@@ -8,8 +8,16 @@
       </template>
     </v-app-bar>
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <v-main class="top-56">
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </v-main>
   </v-app>
 </template>
+
+<style lang="scss" scoped>
+.top-56 {
+  top: 56px;
+}
+</style>

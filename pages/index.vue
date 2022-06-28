@@ -1,3 +1,3 @@
 <template>
-  <div>Dead</div>
+  <ChatWindow />
 </template>
