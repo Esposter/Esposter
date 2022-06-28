@@ -1,0 +1,20 @@
+{
+  "name": "esposter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "@unocss/nuxt": "^0.41.1",
+    "nuxt": "3.0.0-rc.4"
+  },
+  "dependencies": {
+    "@mdi/font": "^6.7.96",
+    "sass": "^1.53.0",
+    "vuetify": "^3.0.0-beta.4"
+  }
+}
