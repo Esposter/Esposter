@@ -1,3 +1,3 @@
 <template>
-  <v-text-field placeholder="Search" prepend-inner-icon="mdi-magnify" />
+  <v-text-field placeholder="Search" prepend-inner-icon="mdi-magnify" density="compact" hide-details />
 </template>

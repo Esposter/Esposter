@@ -12,22 +12,17 @@ const selectedRoomIndex = 2;
 <template>
   <v-list lines="two">
     <template v-for="(room, index) in chatRooms" :key="room.title">
-      <v-list-item
-        active-class="blue lighten-4"
-        :active="selectedRoomIndex === index"
-        :title="room.title"
-        :subtitle="room.subtitle"
-      >
+      <v-list-item :active="selectedRoomIndex === index" :title="room.title" :subtitle="room.subtitle">
         <template #prepend>
           <v-list-item-avatar>
-            <v-img :src="room.avatar"></v-img>
+            <v-img :src="room.avatar" />
           </v-list-item-avatar>
         </template>
         <template #append>
           <v-badge color="green" dot />
         </template>
       </v-list-item>
-      <v-divider v-if="index < chatRooms.length - 1" :key="index" />
+      <v-divider v-if="index < chatRooms.length - 1" />
     </template>
   </v-list>
 </template>

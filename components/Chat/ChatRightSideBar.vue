@@ -29,8 +29,8 @@ const chatRooms = [
 </script>
 
 <template>
-  <div>
+  <v-navigation-drawer permanent location="right">
     <ChatRoomHeader />
     <ChatRoomList :chat-rooms="chatRooms" />
-  </div>
+  </v-navigation-drawer>
 </template>
