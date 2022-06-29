@@ -6,7 +6,18 @@ const sendMessage = () => {
 </script>
 
 <template>
-  <v-text-field placeholder="Aa" v-model="message" density="compact" clearable hide-details @keypress="sendMessage">
+  <v-text-field
+    placeholder="Aa"
+    v-model="message"
+    density="compact"
+    clearable
+    hide-details
+    @keypress="
+      (e) => {
+        if (e.key === 'Enter') sendMessage();
+      }
+    "
+  >
     <template #clear>
       <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="message = ''" />
     </template>
