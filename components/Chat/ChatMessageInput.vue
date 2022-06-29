@@ -1,17 +1,18 @@
 <script setup lang="ts">
-const message = ref("");
-const sendMessage = () => {
-  message.value = "";
-};
+import { useRoomStore } from "@/store/useRoomStore";
+
+const roomStore = useRoomStore();
+const sendMessage = () => roomStore.updateMessage("");
 </script>
 
 <template>
   <v-text-field
     placeholder="Aa"
-    v-model="message"
     density="compact"
     clearable
     hide-details
+    :model-value="roomStore.message"
+    @update:model-value="(val) => roomStore.updateMessage(val)"
     @keypress="
       (e) => {
         if (e.key === 'Enter') sendMessage();
@@ -19,15 +20,15 @@ const sendMessage = () => {
     "
   >
     <template #clear>
-      <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="message = ''" />
+      <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="roomStore.updateMessage('')" />
     </template>
     <template #appendInner>
       <v-btn class="bg-transparent" icon="mdi-emoticon" size="small" flat />
       <v-btn
         class="bg-transparent"
-        :icon="message ? 'mdi-send' : 'mdi-microphone'"
         size="small"
         flat
+        :icon="roomStore.message ? 'mdi-send' : 'mdi-microphone'"
         @click="sendMessage"
       />
     </template>
