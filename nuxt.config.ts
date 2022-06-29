@@ -7,14 +7,4 @@ export default defineNuxtConfig({
     transpile: ["vuetify"],
   },
   modules: ["@unocss/nuxt", "@pinia/nuxt"],
-  unocss: {
-    // presets
-    uno: true, // enabled `@unocss/preset-uno`
-    icons: true, // enabled `@unocss/preset-icons`
-    attributify: true, // enabled `@unocss/preset-attributify`,
-
-    // core options
-    shortcuts: [],
-    rules: [],
-  },
 });
