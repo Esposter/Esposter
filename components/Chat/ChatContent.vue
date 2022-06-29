@@ -2,11 +2,8 @@
 const panel = [2];
 const password = "Password";
 const show = false;
-const message = "Type a message here";
 const marker = true;
 const iconIndex = 0;
-const sendMessage = () => {};
-const clearMessage = () => {};
 </script>
 
 <template>
@@ -104,18 +101,7 @@ const clearMessage = () => {};
             <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
           </v-avatar>
         </v-badge>
-        <v-text-field
-          v-model="message"
-          append-icon="mdi-emoticon"
-          :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
-          filled
-          clear-icon="mdi-close-circle"
-          clearable
-          label="Message"
-          type="text"
-          @click:append-outer="sendMessage"
-          @click:clear="clearMessage"
-        ></v-text-field>
+        <ChatMessageInput />
       </v-col>
     </v-row>
   </v-container>

@@ -6,23 +6,24 @@ interface Props {
 }
 
 const { chatRooms } = defineProps<Props>();
-const selectedRoomIndex = 2;
+const activeRoomIndex = ref(0);
 </script>
 
 <template>
   <v-list lines="two">
     <template v-for="(room, index) in chatRooms" :key="room.title">
-      <v-list-item :active="selectedRoomIndex === index" :title="room.title" :subtitle="room.subtitle">
+      <v-list-item
+        :active="activeRoomIndex === index"
+        :title="room.title"
+        :subtitle="room.subtitle"
+        @click="activeRoomIndex = index"
+      >
         <template #prepend>
-          <v-list-item-avatar>
-            <v-img :src="room.avatar" />
-          </v-list-item-avatar>
-        </template>
-        <template #append>
-          <v-badge color="green" dot />
+          <v-badge color="green" dot>
+            <v-list-item-avatar><v-img :src="room.avatar" /></v-list-item-avatar>
+          </v-badge>
         </template>
       </v-list-item>
-      <v-divider v-if="index < chatRooms.length - 1" />
     </template>
   </v-list>
 </template>

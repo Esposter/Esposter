@@ -3,3 +3,8 @@ export interface ChatRoom {
   title: string;
   subtitle: string;
 }
+
+export interface ChatMember {
+  avatar: string;
+  username: string;
+}
