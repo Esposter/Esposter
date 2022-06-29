@@ -1,10 +1,12 @@
 <script setup lang="ts">
-const message = ref("Aa");
-const sendMessage = () => {};
+const message = ref("");
+const sendMessage = () => {
+  message.value = "";
+};
 </script>
 
 <template>
-  <v-text-field v-model="message" density="compact" clearable>
+  <v-text-field placeholder="Aa" v-model="message" density="compact" clearable hide-details @keypress="sendMessage">
     <template #clear>
       <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="message = ''" />
     </template>

@@ -2,9 +2,7 @@
   // https://v3.nuxtjs.org/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "@assets/*": ["assets/*"],
-      "@components/*": ["components/*"]
-    }
+    "strict": true,
+    "types": ["@pinia/nuxt"]
   }
 }

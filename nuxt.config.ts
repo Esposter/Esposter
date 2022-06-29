@@ -6,12 +6,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
-  vite: {
-    define: {
-      "process.env.DEBUG": false,
-    },
-  },
-  modules: ["@unocss/nuxt"],
+  modules: ["@unocss/nuxt", "@pinia/nuxt"],
   unocss: {
     // presets
     uno: true, // enabled `@unocss/preset-uno`

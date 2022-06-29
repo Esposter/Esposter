@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import chatMembers from "../../assets/data/chatMembers.json";
+import chatMembers from "@/assets/data/chatMembers.json";
 </script>
 
 <template>
