@@ -2,7 +2,6 @@
 import { useRoomStore } from "@/store/useRoomStore";
 
 const roomStore = useRoomStore();
-const sendMessage = () => roomStore.updateMessage("");
 </script>
 
 <template>
@@ -11,16 +10,22 @@ const sendMessage = () => roomStore.updateMessage("");
     density="compact"
     clearable
     hide-details
-    :model-value="roomStore.message"
-    @update:model-value="(val) => roomStore.updateMessage(val)"
+    :model-value="roomStore.messageInput"
+    @update:model-value="(val) => roomStore.updateMessageInput(val)"
     @keypress="
       (e) => {
-        if (e.key === 'Enter') sendMessage();
+        if (e.key === 'Enter') roomStore.sendMessage();
       }
     "
   >
     <template #clear>
-      <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="roomStore.updateMessage('')" />
+      <v-btn
+        class="bg-transparent"
+        icon="mdi-close-circle"
+        size="small"
+        flat
+        @click="roomStore.updateMessageInput('')"
+      />
     </template>
     <template #appendInner>
       <v-btn class="bg-transparent" icon="mdi-emoticon" size="small" flat />
@@ -28,8 +33,8 @@ const sendMessage = () => roomStore.updateMessage("");
         class="bg-transparent"
         size="small"
         flat
-        :icon="roomStore.message ? 'mdi-send' : 'mdi-microphone'"
-        @click="sendMessage"
+        :icon="roomStore.messageInput ? 'mdi-send' : 'mdi-microphone'"
+        @click="roomStore.sendMessage"
       />
     </template>
   </v-text-field>

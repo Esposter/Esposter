@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { ChatMember } from "@/components/Chat/types";
+import { useRoomStore } from "@/store/useRoomStore";
 
-interface Props {
-  chatMembers: ChatMember[];
-}
-
-const { chatMembers } = defineProps<Props>();
+const roomStore = useRoomStore();
 </script>
 
 <template>
   <v-list>
-    <template v-for="(member, index) in chatMembers" :key="index">
+    <template v-for="member in roomStore.members" :key="member.id">
       <v-list-item @click="">
         <template #prepend>
           <v-badge color="green" dot location="bottom end">

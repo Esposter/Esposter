@@ -1,7 +1,25 @@
+<script setup lang="ts">
+onMounted(() => {
+  // Allow scrolling on chat content
+  const mainWrap = document.getElementsByClassName("v-main__wrap");
+  if (mainWrap.length) mainWrap[0].className += "flex flex-col";
+});
+</script>
+
 <template>
-  <div>
+  <v-navigation-drawer permanent app>
     <ChatLeftSideBar />
-    <ChatContent />
+  </v-navigation-drawer>
+
+  <v-navigation-drawer location="right" permanent app>
     <ChatRightSideBar />
-  </div>
+  </v-navigation-drawer>
+
+  <v-main class="h-screen">
+    <ChatContent />
+  </v-main>
+
+  <v-footer app>
+    <ChatMessageInput />
+  </v-footer>
 </template>

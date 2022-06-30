@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { ChatRoom } from "@/components/Chat/types";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 
-interface Props {
-  chatRooms: ChatRoom[];
-}
-
-const { chatRooms } = defineProps<Props>();
 const roomStore = useRoomStore();
 </script>
 
 <template>
   <v-list lines="two">
-    <template v-for="(room, index) in chatRooms" :key="room.title">
+    <template v-for="room in roomStore.roomList" :key="room.id">
       <v-list-item
         :active="roomStore.currentRoomId === room.id"
         :title="room.title"

@@ -5,7 +5,6 @@ export interface ChatRoom {
   subtitle: string;
 }
 
-export interface ChatMember {
-  avatar: string;
-  username: string;
+export interface ChatMessage {
+  message: string;
 }
