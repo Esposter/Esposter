@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ChatMessage } from "@/components/Chat/types";
 
-const { message } = defineProps<ChatMessage>();
+interface ChatMessageProps {
+  message: ChatMessage;
+}
+
+const { message } = defineProps<ChatMessageProps>();
 </script>
 
 <template>
-  <v-card>
-    <v-list-item>{{ message }}</v-list-item>
-  </v-card>
+  <v-list-item>{{ message.message }}</v-list-item>
 </template>

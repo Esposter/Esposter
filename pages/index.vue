@@ -1,3 +1,5 @@
 <template>
-  <ChatWindow />
+  <div>
+    <ChatWindow />
+  </div>
 </template>

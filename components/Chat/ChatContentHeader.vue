@@ -5,7 +5,7 @@ const roomStore = useRoomStore();
 </script>
 
 <template>
-  <v-toolbar class="bg-transparent" tag="div" border="1">
+  <v-toolbar class="bg-transparent" tag="div" height="56" border>
     <v-toolbar-title>{{ roomStore.title }}</v-toolbar-title>
     <template #append>
       <v-btn icon="mdi-phone" size="small" />

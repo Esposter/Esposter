@@ -1,4 +1,4 @@
-import { ChatRoom } from "@/components/Chat/types";
+import { ChatMessage, ChatRoom } from "@/components/Chat/types";
 import { User } from "@/store/useUserStore";
 import { defineStore } from "pinia";
 
@@ -8,6 +8,7 @@ export const useRoomStore = defineStore({
     currentRoomId: null as string | null,
     roomList: [] as ChatRoom[],
     membersMap: {} as Record<string, User[]>,
+    messagesMap: {} as Record<string, ChatMessage[]>,
     messageInputMap: {} as Record<string, string>,
   }),
   getters: {
@@ -20,6 +21,10 @@ export const useRoomStore = defineStore({
     members: (state) => {
       if (!state.currentRoomId || !state.membersMap[state.currentRoomId]) return [];
       return state.membersMap[state.currentRoomId];
+    },
+    messages: (state) => {
+      if (!state.currentRoomId || !state.messagesMap[state.currentRoomId]) return [];
+      return state.messagesMap[state.currentRoomId];
     },
     messageInput: (state) => {
       if (!state.currentRoomId || !state.messageInputMap[state.currentRoomId]) return "";

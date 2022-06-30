@@ -7,17 +7,17 @@ const roomStore = useRoomStore();
 
 <template>
   <v-list lines="two">
-    <template v-for="room in roomStore.roomList" :key="room.id">
-      <v-list-item
-        :active="roomStore.currentRoomId === room.id"
-        :title="room.title"
-        :subtitle="room.subtitle"
-        @click="navigateTo(MESSAGES_PATH(room.id))"
-      >
-        <template #prepend>
-          <v-list-item-avatar><v-img :src="room.avatar" /></v-list-item-avatar>
-        </template>
-      </v-list-item>
-    </template>
+    <v-list-item
+      v-for="room in roomStore.roomList"
+      :key="room.id"
+      :active="roomStore.currentRoomId === room.id"
+      :title="room.title"
+      :subtitle="room.subtitle"
+      @click="navigateTo(MESSAGES_PATH(room.id))"
+    >
+      <template #prepend>
+        <v-list-item-avatar><v-img :src="room.avatar" /></v-list-item-avatar>
+      </template>
+    </v-list-item>
   </v-list>
 </template>
