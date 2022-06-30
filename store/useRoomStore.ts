@@ -1,4 +1,4 @@
-import { ChatMessage, ChatRoom } from "@/components/Chat/types";
+import type { ChatMessage, ChatRoom } from "@/components/Chat/types";
 import { User } from "@/store/useUserStore";
 import { defineStore } from "pinia";
 

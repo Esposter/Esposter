@@ -6,5 +6,11 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
-  modules: ["@unocss/nuxt", "@pinia/nuxt"],
+  modules: ["@unocss/nuxt", "@pinia/nuxt", "trpc-nuxt"],
+  typescript: {
+    strict: true,
+    tsConfig: {
+      types: ["@pinia/nuxt"],
+    },
+  },
 });

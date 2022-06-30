@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChatMessage } from "@/components/Chat/types";
+import type { ChatMessage } from "@/components/Chat/types";
 
 interface ChatMessageProps {
   message: ChatMessage;
