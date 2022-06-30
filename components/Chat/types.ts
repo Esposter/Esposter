@@ -1,7 +1,7 @@
 export interface ChatRoom {
   id: string;
   avatar: string;
-  title: string;
+  name: string;
   subtitle: string;
 }
 

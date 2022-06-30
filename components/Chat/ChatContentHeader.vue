@@ -6,7 +6,7 @@ const roomStore = useRoomStore();
 
 <template>
   <v-toolbar class="bg-transparent" tag="div" height="56" border>
-    <v-toolbar-title>{{ roomStore.title }}</v-toolbar-title>
+    <v-toolbar-title>{{ roomStore.name }}</v-toolbar-title>
     <template #append>
       <v-btn icon="mdi-phone" size="small" />
       <v-btn icon="mdi-video" size="small" />

@@ -6,17 +6,22 @@ export const useRoomStore = defineStore({
   id: "roomStore",
   state: () => ({
     currentRoomId: null as string | null,
+    roomSearchQuery: "",
     roomList: [] as ChatRoom[],
     membersMap: {} as Record<string, User[]>,
     messagesMap: {} as Record<string, ChatMessage[]>,
     messageInputMap: {} as Record<string, string>,
   }),
   getters: {
-    title: (state) => {
+    name: (state) => {
       if (!state.currentRoomId) return "";
 
       const currentRoom = state.roomList.find((r) => r.id === state.currentRoomId);
-      return currentRoom?.title ?? "";
+      return currentRoom?.name ?? "";
+    },
+    filteredRoomList: (state) => {
+      if (!state.roomSearchQuery) return state.roomList;
+      return state.roomList.filter((r) => r.name.toLowerCase().includes(state.roomSearchQuery.toLowerCase()));
     },
     members: (state) => {
       if (!state.currentRoomId || !state.membersMap[state.currentRoomId]) return [];

@@ -8,10 +8,10 @@ const roomStore = useRoomStore();
 <template>
   <v-list lines="two">
     <v-list-item
-      v-for="room in roomStore.roomList"
+      v-for="room in roomStore.filteredRoomList"
       :key="room.id"
       :active="roomStore.currentRoomId === room.id"
-      :title="room.title"
+      :title="room.name"
       :subtitle="room.subtitle"
       @click="navigateTo(MESSAGES_PATH(room.id))"
     >
