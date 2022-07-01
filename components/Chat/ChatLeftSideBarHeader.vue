@@ -7,7 +7,9 @@
       </v-col>
     </v-row>
     <v-row>
-      <ChatRoomSearchBar />
+      <v-col>
+        <ChatRoomSearchBar />
+      </v-col>
     </v-row>
   </v-container>
 </template>
