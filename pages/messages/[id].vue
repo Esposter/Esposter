@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import chatMembers from "@/assets/data/chatMembers.json";
-import chatMessages from "@/assets/data/chatMessages.json";
 import { useRoomStore } from "@/store/useRoomStore";
 
 const route = useRoute();
 const roomStore = useRoomStore();
-const { data, pending } = await useAsyncQuery(["room.getRooms"]);
+const { data: roomsData, pending: roomsPending } = await useAsyncQuery(["room.getRooms"]);
+const { data: membersData, pending: membersPending } = await useAsyncQuery(["room.getMembers"]);
+const { data: messagesData, pending: messagesPending } = await useAsyncQuery(["room.getMessages"]);
 
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 
-if (!pending.value) {
-  console.log(data.value);
-}
+if (!roomsPending.value) roomStore.roomList = roomsData.value;
 
-// roomStore.roomList = ;
 if (roomStore.currentRoomId) {
-  roomStore.membersMap[roomStore.currentRoomId] = chatMembers;
-  roomStore.messagesMap[roomStore.currentRoomId] = chatMessages;
+  if (!membersPending.value) roomStore.membersMap[roomStore.currentRoomId] = membersData.value;
+  if (!messagesPending.value) roomStore.messagesMap[roomStore.currentRoomId] = messagesData.value;
 }
 </script>
 
