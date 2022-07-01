@@ -8,6 +8,8 @@
       </template>
     </v-app-bar>
 
+    <NuxtProgressBar />
+
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

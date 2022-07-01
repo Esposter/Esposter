@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
+useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+
 const route = useRoute();
 const roomStore = useRoomStore();
-const { data: roomsData, pending: roomsPending } = await useAsyncQuery(["room.getRooms"]);
-const { data: membersData, pending: membersPending } = await useAsyncQuery(["room.getMembers"]);
-const { data: messagesData, pending: messagesPending } = await useAsyncQuery(["room.getMessages"]);
+const client = useClient();
+const [rooms, members, messages] = await Promise.all([
+  client.query("room.getRooms"),
+  client.query("room.getMembers"),
+  client.query("room.getMessages"),
+]);
 
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
-
-if (!roomsPending.value) roomStore.roomList = roomsData.value;
-
+roomStore.roomList = rooms;
 if (roomStore.currentRoomId) {
-  if (!membersPending.value) roomStore.membersMap[roomStore.currentRoomId] = membersData.value;
-  if (!messagesPending.value) roomStore.messagesMap[roomStore.currentRoomId] = messagesData.value;
+  roomStore.membersMap[roomStore.currentRoomId] = members;
+  roomStore.messagesMap[roomStore.currentRoomId] = messages;
 }
 </script>
 
 <template>
   <div>
+    <Head>
+      <Title>{{ roomStore.name }}</Title>
+    </Head>
     <ChatWindow />
   </div>
 </template>

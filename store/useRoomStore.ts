@@ -1,5 +1,5 @@
-import type { ChatMessage, ChatRoom } from "@/components/Chat/types";
-import type { User } from "@/store/useUserStore";
+import type { Message, Room } from "@/server/trpc/room";
+import type { User } from "@/server/trpc/user";
 import { defineStore } from "pinia";
 
 export const useRoomStore = defineStore({
@@ -7,9 +7,9 @@ export const useRoomStore = defineStore({
   state: () => ({
     currentRoomId: null as string | null,
     roomSearchQuery: "",
-    roomList: [] as ChatRoom[],
+    roomList: [] as Room[],
     membersMap: {} as Record<string, User[]>,
-    messagesMap: {} as Record<string, ChatMessage[]>,
+    messagesMap: {} as Record<string, Message[]>,
     messageInputMap: {} as Record<string, string>,
   }),
   getters: {
@@ -18,10 +18,6 @@ export const useRoomStore = defineStore({
 
       const currentRoom = state.roomList.find((r) => r.id === state.currentRoomId);
       return currentRoom?.name ?? "";
-    },
-    filteredRoomList: (state) => {
-      if (!state.roomSearchQuery) return state.roomList;
-      return state.roomList.filter((r) => r.name.toLowerCase().includes(state.roomSearchQuery.toLowerCase()));
     },
     members: (state) => {
       if (!state.currentRoomId || !state.membersMap[state.currentRoomId]) return [];

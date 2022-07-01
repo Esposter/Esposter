@@ -1,10 +1,5 @@
+import type { User } from "@/server/trpc/user";
 import { defineStore } from "pinia";
-
-export interface User {
-  id: string;
-  avatar: string;
-  username: string;
-}
 
 export const useUserStore = defineStore({
   id: "userStore",

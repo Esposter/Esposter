@@ -7,7 +7,7 @@
     <ChatRightSideBar />
   </v-navigation-drawer>
 
-  <v-main class="h-screen">
+  <v-main class="relative h-screen">
     <ChatContent />
   </v-main>
 
