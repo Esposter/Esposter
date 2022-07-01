@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
+import ChatMessageList from "./ChatMessageList.vue";
 
 const roomStore = useRoomStore();
 </script>
@@ -7,12 +8,6 @@ const roomStore = useRoomStore();
 <template>
   <div class="flex flex-col h-100">
     <ChatContentHeader />
-    <v-container class="flex-1 flex flex-col" fluid>
-      <v-row class="flex-1 flex flex-col">
-        <v-col class="flex-1 flex flex-col-reverse overflow-y-auto">
-          <ChatMessage v-for="message in roomStore.messages" :key="message.id" :message="message" />
-        </v-col>
-      </v-row>
-    </v-container>
+    <ChatMessageList />
   </div>
 </template>

@@ -1,5 +1,5 @@
 import type { ChatMessage, ChatRoom } from "@/components/Chat/types";
-import { User } from "@/store/useUserStore";
+import type { User } from "@/store/useUserStore";
 import { defineStore } from "pinia";
 
 export const useRoomStore = defineStore({

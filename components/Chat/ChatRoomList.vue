@@ -16,7 +16,9 @@ const roomStore = useRoomStore();
       @click="navigateTo(MESSAGES_PATH(room.id))"
     >
       <template #prepend>
-        <v-list-item-avatar><v-img :src="room.avatar" /></v-list-item-avatar>
+        <v-badge class="mt-1 mr-4" color="green" location="bottom end" dot>
+          <v-list-item-avatar :image="room.avatar" />
+        </v-badge>
       </template>
     </v-list-item>
   </v-list>

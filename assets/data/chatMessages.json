@@ -1,14 +1,17 @@
 [
   {
     "id": "1",
-    "message": "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
+    "message": "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
+    "userId": "1"
   },
   {
     "id": "2",
-    "message": "Wish I could come, but I'm out of town this weekend."
+    "message": "Wish I could come, but I'm out of town this weekend.",
+    "userId": "2"
   },
   {
     "id": "3",
-    "message": "Do you have Paris recommendations? Have you ever been?"
+    "message": "Do you have Paris recommendations? Have you ever been?",
+    "userId": "3"
   }
 ]
