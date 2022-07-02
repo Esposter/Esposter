@@ -2,15 +2,15 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 
-const roomStore = useRoomStore();
+const { currentRoomId, roomList } = useRoomStore();
 </script>
 
 <template>
   <v-list lines="two">
     <v-list-item
-      v-for="room in roomStore.roomList"
+      v-for="room in roomList"
       :key="room.id"
-      :active="roomStore.currentRoomId === room.id"
+      :active="currentRoomId === room.id"
       :title="room.name"
       :subtitle="room.subtitle"
       @click="navigateTo(MESSAGES_PATH(room.id))"

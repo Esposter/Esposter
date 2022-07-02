@@ -7,8 +7,8 @@ interface ChatMessageProps {
 }
 
 const { message } = defineProps<ChatMessageProps>();
-const roomStore = useRoomStore();
-const member = roomStore.members.find((m) => m.id === message.userId);
+const { members } = useRoomStore();
+const member = members.find((m) => m.id === message.userId);
 </script>
 
 <template>
