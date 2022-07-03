@@ -15,7 +15,7 @@
 </template>
 
 <style lang="scss">
-$background: repeating-linear-gradient(to right, #00dc82 0%, #34cdfe 50%, #0047e1 100%);
+$background: #00dc80;
 
 #nprogress {
   pointer-events: none;
@@ -33,15 +33,8 @@ $background: repeating-linear-gradient(to right, #00dc82 0%, #34cdfe 50%, #0047e
 
 /* Fancy blur effect */
 #nprogress .peg {
-  display: block;
-  position: absolute;
-  right: 0px;
-  width: 100px;
+  width: 100%;
   height: 100%;
-  box-shadow: 0 0 10px $background, 0 0 5px $background;
-  opacity: 1;
-  -webkit-transform: rotate(3deg) translate(0px, -4px);
-  -ms-transform: rotate(3deg) translate(0px, -4px);
-  transform: rotate(3deg) translate(0px, -4px);
+  box-shadow: 0 0 5px $background;
 }
 </style>
