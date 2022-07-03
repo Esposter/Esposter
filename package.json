@@ -12,11 +12,11 @@
   "devDependencies": {
     "@types/nprogress": "^0.2.0",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.41.1",
+    "@unocss/nuxt": "^0.43.0",
     "nuxt": "3.0.0-rc.4"
   },
   "dependencies": {
-    "@mdi/font": "^6.7.96",
+    "@mdi/font": "^6.9.96",
     "@pinia/nuxt": "^0.1.9",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.14",
