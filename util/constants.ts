@@ -1,6 +1,9 @@
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
 
 export const isProd = process.env.NODE_ENV === "production";
+export const SITE_DOMAIN = isProd ? "https://esposter.com" : "http://localhost:3000";
+
+export const ROOM_MAX_NAME_LENGTH = 100;
 
 /* public folder paths */
 export const FAVICON_32x32_PATH = "/icons/favicon-32x32.png";

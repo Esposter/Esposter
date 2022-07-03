@@ -1,8 +1,30 @@
-node_modules
-*.log*
+# nuxt 3
 .nuxt
 .nitro
 .cache
 .output
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/dist
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+*.log*
+
+# env files
 .env
-dist
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

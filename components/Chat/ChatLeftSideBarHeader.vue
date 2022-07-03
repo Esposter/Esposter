@@ -3,7 +3,7 @@
     <v-row class="flex align-center">
       <v-col class="text-h5 font-bold">Chats</v-col>
       <v-col class="flex justify-end">
-        <v-btn icon="mdi-plus" size="small" flat />
+        <ChatCreateRoomButton />
       </v-col>
     </v-row>
     <v-row>

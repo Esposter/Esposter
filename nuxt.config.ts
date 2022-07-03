@@ -13,4 +13,7 @@ export default defineNuxtConfig({
       types: ["@pinia/nuxt"],
     },
   },
+  runtimeConfig: {
+    facebookClientId: process.env.FACEBOOK_CLIENT_ID || "809093449746215",
+  },
 });
