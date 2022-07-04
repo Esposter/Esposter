@@ -37,8 +37,5 @@ export const useRoomStore = defineStore({
       if (!this.currentRoomId) return;
       this.messageInputMap[this.currentRoomId] = newMessageInput;
     },
-    sendMessage() {
-      this.updateMessageInput("");
-    },
   },
 });
