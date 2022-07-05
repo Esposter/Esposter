@@ -33,6 +33,13 @@ export const useRoomStore = defineStore({
     },
   },
   actions: {
+    createRoom(newRoom: Room) {
+      this.roomList.unshift(newRoom);
+    },
+    createMessage(newMessage: Message) {
+      if (!this.currentRoomId) return;
+      this.messagesMap[this.currentRoomId] = [newMessage, ...this.messagesMap[this.currentRoomId]];
+    },
     updateMessageInput(newMessageInput: string) {
       if (!this.currentRoomId) return;
       this.messageInputMap[this.currentRoomId] = newMessageInput;

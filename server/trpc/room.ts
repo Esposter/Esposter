@@ -12,11 +12,18 @@ const roomSchema = z.object({
   avatar: z.string().optional(),
   subtitle: z.string().optional(),
 });
-const roomSchemaPartial = roomSchema.partial();
 export type Room = z.infer<typeof roomSchema>;
+
+const roomSchemaPartial = roomSchema.partial();
+
+const createRoomInputSchema = roomSchema.pick({ name: true });
+export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
 
 const messageSchema = z.object({ id: z.string(), userId: z.string(), message: z.string() });
 export type Message = z.infer<typeof messageSchema>;
+
+const createMessageInputSchema = messageSchema.pick({ message: true });
+export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
 export const roomRouter = createRouter()
   .query("getRooms", {
@@ -32,7 +39,7 @@ export const roomRouter = createRouter()
     },
   })
   .mutation("createRoom", {
-    input: roomSchema.pick({ name: true }),
+    input: createRoomInputSchema,
     resolve: ({ input }) => {
       const newRoom: Room = { id: uuidv4(), ...input };
       (chatRooms as Room[]).push(newRoom);
@@ -44,4 +51,12 @@ export const roomRouter = createRouter()
   })
   .query("getMessages", {
     resolve: () => chatMessages,
+  })
+  .mutation("createMessage", {
+    input: createMessageInputSchema,
+    resolve: ({ input }) => {
+      const newMessage: Message = { id: uuidv4(), ...input, userId: "1" };
+      (chatMessages as Message[]).unshift(newMessage);
+      return newMessage;
+    },
   });

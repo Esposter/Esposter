@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import { CreateMessageInput } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 
-const { messageInput, updateMessageInput } = useRoomStore();
+const client = useClient();
+const { messageInput, updateMessageInput, createMessage } = useRoomStore();
 const message = ref(messageInput);
 const updateMessage = (val: string) => {
   message.value = val;
   updateMessageInput(val);
 };
-const sendMessage = () => {
+const sendMessage = async () => {
+  const createMessageInput: CreateMessageInput = { message: message.value };
   message.value = "";
   updateMessageInput("");
+  createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
 </script>
 
