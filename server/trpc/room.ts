@@ -46,6 +46,12 @@ export const roomRouter = createRouter()
       return newRoom;
     },
   })
+  .mutation("deleteRoom", {
+    input: roomSchema.pick({ id: true }),
+    resolve: ({ input: { id } }) => {
+      return true;
+    },
+  })
   .query("getMembers", {
     resolve: () => chatMembers,
   })
