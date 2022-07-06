@@ -36,6 +36,9 @@ export const useRoomStore = defineStore({
     createRoom(newRoom: Room) {
       this.roomList.unshift(newRoom);
     },
+    deleteRoom(id: string) {
+      this.roomList = this.roomList.filter((r) => r.id !== id);
+    },
     createMessage(newMessage: Message) {
       if (!this.currentRoomId) return;
       this.messagesMap[this.currentRoomId] = [newMessage, ...this.messagesMap[this.currentRoomId]];

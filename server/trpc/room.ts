@@ -1,6 +1,5 @@
 import chatMembers from "@/assets/data/chatMembers.json";
 import chatMessages from "@/assets/data/chatMessages.json";
-import chatRooms from "@/assets/data/chatRooms.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { ROOM_MAX_NAME_LENGTH } from "@/util/constants";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +9,6 @@ const roomSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().optional(),
-  subtitle: z.string().optional(),
 });
 export type Room = z.infer<typeof roomSchema>;
 
@@ -32,18 +30,27 @@ export const roomRouter = createRouter()
         filter: roomSchemaPartial.pick({ name: true }).optional(),
       })
       .optional(),
-    resolve: ({ input }) => {
+    resolve: async ({ input, ctx }) => {
       const nameFilter = input?.filter?.name;
-      if (!nameFilter) return chatRooms;
-      return chatRooms.filter((r) => r.name.toLowerCase().includes(nameFilter.toLowerCase()));
+      if (!nameFilter) return ctx.prisma.room.findMany();
+      return ctx.prisma.room.findMany({ where: { name: { contains: nameFilter } } });
     },
   })
   .mutation("createRoom", {
     input: createRoomInputSchema,
-    resolve: ({ input }) => {
-      const newRoom: Room = { id: uuidv4(), ...input };
-      (chatRooms as Room[]).push(newRoom);
-      return newRoom;
+    resolve: async ({ input, ctx }) => {
+      return ctx.prisma.room.create({ data: { id: uuidv4(), ...input } });
+    },
+  })
+  .mutation("deleteRoom", {
+    input: roomSchema.pick({ id: true }),
+    resolve: async ({ input: { id }, ctx }) => {
+      try {
+        await ctx.prisma.room.delete({ where: { id } });
+        return true;
+      } catch (err) {
+        return false;
+      }
     },
   })
   .query("getMembers", {
