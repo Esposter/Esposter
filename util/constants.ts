@@ -9,6 +9,9 @@ export const ROOM_MAX_NAME_LENGTH = 100;
 export const FAVICON_32x32_PATH = "/icons/favicon-32x32.png";
 export const FAVICON_16x16_PATH = "/icons/favicon-16x16.png";
 
+/* cookie names, yum! C: */
+export const THEME_COOKIE_NAME = "theme";
+
 /* 3rd party constants */
 export const BLOB_URL = isProd ? "https://esposter.blob.core.windows.net" : "https://esposterdev.blob.core.windows.net";
 export const LOGO_IMAGE_URL = `${BLOB_URL}/assets/Esposter/logo.jpeg`;
