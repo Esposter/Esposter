@@ -16,7 +16,6 @@ theme.global.name.value = themeCookie.value;
         </NuxtLink>
       </template>
       <v-app-bar-title p="x-2!">Esposter</v-app-bar-title>
-
       <template #append>
         <ChangeThemeButton />
         <EsposterDropdownButton />
