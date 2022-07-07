@@ -15,7 +15,7 @@ theme.global.name.value = themeCookie.value;
           <v-img width="32" height="26" :src="FAVICON_32x32_PATH" alt="Esposter" />
         </NuxtLink>
       </template>
-      <v-app-bar-title class="px-2!">Esposter</v-app-bar-title>
+      <v-app-bar-title p="x-2!">Esposter</v-app-bar-title>
 
       <template #append>
         <ChangeThemeButton />

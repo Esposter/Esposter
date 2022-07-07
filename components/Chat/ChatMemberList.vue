@@ -8,7 +8,7 @@ const { members } = useRoomStore();
   <v-list>
     <v-list-item v-for="member in members" :key="member.id" @click="">
       <template #prepend>
-        <v-badge class="mr-4" color="green" location="bottom end" dot>
+        <v-badge m="r-4" color="green" location="bottom end" dot>
           <v-list-item-avatar>
             <v-img :src="member.avatar" :alt="member.username" />
           </v-list-item-avatar>

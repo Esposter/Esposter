@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col class="flex justify-center">
+      <v-col display="flex" justify="center">
         <Gem />
       </v-col>
     </v-row>

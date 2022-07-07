@@ -19,10 +19,10 @@ const member = members.find((m) => m.id === message.userId);
       </v-list-item-avatar>
     </template>
     <v-list-item-header>
-      <v-list-item-title class="font-bold!">
+      <v-list-item-title font="bold!">
         {{ member.username }}
       </v-list-item-title>
-      <v-list-item-subtitle class="op-100!">
+      <v-list-item-subtitle op="100!">
         {{ message.message }}
       </v-list-item-subtitle>
     </v-list-item-header>

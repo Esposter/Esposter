@@ -7,7 +7,7 @@ const { messages } = storeToRefs(roomStore);
 </script>
 
 <template>
-  <v-list class="flex-1 basis-full flex flex-col-reverse overflow-y-auto" lines="two">
+  <v-list flex="1 col-reverse" basis="full" display="flex" lines="two">
     <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
   </v-list>
 </template>

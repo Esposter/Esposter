@@ -18,10 +18,10 @@ const active = ref(false);
 </script>
 
 <template>
-  <div class="relative" @mouseover="active = true" @mouseleave="active = false">
+  <div position="relative" @mouseover="active = true" @mouseleave="active = false">
     <v-list-item :active="currentRoomId === room.id" :title="room.name" @click="navigateTo(MESSAGES_PATH(room.id))">
       <template #prepend>
-        <v-badge class="mr-4" color="green" location="bottom end" dot>
+        <v-badge m="r-4" color="green" location="bottom end" dot>
           <v-list-item-avatar>
             <v-img :src="room.avatar" :alt="room.name" />
           </v-list-item-avatar>
@@ -30,7 +30,11 @@ const active = ref(false);
     </v-list-item>
     <v-btn
       v-if="active"
-      class="absolute! top-1/2 right-0 translate-y--1/2 bg-transparent z-1"
+      position="absolute"
+      top="1/2"
+      right="0"
+      translate-y="-1/2"
+      bg="transparent"
       icon="mdi-close"
       size="small"
       flat

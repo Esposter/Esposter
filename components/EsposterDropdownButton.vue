@@ -21,7 +21,7 @@ const items = [
           <v-list-item-avatar start>
             <v-icon :icon="item.icon" />
           </v-list-item-avatar>
-          <v-list-item-title class="font-bold!">{{ item.title }}</v-list-item-title>
+          <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-card>

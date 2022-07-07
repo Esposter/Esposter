@@ -16,4 +16,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     facebookClientId: process.env.FACEBOOK_CLIENT_ID || "809093449746215",
   },
+  unocss: {
+    attributify: true,
+  },
 });
