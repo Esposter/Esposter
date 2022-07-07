@@ -34,7 +34,7 @@ const active = ref(false);
       top="1/2"
       right="0"
       translate-y="-1/2"
-      bg="transparent"
+      bg="transparent!"
       icon="mdi-close"
       size="small"
       flat
