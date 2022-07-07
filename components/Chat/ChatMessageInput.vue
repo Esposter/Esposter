@@ -32,12 +32,12 @@ const sendMessage = async () => {
     "
   >
     <template #clear>
-      <v-btn bg="transparent" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
+      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
-      <v-btn bg="transparent" icon="mdi-emoticon" size="small" flat />
+      <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat />
       <v-btn
-        bg="transparent"
+        bg="transparent!"
         size="small"
         flat
         :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
