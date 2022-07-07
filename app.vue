@@ -4,6 +4,7 @@
       <v-app-bar-title>Esposter</v-app-bar-title>
 
       <template #append>
+        <ChangeThemeButton />
         <v-btn icon="mdi-dots-vertical" />
       </template>
     </v-app-bar>

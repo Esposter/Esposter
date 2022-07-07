@@ -1,3 +1,3 @@
 import { useTheme } from "vuetify/lib/framework.mjs";
 
-export const useColors = () => useTheme().current.value.colors;
+export const useColors = () => useTheme().global.current.value.colors;
