@@ -1,3 +1,5 @@
+export const INDEX_PATH = "/";
+export const ABOUT_PATH = "/about";
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
 
 export const isProd = process.env.NODE_ENV === "production";

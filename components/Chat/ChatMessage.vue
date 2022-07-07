@@ -14,7 +14,7 @@ const member = members.find((m) => m.id === message.userId);
 <template>
   <v-list-item v-if="member">
     <template #prepend>
-      <v-list-item-avatar class="mt-1 mr-4">
+      <v-list-item-avatar start>
         <v-img :src="member.avatar" :alt="member.username" />
       </v-list-item-avatar>
     </template>

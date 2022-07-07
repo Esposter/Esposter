@@ -21,7 +21,7 @@ const active = ref(false);
   <div class="relative" @mouseover="active = true" @mouseleave="active = false">
     <v-list-item :active="currentRoomId === room.id" :title="room.name" @click="navigateTo(MESSAGES_PATH(room.id))">
       <template #prepend>
-        <v-badge class="mt-1 mr-4" color="green" location="bottom end" dot>
+        <v-badge class="mr-4" color="green" location="bottom end" dot>
           <v-list-item-avatar>
             <v-img :src="room.avatar" :alt="room.name" />
           </v-list-item-avatar>
