@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { FAVICON_32x32_PATH, INDEX_PATH, THEME_COOKIE_NAME } from "@/util/constants";
-import { useTheme } from "vuetify/lib/framework.mjs";
-
-const theme = useTheme();
-const themeCookie = useCookie(THEME_COOKIE_NAME);
-theme.global.name.value = themeCookie.value;
+import { FAVICON_32x32_PATH, INDEX_PATH } from "@/util/constants";
+import NuxtTheme from "./components/NuxtTheme.vue";
 </script>
 
 <template>
@@ -17,14 +13,18 @@ theme.global.name.value = themeCookie.value;
       </template>
       <v-app-bar-title p="x-2!">Esposter</v-app-bar-title>
       <template #append>
-        <ChangeThemeButton />
+        <ToggleThemeButton />
         <EsposterDropdownButton />
       </template>
     </v-app-bar>
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <NuxtTheme>
+      <NuxtSEO>
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+      </NuxtSEO>
+    </NuxtTheme>
   </v-app>
 </template>
 

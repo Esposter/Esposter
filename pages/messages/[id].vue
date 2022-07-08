@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+definePageMeta({ layout: "chat" });
 
 const route = useRoute();
 const roomStore = useRoomStore();

@@ -2,7 +2,12 @@
   <v-container fluid>
     <v-row>
       <v-col display="flex" justify="center">
-        <Gem />
+        <AboutGem />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <AboutTitle />
       </v-col>
     </v-row>
   </v-container>
