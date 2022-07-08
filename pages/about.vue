@@ -7,7 +7,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <AboutTitle />
+        <AboutHeader />
       </v-col>
     </v-row>
   </v-container>

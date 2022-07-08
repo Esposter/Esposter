@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SITE_DOMAIN, LOGO_IMAGE_URL } from "@/util/constants";
+import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
 
 const { primary } = useGlobalTheme().value.colors;
 const { facebookClientId } = useRuntimeConfig();
