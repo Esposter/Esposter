@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { FAVICON_32x32_PATH, INDEX_PATH } from "@/util/constants";
-import NuxtTheme from "./components/NuxtTheme.vue";
 </script>
 
 <template>
