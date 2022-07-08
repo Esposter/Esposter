@@ -2,10 +2,9 @@ import NProgress from "nprogress";
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("app:mounted", () => {
-    NProgress.configure({ easing: "ease", speed: 500 });
+    NProgress.configure({ speed: 500, minimum: 0.3 });
 
     nuxtApp.hook("page:start", () => {
-      NProgress.set(0.3);
       NProgress.start();
     });
 
