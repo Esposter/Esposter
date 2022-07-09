@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-definePageMeta({ layout: "chat" });
+useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
 const route = useRoute();
 const roomStore = useRoomStore();
@@ -21,10 +21,19 @@ if (roomStore.currentRoomId) {
 </script>
 
 <template>
-  <div>
+  <NuxtLayout>
     <Head>
       <Title>{{ roomStore.name }}</Title>
     </Head>
-    <ChatWindow />
-  </div>
+    <template #left>
+      <ChatLeftSideBar />
+    </template>
+    <template #right>
+      <ChatRightSideBar />
+    </template>
+    <ChatContent />
+    <template #footer>
+      <ChatMessageInput />
+    </template>
+  </NuxtLayout>
 </template>
