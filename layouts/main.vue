@@ -17,20 +17,8 @@ import { FAVICON_32x32_PATH, INDEX_PATH } from "@/util/constants";
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer permanent app>
-      <slot name="left" />
-    </v-navigation-drawer>
-
-    <v-navigation-drawer location="right" permanent app>
-      <slot name="right" />
-    </v-navigation-drawer>
-
     <v-main>
       <slot />
     </v-main>
-
-    <v-footer app>
-      <slot name="footer" />
-    </v-footer>
   </v-app>
 </template>

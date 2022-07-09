@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="main">
     <v-container fluid>
       <v-row>
         <v-col display="flex" justify="center">
