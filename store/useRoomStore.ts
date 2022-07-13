@@ -47,5 +47,11 @@ export const useRoomStore = defineStore({
       if (!this.currentRoomId) return;
       this.messageInputMap[this.currentRoomId] = newMessageInput;
     },
+    updateName(newName: string) {
+      if (!this.currentRoomId) return;
+
+      const currentRoom = this.roomList.find((r) => r.id === this.currentRoomId);
+      if (currentRoom) currentRoom.name = newName;
+    },
   },
 });

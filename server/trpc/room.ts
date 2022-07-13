@@ -19,6 +19,9 @@ const roomSchemaPartial = roomSchema.partial();
 const createRoomInputSchema = roomSchema.pick({ name: true });
 export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
 
+const updateRoomInputSchema = roomSchema.pick({ id: true, name: true });
+export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
+
 const messageSchema = z.object({ id: z.string(), userId: z.string(), message: z.string() });
 export type Message = z.infer<typeof messageSchema>;
 
@@ -44,6 +47,17 @@ export const roomRouter = createRouter()
       const newRoom: Room = { id: uuidv4(), ...input };
       (chatRooms as Room[]).push(newRoom);
       return newRoom;
+    },
+  })
+  .mutation("updateRoom", {
+    input: updateRoomInputSchema,
+    resolve: ({ input: { id, name } }) => {
+      const foundRoom = chatRooms.find((r) => r.id === id);
+      if (foundRoom) {
+        foundRoom.name = name;
+        return foundRoom as Room;
+      }
+      return null;
     },
   })
   .mutation("deleteRoom", {
