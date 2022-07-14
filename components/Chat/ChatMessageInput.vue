@@ -11,8 +11,7 @@ const updateMessage = (val: string) => {
 };
 const sendMessage = async () => {
   const createMessageInput: CreateMessageInput = { message: message.value };
-  message.value = "";
-  updateMessageInput("");
+  updateMessage("");
   createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
 </script>
