@@ -3,11 +3,11 @@ import { Room } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 
-interface ChatRoomListProps {
+interface ChatRoomListItemProps {
   room: Room;
 }
 
-const { room } = defineProps<ChatRoomListProps>();
+const { room } = defineProps<ChatRoomListItemProps>();
 const client = useClient();
 const { currentRoomId, deleteRoom } = useRoomStore();
 const removeRoom = async () => {

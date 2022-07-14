@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-const roomStore = useRoomStore();
 const client = useClient();
+const roomStore = useRoomStore();
 const updateSearchQuery = useDebounce(async (val: string) => {
   if (val !== roomStore.roomSearchQuery) {
     roomStore.roomSearchQuery = val;
