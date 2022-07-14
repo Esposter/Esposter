@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { CreateMessageInput } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const client = useClient();
-const roomStore = useRoomStore();
-const { updateMessageInput, createMessage } = roomStore;
-const { messageInput } = storeToRefs(roomStore);
+const { messageInput, updateMessageInput, createMessage } = useRoomStore();
+const message = ref(messageInput);
+const updateMessage = (val: string) => {
+  message.value = val;
+  updateMessageInput(val);
+};
 const sendMessage = async () => {
-  const createMessageInput: CreateMessageInput = { message: messageInput.value };
+  const createMessageInput: CreateMessageInput = { message: message.value };
+  message.value = "";
   updateMessageInput("");
   createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
@@ -20,8 +23,8 @@ const sendMessage = async () => {
     density="compact"
     clearable
     hide-details
-    :model-value="messageInput"
-    @update:model-value="updateMessageInput"
+    :model-value="message"
+    @update:model-value="updateMessage"
     @keypress="
       (e) => {
         if (e.key === 'Enter') sendMessage();
@@ -29,7 +32,7 @@ const sendMessage = async () => {
     "
   >
     <template #clear>
-      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessageInput('')" />
+      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
       <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat />

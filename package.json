@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@mdi/font": "^6.9.96",
-    "@pinia/nuxt": "^0.2.1",
+    "@pinia/nuxt": "^0.3.0",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.16",
     "sass": "^1.53.0",
