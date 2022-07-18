@@ -8,6 +8,6 @@ const { messages } = storeToRefs(roomStore);
 
 <template>
   <v-list flex="1 col-reverse" basis="full" display="flex" lines="two">
-    <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
+    <ChatMessageListItem v-for="message in messages" :key="message.id" :message="message" />
   </v-list>
 </template>
