@@ -1,13 +1,20 @@
 <template>
-  <NuxtTheme>
-    <NuxtSEO>
-      <NuxtPage />
-    </NuxtSEO>
-  </NuxtTheme>
+  <v-app>
+    <EsposterAppBar />
+    <NuxtTheme>
+      <NuxtSEO>
+        <NuxtPage />
+      </NuxtSEO>
+    </NuxtTheme>
+  </v-app>
 </template>
 
 <style lang="scss">
 $background: #00dc80;
+
+html {
+  overflow-y: auto;
+}
 
 #nprogress {
   pointer-events: none;

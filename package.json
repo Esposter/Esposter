@@ -13,7 +13,7 @@
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.141.0",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.44.1",
+    "@unocss/nuxt": "^0.44.3",
     "nuxt": "3.0.0-rc.4"
   },
   "dependencies": {
@@ -23,9 +23,9 @@
     "pinia": "^2.0.16",
     "sass": "^1.53.0",
     "three": "^0.142.0",
-    "trpc-nuxt": "^0.2.2",
+    "trpc-nuxt": "^0.2.4",
     "uuid": "^8.3.2",
     "vuetify": "^3.0.0-beta.5",
-    "zod": "^3.17.3"
+    "zod": "^3.17.5"
   }
 }
