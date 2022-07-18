@@ -1,3 +1,11 @@
+<script setup lang="ts">
+interface DefaultLayoutProps {
+  mainClass?: string;
+}
+
+const { mainClass } = defineProps<DefaultLayoutProps>();
+</script>
+
 <template>
   <div display="contents">
     <!-- Ignore parent div here, it is only for nuxt -->
@@ -9,7 +17,7 @@
       <slot name="right" />
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main :class="mainClass">
       <slot />
     </v-main>
 
