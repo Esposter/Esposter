@@ -5,7 +5,7 @@ import data from "emoji-mart-vue-fast/data/all.json";
 import { EmojiIndex, Picker } from "emoji-mart-vue-fast/src";
 
 interface EmojiPickerProps {
-  onEmojiSelect: (emoji: string) => void;
+  onEmojiSelect: (emoji: { native: string }) => void;
 }
 
 const { onEmojiSelect } = defineProps<EmojiPickerProps>();
