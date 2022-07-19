@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CreateMessageInput } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
+import type { BaseEmoji } from "emoji-mart";
 
 const client = useClient();
 const { messageInput, updateMessageInput, createMessage } = useRoomStore();
@@ -14,6 +15,7 @@ const sendMessage = async () => {
   updateMessage("");
   createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
+const onEmojiSelect = (emoji: BaseEmoji) => updateMessage(message.value + emoji.native);
 </script>
 
 <template>
@@ -34,11 +36,11 @@ const sendMessage = async () => {
       <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
-      <v-menu>
+      <v-menu :close-on-content-click="false">
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
-        <ChatEmojiPicker />
+        <ChatEmojiPicker :onEmojiSelect="onEmojiSelect" />
       </v-menu>
       <v-btn
         bg="transparent!"
