@@ -1,4 +1,4 @@
-import { Ref } from "nuxt/dist/app/compat/capi";
+import { Ref } from "vue";
 
 export const useClickOutside = (target: Ref<Element | undefined>, fn: () => void) => {
   const listener = (e: MouseEvent) => {

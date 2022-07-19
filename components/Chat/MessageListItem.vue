@@ -9,11 +9,17 @@ interface ChatMessageProps {
 const { message } = defineProps<ChatMessageProps>();
 const { members } = useRoomStore();
 const member = members.find((m) => m.id === message.userId);
-const active = ref(false);
+const isMessageActive = ref(false);
+const isOptionsActive = ref(false);
 </script>
 
 <template>
-  <v-list-item v-if="member" :active="active" @mouseenter="active = true" @mouseleave="active = false">
+  <v-list-item
+    v-if="member"
+    :active="isMessageActive || isOptionsActive"
+    @mouseenter="isMessageActive = true"
+    @mouseleave="isMessageActive = false"
+  >
     <template #prepend>
       <v-list-item-avatar start>
         <v-img :src="member.avatar" :alt="member.username" />
@@ -28,4 +34,18 @@ const active = ref(false);
       </v-list-item-subtitle>
     </v-list-item-header>
   </v-list-item>
+  <div position="relative" z="1">
+    <div
+      v-show="isMessageActive || isOptionsActive"
+      position="absolute"
+      top="-6"
+      right="0"
+      @mouseenter="isOptionsActive = true"
+      @mouseleave="isOptionsActive = false"
+    >
+      <v-hover #default="{ isHovering, props }">
+        <ChatMessageOptionsMenu :isHovering="isHovering" :hoverProps="props" />
+      </v-hover>
+    </div>
+  </div>
 </template>
