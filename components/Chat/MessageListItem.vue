@@ -11,12 +11,13 @@ const { members } = useRoomStore();
 const member = members.find((m) => m.id === message.userId);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
+const active = computed(() => isMessageActive.value || isOptionsActive.value);
 </script>
 
 <template>
   <v-list-item
     v-if="member"
-    :active="isMessageActive || isOptionsActive"
+    :active="active"
     @mouseenter="isMessageActive = true"
     @mouseleave="isMessageActive = false"
   >
@@ -36,7 +37,7 @@ const isOptionsActive = ref(false);
   </v-list-item>
   <div position="relative" z="1">
     <div
-      v-show="isMessageActive || isOptionsActive"
+      v-show="active"
       position="absolute"
       top="-6"
       right="0"

@@ -34,7 +34,12 @@ const sendMessage = async () => {
       <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
-      <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat />
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
+        </template>
+        <ChatEmojiPicker />
+      </v-menu>
       <v-btn
         bg="transparent!"
         size="small"
