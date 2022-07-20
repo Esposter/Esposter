@@ -41,13 +41,7 @@ const sendMessage = async () => {
         </template>
         <EmojiPicker :onEmojiSelect="(emoji) => updateMessage(message + emoji.native)" />
       </v-menu>
-      <v-btn
-        bg="transparent!"
-        size="small"
-        flat
-        :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
-        @click="sendMessage"
-      />
+      <v-btn bg="transparent!" size="small" flat :icon="message ? 'mdi-send' : 'mdi-microphone'" @click="sendMessage" />
     </template>
   </v-text-field>
 </template>

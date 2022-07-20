@@ -11,13 +11,13 @@
   },
   "devDependencies": {
     "@types/nprogress": "^0.2.0",
-    "@types/three": "^0.141.0",
+    "@types/three": "^0.142.0",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.44.3",
+    "@unocss/nuxt": "^0.44.5",
     "nuxt": "3.0.0-rc.6"
   },
   "dependencies": {
-    "@mdi/font": "^6.9.96",
+    "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.3.0",
     "emoji-mart-vue-fast": "^11.1.1",
     "nprogress": "^0.2.0",
