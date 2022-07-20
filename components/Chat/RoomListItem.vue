@@ -29,7 +29,7 @@ const active = ref(false);
       </template>
     </v-list-item>
     <v-btn
-      v-if="active"
+      v-show="active"
       position="absolute"
       top="1/2"
       right="0"

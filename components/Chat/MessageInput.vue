@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EmojiPicker from "@/components/Chat/EmojiPicker.vue";
 import { CreateMessageInput } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 
@@ -14,7 +15,6 @@ const sendMessage = async () => {
   updateMessage("");
   createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
-const onEmojiSelect = (emoji: { native: string }) => updateMessage(message + emoji.native);
 </script>
 
 <template>
@@ -39,7 +39,7 @@ const onEmojiSelect = (emoji: { native: string }) => updateMessage(message + emo
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
-        <ChatEmojiPicker :onEmojiSelect="onEmojiSelect" />
+        <EmojiPicker :onEmojiSelect="(emoji) => updateMessage(message + emoji.native)" />
       </v-menu>
       <v-btn
         bg="transparent!"

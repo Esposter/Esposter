@@ -2,7 +2,7 @@
 import "emoji-mart-vue-fast/css/emoji-mart.css";
 import data from "emoji-mart-vue-fast/data/all.json";
 // @ts-ignore
-import { EmojiIndex, Picker } from "emoji-mart-vue-fast/src";
+import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 
 interface EmojiPickerProps {
   onEmojiSelect: (emoji: { native: string }) => void;
@@ -13,5 +13,5 @@ const emojiIndex = new EmojiIndex(data);
 </script>
 
 <template>
-  <Picker :data="emojiIndex" @select="onEmojiSelect" />
+  <v-emoji-picker :data="emojiIndex" @select="onEmojiSelect" />
 </template>

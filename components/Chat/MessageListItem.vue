@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
 import type { Message } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 
@@ -11,7 +12,8 @@ const { members } = useRoomStore();
 const member = members.find((m) => m.id === message.userId);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
-const active = computed(() => isMessageActive.value || isOptionsActive.value);
+const isOptionsChildrenActive = ref(false);
+const active = computed(() => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value);
 </script>
 
 <template>
@@ -45,7 +47,11 @@ const active = computed(() => isMessageActive.value || isOptionsActive.value);
       @mouseleave="isOptionsActive = false"
     >
       <v-hover #default="{ isHovering, props }">
-        <ChatMessageOptionsMenu :isHovering="isHovering" :hoverProps="props" />
+        <MessageOptionsMenu
+          :isHovering="isHovering"
+          :hoverProps="props"
+          @update="(value) => (isOptionsChildrenActive = value)"
+        />
       </v-hover>
     </div>
   </div>
