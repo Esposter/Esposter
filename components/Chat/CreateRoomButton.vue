@@ -7,7 +7,7 @@ const addRoom = async () => createRoom(await client.mutation("room.createRoom", 
 </script>
 
 <template>
-  <!-- Tooltip doesn't work yet https://github.com/vuetifyjs/vuetify/issues/15323 -->
+  <!-- Tooltip doesn't work yet, it will break route transitions https://github.com/vuetifyjs/vuetify/issues/15323 -->
   <!-- <v-tooltip #activator="{ props }" location="top" text="Create DM">
     <v-btn icon="mdi-plus" size="small" flat :="props" />
   </v-tooltip> -->

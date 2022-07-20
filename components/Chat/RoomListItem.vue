@@ -28,8 +28,9 @@ const active = ref(false);
         </v-badge>
       </template>
     </v-list-item>
+    <!-- @NOTE This doesn't like v-show because route transitions invoke render outside of default it seems -->
     <v-btn
-      v-show="active"
+      v-if="active"
       position="absolute"
       top="1/2"
       right="0"

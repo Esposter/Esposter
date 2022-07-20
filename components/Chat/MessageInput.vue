@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import EmojiPicker from "@/components/Chat/EmojiPicker.vue";
 import { CreateMessageInput } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const { messageInput, updateMessageInput, createMessage } = useRoomStore();
+// @NOTE Ideally, we shouldn't need this extra ref
 const message = ref(messageInput);
 const updateMessage = (val: string) => {
   message.value = val;
@@ -35,12 +35,13 @@ const sendMessage = async () => {
       <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
-      <v-menu :close-on-content-click="false">
+      <!-- Menu doesn't work yet, it will break route transitions -->
+      <!-- <v-menu :close-on-content-click="false">
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
         <EmojiPicker :onEmojiSelect="(emoji) => updateMessage(message + emoji.native)" />
-      </v-menu>
+      </v-menu> -->
       <v-btn bg="transparent!" size="small" flat :icon="message ? 'mdi-send' : 'mdi-microphone'" @click="sendMessage" />
     </template>
   </v-text-field>
