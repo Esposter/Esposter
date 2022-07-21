@@ -11,8 +11,10 @@ const toggleTheme = () => {
 </script>
 
 <template>
-  <v-btn
-    :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-    @click="toggleTheme"
-  />
+  <v-avatar color="background">
+    <v-btn
+      :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+      @click="toggleTheme"
+    />
+  </v-avatar>
 </template>

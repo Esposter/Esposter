@@ -1,11 +1,27 @@
 <script setup lang="ts">
-import { ABOUT_PATH } from "@/util/constants";
+import { ABOUT_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants";
 
-const items = [
+interface Item {
+  title: string;
+  href: string;
+  icon: string;
+}
+
+const items: Item[] = [
   {
     title: "About",
     href: ABOUT_PATH,
     icon: "mdi-information-outline",
+  },
+  {
+    title: "Privacy Policy",
+    href: PRIVACY_POLICY_PATH,
+    icon: "mdi-lock",
+  },
+  {
+    title: "Terms & Conditions",
+    href: TERMS_AND_CONDITIONS_PATH,
+    icon: "mdi-shield-lock",
   },
 ];
 </script>
@@ -13,12 +29,14 @@ const items = [
 <template>
   <v-menu>
     <template #activator="{ props }">
-      <v-btn icon="mdi-dots-vertical" :="props" />
+      <v-avatar color="background">
+        <v-btn class="background" icon="mdi-dots-vertical" :="props" />
+      </v-avatar>
     </template>
     <v-card min-width="300">
       <v-list>
-        <v-list-item v-for="item in items" :key="item.href" :value="item.href" @click="navigateTo(item.href)">
-          <v-list-item-avatar start>
+        <v-list-item v-for="item in items" :key="item.title" :value="item.title" @click="navigateTo(item.href)">
+          <v-list-item-avatar class="background" start>
             <v-icon :icon="item.icon" />
           </v-list-item-avatar>
           <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>

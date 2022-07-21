@@ -11,7 +11,7 @@ import { FAVICON_32x32_PATH, INDEX_PATH } from "@/util/constants";
     </template>
     <v-app-bar-title p="x-2!">Esposter</v-app-bar-title>
     <template #append>
-      <EsposterToggleThemeButton />
+      <EsposterToggleThemeButton m="r-2" />
       <EsposterDropdownButton />
     </template>
   </v-app-bar>
