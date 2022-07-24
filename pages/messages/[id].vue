@@ -21,10 +21,21 @@ if (roomStore.currentRoomId) {
 </script>
 
 <template>
-  <div>
+  <NuxtLayout mainClass="max-h-screen">
+    <!-- Set max height here so we can hide global window scrollbar
+    and show scrollbar within the chat content only for chat routes -->
     <Head>
       <Title>{{ roomStore.name }}</Title>
     </Head>
-    <ChatWindow />
-  </div>
+    <template #left>
+      <ChatLeftSideBar />
+    </template>
+    <template #right>
+      <ChatRightSideBar />
+    </template>
+    <ChatContent />
+    <template #footer>
+      <ChatMessageInput />
+    </template>
+  </NuxtLayout>
 </template>

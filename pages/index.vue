@@ -1,5 +1,5 @@
 <template>
-  <div>
-    <ChatWindow />
-  </div>
+  <NuxtLayout>
+    <NuxtWelcome />
+  </NuxtLayout>
 </template>

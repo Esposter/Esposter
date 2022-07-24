@@ -3,11 +3,11 @@ import { Room } from "@/server/trpc/room";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 
-interface ChatRoomListProps {
+interface ChatRoomListItemProps {
   room: Room;
 }
 
-const { room } = defineProps<ChatRoomListProps>();
+const { room } = defineProps<ChatRoomListItemProps>();
 const client = useClient();
 const { currentRoomId, deleteRoom } = useRoomStore();
 const removeRoom = async () => {
@@ -18,19 +18,24 @@ const active = ref(false);
 </script>
 
 <template>
-  <div class="relative" @mouseover="active = true" @mouseleave="active = false">
+  <div position="relative" @mouseover="active = true" @mouseleave="active = false">
     <v-list-item :active="currentRoomId === room.id" :title="room.name" @click="navigateTo(MESSAGES_PATH(room.id))">
       <template #prepend>
-        <v-badge class="mt-1 mr-4" color="green" location="bottom end" dot>
+        <v-badge m="r-4" color="green" location="bottom end" dot>
           <v-list-item-avatar>
             <v-img :src="room.avatar" :alt="room.name" />
           </v-list-item-avatar>
         </v-badge>
       </template>
     </v-list-item>
+    <!-- @NOTE This doesn't like v-show because route transitions invoke render outside of default it seems -->
     <v-btn
       v-if="active"
-      class="absolute! top-1/2 right-0 translate-y--1/2 bg-transparent z-1"
+      position="absolute"
+      top="1/2"
+      right="0"
+      translate-y="-1/2"
+      bg="transparent!"
       icon="mdi-close"
       size="small"
       flat

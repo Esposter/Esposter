@@ -1,21 +1,20 @@
 <template>
   <v-app>
-    <v-app-bar density="comfortable" app>
-      <v-app-bar-title>Esposter</v-app-bar-title>
-
-      <template #append>
-        <v-btn icon="mdi-dots-vertical" />
-      </template>
-    </v-app-bar>
-
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <EsposterAppBar />
+    <NuxtTheme>
+      <NuxtSEO>
+        <NuxtPage />
+      </NuxtSEO>
+    </NuxtTheme>
   </v-app>
 </template>
 
 <style lang="scss">
 $background: #00dc80;
+
+html {
+  overflow-y: auto;
+}
 
 #nprogress {
   pointer-events: none;

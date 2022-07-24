@@ -4,6 +4,7 @@ import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const { messageInput, updateMessageInput, createMessage } = useRoomStore();
+// @NOTE Ideally, we shouldn't need this extra ref
 const message = ref(messageInput);
 const updateMessage = (val: string) => {
   message.value = val;
@@ -11,8 +12,7 @@ const updateMessage = (val: string) => {
 };
 const sendMessage = async () => {
   const createMessageInput: CreateMessageInput = { message: message.value };
-  message.value = "";
-  updateMessageInput("");
+  updateMessage("");
   createMessage(await client.mutation("room.createMessage", createMessageInput));
 };
 </script>
@@ -32,17 +32,17 @@ const sendMessage = async () => {
     "
   >
     <template #clear>
-      <v-btn class="bg-transparent" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
+      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
     </template>
     <template #append-inner>
-      <v-btn class="bg-transparent" icon="mdi-emoticon" size="small" flat />
-      <v-btn
-        class="bg-transparent"
-        size="small"
-        flat
-        :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
-        @click="sendMessage"
-      />
+      <!-- Menu doesn't work yet, it will break route transitions -->
+      <!-- <v-menu :close-on-content-click="false">
+        <template #activator="{ props }">
+          <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
+        </template>
+        <EmojiPicker :onEmojiSelect="(emoji) => updateMessage(message + emoji.native)" />
+      </v-menu> -->
+      <v-btn bg="transparent!" size="small" flat :icon="message ? 'mdi-send' : 'mdi-microphone'" @click="sendMessage" />
     </template>
   </v-text-field>
 </template>
