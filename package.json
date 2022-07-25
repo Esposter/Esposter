@@ -13,8 +13,9 @@
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.142.0",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.44.5",
-    "nuxt": "3.0.0-rc.6"
+    "@unocss/nuxt": "^0.44.7",
+    "nuxt": "3.0.0-rc.6",
+    "prisma": "^4.1.0"
   },
   "dependencies": {
     "@mdi/font": "^7.0.96",
@@ -23,11 +24,11 @@
     "emoji-mart-vue-fast": "^11.1.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.16",
-    "sass": "^1.53.0",
+    "sass": "^1.54.0",
     "three": "^0.142.0",
     "trpc-nuxt": "^0.2.4",
     "uuid": "^8.3.2",
     "vuetify": "^3.0.0-beta.5",
-    "zod": "^3.17.9"
+    "zod": "^3.17.10"
   }
 }

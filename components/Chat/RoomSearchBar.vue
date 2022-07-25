@@ -6,7 +6,7 @@ const roomStore = useRoomStore();
 const updateSearchQuery = useDebounce(async (val: string) => {
   if (val !== roomStore.roomSearchQuery) {
     roomStore.roomSearchQuery = val;
-    roomStore.roomList = await client.query("room.getRooms", { filter: { name: val } });
+    roomStore.roomList = await client.query("room.readRooms", { filter: { name: val } });
   }
 }, 500);
 </script>

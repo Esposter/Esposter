@@ -7,7 +7,7 @@ const route = useRoute();
 const roomStore = useRoomStore();
 const client = useClient();
 const [rooms, members, messages] = await Promise.all([
-  client.query("room.getRooms"),
+  client.query("room.readRooms"),
   client.query("room.getMembers"),
   client.query("room.getMessages"),
 ]);
