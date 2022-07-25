@@ -1,17 +1,20 @@
 import chatMembers from "@/assets/data/chatMembers.json";
-import chatMessages from "@/assets/data/chatMessages.json";
-import { prisma } from "@/server/trpc/context";
 import { createRouter } from "@/server/trpc/createRouter";
+import { prisma } from "@/server/trpc/prisma";
 import { ROOM_MAX_NAME_LENGTH } from "@/util/constants";
+import type { Room as PrismaRoom } from "@prisma/client";
+import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-const roomSchema = z.object({
+const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string(),
   name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
-  avatar: z.string().optional(),
+  avatar: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  deletedAt: z.date().nullable(),
 });
-export type Room = z.infer<typeof roomSchema>;
 
 const readRoomsInputSchema = z.object({ filter: roomSchema.pick({ name: true }).optional() }).optional();
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
@@ -24,12 +27,6 @@ export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 
 const deleteRoomInputSchema = roomSchema.pick({ id: true });
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
-
-const messageSchema = z.object({ id: z.string(), userId: z.string(), message: z.string() });
-export type Message = z.infer<typeof messageSchema>;
-
-const createMessageInputSchema = messageSchema.pick({ message: true });
-export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
 export const roomRouter = createRouter()
   .query("readRooms", {
@@ -63,17 +60,6 @@ export const roomRouter = createRouter()
       }
     },
   })
-  .query("getMembers", {
+  .query("readMembers", {
     resolve: () => chatMembers,
-  })
-  .query("getMessages", {
-    resolve: () => chatMessages,
-  })
-  .mutation("createMessage", {
-    input: createMessageInputSchema,
-    resolve: ({ input }) => {
-      const newMessage: Message = { id: uuidv4(), ...input, userId: "1" };
-      (chatMessages as Message[]).unshift(newMessage);
-      return newMessage;
-    },
   });

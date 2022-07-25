@@ -1,15 +1,16 @@
 <script setup lang="ts">
+// @NOTE We shouldn't need this import
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
-import type { Message } from "@/server/trpc/room";
+import { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 
 interface ChatMessageProps {
-  message: Message;
+  message: MessageEntity;
 }
 
 const { message } = defineProps<ChatMessageProps>();
 const { members } = useRoomStore();
-const member = members.find((m) => m.id === message.userId);
+const member = computed(() => members.find((m) => m.id === message.userId));
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
@@ -23,11 +24,9 @@ const active = computed(() => isMessageActive.value || isOptionsActive.value || 
     @mouseenter="isMessageActive = true"
     @mouseleave="isMessageActive = false"
   >
-    <template #prepend>
-      <v-list-item-avatar start>
-        <v-img :src="member.avatar" :alt="member.username" />
-      </v-list-item-avatar>
-    </template>
+    <v-list-item-avatar start>
+      <v-img :src="member.avatar" :alt="member.username" />
+    </v-list-item-avatar>
     <v-list-item-header>
       <v-list-item-title font="bold!">
         {{ member.username }}

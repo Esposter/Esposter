@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 
 const route = useRoute();
 const roomStore = useRoomStore();
+const { name } = storeToRefs(roomStore);
 const client = useClient();
+roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
+
 const [rooms, members, messages] = await Promise.all([
   client.query("room.readRooms"),
-  client.query("room.getMembers"),
-  client.query("room.getMessages"),
+  client.query("room.readMembers"),
+  roomStore.currentRoomId
+    ? client.query("message.readMessages", { partitionKey: roomStore.currentRoomId })
+    : ([] as MessageEntity[]),
 ]);
 
-roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 roomStore.roomList = rooms;
 if (roomStore.currentRoomId) {
   roomStore.membersMap[roomStore.currentRoomId] = members;
@@ -27,7 +33,7 @@ const roomExists = computed(() => roomStore.roomList.find((r) => r.id === roomSt
     <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
     <Head>
-      <Title>{{ roomStore.name }}</Title>
+      <Title>{{ name }}</Title>
     </Head>
     <template #left>
       <ChatLeftSideBar />

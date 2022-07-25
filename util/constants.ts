@@ -3,9 +3,8 @@ export const ABOUT_PATH = "/about";
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
 
 export const isProd = process.env.NODE_ENV === "production";
+export const isServer = () => typeof window === "undefined";
 export const SITE_DOMAIN = isProd ? "https://esposter.com" : "http://localhost:3000";
-
-export const ROOM_MAX_NAME_LENGTH = 100;
 
 /* public folder paths */
 export const FAVICON_32x32_PATH = "/icons/favicon-32x32.png";
@@ -20,3 +19,19 @@ export const TERMS_AND_CONDITIONS_PATH = "https://www.termsfeed.com/live/7202726
 
 export const BLOB_URL = isProd ? "https://esposter.blob.core.windows.net" : "https://esposterdev.blob.core.windows.net";
 export const LOGO_IMAGE_URL = `${BLOB_URL}/assets/Esposter/logo.jpeg`;
+
+/**
+ * A crazy big timestamp that indicates how long before azure table storage
+ * completely ***ks up trying to insert a negative RowKey.
+ */
+export const AZURE_SELF_DESTRUCT_TIMER = "999999999999999999999999999999";
+
+/* backend constants */
+export const ROOM_MAX_NAME_LENGTH = 100;
+export const MESSAGE_MAX_LENGTH = 100;
+
+export const FETCH_LIMIT = 20;
+// Fetch one more to check if any more data left to fetch
+export const getFetchLimit = () => FETCH_LIMIT + 1;
+
+export const AZURE_MAX_BATCH_SIZE = 100;

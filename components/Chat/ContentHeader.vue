@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const client = useClient();
-const roomStore = useRoomStore();
-const { updateName } = roomStore;
-const { currentRoomId, name } = storeToRefs(roomStore);
-const currentName = ref(name.value);
+const { currentRoomId, name, updateName } = useRoomStore();
+const currentName = ref(name);
 const title = ref<HTMLDivElement | undefined>();
 const titleHovered = ref(false);
 const editMode = ref(false);
 const sendName = async () => {
   editMode.value = false;
-  if (currentName.value !== name.value && currentRoomId.value) {
+  if (currentName.value !== name && currentRoomId) {
     updateName(currentName.value);
-    await client.mutation("room.updateRoom", { id: currentRoomId.value, name: name.value });
+    await client.mutation("room.updateRoom", { id: currentRoomId, name });
   }
 };
 

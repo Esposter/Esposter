@@ -1,5 +1,6 @@
-import type { Message, Room } from "@/server/trpc/room";
 import type { User } from "@/server/trpc/user";
+import type { MessageEntity } from "@/services/azure/types";
+import type { Room } from "@prisma/client";
 import { defineStore } from "pinia";
 
 export const useRoomStore = defineStore({
@@ -9,7 +10,7 @@ export const useRoomStore = defineStore({
     roomSearchQuery: "",
     roomList: [] as Room[],
     membersMap: {} as Record<string, User[]>,
-    messagesMap: {} as Record<string, Message[]>,
+    messagesMap: {} as Record<string, MessageEntity[]>,
     messageInputMap: {} as Record<string, string>,
   }),
   getters: {
@@ -39,7 +40,7 @@ export const useRoomStore = defineStore({
     deleteRoom(id: string) {
       this.roomList = this.roomList.filter((r) => r.id !== id);
     },
-    createMessage(newMessage: Message) {
+    createMessage(newMessage: MessageEntity) {
       if (!this.currentRoomId) return;
       this.messagesMap[this.currentRoomId] = [newMessage, ...this.messagesMap[this.currentRoomId]];
     },

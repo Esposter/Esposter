@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { CreateMessageInput } from "@/server/trpc/room";
+import type { CreateMessageInput } from "@/server/trpc/message";
+import { rowKey } from "@/services/azure/util";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const client = useClient();
-const { messageInput, updateMessageInput, createMessage } = useRoomStore();
-// @NOTE Ideally, we shouldn't need this extra ref
-const message = ref(messageInput);
-const updateMessage = (val: string) => {
-  message.value = val;
-  updateMessageInput(val);
-};
+const roomStore = useRoomStore();
+const { currentRoomId, updateMessageInput, createMessage } = roomStore;
+const { messageInput } = storeToRefs(roomStore);
 const sendMessage = async () => {
-  const createMessageInput: CreateMessageInput = { message: message.value };
-  updateMessage("");
-  createMessage(await client.mutation("room.createMessage", createMessageInput));
+  if (!currentRoomId) return;
+
+  const createMessageInput: CreateMessageInput = {
+    partitionKey: currentRoomId,
+    rowKey: await rowKey(),
+    message: messageInput.value,
+  };
+  updateMessageInput("");
+  const newMessage = await client.mutation("message.createMessage", createMessageInput);
+  if (newMessage) createMessage(newMessage);
 };
 </script>
 
@@ -23,8 +28,8 @@ const sendMessage = async () => {
     density="compact"
     clearable
     hide-details
-    :model-value="message"
-    @update:model-value="updateMessage"
+    :model-value="messageInput"
+    @update:model-value="updateMessageInput"
     @keypress="
       (e) => {
         if (e.key === 'Enter') sendMessage();
@@ -32,7 +37,7 @@ const sendMessage = async () => {
     "
   >
     <template #clear>
-      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessage('')" />
+      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessageInput('')" />
     </template>
     <template #append-inner>
       <!-- Menu doesn't work yet, it will break route transitions -->
@@ -40,9 +45,15 @@ const sendMessage = async () => {
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
-        <EmojiPicker :onEmojiSelect="(emoji) => updateMessage(message + emoji.native)" />
+        <EmojiPicker :onEmojiSelect="(emoji) => updateMessageInput(message + emoji.native)" />
       </v-menu> -->
-      <v-btn bg="transparent!" size="small" flat :icon="message ? 'mdi-send' : 'mdi-microphone'" @click="sendMessage" />
+      <v-btn
+        bg="transparent!"
+        size="small"
+        flat
+        :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
+        @click="sendMessage"
+      />
     </template>
   </v-text-field>
 </template>
