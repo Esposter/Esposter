@@ -2,6 +2,7 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 import type { Room } from "@prisma/client";
+import InvisibleNuxtLink from "../InvisibleNuxtLink.vue";
 
 interface ChatRoomListItemProps {
   room: Room;
@@ -21,16 +22,18 @@ const active = computed(() => currentRoomId === room.id);
 <!-- @NOTE Route transitions doesn't like this component with invoke render outside of default slot :C -->
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <v-list-item :active="active" :title="room.name" @click="navigateTo(MESSAGES_PATH(room.id))">
-      <template #prepend>
-        <v-badge m="r-4" color="green" location="bottom end" dot>
-          <v-list-item-avatar v-if="room.avatar">
-            <v-img :src="room.avatar" :alt="room.name" />
-          </v-list-item-avatar>
-          <DefaultAvatar v-else :name="room.name" />
-        </v-badge>
-      </template>
-    </v-list-item>
+    <InvisibleNuxtLink :to="MESSAGES_PATH(room.id)">
+      <v-list-item :active="active" :title="room.name" :value="room.name">
+        <template #prepend>
+          <v-badge m="r-4" color="green" location="bottom end" dot>
+            <v-list-item-avatar v-if="room.avatar">
+              <v-img :src="room.avatar" :alt="room.name" />
+            </v-list-item-avatar>
+            <DefaultAvatar v-else :name="room.name" />
+          </v-badge>
+        </template>
+      </v-list-item>
+    </InvisibleNuxtLink>
     <v-btn
       v-show="isHovering"
       position="absolute"

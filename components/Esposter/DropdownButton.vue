@@ -35,12 +35,14 @@ const items: Item[] = [
     </template>
     <v-card min-width="300">
       <v-list>
-        <v-list-item v-for="item in items" :key="item.title" :value="item.title" @click="navigateTo(item.href)">
-          <v-list-item-avatar class="background" start>
-            <v-icon :icon="item.icon" />
-          </v-list-item-avatar>
-          <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
-        </v-list-item>
+        <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
+          <v-list-item :value="item.title">
+            <v-list-item-avatar class="background" start>
+              <v-icon :icon="item.icon" />
+            </v-list-item-avatar>
+            <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </InvisibleNuxtLink>
       </v-list>
     </v-card>
   </v-menu>
