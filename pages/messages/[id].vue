@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 
 const route = useRoute();
 const roomStore = useRoomStore();
@@ -18,6 +18,8 @@ if (roomStore.currentRoomId) {
   roomStore.membersMap[roomStore.currentRoomId] = members;
   roomStore.messagesMap[roomStore.currentRoomId] = messages;
 }
+
+const roomExists = computed(() => roomStore.roomList.find((r) => r.id === roomStore.currentRoomId));
 </script>
 
 <template>
@@ -30,11 +32,11 @@ if (roomStore.currentRoomId) {
     <template #left>
       <ChatLeftSideBar />
     </template>
-    <template #right>
+    <template #right v-if="roomExists">
       <ChatRightSideBar />
     </template>
-    <ChatContent />
-    <template #footer>
+    <ChatContent v-if="roomExists" />
+    <template #footer v-if="roomExists">
       <ChatMessageInput />
     </template>
   </NuxtLayout>
