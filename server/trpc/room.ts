@@ -34,7 +34,7 @@ export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 export const roomRouter = createRouter()
   .query("readRooms", {
     input: readRoomsInputSchema,
-    resolve: async ({ input }) => {
+    resolve: ({ input }) => {
       const nameFilter = input?.filter?.name;
       if (!nameFilter) return prisma.room.findMany();
       return prisma.room.findMany({ where: { name: { contains: nameFilter } } });
@@ -42,7 +42,7 @@ export const roomRouter = createRouter()
   })
   .mutation("createRoom", {
     input: createRoomInputSchema,
-    resolve: async ({ input }) => {
+    resolve: ({ input }) => {
       return prisma.room.create({ data: { id: uuidv4(), ...input } });
     },
   })
