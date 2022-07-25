@@ -5,6 +5,6 @@ import type { CompatibilityEvent } from "h3";
 
 export const prisma = new PrismaClient({ log: isProd ? ["error"] : ["query", "warn", "error"] });
 
-export const createContext = async (_: CompatibilityEvent) => ({ prisma });
+export const createContext = async (_: CompatibilityEvent) => ({});
 
 export type Context = inferAsyncReturnType<typeof createContext>;

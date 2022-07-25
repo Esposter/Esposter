@@ -54,9 +54,9 @@ export const roomRouter = createRouter()
   })
   .mutation("deleteRoom", {
     input: deleteRoomInputSchema,
-    resolve: async ({ input: { id }, ctx }) => {
+    resolve: async ({ input: { id } }) => {
       try {
-        await ctx.prisma.room.delete({ where: { id } });
+        await prisma.room.delete({ where: { id } });
         return true;
       } catch (err) {
         return false;
