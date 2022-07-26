@@ -26,3 +26,10 @@ const { mainClass } = defineProps<DefaultLayoutProps>();
     </v-footer>
   </div>
 </template>
+
+<style lang="scss">
+.v-navigation-drawer__content {
+  display: flex;
+  flex-direction: column;
+}
+</style>
