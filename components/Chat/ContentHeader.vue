@@ -2,7 +2,7 @@
 import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
-const { currentRoomId, name, updateName } = useRoomStore();
+const { currentRoomId, name, updateRoom } = useRoomStore();
 const currentName = ref(name);
 const title = ref<HTMLDivElement | undefined>();
 const titleHovered = ref(false);
@@ -10,13 +10,12 @@ const editMode = ref(false);
 const sendName = async () => {
   editMode.value = false;
   if (currentName.value !== name && currentRoomId) {
-    updateName(currentName.value);
-    await client.mutation("room.updateRoom", { id: currentRoomId, name });
+    updateRoom(await client.mutation("room.updateRoom", { id: currentRoomId, name: currentName.value }));
   }
 };
 
-useClickOutside(title, () => {
-  if (editMode.value) sendName();
+useClickOutside(title, async () => {
+  if (editMode.value) await sendName();
 });
 </script>
 
@@ -38,14 +37,14 @@ useClickOutside(title, () => {
         variant="solo"
         hide-details
         :model-value="currentName"
-        @update:model-value="(val) => (currentName = val)"
+        @update:model-value="(value) => (currentName = value)"
         @keypress="
           (e) => {
             if (e.key === 'Enter') sendName();
           }
         "
       />
-      <v-toolbar-title v-else font="bold!" @click="editMode = true">{{ name }}</v-toolbar-title>
+      <v-toolbar-title v-else font="bold!" @click="editMode = true">{{ currentName }}</v-toolbar-title>
     </div>
     <template #append>
       <v-btn icon="mdi-phone" size="small" />

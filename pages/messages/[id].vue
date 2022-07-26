@@ -11,7 +11,7 @@ const { name } = storeToRefs(roomStore);
 const client = useClient();
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 
-const [rooms, members, messages] = await Promise.all([
+const [{ rooms, nextCursor }, members, messages] = await Promise.all([
   client.query("room.readRooms"),
   client.query("room.readMembers"),
   roomStore.currentRoomId
@@ -20,6 +20,7 @@ const [rooms, members, messages] = await Promise.all([
 ]);
 
 roomStore.roomList = rooms;
+roomStore.roomNextCursor = nextCursor;
 if (roomStore.currentRoomId) {
   roomStore.membersMap[roomStore.currentRoomId] = members;
   roomStore.messagesMap[roomStore.currentRoomId] = messages;

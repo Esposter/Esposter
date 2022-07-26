@@ -3,10 +3,12 @@ import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const updateSearchQuery = useDebounce(async (val: string) => {
-  if (val !== roomStore.roomSearchQuery) {
-    roomStore.roomSearchQuery = val;
-    roomStore.roomList = await client.query("room.readRooms", { filter: { name: val } });
+const updateSearchQuery = useDebounce(async (value: string) => {
+  if (value !== roomStore.roomSearchQuery) {
+    const { rooms, nextCursor } = await client.query("room.readRooms", { filter: { name: value }, cursor: null });
+    roomStore.roomSearchQuery = value;
+    roomStore.roomList = rooms;
+    roomStore.roomNextCursor = nextCursor;
   }
 }, 500);
 </script>

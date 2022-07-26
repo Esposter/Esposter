@@ -1,7 +1,7 @@
 import chatMembers from "@/assets/data/chatMembers.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
-import { ROOM_MAX_NAME_LENGTH } from "@/util/constants";
+import { FETCH_LIMIT, getQueryFetchLimit, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
 import type { Room as PrismaRoom } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
@@ -9,14 +9,19 @@ import { z } from "zod";
 
 const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string(),
-  name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
+  name: z.string().max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 });
 
-const readRoomsInputSchema = z.object({ filter: roomSchema.pick({ name: true }).optional() }).optional();
+const readRoomsInputSchema = z
+  .object({
+    filter: roomSchema.pick({ name: true }).optional(),
+    cursor: z.string().nullable(),
+  })
+  .optional();
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const createRoomInputSchema = roomSchema.pick({ name: true });
@@ -31,10 +36,23 @@ export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 export const roomRouter = createRouter()
   .query("readRooms", {
     input: readRoomsInputSchema,
-    resolve: ({ input }) => {
-      const nameFilter = input?.filter?.name;
-      if (!nameFilter) return prisma.room.findMany();
-      return prisma.room.findMany({ where: { name: { contains: nameFilter } } });
+    resolve: async ({ input }) => {
+      const name = input?.filter?.name;
+      const cursor = input?.cursor;
+      const rooms = await prisma.room.findMany({
+        take: getQueryFetchLimit(),
+        where: name ? { name: { contains: name } } : undefined,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: { updatedAt: "desc" },
+      });
+
+      let nextCursor: typeof cursor | null = null;
+      if (rooms.length > FETCH_LIMIT) {
+        const nextRoom = rooms.pop();
+        if (nextRoom) nextCursor = nextRoom.id;
+      }
+
+      return { rooms, nextCursor };
     },
   })
   .mutation("createRoom", {

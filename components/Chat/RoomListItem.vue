@@ -23,7 +23,7 @@ const active = computed(() => currentRoomId === room.id);
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <InvisibleNuxtLink :to="MESSAGES_PATH(room.id)">
-      <v-list-item :active="active" :title="room.name" :value="room.name">
+      <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge m="r-4" color="green" location="bottom end" dot>
             <v-list-item-avatar v-if="room.avatar">
