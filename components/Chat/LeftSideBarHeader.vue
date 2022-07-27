@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row align="center">
+    <v-row items="center">
       <v-col class="text-h5" font="bold">Chats</v-col>
       <v-col display="flex" justify="end">
         <ChatCreateRoomButton />

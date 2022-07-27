@@ -10,8 +10,6 @@
 </template>
 
 <style lang="scss">
-$background: #00dc80;
-
 html {
   overflow-y: auto;
 }
@@ -26,7 +24,7 @@ html {
   left: 0;
   width: 100%;
   height: 3px;
-  background: $background;
+  background: $vueBackground;
   z-index: 9999;
 }
 
@@ -34,6 +32,6 @@ html {
 #nprogress .peg {
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 5px $background;
+  box-shadow: 0 0 5px $vueBackground;
 }
 </style>

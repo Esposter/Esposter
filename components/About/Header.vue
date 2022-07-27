@@ -18,7 +18,7 @@ const theme = useGlobalTheme();
 <style scoped lang="scss">
 .accent {
   color: transparent;
-  background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+  background: $vueGradient;
   background-clip: text;
 }
 </style>
