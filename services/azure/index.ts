@@ -1,6 +1,7 @@
 import { AzureBlob, AzureTable } from "@/services/azure/types";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
-import { TableClient, TableEntityQueryOptions, TableServiceClient, TransactionAction } from "@azure/data-tables";
+import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
+import { TableClient, TableServiceClient } from "@azure/data-tables";
 import { BlobServiceClient } from "@azure/storage-blob";
 
 const runtimeConfig = useRuntimeConfig();
