@@ -187,7 +187,6 @@ const moveOneCard = () => {
   else activeCardKey.value = null;
 
   updateClasses();
-  return;
 };
 
 onMounted(() => {
