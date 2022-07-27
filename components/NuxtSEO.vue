@@ -5,7 +5,6 @@ const { primary } = useGlobalTheme().value.colors;
 const { facebookClientId } = useRuntimeConfig();
 
 useHead({
-  title: "Esposter",
   titleTemplate: (title) => (title ? `Esposter | ${title}` : "Esposter"),
   meta: [
     {
