@@ -167,22 +167,28 @@ const moveCardsTimer = ref<NodeJS.Timeout | undefined>(undefined);
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
   if (!internalCards.value.length) return;
-
-  inactiveCardKey.value = activeCardKey.value;
-
   if (internalCards.value.length === 1) {
-    if (activeCardKey.value === null) activeCardKey.value = internalCards.value[0].idField;
-    else activeCardKey.value = null;
-    updateClasses();
+    moveOneCard();
     return;
   }
 
+  inactiveCardKey.value = activeCardKey.value;
   activeCardKey.value = internalCards.value[0].idField;
   updateClasses();
 
   const temp = internalCards.value.slice(1);
   temp.push(internalCards.value[0]);
   internalCards.value = temp;
+};
+
+const moveOneCard = () => {
+  inactiveCardKey.value = activeCardKey.value;
+
+  if (activeCardKey.value === null) activeCardKey.value = internalCards.value[0].idField;
+  else activeCardKey.value = null;
+
+  updateClasses();
+  return;
 };
 
 onMounted(() => {
