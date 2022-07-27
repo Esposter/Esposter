@@ -1,14 +1,9 @@
-import { AzureBlob, AzureTable } from "@/services/azure/types";
+import { AzureTable } from "@/services/azure/types";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
 import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
 import { TableClient, TableServiceClient } from "@azure/data-tables";
-import { BlobServiceClient } from "@azure/storage-blob";
 
 const runtimeConfig = useRuntimeConfig();
-
-export const blobServiceClient = BlobServiceClient.fromConnectionString(
-  runtimeConfig.azureStorageAccountConnectionString
-);
 
 export const tableServiceClient = TableServiceClient.fromConnectionString(
   runtimeConfig.azureStorageAccountConnectionString
@@ -22,12 +17,6 @@ export const getTableClient = async (tableName: AzureTable) => {
   } catch {
     return table;
   }
-};
-
-export const getBlobClient = async (blobName: AzureBlob) => {
-  const blob = blobServiceClient.getContainerClient(blobName);
-  await blob.createIfNotExists();
-  return blob;
 };
 
 export const getTopNEntities = async <Entity extends object>(
