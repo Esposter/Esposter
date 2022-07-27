@@ -1,0 +1,371 @@
+<script setup lang="ts">
+import BaseCard from "@/components/Visual/BaseCard.vue";
+import type { Card } from "@/components/Visual/types";
+import type { Component } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const props = withDefaults(
+  defineProps<{
+    cards: Card[];
+    durationInMilliseconds?: number;
+    maxNumberOfCardsToShow?: number;
+    cardTemplate?: Component;
+  }>(),
+  {
+    durationInMilliseconds: 5000,
+    maxNumberOfCardsToShow: 5,
+    cardTemplate: BaseCard,
+  }
+);
+const { durationInMilliseconds, maxNumberOfCardsToShow } = props;
+const cards = toRef(props, "cards");
+
+/**
+ * == Generation of styling for css cards ==
+ * This is quite complex, because we want *smooth* animations that don't jump.
+ *
+ * The rough idea is as follows;
+ * - We have a 1x2 grid, this lets us place the cards in either the left or right grid item.
+ * - The left grid item has a simple animation that just moves it from the right -> left
+ *   - and then back to the right when it's time for the next card.
+ * - The right grid items have a series of animations for each individual card
+ *   that describes how it animates to the next position
+ *
+ * The complexity here is that the number of cards shown on the right is variable and not constant.
+ * we show up to a max of 5 cards on the right (configurable in code, and maybe later in config).
+ * This is not even including the fact that breakpoints mean we need to change the way we size cards
+ * respectively...
+ *
+ * This makes it *feel* extremely complicated to implement but in actuality it's quite simple.
+ * We use a mixture of SASS generation + Vue3 Styling Variables to offload the vast majority of the
+ * complexity to code (not styling) and just have styling be generic.
+ *
+ * I've arguably probably over-commented this code just due to the complexity.
+ *
+ * Something to note is how we handle cards counts larger than our maximum (of 5 by default).
+ * What we want to do is make the card 'color' changing effect extremely subtle.
+ * - Make the old last card disappear behind the second last one
+ * - Giving room to slide the left card to the very right
+ * - Every other card on the right shuffles to the left leaving a 'new' card
+ *   as the top of the second right-most card.
+ */
+
+// == Code ==
+
+interface CardStyleVariables {
+  scaleY?: string;
+  oldScaleY?: string;
+  marginRight?: string;
+  oldMarginRight?: string;
+}
+
+// We maintain an internal list of cards that we slice to act as a rotating list.
+const internalCards = ref<Card[]>(cards.value);
+
+// the active card is the card that's moving from right -> left -> right.
+const activeCardKey = ref<string | null>(null);
+const inactiveCardKey = ref<string | null>(null);
+
+// Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
+const { width, thresholds } = useDisplay();
+
+const gap = computed<string>(() => {
+  let gap = 2;
+  if (width.value >= thresholds.value.xxl) gap = 6;
+  else if (width.value >= thresholds.value.xl) gap = 3;
+  return `${gap}rem`;
+});
+
+// There are 4 types of cards to generate
+// Active, this is the card moving from right -> left -> right
+// Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
+// InActive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
+// 'Normal', this is just one of the normal cards on the right that make their way to become active.
+const scale = computed<number>(() => {
+  let scale = 1;
+  if (width.value >= thresholds.value.xxl) scale = 2.5;
+  else if (width.value >= thresholds.value.xl) scale = 1.25;
+  return scale;
+});
+
+// Every card from right -> left has increasing margin (by 1rem each time)
+// this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
+const normalCardStyles = computed<CardStyleVariables[]>(() => {
+  // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
+  const numberOfCards = Math.min(maxNumberOfCardsToShow, cards.value.length - 1);
+  // start at right most and move to the left
+  // we just need items for the rest so that we don't try to do operations on undefined
+  const items: CardStyleVariables[] = Array(maxNumberOfCardsToShow).fill({});
+  const ratio = 0.05;
+
+  // we'll reverse at the end
+  for (let i = 1; i < numberOfCards; i++)
+    items[i] = {
+      // normal cards talk about how they move from their position to the next one
+      oldMarginRight: `${(i - 1) * scale.value}rem`,
+      marginRight: `${i * scale.value}rem`,
+      oldScaleY: i > 1 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, ratio * (numberOfCards - 1 - i))}`, // we lose 10% for each shift
+    };
+
+  // this is for the SFC style bindings that need this to exist
+  items.reverse();
+  return items;
+});
+
+const activeCardStyle = computed<CardStyleVariables>(() => ({
+  oldMarginRight: normalCardStyles.value.length ? normalCardStyles.value[0].marginRight : "0",
+}));
+
+const inactiveCardStyle = computed<CardStyleVariables>(() => ({
+  scaleY: `${1 - 0.05 * (Math.min(maxNumberOfCardsToShow, cards.value.length - 1) - 1)}`,
+}));
+
+const secondLastCardStyle = computed<CardStyleVariables>(
+  () => normalCardStyles.value[normalCardStyles.value.length - 2]
+);
+
+const classes = ref<string[]>([]);
+
+const updateClasses = () => {
+  const newClasses = [];
+  for (const card of internalCards.value) newClasses.push(findClass(card));
+  classes.value = newClasses;
+};
+
+const findClass = (card: Card): string => {
+  const offset = internalCards.value.indexOf(card);
+
+  if (internalCards.value.length <= 2 && offset == 0) return "initial-active-card";
+  if (internalCards.value.length == 2 && offset == 1) return "last-card-full";
+
+  if (inactiveCardKey.value == null) {
+    // set initial positions for everything, in these cases the 'activeCard' is the first card
+    if (card.idField == activeCardKey.value) return "initial-active-card";
+    if (offset == Math.min(maxNumberOfCardsToShow + 1, internalCards.value.length) - 2) return "last-card";
+    if (offset > maxNumberOfCardsToShow - 2) return "overflow-card";
+    return `initial-normal-card-${offset}`;
+  }
+
+  if (card.idField == activeCardKey.value) return "active-card";
+  if (card.idField == inactiveCardKey.value) return "inactive-card";
+  if (offset > maxNumberOfCardsToShow - 2) return "overflow-card";
+  return `normal-card-${offset}`;
+};
+
+// This is the main timer that drives the movement of cards
+const moveCardsTimer = ref<NodeJS.Timeout | undefined>(undefined);
+
+// This marks the first card as active (which is the top card on the right)
+// then moves it to the end of the array, and after a timeout unmarks it as active.
+const moveCards = () => {
+  if (!internalCards.value || internalCards.value.length <= 2) return;
+
+  inactiveCardKey.value = activeCardKey.value;
+  activeCardKey.value = internalCards.value[0].idField;
+  updateClasses();
+
+  const temp = internalCards.value.slice(1);
+  temp.push(internalCards.value[0]);
+  internalCards.value = temp;
+};
+
+onMounted(() => {
+  // when debugging animations it's often easier to comment out this line so that they don't move on you every so often.
+  if (durationInMilliseconds > -1) moveCardsTimer.value = setInterval(moveCards, durationInMilliseconds);
+  moveCards();
+});
+
+onUnmounted(() => clearInterval(moveCardsTimer.value));
+
+// If cards update then we want to refresh the entire display to first steps.
+// This does make the reload animation a bit sudden/janky, and we could improve this in future.
+watch(cards, () => {
+  internalCards.value = cards.value;
+  activeCardKey.value = null;
+  inactiveCardKey.value = null;
+  moveCards();
+  updateClasses();
+});
+
+watch([internalCards, activeCardKey, inactiveCardKey], updateClasses);
+</script>
+
+<template>
+  <div display="grid" grid="cols-2" flex="1">
+    <div
+      v-for="(card, index) in internalCards"
+      :key="card.idField"
+      :style="`z-index: ${internalCards.length - internalCards.indexOf(card)}`"
+      :class="
+        card.idField === activeCardKey
+          ? 'active-card'
+          : card.idField === inactiveCardKey
+          ? 'inactive-card'
+          : classes[index]
+      "
+      row="start-1"
+      col="start-2"
+    >
+      <component :is="cardTemplate" :card="card" />
+    </div>
+  </div>
+</template>
+
+<style scoped lang="scss">
+// === Simple styles ===
+.active-card {
+  // active cards always show at the very top
+  z-index: 100 !important;
+  // fake grid-gap basically
+  padding-right: v-bind(gap);
+  animation: active-card 2s ease both;
+}
+
+@keyframes active-card {
+  // we start on the right side
+  0% {
+    // active cards don't have any scale/translate
+    transform: translateX(0%) scaleY(1);
+    // subtract v-bind(gap) since it has v-bind(gap)'s worth of padding
+    margin-right: calc(v-bind("activeCardStyle.oldMarginRight") - v-bind(gap));
+  }
+
+  // at the end of the animation
+  // we end up on the left waiting to be sent back to the right
+  100% {
+    transform: translateX(-100%) scaleY(1);
+    margin-right: 0rem;
+  }
+}
+
+.inactive-card {
+  z-index: 0;
+  animation: inactive-card 3s ease both;
+}
+
+@keyframes inactive-card {
+  // we start on the right side
+  0% {
+    // active cards don't have any scale/translate
+    transform: translateX(-100%) scaleY(1);
+    margin-right: 0rem;
+    padding-right: v-bind(gap);
+  }
+
+  // delay moving to the left for 20%
+  20% {
+    transform: translateX(-100%) scale(v-bind("inactiveCardStyle.scaleY"));
+    margin-right: 0rem;
+    padding-right: v-bind(gap);
+  }
+
+  // to avoid the weird squishing look
+  90% {
+    transform: translateX(0%) scale(v-bind("inactiveCardStyle.scaleY"));
+    margin-right: 0rem;
+  }
+
+  // at the end of the animation
+  // we end up on the left waiting to be sent back to the right
+  100% {
+    transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
+    margin-right: 0rem;
+  }
+}
+
+.overflow-card {
+  // in future we could optimise them by not showing them
+  // (it's a bit more complicated then just a display none,
+  // since we need to handle having the top card become normal)
+
+  // just display as a second last card
+  transform: scale(v-bind("secondLastCardStyle.scaleY"));
+  margin-right: v-bind("secondLastCardStyle.marginRight");
+}
+
+/*
+  The rough idea of the code below is pretty simple
+  - The JS code will handle breakpoints/variables for each card
+ */
+
+.initial-active-card {
+  transform: translateX(-100%) scaleY(1);
+  margin-right: 0rem;
+  padding-right: v-bind(gap);
+}
+
+.last-card {
+  margin-right: 0rem;
+  transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
+}
+
+.last-card-full {
+  margin-right: 0rem;
+}
+
+// We can't rely on vue's SFC v-bind pickup code, since it runs too early
+// we can rely on it's variable rewriting code since that runs *after* postcss
+// thus we can generate v-binds like this, but the code that picks them up
+// runs precss (before sass) meaning we can't use sass variables.
+@function sassVariableRename($char, $other) {
+  @return ("v-bind" + "('normalCardStyles[#{$char}].#{$other}')");
+}
+
+@for $i from 0 through 3 {
+  .normal-card-#{$i} {
+    animation: normal-card-#{$i} 2.5s ease both;
+    margin-right: #{sassVariableRename($i, "marginRight")};
+    transform: scaleY(#{sassVariableRename($i, "scaleY")});
+  }
+
+  .initial-normal-card-#{$i} {
+    margin-right: #{sassVariableRename($i, "marginRight")};
+    transform: scaleY(#{sassVariableRename($i, "scaleY")});
+  }
+
+  @keyframes normal-card-#{$i} {
+    0% {
+      margin-right: #{sassVariableRename($i, "oldMarginRight")};
+      transform: scaleY(#{sassVariableRename($i, "oldScaleY")});
+    }
+
+    20% {
+      margin-right: #{sassVariableRename($i, "oldMarginRight")};
+      transform: scaleY(#{sassVariableRename($i, "oldScaleY")});
+    }
+
+    40% {
+      transform: scaleY(#{sassVariableRename($i, "scaleY")});
+    }
+
+    100% {
+      margin-right: #{sassVariableRename($i, "marginRight")};
+      transform: scaleY(#{sassVariableRename($i, "scaleY")});
+    }
+  }
+}
+
+// Sadly vue runs it's SFC code to pickup bindings *before* SASS runs
+// this sadly means that we need to list all variables here.
+// This is quite ugly, but does solve having to list out each class manually...
+.force-vue-to-pickup-bindings {
+  left: v-bind("normalCardStyles[0].marginRight");
+  left: v-bind("normalCardStyles[0].oldMarginRight");
+  left: v-bind("normalCardStyles[0].oldScaleY");
+  left: v-bind("normalCardStyles[0].scaleY");
+  left: v-bind("normalCardStyles[1].marginRight");
+  left: v-bind("normalCardStyles[1].oldMarginRight");
+  left: v-bind("normalCardStyles[1].oldScaleY");
+  left: v-bind("normalCardStyles[1].scaleY");
+  left: v-bind("normalCardStyles[2].marginRight");
+  left: v-bind("normalCardStyles[2].oldMarginRight");
+  left: v-bind("normalCardStyles[2].scaleY");
+  left: v-bind("normalCardStyles[2].oldScaleY");
+  left: v-bind("normalCardStyles[3].marginRight");
+  left: v-bind("normalCardStyles[3].oldMarginRight");
+  left: v-bind("normalCardStyles[3].oldScaleY");
+  left: v-bind("normalCardStyles[3].scaleY");
+}
+</style>
