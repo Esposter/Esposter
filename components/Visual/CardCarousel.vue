@@ -101,7 +101,6 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // start at right most and move to the left
   // we just need items for the rest so that we don't try to do operations on undefined
   const items: CardStyleVariables[] = [];
-  const ratio = 0.05;
 
   // we'll reverse at the end
   for (let i = 0; i < numberOfCards - 1; i++)
