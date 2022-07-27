@@ -125,9 +125,11 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
   oldMarginRight: normalCardStyles.value.length ? normalCardStyles.value[0].marginRight : "0",
 }));
 
-const inactiveCardStyle = computed<CardStyleVariables>(() => ({
-  scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.value.length - 1) - 1)}`,
-}));
+const inactiveCardStyle = computed<CardStyleVariables>(() => {
+  // don't care about size if we just have 1 card
+  if (cards.value.length === 1) return { scaleY: "1" };
+  return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.value.length - 1) - 1)}` };
+});
 
 const secondLastCardStyle = computed<CardStyleVariables>(
   () => normalCardStyles.value[normalCardStyles.value.length - 2]
@@ -143,9 +145,6 @@ const updateClasses = () => {
 
 const findClass = (card: Card): string => {
   const offset = internalCards.value.indexOf(card);
-
-  if (internalCards.value.length <= 2 && offset == 0) return "initial-active-card";
-  if (internalCards.value.length == 2 && offset == 1) return "last-card-full";
 
   if (inactiveCardKey.value == null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
@@ -167,9 +166,17 @@ const moveCardsTimer = ref<NodeJS.Timeout | undefined>(undefined);
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
-  if (!internalCards.value || internalCards.value.length <= 2) return;
+  if (!internalCards.value.length) return;
 
   inactiveCardKey.value = activeCardKey.value;
+
+  if (internalCards.value.length === 1) {
+    if (activeCardKey.value === null) activeCardKey.value = internalCards.value[0].idField;
+    else activeCardKey.value = null;
+    updateClasses();
+    return;
+  }
+
   activeCardKey.value = internalCards.value[0].idField;
   updateClasses();
 
