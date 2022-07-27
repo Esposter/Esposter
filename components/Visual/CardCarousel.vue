@@ -8,17 +8,21 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 const props = withDefaults(
   defineProps<{
     cards: Card[];
-    durationInMilliseconds?: number;
-    maxNumberOfCardsToShow?: number;
+    duration?: number;
+    maxShownCards?: number;
+    cardScaleYRatioLoss?: number;
     cardTemplate?: Component;
   }>(),
   {
-    durationInMilliseconds: 5000,
-    maxNumberOfCardsToShow: 5,
+    // Duration before cards move
+    duration: 5000,
+    maxShownCards: 5,
+    // Ratio of how much shorter the next card is
+    cardScaleYRatioLoss: 0.05,
     cardTemplate: BaseCard,
   }
 );
-const { durationInMilliseconds, maxNumberOfCardsToShow } = props;
+const { duration, maxShownCards, cardScaleYRatioLoss } = props;
 const cards = toRef(props, "cards");
 
 /**
@@ -93,24 +97,27 @@ const scale = computed<number>(() => {
 // this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
-  const numberOfCards = Math.min(maxNumberOfCardsToShow, cards.value.length - 1);
+  const numberOfCards = Math.min(maxShownCards, cards.value.length - 1);
   // start at right most and move to the left
   // we just need items for the rest so that we don't try to do operations on undefined
-  const items: CardStyleVariables[] = Array(maxNumberOfCardsToShow).fill({});
+  const items: CardStyleVariables[] = [];
   const ratio = 0.05;
 
   // we'll reverse at the end
-  for (let i = 1; i < numberOfCards; i++)
-    items[i] = {
+  for (let i = 0; i < numberOfCards - 1; i++)
+    items.push({
       // normal cards talk about how they move from their position to the next one
-      oldMarginRight: `${(i - 1) * scale.value}rem`,
-      marginRight: `${i * scale.value}rem`,
-      oldScaleY: i > 1 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, ratio * (numberOfCards - 1 - i))}`, // we lose 10% for each shift
-    };
+      oldMarginRight: `${i * scale.value}rem`,
+      marginRight: `${(i + 1) * scale.value}rem`,
+      oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
+    });
 
   // this is for the SFC style bindings that need this to exist
   items.reverse();
+
+  // we just need items for the rest so that we don't try to do operations on undefined
+  for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
   return items;
 });
 
@@ -119,7 +126,7 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
 }));
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => ({
-  scaleY: `${1 - 0.05 * (Math.min(maxNumberOfCardsToShow, cards.value.length - 1) - 1)}`,
+  scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.value.length - 1) - 1)}`,
 }));
 
 const secondLastCardStyle = computed<CardStyleVariables>(
@@ -143,14 +150,14 @@ const findClass = (card: Card): string => {
   if (inactiveCardKey.value == null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
     if (card.idField == activeCardKey.value) return "initial-active-card";
-    if (offset == Math.min(maxNumberOfCardsToShow + 1, internalCards.value.length) - 2) return "last-card";
-    if (offset > maxNumberOfCardsToShow - 2) return "overflow-card";
+    if (offset == Math.min(maxShownCards + 1, internalCards.value.length) - 2) return "last-card";
+    if (offset > maxShownCards - 2) return "overflow-card";
     return `initial-normal-card-${offset}`;
   }
 
   if (card.idField == activeCardKey.value) return "active-card";
   if (card.idField == inactiveCardKey.value) return "inactive-card";
-  if (offset > maxNumberOfCardsToShow - 2) return "overflow-card";
+  if (offset > maxShownCards - 2) return "overflow-card";
   return `normal-card-${offset}`;
 };
 
@@ -173,7 +180,7 @@ const moveCards = () => {
 
 onMounted(() => {
   // when debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (durationInMilliseconds > -1) moveCardsTimer.value = setInterval(moveCards, durationInMilliseconds);
+  if (duration > -1) moveCardsTimer.value = setInterval(moveCards, duration);
   moveCards();
 });
 
@@ -236,7 +243,7 @@ watch([internalCards, activeCardKey, inactiveCardKey], updateClasses);
   // we end up on the left waiting to be sent back to the right
   100% {
     transform: translateX(-100%) scaleY(1);
-    margin-right: 0rem;
+    margin-right: 0;
   }
 }
 
@@ -250,28 +257,28 @@ watch([internalCards, activeCardKey, inactiveCardKey], updateClasses);
   0% {
     // active cards don't have any scale/translate
     transform: translateX(-100%) scaleY(1);
-    margin-right: 0rem;
+    margin-right: 0;
     padding-right: v-bind(gap);
   }
 
   // delay moving to the left for 20%
   20% {
     transform: translateX(-100%) scale(v-bind("inactiveCardStyle.scaleY"));
-    margin-right: 0rem;
+    margin-right: 0;
     padding-right: v-bind(gap);
   }
 
   // to avoid the weird squishing look
   90% {
     transform: translateX(0%) scale(v-bind("inactiveCardStyle.scaleY"));
-    margin-right: 0rem;
+    margin-right: 0;
   }
 
   // at the end of the animation
   // we end up on the left waiting to be sent back to the right
   100% {
     transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
-    margin-right: 0rem;
+    margin-right: 0;
   }
 }
 
@@ -292,17 +299,17 @@ watch([internalCards, activeCardKey, inactiveCardKey], updateClasses);
 
 .initial-active-card {
   transform: translateX(-100%) scaleY(1);
-  margin-right: 0rem;
+  margin-right: 0;
   padding-right: v-bind(gap);
 }
 
 .last-card {
-  margin-right: 0rem;
+  margin-right: 0;
   transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
 }
 
 .last-card-full {
-  margin-right: 0rem;
+  margin-right: 0;
 }
 
 // We can't rely on vue's SFC v-bind pickup code, since it runs too early
