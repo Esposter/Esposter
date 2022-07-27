@@ -2,9 +2,13 @@
 import { Card } from "@/components/Visual/types";
 
 const cards: Card[] = [
-  { idField: "1", text: "Braedon Wooding" },
-  { idField: "2", text: "Braedon Wooding" },
-  { idField: "3", text: "Braedon Wooding" },
+  { text: "Braedon Wooding1" },
+  { text: "Braedon Wooding2" },
+  { text: "Braedon Wooding3" },
+  { text: "Braedon Wooding4" },
+  { text: "Braedon Wooding5" },
+  { text: "Braedon Wooding6" },
+  { text: "Braedon Wooding7" },
 ];
 </script>
 

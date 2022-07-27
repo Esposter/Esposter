@@ -28,7 +28,7 @@ const { duration, maxShownCards, cardScaleYRatioLoss } = props;
 const cards = toRef(props, "cards");
 
 /**
- * == Generation of styling for css cards ==
+ * === Generation of styling for css cards ==
  * This is quite complex, because we want *smooth* animations that don't jump.
  *
  * The rough idea is as follows;
@@ -57,7 +57,7 @@ const cards = toRef(props, "cards");
  *   as the top of the second right-most card.
  */
 
-// == Code ==
+// === Code ==
 
 interface CardStyleVariables {
   scaleY?: string;
@@ -66,12 +66,14 @@ interface CardStyleVariables {
   oldMarginRight?: string;
 }
 
-// We maintain an internal list of cards that we slice to act as a rotating list.
-const internalCards = ref<Card[]>(cards.value);
+// We will create fake card ids that are just the indexes of our cards.
+// By doing this, we can "rotate" the cards by just incrementing the whole list by 1.
+// This can also act as a z index for us to use, which is pretty convenient C:
+const cardIds = ref<number[]>(cards.value.map((_, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
-const activeCardKey = ref<string | null>(null);
-const inactiveCardKey = ref<string | null>(null);
+const activeCardId = ref<number | null>(null);
+const inactiveCardId = ref<number | null>(null);
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
 const { width, thresholds } = useDisplay();
@@ -140,23 +142,23 @@ const classes = ref<string[]>([]);
 
 const updateClasses = () => {
   const newClasses = [];
-  for (const card of internalCards.value) newClasses.push(findClass(card));
+  for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
   classes.value = newClasses;
 };
 
-const findClass = (card: Card): string => {
-  const offset = internalCards.value.indexOf(card);
+const getClass = (cardId: number): string => {
+  const offset = cardIds.value.indexOf(cardId);
 
-  if (inactiveCardKey.value == null) {
+  if (inactiveCardId.value === null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
-    if (card.idField == activeCardKey.value) return "initial-active-card";
-    if (offset == Math.min(maxShownCards + 1, internalCards.value.length) - 2) return "last-card";
+    if (cardId === activeCardId.value) return "initial-active-card";
+    if (offset === Math.min(maxShownCards + 1, cards.value.length) - 2) return "last-card";
     if (offset > maxShownCards - 2) return "overflow-card";
     return `initial-normal-card-${offset}`;
   }
 
-  if (card.idField == activeCardKey.value) return "active-card";
-  if (card.idField == inactiveCardKey.value) return "inactive-card";
+  if (cardId === activeCardId.value) return "active-card";
+  if (cardId === inactiveCardId.value) return "inactive-card";
   if (offset > maxShownCards - 2) return "overflow-card";
   return `normal-card-${offset}`;
 };
@@ -167,28 +169,22 @@ const moveCardsTimer = ref<NodeJS.Timeout | undefined>(undefined);
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
-  if (!internalCards.value.length) return;
-  if (internalCards.value.length === 1) {
+  if (!cards.value.length) return;
+  if (cards.value.length === 1) {
     moveOneCard();
     return;
   }
 
-  inactiveCardKey.value = activeCardKey.value;
-  activeCardKey.value = internalCards.value[0].idField;
-  updateClasses();
-
-  const temp = internalCards.value.slice(1);
-  temp.push(internalCards.value[0]);
-  internalCards.value = temp;
+  inactiveCardId.value = activeCardId.value;
+  activeCardId.value = cardIds.value[0];
+  // "Rotate" the cards
+  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.value.length);
 };
 
 const moveOneCard = () => {
-  inactiveCardKey.value = activeCardKey.value;
-
-  if (activeCardKey.value === null) activeCardKey.value = internalCards.value[0].idField;
-  else activeCardKey.value = null;
-
-  updateClasses();
+  inactiveCardId.value = activeCardId.value;
+  if (activeCardId.value === null) activeCardId.value = cardIds.value[0];
+  else activeCardId.value = null;
 };
 
 onMounted(() => {
@@ -202,28 +198,27 @@ onUnmounted(() => clearInterval(moveCardsTimer.value));
 // If cards update then we want to refresh the entire display to first steps.
 // This does make the reload animation a bit sudden/janky, and we could improve this in future.
 watch(cards, () => {
-  internalCards.value = cards.value;
-  activeCardKey.value = null;
-  inactiveCardKey.value = null;
-  moveCards();
-  updateClasses();
+  cardIds.value = cards.value.map((_, index) => index);
+  inactiveCardId.value = null;
+  activeCardId.value = 0;
 });
 
-watch([internalCards, activeCardKey, inactiveCardKey], updateClasses);
+// We only need to update our classes when our active card changes
+watch(activeCardId, updateClasses);
 </script>
 
 <template>
   <div display="grid" grid="cols-2" flex="1">
     <div
-      v-for="(card, index) in internalCards"
-      :key="card.idField"
-      :style="`z-index: ${internalCards.length - internalCards.indexOf(card)}`"
+      v-for="(card, index) in cards"
+      :key="index"
+      :style="`z-index: ${cardIds.length - cardIds.indexOf(index)}`"
       :class="
-        card.idField === activeCardKey
+        index === activeCardId
           ? 'active-card'
-          : card.idField === inactiveCardKey
+          : index === inactiveCardId
           ? 'inactive-card'
-          : classes[index]
+          : classes[cardIds.indexOf(index)]
       "
       row="start-1"
       col="start-2"
