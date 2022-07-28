@@ -18,7 +18,7 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
 </script>
 
 <template>
-  <v-list lines="two">
+  <v-list>
     <ChatRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
     <Waypoint :active="active" @change="fetchMoreRooms" />
   </v-list>

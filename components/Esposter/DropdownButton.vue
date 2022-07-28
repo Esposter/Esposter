@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ABOUT_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants";
+import { mergeProps } from "vue";
 
 interface Item {
   title: string;
@@ -28,19 +29,25 @@ const items: Item[] = [
 
 <template>
   <v-menu>
-    <template #activator="{ props }">
+    <template #activator="{ props: menuProps }">
       <v-avatar color="background">
-        <v-btn class="background" icon="mdi-dots-vertical" :="props" />
+        <!-- @NOTE <v-tooltip location="bottom" text="More">
+          <template #activator="{ props: tooltipProps }"> -->
+        <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps)" />
+        <!-- </template>
+        </v-tooltip> -->
       </v-avatar>
     </template>
     <v-card min-width="300">
       <v-list>
         <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
           <v-list-item :value="item.title">
-            <v-list-item-avatar class="background" start>
-              <v-icon :icon="item.icon" />
-            </v-list-item-avatar>
-            <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
+            <template #prepend>
+              <v-avatar color="background">
+                <v-icon :icon="item.icon" />
+              </v-avatar>
+            </template>
+            <v-list-item-title p="l-4" font="bold!">{{ item.title }}</v-list-item-title>
           </v-list-item>
         </InvisibleNuxtLink>
       </v-list>

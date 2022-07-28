@@ -37,16 +37,22 @@ const sendMessage = async () => {
     "
   >
     <template #clear>
+      <!-- <v-tooltip location="top" text="Clear">
+        <template #activator="{ props }"> -->
       <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessageInput('')" />
+      <!-- </template>
+      </v-tooltip> -->
     </template>
     <template #append-inner>
-      <!-- Menu doesn't work yet, it will break route transitions -->
+      <!-- @NOTE Menu doesn't work yet, it will break route transitions -->
       <!-- <v-menu :close-on-content-click="false">
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
         <EmojiPicker :onEmojiSelect="(emoji) => updateMessageInput(message + emoji.native)" />
       </v-menu> -->
+      <!-- <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
+        <template #activator="{ props }"> -->
       <v-btn
         bg="transparent!"
         size="small"
@@ -54,6 +60,8 @@ const sendMessage = async () => {
         :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
         @click="sendMessage"
       />
+      <!-- </template>
+      </v-tooltip> -->
     </template>
   </v-text-field>
 </template>
