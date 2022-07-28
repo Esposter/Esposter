@@ -16,16 +16,13 @@ const theme: VuetifyOptions["theme"] = {
       colors: {
         primary: "#2b5876",
         background: "#18191a",
+        surface: "#36393f",
       },
     },
   },
 };
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const vuetify = createVuetify({
-    components,
-    directives,
-    theme,
-  });
+  const vuetify = createVuetify({ components, directives, theme });
   nuxtApp.vueApp.use(vuetify);
 });

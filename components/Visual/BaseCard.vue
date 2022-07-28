@@ -10,7 +10,7 @@ const { card } = defineProps<BaseCardProps>();
 
 <template>
   <v-card min-height="200" display="flex" items="center">
-    <v-card-text class="text-h4" display="flex" justify="center" font="bold">
+    <v-card-text class="text-h4" display="flex" justify="center" font="Montserrat! bold">
       {{ card.text }}
     </v-card-text>
   </v-card>

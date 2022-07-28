@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { Card } from "@/components/Visual/types";
 
-const cards: Card[] = [
-  { text: "Braedon Wooding1" },
-  { text: "Braedon Wooding2" },
-  { text: "Braedon Wooding3" },
-  { text: "Braedon Wooding4" },
-  { text: "Braedon Wooding5" },
-  { text: "Braedon Wooding6" },
-  { text: "Braedon Wooding7" },
-];
+const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { text: "Arsentiy Zakharchenko" }];
 </script>
 
 <template>
@@ -26,6 +18,11 @@ const cards: Card[] = [
         </v-col>
       </v-row>
       <v-row>
+        <v-col class="text-h5" display="flex" justify="center" font="Montserrat!">
+          Thanks to all these lovely people for making this possible! 💖
+        </v-col>
+      </v-row>
+      <v-row m="0" pt="8">
         <VisualCardCarousel :cards="cards" />
       </v-row>
     </v-container>
