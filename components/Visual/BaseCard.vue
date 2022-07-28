@@ -9,9 +9,16 @@ const { card } = defineProps<BaseCardProps>();
 </script>
 
 <template>
-  <v-card min-height="200" display="flex" items="center">
-    <v-card-text class="text-h4" display="flex" justify="center" font="Montserrat! bold">
-      {{ card.text }}
-    </v-card-text>
+  <v-card
+    class="text-h4"
+    min-height="200"
+    p="4"
+    display="flex"
+    justify="center"
+    items="center"
+    un-text="center"
+    font="Montserrat! bold"
+  >
+    {{ card.text }}
   </v-card>
 </template>
