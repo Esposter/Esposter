@@ -138,13 +138,11 @@ const secondLastCardStyle = computed<CardStyleVariables>(
   () => normalCardStyles.value[normalCardStyles.value.length - 2]
 );
 
-const classes = ref<string[]>([]);
-
-const updateClasses = () => {
+const classes = computed<string[]>(() => {
   const newClasses = [];
   for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
-  classes.value = newClasses;
-};
+  return newClasses;
+});
 
 const getClass = (cardId: number): string => {
   const offset = cardIds.value.indexOf(cardId);
@@ -202,9 +200,6 @@ watch(cards, () => {
   inactiveCardId.value = null;
   activeCardId.value = 0;
 });
-
-// We only need to update our classes when our active card changes
-watch(activeCardId, updateClasses);
 </script>
 
 <template>
