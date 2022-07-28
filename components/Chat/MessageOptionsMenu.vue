@@ -30,7 +30,7 @@ const emit = defineEmits<{ (event: "update", active: boolean): void }>();
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">
             <template #activator="{ props: tooltipProps }"> -->
-      <v-btn m="0!" rd="0!" rounded="full" icon="mdi-dots-horizontal" size="small" />
+      <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" />
       <!-- </template>
           </v-tooltip>
         </template>
