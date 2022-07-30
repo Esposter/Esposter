@@ -85,11 +85,8 @@ const gap = computed<string>(() => {
   return `${gap}rem`;
 });
 
-// There are 4 types of cards to generate
-// Active, this is the card moving from right -> left -> right
-// Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
-// InActive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
-// 'Normal', this is just one of the normal cards on the right that make their way to become active.
+// Every card from right -> left has increasing margin (by 1rem each time)
+// this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
 const scale = computed<number>(() => {
   let scale = 1;
   if (width.value >= thresholds.value.xxl) scale = 2.5;
@@ -97,8 +94,6 @@ const scale = computed<number>(() => {
   return scale;
 });
 
-// Every card from right -> left has increasing margin (by 1rem each time)
-// this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
   const numberOfCards = Math.min(maxShownCards, cards.value.length - 1);
@@ -144,6 +139,11 @@ const classes = computed<string[]>(() => {
   return newClasses;
 });
 
+// There are 4 types of cards to generate
+// Active, this is the card moving from right -> left -> right
+// Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
+// InActive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
+// 'Normal', this is just one of the normal cards on the right that make their way to become active.
 const getClass = (cardId: number): string => {
   const offset = cardIds.value.indexOf(cardId);
 
