@@ -9,7 +9,7 @@ const roomStore = useRoomStore();
 const { currentRoomId, updateMessageInput, createMessage } = roomStore;
 const { messageInput } = storeToRefs(roomStore);
 const sendMessage = async () => {
-  if (!currentRoomId) return;
+  if (!currentRoomId || !messageInput.value) return;
 
   const createMessageInput: CreateMessageInput = {
     partitionKey: currentRoomId,
