@@ -18,7 +18,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
         </v-col>
       </v-row>
       <v-row>
-        <v-col class="text-h5" display="flex" justify="center" font="Montserrat!">
+        <v-col class="text-h5" display="flex" justify="center" text="center" font="Montserrat!">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
       </v-row>

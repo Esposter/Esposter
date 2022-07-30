@@ -31,6 +31,7 @@ export default defineNuxtConfig({
         Montserrat: ["Montserrat"],
       },
     },
+    rules: [["break-word", { "word-break": "break-word" }]],
   },
   runtimeConfig: {
     facebookClientId: process.env.FACEBOOK_CLIENT_ID || "809093449746215",
