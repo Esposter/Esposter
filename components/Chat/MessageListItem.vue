@@ -24,17 +24,17 @@ const active = computed(() => isMessageActive.value || isOptionsActive.value || 
     @mouseenter="isMessageActive = true"
     @mouseleave="isMessageActive = false"
   >
-    <v-list-item-avatar start>
-      <v-img :src="member.avatar" :alt="member.username" />
-    </v-list-item-avatar>
-    <v-list-item-header>
-      <v-list-item-title font="bold!">
-        {{ member.username }}
-      </v-list-item-title>
-      <v-list-item-subtitle op="100!">
-        {{ message.message }}
-      </v-list-item-subtitle>
-    </v-list-item-header>
+    <template #prepend>
+      <v-avatar>
+        <v-img :src="member.avatar" :alt="member.username" />
+      </v-avatar>
+    </template>
+    <v-list-item-title font="bold!">
+      {{ member.username }}
+    </v-list-item-title>
+    <v-list-item-subtitle op="100!">
+      {{ message.message }}
+    </v-list-item-subtitle>
   </v-list-item>
   <div position="relative" z="1">
     <div

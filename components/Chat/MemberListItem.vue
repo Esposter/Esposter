@@ -12,9 +12,9 @@ const { member } = defineProps<ChatMemberListItemProps>();
   <v-list-item :title="member.username" @click="">
     <template #prepend>
       <v-badge m="r-4" color="green" location="bottom end" dot>
-        <v-list-item-avatar>
+        <v-avatar>
           <v-img :src="member.avatar" :alt="member.username" />
-        </v-list-item-avatar>
+        </v-avatar>
       </v-badge>
     </template>
   </v-list-item>

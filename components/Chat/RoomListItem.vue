@@ -2,7 +2,6 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 import type { Room } from "@prisma/client";
-import InvisibleNuxtLink from "../InvisibleNuxtLink.vue";
 
 interface ChatRoomListItemProps {
   room: Room;
@@ -26,9 +25,9 @@ const active = computed(() => currentRoomId === room.id);
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge m="r-4" color="green" location="bottom end" dot>
-            <v-list-item-avatar v-if="room.avatar">
+            <v-avatar v-if="room.avatar">
               <v-img :src="room.avatar" :alt="room.name" />
-            </v-list-item-avatar>
+            </v-avatar>
             <DefaultAvatar v-else :name="room.name" />
           </v-badge>
         </template>
