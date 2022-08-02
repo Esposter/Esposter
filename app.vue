@@ -24,7 +24,7 @@ html {
   top: 56px;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 2px;
   background: $vueBackground;
   z-index: 9999;
 }
