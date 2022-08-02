@@ -7,7 +7,7 @@ let prismaClient: PrismaClient;
 
 if (isProd) prismaClient = new PrismaClient({ log: ["error"] });
 else {
-  prismaClient = new PrismaClient({
+  const devPrismaClient = new PrismaClient({
     log: [
       {
         emit: "event",
@@ -29,8 +29,7 @@ else {
     ],
   });
 
-  // @ts-ignore @NOTE Remove this once prisma team fixes their types :c
-  prismaClient.$on("query", async (e: Prisma.QueryEvent) => {
+  devPrismaClient.$on("query", async (e: Prisma.QueryEvent) => {
     console.log(highlightSql(`Query: ${e.query}`));
     console.log(highlightSql(`Parameters: ${e.params}`));
     console.log(highlightSql(`Duration: ${e.duration}ms`));
@@ -38,14 +37,16 @@ else {
     console.log(highlightSql(`Time: ${e.timestamp}`));
   });
 
-  prismaClient.$use(async (params, next) => {
+  devPrismaClient.$use(async (params, next) => {
     const before = Date.now();
     const result = await next(params);
     const duration = Date.now() - before;
     // Log more info about where the query possibly originated from
-    console.log(`Prisma ${params.model}.${params.action} took ${duration}ms\n`);
+    console.log(highlightSql(`Prisma ${params.model}.${params.action} took ${duration}ms\n`));
     return result;
   });
+
+  prismaClient = devPrismaClient;
 }
 
 const highlightSql = (sql: string) => {
