@@ -4,8 +4,23 @@ interface MessageOptionsMenuProps {
   hoverProps?: object;
 }
 
+interface Item {
+  title: string;
+  icon: string;
+  color?: string;
+  onClick: (e: MouseEvent) => void;
+}
+
 const { isHovering, hoverProps } = defineProps<MessageOptionsMenuProps>();
-const emit = defineEmits<{ (event: "update", active: boolean): void }>();
+const emit = defineEmits<{
+  (event: "update", active: boolean): void;
+  (event: "update:edit-message", active: true): void;
+  (event: "update:delete-message", active: true): void;
+}>();
+const items: Item[] = [
+  { title: "Edit Message", icon: "mdi-pencil", onClick: () => emit("update:edit-message", true) },
+  { title: "Delete Message", icon: "mdi-delete", color: "error", onClick: () => emit("update:delete-message", true) },
+];
 </script>
 
 <template>
@@ -26,15 +41,24 @@ const emit = defineEmits<{ (event: "update", active: boolean): void }>();
         </template>
         <ChatEmojiPicker :onEmojiSelect="() => {}" />
       </v-menu> -->
-      <!-- <v-menu location="left">
+      <!-- @NOTE This breaks route transitions for now -->
+      <v-menu transition="none" location="left" @update:model-value="(value) => emit('update', value)">
         <template #activator="{ props: menuProps }">
-          <v-tooltip location="top" text="More">
+          <!-- <v-tooltip location="top" text="More">
             <template #activator="{ props: tooltipProps }"> -->
-      <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" />
-      <!-- </template>
-          </v-tooltip>
+          <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="menuProps" />
+          <!-- </template>
+          </v-tooltip> -->
         </template>
-      </v-menu> -->
+        <v-list>
+          <v-list-item v-for="item in items" :key="item.title" @click="item.onClick">
+            <span :class="item.color ? `text-${item.color}` : undefined">{{ item.title }}</span>
+            <template #append>
+              <v-icon size="small" :icon="item.icon" :color="item.color ?? undefined" />
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-card-actions>
   </v-card>
 </template>

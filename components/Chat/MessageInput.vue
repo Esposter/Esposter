@@ -30,11 +30,7 @@ const sendMessage = async () => {
     hide-details
     :model-value="messageInput"
     @update:model-value="updateMessageInput"
-    @keypress="
-      (e) => {
-        if (e.key === 'Enter') sendMessage();
-      }
-    "
+    @keydown.enter="sendMessage"
   >
     <template #clear>
       <!-- <v-tooltip location="top" text="Clear">

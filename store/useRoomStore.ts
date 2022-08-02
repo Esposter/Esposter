@@ -1,3 +1,4 @@
+import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/message";
 import type { User } from "@/server/trpc/user";
 import type { MessageEntity } from "@/services/azure/types";
 import type { Room } from "@prisma/client";
@@ -53,7 +54,26 @@ export const useRoomStore = defineStore({
     },
     createMessage(newMessage: MessageEntity) {
       if (!this.currentRoomId) return;
-      this.messagesMap[this.currentRoomId] = [newMessage, ...this.messagesMap[this.currentRoomId]];
+
+      const messages = this.messagesMap[this.currentRoomId];
+      this.messagesMap[this.currentRoomId] = [newMessage, ...messages];
+    },
+    updateMessage(updatedMessage: UpdateMessageInput) {
+      if (!this.currentRoomId) return;
+
+      const messages = this.messagesMap[this.currentRoomId];
+      const index = messages.findIndex(
+        (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey
+      );
+      if (index > -1) this.messagesMap[this.currentRoomId][index] = { ...messages[index], ...updatedMessage };
+    },
+    deleteMessage(id: DeleteMessageInput) {
+      if (!this.currentRoomId) return;
+
+      const messages = this.messagesMap[this.currentRoomId];
+      this.messagesMap[this.currentRoomId] = messages.filter(
+        (m) => !(m.partitionKey === id.partitionKey && m.rowKey === id.rowKey)
+      );
     },
     updateMessageInput(updatedMessageInput: string) {
       if (!this.currentRoomId) return;

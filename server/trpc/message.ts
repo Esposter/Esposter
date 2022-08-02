@@ -22,6 +22,12 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 const createMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
+const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
+export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
+
+const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
+export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
+
 export const messageRouter = createRouter()
   .query("readMessages", {
     input: readMessagesInputSchema,
@@ -43,8 +49,22 @@ export const messageRouter = createRouter()
       const messageClient = await getTableClient(AzureTable.Messages);
       // Auto create properties we know from the backend
       const message: MessageEntity = { ...input, userId: "1", createdAt: new Date() };
-      const error = await submitTransaction(messageClient, [["create", message]]);
-      if (error) return null;
-      else return message;
+      const successful = await submitTransaction(messageClient, [["create", message]]);
+      return successful ? message : null;
+    },
+  })
+  .mutation("updateMessage", {
+    input: updateMessageInputSchema,
+    resolve: async ({ input }) => {
+      const messageClient = await getTableClient(AzureTable.Messages);
+      const successful = await submitTransaction(messageClient, [["update", input]]);
+      return successful ? input : null;
+    },
+  })
+  .mutation("deleteMessage", {
+    input: deleteMessageInputSchema,
+    resolve: async ({ input }) => {
+      const messageClient = await getTableClient(AzureTable.Messages);
+      return submitTransaction(messageClient, [["delete", input]]);
     },
   });

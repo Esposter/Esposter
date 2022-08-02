@@ -41,14 +41,14 @@ export const getTopNEntities = async <Entity extends object>(
  *
  * @param client
  * @param actions
- * @returns True if there is an error. False otherwise.
+ * @returns If the transaction was successful.
  */
 export const submitTransaction = async (client: TableClient, actions: TransactionAction[]) => {
   if (actions.length === 0) return false;
   const response = await client.submitTransaction(actions);
   const error = response.status >= 400;
   if (error) console.error(`Failed to submit azure table transaction for table ${client.tableName}`);
-  return error;
+  return !error;
 };
 
 export const addActions = async (client: TableClient, actions: TransactionAction[], ...items: TransactionAction[]) => {

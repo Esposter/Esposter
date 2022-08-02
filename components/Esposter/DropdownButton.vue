@@ -38,19 +38,17 @@ const items: Item[] = [
         </v-tooltip> -->
       </v-avatar>
     </template>
-    <v-card min-width="300">
-      <v-list>
-        <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
-          <v-list-item :value="item.title">
-            <template #prepend>
-              <v-avatar color="background">
-                <v-icon :icon="item.icon" />
-              </v-avatar>
-            </template>
-            <v-list-item-title p="l-4" font="bold!">{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </InvisibleNuxtLink>
-      </v-list>
-    </v-card>
+    <v-list>
+      <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
+        <v-list-item :value="item.title">
+          <template #prepend>
+            <v-avatar color="background">
+              <v-icon :icon="item.icon" />
+            </v-avatar>
+          </template>
+          <v-list-item-title p="l-4" font="bold!">{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </InvisibleNuxtLink>
+    </v-list>
   </v-menu>
 </template>

@@ -10,7 +10,7 @@ interface ChatRoomListItemProps {
 const { room } = defineProps<ChatRoomListItemProps>();
 const client = useClient();
 const { currentRoomId, deleteRoom } = useRoomStore();
-const removeRoom = async () => {
+const onDeleteRoom = async () => {
   deleteRoom(room.id);
   await client.mutation("room.deleteRoom", { id: room.id });
 };
@@ -43,7 +43,7 @@ const active = computed(() => currentRoomId === room.id);
       icon="mdi-close"
       size="small"
       flat
-      @click="removeRoom"
+      @click="onDeleteRoom"
     />
   </div>
 </template>
