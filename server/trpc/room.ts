@@ -9,7 +9,7 @@ import { z } from "zod";
 
 const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string(),
-  name: z.string().max(ROOM_MAX_NAME_LENGTH),
+  name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),

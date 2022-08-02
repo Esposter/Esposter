@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // @NOTE We shouldn't need this import
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
-import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/message";
+import type { DeleteMessageInput } from "@/server/trpc/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
@@ -10,13 +10,14 @@ interface ChatMessageProps {
   message: MessageEntity;
 }
 
-const { message } = defineProps<ChatMessageProps>();
+const props = defineProps<ChatMessageProps>();
+const message = toRef(props, "message");
+const currentMessage = ref(message.value.message);
 const client = useClient();
 const roomStore = useRoomStore();
 const { currentRoomId, updateMessage, deleteMessage } = roomStore;
 const { members } = storeToRefs(roomStore);
-const member = computed(() => members.value.find((m) => m.id === message.userId));
-const currentMessage = ref(message.message);
+const member = computed(() => members.value.find((m) => m.id === message.value.userId));
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
@@ -26,26 +27,36 @@ const active = computed(
   () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isEditMode.value
 );
 const onUpdateMessage = async () => {
-  isEditMode.value = false;
-  if (currentMessage.value !== message.message && currentRoomId) {
-    const updateMessageInput: UpdateMessageInput = {
-      partitionKey: message.partitionKey,
-      rowKey: message.rowKey,
+  try {
+    if (!currentRoomId || currentMessage.value === message.value.message) return;
+    if (!currentMessage.value) {
+      isDeleteMode.value = true;
+      return;
+    }
+
+    const updatedMessage = await client.mutation("message.updateMessage", {
+      partitionKey: message.value.partitionKey,
+      rowKey: message.value.rowKey,
       message: currentMessage.value,
-    };
-    updateMessage(updateMessageInput);
-    await client.mutation("message.updateMessage", updateMessageInput);
+    });
+    if (updatedMessage) updateMessage(updatedMessage);
+  } finally {
+    isEditMode.value = false;
+    currentMessage.value = message.value.message;
   }
 };
 const onDeleteMessage = async () => {
-  isDeleteMode.value = false;
-  if (currentRoomId) {
+  try {
+    if (!currentRoomId) return;
+
     const deleteMessageInput: DeleteMessageInput = {
-      partitionKey: message.partitionKey,
-      rowKey: message.rowKey,
+      partitionKey: message.value.partitionKey,
+      rowKey: message.value.rowKey,
     };
-    deleteMessage(deleteMessageInput);
-    await client.mutation("message.deleteMessage", deleteMessageInput);
+    const result = await client.mutation("message.deleteMessage", deleteMessageInput);
+    if (result) deleteMessage(deleteMessageInput);
+  } finally {
+    isDeleteMode.value = false;
   }
 };
 </script>

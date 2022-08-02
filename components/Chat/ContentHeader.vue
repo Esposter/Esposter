@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const client = useClient();
-const { currentRoomId, name, updateRoom } = useRoomStore();
-const currentName = ref(name);
+const roomStore = useRoomStore();
+const { currentRoomId, updateRoom } = roomStore;
+const { name } = storeToRefs(roomStore);
+const currentName = ref(name.value);
 const titleRef = ref<HTMLDivElement | undefined>();
 const titleHovered = ref(false);
 const isEditMode = ref(false);
 const onUpdateRoom = async () => {
-  isEditMode.value = false;
-  if (currentName.value !== name && currentRoomId) {
+  try {
+    if (!currentRoomId || !currentName.value || currentName.value === name.value) return;
+
     const updatedRoom = await client.mutation("room.updateRoom", { id: currentRoomId, name: currentName.value });
     updateRoom(updatedRoom);
+  } finally {
+    isEditMode.value = false;
+    currentName.value = name.value;
   }
 };
 
@@ -41,7 +48,7 @@ useClickOutside(titleRef, async () => {
         @update:model-value="(value) => (currentName = value)"
         @keydown.enter="onUpdateRoom"
       />
-      <v-toolbar-title v-else font="bold!" @click="isEditMode = true">{{ currentName }}</v-toolbar-title>
+      <v-toolbar-title v-else font="bold!" @click="isEditMode = true">{{ name }}</v-toolbar-title>
     </div>
     <template #append>
       <v-btn icon="mdi-phone" size="small" />

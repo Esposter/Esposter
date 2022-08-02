@@ -4,15 +4,15 @@ import { storeToRefs } from "pinia";
 
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
-const active = computed(() => Boolean(roomStore.roomNextCursor));
+const active = computed(() => Boolean(roomStore.roomListNextCursor));
 const client = useClient();
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { rooms, nextCursor } = await client.query("room.readRooms", {
     filter: { name: roomStore.roomSearchQuery },
-    cursor: roomStore.roomNextCursor,
+    cursor: roomStore.roomListNextCursor,
   });
   roomStore.roomList.push(...rooms);
-  roomStore.roomNextCursor = nextCursor;
+  roomStore.roomListNextCursor = nextCursor;
   finishLoading();
 };
 </script>

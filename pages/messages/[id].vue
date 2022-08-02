@@ -20,7 +20,7 @@ const [{ rooms, nextCursor }, members, messages] = await Promise.all([
 ]);
 
 roomStore.roomList = rooms;
-roomStore.roomNextCursor = nextCursor;
+roomStore.roomListNextCursor = nextCursor;
 if (roomStore.currentRoomId) {
   roomStore.membersMap[roomStore.currentRoomId] = members;
   roomStore.messagesMap[roomStore.currentRoomId] = messages;

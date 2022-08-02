@@ -10,7 +10,9 @@ export const useRoomStore = defineStore({
     currentRoomId: null as string | null,
     roomSearchQuery: "",
     roomList: [] as Room[],
-    roomNextCursor: null as string | null,
+    roomListNextCursor: null as string | null,
+    roomListSearched: [] as Room[],
+    roomListSearchedNextCursor: null as string | null,
     membersMap: {} as Record<string, User[]>,
     messagesMap: {} as Record<string, MessageEntity[]>,
     messageInputMap: {} as Record<string, string>,
@@ -24,6 +26,8 @@ export const useRoomStore = defineStore({
     },
     rooms: (state) => {
       // @NOTE Remove manually changing to date after adding superjson transformer
+      if (state.roomSearchQuery)
+        return state.roomListSearched.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       return state.roomList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     },
     members: (state) => {

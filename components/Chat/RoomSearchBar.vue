@@ -5,10 +5,13 @@ const client = useClient();
 const roomStore = useRoomStore();
 const updateSearchQuery = useDebounce(async (value: string) => {
   if (value !== roomStore.roomSearchQuery) {
-    const { rooms, nextCursor } = await client.query("room.readRooms", { filter: { name: value }, cursor: null });
+    const { rooms, nextCursor } = await client.query("room.readRooms", {
+      filter: value ? { name: value } : undefined,
+      cursor: null,
+    });
     roomStore.roomSearchQuery = value;
-    roomStore.roomList = rooms;
-    roomStore.roomNextCursor = nextCursor;
+    roomStore.roomListSearched = rooms;
+    roomStore.roomListSearchedNextCursor = nextCursor;
   }
 }, 500);
 </script>
