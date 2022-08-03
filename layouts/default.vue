@@ -12,8 +12,8 @@ const internalLeftDrawer = ref(!mobile.value);
 const internalRightDrawer = ref(!mobile.value);
 // We will only expose these variables as they are only affected by the screen resizing.
 // We want the decision of showing the outer components to be only dependent on that for better UI/UX.
-const leftDrawer = ref(true);
-const rightDrawer = ref(true);
+const leftDrawer = ref(!mobile.value);
+const rightDrawer = ref(!mobile.value);
 </script>
 
 <template>
