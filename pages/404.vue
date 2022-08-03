@@ -2,6 +2,7 @@
 import { INDEX_PATH } from "@/util/constants";
 import { gsap } from "gsap";
 
+// @NOTE Nuxt error with running this after DOM is fully loaded
 onMounted(() => {
   gsap.to(".hover", {
     duration: 3,
