@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
 interface DefaultLayoutProps {
   mainClass?: string;
 }
 
 const { mainClass } = defineProps<DefaultLayoutProps>();
+const { mobile } = useDisplay();
 // The internal variables will track if we want to actually show the drawers
-const internalLeftDrawer = ref(true);
-const internalRightDrawer = ref(true);
+const internalLeftDrawer = ref(!mobile.value);
+const internalRightDrawer = ref(!mobile.value);
 // We will only expose these variables as they are only affected by the screen resizing.
 // We want the decision of showing the outer components to be only dependent on that for better UI/UX.
 const leftDrawer = ref(true);

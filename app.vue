@@ -25,7 +25,7 @@ html {
   left: 0;
   width: 100%;
   height: 2px;
-  background: $vueBackground;
+  background-color: $vueBackgroundColor;
   z-index: 9999;
 }
 
@@ -33,6 +33,6 @@ html {
 #nprogress .peg {
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 5px $vueBackground;
+  box-shadow: 0 0 5px $vueBackgroundColor;
 }
 </style>
