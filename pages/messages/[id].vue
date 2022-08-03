@@ -7,7 +7,7 @@ useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 
 const route = useRoute();
 const roomStore = useRoomStore();
-const { name } = storeToRefs(roomStore);
+const { currentRoomId, roomList, name } = storeToRefs(roomStore);
 const client = useClient();
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 
@@ -26,7 +26,7 @@ if (roomStore.currentRoomId) {
   roomStore.messagesMap[roomStore.currentRoomId] = messages;
 }
 
-const roomExists = computed(() => roomStore.roomList.find((r) => r.id === roomStore.currentRoomId));
+const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 </script>
 
 <template>
@@ -42,7 +42,9 @@ const roomExists = computed(() => roomStore.roomList.find((r) => r.id === roomSt
     <template #right v-if="roomExists">
       <ChatRightSideBar />
     </template>
-    <ChatContent v-if="roomExists" />
+    <template #default="props" v-if="roomExists">
+      <ChatContent :="props" />
+    </template>
     <template #footer v-if="roomExists">
       <ChatMessageInput />
     </template>

@@ -2,6 +2,7 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
 import type { Room } from "@prisma/client";
+import { storeToRefs } from "pinia";
 
 interface ChatRoomListItemProps {
   room: Room;
@@ -9,13 +10,15 @@ interface ChatRoomListItemProps {
 
 const { room } = defineProps<ChatRoomListItemProps>();
 const client = useClient();
-const { currentRoomId, deleteRoom } = useRoomStore();
+const roomStore = useRoomStore();
+const { deleteRoom } = roomStore;
+const { currentRoomId } = storeToRefs(roomStore);
 const onDeleteRoom = async () => {
   deleteRoom(room.id);
   await client.mutation("room.deleteRoom", { id: room.id });
 };
 const isHovering = ref(false);
-const active = computed(() => currentRoomId === room.id);
+const active = computed(() => room.id === currentRoomId.value);
 </script>
 
 <!-- @NOTE Route transitions doesn't like this component with invoke render outside of default slot :C -->

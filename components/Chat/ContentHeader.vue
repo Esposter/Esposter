@@ -2,6 +2,16 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
+interface ContentHeaderProps {
+  leftDrawer: boolean;
+  rightDrawer: boolean;
+  openLeftDrawer: () => void;
+  openRightDrawer: () => void;
+}
+
+const props = defineProps<ContentHeaderProps>();
+const { openLeftDrawer, openRightDrawer } = props;
+const { leftDrawer, rightDrawer } = toRefs(props);
 const client = useClient();
 const roomStore = useRoomStore();
 const { currentRoomId, updateRoom } = roomStore;
@@ -29,6 +39,9 @@ useClickOutside(titleRef, async () => {
 
 <template>
   <v-toolbar class="v-app-bar" tag="div" height="56" border>
+    <template #prepend v-if="!leftDrawer">
+      <v-btn icon="mdi-menu" size="small" @click="openLeftDrawer" />
+    </template>
     <div
       ref="titleRef"
       p="x-1"
@@ -53,6 +66,7 @@ useClickOutside(titleRef, async () => {
     <template #append>
       <v-btn icon="mdi-phone" size="small" />
       <v-btn icon="mdi-video" size="small" />
+      <v-btn v-if="!rightDrawer" icon="mdi-account-multiple" size="small" @click="openRightDrawer" />
     </template>
   </v-toolbar>
 </template>
