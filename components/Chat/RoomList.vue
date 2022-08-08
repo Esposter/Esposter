@@ -19,6 +19,12 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
 
 <template>
   <v-list>
+    <v-list-item font="bold">
+      DIRECT MESSAGES
+      <template #append>
+        <ChatCreateRoomButton />
+      </template>
+    </v-list-item>
     <ChatRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
     <Waypoint :active="active" @change="fetchMoreRooms" />
   </v-list>

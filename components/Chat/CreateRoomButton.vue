@@ -14,5 +14,5 @@ const onCreateRoom = async () => {
   <!-- <v-tooltip #activator="{ props }" location="top" text="Create DM">
     <v-btn icon="mdi-plus" size="small" flat @click="onCreateRoom" :="props" />
   </v-tooltip> -->
-  <v-btn icon="mdi-plus" size="small" flat @click="onCreateRoom" />
+  <v-btn variant="plain" icon="mdi-plus" size="small" :ripple="false" @click="onCreateRoom" />
 </template>
