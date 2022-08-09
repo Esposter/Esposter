@@ -3,12 +3,12 @@ import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
-useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
+// useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 
 const route = useRoute();
+const client = useClient();
 const roomStore = useRoomStore();
 const { currentRoomId, roomList, name } = storeToRefs(roomStore);
-const client = useClient();
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 
 const [{ rooms, nextCursor }, members, messages] = await Promise.all([
