@@ -2,12 +2,27 @@
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
+const client = useClient();
 const roomStore = useRoomStore();
-const { messages } = storeToRefs(roomStore);
+const { pushMessages, updateMessageNextCursor } = roomStore;
+const { currentRoomId, messages, messageNextCursor } = storeToRefs(roomStore);
+const active = computed(() => Boolean(messageNextCursor.value));
+const fetchMoreMessages = async (finishLoading: () => void) => {
+  if (!currentRoomId.value) return;
+
+  const { messages, nextCursor } = await client.query("message.readMessages", {
+    filter: { partitionKey: currentRoomId.value },
+    cursor: messageNextCursor.value,
+  });
+  pushMessages(messages);
+  updateMessageNextCursor(nextCursor);
+  finishLoading();
+};
 </script>
 
 <template>
   <v-list display="flex" flex="1 col-reverse" basis="full" lines="two">
     <ChatMessageListItem v-for="message in messages" :key="message.rowKey" :message="message" />
+    <Waypoint :active="active" @change="fetchMoreMessages" />
   </v-list>
 </template>

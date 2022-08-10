@@ -7,12 +7,13 @@ import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-const roomSchema: toZod<PrismaRoom> = z.object({
+const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> = z.object({
   id: z.string(),
   name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
-  updatedAt: z.date(),
+  // @NOTE Change back to date after we add superjson
+  updatedAt: z.string(),
   deletedAt: z.date().nullable(),
 });
 
@@ -27,7 +28,9 @@ export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 const createRoomInputSchema = roomSchema.pick({ name: true });
 export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
 
-const updateRoomInputSchema = roomSchema.pick({ id: true, name: true });
+const updateRoomInputSchema = roomSchema
+  .pick({ id: true })
+  .merge(roomSchema.partial().pick({ name: true, updatedAt: true }));
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 
 const deleteRoomInputSchema = roomSchema.pick({ id: true });
@@ -41,12 +44,12 @@ export const roomRouter = createRouter()
       const cursor = input?.cursor;
       const rooms = await prisma.room.findMany({
         take: getQueryFetchLimit(),
-        where: name ? { name: { contains: name } } : undefined,
+        where: name ? { name: { contains: name, mode: "insensitive" } } : undefined,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { updatedAt: "desc" },
       });
 
-      let nextCursor: typeof cursor | null = null;
+      let nextCursor: typeof cursor = null;
       if (rooms.length > FETCH_LIMIT) {
         const nextRoom = rooms.pop();
         if (nextRoom) nextCursor = nextRoom.id;
@@ -57,14 +60,16 @@ export const roomRouter = createRouter()
   })
   .mutation("createRoom", {
     input: createRoomInputSchema,
-    resolve: ({ input }) => {
-      return prisma.room.create({ data: { id: uuidv4(), ...input } });
-    },
+    resolve: ({ input }) => prisma.room.create({ data: { id: uuidv4(), ...input } }),
   })
   .mutation("updateRoom", {
     input: updateRoomInputSchema,
     resolve: ({ input: { id, ...other } }) => {
-      return prisma.room.update({ data: other, where: { id } });
+      // @NOTE Remove manual Date transformation when we add superjson
+      return prisma.room.update({
+        data: { ...other, updatedAt: other.updatedAt ? new Date(other.updatedAt) : undefined },
+        where: { id },
+      });
     },
   })
   .mutation("deleteRoom", {

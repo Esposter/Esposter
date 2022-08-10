@@ -9,7 +9,7 @@ import { FAVICON_32x32_PATH, INDEX_PATH } from "@/util/constants";
         <v-img width="32" height="26" :src="FAVICON_32x32_PATH" alt="Esposter" />
       </NuxtLink>
     </template>
-    <v-app-bar-title p="x-2!">Esposter</v-app-bar-title>
+    <v-app-bar-title>Esposter</v-app-bar-title>
     <template #append>
       <EsposterToggleThemeButton m="r-2" />
       <EsposterDropdownButton />

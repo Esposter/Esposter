@@ -8,6 +8,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "typecheck": "nuxi typecheck",
     "gen-env": "gen-env-types .env -o env.d.ts -e ."
   },
   "devDependencies": {
@@ -21,7 +22,8 @@
     "prisma": "^4.2.0",
     "sass": "^1.54.3",
     "tozod": "^3.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vue-tsc": "^0.40.0"
   },
   "dependencies": {
     "@azure/data-tables": "^13.1.2",

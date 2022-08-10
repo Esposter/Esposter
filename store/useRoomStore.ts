@@ -15,6 +15,7 @@ export const useRoomStore = defineStore({
     roomListSearchedNextCursor: null as string | null,
     membersMap: {} as Record<string, User[]>,
     messagesMap: {} as Record<string, MessageEntity[]>,
+    messageNextCursorMap: {} as Record<string, string | null>,
     messageInputMap: {} as Record<string, string>,
   }),
   getters: {
@@ -26,9 +27,12 @@ export const useRoomStore = defineStore({
     },
     rooms: (state) => {
       // @NOTE Remove manually changing to date after adding superjson transformer
-      if (state.roomSearchQuery)
-        return state.roomListSearched.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-      return state.roomList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      return state.roomSearchQuery
+        ? state.roomListSearched.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        : state.roomList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    },
+    roomNextCursor: (state) => {
+      return state.roomSearchQuery ? state.roomListSearchedNextCursor : state.roomListNextCursor;
     },
     members: (state) => {
       if (!state.currentRoomId || !state.membersMap[state.currentRoomId]) return [];
@@ -38,23 +42,31 @@ export const useRoomStore = defineStore({
       if (!state.currentRoomId || !state.messagesMap[state.currentRoomId]) return [];
       return state.messagesMap[state.currentRoomId];
     },
+    messageNextCursor: (state) => {
+      if (!state.currentRoomId || !state.messagesMap[state.currentRoomId]) return null;
+      return state.messageNextCursorMap[state.currentRoomId];
+    },
     messageInput: (state) => {
       if (!state.currentRoomId || !state.messageInputMap[state.currentRoomId]) return "";
       return state.messageInputMap[state.currentRoomId];
     },
   },
   actions: {
-    createRoom(newRoom: Room) {
-      this.roomList.unshift(newRoom);
-    },
-    updateRoom(updatedRoom: Room) {
-      if (!this.currentRoomId) return;
-
-      const index = this.roomList.findIndex((r) => r.id === this.currentRoomId);
-      if (index > -1) this.roomList[index] = { ...this.roomList[index], ...updatedRoom };
+    createOrUpdateRoom(room: Room) {
+      const index = this.roomList.findIndex((r) => r.id === room.id);
+      if (index === -1) this.roomList.unshift(room);
+      else this.roomList[index] = { ...this.roomList[index], ...room };
     },
     deleteRoom(id: string) {
       this.roomList = this.roomList.filter((r) => r.id !== id);
+    },
+    pushRooms(rooms: Room[]) {
+      if (this.roomSearchQuery) this.roomListSearched.push(...rooms);
+      else this.roomList.push(...rooms);
+    },
+    updateRoomNextCursor(roomNextCursor: string | null) {
+      if (this.roomSearchQuery) this.roomListSearchedNextCursor = roomNextCursor;
+      else this.roomListNextCursor = roomNextCursor;
     },
     createMessage(newMessage: MessageEntity) {
       if (!this.currentRoomId) return;
@@ -78,6 +90,16 @@ export const useRoomStore = defineStore({
       this.messagesMap[this.currentRoomId] = messages.filter(
         (m) => !(m.partitionKey === id.partitionKey && m.rowKey === id.rowKey)
       );
+    },
+    pushMessages(messages: MessageEntity[]) {
+      if (!this.currentRoomId) return;
+
+      this.messagesMap[this.currentRoomId].push(...messages);
+    },
+    updateMessageNextCursor(messageNextCursor: string | null) {
+      if (!this.currentRoomId) return;
+
+      this.messageNextCursorMap[this.currentRoomId] = messageNextCursor;
     },
     updateMessageInput(updatedMessageInput: string) {
       if (!this.currentRoomId) return;

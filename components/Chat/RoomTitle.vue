@@ -4,18 +4,18 @@ import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const { currentRoomId, updateRoom } = roomStore;
-const { name } = storeToRefs(roomStore);
+const { createOrUpdateRoom } = roomStore;
+const { currentRoomId, name } = storeToRefs(roomStore);
 const currentName = ref(name.value);
 const titleRef = ref<HTMLDivElement | undefined>();
 const titleHovered = ref(false);
 const isEditMode = ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId || !currentName.value || currentName.value === name.value) return;
+    if (!currentRoomId.value || !currentName.value || currentName.value === name.value) return;
 
-    const updatedRoom = await client.mutation("room.updateRoom", { id: currentRoomId, name: currentName.value });
-    updateRoom(updatedRoom);
+    const updatedRoom = await client.mutation("room.updateRoom", { id: currentRoomId.value, name: currentName.value });
+    createOrUpdateRoom(updatedRoom);
   } finally {
     isEditMode.value = false;
     currentName.value = name.value;
@@ -28,9 +28,13 @@ useClickOutside(titleRef, async () => {
 </script>
 
 <template>
+  <v-icon p="l-8" size="small">mdi-account-multiple</v-icon>
   <div
     ref="titleRef"
+    m="x-3"
     p="x-1"
+    display="flex"
+    items="center"
     :w="isEditMode ? 'full' : ''"
     :b="!isEditMode && titleHovered ? '1 rd' : '1 rd transparent'"
     @mouseenter="titleHovered = true"

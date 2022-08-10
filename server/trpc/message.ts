@@ -2,7 +2,7 @@ import { createRouter } from "@/server/trpc/createRouter";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure";
 import type { AzureMessageEntity, MessageEntity } from "@/services/azure/types";
 import { AzureTable } from "@/services/azure/types";
-import { getQueryFetchLimit, MESSAGE_MAX_LENGTH } from "@/util/constants";
+import { FETCH_LIMIT, getQueryFetchLimit, MESSAGE_MAX_LENGTH } from "@/util/constants";
 import { RemoveIndexSignature } from "@/util/types";
 import { odata } from "@azure/data-tables";
 import { toZod } from "tozod";
@@ -16,7 +16,10 @@ const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({
   createdAt: z.date(),
 });
 
-const readMessagesInputSchema = messageSchema.pick({ partitionKey: true });
+const readMessagesInputSchema = z.object({
+  filter: messageSchema.pick({ partitionKey: true }),
+  cursor: z.string().nullable(),
+});
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const createMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
@@ -31,16 +34,23 @@ export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 export const messageRouter = createRouter()
   .query("readMessages", {
     input: readMessagesInputSchema,
-    resolve: async ({ input: { partitionKey } }) => {
-      const filter = odata`PartitionKey eq ${partitionKey}`;
+    resolve: async ({ input }) => {
+      const filter = input.cursor
+        ? odata`PartitionKey eq ${input.filter.partitionKey} and RowKey gt ${input.cursor}`
+        : odata`PartitionKey eq ${input.filter.partitionKey}`;
       const fetchLimit = getQueryFetchLimit();
       const messageClient = await getTableClient(AzureTable.Messages);
       const messages = await getTopNEntities<AzureMessageEntity>(messageClient, fetchLimit, { filter });
+
+      let nextCursor: typeof input.cursor = null;
+      if (messages.length > FETCH_LIMIT) {
+        const nextMessage = messages.pop();
+        if (nextMessage) nextCursor = nextMessage.rowKey;
+      }
+
       const messageEntities: MessageEntity[] = [];
-
       for (const message of messages) messageEntities.push({ ...message, createdAt: new Date(message.createdAt) });
-
-      return messageEntities;
+      return { messages: messageEntities, nextCursor };
     },
   })
   .mutation("createMessage", {

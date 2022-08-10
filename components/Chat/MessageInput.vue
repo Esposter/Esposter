@@ -6,13 +6,13 @@ import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const { currentRoomId, updateMessageInput, createMessage } = roomStore;
-const { messageInput } = storeToRefs(roomStore);
+const { updateMessageInput, createMessage } = roomStore;
+const { currentRoomId, messageInput } = storeToRefs(roomStore);
 const sendMessage = async () => {
-  if (!currentRoomId || !messageInput.value) return;
+  if (!currentRoomId.value || !messageInput.value) return;
 
   const createMessageInput: CreateMessageInput = {
-    partitionKey: currentRoomId,
+    partitionKey: currentRoomId.value,
     rowKey: await rowKey(),
     message: messageInput.value,
   };
