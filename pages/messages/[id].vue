@@ -11,21 +11,24 @@ const { currentRoomId, roomList, name } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
 
-const [{ rooms, nextCursor: roomNextCursor }, members, { messages, nextCursor: messageNextCursor }] = await Promise.all(
-  [
-    client.query("room.readRooms"),
-    client.query("room.readMembers"),
-    roomStore.currentRoomId
-      ? client.query("message.readMessages", { filter: { partitionKey: roomStore.currentRoomId }, cursor: null })
-      : { messages: [], nextCursor: null },
-  ]
-);
+const [
+  { rooms, nextCursor: roomNextCursor },
+  { members, nextCursor: memberNextCursor },
+  { messages, nextCursor: messageNextCursor },
+] = await Promise.all([
+  client.query("room.readRooms", { cursor: null }),
+  client.query("room.readMembers", { cursor: null }),
+  roomStore.currentRoomId
+    ? client.query("message.readMessages", { filter: { partitionKey: roomStore.currentRoomId }, cursor: null })
+    : { messages: [], nextCursor: null },
+]);
 
 roomStore.roomSearchQuery = "";
 roomStore.roomList = rooms;
 roomStore.roomListNextCursor = roomNextCursor;
 if (roomStore.currentRoomId) {
   roomStore.membersMap[roomStore.currentRoomId] = members;
+  roomStore.memberNextCursorMap[roomStore.currentRoomId] = memberNextCursor;
   roomStore.messagesMap[roomStore.currentRoomId] = messages;
   roomStore.messageNextCursorMap[roomStore.currentRoomId] = messageNextCursor;
 }

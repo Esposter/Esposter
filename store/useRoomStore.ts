@@ -14,6 +14,7 @@ export const useRoomStore = defineStore({
     roomListSearched: [] as Room[],
     roomListSearchedNextCursor: null as string | null,
     membersMap: {} as Record<string, User[]>,
+    memberNextCursorMap: {} as Record<string, string | null>,
     messagesMap: {} as Record<string, MessageEntity[]>,
     messageNextCursorMap: {} as Record<string, string | null>,
     messageInputMap: {} as Record<string, string>,
@@ -37,6 +38,10 @@ export const useRoomStore = defineStore({
     members: (state) => {
       if (!state.currentRoomId || !state.membersMap[state.currentRoomId]) return [];
       return state.membersMap[state.currentRoomId];
+    },
+    memberNextCursor: (state) => {
+      if (!state.currentRoomId || !state.memberNextCursorMap[state.currentRoomId]) return null;
+      return state.memberNextCursorMap[state.currentRoomId];
     },
     messages: (state) => {
       if (!state.currentRoomId || !state.messagesMap[state.currentRoomId]) return [];

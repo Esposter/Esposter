@@ -27,6 +27,7 @@ export const LOGO_IMAGE_URL = `${BLOB_URL}/assets/Esposter/logo.jpeg`;
 export const AZURE_SELF_DESTRUCT_TIMER = "999999999999999999999999999999";
 
 /* backend constants */
+export const USER_MAX_NAME_LENGTH = 100;
 export const ROOM_MAX_NAME_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 100;
 

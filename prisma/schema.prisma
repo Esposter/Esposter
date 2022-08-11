@@ -7,11 +7,32 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id        String         @id @default(uuid())
+  name      String
+  username  String         @unique
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  deletedAt DateTime?
+  rooms     RoomsOnUsers[]
+}
+
 model Room {
-  id        String    @id @default(uuid())
+  id        String         @id @default(uuid())
   name      String
   avatar    String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   deletedAt DateTime?
+  users     RoomsOnUsers[]
+}
+
+model RoomsOnUsers {
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String
+  room     Room     @relation(fields: [roomId], references: [id])
+  roomId   String
+  joinedAt DateTime @default(now())
+
+  @@id([userId, roomId])
 }

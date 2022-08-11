@@ -9,9 +9,9 @@ import { toZod } from "tozod";
 import { z } from "zod";
 
 const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({
-  partitionKey: z.string(),
-  rowKey: z.string(),
-  userId: z.string(),
+  partitionKey: z.string().uuid(),
+  rowKey: z.string().uuid(),
+  userId: z.string().uuid(),
   message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
   createdAt: z.date(),
 });
