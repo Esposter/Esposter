@@ -20,10 +20,12 @@ roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id 
 roomStore.roomSearchQuery = "";
 
 const [
+  room,
   { rooms, nextCursor: roomNextCursor },
   { members, nextCursor: memberNextCursor },
   { messages, nextCursor: messageNextCursor },
 ] = await Promise.all([
+  roomStore.currentRoomId ? client.query("room.readRoom", roomStore.currentRoomId) : null,
   client.query("room.readRooms", { cursor: null }),
   client.query("room.readMembers", { cursor: null }),
   roomStore.currentRoomId
@@ -31,6 +33,7 @@ const [
     : { messages: [], nextCursor: null },
 ]);
 
+if (room) createOrUpdateRoom(room);
 rooms.forEach((r) => createOrUpdateRoom(r));
 members.forEach((m) => createOrUpdateMember(m));
 if (roomStore.currentRoomId) roomStore.messagesMap[roomStore.currentRoomId] = messages;

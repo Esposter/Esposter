@@ -17,6 +17,9 @@ const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> =
   deletedAt: z.date().nullable(),
 });
 
+const readRoomInputSchema = roomSchema.shape.id;
+export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+
 const readRoomsInputSchema = z.object({
   filter: roomSchema.pick({ name: true }).optional(),
   cursor: z.string().nullable(),
@@ -31,7 +34,7 @@ const updateRoomInputSchema = roomSchema
   .merge(roomSchema.partial().pick({ name: true, updatedAt: true }));
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 
-const deleteRoomInputSchema = roomSchema.pick({ id: true });
+const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
@@ -47,6 +50,10 @@ const addMembersInputSchema = z.object({
 export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
 
 export const roomRouter = createRouter()
+  .query("readRoom", {
+    input: readRoomInputSchema,
+    resolve: async ({ input }) => prisma.room.findFirst({ where: { id: input } }),
+  })
   .query("readRooms", {
     input: readRoomsInputSchema,
     resolve: async ({ input: { filter, cursor } }) => {
@@ -82,9 +89,9 @@ export const roomRouter = createRouter()
   })
   .mutation("deleteRoom", {
     input: deleteRoomInputSchema,
-    resolve: async ({ input: { id } }) => {
+    resolve: async ({ input }) => {
       try {
-        await prisma.room.delete({ where: { id } });
+        await prisma.room.delete({ where: { id: input } });
         return true;
       } catch (err) {
         return false;

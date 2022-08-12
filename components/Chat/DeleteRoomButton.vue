@@ -11,7 +11,7 @@ const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 const onDeleteRoom = async () => {
   deleteRoom(roomId);
-  await client.mutation("room.deleteRoom", { id: roomId });
+  await client.mutation("room.deleteRoom", roomId);
 };
 </script>
 

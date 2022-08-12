@@ -10,6 +10,7 @@ export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(USER_MAX_NAME_LENGTH),
   username: z.string().min(1).max(USER_MAX_NAME_LENGTH),
+  avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
@@ -24,7 +25,7 @@ const updateUserInputSchema = userSchema
   .merge(userSchema.partial().pick({ name: true, username: true }));
 export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 
-const deleteUserInputSchema = userSchema.pick({ id: true });
+const deleteUserInputSchema = userSchema.shape.id;
 export type DeleteUserInput = z.infer<typeof deleteUserInputSchema>;
 
 export const userRouter = createRouter()
@@ -38,9 +39,9 @@ export const userRouter = createRouter()
   })
   .mutation("deleteUser", {
     input: deleteUserInputSchema,
-    resolve: async ({ input: { id } }) => {
+    resolve: async ({ input }) => {
       try {
-        await prisma.user.delete({ where: { id } });
+        await prisma.user.delete({ where: { id: input } });
         return true;
       } catch (err) {
         return false;
