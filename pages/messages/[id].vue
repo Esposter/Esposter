@@ -25,7 +25,9 @@ const [
   { members, nextCursor: memberNextCursor },
   { messages, nextCursor: messageNextCursor },
 ] = await Promise.all([
-  roomStore.currentRoomId ? client.query("room.readRoom", roomStore.currentRoomId) : null,
+  roomStore.currentRoomId && !roomList.value.find((r) => r.id === roomStore.currentRoomId)
+    ? client.query("room.readRoom", roomStore.currentRoomId)
+    : null,
   client.query("room.readRooms", { cursor: null }),
   client.query("room.readMembers", { cursor: null }),
   roomStore.currentRoomId
@@ -44,23 +46,25 @@ updateMessageNextCursor(messageNextCursor);
 </script>
 
 <template>
-  <NuxtLayout mainClass="max-h-screen">
-    <!-- Set max height here so we can hide global window scrollbar
-    and show scrollbar within the chat content only for chat routes -->
+  <div display="contents">
     <Head>
       <Title>{{ name }}</Title>
     </Head>
-    <template #left>
-      <ChatLeftSideBar />
-    </template>
-    <template #right v-if="roomExists">
-      <ChatRightSideBar />
-    </template>
-    <template #default="props" v-if="roomExists">
-      <ChatContent :="props" />
-    </template>
-    <template #footer v-if="roomExists">
-      <ChatMessageInput />
-    </template>
-  </NuxtLayout>
+    <NuxtLayout mainClass="max-h-screen">
+      <!-- Set max height here so we can hide global window scrollbar
+    and show scrollbar within the chat content only for chat routes -->
+      <template #left>
+        <ChatLeftSideBar />
+      </template>
+      <template #right v-if="roomExists">
+        <ChatRightSideBar />
+      </template>
+      <template #default="props" v-if="roomExists">
+        <ChatContent :="props" />
+      </template>
+      <template #footer v-if="roomExists">
+        <ChatMessageInput />
+      </template>
+    </NuxtLayout>
+  </div>
 </template>

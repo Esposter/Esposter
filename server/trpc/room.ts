@@ -1,7 +1,7 @@
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
 import { userSchema } from "@/server/trpc/user";
-import { FETCH_LIMIT, getQueryFetchLimit, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
+import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
 import type { Room as PrismaRoom } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
@@ -17,7 +17,7 @@ const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> =
   deletedAt: z.date().nullable(),
 });
 
-const readRoomInputSchema = roomSchema.shape.id;
+const readRoomInputSchema = roomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z.object({
@@ -52,14 +52,17 @@ export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
 export const roomRouter = createRouter()
   .query("readRoom", {
     input: readRoomInputSchema,
-    resolve: async ({ input }) => prisma.room.findFirst({ where: { id: input } }),
+    resolve: async ({ input }) => {
+      if (input) return prisma.room.findFirst({ where: { id: input } });
+      else return prisma.room.findFirst({ orderBy: { updatedAt: "desc" } });
+    },
   })
   .query("readRooms", {
     input: readRoomsInputSchema,
     resolve: async ({ input: { filter, cursor } }) => {
       const name = filter?.name;
       const rooms = await prisma.room.findMany({
-        take: getQueryFetchLimit(),
+        take: FETCH_LIMIT + 1,
         where: name ? { name: { contains: name, mode: "insensitive" } } : undefined,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { updatedAt: "desc" },
@@ -102,7 +105,7 @@ export const roomRouter = createRouter()
     input: readMembersInputSchema,
     resolve: async ({ input: { cursor } }) => {
       const members = await prisma.user.findMany({
-        take: getQueryFetchLimit(),
+        take: FETCH_LIMIT + 1,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { updatedAt: "desc" },
       });

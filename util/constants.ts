@@ -32,7 +32,5 @@ export const ROOM_MAX_NAME_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 100;
 
 export const FETCH_LIMIT = 20;
-// Fetch one more to check if any more data left to fetch
-export const getQueryFetchLimit = () => FETCH_LIMIT + 1;
 
 export const AZURE_MAX_BATCH_SIZE = 100;
