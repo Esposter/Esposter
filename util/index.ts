@@ -1,3 +1,5 @@
+import { validate as uuidValidate, version as uuidVersion } from "uuid";
+
 export const getInitials = (fullName: string) => {
   const allNames = fullName.trim().split(" ");
   const initials = allNames.reduce((acc, curr, index) => {
@@ -6,3 +8,5 @@ export const getInitials = (fullName: string) => {
   }, "");
   return initials;
 };
+
+export const uuidValidateV4 = (uuid: string) => uuidValidate(uuid) && uuidVersion(uuid) === 4;

@@ -88,6 +88,11 @@ export const useRoomStore = defineStore({
 
       this.memberNextCursorMap[this.currentRoomId] = memberNextCursor;
     },
+    initialiseMessages(messages: MessageEntity[]) {
+      if (!this.currentRoomId) return;
+
+      this.messagesMap[this.currentRoomId] = messages;
+    },
     createMessage(newMessage: MessageEntity) {
       if (!this.currentRoomId) return;
 

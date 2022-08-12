@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
+import { uuidValidateV4 } from "@/util";
 import { storeToRefs } from "pinia";
 
 useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
@@ -9,14 +10,16 @@ const client = useClient();
 const roomStore = useRoomStore();
 const {
   createOrUpdateRoom,
-  createOrUpdateMember,
   updateRoomNextCursor,
+  createOrUpdateMember,
   updateMemberNextCursor,
+  initialiseMessages,
   updateMessageNextCursor,
 } = roomStore;
 const { currentRoomId, roomList, name } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
-roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
+roomStore.currentRoomId =
+  typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomStore.roomSearchQuery = "";
 
 const [
@@ -25,23 +28,24 @@ const [
   { members, nextCursor: memberNextCursor },
   { messages, nextCursor: messageNextCursor },
 ] = await Promise.all([
-  roomStore.currentRoomId && !roomList.value.find((r) => r.id === roomStore.currentRoomId)
-    ? client.query("room.readRoom", roomStore.currentRoomId)
+  currentRoomId.value && !roomList.value.find((r) => r.id === currentRoomId.value)
+    ? client.query("room.readRoom", currentRoomId.value)
     : null,
   client.query("room.readRooms", { cursor: null }),
   client.query("room.readMembers", { cursor: null }),
-  roomStore.currentRoomId
-    ? client.query("message.readMessages", { filter: { partitionKey: roomStore.currentRoomId }, cursor: null })
+  currentRoomId.value
+    ? client.query("message.readMessages", { filter: { partitionKey: currentRoomId.value }, cursor: null })
     : { messages: [], nextCursor: null },
 ]);
 
 if (room) createOrUpdateRoom(room);
 rooms.forEach((r) => createOrUpdateRoom(r));
-members.forEach((m) => createOrUpdateMember(m));
-if (roomStore.currentRoomId) roomStore.messagesMap[roomStore.currentRoomId] = messages;
-
 updateRoomNextCursor(roomNextCursor);
+
+members.forEach((m) => createOrUpdateMember(m));
 updateMemberNextCursor(memberNextCursor);
+
+initialiseMessages(messages);
 updateMessageNextCursor(messageNextCursor);
 </script>
 
