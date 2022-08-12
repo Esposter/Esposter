@@ -57,19 +57,17 @@ export const useRoomStore = defineStore({
     },
   },
   actions: {
-    createOrUpdateRoom(room: Room, push = false) {
+    createOrUpdateRoom(room: Room) {
       const index = this.roomList.findIndex((r) => r.id === room.id);
-      if (index === -1) {
-        if (push) this.roomList.push(room);
-        else this.roomList.unshift(room);
-      } else this.roomList[index] = { ...this.roomList[index], ...room };
+      if (index === -1) this.roomList.push(room);
+      else this.roomList[index] = { ...this.roomList[index], ...room };
     },
     deleteRoom(id: string) {
       this.roomList = this.roomList.filter((r) => r.id !== id);
     },
     pushRooms(rooms: Room[]) {
       if (this.roomSearchQuery) this.roomListSearched.push(...rooms);
-      else rooms.forEach((r) => this.createOrUpdateRoom(r, true));
+      else rooms.forEach((r) => this.createOrUpdateRoom(r));
     },
     updateRoomNextCursor(roomNextCursor: string | null) {
       if (this.roomSearchQuery) this.roomListSearchedNextCursor = roomNextCursor;
@@ -125,6 +123,7 @@ export const useRoomStore = defineStore({
     },
     updateMessageInput(updatedMessageInput: string) {
       if (!this.currentRoomId) return;
+
       this.messageInputMap[this.currentRoomId] = updatedMessageInput;
     },
   },
