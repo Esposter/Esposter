@@ -2,8 +2,6 @@
 import type { DeleteMessageInput } from "@/server/trpc/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
-import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 interface ChatMessageProps {
   message: MessageEntity;
@@ -12,14 +10,10 @@ interface ChatMessageProps {
 const props = defineProps<ChatMessageProps>();
 const message = toRef(props, "message");
 const client = useClient();
-const roomStore = useRoomStore();
 const { deleteMessage } = useMessageStore();
-const { currentRoomId } = storeToRefs(roomStore);
 const isDeleteMode = ref(false);
 const onDeleteMessage = async () => {
   try {
-    if (!currentRoomId) return;
-
     const deleteMessageInput: DeleteMessageInput = {
       partitionKey: message.value.partitionKey,
       rowKey: message.value.rowKey,

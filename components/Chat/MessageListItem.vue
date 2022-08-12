@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // @NOTE We shouldn't need this import
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
-import type { DeleteMessageInput } from "@/server/trpc/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
 import { useMessageStore } from "@/store/useMessageStore";
@@ -17,7 +16,7 @@ const message = toRef(props, "message");
 const currentMessage = ref(message.value.message);
 const client = useClient();
 const roomStore = useRoomStore();
-const { updateMessage, deleteMessage } = useMessageStore();
+const { updateMessage } = useMessageStore();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
 const { currentRoomId } = storeToRefs(roomStore);
@@ -26,10 +25,10 @@ const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
 const isEditMode = ref(false);
-const isDeleteMode = ref(false);
 const active = computed(
   () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isEditMode.value
 );
+const activeNotEdit = computed(() => active.value && !isEditMode.value);
 const onUpdateMessage = async (updateDeleteMode: (value: boolean) => void) => {
   try {
     if (!currentRoomId.value || currentMessage.value === message.value.message) return;
@@ -47,20 +46,6 @@ const onUpdateMessage = async (updateDeleteMode: (value: boolean) => void) => {
   } finally {
     isEditMode.value = false;
     currentMessage.value = message.value.message;
-  }
-};
-const onDeleteMessage = async () => {
-  try {
-    if (!currentRoomId) return;
-
-    const deleteMessageInput: DeleteMessageInput = {
-      partitionKey: message.value.partitionKey,
-      rowKey: message.value.rowKey,
-    };
-    const result = await client.mutation("message.deleteMessage", deleteMessageInput);
-    if (result) deleteMessage(deleteMessageInput);
-  } finally {
-    isDeleteMode.value = false;
   }
 };
 </script>
@@ -94,13 +79,11 @@ const onDeleteMessage = async () => {
             @keydown.enter="onUpdateMessage(updateDeleteMode)"
             @keydown.esc="isEditMode = false"
           />
-          <span text="3"
-            >escape to <span class="text-info underline" cursor="pointer" @click="isEditMode = false">cancel</span> •
+          <span text="3">
+            escape to <span class="text-info underline" cursor="pointer" @click="isEditMode = false">cancel</span> •
             enter to
-            <span class="text-info underline" cursor="pointer" @click="onUpdateMessage(updateDeleteMode)"
-              >save</span
-            ></span
-          >
+            <span class="text-info underline" cursor="pointer" @click="onUpdateMessage(updateDeleteMode)">save</span>
+          </span>
         </div>
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
@@ -110,7 +93,7 @@ const onDeleteMessage = async () => {
     <template #default="{ updateDeleteMode }">
       <div position="relative" z="1">
         <div
-          v-show="active"
+          v-show="activeNotEdit"
           position="absolute"
           top="-6"
           right="0"
