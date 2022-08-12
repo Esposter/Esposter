@@ -1,6 +1,7 @@
+import chatMembers from "@/assets/data/chatMembers.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
-import { userSchema } from "@/server/trpc/user";
+import { User, userSchema } from "@/server/trpc/user";
 import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
 import type { Room as PrismaRoom } from "@prisma/client";
 import { toZod } from "tozod";
@@ -116,7 +117,7 @@ export const roomRouter = createRouter()
         if (nextMember) nextCursor = nextMember.id;
       }
 
-      return { members, nextCursor };
+      return { members: chatMembers as User[], nextCursor };
     },
   })
   .mutation("addMembers", {

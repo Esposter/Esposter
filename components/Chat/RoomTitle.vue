@@ -4,21 +4,24 @@ import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const { createOrUpdateRoom } = roomStore;
-const { currentRoomId, name } = storeToRefs(roomStore);
-const currentName = ref(name.value);
+const { updateRoom } = roomStore;
+const { currentRoomId, roomName } = storeToRefs(roomStore);
+const currentRoomName = ref(roomName.value);
 const titleRef = ref<HTMLDivElement | undefined>();
 const titleHovered = ref(false);
 const isEditMode = ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId.value || !currentName.value || currentName.value === name.value) return;
+    if (!currentRoomId.value || !currentRoomName.value || currentRoomName.value === roomName.value) return;
 
-    const updatedRoom = await client.mutation("room.updateRoom", { id: currentRoomId.value, name: currentName.value });
-    createOrUpdateRoom(updatedRoom);
+    const updatedRoom = await client.mutation("room.updateRoom", {
+      id: currentRoomId.value,
+      name: currentRoomName.value,
+    });
+    updateRoom(updatedRoom);
   } finally {
     isEditMode.value = false;
-    currentName.value = name.value;
+    currentRoomName.value = roomName.value;
   }
 };
 
@@ -47,10 +50,10 @@ useClickOutside(titleRef, async () => {
       density="compact"
       variant="solo"
       hide-details
-      :model-value="currentName"
-      @update:model-value="(value) => (currentName = value)"
+      :model-value="currentRoomName"
+      @update:model-value="(value) => (currentRoomName = value)"
       @keydown.enter="onUpdateRoom"
     />
-    <v-toolbar-title v-else font="bold!" @click="isEditMode = true">{{ name }}</v-toolbar-title>
+    <v-toolbar-title v-else font="bold!" @click="isEditMode = true">{{ roomName }}</v-toolbar-title>
   </div>
 </template>

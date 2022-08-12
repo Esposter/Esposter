@@ -2,10 +2,10 @@
 import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
-const { createOrUpdateRoom } = useRoomStore();
+const { createRoom } = useRoomStore();
 const onCreateRoom = async () => {
   const newRoom = await client.mutation("room.createRoom", { name: "Unnamed" });
-  createOrUpdateRoom(newRoom);
+  createRoom(newRoom);
 };
 </script>
 

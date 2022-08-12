@@ -10,12 +10,12 @@ interface ChatRoomListItemProps {
 
 const { room } = defineProps<ChatRoomListItemProps>();
 const roomStore = useRoomStore();
-const { createOrUpdateRoom } = roomStore;
+const { updateRoom } = roomStore;
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = ref(false);
 const active = computed(() => room.id === currentRoomId.value);
 const onUpdateRoom = async (updatedRoom: Room) => {
-  createOrUpdateRoom(updatedRoom);
+  updateRoom(updatedRoom);
   navigateTo(MESSAGES_PATH(room.id));
 };
 </script>

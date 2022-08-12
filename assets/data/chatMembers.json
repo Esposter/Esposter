@@ -2,76 +2,91 @@
   {
     "id": "1",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+    "name": "Death",
     "username": "Ali Connors"
   },
   {
     "id": "2",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+    "name": "Death",
     "username": "me, Scrott, Jennifer"
   },
   {
     "id": "3",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+    "name": "Death",
     "username": "Sandra Adams"
   },
   {
     "id": "4",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+    "name": "Death",
     "username": "Trevor Hansen"
   },
   {
     "id": "50",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+    "name": "Death",
     "username": "Britta Holt"
   },
   {
     "id": "10",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+    "name": "Death",
     "username": "Ali Connors"
   },
   {
     "id": "20",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+    "name": "Death",
     "username": "me, Scrott, Jennifer"
   },
   {
     "id": "30",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+    "name": "Death",
     "username": "Sandra Adams"
   },
   {
     "id": "40",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+    "name": "Death",
     "username": "Trevor Hansen"
   },
   {
     "id": "50",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+    "name": "Death",
     "username": "Britta Holt"
   },
   {
     "id": "100",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+    "name": "Death",
     "username": "Ali Connors"
   },
   {
     "id": "200",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+    "name": "Death",
     "username": "me, Scrott, Jennifer"
   },
   {
     "id": "300",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+    "name": "Death",
     "username": "Sandra Adams"
   },
   {
     "id": "400",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+    "name": "Death",
     "username": "Trevor Hansen"
   },
   {
     "id": "500",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+    "name": "Death",
     "username": "Britta Holt"
   }
 ]

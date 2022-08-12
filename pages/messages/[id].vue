@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useMemberStore } from "@/store/useMemberStore";
+import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import { uuidValidateV4 } from "@/util";
 import { storeToRefs } from "pinia";
@@ -8,15 +10,10 @@ useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 const route = useRoute();
 const client = useClient();
 const roomStore = useRoomStore();
-const {
-  createOrUpdateRoom,
-  updateRoomNextCursor,
-  createOrUpdateMember,
-  updateMemberNextCursor,
-  initialiseMessages,
-  updateMessageNextCursor,
-} = roomStore;
-const { currentRoomId, roomList, name } = storeToRefs(roomStore);
+const { initialiseRooms, updateRoomNextCursor } = roomStore;
+const { initialiseMembers, updateMemberNextCursor } = useMemberStore();
+const { initialiseMessages, updateMessageNextCursor } = useMessageStore();
+const { currentRoomId, roomList, roomName } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 roomStore.currentRoomId =
   typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
@@ -28,9 +25,7 @@ const [
   { members, nextCursor: memberNextCursor },
   { messages, nextCursor: messageNextCursor },
 ] = await Promise.all([
-  currentRoomId.value && !roomList.value.find((r) => r.id === currentRoomId.value)
-    ? client.query("room.readRoom", currentRoomId.value)
-    : null,
+  currentRoomId.value && !roomExists.value ? client.query("room.readRoom", currentRoomId.value) : null,
   client.query("room.readRooms", { cursor: null }),
   client.query("room.readMembers", { cursor: null }),
   currentRoomId.value
@@ -38,11 +33,11 @@ const [
     : { messages: [], nextCursor: null },
 ]);
 
-if (room) createOrUpdateRoom(room);
-rooms.forEach((r) => createOrUpdateRoom(r));
+if (room) rooms.push(room);
+initialiseRooms(rooms);
 updateRoomNextCursor(roomNextCursor);
 
-members.forEach((m) => createOrUpdateMember(m));
+initialiseMembers(members);
 updateMemberNextCursor(memberNextCursor);
 
 initialiseMessages(messages);
@@ -52,7 +47,7 @@ updateMessageNextCursor(messageNextCursor);
 <template>
   <div display="contents">
     <Head>
-      <Title>{{ name }}</Title>
+      <Title>{{ roomName }}</Title>
     </Head>
     <NuxtLayout mainClass="max-h-screen">
       <!-- Set max height here so we can hide global window scrollbar

@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const { pushMessages, updateMessageNextCursor } = roomStore;
-const { currentRoomId, messages, messageNextCursor } = storeToRefs(roomStore);
+const { currentRoomId } = storeToRefs(roomStore);
+const messageStore = useMessageStore();
+const { pushMessages, updateMessageNextCursor } = messageStore;
+const { messages, messageNextCursor } = storeToRefs(messageStore);
 const active = computed(() => Boolean(messageNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
   if (!currentRoomId.value) return;

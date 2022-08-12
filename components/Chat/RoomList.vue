@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 const client = useClient();
 const roomStore = useRoomStore();
 const { pushRooms, updateRoomNextCursor } = roomStore;
-const { roomSearchQuery, rooms, roomNextCursor } = storeToRefs(roomStore);
+const { roomSearchQuery, loadingRoomsSearched, rooms, roomNextCursor } = storeToRefs(roomStore);
 const active = computed(() => Boolean(roomNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { rooms, nextCursor } = await client.query("room.readRooms", {
@@ -26,6 +26,7 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
         <ChatCreateRoomButton />
       </template>
     </v-list-item>
+    <div v-if="loadingRoomsSearched" display="flex" justify="center"><v-progress-circular indeterminate /></div>
     <ChatRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
     <Waypoint :active="active" @change="fetchMoreRooms" />
   </v-list>
