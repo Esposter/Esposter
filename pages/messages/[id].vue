@@ -7,9 +7,17 @@ useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 const route = useRoute();
 const client = useClient();
 const roomStore = useRoomStore();
+const {
+  createOrUpdateRoom,
+  createOrUpdateMember,
+  updateRoomNextCursor,
+  updateMemberNextCursor,
+  updateMessageNextCursor,
+} = roomStore;
 const { currentRoomId, roomList, name } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 roomStore.currentRoomId = typeof route.params.id === "string" ? route.params.id : null;
+roomStore.roomSearchQuery = "";
 
 const [
   { rooms, nextCursor: roomNextCursor },
@@ -23,15 +31,13 @@ const [
     : { messages: [], nextCursor: null },
 ]);
 
-roomStore.roomSearchQuery = "";
-roomStore.roomList = rooms;
-roomStore.roomListNextCursor = roomNextCursor;
-if (roomStore.currentRoomId) {
-  roomStore.membersMap[roomStore.currentRoomId] = members;
-  roomStore.memberNextCursorMap[roomStore.currentRoomId] = memberNextCursor;
-  roomStore.messagesMap[roomStore.currentRoomId] = messages;
-  roomStore.messageNextCursorMap[roomStore.currentRoomId] = messageNextCursor;
-}
+rooms.forEach((r) => createOrUpdateRoom(r));
+members.forEach((m) => createOrUpdateMember(m));
+if (roomStore.currentRoomId) roomStore.messagesMap[roomStore.currentRoomId] = messages;
+
+updateRoomNextCursor(roomNextCursor);
+updateMemberNextCursor(memberNextCursor);
+updateMessageNextCursor(messageNextCursor);
 </script>
 
 <template>

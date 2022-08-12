@@ -9,15 +9,12 @@ interface ChatRoomListItemProps {
 }
 
 const { room } = defineProps<ChatRoomListItemProps>();
-const client = useClient();
 const roomStore = useRoomStore();
 const { createOrUpdateRoom } = roomStore;
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = ref(false);
 const active = computed(() => room.id === currentRoomId.value);
-const onUpdateRoom = async () => {
-  // @NOTE Change this back to just Date once we add superjson
-  const updatedRoom = await client.mutation("room.updateRoom", { id: room.id, updatedAt: new Date().toISOString() });
+const onUpdateRoom = async (updatedRoom: Room) => {
   createOrUpdateRoom(updatedRoom);
   navigateTo(MESSAGES_PATH(room.id));
 };
@@ -26,7 +23,7 @@ const onUpdateRoom = async () => {
 <!-- @NOTE Route transitions doesn't like this component with invoke render outside of default slot :C -->
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <v-list-item :active="active" :title="room.name" @click="onUpdateRoom">
+    <v-list-item :active="active" :title="room.name" :value="room.id" @click="onUpdateRoom(room)">
       <template #prepend>
         <v-badge m="r-4" color="green" location="bottom end" dot>
           <v-avatar v-if="room.avatar">

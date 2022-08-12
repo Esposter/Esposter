@@ -57,21 +57,38 @@ export const useRoomStore = defineStore({
     },
   },
   actions: {
-    createOrUpdateRoom(room: Room) {
+    createOrUpdateRoom(room: Room, push = false) {
       const index = this.roomList.findIndex((r) => r.id === room.id);
-      if (index === -1) this.roomList.unshift(room);
-      else this.roomList[index] = { ...this.roomList[index], ...room };
+      if (index === -1) {
+        if (push) this.roomList.push(room);
+        else this.roomList.unshift(room);
+      } else this.roomList[index] = { ...this.roomList[index], ...room };
     },
     deleteRoom(id: string) {
       this.roomList = this.roomList.filter((r) => r.id !== id);
     },
     pushRooms(rooms: Room[]) {
       if (this.roomSearchQuery) this.roomListSearched.push(...rooms);
-      else this.roomList.push(...rooms);
+      else rooms.forEach((r) => this.createOrUpdateRoom(r, true));
     },
     updateRoomNextCursor(roomNextCursor: string | null) {
       if (this.roomSearchQuery) this.roomListSearchedNextCursor = roomNextCursor;
       else this.roomListNextCursor = roomNextCursor;
+    },
+    createOrUpdateMember(member: User) {
+      if (!this.currentRoomId) return;
+
+      const newMembers = this.membersMap[this.currentRoomId] ?? [];
+      const index = newMembers.findIndex((m) => m.id === member.id);
+      if (index === -1) newMembers.push(member);
+      else newMembers[index] = { ...newMembers[index], ...member };
+
+      this.membersMap[this.currentRoomId] = newMembers;
+    },
+    updateMemberNextCursor(memberNextCursor: string | null) {
+      if (!this.currentRoomId) return;
+
+      this.memberNextCursorMap[this.currentRoomId] = memberNextCursor;
     },
     createMessage(newMessage: MessageEntity) {
       if (!this.currentRoomId) return;
