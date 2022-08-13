@@ -1,10 +1,9 @@
 <script setup lang="ts">
-// @NOTE We shouldn't need this import
+// @NOTE We shouldn't need these imports
+import EditedMessage from "@/components/Chat/EditedMessage.vue";
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
-import { useMessageStore } from "@/store/useMessageStore";
-import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
 interface ChatMessageProps {
@@ -13,13 +12,8 @@ interface ChatMessageProps {
 
 const props = defineProps<ChatMessageProps>();
 const message = toRef(props, "message");
-const currentMessage = ref(message.value.message);
-const client = useClient();
-const roomStore = useRoomStore();
-const { updateMessage } = useMessageStore();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
-const { currentRoomId } = storeToRefs(roomStore);
 const member = computed(() => members.value.find((m) => m.id === message.value.userId));
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
@@ -29,33 +23,14 @@ const active = computed(
   () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isEditMode.value
 );
 const activeNotEdit = computed(() => active.value && !isEditMode.value);
-const onUpdateMessage = async (updateDeleteMode: (value: boolean) => void) => {
-  try {
-    if (!currentRoomId.value || currentMessage.value === message.value.message) return;
-    if (!currentMessage.value) {
-      updateDeleteMode(true);
-      return;
-    }
-
-    const updatedMessage = await client.mutation("message.updateMessage", {
-      partitionKey: message.value.partitionKey,
-      rowKey: message.value.rowKey,
-      message: currentMessage.value,
-    });
-    if (updatedMessage) updateMessage(updatedMessage);
-  } finally {
-    isEditMode.value = false;
-    currentMessage.value = message.value.message;
-  }
-};
 </script>
 
 <template>
   <ChatDeleteMessageDialog :message="message">
-    <template #message="{ updateDeleteMode }">
+    <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
         v-if="member"
-        :active="active"
+        :active="active && !isDeleteMode"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
@@ -68,29 +43,16 @@ const onUpdateMessage = async (updateDeleteMode: (value: boolean) => void) => {
         <v-list-item-title font="bold!">
           {{ member.username }}
         </v-list-item-title>
-        <div v-if="isEditMode">
-          <!-- @NOTE We should be able to autofocus this when it appears -->
-          <v-text-field
-            density="compact"
-            variant="solo"
-            hide-details
-            :model-value="currentMessage"
-            @update:model-value="(value) => (currentMessage = value)"
-            @keydown.enter="onUpdateMessage(updateDeleteMode)"
-            @keydown.esc="isEditMode = false"
-          />
-          <span text="3">
-            escape to <span class="text-info underline" cursor="pointer" @click="isEditMode = false">cancel</span> •
-            enter to
-            <span class="text-info underline" cursor="pointer" @click="onUpdateMessage(updateDeleteMode)">save</span>
-          </span>
-        </div>
+        <EditedMessage
+          v-if="isEditMode"
+          :message="message"
+          :updateDeleteMode="updateDeleteMode"
+          @update:edit-message="(value) => (isEditMode = value)"
+        />
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
         </v-list-item-subtitle>
       </v-list-item>
-    </template>
-    <template #default="{ updateDeleteMode }">
       <div position="relative" z="1">
         <div
           v-show="activeNotEdit"
@@ -111,6 +73,22 @@ const onUpdateMessage = async (updateDeleteMode: (value: boolean) => void) => {
           </v-hover>
         </div>
       </div>
+    </template>
+    <template #messagePreview>
+      <v-list-item v-if="member">
+        <template #prepend>
+          <v-avatar v-if="member.avatar">
+            <v-img :src="member.avatar" :alt="member.username" />
+          </v-avatar>
+          <DefaultAvatar v-else />
+        </template>
+        <v-list-item-title font="bold!">
+          {{ member.username }}
+        </v-list-item-title>
+        <v-list-item-subtitle op="100!">
+          {{ message.message }}
+        </v-list-item-subtitle>
+      </v-list-item>
     </template>
   </ChatDeleteMessageDialog>
 </template>
