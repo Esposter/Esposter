@@ -1,9 +1,9 @@
 import chatMembers from "@/assets/data/chatMembers.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
-import { User, userSchema } from "@/server/trpc/user";
+import { userSchema } from "@/server/trpc/user";
 import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
-import type { Room as PrismaRoom } from "@prisma/client";
+import type { Room as PrismaRoom, User } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";

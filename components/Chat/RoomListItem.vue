@@ -8,31 +8,29 @@ interface ChatRoomListItemProps {
   room: Room;
 }
 
-const { room } = defineProps<ChatRoomListItemProps>();
+const props = defineProps<ChatRoomListItemProps>();
+const room = toRef(props, "room");
 const roomStore = useRoomStore();
-const { updateRoom } = roomStore;
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = ref(false);
-const active = computed(() => room.id === currentRoomId.value);
-const onUpdateRoom = async (updatedRoom: Room) => {
-  updateRoom(updatedRoom);
-  navigateTo(MESSAGES_PATH(room.id));
-};
+const active = computed(() => room.value.id === currentRoomId.value);
 </script>
 
 <!-- @NOTE Route transitions doesn't like this component with invoke render outside of default slot :C -->
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <v-list-item :active="active" :title="room.name" :value="room.id" @click="onUpdateRoom(room)">
-      <template #prepend>
-        <v-badge m="r-4" color="green" location="bottom end" dot>
-          <v-avatar v-if="room.avatar">
-            <v-img :src="room.avatar" :alt="room.name" />
-          </v-avatar>
-          <DefaultAvatar v-else :name="room.name" />
-        </v-badge>
-      </template>
-    </v-list-item>
+    <InvisibleNuxtLink :to="MESSAGES_PATH(room.id)">
+      <v-list-item :active="active" :title="room.name" :value="room.id">
+        <template #prepend>
+          <v-badge m="r-4" color="green" location="bottom end" dot>
+            <v-avatar v-if="room.avatar">
+              <v-img :src="room.avatar" :alt="room.name" />
+            </v-avatar>
+            <DefaultAvatar v-else :name="room.name" />
+          </v-badge>
+        </template>
+      </v-list-item>
+    </InvisibleNuxtLink>
     <ChatDeleteRoomButton
       v-show="isHovering"
       position="absolute"

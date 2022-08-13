@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@/server/trpc/user";
+import type { User } from "@prisma/client";
 
 interface ChatMemberListItemProps {
   member: User;

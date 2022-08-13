@@ -9,7 +9,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const messageStore = useMessageStore();
 const { pushMessages, updateMessageNextCursor } = messageStore;
 const { messages, messageNextCursor } = storeToRefs(messageStore);
-const active = computed(() => Boolean(messageNextCursor.value));
+const hasMore = computed(() => Boolean(messageNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
   if (!currentRoomId.value) return;
 
@@ -26,6 +26,6 @@ const fetchMoreMessages = async (finishLoading: () => void) => {
 <template>
   <v-list display="flex" flex="1 col-reverse" basis="full" lines="two">
     <ChatMessageListItem v-for="message in messages" :key="message.rowKey" :message="message" />
-    <Waypoint :active="active" @change="fetchMoreMessages" />
+    <Waypoint :active="hasMore" @change="fetchMoreMessages" />
   </v-list>
 </template>

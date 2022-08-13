@@ -3,30 +3,28 @@ import { defineStore } from "pinia";
 
 export const useRoomStore = defineStore("room", () => {
   const currentRoomId = ref<string | null>(null);
-  const roomSearchBarFocused = ref(false);
-  const roomSearchQuery = ref("");
-  const loadingRoomsSearched = ref(false);
   const roomList = ref<Room[]>([]);
-  const roomListSearched = ref<Room[]>([]);
-  const rooms = computed(() => {
-    // @NOTE Remove manually changing to date after adding superjson transformer
-    return roomSearchBarFocused.value
-      ? roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      : roomList.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-  });
-  const pushRooms = (rooms: Room[]) => {
-    if (roomSearchBarFocused.value) roomListSearched.value.push(...rooms);
-    else roomList.value.push(...rooms);
-  };
+  const pushRoomList = (rooms: Room[]) => roomList.value.push(...rooms);
+  // @NOTE Remove manually changing to date after adding superjson transformer
+  const rooms = computed(() =>
+    roomList.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  );
 
   const roomListNextCursor = ref<string | null>(null);
-  const roomListSearchedNextCursor = ref<string | null>(null);
-  const roomNextCursor = computed(() =>
-    roomSearchBarFocused.value ? roomListSearchedNextCursor.value : roomListNextCursor.value
+  const updateRoomListNextCursor = (nextCursor: string | null) => {
+    roomListNextCursor.value = nextCursor;
+  };
+
+  const roomSearchQuery = ref("");
+  const roomListSearched = ref<Room[]>([]);
+  const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
+  const roomsSearched = computed(() =>
+    roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
   );
-  const updateRoomNextCursor = (nextCursor: string | null) => {
-    if (roomSearchBarFocused.value) roomListSearchedNextCursor.value = nextCursor;
-    else roomListNextCursor.value = nextCursor;
+
+  const roomListSearchedNextCursor = ref<string | null>(null);
+  const updateRoomListSearchedNextCursor = (nextCursor: string | null) => {
+    roomListSearchedNextCursor.value = nextCursor;
   };
 
   const roomName = computed(() => {
@@ -34,7 +32,7 @@ export const useRoomStore = defineStore("room", () => {
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
-  const initialiseRooms = (rooms: Room[]) => {
+  const initialiseRoomList = (rooms: Room[]) => {
     roomList.value = rooms;
   };
   const createRoom = (newRoom: Room) => {
@@ -50,18 +48,19 @@ export const useRoomStore = defineStore("room", () => {
 
   return {
     currentRoomId,
-    roomSearchBarFocused,
-    roomSearchQuery,
-    loadingRoomsSearched,
     roomList,
+    pushRoomList,
     rooms,
-    pushRooms,
+    roomListNextCursor,
+    updateRoomListNextCursor,
+    roomSearchQuery,
     roomListSearched,
+    pushRoomListSearched,
+    roomsSearched,
     roomListSearchedNextCursor,
-    roomNextCursor,
-    updateRoomNextCursor,
+    updateRoomListSearchedNextCursor,
     roomName,
-    initialiseRooms,
+    initialiseRoomList,
     createRoom,
     updateRoom,
     deleteRoom,

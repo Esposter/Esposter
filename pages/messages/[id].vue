@@ -10,7 +10,7 @@ useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 const route = useRoute();
 const client = useClient();
 const roomStore = useRoomStore();
-const { initialiseRooms, updateRoomNextCursor } = roomStore;
+const { initialiseRoomList, updateRoomListNextCursor } = roomStore;
 const { initialiseMembers, updateMemberNextCursor } = useMemberStore();
 const { initialiseMessages, updateMessageNextCursor } = useMessageStore();
 const { currentRoomId, roomList, roomName } = storeToRefs(roomStore);
@@ -34,8 +34,8 @@ const [
 ]);
 
 if (room) rooms.push(room);
-initialiseRooms(rooms);
-updateRoomNextCursor(roomNextCursor);
+initialiseRoomList(rooms);
+updateRoomListNextCursor(roomNextCursor);
 
 initialiseMembers(members);
 updateMemberNextCursor(memberNextCursor);

@@ -15,7 +15,6 @@ export const userSchema: toZod<PrismaUser> = z.object({
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 });
-export type User = z.infer<typeof userSchema>;
 
 const createUserInputSchema = userSchema.pick({ name: true, username: true });
 export type CreateUserInput = z.infer<typeof createUserInputSchema>;

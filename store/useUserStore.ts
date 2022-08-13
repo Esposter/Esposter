@@ -1,4 +1,4 @@
-import type { User } from "@/server/trpc/user";
+import type { User } from "@prisma/client";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore({

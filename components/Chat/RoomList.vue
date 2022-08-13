@@ -1,33 +1,21 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
+import type { Room } from "@prisma/client";
 
-const client = useClient();
-const roomStore = useRoomStore();
-const { pushRooms, updateRoomNextCursor } = roomStore;
-const { roomSearchQuery, loadingRoomsSearched, rooms, roomNextCursor } = storeToRefs(roomStore);
-const active = computed(() => Boolean(roomNextCursor.value));
-const fetchMoreRooms = async (finishLoading: () => void) => {
-  const { rooms, nextCursor } = await client.query("room.readRooms", {
-    filter: roomSearchQuery.value ? { name: roomSearchQuery.value } : undefined,
-    cursor: roomNextCursor.value,
-  });
-  pushRooms(rooms);
-  updateRoomNextCursor(nextCursor);
-  finishLoading();
-};
+interface RoomListProps {
+  rooms: Room[];
+  hasMore: boolean;
+  fetchMoreRooms: () => Promise<void>;
+}
+
+const props = defineProps<RoomListProps>();
+const { fetchMoreRooms } = props;
+const { rooms, hasMore } = toRefs(props);
 </script>
 
 <template>
   <v-list>
-    <v-list-item font="bold">
-      DIRECT MESSAGES
-      <template #append>
-        <ChatCreateRoomButton />
-      </template>
-    </v-list-item>
-    <div v-if="loadingRoomsSearched" display="flex" justify="center"><v-progress-circular indeterminate /></div>
+    <slot name="prepend" />
     <ChatRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
-    <Waypoint :active="active" @change="fetchMoreRooms" />
+    <Waypoint :active="hasMore" @change="fetchMoreRooms" />
   </v-list>
 </template>
