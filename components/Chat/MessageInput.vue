@@ -18,7 +18,7 @@ const sendMessage = async () => {
 
   const createMessageInput: CreateMessageInput = {
     partitionKey: currentRoomId.value,
-    rowKey: await rowKey(),
+    rowKey: rowKey(),
     message: messageInput.value,
   };
   updateMessageInput("");
