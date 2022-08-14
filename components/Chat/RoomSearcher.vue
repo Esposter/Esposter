@@ -21,10 +21,8 @@ const dialog = ref(false);
 </script>
 
 <template>
-  <v-dialog v-model="dialog" transition="none">
-    <template #activator="{ props }">
-      <v-btn class="normal-case" variant="outlined" :="props">Find or start a conversation</v-btn>
-    </template>
+  <v-btn class="normal-case" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+  <v-dialog v-model="dialog">
     <v-card min-width="400">
       <v-card-title>
         <v-text-field
