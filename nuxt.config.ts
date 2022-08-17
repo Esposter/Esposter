@@ -41,6 +41,6 @@ export default defineNuxtConfig({
     facebookClientId: process.env.FACEBOOK_CLIENT_ID || "809093449746215",
     azureStorageAccountConnectionString:
       process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING ||
-      "DefaultEndpointsProtocol=https;AccountName=esposterdev;AccountKey=VlyN9MnHOIsr4VsipCVca3uQSwmIL1sTwAe5ClNsT20SUJAUveBFnQaX3aKgpmFoeZmtyQLsGy6pwBxr+ZEMfw==;BlobEndpoint=https://esposterdev.blob.core.windows.net/;QueueEndpoint=https://esposterdev.queue.core.windows.net/;TableEndpoint=https://esposterdev.table.core.windows.net/;FileEndpoint=https://esposterdev.file.core.windows.net/",
+      "DefaultEndpointsProtocol=https;AccountName=dshpstespauea001;AccountKey=QYIQmACOBdRXGUkysPRCVdN+H0Jj2ruOR/fGw7wLnnqXvSHRUIiwuTyrJ4iJmjYnDXrDnSY0W4m4+ASt8G6euQ==;BlobEndpoint=https://dshpstespauea001.blob.core.windows.net/;QueueEndpoint=https://dshpstespauea001.queue.core.windows.net/;TableEndpoint=https://dshpstespauea001.table.core.windows.net/;FileEndpoint=https://dshpstespauea001.file.core.windows.net/",
   },
 });

@@ -17,7 +17,9 @@ export const THEME_COOKIE_NAME = "theme";
 export const PRIVACY_POLICY_PATH = "https://www.termsfeed.com/live/367522f3-27be-4faa-a7bd-dda7b419a8fc";
 export const TERMS_AND_CONDITIONS_PATH = "https://www.termsfeed.com/live/7202726c-ae87-41cd-af54-9bde6ca4477a";
 
-export const BLOB_URL = isProd ? "https://esposter.blob.core.windows.net" : "https://esposterdev.blob.core.windows.net";
+export const BLOB_URL = isProd
+  ? "https://pshpstespauea001.blob.core.windows.net"
+  : "https://dshpstespauea001.blob.core.windows.net";
 export const LOGO_IMAGE_URL = `${BLOB_URL}/assets/Esposter/logo.jpeg`;
 
 /**
