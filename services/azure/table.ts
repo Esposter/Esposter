@@ -1,30 +1,26 @@
 import { AzureTable } from "@/services/azure/types";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
 import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
-import { TableClient, TableServiceClient } from "@azure/data-tables";
+import { TableClient } from "@azure/data-tables";
 
 const runtimeConfig = useRuntimeConfig();
 
-export const tableServiceClient = TableServiceClient.fromConnectionString(
-  runtimeConfig.azureStorageAccountConnectionString
-);
-
 export const getTableClient = async (tableName: AzureTable) => {
-  const table = TableClient.fromConnectionString(runtimeConfig.azureStorageAccountConnectionString, tableName);
+  const tableClient = TableClient.fromConnectionString(runtimeConfig.azureStorageAccountConnectionString, tableName);
   try {
-    await table.createTable();
-    return table;
+    await tableClient.createTable();
+    return tableClient;
   } catch {
-    return table;
+    return tableClient;
   }
 };
 
 export const getTopNEntities = async <Entity extends object>(
-  client: TableClient,
+  tableClient: TableClient,
   topN: number,
   queryOptions?: TableEntityQueryOptions
 ): Promise<Entity[]> => {
-  const listResults = client.listEntities<Entity>({ queryOptions });
+  const listResults = tableClient.listEntities<Entity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });
 
   /**
@@ -39,24 +35,30 @@ export const getTopNEntities = async <Entity extends object>(
 
 /**
  *
- * @param client
- * @param actions
+ * @param tableClient
+ * @param args
  * @returns If the transaction was successful.
  */
-export const submitTransaction = async (client: TableClient, actions: TransactionAction[]) => {
-  if (actions.length === 0) return false;
-  const response = await client.submitTransaction(actions);
+export const submitTransaction = async (
+  tableClient: TableClient,
+  ...args: Parameters<typeof tableClient["submitTransaction"]>
+) => {
+  const response = await tableClient.submitTransaction(...args);
   const error = response.status >= 400;
-  if (error) console.error(`Failed to submit azure table transaction for table ${client.tableName}`);
+  if (error) console.error(`Failed to submit azure table transaction for table ${tableClient.tableName}`);
   return !error;
 };
 
-export const addActions = async (client: TableClient, actions: TransactionAction[], ...items: TransactionAction[]) => {
+export const addActions = async (
+  tableClient: TableClient,
+  actions: TransactionAction[],
+  ...items: TransactionAction[]
+) => {
   let resultActions = actions;
 
   for (const item of items) {
     if (resultActions.length === AZURE_MAX_BATCH_SIZE) {
-      await submitTransaction(client, resultActions);
+      await submitTransaction(tableClient, resultActions);
       resultActions = [];
     }
     resultActions.push(item);

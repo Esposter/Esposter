@@ -8,6 +8,10 @@ export enum AzureBlob {
   Assets = "assets",
 }
 
+export enum AzureQueue {
+  AIChatbotPendingMessageReplies = "AIChatbotPendingMessageReplies",
+}
+
 export interface AzureMessageEntity extends TableEntity {
   userId: string;
   message: string;
