@@ -11,12 +11,6 @@ export const getQueueClient = async (queueName: AzureQueue) => {
   return queueClient;
 };
 
-/**
- *
- * @param queueClient
- * @param args
- * @returns If the transaction was successful.
- */
 export const sendMessage = async (queueClient: QueueClient, ...args: Parameters<typeof queueClient["sendMessage"]>) => {
   const response = await queueClient.sendMessage(...args);
   const error = response._response.status >= 400;

@@ -33,12 +33,6 @@ export const getTopNEntities = async <Entity extends object>(
   return [];
 };
 
-/**
- *
- * @param tableClient
- * @param args
- * @returns If the transaction was successful.
- */
 export const submitTransaction = async (
   tableClient: TableClient,
   ...args: Parameters<typeof tableClient["submitTransaction"]>
