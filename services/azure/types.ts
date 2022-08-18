@@ -9,7 +9,7 @@ export enum AzureBlob {
 }
 
 export enum AzureQueue {
-  AIChatbotPendingMessageReplies = "AIChatbotPendingMessageReplies",
+  AIChatbotPendingMessageReplies = "ai-chatbot-pending-message-replies",
 }
 
 export interface AzureMessageEntity extends TableEntity {
