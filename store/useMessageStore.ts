@@ -6,10 +6,25 @@ import { defineStore } from "pinia";
 export const useMessageStore = defineStore("messageStore", () => {
   const roomStore = useRoomStore();
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
-  const messages = computed(() => {
+  const pushMessageList = (messages: MessageEntity[]) => {
+    if (!roomStore.currentRoomId) return;
+    messagesMap.value[roomStore.currentRoomId].push(...messages);
+  };
+  const messageList = computed(() => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return [];
     return messagesMap.value[roomStore.currentRoomId];
   });
+
+  const messageListNextCursorMap = ref<Record<string, string | null>>({});
+  const messageListNextCursor = computed(() => {
+    if (!roomStore.currentRoomId || !messageListNextCursorMap.value[roomStore.currentRoomId]) return null;
+    return messageListNextCursorMap.value[roomStore.currentRoomId];
+  });
+  const updateMessageListNextCursor = (messageListNextCursor: string | null) => {
+    if (!roomStore.currentRoomId) return;
+    messageListNextCursorMap.value[roomStore.currentRoomId] = messageListNextCursor;
+  };
+
   const initialiseMessages = (messages: MessageEntity[]) => {
     if (!roomStore.currentRoomId) return;
     messagesMap.value[roomStore.currentRoomId] = messages;
@@ -36,29 +51,15 @@ export const useMessageStore = defineStore("messageStore", () => {
       (m) => !(m.partitionKey === id.partitionKey && m.rowKey === id.rowKey)
     );
   };
-  const pushMessages = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId) return;
-    messagesMap.value[roomStore.currentRoomId].push(...messages);
-  };
-
-  const messageNextCursorMap = ref<Record<string, string | null>>({});
-  const messageNextCursor = computed(() => {
-    if (!roomStore.currentRoomId || !messageNextCursorMap.value[roomStore.currentRoomId]) return null;
-    return messageNextCursorMap.value[roomStore.currentRoomId];
-  });
-  const updateMessageNextCursor = (messageNextCursor: string | null) => {
-    if (!roomStore.currentRoomId) return;
-    messageNextCursorMap.value[roomStore.currentRoomId] = messageNextCursor;
-  };
 
   return {
-    messages,
+    messageList,
+    pushMessageList,
+    messageListNextCursor,
+    updateMessageListNextCursor,
     initialiseMessages,
     createMessage,
     updateMessage,
     deleteMessage,
-    pushMessages,
-    messageNextCursor,
-    updateMessageNextCursor,
   };
 });

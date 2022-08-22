@@ -13,8 +13,8 @@ interface ChatMessageProps {
 const props = defineProps<ChatMessageProps>();
 const message = toRef(props, "message");
 const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
-const member = computed(() => members.value.find((m) => m.id === message.value.userId));
+const { memberList } = storeToRefs(memberStore);
+const member = computed(() => memberList.value.find((m) => m.id === message.value.userId));
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);

@@ -53,10 +53,7 @@ export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
 export const roomRouter = createRouter()
   .query("readRoom", {
     input: readRoomInputSchema,
-    resolve: async ({ input }) => {
-      if (input) return prisma.room.findFirst({ where: { id: input } });
-      else return prisma.room.findFirst({ orderBy: { updatedAt: "desc" } });
-    },
+    resolve: async ({ input }) => prisma.room.findFirst({ where: { id: input }, orderBy: { updatedAt: "desc" } }),
   })
   .query("readRooms", {
     input: readRoomsInputSchema,
@@ -64,7 +61,7 @@ export const roomRouter = createRouter()
       const name = filter?.name;
       const rooms = await prisma.room.findMany({
         take: FETCH_LIMIT + 1,
-        where: name ? { name: { contains: name, mode: "insensitive" } } : undefined,
+        where: { name: { contains: name, mode: "insensitive" } },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { updatedAt: "desc" },
       });

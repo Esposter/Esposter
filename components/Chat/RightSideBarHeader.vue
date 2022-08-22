@@ -3,8 +3,8 @@ import { useMemberStore } from "@/store/useMemberStore";
 import { storeToRefs } from "pinia";
 
 const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
-const membersCount = computed(() => members.value.length);
+const { memberList } = storeToRefs(memberStore);
+const membersCount = computed(() => memberList.value.length);
 </script>
 
 <template>

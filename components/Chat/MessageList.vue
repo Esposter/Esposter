@@ -7,25 +7,34 @@ const client = useClient();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const messageStore = useMessageStore();
-const { pushMessages, updateMessageNextCursor } = messageStore;
-const { messages, messageNextCursor } = storeToRefs(messageStore);
-const hasMore = computed(() => Boolean(messageNextCursor.value));
+const { pushMessageList, updateMessageListNextCursor, initialiseMessages } = messageStore;
+const { messageList, messageListNextCursor } = storeToRefs(messageStore);
+const hasMore = computed(() => Boolean(messageListNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
   if (!currentRoomId.value) return;
 
   const { messages, nextCursor } = await client.query("message.readMessages", {
     filter: { partitionKey: currentRoomId.value },
-    cursor: messageNextCursor.value,
+    cursor: messageListNextCursor.value,
   });
-  pushMessages(messages);
-  updateMessageNextCursor(nextCursor);
+  pushMessageList(messages);
+  updateMessageListNextCursor(nextCursor);
   finishLoading();
 };
+
+onMounted(async () => {
+  const { messages, nextCursor } = currentRoomId.value
+    ? await client.query("message.readMessages", { filter: { partitionKey: currentRoomId.value }, cursor: null })
+    : { messages: [], nextCursor: null };
+
+  initialiseMessages(messages);
+  updateMessageListNextCursor(nextCursor);
+});
 </script>
 
 <template>
   <v-list display="flex" flex="1 col-reverse" basis="full" lines="two">
-    <ChatMessageListItem v-for="message in messages" :key="message.rowKey" :message="message" />
+    <ChatMessageListItem v-for="message in messageList" :key="message.rowKey" :message="message" />
     <Waypoint :active="hasMore" @change="fetchMoreMessages" />
   </v-list>
 </template>

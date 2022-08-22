@@ -4,8 +4,8 @@ import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
-const { pushRoomList, updateRoomListNextCursor } = roomStore;
-const { roomList, roomListNextCursor } = storeToRefs(roomStore);
+const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
+const { currentRoomId, roomList, roomListNextCursor } = storeToRefs(roomStore);
 const hasMore = computed(() => Boolean(roomListNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { rooms, nextCursor } = await client.query("room.readRooms", { cursor: roomListNextCursor.value });
@@ -13,6 +13,17 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
   updateRoomListNextCursor(nextCursor);
   finishLoading();
 };
+
+onMounted(async () => {
+  const [room, { rooms, nextCursor }] = await Promise.all([
+    currentRoomId.value ? client.query("room.readRoom", currentRoomId.value) : null,
+    client.query("room.readRooms", { cursor: null }),
+  ]);
+
+  if (room) rooms.push(room);
+  initialiseRoomList(rooms);
+  updateRoomListNextCursor(nextCursor);
+});
 </script>
 
 <template>
