@@ -26,7 +26,7 @@ html {
   width: 100%;
   height: 2px;
   background-color: $vueBackgroundColor;
-  z-index: 9999;
+  z-index: 1000;
 }
 
 /* Fancy blur effect */

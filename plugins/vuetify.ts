@@ -7,14 +7,14 @@ const theme: VuetifyOptions["theme"] = {
     light: {
       dark: false,
       colors: {
-        primary: "#2b5876",
+        primary: "#61dbfb",
         background: "#dae0e6",
       },
     },
     dark: {
       dark: true,
       colors: {
-        primary: "#2b5876",
+        primary: "#61dbfb",
         background: "#18191a",
         surface: "#36393f",
       },

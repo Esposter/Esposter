@@ -5,7 +5,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout chatbot>
     <v-container fluid>
       <v-row>
         <v-col display="flex" justify="center">

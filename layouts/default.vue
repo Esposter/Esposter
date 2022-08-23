@@ -3,9 +3,10 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 
 interface DefaultLayoutProps {
   mainClass?: string;
+  chatbot?: true;
 }
 
-const { mainClass } = defineProps<DefaultLayoutProps>();
+const { mainClass, chatbot } = defineProps<DefaultLayoutProps>();
 const { mobile } = useDisplay();
 // The internal variables will track if we want to actually show the drawers
 const internalLeftDrawer = ref(!mobile.value);
@@ -60,6 +61,8 @@ const rightDrawer = ref(!mobile.value);
     <v-footer v-if="$slots.footer" app>
       <slot name="footer" />
     </v-footer>
+
+    <EsposterChatBotBubble v-if="chatbot" />
   </div>
 </template>
 
