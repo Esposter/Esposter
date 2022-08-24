@@ -18,7 +18,7 @@
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.143.1",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.45.9",
+    "@unocss/nuxt": "^0.45.12",
     "gen-env-types": "^1.3.4",
     "nuxt": "3.0.0-rc.8",
     "prisma": "^4.2.1",
@@ -45,7 +45,7 @@
     "trpc-nuxt": "^0.2.6",
     "uuid": "^8.3.2",
     "vue-waypoint": "^4.2.4",
-    "vuetify": "^3.0.0-beta.7",
+    "vuetify": "^3.0.0-beta.9",
     "zod": "^3.18.0"
   }
 }
