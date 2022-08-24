@@ -38,9 +38,9 @@ export default defineNuxtConfig({
     rules: [["break-word", { "word-break": "break-word" }]],
   },
   runtimeConfig: {
-    facebookClientId: process.env.FACEBOOK_CLIENT_ID || "809093449746215",
-    azureStorageAccountConnectionString:
-      process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING ||
-      "DefaultEndpointsProtocol=https;AccountName=dshpstespauea001;AccountKey=QYIQmACOBdRXGUkysPRCVdN+H0Jj2ruOR/fGw7wLnnqXvSHRUIiwuTyrJ4iJmjYnDXrDnSY0W4m4+ASt8G6euQ==;BlobEndpoint=https://dshpstespauea001.blob.core.windows.net/;QueueEndpoint=https://dshpstespauea001.queue.core.windows.net/;TableEndpoint=https://dshpstespauea001.table.core.windows.net/;FileEndpoint=https://dshpstespauea001.file.core.windows.net/",
+    public: {
+      facebookClientId: process.env.FACEBOOK_CLIENT_ID,
+    },
+    azureStorageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
   },
 });

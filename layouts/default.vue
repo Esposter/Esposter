@@ -11,8 +11,8 @@ const { mobile } = useDisplay();
 // The internal variables will track if we want to actually show the drawers
 const internalLeftDrawer = ref(!mobile.value);
 const internalRightDrawer = ref(!mobile.value);
-// We will only expose these variables as they are only affected by the screen resizing.
-// We want the decision of showing the outer components to be only dependent on that for better UI/UX.
+// We will only expose these variables as they are only affected by the screen resizing
+// We want the decision of showing the outer components to be only dependent on that for better UI/UX
 const leftDrawer = ref(!mobile.value);
 const rightDrawer = ref(!mobile.value);
 </script>

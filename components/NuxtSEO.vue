@@ -3,7 +3,7 @@ import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
 
 // @NOTE: useTheme doesn't work with nuxt ssr
 // const { primary } = useGlobalTheme().value.colors;
-const { facebookClientId } = useRuntimeConfig();
+const runtimeConfig = useRuntimeConfig();
 
 useHead({
   titleTemplate: (title) => (title ? `Esposter | ${title}` : "Esposter"),
@@ -30,7 +30,7 @@ useHead({
     },
     {
       property: "fb:app_id",
-      content: facebookClientId,
+      content: runtimeConfig.public.facebookClientId,
     },
     {
       property: "og:title",
