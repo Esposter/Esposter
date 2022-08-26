@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@nuxtjs/google-fonts": "^3.0.0-0",
+    "@types/dedent": "^0.7.0",
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.143.1",
     "@types/uuid": "^8.3.4",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@azure/data-tables": "^13.1.2",
+    "@azure/storage-blob": "^12.11.0",
     "@azure/storage-queue": "^12.10.0",
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.1",
@@ -37,9 +39,11 @@
     "browser-hrtime": "^1.1.8",
     "chalk": "^5.0.1",
     "cli-highlight": "^2.1.11",
+    "dedent": "^0.7.0",
     "emoji-mart-vue-fast": "^11.1.1",
     "gsap": "^3.11.0",
     "nprogress": "^0.2.0",
+    "openai": "^3.0.0",
     "pinia": "^2.0.19",
     "three": "^0.143.0",
     "trpc-nuxt": "^0.2.6",

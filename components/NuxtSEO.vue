@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
 
-// @NOTE: useTheme doesn't work with nuxt ssr
+// @NOTE useTheme doesn't work with nuxt ssr
 // const { primary } = useGlobalTheme().value.colors;
 const runtimeConfig = useRuntimeConfig();
 

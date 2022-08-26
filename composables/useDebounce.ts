@@ -1,7 +1,7 @@
 export const useDebounce = <TArgs extends unknown[]>(fn: (...args: TArgs) => void, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: number;
   return (...args: TArgs) => {
     if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
+    timeoutId = window.setTimeout(() => fn(...args), delay);
   };
 };

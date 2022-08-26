@@ -162,7 +162,7 @@ const getClass = (cardId: number): string => {
 };
 
 // This is the main timer that drives the movement of cards
-const moveCardsTimer = ref<NodeJS.Timeout | undefined>(undefined);
+const moveCardsTimer = ref<number | undefined>(undefined);
 
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
@@ -187,7 +187,7 @@ const moveOneCard = () => {
 
 onMounted(() => {
   // when debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (duration > -1) moveCardsTimer.value = setInterval(moveCards, duration);
+  if (duration > -1) moveCardsTimer.value = window.setInterval(moveCards, duration);
   moveCards();
 });
 

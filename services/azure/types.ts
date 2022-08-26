@@ -4,8 +4,9 @@ export enum AzureTable {
   Messages = "Messages",
 }
 
-export enum AzureBlob {
+export enum AzureContainer {
   Assets = "assets",
+  AIChatbot = "ai-chatbot",
 }
 
 export enum AzureQueue {
