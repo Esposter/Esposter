@@ -33,7 +33,7 @@ else {
     console.log(highlightSql(`Query: ${e.query}`));
     console.log(highlightSql(`Parameters: ${e.params}`));
     console.log(highlightSql(`Duration: ${e.duration}ms`));
-    console.log(highlightSql(`Target: ${e.target}ms`));
+    console.log(highlightSql(`Target: ${e.target}`));
     console.log(highlightSql(`Time: ${e.timestamp}`));
   });
 
