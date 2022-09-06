@@ -19,14 +19,14 @@
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.144.0",
     "@types/uuid": "^8.3.4",
-    "@unocss/nuxt": "^0.45.14",
+    "@unocss/nuxt": "^0.45.18",
     "gen-env-types": "^1.3.4",
     "nuxt": "3.0.0-rc.8",
     "prisma": "^4.3.1",
     "sass": "^1.54.8",
     "tozod": "^3.0.0",
     "typescript": "^4.8.2",
-    "vue-tsc": "^0.40.5"
+    "vue-tsc": "^0.40.9"
   },
   "dependencies": {
     "@azure/data-tables": "^13.1.2",
@@ -41,15 +41,15 @@
     "cli-highlight": "^2.1.11",
     "dedent": "^0.7.0",
     "emoji-mart-vue-fast": "^11.1.1",
-    "gsap": "^3.11.0",
+    "gsap": "^3.11.1",
     "nprogress": "^0.2.0",
     "openai": "^3.0.0",
     "pinia": "^2.0.19",
     "three": "^0.144.0",
     "trpc-nuxt": "^0.2.7",
-    "uuid": "^8.3.2",
+    "uuid": "^9.0.0",
     "vue-waypoint": "^4.2.4",
     "vuetify": "^3.0.0-beta.9",
-    "zod": "^3.18.0"
+    "zod": "^3.19.0"
   }
 }
