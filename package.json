@@ -49,7 +49,7 @@
     "trpc-nuxt": "^0.2.7",
     "uuid": "^9.0.0",
     "vue-waypoint": "^4.2.4",
-    "vuetify": "^3.0.0-beta.9",
+    "vuetify": "^3.0.0-beta.10",
     "zod": "^3.19.0"
   }
 }
