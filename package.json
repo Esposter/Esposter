@@ -31,7 +31,6 @@
   "dependencies": {
     "@azure/data-tables": "^13.2.0",
     "@azure/storage-blob": "^12.11.0",
-    "@azure/storage-queue": "^12.10.0",
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.1",
     "@prisma/client": "^4.3.1",
