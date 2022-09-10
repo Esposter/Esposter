@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { User } from "@prisma/client";
 
-interface ChatMemberListItemProps {
+interface MemberListItemProps {
   member: User;
 }
 
-const { member } = defineProps<ChatMemberListItemProps>();
+const { member } = defineProps<MemberListItemProps>();
 </script>
 
 <template>

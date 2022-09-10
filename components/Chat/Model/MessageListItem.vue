@@ -6,11 +6,11 @@ import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
 import { storeToRefs } from "pinia";
 
-interface ChatMessageProps {
+interface MessageListItemProps {
   message: MessageEntity;
 }
 
-const props = defineProps<ChatMessageProps>();
+const props = defineProps<MessageListItemProps>();
 const message = toRef(props, "message");
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);

@@ -33,8 +33,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-list display="flex" flex="1 col-reverse" basis="full" lines="two">
-    <ChatMessageListItem v-for="message in messageList" :key="message.rowKey" :message="message" />
-    <Waypoint :active="hasMore" @change="fetchMoreMessages" />
-  </v-list>
+  <ChatModelMessageList :messages="messageList" :hasMore="hasMore" :fetchMoreMessages="fetchMoreMessages" />
 </template>

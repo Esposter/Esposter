@@ -12,6 +12,6 @@ const props = defineProps<ContentProps>();
 <template>
   <div display="flex" flex="col" h="full">
     <ChatContentHeader :="props" />
-    <ChatMessageList />
+    <ChatMessages />
   </div>
 </template>

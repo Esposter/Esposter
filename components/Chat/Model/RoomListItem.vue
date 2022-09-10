@@ -4,11 +4,11 @@ import { MESSAGES_PATH } from "@/util/constants";
 import type { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
 
-interface ChatRoomListItemProps {
+interface RoomListItemProps {
   room: Room;
 }
 
-const props = defineProps<ChatRoomListItemProps>();
+const props = defineProps<RoomListItemProps>();
 const room = toRef(props, "room");
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

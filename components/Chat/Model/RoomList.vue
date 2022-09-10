@@ -15,7 +15,7 @@ const { rooms, hasMore } = toRefs(props);
 <template>
   <v-list>
     <slot name="prepend" />
-    <ChatRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
+    <ChatModelRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
     <Waypoint :active="hasMore" @change="fetchMoreRooms" />
   </v-list>
 </template>

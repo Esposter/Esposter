@@ -7,7 +7,7 @@ const memberStore = useMemberStore();
 const { pushMemberList, updateMemberListNextCursor, initialiseMembersList } = memberStore;
 const { memberList, memberListNextCursor } = storeToRefs(memberStore);
 const hasMore = computed(() => Boolean(memberListNextCursor.value));
-const fetchMoreRooms = async (finishLoading: () => void) => {
+const fetchMoreMembers = async (finishLoading: () => void) => {
   const { members, nextCursor } = await client.query("room.readMembers", { cursor: memberListNextCursor.value });
   pushMemberList(members);
   updateMemberListNextCursor(nextCursor);
@@ -23,8 +23,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-list>
-    <ChatMemberListItem v-for="member in memberList" :key="member.id" :member="member" />
-    <Waypoint :active="hasMore" @change="fetchMoreRooms" />
-  </v-list>
+  <ChatModelMemberList :members="memberList" :hasMore="hasMore" :fetchMoreMembers="fetchMoreMembers" />
 </template>

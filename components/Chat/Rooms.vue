@@ -27,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ChatRoomList :rooms="roomList" :hasMore="hasMore" :fetchMoreRooms="fetchMoreRooms">
+  <ChatModelRoomList :rooms="roomList" :hasMore="hasMore" :fetchMoreRooms="fetchMoreRooms">
     <template #prepend>
       <v-list-item font="bold">
         DIRECT MESSAGES
@@ -36,5 +36,5 @@ onMounted(async () => {
         </template>
       </v-list-item>
     </template>
-  </ChatRoomList>
+  </ChatModelRoomList>
 </template>
