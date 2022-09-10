@@ -3,11 +3,11 @@ import type { DeleteMessageInput } from "@/server/trpc/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 
-interface ChatMessageProps {
+interface DeleteMessageDialogProps {
   message: MessageEntity;
 }
 
-const props = defineProps<ChatMessageProps>();
+const props = defineProps<DeleteMessageDialogProps>();
 const message = toRef(props, "message");
 const client = useClient();
 const { deleteMessage } = useMessageStore();

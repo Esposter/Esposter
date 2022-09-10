@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-interface ChatRoomListItemProps {
+interface DeleteRoomButtonProps {
   roomId: string;
 }
 
-const { roomId } = defineProps<ChatRoomListItemProps>();
+const { roomId } = defineProps<DeleteRoomButtonProps>();
 const client = useClient();
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;

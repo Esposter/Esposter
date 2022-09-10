@@ -4,12 +4,12 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
 
-interface ChatMessageProps {
+interface EditedMessageProps {
   message: MessageEntity;
   updateDeleteMode: (value: true) => void;
 }
 
-const props = defineProps<ChatMessageProps>();
+const props = defineProps<EditedMessageProps>();
 const emit = defineEmits<{ (event: "update:edit-message", active: false): void }>();
 const { updateDeleteMode } = props;
 const message = toRef(props, "message");

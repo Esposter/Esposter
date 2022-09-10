@@ -48,7 +48,6 @@ export const useRoomStore = defineStore("room", () => {
 
   return {
     currentRoomId,
-    roomList,
     pushRoomList,
     rooms,
     roomListNextCursor,

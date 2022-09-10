@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 const client = useClient();
 const roomStore = useRoomStore();
 const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
-const { currentRoomId, roomList, roomListNextCursor } = storeToRefs(roomStore);
+const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
 const hasMore = computed(() => Boolean(roomListNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { rooms, nextCursor } = await client.query("room.readRooms", { cursor: roomListNextCursor.value });
@@ -27,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ChatModelRoomList :rooms="roomList" :hasMore="hasMore" :fetchMoreRooms="fetchMoreRooms">
+  <ChatModelRoomList :rooms="rooms" :hasMore="hasMore" :fetchMoreRooms="fetchMoreRooms">
     <template #prepend>
       <v-list-item font="bold">
         DIRECT MESSAGES

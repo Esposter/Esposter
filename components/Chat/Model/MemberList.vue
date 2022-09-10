@@ -13,7 +13,7 @@ const { members, hasMore } = toRefs(props);
 </script>
 
 <template>
-  <v-list>
+  <v-list overflow-y="auto!">
     <ChatModelMemberListItem v-for="member in members" :key="member.id" :member="member" />
     <Waypoint :active="hasMore" @change="fetchMoreMembers" />
   </v-list>

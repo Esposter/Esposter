@@ -13,7 +13,7 @@ const { messages, hasMore } = toRefs(props);
 </script>
 
 <template>
-  <v-list display="flex" flex="1 col-reverse" basis="full" lines="two">
+  <v-list display="flex" flex="1 col-reverse" basis="full" overflow-y="auto!" lines="two">
     <ChatModelMessageListItem v-for="message in messages" :key="message.rowKey" :message="message" />
     <Waypoint :active="hasMore" @change="fetchMoreMessages" />
   </v-list>
