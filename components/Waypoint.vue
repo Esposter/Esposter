@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Going, Waypoint } from "vue-waypoint";
-// @NOTE Volar needs to fix detecting type usage
 import type { WaypointState } from "vue-waypoint";
+import { Going, Waypoint } from "vue-waypoint";
 
 interface WaypointProps {
   active: boolean;
