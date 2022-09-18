@@ -32,7 +32,9 @@ const items: Item[] = [
     <template #activator="{ props: menuProps }">
       <!-- @NOTE <v-tooltip location="bottom" text="More">
           <template #activator="{ props: tooltipProps }"> -->
-      <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps)" />
+      <v-avatar color="background">
+        <v-btn icon="mdi-chevron-down" :="mergeProps(menuProps)" />
+      </v-avatar>
       <!-- </template>
         </v-tooltip> -->
     </template>
@@ -40,7 +42,9 @@ const items: Item[] = [
       <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
         <v-list-item :value="item.title">
           <template #prepend>
-            <v-icon :icon="item.icon" />
+            <v-avatar color="background">
+              <v-icon :icon="item.icon" />
+            </v-avatar>
           </template>
           <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
         </v-list-item>

@@ -21,9 +21,9 @@ const dialog = ref(false);
 </script>
 
 <template>
-  <v-btn class="normal-case" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
-  <v-dialog v-model="dialog">
-    <v-card min-width="400">
+  <v-btn case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+  <v-dialog v-model="dialog" max-width="400">
+    <v-card>
       <v-card-title>
         <v-text-field
           placeholder="Where would you like to go?"

@@ -38,7 +38,7 @@ const activeNotEdit = computed(() => active.value && !isEditMode.value);
           <v-avatar v-if="member.avatar">
             <v-img :src="member.avatar" :alt="member.username" />
           </v-avatar>
-          <DefaultAvatar v-else />
+          <DefaultAvatar v-else :name="member.username" />
         </template>
         <v-list-item-title font="bold!">
           {{ member.username }}
@@ -80,7 +80,7 @@ const activeNotEdit = computed(() => active.value && !isEditMode.value);
           <v-avatar v-if="member.avatar">
             <v-img :src="member.avatar" :alt="member.username" />
           </v-avatar>
-          <DefaultAvatar v-else />
+          <DefaultAvatar v-else :name="member.username" />
         </template>
         <v-list-item-title font="bold!">
           {{ member.username }}

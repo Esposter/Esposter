@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getInitials } from "@/util/text";
-import { VAvatar } from "vuetify/components";
 
 interface DefaultAvatarProps {
   name: string;

@@ -13,10 +13,12 @@ const toggleTheme = () => {
 <template>
   <!-- @NOTE <v-tooltip location="bottom" text="Dark Mode">
       <template #activator="{ props }"> -->
-  <v-btn
-    :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-    @click="toggleTheme"
-  />
+  <v-avatar color="background">
+    <v-btn
+      :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+      @click="toggleTheme"
+    />
+  </v-avatar>
   <!-- </template>
     </v-tooltip> -->
 </template>

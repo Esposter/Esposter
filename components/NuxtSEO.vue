@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
 
-// @NOTE useTheme doesn't work with nuxt ssr
-// const { primary } = useGlobalTheme().value.colors;
+const { primary } = useGlobalTheme().value.colors;
 const runtimeConfig = useRuntimeConfig();
 
 useHead({
@@ -72,10 +71,10 @@ useHead({
       name: "application-name",
       content: "Esposter",
     },
-    // {
-    //   name: "theme-color",
-    //   content: primary,
-    // },
+    {
+      name: "theme-color",
+      content: primary,
+    },
     {
       name: "apple-mobile-web-app-capable",
       content: "yes",
@@ -100,10 +99,10 @@ useHead({
       name: "msapplication-config",
       content: "/browserconfig.xml",
     },
-    // {
-    //   name: "msapplication-TileColor",
-    //   content: primary,
-    // },
+    {
+      name: "msapplication-TileColor",
+      content: primary,
+    },
     {
       name: "msapplication-tap-highlight",
       content: "no",

@@ -50,6 +50,7 @@ useClickOutside(titleRef, async () => {
       density="compact"
       variant="solo"
       hide-details
+      autofocus
       :model-value="currentRoomName"
       @update:model-value="(value) => (currentRoomName = value)"
       @keydown.enter="onUpdateRoom"

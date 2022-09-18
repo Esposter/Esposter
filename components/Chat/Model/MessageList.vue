@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import Waypoint from "@/components/Waypoint.vue";
 import type { MessageEntity } from "@/services/azure/types";
 
 interface MessageListProps {
   messages: MessageEntity[];
   hasMore: boolean;
-  fetchMoreMessages: () => Promise<void>;
+  fetchMoreMessages: InstanceType<typeof Waypoint>["$props"]["onChange"];
 }
 
 const props = defineProps<MessageListProps>();

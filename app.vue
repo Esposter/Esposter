@@ -1,12 +1,11 @@
 <template>
   <v-app>
     <EsposterAppBar />
-    <!-- @NOTE Enable this back when vuetify fixes ssr -->
-    <!-- <NuxtTheme> -->
-    <NuxtSEO>
-      <NuxtPage />
-    </NuxtSEO>
-    <!-- </NuxtTheme> -->
+    <NuxtTheme>
+      <NuxtSEO>
+        <NuxtPage />
+      </NuxtSEO>
+    </NuxtTheme>
   </v-app>
 </template>
 

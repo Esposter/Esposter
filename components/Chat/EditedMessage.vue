@@ -41,11 +41,11 @@ const onUpdateMessage = async () => {
 </script>
 
 <template>
-  <!-- @NOTE We should be able to autofocus this when it appears -->
   <v-text-field
     density="compact"
     variant="solo"
     hide-details
+    autofocus
     :model-value="editedMessage"
     @update:model-value="(value) => (editedMessage = value)"
     @keydown.enter="onUpdateMessage()"

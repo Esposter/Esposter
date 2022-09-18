@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import Waypoint from "@/components/Waypoint.vue";
 import type { User } from "@prisma/client";
 
 interface MessageListProps {
   members: User[];
   hasMore: boolean;
-  fetchMoreMembers: () => Promise<void>;
+  fetchMoreMembers: InstanceType<typeof Waypoint>["$props"]["onChange"];
 }
 
 const props = defineProps<MessageListProps>();

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import Waypoint from "@/components/Waypoint.vue";
 import type { Room } from "@prisma/client";
 
 interface RoomListProps {
   rooms: Room[];
   hasMore: boolean;
-  fetchMoreRooms: () => Promise<void>;
+  fetchMoreRooms: InstanceType<typeof Waypoint>["$props"]["onChange"];
 }
 
 const props = defineProps<RoomListProps>();
