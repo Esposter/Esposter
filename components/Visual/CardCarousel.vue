@@ -17,7 +17,7 @@ const props = withDefaults(
   }>(),
   {
     // Duration before cards move
-    duration: 5000,
+    duration: 10000,
     maxShownCards: 5,
     // Ratio of how much shorter the next card is
     cardScaleYRatioLoss: 0.05,
@@ -186,7 +186,7 @@ const moveOneCard = () => {
 };
 
 onMounted(() => {
-  // when debugging animations it's often easier to comment out this line so that they don't move on you every so often.
+  // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
   if (duration > -1) moveCardsTimer.value = window.setInterval(moveCards, duration);
   moveCards();
 });
@@ -218,7 +218,9 @@ watch(cards, () => {
       row="start-1"
       col="start-2"
     >
-      <component :is="cardTemplate" :card="card" />
+      <VisualRotatingDiv>
+        <component :is="cardTemplate" :card="card" />
+      </VisualRotatingDiv>
     </div>
   </div>
 </template>
