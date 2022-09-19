@@ -25,7 +25,7 @@ const onUpdateRoom = async () => {
   }
 };
 
-useClickOutside(titleRef, async () => {
+onClickOutside(titleRef, async () => {
   if (isEditMode.value) await onUpdateRoom();
 });
 </script>
