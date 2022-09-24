@@ -23,8 +23,8 @@ const rightDrawer = ref(!mobile.value);
     <!-- Ignore parent div here, it is only for nuxt -->
     <v-navigation-drawer
       v-if="$slots.left"
-      :model-value="internalLeftDrawer"
       app
+      :model-value="internalLeftDrawer"
       @update:model-value="
         (value) => {
           internalLeftDrawer = value;
@@ -37,9 +37,9 @@ const rightDrawer = ref(!mobile.value);
 
     <v-navigation-drawer
       v-if="$slots.right"
-      :model-value="internalRightDrawer"
       app
       location="right"
+      :model-value="internalRightDrawer"
       @update:model-value="
         (value) => {
           internalRightDrawer = value;

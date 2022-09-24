@@ -28,9 +28,9 @@ const onDeleteMessage = async () => {
 
 <template>
   <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
-  <v-dialog v-model="isDeleteMode">
+  <v-dialog v-model="isDeleteMode" max-width="500">
     <v-card title="Delete Message" text="Are you sure you want to delete this message?">
-      <div m="x-4" rd="2" border>
+      <div m="x-4" rd="2" b="1">
         <slot name="messagePreview" />
       </div>
       <v-card-actions>

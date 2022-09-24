@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { Post } from "@prisma/client";
+import { PostWithCreator } from "@/prisma/types";
 
 interface CardProps {
-  post: Post;
+  post: Partial<PostWithCreator>;
 }
+
+const props = defineProps<CardProps>();
+const post = toRef(props, "post");
 </script>
 
 <template>
-  <v-card> </v-card>
+  <v-card b="1! gray!">
+    <v-card-title>
+      <v-avatar>
+        <v-img v-if="post.creator?.avatar" :src="post.creator.avatar" />
+      </v-avatar>
+      {{ post.title }}
+    </v-card-title>
+    <v-card-text>
+      {{ post.description }}
+    </v-card-text>
+  </v-card>
 </template>

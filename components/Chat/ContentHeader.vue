@@ -11,7 +11,7 @@ const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = toRefs(prop
 </script>
 
 <template>
-  <v-toolbar class="v-app-bar" tag="div" height="56" border>
+  <v-toolbar class="v-app-bar" height="56" b="1!">
     <template v-if="!leftDrawer" #prepend>
       <v-btn icon="mdi-menu" size="small" @click="openLeftDrawer" />
     </template>
