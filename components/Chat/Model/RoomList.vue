@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Waypoint from "@/components/Waypoint.vue";
 import type { Room } from "@prisma/client";
+import Waypoint from "@/components/Waypoint.vue";
 
 interface RoomListProps {
   rooms: Room[];
@@ -9,8 +9,7 @@ interface RoomListProps {
 }
 
 const props = defineProps<RoomListProps>();
-const { fetchMoreRooms } = props;
-const { rooms, hasMore } = toRefs(props);
+const { rooms, hasMore, fetchMoreRooms } = toRefs(props);
 </script>
 
 <template>

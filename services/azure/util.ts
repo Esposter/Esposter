@@ -1,6 +1,6 @@
-import { AZURE_SELF_DESTRUCT_TIMER, isServer } from "@/util/constants";
 import BigInt from "big-integer";
 import hrtime from "browser-hrtime";
+import { AZURE_SELF_DESTRUCT_TIMER, isServer } from "@/util/constants";
 
 /**
  * Get current epoch time in nanoseconds.

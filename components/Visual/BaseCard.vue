@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { Card } from "@/components/Visual/types";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import type { Card } from "@/components/Visual/types";
 
 interface BaseCardProps {
   card: Card;
 }
 
-const { card } = defineProps<BaseCardProps>();
+const props = defineProps<BaseCardProps>();
+const card = toRef(props, "card");
 const { xs, sm } = useDisplay();
 </script>
 

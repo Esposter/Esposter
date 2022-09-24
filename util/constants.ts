@@ -7,8 +7,8 @@ export const isServer = () => typeof window === "undefined";
 export const SITE_DOMAIN = isProd ? "https://esposter.com" : "http://localhost:3000";
 
 /* public folder paths */
-export const FAVICON_32x32_PATH = "/icons/favicon-32x32.png";
-export const FAVICON_16x16_PATH = "/icons/favicon-16x16.png";
+export const FAVICON_32X32_PATH = "/icons/favicon-32x32.png";
+export const FAVICON_16X16_PATH = "/icons/favicon-16x16.png";
 
 /* cookie names, yum! C: */
 export const THEME_COOKIE_NAME = "theme";

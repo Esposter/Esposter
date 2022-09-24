@@ -1,8 +1,8 @@
+import dedent from "dedent";
 import { append, getContainerClient } from "@/services/azure/blob";
 import { AzureContainer } from "@/services/azure/types";
 import { generateResponse } from "@/services/openai";
 import { sanitiseText, streamToText } from "@/util/text";
-import dedent from "dedent";
 
 const chatHistoryFileName = "ChatHistory.txt";
 

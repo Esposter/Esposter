@@ -1,12 +1,12 @@
+import type { Room as PrismaRoom, User } from "@prisma/client";
+import { toZod } from "tozod";
+import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 import chatMembers from "@/assets/data/chatMembers.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
 import { userSchema } from "@/server/trpc/user";
 import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
-import type { Room as PrismaRoom, User } from "@prisma/client";
-import { toZod } from "tozod";
-import { v4 as uuidv4 } from "uuid";
-import { z } from "zod";
 
 const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> = z.object({
   id: z.string().uuid(),
@@ -53,7 +53,7 @@ export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
 export const roomRouter = createRouter()
   .query("readRoom", {
     input: readRoomInputSchema,
-    resolve: async ({ input }) => prisma.room.findFirst({ where: { id: input }, orderBy: { updatedAt: "desc" } }),
+    resolve: ({ input }) => prisma.room.findFirst({ where: { id: input }, orderBy: { updatedAt: "desc" } }),
   })
   .query("readRooms", {
     input: readRoomsInputSchema,

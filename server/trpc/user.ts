@@ -1,10 +1,10 @@
-import { createRouter } from "@/server/trpc/createRouter";
-import { prisma } from "@/server/trpc/prisma";
-import { USER_MAX_NAME_LENGTH } from "@/util/constants";
 import type { User as PrismaUser } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { USER_MAX_NAME_LENGTH } from "@/util/constants";
+import { prisma } from "@/server/trpc/prisma";
+import { createRouter } from "@/server/trpc/createRouter";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),

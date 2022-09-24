@@ -1,4 +1,4 @@
+import * as trpc from "@trpc/server";
 import type { Context } from "@/server/trpc/context";
-import trpc from "@trpc/server";
 
 export const createRouter = () => trpc.router<Context>();

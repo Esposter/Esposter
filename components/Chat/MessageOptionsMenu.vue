@@ -11,7 +11,8 @@ interface Item {
   onClick: (e: MouseEvent) => void;
 }
 
-const { isHovering, hoverProps } = defineProps<MessageOptionsMenuProps>();
+const props = defineProps<MessageOptionsMenuProps>();
+const { isHovering, hoverProps } = toRefs(props);
 const emit = defineEmits<{
   (event: "update", active: boolean): void;
   (event: "update:edit-message", active: true): void;

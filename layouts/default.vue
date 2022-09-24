@@ -6,7 +6,8 @@ interface DefaultLayoutProps {
   chatbot?: true;
 }
 
-const { mainClass, chatbot } = defineProps<DefaultLayoutProps>();
+const props = defineProps<DefaultLayoutProps>();
+const { mainClass, chatbot } = toRefs(props);
 const { mobile } = useDisplay();
 // The internal variables will track if we want to actually show the drawers
 const internalLeftDrawer = ref(!mobile.value);
@@ -23,13 +24,13 @@ const rightDrawer = ref(!mobile.value);
     <v-navigation-drawer
       v-if="$slots.left"
       :model-value="internalLeftDrawer"
+      app
       @update:model-value="
         (value) => {
           internalLeftDrawer = value;
           leftDrawer = value;
         }
       "
-      app
     >
       <slot name="left" />
     </v-navigation-drawer>
@@ -37,24 +38,24 @@ const rightDrawer = ref(!mobile.value);
     <v-navigation-drawer
       v-if="$slots.right"
       :model-value="internalRightDrawer"
+      app
+      location="right"
       @update:model-value="
         (value) => {
           internalRightDrawer = value;
           rightDrawer = value;
         }
       "
-      app
-      location="right"
     >
       <slot name="right" />
     </v-navigation-drawer>
 
     <v-main :class="mainClass">
       <slot
-        :leftDrawer="leftDrawer"
-        :rightDrawer="rightDrawer"
-        :openLeftDrawer="() => (internalLeftDrawer = true)"
-        :openRightDrawer="() => (internalRightDrawer = true)"
+        :left-drawer="leftDrawer"
+        :right-drawer="rightDrawer"
+        :open-left-drawer="() => (internalLeftDrawer = true)"
+        :open-right-drawer="() => (internalRightDrawer = true)"
       />
     </v-main>
 

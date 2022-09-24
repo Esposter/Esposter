@@ -1,6 +1,6 @@
-import { useRoomStore } from "@/store/useRoomStore";
 import type { User } from "@prisma/client";
 import { defineStore } from "pinia";
+import { useRoomStore } from "@/store/useRoomStore";
 
 export const useMemberStore = defineStore("member", () => {
   const roomStore = useRoomStore();

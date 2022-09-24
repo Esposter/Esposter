@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // @NOTE We shouldn't need these imports
+import { storeToRefs } from "pinia";
 import EditedMessage from "@/components/Chat/EditedMessage.vue";
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
-import { storeToRefs } from "pinia";
 
 interface MessageListItemProps {
   message: MessageEntity;
@@ -46,7 +46,7 @@ const activeNotEdit = computed(() => active.value && !isEditMode.value);
         <EditedMessage
           v-if="isEditMode"
           :message="message"
-          :updateDeleteMode="updateDeleteMode"
+          :update-delete-mode="updateDeleteMode"
           @update:edit-message="(value) => (isEditMode = value)"
         />
         <v-list-item-subtitle v-else op="100!">
@@ -62,10 +62,10 @@ const activeNotEdit = computed(() => active.value && !isEditMode.value);
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
-          <v-hover #default="{ isHovering, props }">
+          <v-hover v-slot="{ isHovering, props: hoverProps }">
             <MessageOptionsMenu
-              :isHovering="isHovering"
-              :hoverProps="props"
+              :is-hovering="isHovering"
+              :hover-props="hoverProps"
               @update="(value) => (isOptionsChildrenActive = value)"
               @update:edit-message="(value) => (isEditMode = value)"
               @update:delete-message="updateDeleteMode"

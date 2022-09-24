@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/useRoomStore";
-import { MESSAGES_PATH } from "@/util/constants";
 import type { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
+import { useRoomStore } from "@/store/useRoomStore";
+import { MESSAGES_PATH } from "@/util/constants";
 
 interface RoomListItemProps {
   room: Room;
@@ -38,7 +38,7 @@ const active = computed(() => room.value.id === currentRoomId.value);
       right="0"
       translate-y="-1/2"
       bg="transparent!"
-      :roomId="room.id"
+      :room-id="room.id"
     />
   </div>
 </template>

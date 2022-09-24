@@ -8,7 +8,8 @@ interface EmojiPickerProps {
   onEmojiSelect: (emoji: { native: string }) => void;
 }
 
-const { onEmojiSelect } = defineProps<EmojiPickerProps>();
+const props = defineProps<EmojiPickerProps>();
+const onEmojiSelect = toRef(props, "onEmojiSelect");
 const emojiIndex = new EmojiIndex(data);
 </script>
 

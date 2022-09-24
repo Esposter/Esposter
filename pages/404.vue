@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { INDEX_PATH } from "@/util/constants";
 import { gsap } from "gsap";
+import { INDEX_PATH } from "@/util/constants";
 
 // @NOTE Vue error with running this after DOM is fully loaded
 // https://github.com/vuejs/core/issues/5844

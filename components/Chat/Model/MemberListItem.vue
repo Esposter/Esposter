@@ -5,11 +5,12 @@ interface MemberListItemProps {
   member: User;
 }
 
-const { member } = defineProps<MemberListItemProps>();
+const props = defineProps<MemberListItemProps>();
+const member = toRef(props, "member");
 </script>
 
 <template>
-  <v-list-item :title="member.username" @click="">
+  <v-list-item :title="member.username" :value="member.username">
     <template #prepend>
       <v-badge m="r-4" color="green" location="bottom end" dot>
         <v-avatar v-if="member.avatar">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/useMemberStore";
 import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/store/useMemberStore";
 
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);

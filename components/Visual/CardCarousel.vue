@@ -1,11 +1,11 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 
 <script setup lang="ts">
-import BaseCard from "@/components/Visual/BaseCard.vue";
-import type { Card } from "@/components/Visual/types";
 import type { Component } from "vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import type { Card } from "@/components/Visual/types";
+import BaseCard from "@/components/Visual/BaseCard.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -24,8 +24,7 @@ const props = withDefaults(
     cardTemplate: BaseCard,
   }
 );
-const { duration, maxShownCards, cardScaleYRatioLoss } = props;
-const cards = toRef(props, "cards");
+const { cards, duration, maxShownCards, cardScaleYRatioLoss } = toRefs(props);
 
 /**
  * === Generation of styling for css cards ==
@@ -96,7 +95,7 @@ const scale = computed<number>(() => {
 
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
-  const numberOfCards = Math.min(maxShownCards, cards.value.length - 1);
+  const numberOfCards = Math.min(maxShownCards.value, cards.value.length - 1);
   // start at right most and move to the left
   // we just need items for the rest so that we don't try to do operations on undefined
   const items: CardStyleVariables[] = [];
@@ -108,14 +107,14 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
       oldMarginRight: `${i * scale.value}rem`,
       marginRight: `${(i + 1) * scale.value}rem`,
       oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss.value * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
     });
 
   // this is for the SFC style bindings that need this to exist
   items.reverse();
 
   // we just need items for the rest so that we don't try to do operations on undefined
-  for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
+  for (let i = numberOfCards - 1; i < maxShownCards.value; i++) items.push({});
   return items;
 });
 
@@ -126,7 +125,7 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
   // don't care about size if we just have 1 card
   if (cards.value.length === 1) return { scaleY: "1" };
-  return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.value.length - 1) - 1)}` };
+  return { scaleY: `${1 - cardScaleYRatioLoss.value * (Math.min(maxShownCards.value, cards.value.length - 1) - 1)}` };
 });
 
 const secondLastCardStyle = computed<CardStyleVariables>(
@@ -150,14 +149,14 @@ const getClass = (cardId: number): string => {
   if (inactiveCardId.value === null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
     if (cardId === activeCardId.value) return "initial-active-card";
-    if (offset === Math.min(maxShownCards + 1, cards.value.length) - 2) return "last-card";
-    if (offset > maxShownCards - 2) return "overflow-card";
+    if (offset === Math.min(maxShownCards.value + 1, cards.value.length) - 2) return "last-card";
+    if (offset > maxShownCards.value - 2) return "overflow-card";
     return `initial-normal-card-${offset}`;
   }
 
   if (cardId === activeCardId.value) return "active-card";
   if (cardId === inactiveCardId.value) return "inactive-card";
-  if (offset > maxShownCards - 2) return "overflow-card";
+  if (offset > maxShownCards.value - 2) return "overflow-card";
   return `normal-card-${offset}`;
 };
 
@@ -187,7 +186,7 @@ const moveOneCard = () => {
 
 onMounted(() => {
   // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (duration > -1) moveCardsTimer.value = window.setInterval(moveCards, duration);
+  if (duration.value > -1) moveCardsTimer.value = window.setInterval(moveCards, duration.value);
   moveCards();
 });
 

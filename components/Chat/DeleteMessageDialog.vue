@@ -27,7 +27,7 @@ const onDeleteMessage = async () => {
 </script>
 
 <template>
-  <slot :isDeleteMode="isDeleteMode" :updateDeleteMode="(value: true) => isDeleteMode = value" />
+  <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
   <v-dialog v-model="isDeleteMode">
     <v-card title="Delete Message" text="Are you sure you want to delete this message?">
       <div m="x-4" rd="2" border>

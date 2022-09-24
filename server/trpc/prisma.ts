@@ -1,7 +1,7 @@
-import { isProd } from "@/util/constants";
 import { Prisma, PrismaClient } from "@prisma/client";
 import chalk from "chalk";
 import { highlight, Theme } from "cli-highlight";
+import { isProd } from "@/util/constants";
 
 let prismaClient: PrismaClient;
 
@@ -29,7 +29,7 @@ else {
     ],
   });
 
-  devPrismaClient.$on("query", async (e: Prisma.QueryEvent) => {
+  devPrismaClient.$on("query", (e: Prisma.QueryEvent) => {
     console.log(highlightSql(`Query: ${e.query}`));
     console.log(highlightSql(`Parameters: ${e.params}`));
     console.log(highlightSql(`Duration: ${e.duration}ms`));

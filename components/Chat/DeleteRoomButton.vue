@@ -5,13 +5,14 @@ interface DeleteRoomButtonProps {
   roomId: string;
 }
 
-const { roomId } = defineProps<DeleteRoomButtonProps>();
+const props = defineProps<DeleteRoomButtonProps>();
+const roomId = toRef(props, "roomId");
 const client = useClient();
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 const onDeleteRoom = async () => {
-  deleteRoom(roomId);
-  await client.mutation("room.deleteRoom", roomId);
+  deleteRoom(roomId.value);
+  await client.mutation("room.deleteRoom", roomId.value);
 };
 </script>
 

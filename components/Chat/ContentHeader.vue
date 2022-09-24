@@ -7,13 +7,12 @@ interface ContentHeaderProps {
 }
 
 const props = defineProps<ContentHeaderProps>();
-const { openLeftDrawer, openRightDrawer } = props;
-const { leftDrawer, rightDrawer } = toRefs(props);
+const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = toRefs(props);
 </script>
 
 <template>
   <v-toolbar class="v-app-bar" tag="div" height="56" border>
-    <template #prepend v-if="!leftDrawer">
+    <template v-if="!leftDrawer" #prepend>
       <v-btn icon="mdi-menu" size="small" @click="openLeftDrawer" />
     </template>
     <ChatRoomTitle />

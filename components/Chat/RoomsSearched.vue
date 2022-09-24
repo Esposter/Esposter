@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants";
-import { storeToRefs } from "pinia";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const client = useClient();
@@ -22,7 +22,12 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
 
 <template>
   <v-list>
-    <InvisibleNuxtLink v-for="room in roomListSearched" :to="MESSAGES_PATH(room.id)" @click="emit('update:room')">
+    <InvisibleNuxtLink
+      v-for="room in roomListSearched"
+      :key="room.id"
+      :to="MESSAGES_PATH(room.id)"
+      @click="emit('update:room')"
+    >
       <v-list-item :title="room.name" :value="room.id">
         <template #prepend>
           <v-avatar v-if="room.avatar">

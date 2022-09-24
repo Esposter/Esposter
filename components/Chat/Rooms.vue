@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
+import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const roomStore = useRoomStore();
@@ -27,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ChatModelRoomList :rooms="rooms" :hasMore="hasMore" :fetchMoreRooms="fetchMoreRooms">
+  <ChatModelRoomList :rooms="rooms" :has-more="hasMore" :fetch-more-rooms="fetchMoreRooms">
     <template #prepend>
       <v-list-item font="bold">
         DIRECT MESSAGES

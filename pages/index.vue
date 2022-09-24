@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
-    <NuxtWelcome />
+  <NuxtLayout chatbot>
+    <PostCard />
   </NuxtLayout>
 </template>

@@ -5,7 +5,8 @@ interface DefaultAvatarProps {
   name: string;
 }
 
-const { name } = defineProps<DefaultAvatarProps>();
+const props = defineProps<DefaultAvatarProps>();
+const name = toRef(props, "name");
 </script>
 
 <template>

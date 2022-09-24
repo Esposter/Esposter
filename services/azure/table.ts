@@ -1,7 +1,7 @@
-import { AzureTable } from "@/services/azure/types";
-import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
 import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
+import { AzureTable } from "@/services/azure/types";
+import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -28,9 +28,7 @@ export const getTopNEntities = async <Entity extends object>(
    * and break to only get the first page.
    * This only sends a single request to the service.
    */
-  for await (const page of iterator) return page;
-
-  return [];
+  return (await iterator.next()).value ?? [];
 };
 
 export const submitTransaction = async (

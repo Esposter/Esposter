@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/useMemberStore";
 import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/store/useMemberStore";
 
 const client = useClient();
 const memberStore = useMemberStore();
@@ -23,5 +23,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ChatModelMemberList :members="memberList" :hasMore="hasMore" :fetchMoreMembers="fetchMoreMembers" />
+  <ChatModelMemberList :members="memberList" :has-more="hasMore" :fetch-more-members="fetchMoreMembers" />
 </template>

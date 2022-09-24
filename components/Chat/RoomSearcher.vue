@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
+import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const roomStore = useRoomStore();

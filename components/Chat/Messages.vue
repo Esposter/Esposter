@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();
@@ -33,5 +33,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ChatModelMessageList :messages="messageList" :hasMore="hasMore" :fetchMoreMessages="fetchMoreMessages" />
+  <ChatModelMessageList :messages="messageList" :has-more="hasMore" :fetch-more-messages="fetchMoreMessages" />
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Waypoint from "@/components/Waypoint.vue";
 import type { User } from "@prisma/client";
+import Waypoint from "@/components/Waypoint.vue";
 
 interface MessageListProps {
   members: User[];
@@ -9,8 +9,7 @@ interface MessageListProps {
 }
 
 const props = defineProps<MessageListProps>();
-const { fetchMoreMembers } = props;
-const { members, hasMore } = toRefs(props);
+const { members, hasMore, fetchMoreMembers } = toRefs(props);
 </script>
 
 <template>

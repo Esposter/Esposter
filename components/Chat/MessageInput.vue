@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import type { CreateMessageInput } from "@/server/trpc/message";
 import { rowKey } from "@/services/azure/util";
 import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const client = useClient();
 const roomStore = useRoomStore();

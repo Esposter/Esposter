@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 interface EditedMessageProps {
   message: MessageEntity;
@@ -11,8 +11,7 @@ interface EditedMessageProps {
 
 const props = defineProps<EditedMessageProps>();
 const emit = defineEmits<{ (event: "update:edit-message", active: false): void }>();
-const { updateDeleteMode } = props;
-const message = toRef(props, "message");
+const { message, updateDeleteMode } = toRefs(props);
 const editedMessage = ref(message.value.message);
 
 const client = useClient();
@@ -23,7 +22,7 @@ const onUpdateMessage = async () => {
   try {
     if (!currentRoomId.value || editedMessage.value === message.value.message) return;
     if (!editedMessage.value) {
-      updateDeleteMode(true);
+      updateDeleteMode.value(true);
       return;
     }
 

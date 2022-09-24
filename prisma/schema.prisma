@@ -12,20 +12,21 @@ model User {
   name      String
   username  String         @unique
   avatar    String?
+  rooms     RoomsOnUsers[]
+  posts     Post[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   deletedAt DateTime?
-  rooms     RoomsOnUsers[]
 }
 
 model Room {
   id        String         @id @default(uuid())
   name      String
   avatar    String?
+  users     RoomsOnUsers[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   deletedAt DateTime?
-  users     RoomsOnUsers[]
 }
 
 model RoomsOnUsers {
@@ -36,4 +37,23 @@ model RoomsOnUsers {
   joinedAt DateTime @default(now())
 
   @@id([userId, roomId])
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String    @default("")
+  description String    @default("")
+  noPoints    Int       @default(0)
+  noComments  Int       @default(0)
+  ranking     Float
+  edited      Boolean   @default(false)
+  creator     User      @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  depth       Int       @default(1)
+  parent      Post?     @relation("children", fields: [parentId], references: [id])
+  parentId    String?
+  children    Post[]    @relation("children")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }
