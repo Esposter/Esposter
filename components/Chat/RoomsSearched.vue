@@ -37,6 +37,6 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
         </template>
       </v-list-item>
     </InvisibleNuxtLink>
-    <Waypoint :active="hasMore" @change="fetchMoreRooms" />
+    <VWaypoint :active="hasMore" @change="fetchMoreRooms" />
   </v-list>
 </template>

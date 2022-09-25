@@ -15,6 +15,6 @@ const { members, hasMore, fetchMoreMembers } = toRefs(props);
 <template>
   <v-list overflow-y="auto!">
     <ChatModelMemberListItem v-for="member in members" :key="member.id" :member="member" />
-    <Waypoint :active="hasMore" @change="fetchMoreMembers" />
+    <VWaypoint :active="hasMore" @change="fetchMoreMembers" />
   </v-list>
 </template>

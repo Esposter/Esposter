@@ -16,6 +16,6 @@ const { rooms, hasMore, fetchMoreRooms } = toRefs(props);
   <v-list overflow-y="auto!">
     <slot name="prepend" />
     <ChatModelRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
-    <Waypoint :active="hasMore" @change="fetchMoreRooms" />
+    <VWaypoint :active="hasMore" @change="fetchMoreRooms" />
   </v-list>
 </template>
