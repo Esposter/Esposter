@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { StarterKit } from "@tiptap/starter-kit";
-import { Editor, EditorContent, useEditor } from "@tiptap/vue-3";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
   content: string;
