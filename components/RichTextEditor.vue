@@ -105,7 +105,7 @@ onBeforeUnmount(() => editor.value?.destroy());
   </ClientOnly>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .ProseMirror {
   > * + * {
     margin-top: 0.75em;
