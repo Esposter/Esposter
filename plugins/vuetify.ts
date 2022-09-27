@@ -9,6 +9,7 @@ const theme: VuetifyOptions["theme"] = {
       colors: {
         primary: "#61dbfb",
         background: "#dae0e6",
+        border: "#ccc",
       },
     },
     dark: {
@@ -17,6 +18,7 @@ const theme: VuetifyOptions["theme"] = {
         primary: "#61dbfb",
         background: "#18191a",
         surface: "#36393f",
+        border: "#ccc",
       },
     },
   },

@@ -11,7 +11,17 @@ const post: Partial<Post> = {
   <NuxtLayout chatbot>
     <template #left>Left</template>
     <v-container>
-      <PostCard :post="post" />
+      <v-row>
+        <v-col>
+          <PostCard :post="post" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <RichTextEditor content="Hello World!" />
+        </v-col>
+      </v-row>
     </v-container>
+    <template #right>Right</template>
   </NuxtLayout>
 </template>

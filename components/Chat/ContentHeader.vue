@@ -8,10 +8,11 @@ interface ContentHeaderProps {
 
 const props = defineProps<ContentHeaderProps>();
 const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = toRefs(props);
+const { border } = useGlobalTheme().value.colors;
 </script>
 
 <template>
-  <v-toolbar class="v-app-bar" height="56" b="1!">
+  <v-toolbar class="v-app-bar border" height="56">
     <template v-if="!leftDrawer" #prepend>
       <v-btn icon="mdi-menu" size="small" @click="openLeftDrawer" />
     </template>
@@ -24,3 +25,9 @@ const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = toRefs(prop
     </template>
   </v-toolbar>
 </template>
+
+<style scoped lang="scss">
+.border {
+  border: 1px solid v-bind(border);
+}
+</style>
