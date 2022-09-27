@@ -33,7 +33,7 @@ const items = [
     isActive: () => editor.value?.isActive("code"),
   },
   {
-    type: "divider",
+    isDivider: true,
   },
   {
     icon: "mdi-format-header-1",
@@ -95,9 +95,8 @@ const items = [
     onClick: () => editor.value?.chain().focus().toggleCodeBlock().run(),
     isActive: () => editor.value?.isActive("codeBlock"),
   },
-
   {
-    type: "divider",
+    isDivider: true,
   },
   {
     icon: "mdi-arrow-u-left-top",
@@ -115,15 +114,7 @@ const items = [
 <template>
   <div display="flex" flex="wrap">
     <template v-for="(item, index) in items">
-      <v-divider
-        v-if="item.type === 'divider'"
-        :key="`divider${index}`"
-        thickness="2"
-        vertical
-        m="x-4!"
-        h="8!"
-        self="center!"
-      />
+      <v-divider v-if="item.isDivider" :key="`divider${index}`" thickness="2" vertical m="x-4!" h="8!" self="center!" />
       <v-btn v-else :key="index" rd="0!" bg="transparent!" shadow="none!" :="item" />
     </template>
   </div>
