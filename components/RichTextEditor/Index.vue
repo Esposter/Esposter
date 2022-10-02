@@ -5,7 +5,7 @@ import { CharacterCount } from "@tiptap/extension-character-count";
 import { POST_MAX_CHARACTER_LENGTH } from "@/util/constants";
 
 interface RichTextEditorProps {
-  content: string;
+  content?: string;
 }
 
 const props = defineProps<RichTextEditorProps>();

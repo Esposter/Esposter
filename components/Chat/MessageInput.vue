@@ -31,8 +31,8 @@ const sendMessage = async () => {
   <v-text-field
     placeholder="Aa"
     density="compact"
-    clearable
     hide-details
+    clearable
     :model-value="messageInput"
     @update:model-value="updateMessageInput"
     @keydown.enter="sendMessage"
