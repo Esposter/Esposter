@@ -1,5 +1,5 @@
 {
-  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll.eslint"],
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.organizeImports", "source.fixAll.eslint"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "javascript.updateImportsOnFileMove.enabled": "always",

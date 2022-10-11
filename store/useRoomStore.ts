@@ -15,18 +15,6 @@ export const useRoomStore = defineStore("room", () => {
     roomListNextCursor.value = nextCursor;
   };
 
-  const roomSearchQuery = ref("");
-  const roomListSearched = ref<Room[]>([]);
-  const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
-  const roomsSearched = computed(() =>
-    roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-  );
-
-  const roomListSearchedNextCursor = ref<string | null>(null);
-  const updateRoomListSearchedNextCursor = (nextCursor: string | null) => {
-    roomListSearchedNextCursor.value = nextCursor;
-  };
-
   const roomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
@@ -46,22 +34,37 @@ export const useRoomStore = defineStore("room", () => {
     roomList.value = roomList.value.filter((r) => r.id !== id);
   };
 
+  const roomSearchQuery = ref("");
+  const roomListSearched = ref<Room[]>([]);
+  const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
+  const roomsSearched = computed(() =>
+    roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  );
+
+  const roomListSearchedNextCursor = ref<string | null>(null);
+  const updateRoomListSearchedNextCursor = (nextCursor: string | null) => {
+    roomListSearchedNextCursor.value = nextCursor;
+  };
+  const initialiseRoomListSearched = (rooms: Room[]) => {
+    roomListSearched.value = rooms;
+  };
+
   return {
     currentRoomId,
     pushRoomList,
     rooms,
     roomListNextCursor,
     updateRoomListNextCursor,
-    roomSearchQuery,
-    roomListSearched,
-    pushRoomListSearched,
-    roomsSearched,
-    roomListSearchedNextCursor,
-    updateRoomListSearchedNextCursor,
     roomName,
     initialiseRoomList,
     createRoom,
     updateRoom,
     deleteRoom,
+    roomSearchQuery,
+    pushRoomListSearched,
+    roomsSearched,
+    roomListSearchedNextCursor,
+    updateRoomListSearchedNextCursor,
+    initialiseRoomListSearched,
   };
 });

@@ -4,17 +4,18 @@ import { useRoomStore } from "@/store/useRoomStore";
 
 const client = useClient();
 const roomStore = useRoomStore();
+const { initialiseRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
 const { roomSearchQuery } = storeToRefs(roomStore);
 const updateSearchQuery = async (value: string) => {
   roomSearchQuery.value = value;
 
   if (value) {
     const { rooms, nextCursor } = await client.query("room.readRooms", { filter: { name: value }, cursor: null });
-    roomStore.roomListSearched = rooms;
-    roomStore.roomListSearchedNextCursor = nextCursor;
+    initialiseRoomListSearched(rooms);
+    updateRoomListSearchedNextCursor(nextCursor);
   } else {
-    roomStore.roomListSearched = [];
-    roomStore.roomListSearchedNextCursor = null;
+    initialiseRoomListSearched([]);
+    updateRoomListSearchedNextCursor(null);
   }
 };
 const dialog = ref(false);

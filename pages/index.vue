@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Post } from "@prisma/client";
+import { storeToRefs } from "pinia";
+import { usePostStore } from "@/store/usePostStore";
 
-const post: Partial<Post> = {
-  title: "Hello!",
-  description: "Lorem Ipsum",
-};
+const postStore = usePostStore();
+const { postList } = storeToRefs(postStore);
 </script>
 
 <template>
@@ -12,13 +11,13 @@ const post: Partial<Post> = {
     <template #left>Left</template>
     <v-container>
       <v-row>
-        <v-col>
+        <v-col v-for="(post, index) in postList" :key="index" cols="12">
           <PostCard :post="post" />
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <RichTextEditor content="Hello World!" />
+          <RichTextEditor />
         </v-col>
       </v-row>
     </v-container>

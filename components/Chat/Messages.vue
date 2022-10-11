@@ -7,7 +7,7 @@ const client = useClient();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const messageStore = useMessageStore();
-const { pushMessageList, updateMessageListNextCursor, initialiseMessages } = messageStore;
+const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
 const { messageList, messageListNextCursor } = storeToRefs(messageStore);
 const hasMore = computed(() => Boolean(messageListNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
@@ -27,7 +27,7 @@ onMounted(async () => {
     ? await client.query("message.readMessages", { filter: { partitionKey: currentRoomId.value }, cursor: null })
     : { messages: [], nextCursor: null };
 
-  initialiseMessages(messages);
+  initialiseMessageList(messages);
   updateMessageListNextCursor(nextCursor);
 });
 </script>

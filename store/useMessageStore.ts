@@ -3,17 +3,17 @@ import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/messa
 import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 
-export const useMessageStore = defineStore("messageStore", () => {
+export const useMessageStore = defineStore("message", () => {
   const roomStore = useRoomStore();
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
-  const pushMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId) return;
-    messagesMap.value[roomStore.currentRoomId].push(...messages);
-  };
   const messageList = computed(() => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return [];
     return messagesMap.value[roomStore.currentRoomId];
   });
+  const pushMessageList = (messages: MessageEntity[]) => {
+    if (!roomStore.currentRoomId) return;
+    messagesMap.value[roomStore.currentRoomId].push(...messages);
+  };
 
   const messageListNextCursorMap = ref<Record<string, string | null>>({});
   const messageListNextCursor = computed(() => {
@@ -25,7 +25,7 @@ export const useMessageStore = defineStore("messageStore", () => {
     messageListNextCursorMap.value[roomStore.currentRoomId] = messageListNextCursor;
   };
 
-  const initialiseMessages = (messages: MessageEntity[]) => {
+  const initialiseMessageList = (messages: MessageEntity[]) => {
     if (!roomStore.currentRoomId) return;
     messagesMap.value[roomStore.currentRoomId] = messages;
   };
@@ -57,7 +57,7 @@ export const useMessageStore = defineStore("messageStore", () => {
     pushMessageList,
     messageListNextCursor,
     updateMessageListNextCursor,
-    initialiseMessages,
+    initialiseMessageList,
     createMessage,
     updateMessage,
     deleteMessage,

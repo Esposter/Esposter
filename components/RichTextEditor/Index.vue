@@ -2,6 +2,7 @@
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { CharacterCount } from "@tiptap/extension-character-count";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import { POST_MAX_CHARACTER_LENGTH } from "@/util/constants";
 
 interface RichTextEditorProps {
@@ -11,7 +12,11 @@ interface RichTextEditorProps {
 const props = defineProps<RichTextEditorProps>();
 const content = toRef(props, "content");
 const editor = useEditor({
-  extensions: [StarterKit, CharacterCount.configure({ limit: POST_MAX_CHARACTER_LENGTH })],
+  extensions: [
+    StarterKit,
+    Placeholder.configure({ placeholder: "Text (optional)" }),
+    CharacterCount.configure({ limit: POST_MAX_CHARACTER_LENGTH }),
+  ],
   content: content.value,
 });
 const { border } = useGlobalTheme().value.colors;
@@ -40,5 +45,13 @@ onBeforeUnmount(() => editor.value?.destroy());
   padding: 1rem;
   height: 15rem;
   overflow-y: auto;
+
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    height: 0;
+    float: left;
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 </style>
