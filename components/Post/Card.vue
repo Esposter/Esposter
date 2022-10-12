@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { PostWithCreator } from "@/prisma/types";
+import { PostWithRelations } from "@/prisma/types";
 
 interface CardProps {
-  post: PostWithCreator;
+  post: PostWithRelations;
 }
 
 const props = defineProps<CardProps>();

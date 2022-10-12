@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { testPost } from "@/server/trpc";
 import { usePostStore } from "@/store/usePostStore";
 
 const postStore = usePostStore();
+const { initialisePostList } = postStore;
 const { postList } = storeToRefs(postStore);
+
+initialisePostList([testPost]);
 </script>
 
 <template>

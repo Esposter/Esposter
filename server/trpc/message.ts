@@ -1,6 +1,7 @@
 import { odata } from "@azure/data-tables";
 import { toZod } from "tozod";
 import { z } from "zod";
+import { testUser } from "@/server/trpc";
 import { createRouter } from "@/server/trpc/createRouter";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import type { AzureMessageEntity, MessageEntity } from "@/services/azure/types";
@@ -58,7 +59,7 @@ export const messageRouter = createRouter()
     resolve: async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
       // Auto create properties we know from the backend
-      const message: MessageEntity = { ...input, userId: "1", createdAt: new Date() };
+      const message: MessageEntity = { ...input, userId: testUser.id, createdAt: new Date() };
       const successful = await submitTransaction(messageClient, [["create", message]]);
       return successful ? message : null;
     },

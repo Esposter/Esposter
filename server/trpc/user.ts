@@ -2,26 +2,23 @@ import type { User as PrismaUser } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { USER_MAX_NAME_LENGTH } from "@/util/constants";
+import { USER_MAX_USERNAME_LENGTH } from "@/util/constants";
 import { prisma } from "@/server/trpc/prisma";
 import { createRouter } from "@/server/trpc/createRouter";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1).max(USER_MAX_NAME_LENGTH),
-  username: z.string().min(1).max(USER_MAX_NAME_LENGTH),
+  username: z.string().min(1).max(USER_MAX_USERNAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 });
 
-const createUserInputSchema = userSchema.pick({ name: true, username: true });
+const createUserInputSchema = userSchema.pick({ username: true });
 export type CreateUserInput = z.infer<typeof createUserInputSchema>;
 
-const updateUserInputSchema = userSchema
-  .pick({ id: true })
-  .merge(userSchema.partial().pick({ name: true, username: true }));
+const updateUserInputSchema = userSchema.pick({ id: true }).merge(userSchema.partial().pick({ username: true }));
 export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 
 const deleteUserInputSchema = userSchema.shape.id;

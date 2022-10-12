@@ -1,23 +1,15 @@
 import { defineStore } from "pinia";
-import type { PostWithCreator } from "@/prisma/types";
+import type { PostWithRelations } from "@/prisma/types";
 
 export const usePostStore = defineStore("post", () => {
-  const postList = ref<PostWithCreator[]>([
-    {
-      id: "1",
-      title: "Hello!",
-      description: "Lorem Ipsum",
-      creator: { avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg" },
-      noPoints: 1,
-    },
-  ]);
-  const initialisePostList = (posts: PostWithCreator[]) => {
+  const postList = ref<PostWithRelations[]>([]);
+  const initialisePostList = (posts: PostWithRelations[]) => {
     postList.value = posts;
   };
-  const createPost = (newPost: PostWithCreator) => {
+  const createPost = (newPost: PostWithRelations) => {
     postList.value.push(newPost);
   };
-  const updatePost = (updatedPost: PostWithCreator) => {
+  const updatePost = (updatedPost: PostWithRelations) => {
     const index = postList.value.findIndex((r) => r.id === updatedPost.id);
     if (index > -1) postList.value[index] = { ...postList.value[index], ...updatedPost };
   };

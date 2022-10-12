@@ -1,3 +1,3 @@
 import { Prisma } from "@prisma/client";
 
-export type PostWithCreator = Prisma.PostGetPayload<{ include: { creator: true } }>;
+export type PostWithRelations = Prisma.PostGetPayload<{ include: { creator: true } }>;
