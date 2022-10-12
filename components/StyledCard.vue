@@ -4,13 +4,17 @@ import { VCard } from "vuetify/components";
 // @NOTE: Will be fixed in Vue 3.3
 // const props = defineProps<typeof VCard>();
 const { border } = useGlobalTheme().value.colors;
+const slots = useSlots();
 </script>
 
 <template>
   <v-card class="border">
-    <template v-for="(_, slot) of $slots" #[slot]="scope">
-      <slot :key="slot" :name="slot" :="scope" />
-    </template>
+    <!-- @NOTE: We should also be able to access slots on the server -->
+    <ClientOnly>
+      <template v-for="(_, slot) of slots" #[slot]="scope">
+        <slot :name="slot" :="{ ...scope }" />
+      </template>
+    </ClientOnly>
   </v-card>
 </template>
 
