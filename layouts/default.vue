@@ -8,6 +8,7 @@ interface DefaultLayoutProps {
 
 const props = defineProps<DefaultLayoutProps>();
 const { mainClass, chatbot } = toRefs(props);
+const slots = useSlots();
 const { mobile } = useDisplay();
 // The internal variables will track if we want to actually show the drawers
 const internalLeftDrawer = ref(!mobile.value);
@@ -22,7 +23,7 @@ const rightDrawer = ref(!mobile.value);
   <div display="contents">
     <!-- Ignore parent div here, it is only for nuxt -->
     <v-navigation-drawer
-      v-if="$slots.left"
+      v-if="slots.left"
       app
       :model-value="internalLeftDrawer"
       @update:model-value="
@@ -36,7 +37,7 @@ const rightDrawer = ref(!mobile.value);
     </v-navigation-drawer>
 
     <v-navigation-drawer
-      v-if="$slots.right"
+      v-if="slots.right"
       app
       location="right"
       :model-value="internalRightDrawer"
@@ -59,7 +60,7 @@ const rightDrawer = ref(!mobile.value);
       />
     </v-main>
 
-    <v-footer v-if="$slots.footer" app>
+    <v-footer v-if="slots.footer" app>
       <slot name="footer" />
     </v-footer>
 

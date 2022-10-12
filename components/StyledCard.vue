@@ -3,8 +3,8 @@ import { VCard } from "vuetify/components";
 
 // @NOTE: Will be fixed in Vue 3.3
 // const props = defineProps<typeof VCard>();
-const { border } = useGlobalTheme().value.colors;
 const slots = useSlots();
+const { border } = useGlobalTheme().value.colors;
 </script>
 
 <template>
