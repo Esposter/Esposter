@@ -45,7 +45,7 @@ const sendMessage = async () => {
       </v-tooltip> -->
     </template>
     <template #append-inner>
-      <!-- @NOTE Menu doesn't work yet, it will break route transitions -->
+      <!-- @NOTE: Menu doesn't work yet, it will break route transitions -->
       <!-- <v-menu :close-on-content-click="false">
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />

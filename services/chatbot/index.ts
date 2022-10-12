@@ -7,7 +7,7 @@ import { sanitiseText, streamToText } from "@/util/text";
 const chatHistoryFileName = "ChatHistory.txt";
 
 export const getChatHistory = async (userId: string, AIName: string) => {
-  // @NOTE We can put this as a top level await once that feature is ready
+  // @NOTE: We can put this as a top level await once that feature is ready
   const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);

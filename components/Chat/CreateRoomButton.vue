@@ -10,7 +10,7 @@ const onCreateRoom = async () => {
 </script>
 
 <template>
-  <!-- @NOTE Tooltip doesn't work yet, it will break route transitions https://github.com/vuetifyjs/vuetify/issues/15323 -->
+  <!-- @NOTE: Tooltip doesn't work yet, it will break route transitions https://github.com/vuetifyjs/vuetify/issues/15323 -->
   <!-- <v-tooltip #activator="{ props }" location="top" text="Create DM">
     <v-btn icon="mdi-plus" size="small" flat @click="onCreateRoom" :="props" />
   </v-tooltip> -->

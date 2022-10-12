@@ -20,7 +20,7 @@ const items: Item[] = [
 <template>
   <v-menu location="bottom start">
     <template #activator="{ props: menuProps }">
-      <!-- @NOTE <v-tooltip location="bottom" text="More">
+      <!-- @NOTE: <v-tooltip location="bottom" text="More">
           <template #activator="{ props: tooltipProps }"> -->
       <v-avatar color="background">
         <v-btn icon="mdi-plus" :="mergeProps(menuProps)" />

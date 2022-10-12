@@ -43,7 +43,7 @@ const items: Item[] = [
         <ChatEmojiPicker :onEmojiSelect="() => {}" />
       </v-menu> -->
       <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:edit-message', true)" />
-      <!-- @NOTE This breaks route transitions for now -->
+      <!-- @NOTE: This breaks route transitions for now -->
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update', value)">
         <template #activator="{ props: menuProps }">
           <!-- <v-tooltip location="top" text="More">

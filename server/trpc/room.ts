@@ -13,7 +13,7 @@ const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> =
   name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
-  // @NOTE Change back to date after we add superjson
+  // @NOTE: Change back to date after we add superjson
   updatedAt: z.string(),
   deletedAt: z.date().nullable(),
 });
@@ -81,7 +81,7 @@ export const roomRouter = createRouter()
   })
   .mutation("updateRoom", {
     input: updateRoomInputSchema,
-    // @NOTE Remove manual Date transformation when we add superjson
+    // @NOTE: Remove manual Date transformation when we add superjson
     resolve: ({ input: { id, ...other } }) =>
       prisma.room.update({
         data: { ...other, updatedAt: other.updatedAt ? new Date(other.updatedAt) : undefined },

@@ -16,7 +16,7 @@ const isHovering = ref(false);
 const active = computed(() => room.value.id === currentRoomId.value);
 </script>
 
-<!-- @NOTE Route transitions doesn't like this component with invoke render outside of default slot :C -->
+<!-- @NOTE: Route transitions doesn't like this component with invoke render outside of default slot :C -->
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <InvisibleNuxtLink :to="MESSAGES_PATH(room.id)">

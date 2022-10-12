@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// @NOTE We shouldn't need these imports
+// @NOTE: We shouldn't need these imports
 import { storeToRefs } from "pinia";
 import EditedMessage from "@/components/Chat/EditedMessage.vue";
 import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";

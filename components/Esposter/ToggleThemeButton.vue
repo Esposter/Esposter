@@ -11,7 +11,7 @@ const toggleTheme = () => {
 </script>
 
 <template>
-  <!-- @NOTE <v-tooltip location="bottom" text="Dark Mode">
+  <!-- @NOTE: <v-tooltip location="bottom" text="Dark Mode">
       <template #activator="{ props }"> -->
   <v-avatar color="background">
     <v-btn
