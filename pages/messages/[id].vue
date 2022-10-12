@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
-import { uuidValidateV4 } from "@/util";
+import { uuidValidateV4 } from "@/util/uuid";
 
 useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 

@@ -6,13 +6,11 @@ type PaletteMode = "light" | "dark";
 
 const baseColors: Record<PaletteMode, ThemeDefinition["colors"]> = {
   light: {
-    primary: "#61dbfb",
     background: "#dae0e6",
     surface: "#ffffff",
     border: "#cccccc",
   },
   dark: {
-    primary: "#61dbfb",
     background: "#18191a",
     surface: "#36393f",
     border: "#cccccc",

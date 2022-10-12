@@ -1,6 +1,7 @@
 export const INDEX_PATH = "/";
 export const ABOUT_PATH = "/about";
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
+export const POST_CREATE_PATH = "/post/create";
 
 export const isProd = process.env.NODE_ENV === "production";
 export const isServer = () => typeof window === "undefined";
@@ -32,7 +33,8 @@ export const USER_MAX_NAME_LENGTH = 100;
 export const ROOM_MAX_NAME_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 100;
 export const CHATBOT_PROMPT_MAX_LENGTH = 100;
-export const POST_MAX_CHARACTER_LENGTH = 1000;
+export const POST_MAX_TITLE_LENGTH = 300;
+export const POST_MAX_DESCRIPTION_LENGTH = 1000;
 
 export const FETCH_LIMIT = 20;
 

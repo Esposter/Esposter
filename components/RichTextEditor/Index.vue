@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { StarterKit } from "@tiptap/starter-kit";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
-import { POST_MAX_CHARACTER_LENGTH } from "@/util/constants";
+import { StarterKit } from "@tiptap/starter-kit";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { POST_MAX_DESCRIPTION_LENGTH } from "@/util/constants";
 
 interface RichTextEditorProps {
   content?: string;
@@ -15,7 +15,7 @@ const editor = useEditor({
   extensions: [
     StarterKit,
     Placeholder.configure({ placeholder: "Text (optional)" }),
-    CharacterCount.configure({ limit: POST_MAX_CHARACTER_LENGTH }),
+    CharacterCount.configure({ limit: POST_MAX_DESCRIPTION_LENGTH }),
   ],
   content: content.value,
 });
