@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PostWithRelations } from "@/prisma/types";
+import type { PostWithRelations } from "@/prisma/types";
 
 interface CardProps {
   post: PostWithRelations;

@@ -37,6 +37,7 @@ export const useRoomStore = defineStore("room", () => {
   const roomSearchQuery = ref("");
   const roomListSearched = ref<Room[]>([]);
   const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
+  // @NOTE: Remove manually changing to date after adding superjson transformer
   const roomsSearched = computed(() =>
     roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
   );

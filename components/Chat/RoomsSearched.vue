@@ -7,7 +7,7 @@ const emit = defineEmits<{ (event: "update:room"): void }>();
 const client = useClient();
 const roomStore = useRoomStore();
 const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
-const { roomSearchQuery, roomListSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
+const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
 const hasMore = computed(() => Boolean(roomListSearchedNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { rooms, nextCursor } = await client.query("room.readRooms", {
@@ -23,7 +23,7 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
 <template>
   <v-list>
     <InvisibleNuxtLink
-      v-for="room in roomListSearched"
+      v-for="room in roomsSearched"
       :key="room.id"
       :to="MESSAGES_PATH(room.id)"
       @click="emit('update:room')"

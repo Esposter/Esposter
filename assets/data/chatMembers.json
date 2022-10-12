@@ -3,90 +3,135 @@
     "id": "1",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
     "name": "Death",
-    "username": "Ali Connors"
+    "username": "Ali Connors",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "2",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
     "name": "Death",
-    "username": "me, Scrott, Jennifer"
+    "username": "me, Scrott, Jennifer",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "3",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
     "name": "Death",
-    "username": "Sandra Adams"
+    "username": "Sandra Adams",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "4",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
     "name": "Death",
-    "username": "Trevor Hansen"
+    "username": "Trevor Hansen",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "50",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
     "name": "Death",
-    "username": "Britta Holt"
+    "username": "Britta Holt",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "10",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
     "name": "Death",
-    "username": "Ali Connors"
+    "username": "Ali Connors",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "20",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
     "name": "Death",
-    "username": "me, Scrott, Jennifer"
+    "username": "me, Scrott, Jennifer",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "30",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
     "name": "Death",
-    "username": "Sandra Adams"
+    "username": "Sandra Adams",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "40",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
     "name": "Death",
-    "username": "Trevor Hansen"
+    "username": "Trevor Hansen",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "50",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
     "name": "Death",
-    "username": "Britta Holt"
+    "username": "Britta Holt",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "100",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/1.jpg",
     "name": "Death",
-    "username": "Ali Connors"
+    "username": "Ali Connors",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "200",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/2.jpg",
     "name": "Death",
-    "username": "me, Scrott, Jennifer"
+    "username": "me, Scrott, Jennifer",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "300",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/3.jpg",
     "name": "Death",
-    "username": "Sandra Adams"
+    "username": "Sandra Adams",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "400",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/4.jpg",
     "name": "Death",
-    "username": "Trevor Hansen"
+    "username": "Trevor Hansen",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   },
   {
     "id": "500",
     "avatar": "https://cdn.vuetifyjs.com/images/lists/5.jpg",
     "name": "Death",
-    "username": "Britta Holt"
+    "username": "Britta Holt",
+    "createdAt": "2011-10-05T14:48:00.000Z",
+    "updatedAt": "2011-10-05T14:48:00.000Z",
+    "deletedAt": null
   }
 ]

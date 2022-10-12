@@ -114,7 +114,7 @@ export const roomRouter = createRouter()
         if (nextMember) nextCursor = nextMember.id;
       }
 
-      return { members: chatMembers as User[], nextCursor };
+      return { members: chatMembers as unknown as User[], nextCursor };
     },
   })
   .mutation("addMembers", {
