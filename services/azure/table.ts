@@ -3,9 +3,8 @@ import { TableClient } from "@azure/data-tables";
 import { AzureTable } from "@/services/azure/types";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
 
-const runtimeConfig = useRuntimeConfig();
-
 export const getTableClient = async (tableName: AzureTable) => {
+  const runtimeConfig = useRuntimeConfig();
   const tableClient = TableClient.fromConnectionString(runtimeConfig.azureStorageAccountConnectionString, tableName);
   try {
     await tableClient.createTable();

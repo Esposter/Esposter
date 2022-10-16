@@ -9,10 +9,6 @@ export enum AzureContainer {
   AIChatbot = "ai-chatbot",
 }
 
-export enum AzureQueue {
-  AIChatbotPendingMessageReplies = "ai-chatbot-pending-message-replies",
-}
-
 export interface AzureMessageEntity extends TableEntity {
   userId: string;
   message: string;
