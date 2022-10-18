@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
-import { highlight, Theme } from "cli-highlight";
+import { highlight } from "cli-highlight";
 import { isProd } from "@/util/constants";
 
 let prismaClient: PrismaClient;
@@ -29,7 +29,7 @@ else {
     ],
   });
 
-  devPrismaClient.$on("query", (e: Prisma.QueryEvent) => {
+  devPrismaClient.$on("query", (e) => {
     console.log(highlightSql(`Query: ${e.query}`));
     console.log(highlightSql(`Parameters: ${e.params}`));
     console.log(highlightSql(`Duration: ${e.duration}ms`));
@@ -49,16 +49,17 @@ else {
   prismaClient = devPrismaClient;
 }
 
-const highlightSql = (sql: string) => {
-  const theme: Theme = {
-    keyword: chalk.blueBright,
-    literal: chalk.blueBright,
-    string: chalk.white,
-    type: chalk.magentaBright,
-    built_in: chalk.magentaBright,
-    comment: chalk.gray,
-  };
-  return highlight(sql, { theme, language: "sql" });
-};
+const highlightSql = (sql: string) =>
+  highlight(sql, {
+    theme: {
+      keyword: chalk.blueBright,
+      literal: chalk.blueBright,
+      string: chalk.white,
+      type: chalk.magentaBright,
+      built_in: chalk.magentaBright,
+      comment: chalk.gray,
+    },
+    language: "sql",
+  });
 
 export const prisma = prismaClient;
