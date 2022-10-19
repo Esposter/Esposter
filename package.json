@@ -25,7 +25,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.40.1",
-    "@unocss/nuxt": "^0.45.29",
+    "@unocss/nuxt": "^0.45.30",
     "@vueuse/core": "^9.3.1",
     "@vueuse/nuxt": "^9.3.1",
     "eslint": "^8.25.0",
@@ -35,8 +35,8 @@
     "gen-env-types": "^1.3.4",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "nuxt": "3.0.0-rc.11",
-    "prisma": "^4.4.0",
+    "nuxt": "3.0.0-rc.12",
+    "prisma": "^4.5.0",
     "sass": "^1.55.0",
     "tozod": "^3.0.0",
     "typescript": "^4.8.4"
@@ -46,7 +46,7 @@
     "@azure/storage-blob": "^12.12.0",
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.3",
-    "@prisma/client": "^4.4.0",
+    "@prisma/client": "^4.5.0",
     "@tiptap/extension-character-count": "^2.0.0-beta.199",
     "@tiptap/extension-placeholder": "^2.0.0-beta.199",
     "@tiptap/starter-kit": "^2.0.0-beta.199",
@@ -65,7 +65,7 @@
     "trpc-nuxt": "^0.3.0",
     "uuid": "^9.0.0",
     "vue-waypoint": "^4.2.5",
-    "vuetify": "^3.0.0-beta.13",
+    "vuetify": "^3.0.0-beta.14",
     "zod": "^3.19.1"
   }
 }
