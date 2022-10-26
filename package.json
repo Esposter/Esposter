@@ -18,16 +18,17 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
-    "@nuxtjs/google-fonts": "^3.0.0-0",
+    "@nuxtjs/google-fonts": "^3.0.0-1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
     "@types/dedent": "^0.7.0",
     "@types/nprogress": "^0.2.0",
     "@types/three": "^0.144.0",
     "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
-    "@typescript-eslint/parser": "^5.40.1",
-    "@unocss/nuxt": "^0.45.30",
-    "@vueuse/core": "^9.3.1",
-    "@vueuse/nuxt": "^9.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "@unocss/nuxt": "^0.46.0",
+    "@vueuse/core": "^9.4.0",
+    "@vueuse/nuxt": "^9.4.0",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -65,7 +66,7 @@
     "trpc-nuxt": "^0.3.1",
     "uuid": "^9.0.0",
     "vue-waypoint": "^4.2.5",
-    "vuetify": "^3.0.0-beta.14",
+    "vuetify": "^3.0.0-beta.15",
     "zod": "^3.19.1"
   }
 }

@@ -1,3 +1,6 @@
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import { Plugin } from "nuxt/dist/app/nuxt";
+
 export default defineNuxtConfig({
   css: [
     "vuetify/lib/styles/main.sass",
@@ -10,6 +13,12 @@ export default defineNuxtConfig({
         scss: {
           additionalData: '@import "@/assets/styles/_variables.scss";',
         },
+      },
+    },
+    build: {
+      rollupOptions: {
+        // @NOTE: https://github.com/vitejs/vite/issues/7385
+        plugins: [nodeResolve() as Plugin],
       },
     },
   },
