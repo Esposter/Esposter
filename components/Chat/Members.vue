@@ -14,12 +14,9 @@ const fetchMoreMembers = async (finishLoading: () => void) => {
   finishLoading();
 };
 
-onMounted(async () => {
-  const { members, nextCursor } = await client.query("room.readMembers", { cursor: null });
-
-  initialiseMembersList(members);
-  updateMemberListNextCursor(nextCursor);
-});
+const { members, nextCursor } = await client.query("room.readMembers", { cursor: null });
+initialiseMembersList(members);
+updateMemberListNextCursor(nextCursor);
 </script>
 
 <template>

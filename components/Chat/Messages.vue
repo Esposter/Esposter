@@ -22,14 +22,11 @@ const fetchMoreMessages = async (finishLoading: () => void) => {
   finishLoading();
 };
 
-onMounted(async () => {
-  const { messages, nextCursor } = currentRoomId.value
-    ? await client.query("message.readMessages", { filter: { partitionKey: currentRoomId.value }, cursor: null })
-    : { messages: [], nextCursor: null };
-
-  initialiseMessageList(messages);
-  updateMessageListNextCursor(nextCursor);
-});
+const { messages, nextCursor } = currentRoomId.value
+  ? await client.query("message.readMessages", { filter: { partitionKey: currentRoomId.value }, cursor: null })
+  : { messages: [], nextCursor: null };
+initialiseMessageList(messages);
+updateMessageListNextCursor(nextCursor);
 </script>
 
 <template>

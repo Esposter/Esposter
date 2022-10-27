@@ -14,16 +14,13 @@ const fetchMoreRooms = async (finishLoading: () => void) => {
   finishLoading();
 };
 
-onMounted(async () => {
-  const [room, { rooms, nextCursor }] = await Promise.all([
-    currentRoomId.value ? client.query("room.readRoom", currentRoomId.value) : null,
-    client.query("room.readRooms", { cursor: null }),
-  ]);
-
-  if (room) rooms.push(room);
-  initialiseRoomList(rooms);
-  updateRoomListNextCursor(nextCursor);
-});
+const [room, { rooms: initialRooms, nextCursor }] = await Promise.all([
+  currentRoomId.value ? client.query("room.readRoom", currentRoomId.value) : null,
+  client.query("room.readRooms", { cursor: null }),
+]);
+if (room) initialRooms.push(room);
+initialiseRoomList(initialRooms);
+updateRoomListNextCursor(nextCursor);
 </script>
 
 <template>
