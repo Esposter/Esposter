@@ -1,3 +1,3 @@
-import { useTheme } from "vuetify/lib/framework.mjs";
+import { useTheme } from "vuetify";
 
-export const useGlobalTheme = () => useTheme().global.current;
+export const useGlobalTheme = () => useTheme().global;

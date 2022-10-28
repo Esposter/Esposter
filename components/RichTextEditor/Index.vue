@@ -19,7 +19,7 @@ const editor = useEditor({
   ],
   content: content.value,
 });
-const { border } = useGlobalTheme().value.colors;
+const { border } = useColors();
 
 onBeforeUnmount(() => editor.value?.destroy());
 </script>

@@ -1,6 +1,7 @@
-import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+// @NOTE: We should be able to just import from vuetify
+import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify/lib/framework.mjs";
 
 type PaletteMode = "light" | "dark";
 

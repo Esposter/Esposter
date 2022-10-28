@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useDisplay } from "vuetify";
 
-const theme = useGlobalTheme();
+const isDark = useIsDark();
 const { smAndDown } = useDisplay();
 </script>
 
 <template>
   <div text="center">
-    <div font="900" leading="tight" :class="{ accent: theme.dark }" :text="smAndDown ? '5xl' : '7xl'">
+    <div font="900" leading="tight" :class="{ accent: isDark }" :text="smAndDown ? '5xl' : '7xl'">
       The
-      <span :class="{ accent: !theme.dark }">Progressive</span>
+      <span :class="{ accent: !isDark }">Progressive</span>
       <br />
       JavaScript Application
     </div>

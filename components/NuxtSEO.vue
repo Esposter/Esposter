@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
 
-const { primary } = useGlobalTheme().value.colors;
+const { primary } = useColors();
 const runtimeConfig = useRuntimeConfig();
 
 useHead({

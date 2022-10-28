@@ -8,7 +8,7 @@ interface ContentHeaderProps {
 
 const props = defineProps<ContentHeaderProps>();
 const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = toRefs(props);
-const { border } = useGlobalTheme().value.colors;
+const { border } = useColors();
 </script>
 
 <template>

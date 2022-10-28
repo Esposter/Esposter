@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import type { Component } from "vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useDisplay } from "vuetify";
 import type { Card } from "@/components/Visual/types";
 import BaseCard from "@/components/Visual/BaseCard.vue";
 

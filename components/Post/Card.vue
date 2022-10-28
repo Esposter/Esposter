@@ -7,7 +7,7 @@ interface CardProps {
 
 const props = defineProps<CardProps>();
 const post = toRef(props, "post");
-const { border, surfaceOpacity80 } = useGlobalTheme().value.colors;
+const { border, surfaceOpacity80 } = useColors();
 </script>
 
 <template>
