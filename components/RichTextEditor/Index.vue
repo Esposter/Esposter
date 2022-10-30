@@ -19,26 +19,19 @@ const editor = useEditor({
   ],
   content: content.value,
 });
-const { border } = useColors();
 
 onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <template>
-  <ClientOnly>
-    <v-card class="border">
-      <RichTextEditorMenuBar :editor="editor" />
-      <v-divider thickness="2" />
+  <StyledCard>
+    <RichTextEditorMenuBar :editor="editor" />
+    <v-divider thickness="2" />
+    <ClientOnly>
       <EditorContent :editor="editor" />
-    </v-card>
-  </ClientOnly>
+    </ClientOnly>
+  </StyledCard>
 </template>
-
-<style scoped lang="scss">
-.border {
-  border: 1px solid v-bind(border) !important;
-}
-</style>
 
 <style lang="scss">
 .ProseMirror {

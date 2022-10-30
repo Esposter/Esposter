@@ -7,11 +7,11 @@ interface CardProps {
 
 const props = defineProps<CardProps>();
 const post = toRef(props, "post");
-const { border, surfaceOpacity80 } = useColors();
+const { surfaceOpacity80 } = useColors();
 </script>
 
 <template>
-  <v-card class="card">
+  <StyledCard class="card">
     <PostLikeSection position="absolute" left="2" top="2" :post="post" />
     <v-card p="2!">
       <v-avatar>
@@ -25,13 +25,12 @@ const { border, surfaceOpacity80 } = useColors();
         {{ post.description }}
       </v-card-text>
     </v-card>
-  </v-card>
+  </StyledCard>
 </template>
 
 <style scoped lang="scss">
 .card {
   padding-left: 2.5rem;
   background-color: v-bind(surfaceOpacity80);
-  border: 1px solid v-bind(border);
 }
 </style>
