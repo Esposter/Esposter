@@ -1,14 +1,6 @@
 import BigInt from "big-integer";
-import hrtime from "browser-hrtime";
-import { AZURE_SELF_DESTRUCT_TIMER, isServer } from "@/util/constants";
-
-/**
- * Get current epoch time in nanoseconds.
- */
-export const now = () => {
-  const [ms, ns] = isServer() ? process.hrtime() : hrtime();
-  return BigInt(ms).times(1e9).plus(ns).toString();
-};
+import { now } from "@/util/constants.common";
+import { AZURE_SELF_DESTRUCT_TIMER } from "@/util/constants.server";
 
 /**
  * Calculation for azure table storage RowKey by using reverse-ticked timestamp in nanoseconds.

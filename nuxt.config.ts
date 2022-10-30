@@ -45,8 +45,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      nodeEnv: process.env.NODE_ENV,
       facebookClientId: process.env.FACEBOOK_CLIENT_ID,
     },
-    azureStorageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
   },
 });

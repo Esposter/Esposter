@@ -6,7 +6,7 @@ import { createRouter } from "@/server/trpc/createRouter";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import type { AzureMessageEntity, MessageEntity } from "@/services/azure/types";
 import { AzureTable } from "@/services/azure/types";
-import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants";
+import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import { RemoveIndexSignature } from "@/util/types";
 
 const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({

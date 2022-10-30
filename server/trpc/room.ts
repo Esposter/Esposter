@@ -6,7 +6,7 @@ import chatMembers from "@/assets/data/chatMembers.json";
 import { createRouter } from "@/server/trpc/createRouter";
 import { prisma } from "@/server/trpc/prisma";
 import { userSchema } from "@/server/trpc/user";
-import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants";
+import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants.common";
 
 const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> = z.object({
   id: z.string().uuid(),

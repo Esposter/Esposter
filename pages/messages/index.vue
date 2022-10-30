@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MESSAGES_PATH } from "@/util/constants";
+import { MESSAGES_PATH } from "@/util/constants.client";
 
 const client = useClient();
 const room = await client.query("room.readRoom");

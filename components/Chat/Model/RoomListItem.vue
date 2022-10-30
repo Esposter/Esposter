@@ -2,7 +2,7 @@
 import type { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
-import { MESSAGES_PATH } from "@/util/constants";
+import { MESSAGES_PATH } from "@/util/constants.client";
 
 interface RoomListItemProps {
   room: Room;

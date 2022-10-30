@@ -1,11 +1,10 @@
 import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
 import { AzureTable } from "@/services/azure/types";
-import { AZURE_MAX_BATCH_SIZE } from "@/util/constants";
+import { AZURE_MAX_BATCH_SIZE } from "@/util/constants.server";
 
 export const getTableClient = async (tableName: AzureTable) => {
-  const runtimeConfig = useRuntimeConfig();
-  const tableClient = TableClient.fromConnectionString(runtimeConfig.azureStorageAccountConnectionString, tableName);
+  const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
   try {
     await tableClient.createTable();
     return tableClient;

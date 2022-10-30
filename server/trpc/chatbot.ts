@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter } from "@/server/trpc/createRouter";
 import { generateAIResponse } from "@/services/chatbot";
-import { CHATBOT_PROMPT_MAX_LENGTH } from "@/util/constants";
+import { CHATBOT_PROMPT_MAX_LENGTH } from "@/util/constants.common";
 
 const inferSchema = z.object({
   userId: z.string().uuid(),

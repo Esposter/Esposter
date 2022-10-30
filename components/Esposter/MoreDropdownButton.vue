@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mergeProps } from "vue";
-import { ABOUT_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants";
+import { ABOUT_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants.client";
 
 interface Item {
   title: string;

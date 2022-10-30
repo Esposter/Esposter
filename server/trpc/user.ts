@@ -2,7 +2,7 @@ import type { User as PrismaUser } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { USER_MAX_USERNAME_LENGTH } from "@/util/constants";
+import { USER_MAX_USERNAME_LENGTH } from "@/util/constants.common";
 import { prisma } from "@/server/trpc/prisma";
 import { createRouter } from "@/server/trpc/createRouter";
 

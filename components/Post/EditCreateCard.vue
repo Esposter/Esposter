@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Post } from "@prisma/client";
-import { POST_MAX_TITLE_LENGTH } from "@/util/constants";
+import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
 
 interface EditCreateCardProps {

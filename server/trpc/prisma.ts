@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
 import { highlight } from "cli-highlight";
-import { isProd } from "@/util/constants";
+import { isProd } from "@/util/constants.server";
 
 let prismaClient: PrismaClient;
 

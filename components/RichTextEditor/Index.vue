@@ -3,7 +3,7 @@ import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
-import { POST_MAX_DESCRIPTION_LENGTH } from "@/util/constants";
+import { POST_MAX_DESCRIPTION_LENGTH } from "@/util/constants.common";
 
 interface RichTextEditorProps {
   content?: string;

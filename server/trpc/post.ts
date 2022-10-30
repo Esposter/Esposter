@@ -3,7 +3,7 @@ import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { testUser } from ".";
-import { POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants";
+import { POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { prisma } from "@/server/trpc/prisma";
 import { createRouter } from "@/server/trpc/createRouter";
 

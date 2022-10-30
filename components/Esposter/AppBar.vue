@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FAVICON_32X32_PATH, INDEX_PATH } from "@/util/constants";
+import { FAVICON_32X32_PATH, INDEX_PATH } from "@/util/constants.client";
 </script>
 
 <template>

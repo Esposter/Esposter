@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { LOGO_IMAGE_URL, SITE_DOMAIN } from "@/util/constants";
-
 const { primary } = useColors();
-const runtimeConfig = useRuntimeConfig();
+const config = useRuntimeConfig();
+const siteDomain = useSiteDomain();
+const logoImageUrl = useLogoImageUrl();
 
 useHead({
   titleTemplate: (title) => (title ? `Esposter | ${title}` : "Esposter"),
@@ -21,7 +21,7 @@ useHead({
     },
     {
       name: "twitter:site",
-      content: SITE_DOMAIN,
+      content: siteDomain,
     },
     {
       name: "twitter:creator",
@@ -29,7 +29,7 @@ useHead({
     },
     {
       property: "fb:app_id",
-      content: runtimeConfig.public.facebookClientId,
+      content: config.public.facebookClientId,
     },
     {
       property: "og:title",
@@ -41,7 +41,7 @@ useHead({
     },
     {
       property: "og:url",
-      content: SITE_DOMAIN,
+      content: siteDomain,
     },
     {
       property: "og:type",
@@ -49,7 +49,7 @@ useHead({
     },
     {
       property: "og:image",
-      content: LOGO_IMAGE_URL,
+      content: logoImageUrl,
     },
     {
       property: "og:image:alt",
@@ -65,7 +65,7 @@ useHead({
     },
     {
       property: "og:site_name",
-      content: SITE_DOMAIN,
+      content: siteDomain,
     },
     {
       name: "application-name",
@@ -111,7 +111,7 @@ useHead({
   link: [
     {
       rel: "canonical",
-      href: SITE_DOMAIN,
+      href: siteDomain,
     },
     {
       rel: "icon",
