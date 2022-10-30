@@ -4,7 +4,7 @@ import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
 
 interface EditCreateCardProps {
-  initialValues?: Partial<Post>;
+  initialValues?: Pick<Post, "title" | "description">;
 }
 
 const props = defineProps<EditCreateCardProps>();
