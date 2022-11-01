@@ -2,7 +2,6 @@
 import { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
-import { ChatCreateRoomButton, ChatModelRoomList } from "~~/.nuxt/components";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
