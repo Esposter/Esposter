@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const { createRoom } = useRoomStore();
 const onCreateRoom = async () => {
-  const newRoom = await client.mutation("room.createRoom", { name: "Unnamed" });
-  createRoom(newRoom);
+  const { data } = await $client.room.createRoom.mutate({ name: "Unnamed" });
+  if (data.value) createRoom(data.value);
 };
 </script>
 

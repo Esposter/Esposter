@@ -14,7 +14,7 @@ const emit = defineEmits<{ (event: "update:edit-message", active: false): void }
 const { message, updateDeleteMode } = toRefs(props);
 const editedMessage = ref(message.value.message);
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
@@ -26,12 +26,12 @@ const onUpdateMessage = async () => {
       return;
     }
 
-    const updatedMessage = await client.mutation("message.updateMessage", {
+    const { data } = await $client.message.updateMessage.mutate({
       partitionKey: message.value.partitionKey,
       rowKey: message.value.rowKey,
       message: editedMessage.value,
     });
-    if (updatedMessage) updateMessage(updatedMessage);
+    if (data.value) updateMessage(data.value);
   } finally {
     emit("update:edit-message", false);
     editedMessage.value = message.value.message;

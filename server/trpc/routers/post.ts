@@ -2,10 +2,10 @@ import type { Post as PrismaPost } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { testUser } from ".";
+import { prisma } from "@/prisma";
+import { publicProcedure, router } from "@/server/trpc";
+import { testUser } from "@/server/trpc/routers";
 import { POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
-import { prisma } from "@/server/trpc/prisma";
-import { createRouter } from "@/server/trpc/createRouter";
 
 export const postSchema: toZod<PrismaPost> = z.object({
   id: z.string().uuid(),
@@ -34,24 +34,21 @@ export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
 const deletePostInputSchema = postSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
-export const postRouter = createRouter()
-  .mutation("createPost", {
-    input: createPostInputSchema,
-    resolve: ({ input }) =>
-      prisma.post.create({ data: { id: uuidv4(), creatorId: testUser.id, ranking: 0, ...input } }),
-  })
-  .mutation("updatePost", {
-    input: updatePostInputSchema,
-    resolve: ({ input: { id, ...other } }) => prisma.post.update({ data: other, where: { id } }),
-  })
-  .mutation("deletePost", {
-    input: deletePostInputSchema,
-    resolve: async ({ input }) => {
-      try {
-        await prisma.post.delete({ where: { id: input } });
-        return true;
-      } catch (err) {
-        return false;
-      }
-    },
-  });
+export const postRouter = router({
+  createPost: publicProcedure
+    .input(createPostInputSchema)
+    .mutation(({ input }) =>
+      prisma.post.create({ data: { id: uuidv4(), creatorId: testUser.id, ranking: 0, ...input } })
+    ),
+  updatePost: publicProcedure
+    .input(updatePostInputSchema)
+    .mutation(({ input: { id, ...other } }) => prisma.post.update({ data: other, where: { id } })),
+  deletePost: publicProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
+    try {
+      await prisma.post.delete({ where: { id: input } });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }),
+});

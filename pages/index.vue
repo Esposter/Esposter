@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { testPost } from "@/server/trpc";
+import { testPost } from "@/server/trpc/routers";
 import { usePostStore } from "@/store/usePostStore";
 
 const postStore = usePostStore();

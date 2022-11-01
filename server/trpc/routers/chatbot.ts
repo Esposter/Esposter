@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createRouter } from "@/server/trpc/createRouter";
+import { publicProcedure, router } from "@/server/trpc";
 import { generateAIResponse } from "@/services/chatbot";
 import { CHATBOT_PROMPT_MAX_LENGTH } from "@/util/constants.common";
 
@@ -10,7 +10,8 @@ const inferSchema = z.object({
 });
 export type InferInput = z.infer<typeof inferSchema>;
 
-export const chatbotRouter = createRouter().mutation("infer", {
-  input: inferSchema,
-  resolve: ({ input: { userId, prompt, welcomeMessage } }) => generateAIResponse(userId, prompt, welcomeMessage),
+export const chatbotRouter = router({
+  infer: publicProcedure
+    .input(inferSchema)
+    .mutation(({ input: { userId, prompt, welcomeMessage } }) => generateAIResponse(userId, prompt, welcomeMessage)),
 });

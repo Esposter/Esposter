@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { initialiseRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
 const { roomSearchQuery } = storeToRefs(roomStore);
@@ -10,9 +10,11 @@ const updateSearchQuery = async (value: string) => {
   roomSearchQuery.value = value;
 
   if (value) {
-    const { rooms, nextCursor } = await client.query("room.readRooms", { filter: { name: value }, cursor: null });
-    initialiseRoomListSearched(rooms);
-    updateRoomListSearchedNextCursor(nextCursor);
+    const { data } = await $client.room.readRooms.query({ filter: { name: value }, cursor: null });
+    if (data.value) {
+      initialiseRoomListSearched(data.value.rooms);
+      updateRoomListSearchedNextCursor(data.value.nextCursor);
+    }
   } else {
     initialiseRoomListSearched([]);
     updateRoomListSearchedNextCursor(null);

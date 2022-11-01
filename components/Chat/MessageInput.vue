@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import type { CreateMessageInput } from "@/server/trpc/message";
+import type { CreateMessageInput } from "@/server/trpc/routers/message";
 import { rowKey } from "@/services/azure/util";
 import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const messageInputStore = useMessageInputStore();
@@ -22,8 +22,8 @@ const sendMessage = async () => {
     message: messageInput.value,
   };
   updateMessageInput("");
-  const newMessage = await client.mutation("message.createMessage", createMessageInput);
-  if (newMessage) createMessage(newMessage);
+  const { data } = await $client.message.createMessage.mutate(createMessageInput);
+  if (data.value) createMessage(data.value);
 };
 </script>
 

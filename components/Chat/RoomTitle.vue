@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, roomName } = storeToRefs(roomStore);
@@ -14,11 +14,11 @@ const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !currentRoomName.value || currentRoomName.value === roomName.value) return;
 
-    const updatedRoom = await client.mutation("room.updateRoom", {
+    const { data } = await $client.room.updateRoom.mutate({
       id: currentRoomId.value,
       name: currentRoomName.value,
     });
-    updateRoom(updatedRoom);
+    if (data.value) updateRoom(data.value);
   } finally {
     isEditMode.value = false;
     currentRoomName.value = roomName.value;

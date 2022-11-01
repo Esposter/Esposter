@@ -25,3 +25,5 @@ export const AZURE_BLOB_URL_DEV = "https://dshpstespauea001.blob.core.windows.ne
 
 export const SITE_DOMAIN_PROD = "https://esposter.com";
 export const SITE_DOMAIN_DEV = "http://localhost:3000";
+
+export const TRPC_CLIENT_PATH = "/api/trpc";

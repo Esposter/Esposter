@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { MESSAGES_PATH } from "@/util/constants.client";
 
-const client = useClient();
-const room = await client.query("room.readRoom");
-if (room) navigateTo(MESSAGES_PATH(room.id));
+const { $client } = useNuxtApp();
+const { data } = await $client.room.readRoom.query();
+if (data.value) navigateTo(MESSAGES_PATH(data.value.id));
 else navigateTo(MESSAGES_PATH("t"));
 </script>

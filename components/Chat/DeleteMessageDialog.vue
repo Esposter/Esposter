@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DeleteMessageInput } from "@/server/trpc/message";
+import type { DeleteMessageInput } from "@/server/trpc/routers/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 
@@ -9,7 +9,7 @@ interface DeleteMessageDialogProps {
 
 const props = defineProps<DeleteMessageDialogProps>();
 const message = toRef(props, "message");
-const client = useClient();
+const { $client } = useNuxtApp();
 const { deleteMessage } = useMessageStore();
 const isDeleteMode = ref(false);
 const onDeleteMessage = async () => {
@@ -18,8 +18,8 @@ const onDeleteMessage = async () => {
       partitionKey: message.value.partitionKey,
       rowKey: message.value.rowKey,
     };
-    const result = await client.mutation("message.deleteMessage", deleteMessageInput);
-    if (result) deleteMessage(deleteMessageInput);
+    const { data } = await $client.message.deleteMessage.mutate(deleteMessageInput);
+    if (data.value) deleteMessage(deleteMessageInput);
   } finally {
     isDeleteMode.value = false;
   }

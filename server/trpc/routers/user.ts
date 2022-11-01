@@ -3,8 +3,8 @@ import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { USER_MAX_USERNAME_LENGTH } from "@/util/constants.common";
-import { prisma } from "@/server/trpc/prisma";
-import { createRouter } from "@/server/trpc/createRouter";
+import { publicProcedure, router } from "@/server/trpc";
+import { prisma } from "@/prisma";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),
@@ -24,23 +24,19 @@ export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 const deleteUserInputSchema = userSchema.shape.id;
 export type DeleteUserInput = z.infer<typeof deleteUserInputSchema>;
 
-export const userRouter = createRouter()
-  .mutation("createUser", {
-    input: createUserInputSchema,
-    resolve: ({ input }) => prisma.user.create({ data: { id: uuidv4(), ...input } }),
-  })
-  .mutation("updateUser", {
-    input: updateUserInputSchema,
-    resolve: ({ input: { id, ...other } }) => prisma.user.update({ data: other, where: { id } }),
-  })
-  .mutation("deleteUser", {
-    input: deleteUserInputSchema,
-    resolve: async ({ input }) => {
-      try {
-        await prisma.user.delete({ where: { id: input } });
-        return true;
-      } catch (err) {
-        return false;
-      }
-    },
-  });
+export const userRouter = router({
+  createUser: publicProcedure
+    .input(createUserInputSchema)
+    .mutation(({ input }) => prisma.user.create({ data: { id: uuidv4(), ...input } })),
+  updateUser: publicProcedure
+    .input(updateUserInputSchema)
+    .mutation(({ input: { id, ...other } }) => prisma.user.update({ data: other, where: { id } })),
+  deleteUser: publicProcedure.input(deleteUserInputSchema).mutation(async ({ input }) => {
+    try {
+      await prisma.user.delete({ where: { id: input } });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }),
+});

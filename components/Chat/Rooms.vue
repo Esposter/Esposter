@@ -1,26 +1,34 @@
 <script setup lang="ts">
+import { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
+import { ChatCreateRoomButton, ChatModelRoomList } from "~~/.nuxt/components";
 
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
 const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
 const hasMore = computed(() => Boolean(roomListNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
-  const { rooms, nextCursor } = await client.query("room.readRooms", { cursor: roomListNextCursor.value });
-  pushRoomList(rooms);
-  updateRoomListNextCursor(nextCursor);
-  finishLoading();
+  const { data } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
+  if (data.value) {
+    pushRoomList(data.value.rooms);
+    updateRoomListNextCursor(data.value.nextCursor);
+    finishLoading();
+  }
 };
 
-const [room, { rooms: initialRooms, nextCursor }] = await Promise.all([
-  currentRoomId.value ? client.query("room.readRoom", currentRoomId.value) : null,
-  client.query("room.readRooms", { cursor: null }),
+const [{ data: roomData }, { data: roomsData }] = await Promise.all([
+  currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : { data: { value: null } },
+  $client.room.readRooms.query({ cursor: null }),
 ]);
-if (room) initialRooms.push(room);
+const initialRooms: Room[] = [];
+if (roomData.value) initialRooms.push(roomData.value);
+if (roomsData.value) {
+  initialRooms.push(...roomsData.value.rooms);
+  updateRoomListNextCursor(roomsData.value.nextCursor);
+}
 initialiseRoomList(initialRooms);
-updateRoomListNextCursor(nextCursor);
 </script>
 
 <template>
