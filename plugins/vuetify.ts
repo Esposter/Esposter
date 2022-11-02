@@ -7,22 +7,33 @@ export enum ThemeMode {
   dark = "dark",
 }
 
-const baseColors: Record<ThemeMode, ThemeDefinition["colors"]> = {
+type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
+
+const baseColors: Record<ThemeMode, ThemeColors> = {
   [ThemeMode.light]: {
     background: "#dae0e6",
-    surface: "#ffffff",
-    border: "#cccccc",
+    surface: "#fff",
+    border: "#ccc",
   },
   [ThemeMode.dark]: {
     background: "#18191a",
     surface: "#36393f",
-    border: "#cccccc",
+    border: "#ccc",
   },
 };
 
-const getBaseColorsExtension = (colors: ThemeDefinition["colors"]) => ({
-  surfaceOpacity80: `${colors?.surface}cc`,
-});
+const convertToSixDigitHexColor = (hexColor: string) =>
+  hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
+
+const getBaseColorsExtension = (colors: ThemeColors) => {
+  const sanitisedColors = Object.entries(colors).reduce<ThemeColors>((acc, curr) => {
+    acc[curr[0]] = curr[1] ? convertToSixDigitHexColor(curr[1]) : undefined;
+    return acc;
+  }, {});
+  return {
+    surfaceOpacity80: `${sanitisedColors.surface}cc`,
+  };
+};
 
 const theme: VuetifyOptions["theme"] = {
   themes: {
