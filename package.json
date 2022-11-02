@@ -9,7 +9,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
-    "lint": "eslint --ext .ts,.js,.vue . --fix",
+    "lint": "eslint --cache --ext .ts,.js,.vue . --fix",
     "precommit-lint": "lint-staged",
     "prisma-migrate:dev": "prisma migrate dev",
     "prisma-generate": "prisma generate",
