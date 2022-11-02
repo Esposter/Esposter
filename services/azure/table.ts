@@ -21,11 +21,8 @@ export const getTopNEntities = async <Entity extends object>(
   const listResults = tableClient.listEntities<Entity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });
 
-  /**
-   * Take the first page as the topEntries result
-   * and break to only get the first page.
-   * This only sends a single request to the service.
-   */
+  // Take the first page as the topEntries result
+  // This only sends a single request to the service
   return (await iterator.next()).value ?? [];
 };
 

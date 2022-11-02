@@ -296,11 +296,8 @@ watch(cards, () => {
   margin-right: v-bind("secondLastCardStyle.marginRight");
 }
 
-/*
-  The rough idea of the code below is pretty simple
-  - The JS code will handle breakpoints/variables for each card
- */
-
+// The rough idea of the code below is pretty simple
+// - The JS code will handle breakpoints/variables for each card
 .initial-active-card {
   transform: translateX(-100%) scaleY(1);
   margin-right: 0;
