@@ -5,10 +5,7 @@ export const useRoomStore = defineStore("room", () => {
   const currentRoomId = ref<string | null>(null);
   const roomList = ref<Room[]>([]);
   const pushRoomList = (rooms: Room[]) => roomList.value.push(...rooms);
-  // @NOTE: Remove manually changing to date after adding superjson transformer
-  const rooms = computed(() =>
-    roomList.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-  );
+  const rooms = computed(() => roomList.value.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
 
   const roomListNextCursor = ref<string | null>(null);
   const updateRoomListNextCursor = (nextCursor: string | null) => {
@@ -37,9 +34,8 @@ export const useRoomStore = defineStore("room", () => {
   const roomSearchQuery = ref("");
   const roomListSearched = ref<Room[]>([]);
   const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
-  // @NOTE: Remove manually changing to date after adding superjson transformer
   const roomsSearched = computed(() =>
-    roomListSearched.value.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    roomListSearched.value.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
   );
 
   const roomListSearchedNextCursor = ref<string | null>(null);

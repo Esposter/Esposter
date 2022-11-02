@@ -5,10 +5,9 @@ import { generateResponse } from "@/services/openai";
 import { sanitiseText, streamToText } from "@/util/text";
 
 const chatHistoryFileName = "ChatHistory.txt";
+const containerClient = await getContainerClient(AzureContainer.AIChatbot);
 
 export const getChatHistory = async (userId: string, AIName: string) => {
-  // @NOTE: We can put this as a top level await once that feature is ready
-  const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
 
@@ -20,7 +19,6 @@ export const getChatHistory = async (userId: string, AIName: string) => {
 };
 
 export const appendChatHistory = async (userId: string, AIName: string, chatContent: string) => {
-  const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
   await append(blobClient, chatContent);

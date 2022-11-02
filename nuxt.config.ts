@@ -16,9 +16,18 @@ export default defineNuxtConfig({
       },
     },
     build: {
+      // Set build targets to esnext to allow top-level awaits in ts files
+      target: "esnext",
       rollupOptions: {
         // @NOTE: https://github.com/vitejs/vite/issues/7385
         plugins: [nodeResolve() as Plugin],
+      },
+    },
+  },
+  nitro: {
+    esbuild: {
+      options: {
+        target: "esnext",
       },
     },
   },

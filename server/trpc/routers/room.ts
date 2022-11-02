@@ -8,13 +8,12 @@ import { publicProcedure, router } from "@/server/trpc";
 import { userSchema } from "@/server/trpc/routers/user";
 import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants.common";
 
-const roomSchema: toZod<Omit<PrismaRoom, "updatedAt"> & { updatedAt: string }> = z.object({
+const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
-  // @NOTE: Change back to date after we add superjson
-  updatedAt: z.string(),
+  updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 });
 
