@@ -10,7 +10,6 @@ const containerClient = await getContainerClient(AzureContainer.AIChatbot);
 export const getChatHistory = async (userId: string, AIName: string) => {
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
-
   if (!(await blobClient.exists())) return "";
 
   const response = await blobClient.download();
