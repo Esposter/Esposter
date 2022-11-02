@@ -1,17 +1,19 @@
+import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-// @NOTE: We should be able to just import from vuetify
-import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify/lib/framework.mjs";
 
-type PaletteMode = "light" | "dark";
+export enum ThemeMode {
+  light = "light",
+  dark = "dark",
+}
 
-const baseColors: Record<PaletteMode, ThemeDefinition["colors"]> = {
-  light: {
+const baseColors: Record<ThemeMode, ThemeDefinition["colors"]> = {
+  [ThemeMode.light]: {
     background: "#dae0e6",
     surface: "#ffffff",
     border: "#cccccc",
   },
-  dark: {
+  [ThemeMode.dark]: {
     background: "#18191a",
     surface: "#36393f",
     border: "#cccccc",
@@ -24,24 +26,24 @@ const getBaseColorsExtension = (colors: ThemeDefinition["colors"]) => ({
 
 const theme: VuetifyOptions["theme"] = {
   themes: {
-    light: {
+    [ThemeMode.light]: {
       dark: false,
       colors: {
-        ...baseColors.light,
-        ...getBaseColorsExtension(baseColors.light),
+        ...baseColors[ThemeMode.light],
+        ...getBaseColorsExtension(baseColors[ThemeMode.light]),
       },
     },
-    dark: {
+    [ThemeMode.dark]: {
       dark: true,
       colors: {
-        ...baseColors.dark,
-        ...getBaseColorsExtension(baseColors.dark),
+        ...baseColors[ThemeMode.dark],
+        ...getBaseColorsExtension(baseColors[ThemeMode.dark]),
       },
     },
   },
 };
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const vuetify = createVuetify({ components, directives, theme });
+  const vuetify = createVuetify({ components, directives, theme, ssr: true });
   nuxtApp.vueApp.use(vuetify);
 });
