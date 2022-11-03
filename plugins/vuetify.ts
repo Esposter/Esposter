@@ -1,4 +1,4 @@
-import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
+import { createVuetify, VuetifyOptions } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
@@ -7,9 +7,7 @@ export enum ThemeMode {
   dark = "dark",
 }
 
-type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
-
-const baseColors: Record<ThemeMode, ThemeColors> = {
+const baseColors = {
   [ThemeMode.light]: {
     background: "#dae0e6",
     surface: "#fff",
@@ -22,14 +20,16 @@ const baseColors: Record<ThemeMode, ThemeColors> = {
   },
 };
 
-const convertToSixDigitHexColor = (hexColor: string) =>
+type BaseColors = typeof baseColors[ThemeMode];
+
+const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
 
-const getBaseColorsExtension = (colors: ThemeColors) => {
-  const sanitisedColors = Object.entries(colors).reduce<ThemeColors>((acc, curr) => {
-    acc[curr[0]] = curr[1] ? convertToSixDigitHexColor(curr[1]) : undefined;
+const getBaseColorsExtension = (colors: BaseColors) => {
+  const sanitisedColors = Object.entries(colors).reduce<{ [key: string]: string }>((acc, [color, hex]) => {
+    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.substring(1))}`;
     return acc;
-  }, {});
+  }, {}) as BaseColors;
   return {
     surfaceOpacity80: `${sanitisedColors.surface}cc`,
   };
