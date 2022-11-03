@@ -68,8 +68,12 @@
     "three": "^0.146.0",
     "trpc-nuxt": "^0.4.0-beta.14",
     "uuid": "^9.0.0",
+    "vue": "^3.2.41",
     "vue-waypoint": "^4.2.5",
     "vuetify": "^3.0.0",
     "zod": "^3.19.1"
+  },
+  "dependenciesComments": {
+    "vue": "@NOTE: https://github.com/vuejs/pinia/issues/853"
   }
 }
