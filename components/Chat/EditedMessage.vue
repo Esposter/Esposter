@@ -47,13 +47,13 @@ const onUpdateMessage = async () => {
     autofocus
     :model-value="editedMessage"
     @update:model-value="(value) => (editedMessage = value)"
-    @keydown.enter="onUpdateMessage()"
+    @keydown.enter="onUpdateMessage"
     @keydown.esc="emit('update:edit-message', false)"
   />
   <span text="3">
     escape to
     <span class="text-info underline" cursor="pointer" @click="emit('update:edit-message', false)">cancel</span> • enter
     to
-    <span class="text-info underline" cursor="pointer" @click="onUpdateMessage()">save</span>
+    <span class="text-info underline" cursor="pointer" @click="onUpdateMessage">save</span>
   </span>
 </template>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/message";
+import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 

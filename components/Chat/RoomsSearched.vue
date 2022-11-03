@@ -4,19 +4,21 @@ import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants.client";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
-const client = useClient();
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
 const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
 const hasMore = computed(() => Boolean(roomListSearchedNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
-  const { rooms, nextCursor } = await client.query("room.readRooms", {
+  const { data } = await $client.room.readRooms.query({
     filter: roomSearchQuery.value ? { name: roomSearchQuery.value } : undefined,
     cursor: roomListSearchedNextCursor.value,
   });
-  pushRoomListSearched(rooms);
-  updateRoomListSearchedNextCursor(nextCursor);
-  finishLoading();
+  if (data.value) {
+    pushRoomListSearched(data.value.rooms);
+    updateRoomListSearchedNextCursor(data.value.nextCursor);
+    finishLoading();
+  }
 };
 </script>
 
