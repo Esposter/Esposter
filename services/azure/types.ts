@@ -12,7 +12,8 @@ export enum AzureContainer {
 }
 
 export type CompositeKey = RemoveIndexSignature<TableEntity>;
-// Write our own transaction action type to make it less restrictive when inserting records C:
+// Write our own TransactionAction type to make it less restrictive when inserting records C:
+// @NOTE: Remove this if/when microsoft team decides to make the type a little nicer to work with
 type Distribute<T> = T extends unknown[] ? [T[0], CompositeKey | T[1], ...TupleSlice<T, 2>] : never;
 
 export type TransactionAction = Distribute<AzureTransactionAction>;
