@@ -6,7 +6,7 @@ import { testUser } from "@/server/trpc/routers";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
-import { RemoveIndexSignature } from "@/util/types";
+import type { RemoveIndexSignature } from "@/util/types";
 
 const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({
   partitionKey: z.string().uuid(),
@@ -38,7 +38,7 @@ export const messageRouter = router({
       : odata`PartitionKey eq ${input.filter.partitionKey}`;
     const realFetchLimit = FETCH_LIMIT + 1;
     const messageClient = await getTableClient(AzureTable.Messages);
-    const messages = await getTopNEntities<MessageEntity>(messageClient, realFetchLimit, MessageEntity, { filter });
+    const messages = await getTopNEntities(messageClient, realFetchLimit, MessageEntity, { filter });
 
     let nextCursor: typeof input.cursor = null;
     if (messages.length > FETCH_LIMIT) {

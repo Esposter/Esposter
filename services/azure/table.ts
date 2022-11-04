@@ -1,8 +1,10 @@
-import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
+import type { TableEntityQueryOptions, TransactionAction as AzureTransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
 import { JsonSerializer } from "typescript-json-serializer";
+import type { Type } from "typescript-json-serializer/dist/helpers";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants.server";
-import { AzureTable, CompositeKey } from "@/services/azure/types";
+import { AzureTable } from "@/services/azure/types";
+import type { CompositeKey, TransactionAction } from "@/services/azure/types";
 
 export const getTableClient = async (tableName: AzureTable) => {
   const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
@@ -19,7 +21,7 @@ const serializer = new JsonSerializer();
 export const getTopNEntities = async <Entity extends CompositeKey>(
   tableClient: TableClient,
   topN: number,
-  type: Entity,
+  type: Type<Entity>,
   queryOptions?: TableEntityQueryOptions
 ): Promise<Entity[]> => {
   const listResults = tableClient.listEntities<Entity>({ queryOptions });
@@ -29,14 +31,11 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   const firstPage = (await iterator.next()).value;
   if (!firstPage) return [];
   // Deserialize json to handle transforming Date objects
-  return serializer.deserializeObjectArray<Entity>(firstPage, type) as Entity[];
+  return serializer.deserialize<Entity>(firstPage, type) as Entity[];
 };
 
-export const submitTransaction = async (
-  tableClient: TableClient,
-  ...args: Parameters<typeof tableClient["submitTransaction"]>
-) => {
-  const response = await tableClient.submitTransaction(...args);
+export const submitTransaction = async (tableClient: TableClient, actions: TransactionAction[]) => {
+  const response = await tableClient.submitTransaction(actions as AzureTransactionAction[]);
   const error = response.status >= 400;
   if (error) console.error(`Failed to submit azure table transaction for table ${tableClient.tableName}`);
   return !error;

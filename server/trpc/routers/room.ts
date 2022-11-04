@@ -21,7 +21,7 @@ const readRoomInputSchema = roomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z.object({
-  filter: roomSchema.partial().pick({ name: true }),
+  filter: roomSchema.pick({ name: true }).optional(),
   cursor: z.string().nullable(),
 });
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
@@ -38,7 +38,7 @@ const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
-  filter: roomSchema.partial().pick({ name: true }),
+  filter: roomSchema.pick({ name: true }).optional(),
   cursor: z.string().nullable(),
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
