@@ -67,6 +67,7 @@
     "superjson": "^1.11.0",
     "three": "^0.146.0",
     "trpc-nuxt": "^0.4.0-beta.14",
+    "typescript-json-serializer": "^5.1.0",
     "uuid": "^9.0.0",
     "vue": "^3.2.41",
     "vue-waypoint": "^4.2.5",

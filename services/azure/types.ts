@@ -1,4 +1,4 @@
-import { TableEntity } from "@azure/data-tables";
+import { JsonObject, JsonProperty } from "typescript-json-serializer";
 
 export enum AzureTable {
   Messages = "Messages",
@@ -9,14 +9,22 @@ export enum AzureContainer {
   AIChatbot = "ai-chatbot",
 }
 
-export interface AzureMessageEntity extends TableEntity {
-  userId: string;
-  message: string;
-  createdAt: string;
+export interface CompositeKey {
+  partitionKey: string;
+  rowKey: string;
 }
 
-export interface MessageEntity extends TableEntity {
+interface IMessageEntity extends CompositeKey {
   userId: string;
   message: string;
   createdAt: Date;
+}
+
+@JsonObject()
+export class MessageEntity implements IMessageEntity {
+  @JsonProperty() partitionKey!: string;
+  @JsonProperty() rowKey!: string;
+  @JsonProperty() userId!: string;
+  @JsonProperty() message!: string;
+  @JsonProperty() createdAt!: Date;
 }
