@@ -21,7 +21,7 @@ const readRoomInputSchema = roomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z.object({
-  filter: roomSchema.pick({ name: true }).optional(),
+  filter: roomSchema.partial().pick({ name: true }),
   cursor: z.string().nullable(),
 });
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
@@ -38,7 +38,7 @@ const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
-  filter: roomSchema.pick({ name: true }).optional(),
+  filter: roomSchema.partial().pick({ name: true }),
   cursor: z.string().nullable(),
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
@@ -73,12 +73,9 @@ export const roomRouter = router({
   createRoom: publicProcedure
     .input(createRoomInputSchema)
     .mutation(({ input }) => prisma.room.create({ data: { id: uuidv4(), ...input } })),
-  updateRoom: publicProcedure.input(updateRoomInputSchema).mutation(({ input: { id, ...other } }) =>
-    prisma.room.update({
-      data: { ...other, updatedAt: other.updatedAt ? new Date(other.updatedAt) : undefined },
-      where: { id },
-    })
-  ),
+  updateRoom: publicProcedure
+    .input(updateRoomInputSchema)
+    .mutation(({ input: { id, ...other } }) => prisma.room.update({ data: other, where: { id } })),
   deleteRoom: publicProcedure.input(deleteRoomInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.room.delete({ where: { id: input } });
