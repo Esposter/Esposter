@@ -1,7 +1,8 @@
 import type { TableEntityQueryOptions, TransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
-import { AzureTable } from "@/services/azure/types";
+import { parse } from "superjson";
 import { AZURE_MAX_BATCH_SIZE } from "@/util/constants.server";
+import { AzureTable } from "@/services/azure/types";
 
 export const getTableClient = async (tableName: AzureTable) => {
   const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
@@ -20,10 +21,10 @@ export const getTopNEntities = async <Entity extends object>(
 ): Promise<Entity[]> => {
   const listResults = tableClient.listEntities<Entity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });
-
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  return (await iterator.next()).value ?? [];
+  // Parse json to handle transforming Date objects
+  return parse<Entity[]>((await iterator.next()).value) ?? [];
 };
 
 export const submitTransaction = async (

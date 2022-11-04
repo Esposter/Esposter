@@ -4,7 +4,7 @@ import { z } from "zod";
 import { publicProcedure, router } from "@/server/trpc";
 import { testUser } from "@/server/trpc/routers";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
-import type { AzureMessageEntity, MessageEntity } from "@/services/azure/types";
+import type { MessageEntity } from "@/services/azure/types";
 import { AzureTable } from "@/services/azure/types";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import { RemoveIndexSignature } from "@/util/types";
@@ -39,7 +39,7 @@ export const messageRouter = router({
       : odata`PartitionKey eq ${input.filter.partitionKey}`;
     const realFetchLimit = FETCH_LIMIT + 1;
     const messageClient = await getTableClient(AzureTable.Messages);
-    const messages = await getTopNEntities<AzureMessageEntity>(messageClient, realFetchLimit, { filter });
+    const messages = await getTopNEntities<MessageEntity>(messageClient, realFetchLimit, { filter });
 
     let nextCursor: typeof input.cursor = null;
     if (messages.length > FETCH_LIMIT) {
@@ -47,9 +47,7 @@ export const messageRouter = router({
       if (nextMessage) nextCursor = nextMessage.rowKey;
     }
 
-    const messageEntities: MessageEntity[] = [];
-    for (const message of messages) messageEntities.push({ ...message, createdAt: new Date(message.createdAt) });
-    return { messages: messageEntities, nextCursor };
+    return { messages, nextCursor };
   }),
   createMessage: publicProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
