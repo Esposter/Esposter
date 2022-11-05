@@ -18,14 +18,8 @@ type Distribute<T> = T extends unknown[] ? [T[0], CompositeKey | T[1], ...TupleS
 
 export type TransactionAction = Distribute<AzureTransactionAction>;
 
-export interface AzureMessageEntity extends TableEntity {
-  userId: string;
-  message: string;
-  createdAt: Date;
-}
-
 @JsonObject()
-export class MessageEntity implements RemoveIndexSignature<AzureMessageEntity> {
+export class MessageEntity implements CompositeKey {
   @JsonProperty() partitionKey!: string;
   @JsonProperty() rowKey!: string;
   @JsonProperty() userId!: string;

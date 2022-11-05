@@ -5,6 +5,7 @@ import { publicProcedure, router } from "@/server/trpc";
 import { testUser } from "@/server/trpc/routers";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
+import { getReverseTickedTimestamp } from "@/services/azure/util";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import type { RemoveIndexSignature } from "@/util/types";
 
@@ -22,7 +23,7 @@ const readMessagesInputSchema = z.object({
 });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
-const createMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
+const createMessageInputSchema = messageSchema.pick({ partitionKey: true, message: true });
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
 const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
@@ -51,7 +52,12 @@ export const messageRouter = router({
   createMessage: publicProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
     // Auto create properties we know from the backend
-    const message: MessageEntity = { ...input, userId: testUser.id, createdAt: new Date() };
+    const message: MessageEntity = {
+      ...input,
+      rowKey: getReverseTickedTimestamp(),
+      userId: testUser.id,
+      createdAt: new Date(),
+    };
     const successful = await submitTransaction(messageClient, [["create", message]]);
     return successful ? message : null;
   }),

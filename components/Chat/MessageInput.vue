@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import type { CreateMessageInput } from "@/server/trpc/routers/message";
-import { rowKey } from "@/services/azure/util";
 import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
@@ -16,11 +15,7 @@ const { createMessage } = useMessageStore();
 const sendMessage = async () => {
   if (!currentRoomId.value || !messageInput.value) return;
 
-  const createMessageInput: CreateMessageInput = {
-    partitionKey: currentRoomId.value,
-    rowKey: rowKey(),
-    message: messageInput.value,
-  };
+  const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId.value, message: messageInput.value };
   updateMessageInput("");
   const { data } = await $client.message.createMessage.mutate(createMessageInput);
   if (data.value) createMessage(data.value);
