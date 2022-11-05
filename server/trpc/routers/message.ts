@@ -8,9 +8,8 @@ import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { getReverseTickedTimestamp } from "@/services/azure/util";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
-import type { RemoveIndexSignature } from "@/util/types";
 
-const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({
+const messageSchema: toZod<MessageEntity> = z.object({
   partitionKey: z.string().uuid(),
   rowKey: z.string(),
   userId: z.string().uuid(),
