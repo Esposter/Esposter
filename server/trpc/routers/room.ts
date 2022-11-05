@@ -7,6 +7,7 @@ import { prisma } from "@/prisma";
 import { publicProcedure, router } from "@/server/trpc";
 import { userSchema } from "@/server/trpc/routers/user";
 import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants.common";
+import { getNextCursor } from "@/util/pagination";
 
 const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string().uuid(),
@@ -61,14 +62,7 @@ export const roomRouter = router({
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-
-    let nextCursor: typeof cursor = null;
-    if (rooms.length > FETCH_LIMIT) {
-      const nextRoom = rooms.pop();
-      if (nextRoom) nextCursor = nextRoom.id;
-    }
-
-    return { rooms, nextCursor };
+    return { rooms, nextCursor: getNextCursor(rooms, "id") };
   }),
   createRoom: publicProcedure
     .input(createRoomInputSchema)
@@ -90,14 +84,7 @@ export const roomRouter = router({
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-
-    let nextCursor: typeof cursor = null;
-    if (members.length > FETCH_LIMIT) {
-      const nextMember = members.pop();
-      if (nextMember) nextCursor = nextMember.id;
-    }
-
-    return { members: chatMembers as unknown as User[], nextCursor };
+    return { members: chatMembers as unknown as User[], nextCursor: getNextCursor(members, "id") };
   }),
   addMembers: publicProcedure.input(addMembersInputSchema).mutation(async ({ input: { roomId, userIds } }) => {
     const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });

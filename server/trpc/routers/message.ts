@@ -7,6 +7,7 @@ import { getTableClient, getTopNEntities, submitTransaction } from "@/services/a
 import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { getReverseTickedTimestamp } from "@/services/azure/util";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
+import { getNextCursor } from "@/util/pagination";
 import type { RemoveIndexSignature } from "@/util/types";
 
 const messageSchema: toZod<RemoveIndexSignature<MessageEntity>> = z.object({
@@ -40,14 +41,7 @@ export const messageRouter = router({
     const realFetchLimit = FETCH_LIMIT + 1;
     const messageClient = await getTableClient(AzureTable.Messages);
     const messages = await getTopNEntities(messageClient, realFetchLimit, MessageEntity, { filter });
-
-    let nextCursor: typeof input.cursor = null;
-    if (messages.length > FETCH_LIMIT) {
-      const nextMessage = messages.pop();
-      if (nextMessage) nextCursor = nextMessage.rowKey;
-    }
-
-    return { messages, nextCursor };
+    return { messages, nextCursor: getNextCursor(messages, "rowKey") };
   }),
   createMessage: publicProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
