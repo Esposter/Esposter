@@ -36,7 +36,7 @@ export default defineNuxtConfig({
   },
   modules: ["@nuxtjs/google-fonts", "@unocss/nuxt", "@pinia/nuxt", "@vueuse/nuxt", "trpc-nuxt/module"],
   typescript: {
-    strict: true,
+    shim: false,
   },
   googleFonts: {
     families: {
