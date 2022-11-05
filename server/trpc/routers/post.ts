@@ -38,7 +38,7 @@ export const postRouter = router({
   createPost: publicProcedure
     .input(createPostInputSchema)
     .mutation(({ input }) =>
-      prisma.post.create({ data: { id: uuidv4(), creatorId: testUser.id, ranking: 0, ...input } })
+      prisma.post.create({ data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 } })
     ),
   updatePost: publicProcedure
     .input(updatePostInputSchema)

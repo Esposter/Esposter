@@ -66,7 +66,7 @@ export const roomRouter = router({
   }),
   createRoom: publicProcedure
     .input(createRoomInputSchema)
-    .mutation(({ input }) => prisma.room.create({ data: { id: uuidv4(), ...input } })),
+    .mutation(({ input }) => prisma.room.create({ data: { ...input, id: uuidv4() } })),
   updateRoom: publicProcedure
     .input(updateRoomInputSchema)
     .mutation(({ input: { id, ...other } }) => prisma.room.update({ data: other, where: { id } })),

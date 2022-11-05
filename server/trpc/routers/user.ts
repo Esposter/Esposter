@@ -27,7 +27,7 @@ export type DeleteUserInput = z.infer<typeof deleteUserInputSchema>;
 export const userRouter = router({
   createUser: publicProcedure
     .input(createUserInputSchema)
-    .mutation(({ input }) => prisma.user.create({ data: { id: uuidv4(), ...input } })),
+    .mutation(({ input }) => prisma.user.create({ data: { ...input, id: uuidv4() } })),
   updateUser: publicProcedure
     .input(updateUserInputSchema)
     .mutation(({ input: { id, ...other } }) => prisma.user.update({ data: other, where: { id } })),
