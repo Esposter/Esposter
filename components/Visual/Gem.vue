@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
+
 const ready = ref(false);
 
 onMounted(async () => {
@@ -17,9 +19,9 @@ onMounted(async () => {
   let light: THREE.Object3D<THREE.Event>;
 
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load("/3D/gem.gltf", (gltf) => {
+  gltfLoader.load(GEM_GLTF_PATH, (gltf) => {
     const textureLoader = new THREE.TextureLoader();
-    const roughnessTexture = textureLoader.load("/3D/roughness.jpeg");
+    const roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
     gem = gltf.scene.children[6] as THREE.Mesh<
       THREE.BufferGeometry,
       THREE.MeshBasicMaterial & THREE.MeshStandardMaterial

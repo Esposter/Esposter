@@ -1,4 +1,4 @@
-import { AZURE_BLOB_URL_DEV, AZURE_BLOB_URL_PROD } from "@/util/constants.common";
+import { AZURE_BLOB_URL_DEV, AZURE_BLOB_URL_PROD } from "@/util/constants.client";
 
 export const useLogoImageUrl = () => {
   const isProd = useIsProd();
