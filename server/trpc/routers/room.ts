@@ -62,7 +62,7 @@ export const roomRouter = router({
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-    return { rooms, nextCursor: getNextCursor(rooms, "id") };
+    return { rooms, nextCursor: getNextCursor(rooms, "id", FETCH_LIMIT) };
   }),
   createRoom: publicProcedure
     .input(createRoomInputSchema)
@@ -84,7 +84,7 @@ export const roomRouter = router({
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-    return { members: chatMembers as unknown as User[], nextCursor: getNextCursor(members, "id") };
+    return { members: chatMembers as unknown as User[], nextCursor: getNextCursor(members, "id", FETCH_LIMIT) };
   }),
   addMembers: publicProcedure.input(addMembersInputSchema).mutation(async ({ input: { roomId, userIds } }) => {
     const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });

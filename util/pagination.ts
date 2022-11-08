@@ -1,8 +1,10 @@
-import { FETCH_LIMIT } from "@/util/constants.common";
-
-export const getNextCursor = <T extends object, U extends keyof T>(items: T[], itemCursorKey: U) => {
+export const getNextCursor = <T extends object, U extends keyof T>(
+  items: T[],
+  itemCursorKey: U,
+  fetchLimit: number
+) => {
   let nextCursor: T[U] | null = null;
-  if (items.length > FETCH_LIMIT) {
+  if (items.length > fetchLimit) {
     const nextItem = items.pop();
     if (nextItem) nextCursor = nextItem[itemCursorKey];
   }

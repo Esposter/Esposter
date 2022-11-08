@@ -37,10 +37,9 @@ export const messageRouter = router({
     const filter = input.cursor
       ? odata`PartitionKey eq ${input.filter.partitionKey} and RowKey gt ${input.cursor}`
       : odata`PartitionKey eq ${input.filter.partitionKey}`;
-    const realFetchLimit = FETCH_LIMIT + 1;
     const messageClient = await getTableClient(AzureTable.Messages);
-    const messages = await getTopNEntities(messageClient, realFetchLimit, MessageEntity, { filter });
-    return { messages, nextCursor: getNextCursor(messages, "rowKey") };
+    const messages = await getTopNEntities(messageClient, FETCH_LIMIT + 1, MessageEntity, { filter });
+    return { messages, nextCursor: getNextCursor(messages, "rowKey", FETCH_LIMIT) };
   }),
   createMessage: publicProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);

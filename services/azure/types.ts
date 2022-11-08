@@ -22,7 +22,7 @@ export type TransactionAction = Distribute<AzureTransactionAction>;
 export class MessageEntity {
   @JsonProperty() partitionKey!: string;
   @JsonProperty() rowKey!: string;
-  // @JsonProperty() userId!: string;
-  // @JsonProperty() message!: string;
-  // @JsonProperty() createdAt!: Date;
+  @JsonProperty() userId!: string;
+  @JsonProperty() message!: string;
+  @JsonProperty() createdAt!: Date;
 }
