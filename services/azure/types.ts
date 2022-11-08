@@ -19,10 +19,10 @@ type Distribute<T> = T extends unknown[] ? [T[0], CompositeKey | T[1], ...TupleS
 export type TransactionAction = Distribute<AzureTransactionAction>;
 
 @JsonObject()
-export class MessageEntity implements CompositeKey {
+export class MessageEntity {
   @JsonProperty() partitionKey!: string;
   @JsonProperty() rowKey!: string;
-  @JsonProperty() userId!: string;
-  @JsonProperty() message!: string;
-  @JsonProperty() createdAt!: Date;
+  // @JsonProperty() userId!: string;
+  // @JsonProperty() message!: string;
+  // @JsonProperty() createdAt!: Date;
 }

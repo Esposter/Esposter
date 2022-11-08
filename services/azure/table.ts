@@ -16,7 +16,7 @@ export const getTableClient = async (tableName: AzureTable) => {
   }
 };
 
-const serializer = new JsonSerializer();
+const jsonSerializer = new JsonSerializer({ additionalPropertiesPolicy: "remove" });
 
 export const getTopNEntities = async <Entity extends CompositeKey>(
   tableClient: TableClient,
@@ -28,10 +28,11 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   const iterator = listResults.byPage({ maxPageSize: topN });
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  const firstPage = (await iterator.next()).value;
+  const firstPage = (await iterator.next()).value as (Entity | string)[];
   if (!firstPage) return [];
-  // Deserialize json to handle transforming Date objects
-  return serializer.deserialize<Entity>(firstPage, type) as Entity[];
+  // Filter out metadata like continuation token
+  // before deserializing the json to handle transforming Date objects
+  return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
 };
 
 export const submitTransaction = async (tableClient: TableClient, actions: TransactionAction[]) => {

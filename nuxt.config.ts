@@ -1,5 +1,5 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { Plugin } from "nuxt/dist/app/nuxt";
+import type { Plugin } from "nuxt/dist/app/nuxt";
 
 export default defineNuxtConfig({
   css: [
@@ -37,6 +37,14 @@ export default defineNuxtConfig({
   modules: ["@nuxtjs/google-fonts", "@unocss/nuxt", "@pinia/nuxt", "@vueuse/nuxt", "trpc-nuxt/module"],
   typescript: {
     shim: false,
+    tsConfig: {
+      compilerOptions: {
+        // https://github.com/unjs/nitro/issues/273
+        // typescript-json-deserializer
+        emitDecoratorMetadata: true,
+        experimentalDecorators: true,
+      },
+    },
   },
   googleFonts: {
     families: {
