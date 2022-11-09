@@ -66,4 +66,7 @@ export default defineNuxtConfig({
       facebookClientId: process.env.FACEBOOK_CLIENT_ID,
     },
   },
+  experimental: {
+    reactivityTransform: true,
+  },
 });

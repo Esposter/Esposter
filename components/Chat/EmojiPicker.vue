@@ -9,7 +9,7 @@ interface EmojiPickerProps {
 }
 
 const props = defineProps<EmojiPickerProps>();
-const onEmojiSelect = toRef(props, "onEmojiSelect");
+const onEmojiSelect = toRefs(props);
 const emojiIndex = new EmojiIndex(data);
 </script>
 

@@ -1,27 +1,33 @@
 <script setup lang="ts">
 import { Post } from "@prisma/client";
+import { SubmitEventPromise } from "vuetify";
 import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
+import { usePostStore } from "@/store/usePostStore";
+import { testUser } from "@/assets/data/test";
 
 interface EditCreateCardProps {
   initialValues?: Pick<Post, "title" | "description">;
 }
 
-const props = defineProps<EditCreateCardProps>();
+const props = withDefaults(defineProps<EditCreateCardProps>(), {
+  initialValues: () => ({ title: "", description: "" }),
+});
 const { initialValues } = toRefs(props);
-const title = ref(initialValues?.value?.title ?? "");
-const description = ref(initialValues?.value?.description ?? "");
+const { $client } = useNuxtApp();
+const { createPost } = usePostStore();
+const title = $ref(initialValues.value.title);
+const description = $ref(initialValues.value.description);
+const onCreatePost = async (e: SubmitEventPromise) => {
+  e.preventDefault();
+  const { data } = await $client.post.createPost.mutate({ title, description });
+  if (data.value) createPost({ ...data.value, creator: testUser });
+};
 </script>
 
 <template>
   <v-card>
-    <v-form
-      @submit="
-        (e) => {
-          e.preventDefault();
-        }
-      "
-    >
+    <v-form @submit="onCreatePost">
       <v-container>
         <v-row>
           <v-col>

@@ -6,7 +6,7 @@ interface CardProps {
 }
 
 const props = defineProps<CardProps>();
-const post = toRef(props, "post");
+const { post } = toRefs(props);
 const { surfaceOpacity80 } = useColors();
 </script>
 

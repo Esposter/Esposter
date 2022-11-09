@@ -8,7 +8,7 @@ interface Item {
   title: string;
   icon: string;
   color?: string;
-  onClick: (e: Event) => void;
+  onClick: (e: MouseEvent) => void;
 }
 
 const props = defineProps<MessageOptionsMenuProps>();

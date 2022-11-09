@@ -7,7 +7,7 @@ interface BaseCardProps {
 }
 
 const props = defineProps<BaseCardProps>();
-const card = toRef(props, "card");
+const { card } = toRefs(props);
 const { xs, sm } = useDisplay();
 </script>
 

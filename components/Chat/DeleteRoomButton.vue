@@ -6,7 +6,7 @@ interface DeleteRoomButtonProps {
 }
 
 const props = defineProps<DeleteRoomButtonProps>();
-const roomId = toRef(props, "roomId");
+const { roomId } = toRefs(props);
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;

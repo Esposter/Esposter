@@ -11,7 +11,7 @@ interface MessageListItemProps {
 }
 
 const props = defineProps<MessageListItemProps>();
-const message = toRef(props, "message");
+const { message } = toRefs(props);
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
 const member = computed(() => memberList.value.find((m) => m.id === message.value.userId));

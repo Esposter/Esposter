@@ -2,11 +2,11 @@
 import { Editor } from "@tiptap/vue-3";
 
 interface MenuBarProps {
-  editor?: Editor;
+  editor: Editor | undefined;
 }
 
 const props = defineProps<MenuBarProps>();
-const editor = toRef(props, "editor");
+const { editor } = toRefs(props);
 const items = [
   {
     icon: "mdi-format-bold",

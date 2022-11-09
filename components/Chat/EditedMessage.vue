@@ -12,7 +12,7 @@ interface EditedMessageProps {
 const props = defineProps<EditedMessageProps>();
 const emit = defineEmits<{ (event: "update:edit-message", active: false): void }>();
 const { message, updateDeleteMode } = toRefs(props);
-const editedMessage = ref(message.value.message);
+let editedMessage = $ref(message.value.message);
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -20,8 +20,8 @@ const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
 const onUpdateMessage = async () => {
   try {
-    if (!currentRoomId.value || editedMessage.value === message.value.message) return;
-    if (!editedMessage.value) {
+    if (!currentRoomId.value || editedMessage === message.value.message) return;
+    if (!editedMessage) {
       updateDeleteMode.value(true);
       return;
     }
@@ -29,12 +29,12 @@ const onUpdateMessage = async () => {
     const { data } = await $client.message.updateMessage.mutate({
       partitionKey: message.value.partitionKey,
       rowKey: message.value.rowKey,
-      message: editedMessage.value,
+      message: editedMessage,
     });
     if (data.value) updateMessage(data.value);
   } finally {
     emit("update:edit-message", false);
-    editedMessage.value = message.value.message;
+    editedMessage = message.value.message;
   }
 };
 </script>

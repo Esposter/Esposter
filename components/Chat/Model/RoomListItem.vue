@@ -9,7 +9,7 @@ interface RoomListItemProps {
 }
 
 const props = defineProps<RoomListItemProps>();
-const room = toRef(props, "room");
+const { room } = toRefs(props);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = ref(false);

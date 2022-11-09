@@ -9,8 +9,8 @@ interface RichTextEditorProps {
   content?: string;
 }
 
-const props = defineProps<RichTextEditorProps>();
-const content = toRef(props, "content");
+const props = withDefaults(defineProps<RichTextEditorProps>(), { content: "" });
+const { content } = toRefs(props);
 const editor = useEditor({
   extensions: [
     StarterKit,

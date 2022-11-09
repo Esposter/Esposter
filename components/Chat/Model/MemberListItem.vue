@@ -6,7 +6,7 @@ interface MemberListItemProps {
 }
 
 const props = defineProps<MemberListItemProps>();
-const member = toRef(props, "member");
+const { member } = toRefs(props);
 </script>
 
 <template>
