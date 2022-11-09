@@ -13,7 +13,7 @@ const { room } = $(toRefs(props));
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = $ref(false);
-const active = computed(() => room.id === currentRoomId.value);
+const active = $computed(() => room.id === currentRoomId.value);
 </script>
 
 <!-- @NOTE: Route transitions doesn't like this component with invoke render outside of default slot :C -->

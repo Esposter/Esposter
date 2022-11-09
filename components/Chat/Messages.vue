@@ -10,7 +10,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const messageStore = useMessageStore();
 const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
 const { messageList, messageListNextCursor } = storeToRefs(messageStore);
-const hasMore = computed(() => Boolean(messageListNextCursor.value));
+const hasMore = $computed(() => Boolean(messageListNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
   if (!currentRoomId.value) return;
 

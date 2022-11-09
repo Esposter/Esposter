@@ -8,7 +8,7 @@ useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 const route = useRoute();
 const roomStore = useRoomStore();
 const { currentRoomId, rooms, roomName } = storeToRefs(roomStore);
-const roomExists = computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
+const roomExists = $computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
 roomStore.currentRoomId =
   typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomStore.roomSearchQuery = "";

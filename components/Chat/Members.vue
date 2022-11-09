@@ -6,7 +6,7 @@ const { $client } = useNuxtApp();
 const memberStore = useMemberStore();
 const { pushMemberList, updateMemberListNextCursor, initialiseMembersList } = memberStore;
 const { memberList, memberListNextCursor } = storeToRefs(memberStore);
-const hasMore = computed(() => Boolean(memberListNextCursor.value));
+const hasMore = $computed(() => Boolean(memberListNextCursor.value));
 const fetchMoreMembers = async (finishLoading: () => void) => {
   const { data } = await $client.room.readMembers.query({ cursor: memberListNextCursor.value });
   if (data.value) {

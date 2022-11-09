@@ -7,7 +7,7 @@ const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
 const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
-const hasMore = computed(() => Boolean(roomListNextCursor.value));
+const hasMore = $computed(() => Boolean(roomListNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
   const { data } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
   if (data.value) {

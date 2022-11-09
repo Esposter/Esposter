@@ -4,7 +4,7 @@ import { useMemberStore } from "@/store/useMemberStore";
 
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
-const membersCount = computed(() => memberList.value.length);
+const membersCount = $computed(() => memberList.value.length);
 </script>
 
 <template>

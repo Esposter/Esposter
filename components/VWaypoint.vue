@@ -10,7 +10,7 @@ const props = defineProps<VWaypointProps>();
 const { active } = $(toRefs(props));
 const emit = defineEmits<{ (event: "change", finishLoading: () => void): void }>();
 const loading = $ref(false);
-const realActive = computed(() => !loading && active);
+const realActive = $computed(() => !loading && active);
 </script>
 
 <template>

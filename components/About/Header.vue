@@ -2,7 +2,7 @@
 import { useDisplay } from "vuetify";
 
 const isDark = useIsDark();
-const { smAndDown } = useDisplay();
+const { smAndDown } = $(useDisplay());
 </script>
 
 <template>
