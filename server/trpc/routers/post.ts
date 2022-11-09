@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { prisma } from "@/prisma";
 import { publicProcedure, router } from "@/server/trpc";
-import { testUser } from "@/server/trpc/routers";
+import { testUser } from "@/assets/data/test";
 import { POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 
 export const postSchema: toZod<PrismaPost> = z.object({

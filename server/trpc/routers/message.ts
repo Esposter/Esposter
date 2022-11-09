@@ -2,7 +2,7 @@ import { odata } from "@azure/data-tables";
 import { toZod } from "tozod";
 import { z } from "zod";
 import { publicProcedure, router } from "@/server/trpc";
-import { testUser } from "@/server/trpc/routers";
+import { testUser } from "@/assets/data/test";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { getReverseTickedTimestamp } from "@/services/azure/util";
