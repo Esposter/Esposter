@@ -6,27 +6,27 @@ const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, roomName } = storeToRefs(roomStore);
-const currentRoomName = ref(roomName.value);
+let currentRoomName = $ref(roomName.value);
+let isEditMode = $ref(false);
 const titleRef = ref<HTMLDivElement | undefined>();
-const titleHovered = ref(false);
-const isEditMode = ref(false);
+const titleHovered = $ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId.value || !currentRoomName.value || currentRoomName.value === roomName.value) return;
+    if (!currentRoomId.value || !currentRoomName || currentRoomName === roomName.value) return;
 
     const { data } = await $client.room.updateRoom.mutate({
       id: currentRoomId.value,
-      name: currentRoomName.value,
+      name: currentRoomName,
     });
     if (data.value) updateRoom(data.value);
   } finally {
-    isEditMode.value = false;
-    currentRoomName.value = roomName.value;
+    isEditMode = false;
+    currentRoomName = roomName.value;
   }
 };
 
 onClickOutside(titleRef, async () => {
-  if (isEditMode.value) await onUpdateRoom();
+  if (isEditMode) await onUpdateRoom();
 });
 </script>
 

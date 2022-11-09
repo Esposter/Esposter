@@ -6,13 +6,13 @@ interface DeleteRoomButtonProps {
 }
 
 const props = defineProps<DeleteRoomButtonProps>();
-const { roomId } = toRefs(props);
+const { roomId } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 const onDeleteRoom = async () => {
-  deleteRoom(roomId.value);
-  await $client.room.deleteRoom.mutate(roomId.value);
+  deleteRoom(roomId);
+  await $client.room.deleteRoom.mutate(roomId);
 };
 </script>
 

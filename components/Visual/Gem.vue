@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
 
-const ready = ref(false);
+let ready = $ref(false);
 
 onMounted(async () => {
   const THREE = await import("three");
@@ -34,7 +34,7 @@ onMounted(async () => {
 
     light = gltf.scene.children[0];
     scene.add(light);
-    ready.value = true;
+    ready = true;
   });
 
   // Lighting

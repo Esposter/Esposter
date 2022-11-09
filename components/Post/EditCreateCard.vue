@@ -13,11 +13,11 @@ interface EditCreateCardProps {
 const props = withDefaults(defineProps<EditCreateCardProps>(), {
   initialValues: () => ({ title: "", description: "" }),
 });
-const { initialValues } = toRefs(props);
+const { initialValues } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const { createPost } = usePostStore();
-const title = $ref(initialValues.value.title);
-const description = $ref(initialValues.value.description);
+const title = $ref(initialValues.title);
+const description = $ref(initialValues.description);
 const onCreatePost = async (e: SubmitEventPromise) => {
   e.preventDefault();
   const { data } = await $client.post.createPost.mutate({ title, description });

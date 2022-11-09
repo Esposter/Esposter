@@ -10,17 +10,19 @@ interface RichTextEditorProps {
 }
 
 const props = withDefaults(defineProps<RichTextEditorProps>(), { content: "" });
-const { content } = toRefs(props);
-const editor = useEditor({
-  extensions: [
-    StarterKit,
-    Placeholder.configure({ placeholder: "Text (optional)" }),
-    CharacterCount.configure({ limit: POST_MAX_DESCRIPTION_LENGTH }),
-  ],
-  content: content.value,
-});
+const { content } = $(toRefs(props));
+const editor = $(
+  useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({ placeholder: "Text (optional)" }),
+      CharacterCount.configure({ limit: POST_MAX_DESCRIPTION_LENGTH }),
+    ],
+    content,
+  })
+);
 
-onBeforeUnmount(() => editor.value?.destroy());
+onBeforeUnmount(() => editor?.destroy());
 </script>
 
 <template>

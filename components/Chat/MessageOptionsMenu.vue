@@ -12,7 +12,7 @@ interface Item {
 }
 
 const props = defineProps<MessageOptionsMenuProps>();
-const { isHovering, hoverProps } = toRefs(props);
+const { isHovering, hoverProps } = $(toRefs(props));
 const emit = defineEmits<{
   (event: "update", active: boolean): void;
   (event: "update:edit-message", active: true): void;

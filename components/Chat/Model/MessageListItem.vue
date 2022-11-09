@@ -11,18 +11,16 @@ interface MessageListItemProps {
 }
 
 const props = defineProps<MessageListItemProps>();
-const { message } = toRefs(props);
+const { message } = $(toRefs(props));
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
-const member = computed(() => memberList.value.find((m) => m.id === message.value.userId));
-const isMessageActive = ref(false);
-const isOptionsActive = ref(false);
-const isOptionsChildrenActive = ref(false);
-const isEditMode = ref(false);
-const active = computed(
-  () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isEditMode.value
-);
-const activeNotEdit = computed(() => active.value && !isEditMode.value);
+const member = $computed(() => memberList.value.find((m) => m.id === message.userId));
+const isEditMode = $ref(false);
+const isMessageActive = $ref(false);
+const isOptionsActive = $ref(false);
+const isOptionsChildrenActive = $ref(false);
+const active = $computed(() => isMessageActive || isOptionsActive || isOptionsChildrenActive || isEditMode);
+const activeNotEdit = $computed(() => active && !isEditMode);
 </script>
 
 <template>

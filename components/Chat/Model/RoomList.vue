@@ -9,7 +9,7 @@ interface RoomListProps {
 }
 
 const props = defineProps<RoomListProps>();
-const { rooms, hasMore, fetchMoreRooms } = toRefs(props);
+const { rooms, hasMore, fetchMoreRooms } = $(toRefs(props));
 </script>
 
 <template>

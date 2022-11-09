@@ -20,7 +20,7 @@ const updateSearchQuery = async (value: string) => {
     updateRoomListSearchedNextCursor(null);
   }
 };
-const dialog = ref(false);
+const dialog = $ref(false);
 </script>
 
 <template>

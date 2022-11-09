@@ -8,16 +8,13 @@ interface DeleteMessageDialogProps {
 }
 
 const props = defineProps<DeleteMessageDialogProps>();
-const { message } = toRefs(props);
+const { message } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const { deleteMessage } = useMessageStore();
 let isDeleteMode = $ref(false);
 const onDeleteMessage = async () => {
   try {
-    const deleteMessageInput: DeleteMessageInput = {
-      partitionKey: message.value.partitionKey,
-      rowKey: message.value.rowKey,
-    };
+    const deleteMessageInput: DeleteMessageInput = { partitionKey: message.partitionKey, rowKey: message.rowKey };
     const { data } = await $client.message.deleteMessage.mutate(deleteMessageInput);
     if (data.value) deleteMessage(deleteMessageInput);
   } finally {

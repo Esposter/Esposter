@@ -6,7 +6,7 @@ interface LikeSectionProps {
 }
 
 const props = defineProps<LikeSectionProps>();
-const { post } = toRefs(props);
+const { post } = $(toRefs(props));
 </script>
 
 <template>
