@@ -159,7 +159,7 @@ const getClass = (cardId: number): string => {
 };
 
 // This is the main timer that drives the movement of cards
-let moveCardsTimer = $ref<number | undefined>(undefined);
+let moveCardsTimer = $ref<number | undefined>();
 
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
@@ -192,11 +192,14 @@ onUnmounted(() => clearInterval(moveCardsTimer));
 
 // If cards update then we want to refresh the entire display to first steps.
 // This does make the reload animation a bit sudden/janky, and we could improve this in future.
-watch(cards, () => {
-  cardIds = cards.map((_, index) => index);
-  inactiveCardId = null;
-  activeCardId = 0;
-});
+watch(
+  () => cards,
+  () => {
+    cardIds = cards.map((_, index) => index);
+    inactiveCardId = null;
+    activeCardId = 0;
+  }
+);
 </script>
 
 <template>

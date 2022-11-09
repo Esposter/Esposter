@@ -2,10 +2,10 @@
 import { THEME_COOKIE_NAME } from "@/util/constants.client";
 
 const theme = useGlobalTheme();
-const themeCookie = useCookie(THEME_COOKIE_NAME);
+let themeCookie = $(useCookie(THEME_COOKIE_NAME));
 const toggleTheme = () => {
   const newThemeValue = theme.current.value.dark ? "light" : "dark";
-  themeCookie.value = theme.name.value = newThemeValue;
+  themeCookie = theme.name.value = newThemeValue;
 };
 </script>
 
