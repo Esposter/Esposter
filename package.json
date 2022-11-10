@@ -28,7 +28,7 @@
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "@unocss/nuxt": "^0.46.4",
-    "@vueuse/core": "^9.4.0",
+    "@vueuse/core": "^9.5.0",
     "@vueuse/nuxt": "^9.5.0",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
