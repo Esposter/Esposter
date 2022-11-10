@@ -1,10 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
+  "ignorePresets": [":prHourlyLimit2"],
+  "rangeStrategy": "bump",
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "bump"],
+      "automerge": true,
+      "automergeType": "branch"
     }
   ],
   "lockFileMaintenance": {
