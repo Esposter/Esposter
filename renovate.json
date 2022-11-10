@@ -9,9 +9,5 @@
       "automerge": true,
       "automergeType": "branch"
     }
-  ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  }
+  ]
 }
