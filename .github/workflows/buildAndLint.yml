@@ -1,4 +1,4 @@
-name: Lint
+name: Build & Lint
 on: push
 jobs:
   build:
@@ -7,5 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install modules
         run: npm i
+      - name: Build Nuxt 3
+        run: npm run build
       - name: Run ESLint
         run: npm run lint
