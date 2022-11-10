@@ -38,7 +38,7 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.0.3",
     "nuxt": "^3.0.0-rc.13",
-    "prisma": "^4.6.0",
+    "prisma": "^4.6.1",
     "sass": "^1.56.1",
     "tozod": "^3.0.0"
   },
@@ -47,7 +47,7 @@
     "@azure/storage-blob": "^12.12.0",
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.3",
-    "@prisma/client": "^4.6.0",
+    "@prisma/client": "^4.6.1",
     "@tiptap/extension-character-count": "^2.0.0-beta.202",
     "@tiptap/extension-placeholder": "^2.0.0-beta.202",
     "@tiptap/starter-kit": "^2.0.0-beta.202",
