@@ -22,5 +22,7 @@ export const THEME_COOKIE_NAME = "theme";
 export const AZURE_BLOB_URL_PROD = "https://pshpstespauea001.blob.core.windows.net";
 export const AZURE_BLOB_URL_DEV = "https://dshpstespauea001.blob.core.windows.net";
 
+export const LOGO_IMAGE_PATH = "/assets/Esposter/logo.jpeg";
+
 export const SITE_DOMAIN_PROD = "https://esposter.com";
 export const SITE_DOMAIN_DEV = "http://localhost:3000";
