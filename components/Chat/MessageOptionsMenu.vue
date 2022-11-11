@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { mergeProps } from "vue";
+
 interface MessageOptionsMenuProps {
   isHovering?: boolean;
   hoverProps?: object;
@@ -27,7 +29,7 @@ const items: Item[] = [
 <template>
   <v-card :elevation="isHovering ? 12 : 2" :="hoverProps">
     <v-card-actions p="0!" min-h="auto!">
-      <!-- <v-menu
+      <v-menu
         transition="none"
         location="left"
         :close-on-content-click="false"
@@ -35,22 +37,21 @@ const items: Item[] = [
       >
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="Add Reaction">
-            <template #activator="{ props: tooltipProps }"> -->
-      <v-btn rd="0!" icon="mdi-emoticon" size="small" />
-      <!-- </template>
+            <template #activator="{ props: tooltipProps }">
+              <v-btn rd="0!" icon="mdi-emoticon" size="small" :="mergeProps(menuProps, tooltipProps)" />
+            </template>
           </v-tooltip>
         </template>
-        <ChatEmojiPicker :onEmojiSelect="() => {}" />
-      </v-menu> -->
+        <ChatEmojiPicker :on-emoji-select="() => {}" />
+      </v-menu>
       <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:edit-message', true)" />
-      <!-- @NOTE: This breaks route transitions for now -->
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update', value)">
         <template #activator="{ props: menuProps }">
-          <!-- <v-tooltip location="top" text="More">
-            <template #activator="{ props: tooltipProps }"> -->
-          <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="menuProps" />
-          <!-- </template>
-          </v-tooltip> -->
+          <v-tooltip location="top" text="More">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+            </template>
+          </v-tooltip>
         </template>
         <v-list>
           <v-list-item v-for="item in items" :key="item.title" @click="item.onClick">

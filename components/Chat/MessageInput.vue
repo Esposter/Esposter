@@ -33,31 +33,38 @@ const sendMessage = async () => {
     @keydown.enter="sendMessage"
   >
     <template #clear>
-      <!-- <v-tooltip location="top" text="Clear">
-        <template #activator="{ props }"> -->
-      <v-btn bg="transparent!" icon="mdi-close-circle" size="small" flat @click="updateMessageInput('')" />
-      <!-- </template>
-      </v-tooltip> -->
+      <v-tooltip location="top" text="Clear">
+        <template #activator="{ props }">
+          <v-btn
+            bg="transparent!"
+            icon="mdi-close-circle"
+            size="small"
+            flat
+            :="props"
+            @click="updateMessageInput('')"
+          />
+        </template>
+      </v-tooltip>
     </template>
     <template #append-inner>
-      <!-- @NOTE: Menu doesn't work yet, it will break route transitions -->
-      <!-- <v-menu :close-on-content-click="false">
+      <v-menu :close-on-content-click="false">
         <template #activator="{ props }">
           <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
         </template>
-        <EmojiPicker :onEmojiSelect="(emoji) => updateMessageInput(message + emoji.native)" />
-      </v-menu> -->
-      <!-- <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
-        <template #activator="{ props }"> -->
-      <v-btn
-        bg="transparent!"
-        size="small"
-        flat
-        :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
-        @click="sendMessage"
-      />
-      <!-- </template>
-      </v-tooltip> -->
+        <ChatEmojiPicker :on-emoji-select="(emoji) => updateMessageInput(messageInput + emoji.native)" />
+      </v-menu>
+      <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
+        <template #activator="{ props }">
+          <v-btn
+            bg="transparent!"
+            size="small"
+            flat
+            :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
+            :="props"
+            @click="sendMessage"
+          />
+        </template>
+      </v-tooltip>
     </template>
   </v-text-field>
 </template>

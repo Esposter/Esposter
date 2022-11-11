@@ -20,13 +20,13 @@ const items: Item[] = [
 <template>
   <v-menu location="bottom start">
     <template #activator="{ props: menuProps }">
-      <!-- @NOTE: <v-tooltip location="bottom" text="More">
-          <template #activator="{ props: tooltipProps }"> -->
-      <v-avatar color="background">
-        <v-btn icon="mdi-plus" :="mergeProps(menuProps)" />
-      </v-avatar>
-      <!-- </template>
-        </v-tooltip> -->
+      <v-tooltip location="bottom" text="Create">
+        <template #activator="{ props: tooltipProps }">
+          <v-avatar color="background">
+            <v-btn icon="mdi-plus" :="mergeProps(menuProps, tooltipProps)" />
+          </v-avatar>
+        </template>
+      </v-tooltip>
     </template>
     <v-list min-width="250">
       <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
