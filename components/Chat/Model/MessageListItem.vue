@@ -1,8 +1,5 @@
 <script setup lang="ts">
-// @NOTE: We shouldn't need these imports
 import { storeToRefs } from "pinia";
-import EditedMessage from "@/components/Chat/EditedMessage.vue";
-import MessageOptionsMenu from "@/components/Chat/MessageOptionsMenu.vue";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
 
@@ -41,7 +38,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
         <v-list-item-title font="bold!">
           {{ member.username }}
         </v-list-item-title>
-        <EditedMessage
+        <ChatEditedMessage
           v-if="isEditMode"
           :message="message"
           :update-delete-mode="updateDeleteMode"
@@ -61,7 +58,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
           @mouseleave="isOptionsActive = false"
         >
           <v-hover v-slot="{ isHovering, props: hoverProps }">
-            <MessageOptionsMenu
+            <ChatMessageOptionsMenu
               :is-hovering="isHovering"
               :hover-props="hoverProps"
               @update="(value) => (isOptionsChildrenActive = value)"
