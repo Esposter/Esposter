@@ -14,11 +14,11 @@ const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !currentRoomName || currentRoomName === roomName.value) return;
 
-    const { data } = await $client.room.updateRoom.mutate({
+    const updatedRoom = await $client.room.updateRoom.mutate({
       id: currentRoomId.value,
       name: currentRoomName,
     });
-    if (data.value) updateRoom(data.value);
+    updateRoom(updatedRoom);
   } finally {
     isEditMode = false;
     currentRoomName = roomName.value;

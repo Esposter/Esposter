@@ -9,24 +9,20 @@ const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore
 const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
 const hasMore = $computed(() => Boolean(roomListNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
-  const { data } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
-  if (data.value) {
-    pushRoomList(data.value.rooms);
-    updateRoomListNextCursor(data.value.nextCursor);
-    finishLoading();
-  }
+  const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
+  pushRoomList(rooms);
+  updateRoomListNextCursor(nextCursor);
+  finishLoading();
 };
 
-const [{ data: roomData }, { data: roomsData }] = await Promise.all([
-  currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : { data: { value: null } },
+const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([
+  currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : null,
   $client.room.readRooms.query({ cursor: null }),
 ]);
 const initialRooms: Room[] = [];
-if (roomData.value) initialRooms.push(roomData.value);
-if (roomsData.value) {
-  initialRooms.push(...roomsData.value.rooms);
-  updateRoomListNextCursor(roomsData.value.nextCursor);
-}
+if (roomData) initialRooms.push(roomData);
+initialRooms.push(...roomsData);
+updateRoomListNextCursor(nextCursor);
 initialiseRoomList(initialRooms);
 </script>
 

@@ -20,8 +20,8 @@ const title = $ref(initialValues.title);
 const description = $ref(initialValues.description);
 const onCreatePost = async (e: SubmitEventPromise) => {
   e.preventDefault();
-  const { data } = await $client.post.createPost.mutate({ title, description });
-  if (data.value) createPost({ ...data.value, creator: testUser });
+  const newPost = await $client.post.createPost.mutate({ title, description });
+  createPost({ ...newPost, creator: testUser });
 };
 </script>
 

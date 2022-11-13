@@ -15,10 +15,10 @@ const { createMessage } = useMessageStore();
 const sendMessage = async () => {
   if (!currentRoomId.value || !messageInput.value) return;
 
-  const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId.value, message: messageInput.value };
   updateMessageInput("");
-  const { data } = await $client.message.createMessage.mutate(createMessageInput);
-  if (data.value) createMessage(data.value);
+  const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId.value, message: messageInput.value };
+  const newMessage = await $client.message.createMessage.mutate(createMessageInput);
+  if (newMessage) createMessage(newMessage);
 };
 </script>
 

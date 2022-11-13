@@ -4,8 +4,8 @@ import { useRoomStore } from "@/store/useRoomStore";
 const { $client } = useNuxtApp();
 const { createRoom } = useRoomStore();
 const onCreateRoom = async () => {
-  const { data } = await $client.room.createRoom.mutate({ name: "Unnamed" });
-  if (data.value) createRoom(data.value);
+  const newRoom = await $client.room.createRoom.mutate({ name: "Unnamed" });
+  createRoom(newRoom);
 };
 </script>
 

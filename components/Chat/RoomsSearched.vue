@@ -10,15 +10,13 @@ const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
 const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
 const hasMore = $computed(() => Boolean(roomListSearchedNextCursor.value));
 const fetchMoreRooms = async (finishLoading: () => void) => {
-  const { data } = await $client.room.readRooms.query({
+  const { rooms, nextCursor } = await $client.room.readRooms.query({
     filter: roomSearchQuery.value ? { name: roomSearchQuery.value } : undefined,
     cursor: roomListSearchedNextCursor.value,
   });
-  if (data.value) {
-    pushRoomListSearched(data.value.rooms);
-    updateRoomListSearchedNextCursor(data.value.nextCursor);
-    finishLoading();
-  }
+  pushRoomListSearched(rooms);
+  updateRoomListSearchedNextCursor(nextCursor);
+  finishLoading();
 };
 </script>
 

@@ -8,19 +8,15 @@ const { pushMemberList, updateMemberListNextCursor, initialiseMembersList } = me
 const { memberList, memberListNextCursor } = storeToRefs(memberStore);
 const hasMore = $computed(() => Boolean(memberListNextCursor.value));
 const fetchMoreMembers = async (finishLoading: () => void) => {
-  const { data } = await $client.room.readMembers.query({ cursor: memberListNextCursor.value });
-  if (data.value) {
-    pushMemberList(data.value.members);
-    updateMemberListNextCursor(data.value.nextCursor);
-    finishLoading();
-  }
+  const { members, nextCursor } = await $client.room.readMembers.query({ cursor: memberListNextCursor.value });
+  pushMemberList(members);
+  updateMemberListNextCursor(nextCursor);
+  finishLoading();
 };
 
-const { data } = await $client.room.readMembers.query({ cursor: null });
-if (data.value) {
-  initialiseMembersList(data.value.members);
-  updateMemberListNextCursor(data.value.nextCursor);
-}
+const { members, nextCursor } = await $client.room.readMembers.query({ cursor: null });
+initialiseMembersList(members);
+updateMemberListNextCursor(nextCursor);
 </script>
 
 <template>

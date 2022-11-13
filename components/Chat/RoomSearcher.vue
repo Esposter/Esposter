@@ -10,11 +10,9 @@ const updateSearchQuery = async (value: string) => {
   roomSearchQuery.value = value;
 
   if (value) {
-    const { data } = await $client.room.readRooms.query({ filter: { name: value }, cursor: null });
-    if (data.value) {
-      initialiseRoomListSearched(data.value.rooms);
-      updateRoomListSearchedNextCursor(data.value.nextCursor);
-    }
+    const { rooms, nextCursor } = await $client.room.readRooms.query({ filter: { name: value }, cursor: null });
+    initialiseRoomListSearched(rooms);
+    updateRoomListSearchedNextCursor(nextCursor);
   } else {
     initialiseRoomListSearched([]);
     updateRoomListSearchedNextCursor(null);

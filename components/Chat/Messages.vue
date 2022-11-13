@@ -14,24 +14,20 @@ const hasMore = $computed(() => Boolean(messageListNextCursor.value));
 const fetchMoreMessages = async (finishLoading: () => void) => {
   if (!currentRoomId.value) return;
 
-  const { data } = await $client.message.readMessages.query({
+  const { messages, nextCursor } = await $client.message.readMessages.query({
     filter: { partitionKey: currentRoomId.value },
     cursor: messageListNextCursor.value,
   });
-  if (data.value) {
-    pushMessageList(data.value.messages);
-    updateMessageListNextCursor(data.value.nextCursor);
-    finishLoading();
-  }
+  pushMessageList(messages);
+  updateMessageListNextCursor(nextCursor);
+  finishLoading();
 };
 
-const { data } = currentRoomId.value
+const { messages, nextCursor } = currentRoomId.value
   ? await $client.message.readMessages.query({ filter: { partitionKey: currentRoomId.value }, cursor: null })
-  : { data: { value: { messages: [] as MessageEntity[], nextCursor: null } } };
-if (data.value) {
-  initialiseMessageList(data.value.messages);
-  updateMessageListNextCursor(data.value.nextCursor);
-}
+  : { messages: [] as MessageEntity[], nextCursor: null };
+initialiseMessageList(messages);
+updateMessageListNextCursor(nextCursor);
 </script>
 
 <template>

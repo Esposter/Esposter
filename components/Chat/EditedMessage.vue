@@ -26,12 +26,12 @@ const onUpdateMessage = async () => {
       return;
     }
 
-    const { data } = await $client.message.updateMessage.mutate({
+    const updatedMessage = await $client.message.updateMessage.mutate({
       partitionKey: message.partitionKey,
       rowKey: message.rowKey,
       message: editedMessage,
     });
-    if (data.value) updateMessage(data.value);
+    if (updatedMessage) updateMessage(updatedMessage);
   } finally {
     emit("update:edit-message", false);
     editedMessage = message.message;

@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
-  modules: ["@nuxtjs/google-fonts", "@unocss/nuxt", "@pinia/nuxt", "@vueuse/nuxt", "trpc-nuxt/module"],
+  modules: ["@nuxtjs/google-fonts", "@unocss/nuxt", "@pinia/nuxt", "@vueuse/nuxt"],
   typescript: {
     shim: false,
     tsConfig: {
