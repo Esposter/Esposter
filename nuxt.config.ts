@@ -39,7 +39,7 @@ export default defineNuxtConfig({
     shim: false,
     tsConfig: {
       compilerOptions: {
-        // https://github.com/unjs/nitro/issues/273
+        // @NOTE: https://github.com/unjs/nitro/issues/273
         // typescript-json-deserializer
         emitDecoratorMetadata: true,
         experimentalDecorators: true,

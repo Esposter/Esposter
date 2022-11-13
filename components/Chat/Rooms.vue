@@ -20,7 +20,7 @@ const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([
   $client.room.readRooms.query({ cursor: null }),
 ]);
 const initialRooms: Room[] = [];
-if (roomData) initialRooms.push(roomData);
+if (roomData && !roomsData.find((r) => r.id === roomData.id)) initialRooms.push(roomData);
 initialRooms.push(...roomsData);
 updateRoomListNextCursor(nextCursor);
 initialiseRoomList(initialRooms);

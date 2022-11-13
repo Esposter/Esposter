@@ -12,6 +12,7 @@ const props = defineProps<ContentProps>();
 <template>
   <div display="flex" flex="col" h="full">
     <ChatContentHeader :="props" />
-    <ChatMessages />
+    <!-- @NOTE: Fix typescript json serialiser to actually emit decorator metadata -->
+    <!-- <ChatMessages /> -->
   </div>
 </template>
