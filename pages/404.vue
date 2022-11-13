@@ -2,8 +2,6 @@
 import { gsap } from "gsap";
 import { INDEX_PATH } from "@/util/constants.client";
 
-// @NOTE: Vue error with running this after DOM is fully loaded
-// https://github.com/vuejs/core/issues/5844
 onMounted(() => {
   gsap.to(".hover", {
     duration: 3,
