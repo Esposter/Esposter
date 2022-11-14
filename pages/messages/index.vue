@@ -6,3 +6,7 @@ const room = await $client.room.readRoom.query();
 if (room) navigateTo(MESSAGES_PATH(room.id));
 else navigateTo(MESSAGES_PATH("t"));
 </script>
+
+<template>
+  <slot />
+</template>
