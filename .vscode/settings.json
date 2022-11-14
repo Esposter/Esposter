@@ -26,5 +26,9 @@
   },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "files.associations": {
+    ".env": "env",
+    ".env.example": "env"
   }
 }

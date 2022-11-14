@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { highlight } from "sql-highlight";
+import dedent from "dedent";
 import { isProd } from "@/util/constants.server";
 
 let prismaClient: PrismaClient;
@@ -29,11 +30,13 @@ else {
   });
 
   devPrismaClient.$on("query", (e) => {
-    console.log(highlight(`Query: ${e.query}`));
-    console.log(highlight(`Parameters: ${e.params}`));
-    console.log(highlight(`Duration: ${e.duration}ms`));
-    console.log(highlight(`Target: ${e.target}`));
-    console.log(highlight(`Time: ${e.timestamp}`));
+    console.log(
+      highlight(dedent`Query: ${e.query}
+    Parameters: ${e.params}
+    Duration: ${e.duration}ms
+    Time: ${e.timestamp}
+    Target: ${e.target}`)
+    );
   });
 
   devPrismaClient.$use(async (params, next) => {
