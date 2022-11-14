@@ -53,7 +53,11 @@ export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
 export const roomRouter = router({
   readRoom: publicProcedure
     .input(readRoomInputSchema)
-    .query(({ input }) => prisma.room.findUnique({ where: { id: input } })),
+    .query(({ input }) =>
+      input
+        ? prisma.room.findUnique({ where: { id: input } })
+        : prisma.room.findFirst({ orderBy: { updatedAt: "desc" } })
+    ),
   readRooms: publicProcedure.input(readRoomsInputSchema).query(async ({ input: { filter, cursor } }) => {
     const name = filter?.name;
     const rooms = await prisma.room.findMany({
