@@ -21,10 +21,6 @@ export const ROUGHNESS_TEXTURE_PATH = `${THREED_FOLDER_PATH}/roughness.jpeg`;
 // cookie names, yum! C:
 export const THEME_COOKIE_NAME = "theme";
 
-export const AZURE_BLOB_URL_PROD = "https://pshpstespauea001.blob.core.windows.net";
-export const AZURE_BLOB_URL_DEV = "https://dshpstespauea001.blob.core.windows.net";
-
-export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/Esposter/logo.png`;
-
-export const SITE_DOMAIN_PROD = "https://esposter.com";
-export const SITE_DOMAIN_DEV = "http://localhost:3000";
+export const SITE_NAME = "Esposter";
+export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
+export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/${SITE_NAME}/logo.png`;

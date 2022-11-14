@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { SITE_DESCRIPTION, SITE_NAME } from "@/util/constants.client";
+
 const { primary } = useColors();
 const config = useRuntimeConfig();
-const siteDomain = useSiteDomain();
 const logoImageUrl = useLogoImageUrl();
 
 useHead({
-  titleTemplate: (title) => (title ? `Esposter | ${title}` : "Esposter"),
+  titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
   meta: [
     {
       name: "robots",
@@ -13,7 +14,7 @@ useHead({
     },
     {
       name: "description",
-      content: "Esposter is a nice and casual place for posting random things.",
+      content: SITE_DESCRIPTION,
     },
     {
       name: "twitter:card",
@@ -21,7 +22,7 @@ useHead({
     },
     {
       name: "twitter:site",
-      content: siteDomain,
+      content: config.public.baseUrl,
     },
     {
       name: "twitter:creator",
@@ -33,15 +34,15 @@ useHead({
     },
     {
       property: "og:title",
-      content: "Esposter",
+      content: SITE_NAME,
     },
     {
       property: "og:description",
-      content: "Esposter is a nice and casual place for posting random things.",
+      content: SITE_DESCRIPTION,
     },
     {
       property: "og:url",
-      content: siteDomain,
+      content: config.public.baseUrl,
     },
     {
       property: "og:type",
@@ -65,11 +66,11 @@ useHead({
     },
     {
       property: "og:site_name",
-      content: siteDomain,
+      content: config.public.baseUrl,
     },
     {
       name: "application-name",
-      content: "Esposter",
+      content: SITE_NAME,
     },
     {
       name: "theme-color",
@@ -85,7 +86,7 @@ useHead({
     },
     {
       name: "apple-mobile-web-app-title",
-      content: "Esposter",
+      content: SITE_NAME,
     },
     {
       name: "format-detection",
@@ -111,7 +112,7 @@ useHead({
   link: [
     {
       rel: "canonical",
-      href: siteDomain,
+      href: config.public.baseUrl,
     },
     {
       rel: "icon",

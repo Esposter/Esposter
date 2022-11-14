@@ -3,5 +3,5 @@ import { appRouter } from "@/server/trpc/routers";
 
 export default createNuxtApiHandler({
   router: appRouter,
-  createContext: () => ({}),
+  createContext: ({ req, res }) => ({ req, res }),
 });
