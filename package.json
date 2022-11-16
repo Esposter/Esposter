@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "npm run prisma-migrate:deploy && nuxt build",
     "dev": "nuxt dev",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -15,6 +15,7 @@
     "precommit-lint": "lint-staged",
     "prettify": "prettier . --write --ignore-path .gitignore",
     "prisma-migrate:dev": "prisma migrate dev",
+    "prisma-migrate:deploy": "prisma migrate deploy",
     "prisma-generate": "prisma generate",
     "gen-env": "gen-env-types .env -o env.d.ts -e .",
     "prepare": "husky install"
