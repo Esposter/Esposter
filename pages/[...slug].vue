@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { INDEX_PATH, NOT_FOUND_BACKGROUND } from "@/util/constants.client";
 import { gsap } from "gsap";
-import { INDEX_PATH } from "@/util/constants.client";
+
+const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;
+
+setResponseStatus(404);
 
 onMounted(() => {
   gsap.to(".hover", {
@@ -41,7 +45,7 @@ onMounted(() => {
 }
 
 .image {
-  background-image: url("/img/404bg.svg");
+  background-image: v-bind(backgroundImageUrl);
   background-color: #000;
   background-position: center;
   background-size: cover;

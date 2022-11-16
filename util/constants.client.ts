@@ -18,6 +18,9 @@ const THREED_FOLDER_PATH = "/3D";
 export const GEM_GLTF_PATH = `${THREED_FOLDER_PATH}/gem.gltf`;
 export const ROUGHNESS_TEXTURE_PATH = `${THREED_FOLDER_PATH}/roughness.jpeg`;
 
+const IMG_FOLDER_PATH = "/img";
+export const NOT_FOUND_BACKGROUND = `${IMG_FOLDER_PATH}/404bg.svg`;
+
 // cookie names, yum! C:
 export const THEME_COOKIE_NAME = "theme";
 
