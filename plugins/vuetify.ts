@@ -1,4 +1,4 @@
-import { createVuetify, VuetifyOptions } from "vuetify";
+import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
@@ -7,16 +7,23 @@ export enum ThemeMode {
   dark = "dark",
 }
 
-const baseColors = {
+type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
+// @NOTE: Change these 2 types to use ts 4.9 satisfies operator for smarter types
+const baseColorsCommon: ThemeColors = {
+  primary: "#42b883",
+  border: "#ccc",
+};
+
+const baseColors: Record<ThemeMode, ThemeColors> = {
   [ThemeMode.light]: {
+    ...baseColorsCommon,
     background: "#dae0e6",
     surface: "#fff",
-    border: "#ccc",
   },
   [ThemeMode.dark]: {
+    ...baseColorsCommon,
     background: "#18191a",
     surface: "#36393f",
-    border: "#ccc",
   },
 };
 
@@ -26,8 +33,9 @@ const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
 
 const getBaseColorsExtension = (colors: BaseColors) => {
-  const sanitisedColors = Object.entries(colors).reduce<{ [key: string]: string }>((acc, [color, hex]) => {
-    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.substring(1))}`;
+  const sanitisedColors = Object.entries(colors).reduce<Record<string, string>>((acc, [color, hex]) => {
+    const hexString = hex as string;
+    acc[color] = `${hexString[0]}${toSixDigitHexColor(hexString.substring(1))}`;
     return acc;
   }, {}) as BaseColors;
   return {

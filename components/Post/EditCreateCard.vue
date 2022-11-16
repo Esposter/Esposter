@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Post } from "@prisma/client";
-import { SubmitEventPromise } from "vuetify";
+import { testUser } from "@/assets/data/test";
+import { usePostStore } from "@/store/usePostStore";
 import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
-import { usePostStore } from "@/store/usePostStore";
-import { testUser } from "@/assets/data/test";
+import { Post } from "@prisma/client";
+import { SubmitEventPromise } from "vuetify";
 
 interface EditCreateCardProps {
   initialValues?: Pick<Post, "title" | "description">;
@@ -49,7 +49,7 @@ const onCreatePost = async (e: SubmitEventPromise) => {
         </v-row>
         <v-row>
           <v-col display="flex" justify="end">
-            <StyledButton color="primary" type="submit">Post</StyledButton>
+            <StyledButton type="submit">Post</StyledButton>
           </v-col>
         </v-row>
       </v-container>

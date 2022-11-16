@@ -2,7 +2,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.addMissingImports": true,
-    "source.removeUnusedImports": true,
+    "source.organizeImports": true,
     "source.fixAll.eslint": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -11,6 +11,9 @@
   },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
   },
   "files.associations": {
     ".env": "env",
