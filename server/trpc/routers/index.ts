@@ -1,5 +1,4 @@
 import { router } from "@/server/trpc";
-import { chatbotRouter } from "@/server/trpc/routers/chatbot";
 import { messageRouter } from "@/server/trpc/routers/message";
 import { postRouter } from "@/server/trpc/routers/post";
 import { roomRouter } from "@/server/trpc/routers/room";
@@ -10,7 +9,9 @@ export const appRouter = router({
   room: roomRouter,
   post: postRouter,
   message: messageRouter,
-  chatbot: chatbotRouter,
+  // @NOTE: We cannot use azure blob storage with azure data tables together yet
+  // https://github.com/Azure/azure-sdk-for-js/issues/21314
+  // chatbot: chatbotRouter,
 });
 
 export type AppRouter = typeof appRouter;

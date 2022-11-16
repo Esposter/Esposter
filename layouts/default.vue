@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 
-interface DefaultLayoutProps {
-  mainClass?: string;
-  chatbot?: true;
-}
-
-const props = defineProps<DefaultLayoutProps>();
-const { mainClass, chatbot } = $(toRefs(props));
 const slots = useSlots();
 const { mobile } = $(useDisplay());
 // The internal variables will track if we want to actually show the drawers
@@ -51,7 +44,7 @@ const rightDrawer = $ref(!mobile);
       <slot name="right" />
     </v-navigation-drawer>
 
-    <v-main :class="mainClass">
+    <v-main>
       <slot
         :left-drawer="leftDrawer"
         :right-drawer="rightDrawer"
@@ -63,8 +56,6 @@ const rightDrawer = $ref(!mobile);
     <v-footer v-if="slots.footer" app>
       <slot name="footer" />
     </v-footer>
-
-    <EsposterChatBotBubble v-if="chatbot" />
   </div>
 </template>
 

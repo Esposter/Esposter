@@ -19,7 +19,7 @@ roomStore.roomSearchQuery = "";
     <Head>
       <Title>{{ roomName }}</Title>
     </Head>
-    <NuxtLayout main-class="max-h-screen">
+    <NuxtLayout>
       <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
       <template #left>

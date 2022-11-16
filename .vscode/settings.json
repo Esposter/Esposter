@@ -1,26 +1,11 @@
 {
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.addMissingImports": true,
     "source.removeUnusedImports": true,
     "source.fixAll.eslint": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "[vue]": {
-    "editor.defaultFormatter": "Vue.volar"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
