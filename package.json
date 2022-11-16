@@ -21,7 +21,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config-typescript": "^11.0.0",
+    "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@types/dedent": "^0.7.0",
