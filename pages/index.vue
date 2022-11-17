@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { testPost } from "@/assets/data/test";
 import { usePostStore } from "@/store/usePostStore";
+import { storeToRefs } from "pinia";
 
+const { $client } = useNuxtApp();
 const postStore = usePostStore();
 const { initialisePostList } = postStore;
 const { postList } = storeToRefs(postStore);
+const { posts } = await $client.post.readPosts.query({ cursor: null });
 
-initialisePostList([testPost]);
+initialisePostList(posts);
 </script>
 
 <template>

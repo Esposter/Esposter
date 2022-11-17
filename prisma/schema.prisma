@@ -15,7 +15,7 @@ model User {
   posts     Post[]
   updoots   Updoot[]
   createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  updatedAt DateTime       @default(now()) @updatedAt
   deletedAt DateTime?
 }
 
@@ -25,7 +25,7 @@ model Room {
   avatar    String?
   users     RoomsOnUsers[]
   createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  updatedAt DateTime       @default(now()) @updatedAt
   deletedAt DateTime?
 }
 
@@ -35,7 +35,7 @@ model RoomsOnUsers {
   room      Room      @relation(fields: [roomId], references: [id])
   roomId    String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
 
   @@id([userId, roomId])
@@ -57,7 +57,7 @@ model Post {
   parentId    String?
   children    Post[]    @relation("children")
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
   deletedAt   DateTime?
 }
 
@@ -68,7 +68,7 @@ model Updoot {
   post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
 
   @@id([userId, postId])

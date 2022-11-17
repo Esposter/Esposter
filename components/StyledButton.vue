@@ -2,6 +2,7 @@
 // @NOTE: Will be fixed in Vue 3.3
 // const props = defineProps<typeof VCard>();
 const slots = useSlots();
+const { surface } = useColors();
 </script>
 
 <template>
@@ -17,6 +18,7 @@ const slots = useSlots();
 
 <style scoped lang="scss">
 .button {
+  color: white;
   background-image: $midnightBloom !important;
 }
 </style>

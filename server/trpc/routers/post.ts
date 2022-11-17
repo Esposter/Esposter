@@ -1,11 +1,12 @@
+import { testUser } from "@/assets/data/test";
+import { prisma } from "@/prisma";
+import { publicProcedure, router } from "@/server/trpc";
+import { FETCH_LIMIT, POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import type { Post as PrismaPost } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { prisma } from "@/prisma";
-import { publicProcedure, router } from "@/server/trpc";
-import { testUser } from "@/assets/data/test";
-import { POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
+import { getNextCursor } from "~~/util/pagination";
 
 export const postSchema: toZod<PrismaPost> = z.object({
   id: z.string().uuid(),
@@ -23,6 +24,11 @@ export const postSchema: toZod<PrismaPost> = z.object({
   deletedAt: z.date().nullable(),
 });
 
+const readPostsInputSchema = z.object({
+  cursor: z.string().nullable(),
+});
+export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
+
 const createPostInputSchema = postSchema.pick({ title: true }).merge(postSchema.partial().pick({ description: true }));
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
 
@@ -35,6 +41,15 @@ const deletePostInputSchema = postSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
 export const postRouter = router({
+  readPosts: publicProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
+    const posts = await prisma.post.findMany({
+      take: FETCH_LIMIT + 1,
+      cursor: cursor ? { id: cursor } : undefined,
+      orderBy: { createdAt: "desc" },
+      include: { creator: true },
+    });
+    return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
+  }),
   createPost: publicProcedure
     .input(createPostInputSchema)
     .mutation(({ input }) =>
