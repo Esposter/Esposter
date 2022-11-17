@@ -7,7 +7,9 @@ Look at the [nuxt 3 documentation](https://nuxt.com) to learn more.
 <table>
   <thead>
     <tr>
-      <th width="2000" colspan="2"></th>
+      <th width="2000" colspan="2">
+        <img src="./.github/assets/nuxt/banner.png" />
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -20,7 +22,6 @@ Look at the [nuxt 3 documentation](https://nuxt.com) to learn more.
       </td>
       <td valign="top">
         <h3>Nuxt 3</h3>
-        <img src="./.github/assets/nuxt/banner.png" />
         <p>
           We highly recommend you take a look at
           <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
@@ -54,8 +55,7 @@ Look at the [nuxt 3 documentation](https://nuxt.com) to learn more.
         <h3>tRPC</h3>
         <p>
           We highly recommend you take a look at
-          <a href="https://trpc.io">the tRPC documentation</a> to level
-          up.
+          <a href="https://trpc.io">the tRPC documentation</a> to level up.
         </p>
       </td>
     </tr>
