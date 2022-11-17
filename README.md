@@ -1,7 +1,5 @@
 # Esposter
 
-Look at the [nuxt 3 documentation](https://nuxt.com) to learn more.
-
 ## Technology
 
 <table>
