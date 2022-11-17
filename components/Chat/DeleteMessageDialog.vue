@@ -27,13 +27,13 @@ const onDeleteMessage = async () => {
   <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
   <v-dialog v-model="isDeleteMode" max-width="500">
     <v-card title="Delete Message" text="Are you sure you want to delete this message?">
-      <div m="x-4" rd="2" b="1">
+      <div mx="4" rd="2" b="1">
         <slot name="messagePreview" />
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn p="x-6!" text="3" @click="isDeleteMode = false">Cancel</v-btn>
-        <v-btn p="x-6!" text="3" variant="flat" color="error" @click="onDeleteMessage">Delete</v-btn>
+        <v-btn px="6!" text="3" @click="isDeleteMode = false">Cancel</v-btn>
+        <v-btn px="6!" text="3" variant="flat" color="error" @click="onDeleteMessage">Delete</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

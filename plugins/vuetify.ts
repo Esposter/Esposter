@@ -44,6 +44,11 @@ const getBaseColorsExtension = (colors: BaseColors) => {
 };
 
 const theme: VuetifyOptions["theme"] = {
+  variations: {
+    colors: ["primary"],
+    lighten: 1,
+    darken: 1,
+  },
   themes: {
     [ThemeMode.light]: {
       dark: false,

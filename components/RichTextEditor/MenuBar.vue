@@ -114,7 +114,7 @@ const items = [
 <template>
   <div display="flex" flex="wrap">
     <template v-for="(item, index) in items">
-      <v-divider v-if="item.isDivider" :key="`divider${index}`" thickness="2" vertical m="x-4!" h="8!" self="center!" />
+      <v-divider v-if="item.isDivider" :key="`divider${index}`" thickness="2" vertical mx="4!" h="8!" self="center!" />
       <v-btn v-else :key="index" rd="0!" variant="flat" :="item" />
     </template>
   </div>

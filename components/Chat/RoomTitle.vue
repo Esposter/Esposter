@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -34,8 +34,8 @@ onClickOutside(titleRef, async () => {
   <v-icon p="l-8" size="small">mdi-account-multiple</v-icon>
   <div
     ref="titleRef"
-    m="x-3"
-    p="x-1"
+    mx="3"
+    px="1"
     display="flex"
     items="center"
     :w="isEditMode ? 'full' : ''"

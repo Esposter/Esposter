@@ -27,3 +27,5 @@ export const THEME_COOKIE_NAME = "theme";
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
 export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/${SITE_NAME}/logo.png`;
+
+export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";

@@ -18,10 +18,10 @@ const { surfaceOpacity80 } = useColors();
         <v-img v-if="post.creator.avatar" :src="post.creator.avatar" />
       </v-avatar>
       Posted by {{ post.creator.username }} {{ post.createdAt }}
-      <v-card-title p="x-0!">
+      <v-card-title px="0!">
         {{ post.title }}
       </v-card-title>
-      <v-card-text p="x-0! b-0!">
+      <v-card-text px="0!" pb="0!">
         {{ post.description }}
       </v-card-text>
     </v-card>

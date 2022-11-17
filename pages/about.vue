@@ -6,7 +6,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
 
 <template>
   <NuxtLayout>
-    <v-container fluid>
+    <!-- <v-container>
       <v-row>
         <v-col display="flex" justify="center">
           <VisualGem />
@@ -17,14 +17,19 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
           <AboutHeader />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row pt="12">
+        <v-col>
+          <AboutContent />
+        </v-col>
+      </v-row>
+      <v-row pt="12">
         <v-col class="text-h5" display="flex" justify="center" text="center" font="Montserrat!">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
       </v-row>
-      <v-row m="0" pt="8">
+      <v-row pt="8">
         <VisualCardCarousel :cards="cards" />
       </v-row>
-    </v-container>
+    </v-container> -->
   </NuxtLayout>
 </template>
