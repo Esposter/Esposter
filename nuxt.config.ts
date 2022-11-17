@@ -62,10 +62,10 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      nodeEnv: process.env.NODE_ENV,
-      baseUrl: process.env.BASE_URL,
       azureBlobUrl: process.env.AZURE_BLOB_URL,
+      baseUrl: process.env.BASE_URL,
       facebookClientId: process.env.FACEBOOK_CLIENT_ID,
+      nodeEnv: process.env.NODE_ENV,
     },
   },
   experimental: {
