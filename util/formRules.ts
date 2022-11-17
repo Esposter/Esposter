@@ -1,5 +1,5 @@
-import { VValidation } from "vuetify/components";
 import { ArrayElement } from "@/util/types";
+import { VValidation } from "vuetify/components";
 
 // @NOTE: Vuetify 3 doesn't export ValidationRule type...
 // So we'll hack our way through to grab the type from a component

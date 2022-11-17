@@ -6,7 +6,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
 
 <template>
   <NuxtLayout>
-    <!-- <v-container>
+    <v-container>
       <v-row>
         <v-col display="flex" justify="center">
           <VisualGem />
@@ -30,6 +30,6 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
       <v-row pt="8">
         <VisualCardCarousel :cards="cards" />
       </v-row>
-    </v-container> -->
+    </v-container>
   </NuxtLayout>
 </template>

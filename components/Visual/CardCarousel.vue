@@ -1,11 +1,11 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 
 <script setup lang="ts">
-import type { Component } from "vue";
-import { onMounted, onUnmounted, ref } from "vue";
-import { useDisplay } from "vuetify";
-import type { Card } from "@/components/Visual/types";
 import BaseCard from "@/components/Visual/BaseCard.vue";
+import type { Card } from "@/components/Visual/types";
+import type { Component } from "vue";
+import { onMounted, onUnmounted } from "vue";
+import { useDisplay } from "vuetify";
 
 const props = withDefaults(
   defineProps<{

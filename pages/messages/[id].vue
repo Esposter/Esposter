@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 import { uuidValidateV4 } from "@/util/uuid";
+import { storeToRefs } from "pinia";
 
 useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
 
@@ -20,8 +20,6 @@ roomStore.roomSearchQuery = "";
       <Title>{{ roomName }}</Title>
     </Head>
     <NuxtLayout>
-      <!-- Set max height here so we can hide global window scrollbar
-    and show scrollbar within the chat content only for chat routes -->
       <template #left>
         <ChatLeftSideBar />
       </template>
