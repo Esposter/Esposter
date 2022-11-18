@@ -15,11 +15,11 @@ export const postSchema: toZod<PrismaPost> = z.object({
   noPoints: z.number().nonnegative(),
   noComments: z.number().nonnegative(),
   ranking: z.number(),
-  updated: z.boolean(),
   creatorId: z.string().uuid(),
   depth: z.number(),
   parentId: z.string().uuid().nullable(),
   createdAt: z.date(),
+  updated: z.boolean(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 });
