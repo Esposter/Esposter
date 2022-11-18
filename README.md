@@ -67,6 +67,10 @@
 
 <table>
   <thead>
+    <tr>
+      <th width="2000" colspan="2">
+      </th>
+    </tr>
   </thead>
   <tbody>
     <tr>
@@ -95,8 +99,7 @@
         <h3>Prisma</h3>
         <p>
           We highly recommend you take a look at
-          <a href="https://prisma.io">the Prisma documentation</a> to level
-          up.
+          <a href="https://prisma.io">the Prisma documentation</a> to level up.
         </p>
       </td>
     </tr>
