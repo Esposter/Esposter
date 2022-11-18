@@ -1,6 +1,7 @@
-import { extend } from "dayjs";
+import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 export default defineNuxtPlugin(() => {
-  extend(relativeTime);
+  // eslint-disable-next-line import/no-named-as-default-member
+  dayjs.extend(relativeTime);
 });
