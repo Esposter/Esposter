@@ -48,7 +48,7 @@ model Post {
   noPoints    Int       @default(0)
   noComments  Int       @default(0)
   ranking     Float
-  edited      Boolean   @default(false)
+  updated     Boolean   @default(false)
   creator     User      @relation(fields: [creatorId], references: [id])
   creatorId   String
   updoots     Updoot[]

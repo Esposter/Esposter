@@ -15,7 +15,7 @@ export const postSchema: toZod<PrismaPost> = z.object({
   noPoints: z.number().nonnegative(),
   noComments: z.number().nonnegative(),
   ranking: z.number(),
-  edited: z.boolean(),
+  updated: z.boolean(),
   creatorId: z.string().uuid(),
   depth: z.number(),
   parentId: z.string().uuid().nullable(),

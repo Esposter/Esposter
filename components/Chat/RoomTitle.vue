@@ -7,7 +7,7 @@ const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, roomName } = storeToRefs(roomStore);
 let currentRoomName = $ref(roomName.value);
-let isEditMode = $ref(false);
+let isUpdateMode = $ref(false);
 const titleRef = ref<HTMLDivElement | undefined>();
 const titleHovered = $ref(false);
 const onUpdateRoom = async () => {
@@ -20,13 +20,13 @@ const onUpdateRoom = async () => {
     });
     updateRoom(updatedRoom);
   } finally {
-    isEditMode = false;
+    isUpdateMode = false;
     currentRoomName = roomName.value;
   }
 };
 
 onClickOutside(titleRef, async () => {
-  if (isEditMode) await onUpdateRoom();
+  if (isUpdateMode) await onUpdateRoom();
 });
 </script>
 
@@ -38,13 +38,13 @@ onClickOutside(titleRef, async () => {
     px="1"
     display="flex"
     items="center"
-    :w="isEditMode ? 'full' : ''"
-    :b="!isEditMode && titleHovered ? '1 rd' : '1 rd transparent'"
+    :w="isUpdateMode ? 'full' : ''"
+    :b="!isUpdateMode && titleHovered ? '1 rd' : '1 rd transparent'"
     @mouseenter="titleHovered = true"
     @mouseleave="titleHovered = false"
   >
     <v-text-field
-      v-if="isEditMode"
+      v-if="isUpdateMode"
       font="bold"
       text="xl"
       density="compact"
@@ -55,6 +55,6 @@ onClickOutside(titleRef, async () => {
       @update:model-value="(value) => (currentRoomName = value)"
       @keydown.enter="onUpdateRoom"
     />
-    <v-toolbar-title v-else font="bold!" @click="isEditMode = true">{{ roomName }}</v-toolbar-title>
+    <v-toolbar-title v-else font="bold!" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
   </div>
 </template>

@@ -12,12 +12,12 @@ const { message } = $(toRefs(props));
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
 const member = $computed(() => memberList.value.find((m) => m.id === message.userId));
-const isEditMode = $ref(false);
+const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
 const isOptionsActive = $ref(false);
 const isOptionsChildrenActive = $ref(false);
-const active = $computed(() => isMessageActive || isOptionsActive || isOptionsChildrenActive || isEditMode);
-const activeNotEdit = $computed(() => active && !isEditMode);
+const active = $computed(() => isMessageActive || isOptionsActive || isOptionsChildrenActive || isUpdateMode);
+const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
 </script>
 
 <template>
@@ -39,10 +39,10 @@ const activeNotEdit = $computed(() => active && !isEditMode);
           {{ member.username }}
         </v-list-item-title>
         <ChatUpdatedMessage
-          v-if="isEditMode"
+          v-if="isUpdateMode"
           :message="message"
           :update-delete-mode="updateDeleteMode"
-          @update:edit-mode="(value) => (isEditMode = value)"
+          @update:update-mode="(value) => (isUpdateMode = value)"
         />
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
@@ -50,7 +50,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
       </v-list-item>
       <div position="relative" z="1">
         <div
-          v-show="activeNotEdit"
+          v-show="activeAndNotUpdateMode"
           position="absolute"
           top="-6"
           right="0"
@@ -62,7 +62,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
               :is-hovering="isHovering"
               :hover-props="hoverProps"
               @update="(value) => (isOptionsChildrenActive = value)"
-              @update:edit-mode="(value) => (isEditMode = value)"
+              @update:update-mode="(value) => (isUpdateMode = value)"
               @update:delete-mode="updateDeleteMode"
             />
           </v-hover>

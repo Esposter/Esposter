@@ -10,7 +10,7 @@ interface UpdatedMessageProps {
 }
 
 const props = defineProps<UpdatedMessageProps>();
-const emit = defineEmits<{ (event: "update:edit-mode", value: false): void }>();
+const emit = defineEmits<{ (event: "update:update-mode", value: false): void }>();
 const { message, updateDeleteMode } = $(toRefs(props));
 let editedMessage = $ref(message.message);
 
@@ -33,7 +33,7 @@ const onUpdateMessage = async () => {
     });
     if (updatedMessage) updateMessage(updatedMessage);
   } finally {
-    emit("update:edit-mode", false);
+    emit("update:update-mode", false);
     editedMessage = message.message;
   }
 };
@@ -48,11 +48,12 @@ const onUpdateMessage = async () => {
     :model-value="editedMessage"
     @update:model-value="(value) => (editedMessage = value)"
     @keydown.enter="onUpdateMessage"
-    @keydown.esc="emit('update:edit-mode', false)"
+    @keydown.esc="emit('update:update-mode', false)"
   />
   <span text="3">
     escape to
-    <span class="text-info underline" cursor="pointer" @click="emit('update:edit-mode', false)">cancel</span> • enter to
+    <span class="text-info underline" cursor="pointer" @click="emit('update:update-mode', false)">cancel</span> • enter
+    to
     <span class="text-info underline" cursor="pointer" @click="onUpdateMessage">save</span>
   </span>
 </template>
