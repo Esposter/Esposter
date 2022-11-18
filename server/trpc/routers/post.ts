@@ -50,11 +50,12 @@ export const postRouter = router({
     });
     return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
   }),
-  createPost: publicProcedure
-    .input(createPostInputSchema)
-    .mutation(({ input }) =>
-      prisma.post.create({ data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 } })
-    ),
+  createPost: publicProcedure.input(createPostInputSchema).mutation(({ input }) =>
+    prisma.post.create({
+      data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 },
+      include: { creator: true },
+    })
+  ),
   updatePost: publicProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...other } }) => prisma.post.update({ data: other, where: { id } })),

@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
     <v-container>
-      <PostEditCreateCard />
+      <PostUpsertCard />
     </v-container>
   </NuxtLayout>
 </template>

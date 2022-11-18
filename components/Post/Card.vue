@@ -24,6 +24,9 @@ const { surfaceOpacity80 } = useColors();
       <v-card-text px="0!" pb="0!">
         {{ post.description }}
       </v-card-text>
+      <v-card-actions>
+        <PostEditCardButton />
+      </v-card-actions>
     </v-card>
   </StyledCard>
 </template>

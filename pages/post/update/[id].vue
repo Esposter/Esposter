@@ -1,5 +1,5 @@
 <template>
   <NuxtLayout>
-    <PostEditCreateCard />
+    <PostUpsertCard />
   </NuxtLayout>
 </template>
