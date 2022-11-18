@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import { usePostStore } from "@/store/usePostStore";
+import { INDEX_PATH } from "@/util/constants.client";
+
+interface DeleteCardButtonProps {
+  postId: string;
+}
+
+const props = defineProps<DeleteCardButtonProps>();
+const { postId } = $(toRefs(props));
+const { $client } = useNuxtApp();
+const { deletePost } = usePostStore();
+const onDeletePost = async () => {
+  const successful = await $client.post.deletePost.mutate(postId);
+  if (successful) deletePost(postId);
+  await navigateTo(INDEX_PATH);
+};
+</script>
+
+<template>
+  <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" @click="onDeletePost" />
+</template>

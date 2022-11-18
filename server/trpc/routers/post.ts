@@ -24,6 +24,9 @@ export const postSchema: toZod<PrismaPost> = z.object({
   deletedAt: z.date().nullable(),
 });
 
+const readPostInputSchema = postSchema.shape.id.optional();
+export type ReadPostInput = z.infer<typeof readPostInputSchema>;
+
 const readPostsInputSchema = z.object({
   cursor: z.string().nullable(),
 });
@@ -41,6 +44,13 @@ const deletePostInputSchema = postSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
 export const postRouter = router({
+  readPost: publicProcedure
+    .input(readPostInputSchema)
+    .query(({ input }) =>
+      input
+        ? prisma.post.findUnique({ where: { id: input } })
+        : prisma.post.findFirst({ orderBy: { updatedAt: "desc" } })
+    ),
   readPosts: publicProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
     const posts = await prisma.post.findMany({
       take: FETCH_LIMIT + 1,
@@ -58,7 +68,9 @@ export const postRouter = router({
   ),
   updatePost: publicProcedure
     .input(updatePostInputSchema)
-    .mutation(({ input: { id, ...other } }) => prisma.post.update({ data: other, where: { id } })),
+    .mutation(({ input: { id, ...other } }) =>
+      prisma.post.update({ data: other, where: { id }, include: { creator: true } })
+    ),
   deletePost: publicProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.post.delete({ where: { id: input } });

@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { usePostStore } from "@/store/usePostStore";
-import { INDEX_PATH } from "@/util/constants.client";
 import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
 import { Post } from "@prisma/client";
 import { SubmitEventPromise } from "vuetify";
 
-interface UpsertCardProps {
+export interface UpsertCardProps {
   initialValues?: Pick<Post, "title" | "description">;
 }
 
@@ -14,21 +12,20 @@ const props = withDefaults(defineProps<UpsertCardProps>(), {
   initialValues: () => ({ title: "", description: "" }),
 });
 const { initialValues } = $(toRefs(props));
-const { $client } = useNuxtApp();
-const { createPost } = usePostStore();
+const emit = defineEmits<{
+  (
+    event: "submit",
+    submitEventPromise: SubmitEventPromise,
+    values: NonNullable<UpsertCardProps["initialValues"]>
+  ): void;
+}>();
 const title = $ref(initialValues.title);
 const description = $ref(initialValues.description);
-const onCreatePost = async (e: SubmitEventPromise) => {
-  e.preventDefault();
-  const newPost = await $client.post.createPost.mutate({ title, description });
-  createPost(newPost);
-  await navigateTo(INDEX_PATH);
-};
 </script>
 
 <template>
   <v-card>
-    <v-form @submit="onCreatePost">
+    <v-form @submit="(e) => emit('submit', e, { title, description })">
       <v-container>
         <v-row>
           <v-col>
@@ -45,7 +42,7 @@ const onCreatePost = async (e: SubmitEventPromise) => {
         </v-row>
         <v-row>
           <v-col>
-            <RichTextEditor :content="description" />
+            <RichTextEditor :content="description" @update:content="(value) => (description = value)" />
           </v-col>
         </v-row>
         <v-row>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 interface EditedMessageProps {
   message: MessageEntity;
@@ -10,7 +10,7 @@ interface EditedMessageProps {
 }
 
 const props = defineProps<EditedMessageProps>();
-const emit = defineEmits<{ (event: "update:edit-message", active: false): void }>();
+const emit = defineEmits<{ (event: "update:edit-mode", value: false): void }>();
 const { message, updateDeleteMode } = $(toRefs(props));
 let editedMessage = $ref(message.message);
 
@@ -33,7 +33,7 @@ const onUpdateMessage = async () => {
     });
     if (updatedMessage) updateMessage(updatedMessage);
   } finally {
-    emit("update:edit-message", false);
+    emit("update:edit-mode", false);
     editedMessage = message.message;
   }
 };
@@ -48,12 +48,11 @@ const onUpdateMessage = async () => {
     :model-value="editedMessage"
     @update:model-value="(value) => (editedMessage = value)"
     @keydown.enter="onUpdateMessage"
-    @keydown.esc="emit('update:edit-message', false)"
+    @keydown.esc="emit('update:edit-mode', false)"
   />
   <span text="3">
     escape to
-    <span class="text-info underline" cursor="pointer" @click="emit('update:edit-message', false)">cancel</span> • enter
-    to
+    <span class="text-info underline" cursor="pointer" @click="emit('update:edit-mode', false)">cancel</span> • enter to
     <span class="text-info underline" cursor="pointer" @click="onUpdateMessage">save</span>
   </span>
 </template>

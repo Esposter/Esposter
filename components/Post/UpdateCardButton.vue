@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { INDEX_PATH } from "@/util/constants.client";
+import { POST_UPDATE_PATH } from "@/util/constants.client";
 
-const onUpdatePost = async () => {
-  await navigateTo(INDEX_PATH);
-};
+interface UpdateCardButtonProps {
+  postId: string;
+}
+
+const props = defineProps<UpdateCardButtonProps>();
+const { postId } = $(toRefs(props));
+const onUpdatePost = async () => await navigateTo(POST_UPDATE_PATH(postId));
 </script>
 
 <template>
-  <v-btn icon="mdi-pencil" @click="onUpdatePost" />
+  <v-btn rd="0!" icon="mdi-pencil" size="small" @click="onUpdatePost" />
 </template>

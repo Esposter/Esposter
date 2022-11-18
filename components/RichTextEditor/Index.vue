@@ -11,6 +11,9 @@ interface RichTextEditorProps {
 
 const props = withDefaults(defineProps<RichTextEditorProps>(), { content: "" });
 const { content } = $(toRefs(props));
+const emit = defineEmits<{
+  (event: "update:content", value: string): void;
+}>();
 const editor = $(
   useEditor({
     extensions: [
@@ -19,6 +22,7 @@ const editor = $(
       CharacterCount.configure({ limit: POST_MAX_DESCRIPTION_LENGTH }),
     ],
     content,
+    onUpdate: ({ editor }) => emit("update:content", editor.getHTML()),
   })
 );
 

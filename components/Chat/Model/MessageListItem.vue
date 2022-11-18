@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
+import { storeToRefs } from "pinia";
 
 interface MessageListItemProps {
   message: MessageEntity;
@@ -42,7 +42,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
           v-if="isEditMode"
           :message="message"
           :update-delete-mode="updateDeleteMode"
-          @update:edit-message="(value) => (isEditMode = value)"
+          @update:edit-mode="(value) => (isEditMode = value)"
         />
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
@@ -62,8 +62,8 @@ const activeNotEdit = $computed(() => active && !isEditMode);
               :is-hovering="isHovering"
               :hover-props="hoverProps"
               @update="(value) => (isOptionsChildrenActive = value)"
-              @update:edit-message="(value) => (isEditMode = value)"
-              @update:delete-message="updateDeleteMode"
+              @update:edit-mode="(value) => (isEditMode = value)"
+              @update:delete-mode="updateDeleteMode"
             />
           </v-hover>
         </div>

@@ -16,13 +16,13 @@ interface Item {
 const props = defineProps<MessageOptionsMenuProps>();
 const { isHovering, hoverProps } = $(toRefs(props));
 const emit = defineEmits<{
-  (event: "update", active: boolean): void;
-  (event: "update:edit-message", active: true): void;
-  (event: "update:delete-message", active: true): void;
+  (event: "update", value: boolean): void;
+  (event: "update:edit-mode", value: true): void;
+  (event: "update:delete-mode", value: true): void;
 }>();
 const items: Item[] = [
-  { title: "Edit Message", icon: "mdi-pencil", onClick: () => emit("update:edit-message", true) },
-  { title: "Delete Message", icon: "mdi-delete", color: "error", onClick: () => emit("update:delete-message", true) },
+  { title: "Edit Message", icon: "mdi-pencil", onClick: () => emit("update:edit-mode", true) },
+  { title: "Delete Message", icon: "mdi-delete", color: "error", onClick: () => emit("update:delete-mode", true) },
 ];
 </script>
 
@@ -44,7 +44,7 @@ const items: Item[] = [
         </template>
         <ChatEmojiPicker :on-emoji-select="() => {}" />
       </v-menu>
-      <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:edit-message', true)" />
+      <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:edit-mode', true)" />
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update', value)">
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">

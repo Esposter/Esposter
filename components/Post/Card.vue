@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/prisma/types";
+import dayjs from "dayjs";
+import sanitizeHtml from "sanitize-html";
 
 interface CardProps {
   post: PostWithRelations;
@@ -7,25 +9,27 @@ interface CardProps {
 
 const props = defineProps<CardProps>();
 const { post } = $(toRefs(props));
+const sanitizedDescriptionHtml = $computed(() => sanitizeHtml(post.description));
+const createdAt = $computed(() => dayjs(post.createdAt).fromNow());
 const { surfaceOpacity80 } = useColors();
 </script>
 
 <template>
   <StyledCard class="card">
     <PostLikeSection position="absolute" left="2" top="2" :post="post" />
-    <v-card p="2!">
+    <v-card px="2!" pt="2!">
       <v-avatar>
         <v-img v-if="post.creator.avatar" :src="post.creator.avatar" />
       </v-avatar>
-      Posted by {{ post.creator.username }} {{ post.createdAt }}
+      Posted by <span font="bold">{{ post.creator.username }}</span> <span class="text-grey">{{ createdAt }}</span>
       <v-card-title px="0!">
         {{ post.title }}
       </v-card-title>
-      <v-card-text px="0!" pb="0!">
-        {{ post.description }}
-      </v-card-text>
-      <v-card-actions>
-        <PostEditCardButton />
+      <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+      <v-card-text px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
+      <v-card-actions p="0!">
+        <PostUpdateCardButton :post-id="post.id" />
+        <PostDeleteCardButton :post-id="post.id" />
       </v-card-actions>
     </v-card>
   </StyledCard>

@@ -15,10 +15,11 @@ const items: Item[] = [
     icon: "mdi-pencil",
   },
 ];
+const menu = $ref(false);
 </script>
 
 <template>
-  <v-menu location="bottom start">
+  <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <v-tooltip location="bottom" text="Create">
         <template #activator="{ props: tooltipProps }">
@@ -29,7 +30,7 @@ const items: Item[] = [
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
+      <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
         <v-list-item :value="item.title">
           <template #prepend>
             <v-avatar color="background">
