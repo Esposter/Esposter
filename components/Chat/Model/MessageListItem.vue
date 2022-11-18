@@ -38,7 +38,7 @@ const activeNotEdit = $computed(() => active && !isEditMode);
         <v-list-item-title font="bold!">
           {{ member.username }}
         </v-list-item-title>
-        <ChatEditedMessage
+        <ChatUpdatedMessage
           v-if="isEditMode"
           :message="message"
           :update-delete-mode="updateDeleteMode"

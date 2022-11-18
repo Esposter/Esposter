@@ -22,11 +22,11 @@ const { surfaceOpacity80 } = useColors();
         <v-img v-if="post.creator.avatar" :src="post.creator.avatar" />
       </v-avatar>
       Posted by <span font="bold">{{ post.creator.username }}</span> <span class="text-grey">{{ createdAt }}</span>
-      <v-card-title px="0!">
+      <v-card-title class="text-h6" px="0!" font="bold!">
         {{ post.title }}
       </v-card-title>
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
-      <v-card-text px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
+      <v-card-text class="text-subtitle-1" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
         <PostUpdateCardButton :post-id="post.id" />
         <PostDeleteCardButton :post-id="post.id" />
