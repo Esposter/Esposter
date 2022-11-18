@@ -1,6 +1,8 @@
-# Esposter
+# [Esposter](https://esposter.com)
 
 ## Technology
+
+### Frontend
 
 <table>
   <thead>
@@ -29,6 +31,22 @@
     <tr>
       <td width="80" align="center" valign="top">
         <br />
+        <a href="https://vuejs.org">
+          <img src="./.github/assets/vue/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Vue 3</h3>
+        <p>
+          We highly recommend you take a look at
+          <a href="https://vuejs.org">the Vue 3 documentation</a> to level
+          up.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
         <a href="https://pinia.vuejs.org">
           <img src="./.github/assets/pinia/logo.svg" />
         </a>
@@ -42,6 +60,15 @@
         </p>
       </td>
     </tr>
+  </tbody>
+</table>
+
+### Backend
+
+<table>
+  <thead>
+  </thead>
+  <tbody>
     <tr>
       <td width="80" align="center" valign="top">
         <br />
@@ -54,6 +81,22 @@
         <p>
           We highly recommend you take a look at
           <a href="https://trpc.io">the tRPC documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://prisma.io">
+          <img src="./.github/assets/prisma/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Prisma</h3>
+        <p>
+          We highly recommend you take a look at
+          <a href="https://prisma.io">the Prisma documentation</a> to level
+          up.
         </p>
       </td>
     </tr>

@@ -15,6 +15,9 @@
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
   },
+  "[svg]": {
+    "editor.defaultFormatter": "jock.svg"
+  },
   "files.associations": {
     ".env": "env",
     ".env.example": "env"
