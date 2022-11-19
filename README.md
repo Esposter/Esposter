@@ -127,6 +127,47 @@
   </tbody>
 </table>
 
+### Hosting & Domain Providers
+
+<table>
+  <thead>
+    <tr>
+      <th width="2000" colspan="2">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://railway.app">
+          <img src="./.github/assets/railway/logo.svg" />
+        </a>
+      </td>
+      <td>
+        <h3>Railway</h3>
+        <p>
+          Infrastructure, Instantly. We highly recommend you take a look at <a href="https://railway.app">the Railway documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://www.namecheap.com">
+          <img src="./.github/assets/namecheap/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Namecheap</h3>
+        <p>
+          ICANN-accredited domain name registrar providing domain name registration and web hosting. We highly recommend you take a look at <a href="https://www.namecheap.com">the Namecheap documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 ## Setup
 
 Make sure to install the dependencies:
