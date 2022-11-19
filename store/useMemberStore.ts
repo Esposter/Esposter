@@ -1,18 +1,18 @@
+import { useRoomStore } from "@/store/useRoomStore";
 import type { User } from "@prisma/client";
 import { defineStore } from "pinia";
-import { useRoomStore } from "@/store/useRoomStore";
 
 export const useMemberStore = defineStore("member", () => {
   const roomStore = useRoomStore();
   const membersMap = ref<Record<string, User[]>>({});
-  const pushMemberList = (members: User[]) => {
-    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
-    membersMap.value[roomStore.currentRoomId].push(...members);
-  };
   const memberList = computed(() => {
     if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return [];
     return membersMap.value[roomStore.currentRoomId];
   });
+  const pushMemberList = (members: User[]) => {
+    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
+    membersMap.value[roomStore.currentRoomId].push(...members);
+  };
 
   const memberListNextCursorMap = ref<Record<string, string | null>>({});
   const memberListNextCursor = computed(() => {

@@ -4,11 +4,19 @@ import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const postStore = usePostStore();
-const { initialisePostList } = postStore;
-const { postList } = storeToRefs(postStore);
-const { posts } = await $client.post.readPosts.query({ cursor: null });
+const { pushPostList, updatePostListNextCursor, initialisePostList } = postStore;
+const { postList, postListNextCursor } = storeToRefs(postStore);
+const hasMore = $computed(() => Boolean(postListNextCursor.value));
+const fetchMorePosts = async (finishLoading: () => void) => {
+  const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor.value });
+  pushPostList(posts);
+  updatePostListNextCursor(nextCursor);
+  finishLoading();
+};
 
+const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: null });
 initialisePostList(posts);
+updatePostListNextCursor(nextCursor);
 </script>
 
 <template>
@@ -19,6 +27,7 @@ initialisePostList(posts);
           <PostCard :post="post" />
         </v-col>
       </v-row>
+      <VWaypoint :active="hasMore" @change="fetchMorePosts" />
     </v-container>
   </NuxtLayout>
 </template>

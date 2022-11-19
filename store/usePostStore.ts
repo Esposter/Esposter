@@ -3,6 +3,13 @@ import { defineStore } from "pinia";
 
 export const usePostStore = defineStore("post", () => {
   const postList = ref<PostWithRelations[]>([]);
+  const pushPostList = (posts: PostWithRelations[]) => postList.value.push(...posts);
+
+  const postListNextCursor = ref<string | null>(null);
+  const updatePostListNextCursor = (nextCursor: string | null) => {
+    postListNextCursor.value = nextCursor;
+  };
+
   const initialisePostList = (posts: PostWithRelations[]) => {
     postList.value = posts;
   };
@@ -20,6 +27,9 @@ export const usePostStore = defineStore("post", () => {
 
   return {
     postList,
+    pushPostList,
+    postListNextCursor,
+    updatePostListNextCursor,
     initialisePostList,
     readPost,
     createPost,
