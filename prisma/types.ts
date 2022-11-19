@@ -1,3 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-export type PostWithRelations = Prisma.PostGetPayload<{ include: { creator: true } }>;
+// @NOTE: Update to use satisfies Prisma.PostInclude after ts 4.9
+export const PostRelationsIncludeDefault = { creator: true, likes: true };
+
+export type PostWithRelations = Prisma.PostGetPayload<{ include: typeof PostRelationsIncludeDefault }>;

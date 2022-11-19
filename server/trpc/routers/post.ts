@@ -1,22 +1,23 @@
 import { testUser } from "@/assets/data/test";
 import { prisma } from "@/prisma";
+import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { publicProcedure, router } from "@/server/trpc";
 import { FETCH_LIMIT, POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
+import { getNextCursor } from "@/util/pagination";
 import type { Post as PrismaPost } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { getNextCursor } from "~~/util/pagination";
 
 export const postSchema: toZod<PrismaPost> = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(POST_MAX_TITLE_LENGTH),
   description: z.string().max(POST_MAX_DESCRIPTION_LENGTH),
-  noPoints: z.number().nonnegative(),
-  noComments: z.number().nonnegative(),
+  noLikes: z.number().int().nonnegative(),
+  noComments: z.number().int().nonnegative(),
   ranking: z.number(),
   creatorId: z.string().uuid(),
-  depth: z.number(),
+  depth: z.number().int(),
   parentId: z.string().uuid().nullable(),
   createdAt: z.date(),
   updated: z.boolean(),
@@ -56,20 +57,20 @@ export const postRouter = router({
       take: FETCH_LIMIT + 1,
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { createdAt: "desc" },
-      include: { creator: true },
+      include: PostRelationsIncludeDefault,
     });
     return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
   }),
   createPost: publicProcedure.input(createPostInputSchema).mutation(({ input }) =>
     prisma.post.create({
       data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 },
-      include: { creator: true },
+      include: PostRelationsIncludeDefault,
     })
   ),
   updatePost: publicProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...other } }) =>
-      prisma.post.update({ data: other, where: { id }, include: { creator: true } })
+      prisma.post.update({ data: other, where: { id }, include: PostRelationsIncludeDefault })
     ),
   deletePost: publicProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {

@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 model User {
@@ -13,7 +14,7 @@ model User {
   avatar    String?
   rooms     RoomsOnUsers[]
   posts     Post[]
-  updoots   Updoot[]
+  likes     Like[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @default(now()) @updatedAt
   deletedAt DateTime?
@@ -45,12 +46,12 @@ model Post {
   id          String    @id @default(uuid())
   title       String    @default("")
   description String    @default("")
-  noPoints    Int       @default(0)
+  noLikes     Int       @default(0)
   noComments  Int       @default(0)
   ranking     Float
   creator     User      @relation(fields: [creatorId], references: [id])
   creatorId   String
-  updoots     Updoot[]
+  likes       Like[]
   depth       Int       @default(0)
   parent      Post?     @relation("children", fields: [parentId], references: [id])
   parentId    String?
@@ -61,12 +62,12 @@ model Post {
   deletedAt   DateTime?
 }
 
-model Updoot {
-  value     Int
+model Like {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
+  value     Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   deletedAt DateTime?
