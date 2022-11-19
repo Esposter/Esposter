@@ -45,7 +45,7 @@
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://next.vuetifyjs.com">
-          <img src="./.github/assets/vue/logo.svg" />
+          <img src="./.github/assets/vuetify/logo.svg" />
         </a>
       </td>
       <td valign="top">
