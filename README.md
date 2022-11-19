@@ -23,8 +23,7 @@
       <td valign="top">
         <h3>Nuxt 3</h3>
         <p>
-          We highly recommend you take a look at
-          <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
+          The Intuitive Web Framework, based on Vue 3. We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -38,9 +37,21 @@
       <td valign="top">
         <h3>Vue 3</h3>
         <p>
-          We highly recommend you take a look at
-          <a href="https://vuejs.org">the Vue 3 documentation</a> to level
-          up.
+          🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. We highly recommend you take a look at <a href="https://vuejs.org">the Vue 3 documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://next.vuetifyjs.com">
+          <img src="./.github/assets/vue/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Vuetify 3</h3>
+        <p>
+          🐉 Material Component Framework for Vue. We highly recommend you take a look at <a href="https://next.vuetifyjs.com">the Vuetify 3 documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -54,9 +65,7 @@
       <td valign="top">
         <h3>Pinia</h3>
         <p>
-          We highly recommend you take a look at
-          <a href="https://pinia.vuejs.org">the Pinia documentation</a> to level
-          up.
+          🍍 Intuitive, type safe, light and flexible Store for Vue using the composition api with DevTools support. We highly recommend you take a look at <a href="https://pinia.vuejs.org">the Pinia documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -83,8 +92,21 @@
       <td>
         <h3>tRPC</h3>
         <p>
-          We highly recommend you take a look at
-          <a href="https://trpc.io">the tRPC documentation</a> to level up.
+          🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy. We highly recommend you take a look at <a href="https://trpc.io">the tRPC documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://zod.dev">
+          <img src="./.github/assets/zod/logo.svg" />
+        </a>
+      </td>
+      <td>
+        <h3>Zod</h3>
+        <p>
+          TypeScript-first schema validation with static type inference. We highly recommend you take a look at <a href="https://zod.dev">the Zod documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -98,8 +120,7 @@
       <td valign="top">
         <h3>Prisma</h3>
         <p>
-          We highly recommend you take a look at
-          <a href="https://prisma.io">the Prisma documentation</a> to level up.
+          Next-generation ORM for Node.js & TypeScript | PostgreSQL. We highly recommend you take a look at <a href="https://prisma.io">the Prisma documentation</a> to level up.
         </p>
       </td>
     </tr>
