@@ -66,6 +66,8 @@ export default defineNuxtConfig({
       baseUrl: process.env.BASE_URL,
       facebookClientId: process.env.FACEBOOK_CLIENT_ID,
       nodeEnv: process.env.NODE_ENV,
+      wsBaseUrl: process.env.WS_BASE_URL,
+      wsPort: process.env.WS_PORT,
     },
   },
   experimental: {

@@ -6,6 +6,7 @@ const config = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
 useHead({
+  title: null,
   titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
   meta: [
     {

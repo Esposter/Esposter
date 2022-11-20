@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -28,6 +28,8 @@ const { messages, nextCursor } = currentRoomId.value
   : { messages: [] as MessageEntity[], nextCursor: null };
 initialiseMessageList(messages);
 updateMessageListNextCursor(nextCursor);
+
+$client.message.onCreateMessage.subscribe(undefined, { onData: (data) => console.log(data) });
 </script>
 
 <template>

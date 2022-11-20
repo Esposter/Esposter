@@ -1,5 +1,6 @@
 import { testUser } from "@/assets/data/test";
-import { router } from "@/server/trpc";
+import { publicProcedure, router } from "@/server/trpc";
+import { customEventEmitter } from "@/server/trpc/events";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
@@ -7,6 +8,7 @@ import { getReverseTickedTimestamp } from "@/services/azure/util";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
 import { odata } from "@azure/data-tables";
+import { observable } from "@trpc/server/observable";
 import { toZod } from "tozod";
 import { z } from "zod";
 
@@ -42,6 +44,15 @@ export const messageRouter = router({
     const messages = await getTopNEntities(messageClient, FETCH_LIMIT + 1, MessageEntity, { filter });
     return { messages, nextCursor: getNextCursor(messages, "rowKey", FETCH_LIMIT) };
   }),
+  onCreateMessage: publicProcedure.subscription(() =>
+    observable<MessageEntity>((emit) => {
+      const onCreateMessage = (data: MessageEntity) => emit.next(data);
+      customEventEmitter.on("onCreateMessage", onCreateMessage);
+      return () => {
+        customEventEmitter.off("onCreateMessage", onCreateMessage);
+      };
+    })
+  ),
   createMessage: rateLimitedProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
     // Auto create properties we know from the backend
@@ -52,7 +63,10 @@ export const messageRouter = router({
       createdAt: new Date(),
     };
     const successful = await submitTransaction(messageClient, [["create", message]]);
-    return successful ? message : null;
+    if (!successful) return null;
+
+    customEventEmitter.emit("onCreateMessage", message);
+    return message;
   }),
   updateMessage: rateLimitedProcedure.input(updateMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
