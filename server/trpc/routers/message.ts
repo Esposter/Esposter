@@ -1,13 +1,14 @@
-import { odata } from "@azure/data-tables";
-import { toZod } from "tozod";
-import { z } from "zod";
-import { publicProcedure, router } from "@/server/trpc";
 import { testUser } from "@/assets/data/test";
+import { router } from "@/server/trpc";
+import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { getReverseTickedTimestamp } from "@/services/azure/util";
 import { FETCH_LIMIT, MESSAGE_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
+import { odata } from "@azure/data-tables";
+import { toZod } from "tozod";
+import { z } from "zod";
 
 const messageSchema: toZod<MessageEntity> = z.object({
   partitionKey: z.string().uuid(),
@@ -33,7 +34,7 @@ const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey
 export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
-  readMessages: publicProcedure.input(readMessagesInputSchema).query(async ({ input }) => {
+  readMessages: rateLimitedProcedure.input(readMessagesInputSchema).query(async ({ input }) => {
     const filter = input.cursor
       ? odata`PartitionKey eq ${input.filter.partitionKey} and RowKey gt ${input.cursor}`
       : odata`PartitionKey eq ${input.filter.partitionKey}`;
@@ -41,7 +42,7 @@ export const messageRouter = router({
     const messages = await getTopNEntities(messageClient, FETCH_LIMIT + 1, MessageEntity, { filter });
     return { messages, nextCursor: getNextCursor(messages, "rowKey", FETCH_LIMIT) };
   }),
-  createMessage: publicProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
+  createMessage: rateLimitedProcedure.input(createMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
     // Auto create properties we know from the backend
     const message: MessageEntity = {
@@ -53,12 +54,12 @@ export const messageRouter = router({
     const successful = await submitTransaction(messageClient, [["create", message]]);
     return successful ? message : null;
   }),
-  updateMessage: publicProcedure.input(updateMessageInputSchema).mutation(async ({ input }) => {
+  updateMessage: rateLimitedProcedure.input(updateMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
     const successful = await submitTransaction(messageClient, [["update", input]]);
     return successful ? input : null;
   }),
-  deleteMessage: publicProcedure.input(deleteMessageInputSchema).mutation(async ({ input }) => {
+  deleteMessage: rateLimitedProcedure.input(deleteMessageInputSchema).mutation(async ({ input }) => {
     const messageClient = await getTableClient(AzureTable.Messages);
     return submitTransaction(messageClient, [["delete", input]]);
   }),

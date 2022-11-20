@@ -1,10 +1,11 @@
+import { prisma } from "@/prisma";
+import { router } from "@/server/trpc";
+import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { USER_MAX_USERNAME_LENGTH } from "@/util/constants.common";
 import type { User as PrismaUser } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import { USER_MAX_USERNAME_LENGTH } from "@/util/constants.common";
-import { publicProcedure, router } from "@/server/trpc";
-import { prisma } from "@/prisma";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),
@@ -25,13 +26,13 @@ const deleteUserInputSchema = userSchema.shape.id;
 export type DeleteUserInput = z.infer<typeof deleteUserInputSchema>;
 
 export const userRouter = router({
-  createUser: publicProcedure
+  createUser: rateLimitedProcedure
     .input(createUserInputSchema)
     .mutation(({ input }) => prisma.user.create({ data: { ...input, id: uuidv4() } })),
-  updateUser: publicProcedure
+  updateUser: rateLimitedProcedure
     .input(updateUserInputSchema)
     .mutation(({ input: { id, ...other } }) => prisma.user.update({ data: other, where: { id } })),
-  deleteUser: publicProcedure.input(deleteUserInputSchema).mutation(async ({ input }) => {
+  deleteUser: rateLimitedProcedure.input(deleteUserInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.user.delete({ where: { id: input } });
       return true;

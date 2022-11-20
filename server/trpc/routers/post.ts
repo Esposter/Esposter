@@ -1,7 +1,8 @@
 import { testUser } from "@/assets/data/test";
 import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
-import { publicProcedure, router } from "@/server/trpc";
+import { router } from "@/server/trpc";
+import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { FETCH_LIMIT, POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
 import type { Post as PrismaPost } from "@prisma/client";
@@ -45,14 +46,14 @@ const deletePostInputSchema = postSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
 export const postRouter = router({
-  readPost: publicProcedure
+  readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ input }) =>
       input
         ? prisma.post.findUnique({ where: { id: input } })
         : prisma.post.findFirst({ orderBy: { updatedAt: "desc" } })
     ),
-  readPosts: publicProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
+  readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
     const posts = await prisma.post.findMany({
       take: FETCH_LIMIT + 1,
       cursor: cursor ? { id: cursor } : undefined,
@@ -61,18 +62,18 @@ export const postRouter = router({
     });
     return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
   }),
-  createPost: publicProcedure.input(createPostInputSchema).mutation(({ input }) =>
+  createPost: rateLimitedProcedure.input(createPostInputSchema).mutation(({ input }) =>
     prisma.post.create({
       data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 },
       include: PostRelationsIncludeDefault,
     })
   ),
-  updatePost: publicProcedure
+  updatePost: rateLimitedProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...other } }) =>
       prisma.post.update({ data: other, where: { id }, include: PostRelationsIncludeDefault })
     ),
-  deletePost: publicProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
+  deletePost: rateLimitedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.post.delete({ where: { id: input } });
       return true;
