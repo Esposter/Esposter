@@ -159,7 +159,7 @@ const getClass = (cardId: number): string => {
 };
 
 // This is the main timer that drives the movement of cards
-let moveCardsTimer = $ref<number | undefined>();
+let moveCardsTimer = $ref<number>();
 
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
