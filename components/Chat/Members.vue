@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/store/useMemberStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const memberStore = useMemberStore();
 const { pushMemberList, updateMemberListNextCursor, initialiseMembersList } = memberStore;
 const { memberList, memberListNextCursor } = storeToRefs(memberStore);
 const hasMore = $computed(() => Boolean(memberListNextCursor.value));
-const fetchMoreMembers = async (finishLoading: () => void) => {
+const fetchMoreMembers = async (onComplete: () => void) => {
   const { members, nextCursor } = await $client.room.readMembers.query({ cursor: memberListNextCursor.value });
   pushMemberList(members);
   updateMemberListNextCursor(nextCursor);
-  finishLoading();
+  onComplete();
 };
 
 const { members, nextCursor } = await $client.room.readMembers.query({ cursor: null });

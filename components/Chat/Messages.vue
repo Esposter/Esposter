@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -11,7 +11,7 @@ const messageStore = useMessageStore();
 const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
 const { messageList, messageListNextCursor } = storeToRefs(messageStore);
 const hasMore = $computed(() => Boolean(messageListNextCursor.value));
-const fetchMoreMessages = async (finishLoading: () => void) => {
+const fetchMoreMessages = async (onComplete: () => void) => {
   if (!currentRoomId.value) return;
 
   const { messages, nextCursor } = await $client.message.readMessages.query({
@@ -20,7 +20,7 @@ const fetchMoreMessages = async (finishLoading: () => void) => {
   });
   pushMessageList(messages);
   updateMessageListNextCursor(nextCursor);
-  finishLoading();
+  onComplete();
 };
 
 const { messages, nextCursor } = currentRoomId.value
