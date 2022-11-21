@@ -3,7 +3,7 @@ import { useRoomStore } from "@/store/useRoomStore";
 import { uuidValidateV4 } from "@/util/uuid";
 import { storeToRefs } from "pinia";
 
-useHead({ titleTemplate: (title) => `Esbabbler | ${title}` });
+useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
 const route = useRoute();
 const roomStore = useRoomStore();

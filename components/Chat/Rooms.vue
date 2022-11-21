@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { useRoomStore } from "@/store/useRoomStore";
 import { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
-import { useRoomStore } from "@/store/useRoomStore";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
 const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
 const hasMore = $computed(() => Boolean(roomListNextCursor.value));
-const fetchMoreRooms = async (finishLoading: () => void) => {
+const fetchMoreRooms = async (onComplete: () => void) => {
   const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
   pushRoomList(rooms);
   updateRoomListNextCursor(nextCursor);
-  finishLoading();
+  onComplete();
 };
 
 const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([

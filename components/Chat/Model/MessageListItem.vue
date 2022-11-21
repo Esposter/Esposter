@@ -21,7 +21,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
 </script>
 
 <template>
-  <ChatDeleteMessageDialog :message="message">
+  <ChatConfirmDeleteMessageDialog :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
         v-if="member"
@@ -85,5 +85,5 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         </v-list-item-subtitle>
       </v-list-item>
     </template>
-  </ChatDeleteMessageDialog>
+  </ChatConfirmDeleteMessageDialog>
 </template>

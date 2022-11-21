@@ -7,11 +7,11 @@ const postStore = usePostStore();
 const { pushPostList, updatePostListNextCursor, initialisePostList } = postStore;
 const { postList, postListNextCursor } = storeToRefs(postStore);
 const hasMore = $computed(() => Boolean(postListNextCursor.value));
-const fetchMorePosts = async (finishLoading: () => void) => {
+const fetchMorePosts = async (onComplete: () => void) => {
   const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor.value });
   pushPostList(posts);
   updatePostListNextCursor(nextCursor);
-  finishLoading();
+  onComplete();
 };
 
 const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: null });

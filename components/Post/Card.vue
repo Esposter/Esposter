@@ -29,7 +29,7 @@ const { surfaceOpacity80 } = useColors();
       <v-card-text class="text-subtitle-1" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
         <PostUpdateCardButton :post-id="post.id" />
-        <PostDeleteCardButton :post-id="post.id" />
+        <PostConfirmDeleteDialogButton :post-id="post.id" />
       </v-card-actions>
     </v-card>
   </StyledCard>

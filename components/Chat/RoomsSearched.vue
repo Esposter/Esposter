@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants.client";
+import { storeToRefs } from "pinia";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const { $client } = useNuxtApp();
@@ -9,14 +9,14 @@ const roomStore = useRoomStore();
 const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
 const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
 const hasMore = $computed(() => Boolean(roomListSearchedNextCursor.value));
-const fetchMoreRooms = async (finishLoading: () => void) => {
+const fetchMoreRooms = async (onComplete: () => void) => {
   const { rooms, nextCursor } = await $client.room.readRooms.query({
     filter: roomSearchQuery.value ? { name: roomSearchQuery.value } : undefined,
     cursor: roomListSearchedNextCursor.value,
   });
   pushRoomListSearched(rooms);
   updateRoomListSearchedNextCursor(nextCursor);
-  finishLoading();
+  onComplete();
 };
 </script>
 
