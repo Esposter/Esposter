@@ -1,27 +1,23 @@
 <script setup lang="ts">
-interface ContentHeaderProps {
-  leftDrawer: boolean;
-  rightDrawer: boolean;
-  openLeftDrawer: () => void;
-  openRightDrawer: () => void;
-}
+import { useLayoutStore } from "@/store/useLayoutStore";
+import { storeToRefs } from "pinia";
 
-const props = defineProps<ContentHeaderProps>();
-const { leftDrawer, rightDrawer, openLeftDrawer, openRightDrawer } = $(toRefs(props));
+const layoutStore = useLayoutStore();
+const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
 const { border } = useColors();
 </script>
 
 <template>
   <v-toolbar class="v-app-bar border" height="56">
-    <template v-if="!leftDrawer" #prepend>
-      <v-btn icon="mdi-menu" size="small" @click="openLeftDrawer" />
+    <template v-if="!leftDrawerOpenAuto" #prepend>
+      <v-btn icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     </template>
     <ChatRoomTitle />
     <template #append>
       <v-btn icon="mdi-phone" size="small" />
       <v-btn icon="mdi-video" size="small" />
       <ChatAddMemberButton />
-      <v-btn v-if="!rightDrawer" icon="mdi-account-multiple" size="small" @click="openRightDrawer" />
+      <v-btn v-if="!rightDrawerOpenAuto" icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = true" />
     </template>
   </v-toolbar>
 </template>

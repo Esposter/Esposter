@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
+import { useLayoutStore } from "@/store/useLayoutStore";
+import { storeToRefs } from "pinia";
 
 const slots = useSlots();
-const { mobile } = $(useDisplay());
-// The internal variables will track if we want to actually show the drawers
-const internalLeftDrawer = $ref(!mobile);
-const internalRightDrawer = $ref(!mobile);
-// We will only expose these variables as they are only affected by the screen resizing
-// We want the decision of showing the outer components to be only dependent on that for better UI/UX
-const leftDrawer = $ref(!mobile);
-const rightDrawer = $ref(!mobile);
+const layoutStore = useLayoutStore();
+const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
@@ -18,11 +13,11 @@ const rightDrawer = $ref(!mobile);
     <v-navigation-drawer
       v-if="slots.left"
       app
-      :model-value="internalLeftDrawer"
+      :model-value="leftDrawerOpen"
       @update:model-value="
         (value) => {
-          internalLeftDrawer = value;
-          leftDrawer = value;
+          leftDrawerOpen = value;
+          leftDrawerOpenAuto = value;
         }
       "
     >
@@ -33,11 +28,11 @@ const rightDrawer = $ref(!mobile);
       v-if="slots.right"
       app
       location="right"
-      :model-value="internalRightDrawer"
+      :model-value="rightDrawerOpen"
       @update:model-value="
         (value) => {
-          internalRightDrawer = value;
-          rightDrawer = value;
+          rightDrawerOpen = value;
+          rightDrawerOpenAuto = value;
         }
       "
     >
@@ -45,12 +40,7 @@ const rightDrawer = $ref(!mobile);
     </v-navigation-drawer>
 
     <v-main>
-      <slot
-        :left-drawer="leftDrawer"
-        :right-drawer="rightDrawer"
-        :open-left-drawer="() => (internalLeftDrawer = true)"
-        :open-right-drawer="() => (internalRightDrawer = true)"
-      />
+      <slot />
     </v-main>
 
     <v-footer v-if="slots.footer" app>
