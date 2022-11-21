@@ -21,5 +21,5 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   } catch {
     throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
   }
-  return next({ ctx });
+  return next();
 });
