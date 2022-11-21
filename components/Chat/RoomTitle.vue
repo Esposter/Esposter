@@ -5,23 +5,23 @@ import { storeToRefs } from "pinia";
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
-const { currentRoomId, roomName } = storeToRefs(roomStore);
-let currentRoomName = $ref(roomName.value);
+const { currentRoomId, roomName } = $(storeToRefs(roomStore));
+let currentRoomName = $ref(roomName);
 let isUpdateMode = $ref(false);
 const titleRef = ref<HTMLDivElement | undefined>();
 const titleHovered = $ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId.value || !currentRoomName || currentRoomName === roomName.value) return;
+    if (!currentRoomId || !currentRoomName || currentRoomName === roomName) return;
 
     const updatedRoom = await $client.room.updateRoom.mutate({
-      id: currentRoomId.value,
+      id: currentRoomId,
       name: currentRoomName,
     });
     updateRoom(updatedRoom);
   } finally {
     isUpdateMode = false;
-    currentRoomName = roomName.value;
+    currentRoomName = roomName;
   }
 };
 

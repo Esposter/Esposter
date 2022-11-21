@@ -5,10 +5,10 @@ import { storeToRefs } from "pinia";
 const { $client } = useNuxtApp();
 const postStore = usePostStore();
 const { pushPostList, updatePostListNextCursor, initialisePostList } = postStore;
-const { postList, postListNextCursor } = storeToRefs(postStore);
-const hasMore = $computed(() => Boolean(postListNextCursor.value));
+const { postList, postListNextCursor } = $(storeToRefs(postStore));
+const hasMore = $computed(() => Boolean(postListNextCursor));
 const fetchMorePosts = async (onComplete: () => void) => {
-  const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor.value });
+  const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor });
   pushPostList(posts);
   updatePostListNextCursor(nextCursor);
   onComplete();

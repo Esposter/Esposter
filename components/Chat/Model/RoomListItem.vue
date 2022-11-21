@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Room } from "@prisma/client";
-import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants.client";
+import type { Room } from "@prisma/client";
+import { storeToRefs } from "pinia";
 
 interface RoomListItemProps {
   room: Room;
@@ -11,9 +11,9 @@ interface RoomListItemProps {
 const props = defineProps<RoomListItemProps>();
 const { room } = $(toRefs(props));
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId } = $(storeToRefs(roomStore));
 const isHovering = $ref(false);
-const active = $computed(() => room.id === currentRoomId.value);
+const active = $computed(() => room.id === currentRoomId);
 </script>
 
 <!-- @NOTE: Route transitions doesn't like this component with invoke render outside of default slot :C -->

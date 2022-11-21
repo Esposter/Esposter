@@ -5,8 +5,8 @@ import { storeToRefs } from "pinia";
 
 const route = useRoute();
 const roomStore = useRoomStore();
-const { currentRoomId, rooms, roomName } = storeToRefs(roomStore);
-const roomExists = $computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
+const { currentRoomId, rooms, roomName } = $(storeToRefs(roomStore));
+const roomExists = $computed(() => rooms.find((r) => r.id === currentRoomId));
 roomStore.currentRoomId =
   typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomStore.roomSearchQuery = "";

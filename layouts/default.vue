@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 
 const slots = useSlots();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
 </script>
 
 <template>

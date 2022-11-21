@@ -5,10 +5,10 @@ import { storeToRefs } from "pinia";
 const { $client } = useNuxtApp();
 const memberStore = useMemberStore();
 const { pushMemberList, updateMemberListNextCursor, initialiseMembersList } = memberStore;
-const { memberList, memberListNextCursor } = storeToRefs(memberStore);
-const hasMore = $computed(() => Boolean(memberListNextCursor.value));
+const { memberList, memberListNextCursor } = $(storeToRefs(memberStore));
+const hasMore = $computed(() => Boolean(memberListNextCursor));
 const fetchMoreMembers = async (onComplete: () => void) => {
-  const { members, nextCursor } = await $client.room.readMembers.query({ cursor: memberListNextCursor.value });
+  const { members, nextCursor } = await $client.room.readMembers.query({ cursor: memberListNextCursor });
   pushMemberList(members);
   updateMemberListNextCursor(nextCursor);
   onComplete();

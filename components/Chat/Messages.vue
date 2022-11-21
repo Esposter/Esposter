@@ -6,25 +6,25 @@ import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId } = $(storeToRefs(roomStore));
 const messageStore = useMessageStore();
 const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
-const { messageList, messageListNextCursor } = storeToRefs(messageStore);
-const hasMore = $computed(() => Boolean(messageListNextCursor.value));
+const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));
+const hasMore = $computed(() => Boolean(messageListNextCursor));
 const fetchMoreMessages = async (onComplete: () => void) => {
-  if (!currentRoomId.value) return;
+  if (!currentRoomId) return;
 
   const { messages, nextCursor } = await $client.message.readMessages.query({
-    filter: { partitionKey: currentRoomId.value },
-    cursor: messageListNextCursor.value,
+    filter: { partitionKey: currentRoomId },
+    cursor: messageListNextCursor,
   });
   pushMessageList(messages);
   updateMessageListNextCursor(nextCursor);
   onComplete();
 };
 
-const { messages, nextCursor } = currentRoomId.value
-  ? await $client.message.readMessages.query({ filter: { partitionKey: currentRoomId.value }, cursor: null })
+const { messages, nextCursor } = currentRoomId
+  ? await $client.message.readMessages.query({ filter: { partitionKey: currentRoomId }, cursor: null })
   : { messages: [] as MessageEntity[], nextCursor: null };
 initialiseMessageList(messages);
 updateMessageListNextCursor(nextCursor);

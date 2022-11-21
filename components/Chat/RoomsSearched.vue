@@ -7,12 +7,12 @@ const emit = defineEmits<{ (event: "update:room"): void }>();
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
-const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = storeToRefs(roomStore);
-const hasMore = $computed(() => Boolean(roomListSearchedNextCursor.value));
+const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = $(storeToRefs(roomStore));
+const hasMore = $computed(() => Boolean(roomListSearchedNextCursor));
 const fetchMoreRooms = async (onComplete: () => void) => {
   const { rooms, nextCursor } = await $client.room.readRooms.query({
-    filter: roomSearchQuery.value ? { name: roomSearchQuery.value } : undefined,
-    cursor: roomListSearchedNextCursor.value,
+    filter: roomSearchQuery ? { name: roomSearchQuery } : undefined,
+    cursor: roomListSearchedNextCursor,
   });
   pushRoomListSearched(rooms);
   updateRoomListSearchedNextCursor(nextCursor);

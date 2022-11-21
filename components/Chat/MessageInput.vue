@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import type { CreateMessageInput } from "@/server/trpc/routers/message";
 import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId } = $(storeToRefs(roomStore));
 const messageInputStore = useMessageInputStore();
 const { updateMessageInput } = messageInputStore;
-const { messageInput } = storeToRefs(messageInputStore);
+const { messageInput } = $(storeToRefs(messageInputStore));
 const { createMessage } = useMessageStore();
 const sendMessage = async () => {
-  if (!currentRoomId.value || !messageInput.value) return;
+  if (!currentRoomId || !messageInput) return;
 
   updateMessageInput("");
-  const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId.value, message: messageInput.value };
+  const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId, message: messageInput };
   const newMessage = await $client.message.createMessage.mutate(createMessageInput);
   if (newMessage) createMessage(newMessage);
 };

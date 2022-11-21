@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/store/useMemberStore";
+import { storeToRefs } from "pinia";
 
 const memberStore = useMemberStore();
-const { memberList } = storeToRefs(memberStore);
-const membersCount = $computed(() => memberList.value.length);
+const { memberList } = $(storeToRefs(memberStore));
+const membersCount = $computed(() => memberList.length);
 </script>
 
 <template>

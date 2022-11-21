@@ -16,7 +16,7 @@ let editedMessage = $ref(message.message);
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId } = $(storeToRefs(roomStore));
 const { updateMessage } = useMessageStore();
 const onUpdateMessage = async () => {
   try {

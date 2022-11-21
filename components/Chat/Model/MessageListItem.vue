@@ -10,8 +10,8 @@ interface MessageListItemProps {
 const props = defineProps<MessageListItemProps>();
 const { message } = $(toRefs(props));
 const memberStore = useMemberStore();
-const { memberList } = storeToRefs(memberStore);
-const member = $computed(() => memberList.value.find((m) => m.id === message.userId));
+const { memberList } = $(storeToRefs(memberStore));
+const member = $computed(() => memberList.find((m) => m.id === message.userId));
 const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
 const isOptionsActive = $ref(false);

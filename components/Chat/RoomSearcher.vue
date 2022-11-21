@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
+import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { initialiseRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
-const { roomSearchQuery } = storeToRefs(roomStore);
+let { roomSearchQuery } = $(storeToRefs(roomStore));
 const updateSearchQuery = async (value: string) => {
-  roomSearchQuery.value = value;
+  roomSearchQuery = value;
 
   if (value) {
     const { rooms, nextCursor } = await $client.room.readRooms.query({ filter: { name: value }, cursor: null });

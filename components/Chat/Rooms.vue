@@ -6,17 +6,17 @@ import { storeToRefs } from "pinia";
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
-const { currentRoomId, rooms, roomListNextCursor } = storeToRefs(roomStore);
-const hasMore = $computed(() => Boolean(roomListNextCursor.value));
+const { currentRoomId, rooms, roomListNextCursor } = $(storeToRefs(roomStore));
+const hasMore = $computed(() => Boolean(roomListNextCursor));
 const fetchMoreRooms = async (onComplete: () => void) => {
-  const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
+  const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor });
   pushRoomList(rooms);
   updateRoomListNextCursor(nextCursor);
   onComplete();
 };
 
 const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([
-  currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : null,
+  currentRoomId ? $client.room.readRoom.query(currentRoomId) : null,
   $client.room.readRooms.query({ cursor: null }),
 ]);
 const initialRooms: Room[] = [];
