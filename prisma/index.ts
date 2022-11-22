@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { highlight } from "sql-highlight";
-import dedent from "dedent";
 import { isProd } from "@/util/constants.server";
+import { PrismaClient } from "@prisma/client";
+import dedent from "dedent";
+import { highlight } from "sql-highlight";
 
 let prismaClient: PrismaClient;
 
@@ -37,6 +37,7 @@ else {
     Time: ${e.timestamp}
     Target: ${e.target}`)
     );
+    console.log();
   });
 
   devPrismaClient.$use(async (params, next) => {
@@ -44,7 +45,8 @@ else {
     const result = await next(params);
     const duration = Date.now() - before;
     // Log more info about where the query possibly originated from
-    console.log(highlight(`Prisma ${params.model}.${params.action} took ${duration}ms\n`));
+    console.log(highlight(`Prisma ${params.model}.${params.action} took ${duration}ms`));
+    console.log();
     return result;
   });
 

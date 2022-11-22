@@ -5,6 +5,7 @@ import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { FETCH_LIMIT, POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
+import { ranking } from "@/util/post";
 import type { Post as PrismaPost } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
@@ -49,25 +50,24 @@ export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ input }) =>
-      input
-        ? prisma.post.findUnique({ where: { id: input } })
-        : prisma.post.findFirst({ orderBy: { updatedAt: "desc" } })
+      input ? prisma.post.findUnique({ where: { id: input } }) : prisma.post.findFirst({ orderBy: { ranking: "desc" } })
     ),
   readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
     const posts = await prisma.post.findMany({
       take: FETCH_LIMIT + 1,
       cursor: cursor ? { id: cursor } : undefined,
-      orderBy: { createdAt: "desc" },
+      orderBy: { ranking: "desc" },
       include: PostRelationsIncludeDefault,
     });
     return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
   }),
-  createPost: rateLimitedProcedure.input(createPostInputSchema).mutation(({ input }) =>
-    prisma.post.create({
-      data: { ...input, id: uuidv4(), creatorId: testUser.id, ranking: 0 },
+  createPost: rateLimitedProcedure.input(createPostInputSchema).mutation(({ input }) => {
+    const now = new Date();
+    return prisma.post.create({
+      data: { ...input, id: uuidv4(), creatorId: testUser.id, createdAt: now, ranking: ranking(0, now) },
       include: PostRelationsIncludeDefault,
-    })
-  ),
+    });
+  }),
   updatePost: rateLimitedProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...other } }) =>

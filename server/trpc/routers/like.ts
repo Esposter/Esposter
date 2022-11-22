@@ -1,6 +1,7 @@
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { ranking } from "@/util/post";
 import type { Like as PrismaLike } from "@prisma/client";
 import { toZod } from "tozod";
 import { z } from "zod";
@@ -28,21 +29,35 @@ const deleteLikeInputSchema = likeSchema.pick({ userId: true, postId: true });
 export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
-  createLike: rateLimitedProcedure.input(createLikeInputSchema).mutation(async ({ input }) => {
-    const [like] = await prisma.$transaction([
-      prisma.like.create({ data: input }),
-      prisma.post.update({ data: { noLikes: { increment: input.value } }, where: { id: input.postId } }),
-    ]);
-    return like;
-  }),
+  createLike: rateLimitedProcedure.input(createLikeInputSchema).mutation(({ input }) =>
+    prisma.$transaction(async (prisma) => {
+      const post = await prisma.post.findUnique({ where: { id: input.postId } });
+      if (!post) return null;
+
+      const like = await prisma.like.create({ data: input });
+      const noLikesNew = post.noLikes + like.value;
+      await prisma.post.update({
+        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, post.createdAt) },
+        where: { id: post.id },
+      });
+      return like;
+    })
+  ),
   updateLike: rateLimitedProcedure
     .input(updateLikeInputSchema)
     .mutation(async ({ input: { userId, postId, ...other } }) => {
-      const like = await prisma.like.findUnique({ where: { userId_postId: { userId, postId } } });
+      const like = await prisma.like.findUnique({
+        where: { userId_postId: { userId, postId } },
+        include: { post: true },
+      });
       if (!like || like.value === other.value) return null;
 
+      const noLikesNew = like.post.noLikes + 2 * other.value;
       const updatedLike = await prisma.like.update({
-        data: { ...other, post: { update: { noLikes: { increment: 2 * other.value } } } },
+        data: {
+          ...other,
+          post: { update: { noLikes: noLikesNew, ranking: ranking(noLikesNew, like.post.createdAt) } },
+        },
         where: { userId_postId: { userId, postId } },
       });
       return updatedLike;
@@ -50,8 +65,12 @@ export const likeRouter = router({
   deleteLike: rateLimitedProcedure.input(deleteLikeInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.$transaction(async (prisma) => {
-        const deletedLike = await prisma.like.delete({ where: { userId_postId: input } });
-        await prisma.post.update({ data: { noLikes: { decrement: deletedLike.value } }, where: { id: input.postId } });
+        const deletedLike = await prisma.like.delete({ where: { userId_postId: input }, include: { post: true } });
+        const noLikesNew = deletedLike.post.noLikes - deletedLike.value;
+        await prisma.post.update({
+          data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, deletedLike.post.createdAt) },
+          where: { id: input.postId },
+        });
       });
       return true;
     } catch (err) {

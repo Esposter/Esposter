@@ -18,7 +18,7 @@ const liked = $computed(() => Boolean(post.likes.find((l) => l.userId === testUs
 const unliked = $computed(() => Boolean(post.likes.find((l) => l.userId === testUser.id && l.value === -1)));
 const onCreateLike = async (value: 1 | -1) => {
   const newLike = await $client.like.createLike.mutate({ ...id, value });
-  createLike(newLike);
+  if (newLike) createLike(newLike);
 };
 const onUpdateLike = async (value: 1 | -1) => {
   const updatedLike = await $client.like.updateLike.mutate({ ...id, value });

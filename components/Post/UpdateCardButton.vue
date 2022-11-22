@@ -7,7 +7,7 @@ interface UpdateCardButtonProps {
 
 const props = defineProps<UpdateCardButtonProps>();
 const { postId } = $(toRefs(props));
-const onUpdatePost = async () => await navigateTo(POST_UPDATE_PATH(postId));
+const onUpdatePost = () => navigateTo(POST_UPDATE_PATH(postId));
 </script>
 
 <template>

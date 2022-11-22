@@ -5,7 +5,7 @@ interface CustomEvents {
   onCreateMessage: (data: MessageEntity) => void;
 }
 
-declare interface CustomEventEmitter {
+interface CustomEventEmitter {
   on<T extends keyof CustomEvents>(event: T, listener: CustomEvents[T]): this;
   off<T extends keyof CustomEvents>(event: T, listener: CustomEvents[T]): this;
   once<T extends keyof CustomEvents>(event: T, listener: CustomEvents[T]): this;
