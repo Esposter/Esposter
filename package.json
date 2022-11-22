@@ -67,7 +67,7 @@
     "gsap": "^3.11.3",
     "nprogress": "^0.2.0",
     "openai": "^3.1.0",
-    "pinia": "^2.0.24",
+    "pinia": "^2.0.25",
     "rate-limiter-flexible": "^2.4.1",
     "sanitize-html": "^2.7.3",
     "sql-highlight": "^4.2.1",
