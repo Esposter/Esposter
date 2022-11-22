@@ -51,7 +51,7 @@
     "@azure/data-tables": "^13.2.0",
     "@azure/storage-blob": "^12.12.0",
     "@mdi/font": "^7.0.96",
-    "@pinia/nuxt": "^0.4.4",
+    "@pinia/nuxt": "^0.4.5",
     "@prisma/client": "^4.6.1",
     "@tiptap/extension-character-count": "^2.0.0-beta.202",
     "@tiptap/extension-placeholder": "^2.0.0-beta.202",
