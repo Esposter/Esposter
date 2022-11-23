@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
-import { ranking } from "@/util/post";
+import { ranking } from "@/services/post";
 import type { Like as PrismaLike } from "@prisma/client";
 import { toZod } from "tozod";
 import { z } from "zod";
@@ -31,16 +31,13 @@ export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 export const likeRouter = router({
   createLike: rateLimitedProcedure.input(createLikeInputSchema).mutation(({ input }) =>
     prisma.$transaction(async (prisma) => {
-      const post = await prisma.post.findUnique({ where: { id: input.postId } });
-      if (!post) return null;
-
-      const like = await prisma.like.create({ data: input });
-      const noLikesNew = post.noLikes + like.value;
+      const newLike = await prisma.like.create({ data: input, include: { post: true } });
+      const noLikesNew = newLike.post.noLikes + newLike.value;
       await prisma.post.update({
-        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, post.createdAt) },
-        where: { id: post.id },
+        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, newLike.post.createdAt) },
+        where: { id: newLike.post.id },
       });
-      return like;
+      return newLike;
     })
   ),
   updateLike: rateLimitedProcedure
