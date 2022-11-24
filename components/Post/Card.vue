@@ -26,7 +26,7 @@ const { surfaceOpacity80 } = useColors();
         {{ post.title }}
       </v-card-title>
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
-      <v-card-text class="text-subtitle-1" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
+      <v-card-text class="text-subtitle-1 card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
         <PostUpdateCardButton :post-id="post.id" />
         <PostConfirmDeleteDialogButton :post-id="post.id" />
@@ -39,5 +39,12 @@ const { surfaceOpacity80 } = useColors();
 .card {
   padding-left: 2.5rem;
   background-color: v-bind(surfaceOpacity80);
+}
+
+:deep(.card-content) {
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
 }
 </style>

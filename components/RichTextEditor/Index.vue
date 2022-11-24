@@ -45,6 +45,11 @@ onBeforeUnmount(() => editor?.destroy());
   height: 15rem;
   overflow-y: auto;
 
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     height: 0;
