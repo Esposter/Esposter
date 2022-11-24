@@ -47,12 +47,11 @@ const sendMessage = async () => {
       </v-tooltip>
     </template>
     <template #append-inner>
-      <v-menu :close-on-content-click="false">
-        <template #activator="{ props }">
-          <v-btn bg="transparent!" icon="mdi-emoticon" size="small" flat :="props" />
-        </template>
-        <ChatEmojiPicker :on-emoji-select="(emoji) => updateMessageInput(`${messageInput}${emoji.native}`)" />
-      </v-menu>
+      <EmojiPicker
+        :tooltip-props="{ text: 'Choose an emoji' }"
+        :button-props="{ size: 'small' }"
+        @select="(emoji) => updateMessageInput(`${messageInput}${emoji}`)"
+      />
       <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
         <template #activator="{ props }">
           <v-btn

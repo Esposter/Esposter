@@ -6,26 +6,39 @@ interface MenuBarProps {
   editor: Editor | undefined;
 }
 
+type IsDivider = {
+  isDivider: boolean;
+};
+
+type Item = {
+  icon: string;
+  title: string;
+  onClick: () => void;
+  active?: boolean;
+};
+
+type MenuItem = Item | IsDivider;
+
 const props = defineProps<MenuBarProps>();
 const { editor } = $(toRefs(props));
-const items = [
+const items = $computed<MenuItem[]>(() => [
   {
     icon: "mdi-format-bold",
     title: "Bold",
     onClick: () => editor?.chain().focus().toggleBold().run(),
-    isActive: () => editor?.isActive("bold"),
+    active: editor?.isActive("bold"),
   },
   {
     icon: "mdi-format-italic",
     title: "Italic",
     onClick: () => editor?.chain().focus().toggleItalic().run(),
-    isActive: () => editor?.isActive("italic"),
+    active: editor?.isActive("italic"),
   },
   {
     icon: "mdi-format-strikethrough-variant",
     title: "Strike",
     onClick: () => editor?.chain().focus().toggleStrike().run(),
-    isActive: () => editor?.isActive("strike"),
+    active: editor?.isActive("strike"),
   },
   {
     isDivider: true,
@@ -34,13 +47,13 @@ const items = [
     icon: "mdi-format-list-bulleted",
     title: "Bullet List",
     onClick: () => editor?.chain().focus().toggleBulletList().run(),
-    isActive: () => editor?.isActive("bulletList"),
+    active: editor?.isActive("bulletList"),
   },
   {
     icon: "mdi-format-list-numbered",
     title: "Ordered List",
     onClick: () => editor?.chain().focus().toggleOrderedList().run(),
-    isActive: () => editor?.isActive("orderedList"),
+    active: editor?.isActive("orderedList"),
   },
   {
     isDivider: true,
@@ -55,18 +68,25 @@ const items = [
     title: "Redo",
     onClick: () => editor?.chain().focus().redo().run(),
   },
-];
+]);
+const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
 
 <template>
   <div display="flex" flex="wrap">
     <template v-for="(item, index) in items">
-      <v-divider v-if="item.isDivider" :key="`divider${index}`" thickness="2" vertical mx="4!" h="8!" self="center!" />
+      <v-divider v-if="isDivider(item)" :key="`divider${index}`" thickness="2" vertical mx="4!" h="8!" self="center!" />
       <v-tooltip v-else :key="index" location="top" :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd="0!" variant="flat" :="mergeProps(item, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
+    <v-divider thickness="2" vertical mx="4!" h="8!" self="center!" />
+    <EmojiPicker
+      :tooltip-props="{ text: 'Choose an emoji' }"
+      :button-attrs="{ rd: '0!' }"
+      @select="(emoji) => editor?.chain().focus().insertContent(emoji).run()"
+    />
   </div>
 </template>

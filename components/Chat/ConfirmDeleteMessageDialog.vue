@@ -24,8 +24,10 @@ const onDeleteMessage = async (onComplete: () => void) => {
 
 <template>
   <StyledDeleteDialog
-    title="Delete Message"
-    text="Are you sure you want to delete this message?"
+    :card-props="{
+      title: 'Delete Message',
+      text: 'Are you sure you want to delete this message?',
+    }"
     @delete="onDeleteMessage"
   >
     <template #default="defaultProps">

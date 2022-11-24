@@ -3,7 +3,7 @@ import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
   isHovering?: boolean;
-  hoverProps?: object;
+  hoverProps?: Record<string, unknown>;
 }
 
 interface Item {
@@ -16,7 +16,7 @@ interface Item {
 const props = defineProps<MessageOptionsMenuProps>();
 const { isHovering, hoverProps } = $(toRefs(props));
 const emit = defineEmits<{
-  (event: "update", value: boolean): void;
+  (event: "update:menu", value: boolean): void;
   (event: "update:update-mode", value: true): void;
   (event: "update:delete-mode", value: true): void;
 }>();
@@ -29,23 +29,14 @@ const items: Item[] = [
 <template>
   <v-card :elevation="isHovering ? 12 : 2" :="hoverProps">
     <v-card-actions p="0!" min-h="auto!">
-      <v-menu
-        transition="none"
-        location="left"
-        :close-on-content-click="false"
-        @update:model-value="(value) => emit('update', value)"
-      >
-        <template #activator="{ props: menuProps }">
-          <v-tooltip location="top" text="Add Reaction">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn rd="0!" icon="mdi-emoticon" size="small" :="mergeProps(menuProps, tooltipProps)" />
-            </template>
-          </v-tooltip>
-        </template>
-        <ChatEmojiPicker :on-emoji-select="() => {}" />
-      </v-menu>
+      <EmojiPicker
+        :tooltip-props="{ text: 'Add Reaction' }"
+        :button-props="{ size: 'small' }"
+        @update:model-value="(value) => emit('update:menu', value)"
+        @select="() => {}"
+      />
       <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
-      <v-menu transition="none" location="left" @update:model-value="(value) => emit('update', value)">
+      <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">
             <template #activator="{ props: tooltipProps }">

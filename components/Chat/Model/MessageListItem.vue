@@ -41,8 +41,8 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         <ChatUpdatedMessage
           v-if="isUpdateMode"
           :message="message"
-          :update-delete-mode="updateDeleteMode"
           @update:update-mode="(value) => (isUpdateMode = value)"
+          @update-delete-mode="updateDeleteMode"
         />
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
@@ -61,7 +61,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
             <ChatMessageOptionsMenu
               :is-hovering="isHovering"
               :hover-props="hoverProps"
-              @update="(value) => (isOptionsChildrenActive = value)"
+              @update:menu="(value) => (isOptionsChildrenActive = value)"
               @update:update-mode="(value) => (isUpdateMode = value)"
               @update:delete-mode="updateDeleteMode"
             />

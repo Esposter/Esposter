@@ -22,7 +22,13 @@ const onDeletePost = async (onComplete: () => void) => {
 </script>
 
 <template>
-  <StyledDeleteDialog title="Delete Post" text="Are you sure you want to delete this post?" @delete="onDeletePost">
+  <StyledDeleteDialog
+    :card-props="{
+      title: 'Delete Post',
+      text: 'Are you sure you want to delete this post?',
+    }"
+    @delete="onDeletePost"
+  >
     <template #default="{ updateDeleteMode }">
       <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" @click="updateDeleteMode(true)" />
     </template>

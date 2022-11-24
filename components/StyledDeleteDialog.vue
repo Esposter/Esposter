@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { VCard } from "vuetify/components";
+
 interface StyledDeleteProps {
-  title: string;
-  text: string;
+  cardProps: InstanceType<typeof VCard>["$props"];
 }
 
 // @NOTE: Will be fixed in Vue 3.3
 // const props = defineProps<typeof VCard>();
 const props = defineProps<StyledDeleteProps>();
-const { title, text } = $(toRefs(props));
+const { cardProps } = $(toRefs(props));
 const emit = defineEmits<{
   (event: "delete", onComplete: () => void): void;
 }>();
@@ -17,7 +18,7 @@ const isDeleteMode = $ref(false);
 <template>
   <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
   <v-dialog v-model="isDeleteMode" max-width="500">
-    <v-card :title="title" :text="text">
+    <v-card :="cardProps">
       <slot name="content" />
       <v-card-actions>
         <v-spacer />
