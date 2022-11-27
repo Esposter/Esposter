@@ -19,7 +19,9 @@ const { vueBackground } = useColors();
 html {
   overflow-y: auto;
 }
+</style>
 
+<style scoped lang="scss">
 .nuxt-loading-indicator {
   top: 56px !important;
   box-shadow: 0 0 5px $vueBackgroundColor;

@@ -39,8 +39,8 @@ onBeforeUnmount(() => editor?.destroy());
   </StyledCard>
 </template>
 
-<style lang="scss">
-.ProseMirror {
+<style scoped lang="scss">
+:deep(.ProseMirror) {
   padding: 1rem;
   height: 15rem;
   overflow-y: auto;

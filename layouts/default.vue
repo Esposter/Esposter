@@ -49,10 +49,10 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 // Only show scrollbar for part of the drawer that actually has
 // content greater than screen size rather than the entire drawer
-.v-navigation-drawer__content {
+:deep(.v-navigation-drawer__content) {
   display: flex;
   flex-direction: column;
 }
