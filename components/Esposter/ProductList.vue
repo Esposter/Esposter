@@ -14,12 +14,11 @@ const items: Item[] = [
     icon: "mdi-message-fast",
   },
 ];
-const menu = $ref(false);
 </script>
 
 <template>
   <v-list>
-    <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
+    <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
       <v-list-item :value="item.title">
         <template #prepend>
           <v-avatar color="background">
