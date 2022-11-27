@@ -2,6 +2,7 @@ import { AzureContainer } from "@/services/azure/types";
 
 export const INDEX_PATH = "/";
 export const ABOUT_PATH = "/about";
+export const MESSAGES_INDEX_PATH = "/messages";
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
 export const POST_CREATE_PATH = "/post/create";
 export const POST_UPDATE_PATH = (id: string) => `/post/update/${id}`;

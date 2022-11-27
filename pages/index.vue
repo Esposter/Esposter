@@ -21,6 +21,9 @@ updatePostListNextCursor(nextCursor);
 
 <template>
   <NuxtLayout>
+    <template #left>
+      <EsposterProductList />
+    </template>
     <v-container>
       <v-row>
         <v-col v-for="(post, index) in postList" :key="index" cols="12">

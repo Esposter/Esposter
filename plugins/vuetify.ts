@@ -12,6 +12,7 @@ type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
 const baseColorsCommon: ThemeColors = {
   primary: "#42b883",
   border: "#ccc",
+  vueBackground: "#42d392",
 };
 
 const baseColors: Record<ThemeMode, ThemeColors> = {
