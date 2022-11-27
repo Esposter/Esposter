@@ -4,11 +4,10 @@ import { storeToRefs } from "pinia";
 
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
-const { border } = useColors();
 </script>
 
 <template>
-  <v-toolbar class="v-app-bar border" height="56">
+  <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined">
     <template v-if="!leftDrawerOpenAuto" #prepend>
       <v-btn icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     </template>
@@ -21,9 +20,3 @@ const { border } = useColors();
     </template>
   </v-toolbar>
 </template>
-
-<style scoped lang="scss">
-.border {
-  border: 1px solid v-bind(border);
-}
-</style>

@@ -31,6 +31,7 @@ const description = $ref(initialValues.description);
           <v-col>
             <v-text-field
               variant="outlined"
+              label="Title"
               placeholder="Title"
               autofocus
               :counter="POST_MAX_TITLE_LENGTH"

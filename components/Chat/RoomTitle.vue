@@ -31,10 +31,8 @@ onClickOutside(titleRef, async () => {
 </script>
 
 <template>
-  <v-icon p="l-8" size="small">mdi-account-multiple</v-icon>
   <div
     ref="titleRef"
-    mx="3"
     px="1"
     display="flex"
     items="center"
