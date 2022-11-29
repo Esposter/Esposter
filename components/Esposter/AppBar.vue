@@ -11,8 +11,15 @@ import { FAVICON_32X32_PATH, INDEX_PATH, SITE_NAME } from "@/util/constants.clie
     </template>
     <template #append>
       <EsposterCreateDropdownButton />
-      <EsposterToggleThemeButton mx="2" />
-      <EsposterMoreDropdownButton />
+      <div pl="2">
+        <EsposterEsbabblerButton />
+      </div>
+      <div pl="2">
+        <EsposterToggleThemeButton />
+      </div>
+      <div pl="2">
+        <EsposterMoreDropdownButton />
+      </div>
     </template>
   </v-app-bar>
 </template>
