@@ -12,13 +12,11 @@
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
-    "precommit-lint": "lint-staged",
     "prettify": "prettier --ignore-path .gitignore --write .",
     "prisma-migrate:dev": "prisma migrate dev",
     "prisma-migrate:deploy": "prisma migrate deploy",
     "prisma-generate": "prisma generate",
-    "gen-env": "gen-env-types .env -o env.d.ts -e .",
-    "prepare": "husky install"
+    "gen-env": "gen-env-types .env -o env.d.ts -e ."
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
@@ -39,8 +37,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.8.0",
     "gen-env-types": "^1.3.4",
-    "husky": "^8.0.2",
-    "lint-staged": "^13.0.4",
     "nuxt": "^3.0.0",
     "prettier": "^2.8.0",
     "prisma": "^4.6.1",
@@ -75,13 +71,15 @@
     "trpc-nuxt": "^0.4.3",
     "typescript-json-serializer": "^5.1.0",
     "uuid": "^9.0.0",
-    "vue": "^3.2.45",
     "vue-waypoint": "^4.2.5",
     "vuetify": "^3.0.2",
     "ws": "^8.11.0",
     "zod": "^3.19.1"
   },
-  "dependenciesComments": {
+  "overrides": {
+    "vue": "latest"
+  },
+  "overridesComments": {
     "vue": "@NOTE: https://github.com/vuejs/pinia/issues/853"
   }
 }
