@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { PINA_COLADA_PATH } from "@/util/constants.client";
+import { useGameStore } from "@/store/clicker/useGameStore";
+import { storeToRefs } from "pinia";
+
+const gameStore = useGameStore();
+const { game } = $(storeToRefs(gameStore));
 </script>
 
 <template>
   <NuxtLayout>
-    <v-container h="screen" display="flex" items="center">
-      <v-img cursor="pointer" width="256" height="256" :src="PINA_COLADA_PATH" alt="Piña Colada" />
+    <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
+      <div class="text-h3" font="bold" select="none">{{ game.noPoints }} Piña Coladas</div>
+      <ClickerPinaColada pt="12" />
     </v-container>
   </NuxtLayout>
 </template>

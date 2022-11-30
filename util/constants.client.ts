@@ -30,6 +30,9 @@ export const PINA_COLADA_PATH = `${CLICKER_FOLDER_PATH}/pina-colada.svg`;
 // cookie names, yum! C:
 export const THEME_COOKIE_NAME = "theme";
 
+// local storage keys
+export const CLICKER_STORE = "clicker-store";
+
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
 export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/${SITE_NAME}/logo.png`;

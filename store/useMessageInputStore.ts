@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
 import { useRoomStore } from "@/store/useRoomStore";
+import { defineStore } from "pinia";
 
 export const useMessageInputStore = defineStore("messageInput", () => {
   const roomStore = useRoomStore();
@@ -12,6 +12,5 @@ export const useMessageInputStore = defineStore("messageInput", () => {
     if (!roomStore.currentRoomId) return;
     messageInputMap.value[roomStore.currentRoomId] = updatedMessageInput;
   };
-
   return { messageInput, updateMessageInput };
 });
