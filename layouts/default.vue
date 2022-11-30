@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/useLayoutStore";
 import { storeToRefs } from "pinia";
+import { VMain } from "vuetify/components";
 
+interface DefaultLayoutProps {
+  mainAttrs?: InstanceType<typeof VMain>["$attrs"];
+}
+
+const props = defineProps<DefaultLayoutProps>();
+const { mainAttrs } = $(toRefs(props));
 const slots = useSlots();
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
@@ -39,7 +46,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
       <slot name="right" />
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main :="{ ...mainAttrs }">
       <slot />
     </v-main>
 

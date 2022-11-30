@@ -22,13 +22,15 @@ const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<UpsertCar
 </script>
 
 <template>
-  <NuxtLayout>
-    <v-container>
-      <PostUpsertCard
-        v-if="post"
-        :initial-values="{ title: post.title, description: post.description }"
-        @submit="onUpdatePost"
-      />
-    </v-container>
-  </NuxtLayout>
+  <div>
+    <NuxtLayout>
+      <v-container>
+        <PostUpsertCard
+          v-if="post"
+          :initial-values="{ title: post.title, description: post.description }"
+          @submit="onUpdatePost"
+        />
+      </v-container>
+    </NuxtLayout>
+  </div>
 </template>

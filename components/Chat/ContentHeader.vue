@@ -7,7 +7,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
 </script>
 
 <template>
-  <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined">
+  <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
     <template v-if="!leftDrawerOpenAuto" #prepend>
       <v-btn icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     </template>

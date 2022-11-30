@@ -15,8 +15,8 @@ const { createMessage } = useMessageStore();
 const sendMessage = async () => {
   if (!currentRoomId || !messageInput) return;
 
-  updateMessageInput("");
   const createMessageInput: CreateMessageInput = { partitionKey: currentRoomId, message: messageInput };
+  updateMessageInput("");
   const newMessage = await $client.message.createMessage.mutate(createMessageInput);
   if (newMessage) createMessage(newMessage);
 };

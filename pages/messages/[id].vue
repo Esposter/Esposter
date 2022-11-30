@@ -15,15 +15,17 @@ useHead({ title: roomName, titleTemplate: (title) => (title ? `Esbabbler | ${tit
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout :main-attrs="{ 'max-h': 'screen' }">
+    <!-- Set max height here so we can hide global window scrollbar
+    and show scrollbar within the chat content only for chat routes -->
     <template #left>
       <ChatLeftSideBar />
     </template>
     <template v-if="roomExists" #right>
       <ChatRightSideBar />
     </template>
-    <template v-if="roomExists" #default="props">
-      <ChatContent :="props" />
+    <template v-if="roomExists">
+      <ChatContent />
     </template>
     <template v-if="roomExists" #footer>
       <ChatMessageInput />

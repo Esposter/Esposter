@@ -16,7 +16,7 @@ export const getTableClient = async (tableName: AzureTable) => {
   }
 };
 
-const jsonSerializer = new JsonSerializer({ additionalPropertiesPolicy: "remove" });
+const jsonSerializer = new JsonSerializer();
 
 export const getTopNEntities = async <Entity extends CompositeKey>(
   tableClient: TableClient,
@@ -30,9 +30,11 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   // This only sends a single request to the service
   const firstPage = (await iterator.next()).value as (Entity | string)[];
   if (!firstPage) return [];
+  return firstPage.slice(0, topN - 1) as Entity[];
+  // @NOTE: Fix this when ES decorators are implemented
   // Filter out metadata like continuation token
   // before deserializing the json to handle transforming Date objects
-  return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
+  // return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
 };
 
 export const submitTransaction = async (tableClient: TableClient, actions: TransactionAction[]) => {

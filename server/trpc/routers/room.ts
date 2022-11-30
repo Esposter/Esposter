@@ -1,4 +1,5 @@
 import chatMembers from "@/assets/data/chatMembers.json";
+import { testUser } from "@/assets/data/test";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
@@ -89,7 +90,10 @@ export const roomRouter = router({
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-    return { members: chatMembers as unknown as User[], nextCursor: getNextCursor(members, "id", FETCH_LIMIT) };
+    return {
+      members: (chatMembers as unknown as User[]).concat(testUser),
+      nextCursor: getNextCursor(members, "id", FETCH_LIMIT),
+    };
   }),
   addMembers: rateLimitedProcedure.input(addMembersInputSchema).mutation(async ({ input: { roomId, userIds } }) => {
     const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });

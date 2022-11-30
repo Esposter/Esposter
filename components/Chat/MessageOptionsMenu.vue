@@ -32,6 +32,7 @@ const items: Item[] = [
       <EmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
+        :button-attrs="{ rd: '0!' }"
         @update:model-value="(value) => emit('update:menu', value)"
         @select="() => {}"
       />

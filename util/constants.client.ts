@@ -6,6 +6,7 @@ export const MESSAGES_INDEX_PATH = "/messages";
 export const MESSAGES_PATH = (id: string) => `/messages/${id}`;
 export const POST_CREATE_PATH = "/post/create";
 export const POST_UPDATE_PATH = (id: string) => `/post/update/${id}`;
+export const CLICKER_PATH = "/clicker";
 export const PRIVACY_POLICY_PATH = "https://www.termsfeed.com/live/367522f3-27be-4faa-a7bd-dda7b419a8fc";
 export const TERMS_AND_CONDITIONS_PATH = "https://www.termsfeed.com/live/7202726c-ae87-41cd-af54-9bde6ca4477a";
 
@@ -22,6 +23,9 @@ export const ROUGHNESS_TEXTURE_PATH = `${THREED_FOLDER_PATH}/roughness.jpeg`;
 
 const IMG_FOLDER_PATH = "/img";
 export const NOT_FOUND_BACKGROUND = `${IMG_FOLDER_PATH}/404bg.svg`;
+
+const CLICKER_FOLDER_PATH = "/clicker";
+export const PINA_COLADA_PATH = `${CLICKER_FOLDER_PATH}/pina-colada.svg`;
 
 // cookie names, yum! C:
 export const THEME_COOKIE_NAME = "theme";

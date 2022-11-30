@@ -42,7 +42,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
           v-if="isUpdateMode"
           :message="message"
           @update:update-mode="(value) => (isUpdateMode = value)"
-          @update-delete-mode="updateDeleteMode"
+          @update:delete-mode="updateDeleteMode"
         />
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
@@ -50,7 +50,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       </v-list-item>
       <div position="relative" z="1">
         <div
-          v-show="activeAndNotUpdateMode"
+          v-show="activeAndNotUpdateMode && !isDeleteMode"
           position="absolute"
           top="-6"
           right="0"

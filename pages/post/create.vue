@@ -15,9 +15,11 @@ const onCreatePost = async (e: SubmitEventPromise, values: NonNullable<UpsertCar
 </script>
 
 <template>
-  <NuxtLayout>
-    <v-container>
-      <PostUpsertCard @submit="onCreatePost" />
-    </v-container>
-  </NuxtLayout>
+  <div>
+    <NuxtLayout>
+      <v-container>
+        <PostUpsertCard @submit="onCreatePost" />
+      </v-container>
+    </NuxtLayout>
+  </div>
 </template>

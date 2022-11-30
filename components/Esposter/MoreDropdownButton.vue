@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ABOUT_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants.client";
+import { ABOUT_PATH, CLICKER_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants.client";
 import { mergeProps } from "vue";
 
 interface Item {
@@ -9,6 +9,11 @@ interface Item {
 }
 
 const items: Item[] = [
+  {
+    title: "Piña Colada Clicker",
+    href: CLICKER_PATH,
+    icon: "mdi-fruit-pineapple",
+  },
   {
     title: "About",
     href: ABOUT_PATH,
