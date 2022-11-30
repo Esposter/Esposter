@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { FAVICON_32X32_PATH, INDEX_PATH, SITE_NAME } from "@/util/constants.client";
+import { INDEX_PATH, SITE_NAME } from "@/util/constants.client";
+
+const logoImageUrl = useLogoImageUrl();
 </script>
 
 <template>
   <v-app-bar density="comfortable" app :title="SITE_NAME">
     <template #prepend>
       <NuxtLink :to="INDEX_PATH">
-        <v-img width="32" height="26" :src="FAVICON_32X32_PATH" :alt="SITE_NAME" />
+        <v-img width="32" height="26" :src="logoImageUrl" :alt="SITE_NAME" />
       </NuxtLink>
     </template>
     <template #append>
