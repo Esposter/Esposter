@@ -25,7 +25,7 @@ onMounted(() => {
       <div mt="25" display="flex" flex="col" items="center" z="1">
         <div class="text" text="center 5xl">Lost in space?</div>
         <InvisibleNuxtLink pt="4" :to="INDEX_PATH">
-          <v-btn class="button">Go back home</v-btn>
+          <v-btn class="button" un-color="white!">Go back home</v-btn>
         </InvisibleNuxtLink>
       </div>
       <div class="hover" mt="-25">
@@ -40,7 +40,6 @@ onMounted(() => {
   color: #ddd;
 }
 .button {
-  color: #fff;
   background-image: $vueGradient;
 }
 

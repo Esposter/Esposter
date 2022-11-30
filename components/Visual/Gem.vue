@@ -2,6 +2,7 @@
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
 
 let ready = $ref(false);
+const opacity = $computed(() => (ready ? 1 : 0));
 
 onMounted(async () => {
   const THREE = await import("three");
@@ -86,13 +87,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <canvas class="webgl" :style="{ opacity: ready ? 1 : 0 }" />
+  <canvas class="webgl" />
 </template>
 
 <style scoped lang="scss">
 .webgl {
   width: 200px;
   height: 200px;
+  opacity: v-bind(opacity);
   transition: opacity 1s ease;
 }
 </style>
