@@ -8,13 +8,14 @@ interface ClickPopupProps {
 
 const props = defineProps<ClickPopupProps>();
 const { points, clientX, clientY, duration } = $(toRefs(props));
+const { primary } = useColors();
 const clientXPx = $computed(() => `${clientX}px`);
 const clientYPx = $computed(() => `${clientY}px`);
 const durationMs = $computed(() => `${duration}ms`);
 </script>
 
 <template>
-  <div class="text-h5 animation" position="absolute" font="bold" select="none" pointer-events="none">+{{ points }}</div>
+  <div class="text-h5 popup" position="absolute" font="bold" select="none" pointer-events="none">+{{ points }}</div>
 </template>
 
 <style scoped lang="scss">
@@ -28,9 +29,10 @@ const durationMs = $computed(() => `${duration}ms`);
   }
 }
 
-.animation {
+.popup {
   top: v-bind(clientYPx);
   left: v-bind(clientXPx);
+  color: v-bind(primary);
   animation: animation v-bind(durationMs) forwards;
 }
 </style>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const { vueBackground } = useColors();
+const { "primary-lighten-1": primaryLighten1 } = useColors();
 </script>
 
 <template>
   <v-app>
     <EsposterAppBar />
-    <NuxtLoadingIndicator :height="2" :color="vueBackground" />
+    <NuxtLoadingIndicator class="progress" :height="2" :color="primaryLighten1" />
     <NuxtTheme>
       <NuxtSEO>
         <NuxtPage />
@@ -22,9 +22,9 @@ html {
 </style>
 
 <style scoped lang="scss">
-.nuxt-loading-indicator {
+.progress {
   top: 56px !important;
-  box-shadow: 0 0 5px $vueBackgroundColor;
+  box-shadow: 0 0 5px v-bind(primaryLighten1);
   // Put progress bar just above appbar which has z index of 1000
   // but below menus which have z index of 2000
   z-index: 1500 !important;
