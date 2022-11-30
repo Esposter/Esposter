@@ -12,6 +12,6 @@ export const useGameStore = defineStore("clicker/game", () => {
     game.value.noPoints += points;
     localStorage.setItem(CLICKER_STORE, JSON.stringify(game.value));
   };
-  // Game state requires local storage which only exists in the client so we won't hydrate in server
+  // Game state requires local storage which only exists in the client so we won't hydrate in the server
   return { game: skipHydrate(game), incrementPoints };
 });
