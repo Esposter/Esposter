@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
+import { POST_TITLE_MAX_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
 import { Post } from "@prisma/client";
 import { SubmitEventPromise } from "vuetify";
@@ -34,8 +34,8 @@ const description = $ref(initialValues.description);
               label="Title"
               placeholder="Title"
               autofocus
-              :counter="POST_MAX_TITLE_LENGTH"
-              :rules="[formRules.required, formRules.requireAtMostNCharacters(POST_MAX_TITLE_LENGTH)]"
+              :counter="POST_TITLE_MAX_LENGTH"
+              :rules="[formRules.required, formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH)]"
               :model-value="title"
               @update:model-value="(value) => (title = value)"
             />

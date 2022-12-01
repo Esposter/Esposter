@@ -4,7 +4,7 @@ import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post";
-import { FETCH_LIMIT, POST_MAX_DESCRIPTION_LENGTH, POST_MAX_TITLE_LENGTH } from "@/util/constants.common";
+import { FETCH_LIMIT, POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
 import type { Post as PrismaPost } from "@prisma/client";
 import { toZod } from "tozod";
@@ -13,8 +13,8 @@ import { z } from "zod";
 
 export const postSchema: toZod<PrismaPost> = z.object({
   id: z.string().uuid(),
-  title: z.string().min(1).max(POST_MAX_TITLE_LENGTH),
-  description: z.string().max(POST_MAX_DESCRIPTION_LENGTH),
+  title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
+  description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
   noLikes: z.number().int().nonnegative(),
   noComments: z.number().int().nonnegative(),
   ranking: z.number(),

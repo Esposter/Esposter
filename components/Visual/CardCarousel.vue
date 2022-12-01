@@ -27,7 +27,7 @@ const props = withDefaults(
 const { cards, duration, maxShownCards, cardScaleYRatioLoss } = $(toRefs(props));
 
 /**
- * === Generation of styling for css cards ==
+ * === Generation of styling for css cards ===
  * This is quite complex, because we want *smooth* animations that don't jump.
  *
  * The rough idea is as follows;

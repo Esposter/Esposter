@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { POST_MAX_DESCRIPTION_LENGTH } from "@/util/constants.common";
+import { POST_DESCRIPTION_MAX_LENGTH } from "@/util/constants.common";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -19,7 +19,7 @@ const editor = $(
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder: "Text (optional)" }),
-      CharacterCount.configure({ limit: POST_MAX_DESCRIPTION_LENGTH }),
+      CharacterCount.configure({ limit: POST_DESCRIPTION_MAX_LENGTH }),
     ],
     content,
     onUpdate: ({ editor }) => emit("update:content", editor.getHTML()),

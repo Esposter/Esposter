@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
-import { USER_MAX_USERNAME_LENGTH } from "@/util/constants.common";
+import { USER_USERNAME_MAX_LENGTH } from "@/util/constants.common";
 import type { User as PrismaUser } from "@prisma/client";
 import { toZod } from "tozod";
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +9,7 @@ import { z } from "zod";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().uuid(),
-  username: z.string().min(1).max(USER_MAX_USERNAME_LENGTH),
+  username: z.string().min(1).max(USER_USERNAME_MAX_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),

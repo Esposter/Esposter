@@ -4,7 +4,7 @@ import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
-import { FETCH_LIMIT, ROOM_MAX_NAME_LENGTH } from "@/util/constants.common";
+import { FETCH_LIMIT, ROOM_NAME_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
 import type { Room as PrismaRoom, User } from "@prisma/client";
 import { toZod } from "tozod";
@@ -13,7 +13,7 @@ import { z } from "zod";
 
 const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1).max(ROOM_MAX_NAME_LENGTH),
+  name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
   avatar: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
