@@ -9,6 +9,8 @@
   "rules": {
     "no-console": "off",
     "import/order": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off",
     "vue/no-unused-vars": "off",
     "vue/no-multiple-template-root": "off",
     "vue/multi-word-component-names": "off",

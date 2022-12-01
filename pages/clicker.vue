@@ -25,6 +25,10 @@ const onClick = ({ clientX, clientY }: MouseEvent) => {
 
 <template>
   <NuxtLayout>
+    <template #left>
+      <ClickerStoreHeader pt="4" />
+      <ClickerUpgradeList />
+    </template>
     <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
       <div class="text-h3" text="center" font="bold" select="none">{{ game.noPoints }} Piña Coladas</div>
       <ClickerPinaColada mt="12" @click="onClick" />

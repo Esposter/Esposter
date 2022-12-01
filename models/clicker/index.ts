@@ -9,6 +9,9 @@ export enum UpgradeType {
 
 export interface Upgrade {
   name: string;
+  description: string;
+  flavorDescription: string;
+  price: number;
   value: number;
   upgradeTarget: UpgradeTarget;
   upgradeType: UpgradeType;
