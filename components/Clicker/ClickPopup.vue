@@ -1,16 +1,16 @@
 <script setup lang="ts">
 interface ClickPopupProps {
   points: number;
-  clientX: number;
-  clientY: number;
+  top: number;
+  left: number;
   duration: number;
 }
 
 const props = defineProps<ClickPopupProps>();
-const { points, clientX, clientY, duration } = $(toRefs(props));
+const { points, top, left, duration } = $(toRefs(props));
 const { primary } = useColors();
-const clientXPx = $computed(() => `${clientX}px`);
-const clientYPx = $computed(() => `${clientY}px`);
+const topPx = $computed(() => `${top}px`);
+const leftPx = $computed(() => `${left}px`);
 const durationMs = $computed(() => `${duration}ms`);
 </script>
 
@@ -30,8 +30,8 @@ const durationMs = $computed(() => `${duration}ms`);
 }
 
 .popup {
-  top: v-bind(clientYPx);
-  left: v-bind(clientXPx);
+  top: v-bind(topPx);
+  left: v-bind(leftPx);
   color: v-bind(primary);
   animation: animation v-bind(durationMs) forwards;
 }

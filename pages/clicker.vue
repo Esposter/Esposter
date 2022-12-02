@@ -11,11 +11,11 @@ const { game } = $(storeToRefs(gameStore));
 const cursorStore = useCursorStore();
 const { cursorPower } = $(storeToRefs(cursorStore));
 const popUps = $ref<({ id: string } & InstanceType<typeof ClickPopup>["$props"])[]>([]);
-const onClick = ({ clientX, clientY }: MouseEvent) => {
+const onClick = ({ pageX, pageY }: MouseEvent) => {
   const id = uuidv4();
   const duration = 10000;
   incrementPoints(cursorPower);
-  popUps.push({ id, points: cursorPower, clientX, clientY, duration });
+  popUps.push({ id, points: cursorPower, top: pageY, left: pageX, duration });
   setTimeout(() => {
     const index = popUps.findIndex((p) => p.id === id);
     if (index > -1) popUps.splice(index, 1);
@@ -30,6 +30,7 @@ const onClick = ({ clientX, clientY }: MouseEvent) => {
       <ClickerUpgradeList />
     </template>
     <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
+      <ClickerHeader w="full" />
       <div class="text-h3" text="center" font="bold" select="none">{{ game.noPoints }} Piña Coladas</div>
       <ClickerPinaColada mt="12" @click="onClick" />
     </v-container>
