@@ -25,7 +25,6 @@ const slots = useSlots();
 
 <style scoped lang="scss">
 .button {
-  color: #fff;
   background-image: $midnightBloom !important;
 }
 </style>

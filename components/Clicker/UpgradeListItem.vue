@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Upgrade } from "@/models/clicker";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
@@ -9,6 +10,7 @@ interface UpgradeListItemProps {
 
 const props = defineProps<UpgradeListItemProps>();
 const { upgrade } = $(toRefs(props));
+const { play } = useSound(buySfx);
 const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.parse(upgrade.description)));
 </script>
 
@@ -31,7 +33,7 @@ const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.pa
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <StyledButton>Buy</StyledButton>
+        <StyledButton @click="play">Buy</StyledButton>
       </v-card-actions>
     </v-card>
   </v-menu>
