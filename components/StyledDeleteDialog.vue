@@ -2,11 +2,9 @@
 import { VCard } from "vuetify/components";
 
 interface StyledDeleteProps {
-  cardProps: InstanceType<typeof VCard>["$props"];
+  cardProps?: InstanceType<typeof VCard>["$props"];
 }
 
-// @NOTE: Will be fixed in Vue 3.3
-// const props = defineProps<typeof VCard>();
 const props = defineProps<StyledDeleteProps>();
 const { cardProps } = $(toRefs(props));
 const emit = defineEmits<{

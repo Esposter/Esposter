@@ -1,11 +1,19 @@
 <script setup lang="ts">
-// @NOTE: Will be fixed in Vue 3.3
-// const props = defineProps<typeof VCard>();
+import { mergeProps } from "vue";
+import { VBtn } from "vuetify/components";
+
+interface StyledButtonProps {
+  buttonProps?: InstanceType<typeof VBtn>["$props"];
+  buttonAttrs?: InstanceType<typeof VBtn>["$attrs"];
+}
+
+const props = defineProps<StyledButtonProps>();
+const { buttonProps, buttonAttrs } = $(toRefs(props));
 const slots = useSlots();
 </script>
 
 <template>
-  <v-btn class="button">
+  <v-btn class="button" un-color="white!" :="mergeProps(buttonProps ?? {}, buttonAttrs ?? {})">
     <!-- @NOTE: We should also be able to access slots on the server -->
     <ClientOnly>
       <template v-for="(_, slot) of slots" #[slot]="scope">

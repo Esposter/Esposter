@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import { mergeProps } from "vue";
 import { VCard } from "vuetify/components";
 
-// @NOTE: Will be fixed in Vue 3.3
-// const props = defineProps<typeof VCard>();
+interface StyledCardProps {
+  cardProps?: InstanceType<typeof VCard>["$props"];
+  cardAttrs?: InstanceType<typeof VCard>["$attrs"];
+}
+
+const props = defineProps<StyledCardProps>();
+const { cardProps, cardAttrs } = $(toRefs(props));
 const slots = useSlots();
 const { border } = useColors();
 </script>
 
 <template>
-  <v-card class="border">
+  <v-card class="border" :="mergeProps(cardProps ?? {}, cardAttrs ?? {})">
     <!-- @NOTE: We should also be able to access slots on the server -->
     <ClientOnly>
       <template v-for="(_, slot) of slots" #[slot]="scope">

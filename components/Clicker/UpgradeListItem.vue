@@ -12,6 +12,8 @@ const { upgrade } = $(toRefs(props));
 const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.parse(upgrade.description)));
 </script>
 
+<!-- @NOTE: https://github.com/vuetifyjs/vuetify/issues/15307 -->
+<!-- v-menu renders buttons twice in SSR -->
 <template>
   <v-menu location="right center">
     <template #activator="{ props: menuProps }">
