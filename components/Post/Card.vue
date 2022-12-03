@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/prisma/types";
 import dayjs from "dayjs";
-import sanitizeHtml from "sanitize-html";
+import DOMPurify from "dompurify";
 
 interface CardProps {
   post: PostWithRelations;
@@ -9,7 +9,7 @@ interface CardProps {
 
 const props = defineProps<CardProps>();
 const { post } = $(toRefs(props));
-const sanitizedDescriptionHtml = $computed(() => sanitizeHtml(post.description));
+const sanitizedDescriptionHtml = $computed(() => DOMPurify.sanitize(post.description));
 const createdAt = $computed(() => dayjs(post.createdAt).fromNow());
 const { surfaceOpacity80 } = useColors();
 </script>
