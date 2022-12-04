@@ -17,13 +17,15 @@ const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.pa
 <!-- @NOTE: https://github.com/vuetifyjs/vuetify/issues/15307 -->
 <!-- v-menu renders buttons twice in SSR -->
 <template>
-  <v-menu location="right center">
+  <v-menu min-width="400" location="right center">
     <template #activator="{ props: menuProps }">
       <v-list-item :title="upgrade.name" :="menuProps" />
     </template>
     <v-card>
-      <v-card-title font="bold!">
+      <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
         {{ upgrade.name }}
+        <v-spacer />
+        {{ upgrade.price }} <ClickerPinaColada width="24" height="24" />
       </v-card-title>
       <v-card-text>
         <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->

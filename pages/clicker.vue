@@ -32,7 +32,7 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
     <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
       <ClickerHeader w="full" />
       <div class="text-h3" text="center" font="bold" select="none">{{ game.noPoints }} Piña Coladas</div>
-      <ClickerPinaColada mt="12" @click="onClick" />
+      <ClickerPinaColada mt="12" width="256" height="256" :g-attrs="{ cursor: 'pointer' }" @click="onClick" />
     </v-container>
     <ClickerClickPopup v-for="{ id, ...popUpProps } in popUps" :key="id" :="popUpProps" />
   </NuxtLayout>

@@ -10,7 +10,7 @@ const membersCount = $computed(() => memberList.length);
 <template>
   <v-container fluid>
     <v-row>
-      <v-col class="text-subtitle-2" font="bold">Members—{{ membersCount }}</v-col>
+      <v-col class="text-subtitle-1" font="bold">Members—{{ membersCount }}</v-col>
     </v-row>
   </v-container>
 </template>
