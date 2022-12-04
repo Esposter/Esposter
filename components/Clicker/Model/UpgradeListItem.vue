@@ -6,10 +6,11 @@ import { marked } from "marked";
 
 interface UpgradeListItemProps {
   upgrade: Upgrade;
+  isBought?: boolean;
 }
 
 const props = defineProps<UpgradeListItemProps>();
-const { upgrade } = $(toRefs(props));
+const { upgrade, isBought } = $(toRefs(props));
 const { play } = useSound(buySfx);
 const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.parse(upgrade.description)));
 </script>
@@ -32,11 +33,13 @@ const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.pa
         <div v-html="sanitizedUpgradeDescription" />
         <span pt="4" display="flex" justify="end" font="italic">"{{ upgrade.flavorDescription }}"</span>
       </v-card-text>
-      <v-divider />
-      <v-card-actions>
-        <v-spacer />
-        <StyledButton @click="play">Buy</StyledButton>
-      </v-card-actions>
+      <template v-if="!isBought">
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <StyledButton @click="play">Buy</StyledButton>
+        </v-card-actions>
+      </template>
     </v-card>
   </v-menu>
 </template>

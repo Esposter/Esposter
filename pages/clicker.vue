@@ -2,12 +2,14 @@
 import ClickPopup from "@/components/Clicker/ClickPopup.vue";
 import { useCursorStore } from "@/store/clicker/useCursorStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
+import { usePointStore } from "@/store/clicker/usePointStore";
 import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 
 const gameStore = useGameStore();
-const { incrementPoints } = gameStore;
 const { game } = $(storeToRefs(gameStore));
+const pointStore = usePointStore();
+const { incrementPoints } = pointStore;
 const cursorStore = useCursorStore();
 const { cursorPower } = $(storeToRefs(cursorStore));
 const popUps = $ref<({ id: string } & InstanceType<typeof ClickPopup>["$props"])[]>([]);
@@ -27,7 +29,7 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
   <NuxtLayout>
     <template #left>
       <ClickerStoreHeader pt="4" />
-      <ClickerUpgradeList />
+      <ClickerStoreUpgrades />
     </template>
     <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
       <ClickerHeader w="full" />
@@ -35,5 +37,9 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
       <ClickerPinaColada mt="12" width="256" height="256" :g-attrs="{ cursor: 'pointer' }" @click="onClick" />
     </v-container>
     <ClickerClickPopup v-for="{ id, ...popUpProps } in popUps" :key="id" :="popUpProps" />
+    <template #right>
+      <ClickerInventoryHeader pt="4" />
+      <ClickerInventoryUpgrades />
+    </template>
   </NuxtLayout>
 </template>

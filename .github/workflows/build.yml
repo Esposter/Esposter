@@ -16,3 +16,5 @@ jobs:
         run: npm run build
       - name: Run ESLint
         run: npm run lint
+      - name: Run Typechecking
+        run: npm run typecheck
