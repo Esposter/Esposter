@@ -40,13 +40,15 @@ onClickOutside(cardRef, () => {
     <v-card ref="cardRef">
       <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
         {{ upgrade.name }}
-        <v-spacer />
-        {{ upgrade.price }} <ClickerPinaColada width="24" height="24" />
       </v-card-title>
       <v-card-text>
         <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
         <div v-html="sanitizedUpgradeDescription" />
-        <span pt="4" display="flex" justify="end" font="italic">"{{ upgrade.flavorDescription }}"</span>
+        <div pt="4" display="flex" justify="end" font="italic">"{{ upgrade.flavorDescription }}"</div>
+        <div pt="4" display="flex">
+          <v-spacer />
+          {{ upgrade.price }} <ClickerPinaColada width="24" height="24" />
+        </div>
       </v-card-text>
       <template v-if="!isBought">
         <v-divider />
