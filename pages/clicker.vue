@@ -50,18 +50,18 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
   </NuxtLayout>
 </template>
 
+<style lang="scss">
+// Disable selecting text for better UX for clicking
+.v-main {
+  user-select: none;
+}
+</style>
+
 <style scoped lang="scss">
 :deep(.clickable) {
   &:active {
     transform: $clickShrink;
     transform-origin: center;
   }
-}
-</style>
-
-<style lang="scss">
-// Disable selecting text for better UX for clicking
-.v-main {
-  user-select: none;
 }
 </style>

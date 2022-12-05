@@ -33,7 +33,7 @@ onClickOutside(cardRef, () => {
 <!-- @NOTE: https://github.com/vuetifyjs/vuetify/issues/15307 -->
 <!-- v-menu renders buttons twice in SSR -->
 <template>
-  <v-menu v-model="menu" min-width="400" location="right center" :close-on-content-click="false">
+  <v-menu v-model="menu" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <v-list-item :title="upgrade.name" :="menuProps" />
     </template>
