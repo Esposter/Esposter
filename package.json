@@ -51,7 +51,7 @@
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.6",
     "@prisma/client": "^4.7.1",
-    "@tiptap/extension-character-count": "^2.0.0-beta.204",
+    "@tiptap/extension-character-count": "^2.0.0-beta.205",
     "@tiptap/extension-placeholder": "^2.0.0-beta.204",
     "@tiptap/starter-kit": "^2.0.0-beta.204",
     "@tiptap/vue-3": "^2.0.0-beta.204",
