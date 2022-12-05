@@ -51,15 +51,17 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
 </template>
 
 <style scoped lang="scss">
-// Disable selecting text for better UX for clicking
-.v-main {
-  user-select: none;
-}
-
 :deep(.clickable) {
   &:active {
     transform: $clickShrink;
     transform-origin: center;
   }
+}
+</style>
+
+<style lang="scss">
+// Disable selecting text for better UX for clicking
+.v-main {
+  user-select: none;
 }
 </style>
