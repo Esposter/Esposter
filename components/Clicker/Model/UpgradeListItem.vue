@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Upgrade } from "@/models/clicker";
+import { useGameStore } from "@/store/clicker/useGameStore";
+import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
+import { storeToRefs } from "pinia";
+import { VMenu } from "vuetify/components";
 
 interface UpgradeListItemProps {
   upgrade: Upgrade;
@@ -11,18 +15,29 @@ interface UpgradeListItemProps {
 
 const props = defineProps<UpgradeListItemProps>();
 const { upgrade, isBought } = $(toRefs(props));
+const gameStore = useGameStore();
+const { game } = $(storeToRefs(gameStore));
+const upgradeStore = useUpgradeStore();
+const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
+let menu = $ref(false);
+const cardRef = ref<HTMLDivElement>();
 const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.parse(upgrade.description)));
+const isBuyable = $computed(() => Boolean(game && game.noPoints >= upgrade.price));
+
+onClickOutside(cardRef, () => {
+  if (menu) menu = false;
+});
 </script>
 
 <!-- @NOTE: https://github.com/vuetifyjs/vuetify/issues/15307 -->
 <!-- v-menu renders buttons twice in SSR -->
 <template>
-  <v-menu min-width="400" location="right center">
+  <v-menu v-model="menu" min-width="400" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <v-list-item :title="upgrade.name" :="menuProps" />
     </template>
-    <v-card>
+    <v-card ref="cardRef">
       <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
         {{ upgrade.name }}
         <v-spacer />
@@ -37,9 +52,28 @@ const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.pa
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <StyledButton @click="play">Buy</StyledButton>
+          <StyledButton
+            :button-props="{ disabled: !isBuyable }"
+            @click="
+              () => {
+                createBoughtUpgrade(upgrade);
+                play();
+                menu = false;
+              }
+            "
+          >
+            Buy
+          </StyledButton>
         </v-card-actions>
       </template>
     </v-card>
   </v-menu>
 </template>
+
+<!-- @NOTE: Seems like reactivity transform doesn't work with v-bind -->
+<!-- This might be fixed in Vue 3.3 -->
+<!-- <style scoped lang="scss">
+.not-buyable {
+  color: v-bind(error);
+}
+</style> -->

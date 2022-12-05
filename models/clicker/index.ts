@@ -19,5 +19,5 @@ export interface Upgrade {
 
 export interface Game {
   noPoints: number;
-  boughtUpgrades: Upgrade[];
+  boughtUpgradeList: Upgrade[];
 }

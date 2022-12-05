@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const divRef = ref<HTMLDivElement | undefined>();
+const divRef = ref<HTMLDivElement>();
 const transform = useRotatingTransform(divRef);
 </script>
 

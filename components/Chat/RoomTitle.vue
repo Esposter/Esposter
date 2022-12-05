@@ -8,7 +8,7 @@ const { updateRoom } = roomStore;
 const { currentRoomId, roomName } = $(storeToRefs(roomStore));
 let currentRoomName = $ref(roomName);
 let isUpdateMode = $ref(false);
-const titleRef = ref<HTMLDivElement | undefined>();
+const titleRef = ref<HTMLDivElement>();
 const titleHovered = $ref(false);
 const onUpdateRoom = async () => {
   try {
