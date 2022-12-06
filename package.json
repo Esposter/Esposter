@@ -59,7 +59,7 @@
     "@trpc/server": "^10.4.3",
     "big-integer": "^1.6.51",
     "browser-hrtime": "^1.1.8",
-    "dayjs": "^1.11.6",
+    "dayjs": "^1.11.7",
     "dedent": "^0.7.0",
     "dompurify": "^2.4.1",
     "emoji-mart-vue-fast": "^12.0.1",
