@@ -66,7 +66,7 @@
     "gsap": "^3.11.3",
     "marked": "^4.2.4",
     "openai": "^3.1.0",
-    "pinia": "^2.0.27",
+    "pinia": "^2.0.28",
     "rate-limiter-flexible": "^2.4.1",
     "read-excel-file": "^5.5.3",
     "sanitize-html": "^2.7.3",
