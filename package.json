@@ -30,7 +30,7 @@
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
-    "@unocss/nuxt": "^0.47.5",
+    "@unocss/nuxt": "^0.47.6",
     "@vueuse/core": "^9.6.0",
     "@vueuse/nuxt": "^9.6.0",
     "@vueuse/sound": "^2.0.0",
