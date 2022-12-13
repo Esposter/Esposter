@@ -78,7 +78,7 @@ const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
       <v-divider v-if="isDivider(item)" :key="`divider${index}`" thickness="2" vertical mx="4!" h="8!" self="center!" />
       <v-tooltip v-else :key="index" location="top" :text="item.title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn rd="0!" variant="flat" :="mergeProps(item, tooltipProps)" />
+          <v-btn rd="0!" :="mergeProps(item, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

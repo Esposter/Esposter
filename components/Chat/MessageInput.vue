@@ -35,14 +35,7 @@ const sendMessage = async () => {
     <template #clear>
       <v-tooltip location="top" text="Clear">
         <template #activator="{ props }">
-          <v-btn
-            bg="transparent!"
-            icon="mdi-close-circle"
-            size="small"
-            flat
-            :="props"
-            @click="updateMessageInput('')"
-          />
+          <v-btn icon="mdi-close-circle" size="small" :="props" @click="updateMessageInput('')" />
         </template>
       </v-tooltip>
     </template>
@@ -54,14 +47,7 @@ const sendMessage = async () => {
       />
       <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
         <template #activator="{ props }">
-          <v-btn
-            bg="transparent!"
-            size="small"
-            flat
-            :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
-            :="props"
-            @click="sendMessage"
-          />
+          <v-btn size="small" :icon="messageInput ? 'mdi-send' : 'mdi-microphone'" :="props" @click="sendMessage" />
         </template>
       </v-tooltip>
     </template>

@@ -31,17 +31,24 @@ const items: Item[] = [
     <v-card-actions p="0!" min-h="auto!">
       <EmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
-        :button-props="{ size: 'small' }"
+        :button-props="{ color: 'inherit', size: 'small' }"
         :button-attrs="{ rd: '0!' }"
         @update:model-value="(value) => emit('update:menu', value)"
         @select="() => {}"
       />
-      <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
+      <v-btn m="0!" rd="0!" icon="mdi-pencil" color="inherit" size="small" @click="emit('update:update-mode', true)" />
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">
             <template #activator="{ props: tooltipProps }">
-              <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+              <v-btn
+                m="0!"
+                rd="0!"
+                icon="mdi-dots-horizontal"
+                color="inherit"
+                size="small"
+                :="mergeProps(menuProps, tooltipProps)"
+              />
             </template>
           </v-tooltip>
         </template>

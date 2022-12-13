@@ -37,9 +37,7 @@ const onDeleteLike = async () => {
       w="6!"
       h="6!"
       p="0!"
-      bg="transparent!"
       rd="1!"
-      variant="flat"
       @click="liked ? onDeleteLike() : unliked ? onUpdateLike(1) : onCreateLike(1)"
     >
       <v-icon
@@ -55,9 +53,7 @@ const onDeleteLike = async () => {
       w="6!"
       h="6!"
       p="0!"
-      bg="transparent!"
       rd="1!"
-      variant="flat"
       @click="unliked ? onDeleteLike() : liked ? onUpdateLike(-1) : onCreateLike(-1)"
     >
       <v-icon

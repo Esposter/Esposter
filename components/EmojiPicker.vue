@@ -30,12 +30,10 @@ const onEmojiSelect = (emoji: { native: string }) => emit("select", emoji.native
   >
     <template #activator="{ props: menuProps }">
       <v-tooltip location="top" :="tooltipProps">
-        <template #activator="{ props: tooltipPropsActivator }">
+        <template #activator="{ props: tooltipActivatorProps }">
           <v-btn
-            bg="transparent!"
             icon="mdi-emoticon"
-            flat
-            :="mergeProps(menuProps, tooltipPropsActivator, buttonProps ?? {}, buttonAttrs ?? {})"
+            :="mergeProps(menuProps, tooltipActivatorProps, buttonProps ?? {}, buttonAttrs ?? {})"
           />
         </template>
       </v-tooltip>

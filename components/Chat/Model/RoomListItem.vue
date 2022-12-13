@@ -37,7 +37,6 @@ const active = $computed(() => room.id === currentRoomId);
       top="1/2"
       right="0"
       translate-y="-1/2"
-      bg="transparent!"
       :room-id="room.id"
     />
   </div>

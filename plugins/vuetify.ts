@@ -68,6 +68,12 @@ const theme: VuetifyOptions["theme"] = {
 };
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const vuetify = createVuetify({ components, directives, theme, ssr: true });
+  const vuetify = createVuetify({
+    components,
+    directives,
+    theme,
+    ssr: true,
+    defaults: { VBtn: { color: "transparent", flat: true } },
+  });
   nuxtApp.vueApp.use(vuetify);
 });

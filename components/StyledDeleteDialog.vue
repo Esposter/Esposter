@@ -24,7 +24,6 @@ const isDeleteMode = $ref(false);
         <v-btn
           px="6!"
           text="3"
-          variant="flat"
           color="error"
           @click="
             emit('delete', () => {
