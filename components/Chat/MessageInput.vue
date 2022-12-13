@@ -42,12 +42,18 @@ const sendMessage = async () => {
     <template #append-inner>
       <EmojiPicker
         :tooltip-props="{ text: 'Choose an emoji' }"
-        :button-props="{ size: 'small' }"
+        :button-props="{ color: 'transparent', size: 'small' }"
         @select="(emoji) => updateMessageInput(`${messageInput}${emoji}`)"
       />
       <v-tooltip location="top" :text="messageInput ? 'Press Enter to send' : 'Speak'">
         <template #activator="{ props }">
-          <v-btn size="small" :icon="messageInput ? 'mdi-send' : 'mdi-microphone'" :="props" @click="sendMessage" />
+          <v-btn
+            color="transparent"
+            size="small"
+            :icon="messageInput ? 'mdi-send' : 'mdi-microphone'"
+            :="props"
+            @click="sendMessage"
+          />
         </template>
       </v-tooltip>
     </template>

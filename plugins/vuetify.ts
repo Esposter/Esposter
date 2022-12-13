@@ -73,7 +73,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     theme,
     ssr: true,
-    defaults: { VBtn: { color: "transparent", flat: true } },
+    defaults: { VBtn: { flat: true } },
   });
   nuxtApp.vueApp.use(vuetify);
 });

@@ -12,15 +12,7 @@ const onCreateRoom = async () => {
 <template>
   <v-tooltip location="top" text="Create DM">
     <template #activator="{ props }">
-      <v-btn
-        icon="mdi-plus"
-        color="inherit"
-        variant="plain"
-        size="small"
-        :ripple="false"
-        :="props"
-        @click="onCreateRoom"
-      />
+      <v-btn icon="mdi-plus" variant="plain" size="small" :ripple="false" :="props" @click="onCreateRoom" />
     </template>
   </v-tooltip>
 </template>
