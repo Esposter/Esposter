@@ -6,8 +6,8 @@ export const useCursorStore = defineStore("clicker/cursor", () => {
   const gameStore = useGameStore();
   const baseCursorPower = ref(1);
   const cursorPower = computed(() => {
+    if (!gameStore.game) return 0;
     let resultPower = baseCursorPower.value;
-    if (!gameStore.game) return resultPower;
 
     const additiveUpgrades = gameStore.game.boughtUpgradeList.filter((u) => u.upgradeType === UpgradeType.Additive);
     for (const additiveUpgrade of additiveUpgrades) resultPower += additiveUpgrade.value;
