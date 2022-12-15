@@ -1,5 +1,11 @@
 export enum UpgradeTarget {
   Cursor = "Cursor",
+  AutoClick = "AutoClick",
+}
+
+export enum UpgradeLocation {
+  General = "General",
+  AutoClick = "AutoClick",
 }
 
 export enum UpgradeType {
@@ -13,7 +19,8 @@ export interface Upgrade {
   flavorDescription: string;
   price: number;
   value: number;
-  upgradeTarget: UpgradeTarget;
+  upgradeLocation: UpgradeLocation;
+  upgradeTargets: UpgradeTarget[];
   upgradeType: UpgradeType;
 }
 
