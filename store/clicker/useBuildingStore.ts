@@ -36,7 +36,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   });
   const getBuildingPrice = computed(() => (building: Building) => {
     const boughtBuildingLevel = getBoughtBuildingLevel.value(building);
-    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingLevel + 1));
+    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingLevel));
   });
 
   const createBoughtBuilding = (newBuilding: Building) => {
