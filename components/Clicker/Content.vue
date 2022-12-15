@@ -3,6 +3,7 @@ import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { usePopupStore } from "@/store/clicker/usePopupStore";
 import { storeToRefs } from "pinia";
+import { clearInterval, setInterval } from "worker-timers";
 
 const pointStore = usePointStore();
 const { incrementPoints } = pointStore;
@@ -15,13 +16,13 @@ let buildingsClickerTimer = $ref<number>();
 const buildingsClickerFps = $ref<number>(60);
 
 onMounted(() => {
-  buildingsClickerTimer = window.setInterval(
+  buildingsClickerTimer = setInterval(
     () => incrementPoints(buildingPower / buildingsClickerFps),
     1000 / buildingsClickerFps
   );
 });
 
-onUnmounted(() => clearInterval(buildingsClickerTimer));
+onUnmounted(() => buildingsClickerTimer && clearInterval(buildingsClickerTimer));
 </script>
 
 <template>
