@@ -11,7 +11,7 @@ roomStore.currentRoomId =
   typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomStore.roomSearchQuery = "";
 
-useHead({ title: roomName, titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 </script>
 
 <template>
@@ -25,6 +25,9 @@ useHead({ title: roomName, titleTemplate: (title) => (title ? `Esbabbler | ${tit
       <ChatRightSideBar />
     </template>
     <template v-if="roomExists">
+      <Head>
+        <Title>{{ roomName }}</Title>
+      </Head>
       <ChatContent />
     </template>
     <template v-if="roomExists" #footer>

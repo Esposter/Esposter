@@ -15,10 +15,10 @@ let buildingsClickerTimer = $ref<number>();
 const buildingsClickerFps = $ref<number>(60);
 
 onMounted(() => {
-  buildingsClickerTimer = window.setInterval(() => {
-    console.log(buildingPower);
-    incrementPoints(buildingPower / buildingsClickerFps);
-  }, 1000 / buildingsClickerFps);
+  buildingsClickerTimer = window.setInterval(
+    () => incrementPoints(buildingPower / buildingsClickerFps),
+    1000 / buildingsClickerFps
+  );
 });
 
 onUnmounted(() => clearInterval(buildingsClickerTimer));
