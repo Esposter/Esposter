@@ -16,10 +16,11 @@ const { building } = $(toRefs(props));
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
-const { createBoughtBuilding, getBuildingPrice } = buildingStore;
+const { createBoughtBuilding, getBuildingPrice, getBoughtBuildingLevel } = buildingStore;
 const { play } = useSound(buySfx);
 let menu = $ref(false);
 const cardRef = ref<HTMLDivElement>();
+const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
 const buildingPrice = $computed(() => getBuildingPrice(building));
 const isBuyable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
 
@@ -44,12 +45,14 @@ const buildingIcon = $computed(() => images[building.name]);
           <img :src="buildingIcon" :alt="building.name" />
         </template>
         <template #title>
-          {{ building.name }}
+          <span select="none">
+            {{ building.name }}
+          </span>
         </template>
         <template #append>
-          <div font="bold">
-            {{ building.level }}
-          </div>
+          <span font="bold" select="none">
+            {{ boughtBuildingLevel }}
+          </span>
         </template>
       </v-list-item>
     </template>
@@ -62,7 +65,7 @@ const buildingIcon = $computed(() => images[building.name]);
         <div display="flex" justify="end" font="italic">"{{ building.flavorDescription }}"</div>
         <div pt="4" display="flex">
           <v-spacer />
-          {{ buildingPrice }} <ClickerPinaColada width="24" height="24" />
+          {{ buildingPrice }} <ClickerModelPinaColada width="24" height="24" />
         </div>
       </v-card-text>
       <v-divider />
@@ -74,7 +77,6 @@ const buildingIcon = $computed(() => images[building.name]);
             () => {
               createBoughtBuilding(building);
               play();
-              menu = false;
             }
           "
         >

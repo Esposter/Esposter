@@ -3,6 +3,10 @@ import { defineStore } from "pinia";
 
 export const usePointStore = defineStore("clicker/point", () => {
   const gameStore = useGameStore();
+  const noPoints = computed(() => {
+    if (!gameStore.game) return 0;
+    return Math.round(gameStore.game.noPoints);
+  });
   const incrementPoints = (points: number) => {
     if (!gameStore.game) return;
     gameStore.game.noPoints += points;
@@ -13,5 +17,5 @@ export const usePointStore = defineStore("clicker/point", () => {
     gameStore.game.noPoints -= points;
     gameStore.saveGame();
   };
-  return { incrementPoints, decrementPoints };
+  return { noPoints, incrementPoints, decrementPoints };
 });

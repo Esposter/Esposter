@@ -33,7 +33,13 @@ onClickOutside(cardRef, () => {
 <template>
   <v-menu v-model="menu" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-list-item :title="upgrade.name" :="menuProps" />
+      <v-list-item :="menuProps">
+        <template #title>
+          <span select="none">
+            {{ upgrade.name }}
+          </span>
+        </template>
+      </v-list-item>
     </template>
     <v-card ref="cardRef">
       <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
@@ -45,7 +51,7 @@ onClickOutside(cardRef, () => {
         <div pt="4" display="flex" justify="end" font="italic">"{{ upgrade.flavorDescription }}"</div>
         <div pt="4" display="flex">
           <v-spacer />
-          {{ upgrade.price }} <ClickerPinaColada width="24" height="24" />
+          {{ upgrade.price }} <ClickerModelPinaColada width="24" height="24" />
         </div>
       </v-card-text>
       <template v-if="!isBought">

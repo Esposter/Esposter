@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface ClickPopupProps {
+export interface ClickPopupProps {
   points: number;
   top: number;
   left: number;
