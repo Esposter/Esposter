@@ -29,7 +29,7 @@ const onClick = ({ pageX, pageY }: MouseEvent) => {
   <NuxtLayout>
     <template #left>
       <ClickerStoreHeader pt="4" />
-      <ClickerStoreUpgrades />
+      <ClickerStoreList />
     </template>
     <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
       <ClickerHeader w="full" />

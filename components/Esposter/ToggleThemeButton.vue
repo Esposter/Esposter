@@ -15,7 +15,6 @@ const toggleTheme = () => {
       <v-avatar color="background">
         <v-btn
           :icon="theme.current.value.dark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-          color="transparent"
           :="props"
           @click="toggleTheme"
         />

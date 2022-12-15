@@ -39,7 +39,7 @@ const menu = $ref(false);
       <v-tooltip location="bottom" text="More">
         <template #activator="{ props: tooltipProps }">
           <v-avatar color="background">
-            <v-btn icon="mdi-chevron-down" color="transparent" :="mergeProps(menuProps, tooltipProps)" />
+            <v-btn icon="mdi-chevron-down" :="mergeProps(menuProps, tooltipProps)" />
           </v-avatar>
         </template>
       </v-tooltip>

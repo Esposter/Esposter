@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import type { Upgrade } from "@/models/clicker";
-import { UpgradeLocation } from "@/models/clicker";
 
-interface CursorUpgradeListGroupProps {
+interface UpgradeListGroupProps {
   upgrades: Upgrade[];
   isBought?: true;
 }
 
-const props = defineProps<CursorUpgradeListGroupProps>();
+const props = defineProps<UpgradeListGroupProps>();
 const { upgrades, isBought } = $(toRefs(props));
-const generalUpgrades = $computed(() => upgrades.filter((u) => u.upgradeLocation === UpgradeLocation.General));
 </script>
 
 <template>
-  <v-list-group v-if="generalUpgrades.length > 0">
+  <v-list-group>
     <template #activator="{ props: listProps }">
       <v-list-item :="listProps">
         <template #prepend>
@@ -21,13 +19,13 @@ const generalUpgrades = $computed(() => upgrades.filter((u) => u.upgradeLocation
             <v-icon icon="mdi-gesture-swipe-up" />
           </v-avatar>
         </template>
-        <v-list-item-title font="bold!">General</v-list-item-title>
+        <v-list-item-title font="bold!">Upgrades</v-list-item-title>
       </v-list-item>
     </template>
     <ClickerModelUpgradeListItem
-      v-for="generalUpgrade in generalUpgrades"
-      :key="generalUpgrade.name"
-      :upgrade="generalUpgrade"
+      v-for="upgrade in upgrades"
+      :key="upgrade.name"
+      :upgrade="upgrade"
       :is-bought="isBought"
     />
   </v-list-group>

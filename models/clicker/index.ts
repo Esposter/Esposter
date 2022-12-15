@@ -1,11 +1,6 @@
 export enum UpgradeTarget {
   Cursor = "Cursor",
-  AutoClick = "AutoClick",
-}
-
-export enum UpgradeLocation {
-  General = "General",
-  AutoClick = "AutoClick",
+  Building = "Building",
 }
 
 export enum UpgradeType {
@@ -19,12 +14,20 @@ export interface Upgrade {
   flavorDescription: string;
   price: number;
   value: number;
-  upgradeLocation: UpgradeLocation;
   upgradeTargets: UpgradeTarget[];
   upgradeType: UpgradeType;
+}
+
+export interface Building {
+  name: string;
+  flavorDescription: string;
+  basePrice: number;
+  baseValue: number;
+  level: number;
 }
 
 export interface Game {
   noPoints: number;
   boughtUpgradeList: Upgrade[];
+  boughtBuildingList: Building[];
 }
