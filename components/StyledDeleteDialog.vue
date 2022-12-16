@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VCard } from "vuetify/components";
+import type { VCard } from "vuetify/components";
 
 interface StyledDeleteProps {
   cardProps?: InstanceType<typeof VCard>["$props"];

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mergeProps } from "vue";
-import { VBtn } from "vuetify/components";
+import type { VBtn } from "vuetify/components";
 
 interface StyledButtonProps {
   buttonProps?: InstanceType<typeof VBtn>["$props"];

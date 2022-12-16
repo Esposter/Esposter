@@ -3,11 +3,11 @@ import type { Upgrade } from "@/models/clicker";
 
 interface UpgradeListGroupProps {
   upgrades: Upgrade[];
-  isBought?: true;
+  isBuyable?: true;
 }
 
 const props = defineProps<UpgradeListGroupProps>();
-const { upgrades, isBought } = $(toRefs(props));
+const { upgrades, isBuyable } = $(toRefs(props));
 </script>
 
 <template>
@@ -26,7 +26,7 @@ const { upgrades, isBought } = $(toRefs(props));
       v-for="upgrade in upgrades"
       :key="upgrade.name"
       :upgrade="upgrade"
-      :is-bought="isBought"
+      :is-buyable="isBuyable"
     />
   </v-list-group>
 </template>

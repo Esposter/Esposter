@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/useLayoutStore";
 import { storeToRefs } from "pinia";
-import { VMain } from "vuetify/components";
+import type { VMain } from "vuetify/components";
 
 interface DefaultLayoutProps {
   mainAttrs?: InstanceType<typeof VMain>["$attrs"];

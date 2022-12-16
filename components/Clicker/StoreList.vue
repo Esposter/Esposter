@@ -26,7 +26,7 @@ if (buildings) initialiseBuildingList(buildings);
 
 <template>
   <v-list>
-    <ClickerModelUpgradeListGroup :upgrades="storeUpgrades" />
+    <ClickerModelUpgradeListGroup :upgrades="storeUpgrades" is-buyable />
     <ClickerModelBuildingListGroup :buildings="buildingList" />
   </v-list>
 </template>

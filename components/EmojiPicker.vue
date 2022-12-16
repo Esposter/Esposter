@@ -3,7 +3,7 @@ import data from "emoji-mart-vue-fast/data/all.json";
 // @ts-ignore
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
-import { VBtn, VTooltip } from "vuetify/components";
+import type { VBtn, VTooltip } from "vuetify/components";
 
 interface EmojiPickerProps {
   tooltipProps: InstanceType<typeof VTooltip>["$props"];
