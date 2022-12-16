@@ -43,11 +43,3 @@ onClickOutside(cardRef, () => {
     "
   />
 </template>
-
-<!-- @NOTE: Seems like reactivity transform doesn't work with v-bind -->
-<!-- This might be fixed in Vue 3.3 -->
-<!-- <style scoped lang="scss">
-.not-affordable {
-  color: v-bind(error);
-}
-</style> -->
