@@ -8,13 +8,13 @@ export enum ThemeMode {
 }
 
 type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
-// @NOTE: Change these 2 types to use ts 4.9 satisfies operator for smarter types
-const baseColorsCommon: ThemeColors = {
+
+const baseColorsCommon = {
   primary: "#42b883",
   border: "#ccc",
-};
+} satisfies ThemeColors;
 
-const baseColors: Record<ThemeMode, ThemeColors> = {
+const baseColors = {
   [ThemeMode.light]: {
     ...baseColorsCommon,
     background: "#dae0e6",
@@ -25,7 +25,7 @@ const baseColors: Record<ThemeMode, ThemeColors> = {
     background: "#18191a",
     surface: "#36393f",
   },
-};
+} satisfies Record<ThemeMode, ThemeColors>;
 
 type BaseColors = typeof baseColors[ThemeMode];
 
@@ -34,8 +34,7 @@ const toSixDigitHexColor = (hexColor: string) =>
 
 const getBaseColorsExtension = (colors: BaseColors) => {
   const sanitisedColors = Object.entries(colors).reduce<Record<string, string>>((acc, [color, hex]) => {
-    const hexString = hex as string;
-    acc[color] = `${hexString[0]}${toSixDigitHexColor(hexString.substring(1))}`;
+    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.substring(1))}`;
     return acc;
   }, {}) as BaseColors;
   return {
