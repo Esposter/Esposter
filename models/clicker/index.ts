@@ -1,8 +1,13 @@
 export enum UpgradeTarget {
+  // General Upgrades
   Mouse = "Mouse",
-  Cursor = "Cursor",
   Building = "Building",
+  // Specific Building Upgrades
+  Cursor = "Cursor",
 }
+
+export type UpgradeName = UpgradeTarget;
+export const UpgradeName = UpgradeTarget;
 
 export enum UpgradeType {
   Additive = "Additive",
@@ -20,7 +25,7 @@ export interface Upgrade {
 }
 
 export interface Building {
-  name: string;
+  name: UpgradeName;
   flavorDescription: string;
   basePrice: number;
   baseValue: number;
