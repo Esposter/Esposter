@@ -38,12 +38,13 @@ onUnmounted(() => buildingsClickerTimer && clearInterval(buildingsClickerTimer))
 
 <template>
   <div mt="12" position="relative">
+    <ClickerRotatingCursors :amount="cursorAmount" />
     <ClickerModelPinaColada
+      position="relative"
       width="256"
       height="256"
       :g-attrs="{ class: 'clickable', cursor: 'pointer' }"
       @click="onClick"
     />
-    <ClickerRotatingCursors :amount="cursorAmount" />
   </div>
 </template>
