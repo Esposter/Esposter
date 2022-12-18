@@ -8,7 +8,7 @@ export const upgrades: Upgrade[] = [
     flavorDescription: "prod prod",
     price: 100,
     value: 2,
-    upgradeTargets: [UpgradeTarget.Cursor, UpgradeTarget.Building],
+    upgradeTargets: [UpgradeTarget.Mouse, UpgradeTarget.Building],
     upgradeType: UpgradeType.Multiplicative,
   },
   {
@@ -17,7 +17,7 @@ export const upgrades: Upgrade[] = [
     flavorDescription: "it... it hurts to click...",
     price: 500,
     value: 2,
-    upgradeTargets: [UpgradeTarget.Cursor, UpgradeTarget.Building],
+    upgradeTargets: [UpgradeTarget.Mouse, UpgradeTarget.Building],
     upgradeType: UpgradeType.Multiplicative,
   },
   {
@@ -26,7 +26,7 @@ export const upgrades: Upgrade[] = [
     flavorDescription: "Look ma, both hands!",
     price: 10000,
     value: 2,
-    upgradeTargets: [UpgradeTarget.Cursor, UpgradeTarget.Building],
+    upgradeTargets: [UpgradeTarget.Mouse, UpgradeTarget.Building],
     upgradeType: UpgradeType.Multiplicative,
   },
 ];

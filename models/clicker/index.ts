@@ -1,4 +1,5 @@
 export enum UpgradeTarget {
+  Mouse = "Mouse",
   Cursor = "Cursor",
   Building = "Building",
 }
