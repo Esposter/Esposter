@@ -19,8 +19,10 @@ const applyAdditiveUpgrades = (power: number, upgrades: Upgrade[]) => {
 const applyMultiplicativeUpgrades = (power: number, upgrades: Upgrade[]) => {
   let resultPower = power;
 
-  const additiveUpgrades = upgrades.filter((cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Additive);
-  for (const additiveUpgrade of additiveUpgrades) resultPower += additiveUpgrade.value;
+  const multiplicativeUpgrades = upgrades.filter(
+    (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Multiplicative
+  );
+  for (const multiplicativeUpgrade of multiplicativeUpgrades) resultPower *= multiplicativeUpgrade.value;
 
   return resultPower;
 };
