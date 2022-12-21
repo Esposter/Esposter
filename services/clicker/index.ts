@@ -1,14 +1,22 @@
 import type { Building, Upgrade } from "@/models/clicker";
-import { UpgradeType } from "@/models/clicker";
+import { UpgradeTarget, UpgradeType } from "@/models/clicker";
 
-export const applyBuildings = (power: number, buildings: Building[]) => {
-  let resultPower = power;
-  for (const building of buildings) resultPower += building.baseValue * building.level;
+export const applyBuildingUpgrades = (basePower: number, boughtUpgrades: Upgrade[], boughtBuildings: Building[]) => {
+  let resultPower = basePower;
+  for (const boughtBuilding of boughtBuildings) {
+    const buildingUpgrades = boughtUpgrades.filter((u) => u.upgradeTargets.includes(boughtBuilding.name));
+    resultPower += applyUpgrades(boughtBuilding.baseValue * boughtBuilding.level, buildingUpgrades, boughtBuildings);
+  }
   return resultPower;
 };
 
-const applyAdditiveUpgrades = (power: number, upgrades: Upgrade[]) => {
-  let resultPower = power;
+export const applyMouseUpgrades = (basePower: number, boughtUpgrades: Upgrade[]) => {
+  const mouseUpgrades = boughtUpgrades.filter((u) => u.upgradeTargets.includes(UpgradeTarget.Mouse));
+  return applyUpgrades(basePower, mouseUpgrades);
+};
+
+const applyAdditiveUpgrades = (basePower: number, upgrades: Upgrade[]) => {
+  let resultPower = basePower;
 
   const additiveUpgrades = upgrades.filter((cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Additive);
   for (const additiveUpgrade of additiveUpgrades) resultPower += additiveUpgrade.value;
@@ -16,8 +24,8 @@ const applyAdditiveUpgrades = (power: number, upgrades: Upgrade[]) => {
   return resultPower;
 };
 
-const applyMultiplicativeUpgrades = (power: number, upgrades: Upgrade[]) => {
-  let resultPower = power;
+const applyMultiplicativeUpgrades = (basePower: number, upgrades: Upgrade[]) => {
+  let resultPower = basePower;
 
   const multiplicativeUpgrades = upgrades.filter(
     (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Multiplicative
@@ -27,8 +35,8 @@ const applyMultiplicativeUpgrades = (power: number, upgrades: Upgrade[]) => {
   return resultPower;
 };
 
-const applyBuildingAdditiveUpgrades = (power: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
-  let resultPower = power;
+const applyBuildingAdditiveUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+  let resultPower = basePower;
 
   const buildingAdditiveUpgrades = upgrades.filter(
     (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
@@ -45,8 +53,8 @@ const applyBuildingAdditiveUpgrades = (power: number, upgrades: Upgrade[], bough
   return resultPower;
 };
 
-const applyBuildingAdditiveNorUpgrades = (power: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
-  let resultPower = power;
+const applyBuildingAdditiveNorUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+  let resultPower = basePower;
 
   const buildingAdditiveNorUpgrades = upgrades.filter(
     (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
@@ -63,8 +71,8 @@ const applyBuildingAdditiveNorUpgrades = (power: number, upgrades: Upgrade[], bo
   return resultPower;
 };
 
-export const applyUpgrades = (power: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
-  let resultPower = power;
+export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+  let resultPower = basePower;
   resultPower = applyAdditiveUpgrades(resultPower, upgrades);
   resultPower = applyMultiplicativeUpgrades(resultPower, upgrades);
   resultPower = applyBuildingAdditiveUpgrades(resultPower, upgrades, boughtBuildings);

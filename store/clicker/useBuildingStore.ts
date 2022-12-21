@@ -1,5 +1,5 @@
 import type { Building } from "@/models/clicker";
-import { applyBuildings, applyUpgrades } from "@/services/clicker";
+import { applyBuildingUpgrades } from "@/services/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { defineStore } from "pinia";
 
@@ -12,14 +12,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   const buildingPower = computed(() => {
     if (!gameStore.game) return 0;
-    const game = gameStore.game;
-
-    let resultPower = applyBuildings(0, game.boughtBuildings);
-    const buildingUpgrades = game.boughtUpgrades.filter((u) =>
-      game.boughtBuildings.some((b) => u.upgradeTargets.includes(b.name))
-    );
-    resultPower = applyUpgrades(resultPower, buildingUpgrades, game.boughtBuildings);
-    return resultPower;
+    return applyBuildingUpgrades(0, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
   });
   const getBoughtBuildingLevel = computed(() => (building: Building) => {
     if (!gameStore.game) return 0;
