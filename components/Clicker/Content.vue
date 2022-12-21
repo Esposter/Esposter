@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UpgradeName } from "@/models/clicker";
+import { UpgradeTarget } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
@@ -18,7 +18,7 @@ const { onClick } = popupStore;
 const cursorAmount = $computed(() => {
   if (!game) return 0;
 
-  const cursorBuilding = game.boughtBuildingList.find((b) => b.name === UpgradeName.Cursor);
+  const cursorBuilding = game.boughtBuildings.find((b) => b.name === UpgradeTarget.Cursor);
   if (cursorBuilding) return cursorBuilding.level;
   return 0;
 });

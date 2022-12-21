@@ -11,7 +11,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
     if (!gameStore.game) return;
-    gameStore.game.boughtUpgradeList.push(newUpgrade);
+    gameStore.game.boughtUpgrades.push(newUpgrade);
     gameStore.game.noPoints -= newUpgrade.price;
     gameStore.saveGame();
   };

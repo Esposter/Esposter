@@ -1,31 +1,48 @@
-export enum UpgradeTarget {
-  // General Upgrades
+export enum GeneralName {
   Mouse = "Mouse",
-  Building = "Building",
-  // Specific Building Upgrades
+}
+
+export enum UpgradeName {
+  ["Reinforced Index Finger"] = "Reinforced Index Finger",
+  ["Carpal Tunnel Prevention Cream"] = "Carpal Tunnel Prevention Cream",
+  Ambidextrous = "Ambidextrous",
+  ["Thousand Fingers"] = "Thousand Fingers",
+}
+
+export enum BuildingName {
   Cursor = "Cursor",
 }
 
-export type UpgradeName = UpgradeTarget;
-export const UpgradeName = UpgradeTarget;
+export const UpgradeTarget = { ...GeneralName, ...UpgradeName, ...BuildingName };
+export type UpgradeTarget = GeneralName | UpgradeName | BuildingName;
 
 export enum UpgradeType {
   Additive = "Additive",
   Multiplicative = "Multiplicative",
+  // Adds value based on number of specific buildings we have
+  BuildingAdditive = "BuildingAdditive",
+  // Considers all buildings except for buildings we specify
+  BuildingAdditiveNor = "BuildingAdditiveNor",
+}
+
+export interface UpgradeConfiguration {
+  upgradeType: UpgradeType;
+  // Only used for upgrade types that are based off other specific upgrade targets
+  affectedUpgradeTargets?: UpgradeTarget[];
 }
 
 export interface Upgrade {
-  name: string;
+  name: UpgradeName;
   description: string;
   flavorDescription: string;
   price: number;
   value: number;
   upgradeTargets: UpgradeTarget[];
-  upgradeType: UpgradeType;
+  upgradeConfiguration: UpgradeConfiguration;
 }
 
 export interface Building {
-  name: UpgradeName;
+  name: BuildingName;
   flavorDescription: string;
   basePrice: number;
   baseValue: number;
@@ -34,6 +51,6 @@ export interface Building {
 
 export interface Game {
   noPoints: number;
-  boughtUpgradeList: Upgrade[];
-  boughtBuildingList: Building[];
+  boughtUpgrades: Upgrade[];
+  boughtBuildings: Building[];
 }

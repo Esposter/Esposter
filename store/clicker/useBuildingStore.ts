@@ -1,4 +1,5 @@
-import { Building, UpgradeTarget, UpgradeType } from "@/models/clicker";
+import type { Building } from "@/models/clicker";
+import { applyBuildings, applyUpgrades } from "@/services/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { defineStore } from "pinia";
 
@@ -11,26 +12,19 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   const buildingPower = computed(() => {
     if (!gameStore.game) return 0;
-    let resultPower = 0;
+    const game = gameStore.game;
 
-    for (const building of gameStore.game.boughtBuildingList) resultPower += building.baseValue * building.level;
-
-    const buildingUpgrades = gameStore.game.boughtUpgradeList.filter((u) =>
-      u.upgradeTargets.includes(UpgradeTarget.Building)
+    let resultPower = applyBuildings(0, game.boughtBuildings);
+    const buildingUpgrades = game.boughtUpgrades.filter((u) =>
+      game.boughtBuildings.some((b) => u.upgradeTargets.includes(b.name))
     );
-
-    const additiveUpgrades = buildingUpgrades.filter((cu) => cu.upgradeType === UpgradeType.Additive);
-    for (const additiveUpgrade of additiveUpgrades) resultPower += additiveUpgrade.value;
-
-    const multiplicativeUpgrades = buildingUpgrades.filter((cu) => cu.upgradeType === UpgradeType.Multiplicative);
-    for (const multiplicativeUpgrade of multiplicativeUpgrades) resultPower *= multiplicativeUpgrade.value;
-
+    resultPower = applyUpgrades(resultPower, buildingUpgrades, game.boughtBuildings);
     return resultPower;
   });
   const getBoughtBuildingLevel = computed(() => (building: Building) => {
     if (!gameStore.game) return 0;
 
-    const foundBuilding = gameStore.game.boughtBuildingList.find((b) => b.name === building.name);
+    const foundBuilding = gameStore.game.boughtBuildings.find((b) => b.name === building.name);
     if (!foundBuilding) return 0;
     return foundBuilding.level;
   });
@@ -43,9 +37,9 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!gameStore.game) return;
 
     const newBuildingPrice = getBuildingPrice.value(newBuilding);
-    const foundBuilding = gameStore.game.boughtBuildingList.find((b) => b.name === newBuilding.name);
+    const foundBuilding = gameStore.game.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!foundBuilding) {
-      gameStore.game.boughtBuildingList.push(newBuilding);
+      gameStore.game.boughtBuildings.push(newBuilding);
       gameStore.game.noPoints -= newBuildingPrice;
       gameStore.saveGame();
       return;

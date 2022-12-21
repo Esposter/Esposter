@@ -8,6 +8,6 @@ const { game } = $(storeToRefs(gameStore));
 
 <template>
   <v-list>
-    <ClickerModelUpgradeListGroup v-if="game" :upgrades="game.boughtUpgradeList" />
+    <ClickerModelUpgradeListGroup v-if="game" :upgrades="game.boughtUpgrades" />
   </v-list>
 </template>
