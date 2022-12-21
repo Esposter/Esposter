@@ -1,20 +1,27 @@
-export enum GeneralName {
-  Mouse = "Mouse",
-}
+export const GeneralName = {
+  Mouse: "Mouse",
+} as const;
+export type GeneralName = typeof GeneralName;
+export type AGeneralName = GeneralName[keyof GeneralName];
 
-export enum UpgradeName {
-  ["Reinforced Index Finger"] = "Reinforced Index Finger",
-  ["Carpal Tunnel Prevention Cream"] = "Carpal Tunnel Prevention Cream",
-  Ambidextrous = "Ambidextrous",
-  ["Thousand Fingers"] = "Thousand Fingers",
-}
+export const UpgradeName = {
+  "Reinforced Index Finger": "Reinforced Index Finger",
+  "Carpal Tunnel Prevention Cream": "Carpal Tunnel Prevention Cream",
+  Ambidextrous: "Ambidextrous",
+  "Thousand Fingers": "Thousand Fingers",
+} as const;
+export type UpgradeName = typeof UpgradeName;
+export type AUpgradeName = UpgradeName[keyof UpgradeName];
 
-export enum BuildingName {
-  Cursor = "Cursor",
-}
+export const BuildingName = {
+  Cursor: "Cursor",
+} as const;
+export type BuildingName = typeof BuildingName;
+export type ABuildingName = BuildingName[keyof BuildingName];
 
 export const UpgradeTarget = { ...GeneralName, ...UpgradeName, ...BuildingName };
-export type UpgradeTarget = GeneralName | UpgradeName | BuildingName;
+export type UpgradeTarget = typeof UpgradeTarget;
+export type AUpgradeTarget = UpgradeTarget[keyof UpgradeTarget];
 
 export enum UpgradeType {
   Additive = "Additive",
@@ -28,21 +35,21 @@ export enum UpgradeType {
 export interface UpgradeConfiguration {
   upgradeType: UpgradeType;
   // Only used for upgrade types that are based off other specific upgrade targets
-  affectedUpgradeTargets?: UpgradeTarget[];
+  affectedUpgradeTargets?: AUpgradeTarget[];
 }
 
 export interface Upgrade {
-  name: UpgradeName;
+  name: AUpgradeName;
   description: string;
   flavorDescription: string;
   price: number;
   value: number;
-  upgradeTargets: UpgradeTarget[];
+  upgradeTargets: AUpgradeTarget[];
   upgradeConfiguration: UpgradeConfiguration;
 }
 
 export interface Building {
-  name: BuildingName;
+  name: ABuildingName;
   flavorDescription: string;
   basePrice: number;
   baseValue: number;
