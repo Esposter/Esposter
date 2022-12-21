@@ -1,4 +1,3 @@
-import BigInt from "big-integer";
 import hrtime from "browser-hrtime";
 
 export const isServer = () => typeof window === "undefined";
@@ -6,7 +5,7 @@ export const isServer = () => typeof window === "undefined";
 // Get current epoch time in nanoseconds
 export const now = () => {
   const [ms, ns] = isServer() ? process.hrtime() : hrtime();
-  return BigInt(ms).times(1e9).plus(ns).toString();
+  return (BigInt(ms) * BigInt(1e9) + BigInt(ns)).toString();
 };
 
 export const FETCH_LIMIT = 20;
