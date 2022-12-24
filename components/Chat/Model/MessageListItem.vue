@@ -30,8 +30,8 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
-          <v-avatar v-if="member.avatar">
-            <v-img :src="member.avatar" :alt="member.username" />
+          <v-avatar v-if="member.image">
+            <v-img :src="member.image" :alt="member.username" />
           </v-avatar>
           <DefaultAvatar v-else :name="member.username" />
         </template>
@@ -72,8 +72,8 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
     <template #messagePreview>
       <v-list-item v-if="member">
         <template #prepend>
-          <v-avatar v-if="member.avatar">
-            <v-img :src="member.avatar" :alt="member.username" />
+          <v-avatar v-if="member.image">
+            <v-img :src="member.image" :alt="member.username" />
           </v-avatar>
           <DefaultAvatar v-else :name="member.username" />
         </template>

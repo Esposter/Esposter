@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
 import { usePostStore } from "@/store/usePostStore";
-import { INDEX_PATH } from "@/util/constants.client";
+import { INDEX_PATH } from "@/util/constants.common";
 import { SubmitEventPromise } from "vuetify";
 
 const { $client } = useNuxtApp();

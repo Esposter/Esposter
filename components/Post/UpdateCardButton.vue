@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { POST_UPDATE_PATH } from "@/util/constants.client";
+import { POST_UPDATE_PATH } from "@/util/constants.common";
 
 interface UpdateCardButtonProps {
   postId: string;

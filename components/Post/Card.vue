@@ -19,7 +19,7 @@ const { surfaceOpacity80 } = useColors();
     <PostLikeSection position="absolute" left="2" top="2" :post="post" />
     <v-card px="2!" pt="2!">
       <v-avatar>
-        <v-img v-if="post.creator.avatar" :src="post.creator.avatar" />
+        <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
       Posted by <span font="bold">{{ post.creator.username }}</span> <span class="text-grey">{{ createdAt }}</span>
       <v-card-title class="text-h6" px="0!" font="bold!">

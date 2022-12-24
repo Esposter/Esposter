@@ -34,8 +34,6 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
-  // @NOTE: "@vueuse/sound/nuxt"
-  modules: ["@nuxtjs/google-fonts", "@unocss/nuxt", "@pinia/nuxt", "@vueuse/nuxt"],
   typescript: {
     shim: false,
     tsConfig: {
@@ -46,20 +44,6 @@ export default defineNuxtConfig({
         experimentalDecorators: true,
       },
     },
-  },
-  googleFonts: {
-    families: {
-      Montserrat: true,
-    },
-  },
-  unocss: {
-    attributify: true,
-    theme: {
-      fontFamily: {
-        Montserrat: ["Montserrat"],
-      },
-    },
-    rules: [["break-word", { "word-break": "break-word" }]],
   },
   runtimeConfig: {
     public: {
@@ -73,5 +57,24 @@ export default defineNuxtConfig({
   },
   experimental: {
     reactivityTransform: true,
+  },
+  // @NOTE: "@vueuse/sound/nuxt"
+  modules: ["@nuxtjs/google-fonts", "@pinia/nuxt", "@sidebase/nuxt-auth", "@unocss/nuxt", "@vueuse/nuxt"],
+  googleFonts: {
+    families: {
+      Montserrat: true,
+    },
+  },
+  auth: {
+    origin: process.env.BASE_URL,
+  },
+  unocss: {
+    attributify: true,
+    theme: {
+      fontFamily: {
+        Montserrat: ["Montserrat"],
+      },
+    },
+    rules: [["break-word", { "word-break": "break-word" }]],
   },
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ABOUT_PATH, CLICKER_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants.client";
+import { ABOUT_PATH, CLICKER_PATH, PRIVACY_POLICY_PATH, TERMS_AND_CONDITIONS_PATH } from "@/util/constants.common";
 import { mergeProps } from "vue";
 
 interface Item {

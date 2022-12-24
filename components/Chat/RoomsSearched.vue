@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { MESSAGES_PATH } from "@/util/constants.client";
+import { MESSAGES_PATH } from "@/util/constants.common";
 import { storeToRefs } from "pinia";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
@@ -30,8 +30,8 @@ const fetchMoreRooms = async (onComplete: () => void) => {
     >
       <v-list-item :title="room.name" :value="room.id">
         <template #prepend>
-          <v-avatar v-if="room.avatar">
-            <v-img :src="room.avatar" :alt="room.name" />
+          <v-avatar v-if="room.image">
+            <v-img :src="room.image" :alt="room.name" />
           </v-avatar>
           <DefaultAvatar v-else :name="room.name" />
         </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
 import { usePostStore } from "@/store/usePostStore";
-import { INDEX_PATH } from "@/util/constants.client";
+import { INDEX_PATH } from "@/util/constants.common";
 import { uuidValidateV4 } from "@/util/uuid";
 import { SubmitEventPromise } from "vuetify";
 

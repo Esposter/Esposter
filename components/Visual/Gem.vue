@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
+import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.common";
 
 let ready = $ref(false);
 const opacity = $computed(() => (ready ? 1 : 0));

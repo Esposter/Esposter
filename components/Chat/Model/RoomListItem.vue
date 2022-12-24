@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { MESSAGES_PATH } from "@/util/constants.client";
+import { MESSAGES_PATH } from "@/util/constants.common";
 import type { Room } from "@prisma/client";
 import { storeToRefs } from "pinia";
 
@@ -23,8 +23,8 @@ const active = $computed(() => room.id === currentRoomId);
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge m="r-4" color="green" location="bottom end" dot>
-            <v-avatar v-if="room.avatar">
-              <v-img :src="room.avatar" :alt="room.name" />
+            <v-avatar v-if="room.image">
+              <v-img :src="room.image" :alt="room.name" />
             </v-avatar>
             <DefaultAvatar v-else :name="room.name" />
           </v-badge>

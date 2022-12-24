@@ -1,4 +1,4 @@
-import { TRPC_CLIENT_PATH } from "@/util/constants.client";
+import { TRPC_CLIENT_PATH } from "@/util/constants.common";
 
 export const useTRPCClientUrl = () => {
   const config = useRuntimeConfig();

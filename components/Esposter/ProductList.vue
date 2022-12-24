@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MESSAGES_INDEX_PATH } from "@/util/constants.client";
+import { MESSAGES_INDEX_PATH } from "@/util/constants.common";
 
 interface Item {
   title: string;

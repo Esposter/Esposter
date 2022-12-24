@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MESSAGES_PATH } from "@/util/constants.client";
+import { MESSAGES_PATH } from "@/util/constants.common";
 
 const { $client } = useNuxtApp();
 const room = await $client.room.readRoom.query();
