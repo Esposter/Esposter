@@ -11,7 +11,7 @@ import { INDEX_PATH } from "@/util/constants.common";
       </NuxtLink>
     </template>
     <template #append>
-      <UserButton />
+      <EsposterUserButton />
       <div pl="2">
         <EsposterCreateDropdownButton />
       </div>
