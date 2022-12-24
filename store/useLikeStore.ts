@@ -1,5 +1,5 @@
 import { usePostStore } from "@/store/usePostStore";
-import { Like, Prisma } from "@prisma/client";
+import type { Like, Prisma } from "@prisma/client";
 import { defineStore } from "pinia";
 
 export const useLikeStore = defineStore("like", () => {

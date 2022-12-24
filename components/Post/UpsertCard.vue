@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { POST_TITLE_MAX_LENGTH } from "@/util/constants.common";
 import { formRules } from "@/util/formRules";
-import { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import { SubmitEventPromise } from "vuetify";
 
 export interface UpsertCardProps {
