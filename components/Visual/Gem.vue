@@ -1,50 +1,60 @@
 <script setup lang="ts">
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
+import {
+  AmbientLight,
+  BufferGeometry,
+  Clock,
+  DirectionalLight,
+  Light,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  PCFSoftShadowMap,
+  PerspectiveCamera,
+  Scene,
+  TextureLoader,
+  WebGLRenderer,
+} from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 let ready = $ref(false);
 const opacity = $computed(() => (ready ? 1 : 0));
 
-onMounted(async () => {
-  const THREE = await import("three");
-  const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
-  const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
-
+onMounted(() => {
   // Canvas
   const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
   // Scene
-  const scene = new THREE.Scene();
+  const scene = new Scene();
 
   // Models
-  let gem: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial & THREE.MeshStandardMaterial>;
-  let light: THREE.Object3D<THREE.Event>;
+  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
+  let light: Light;
 
   const gltfLoader = new GLTFLoader();
   gltfLoader.load(GEM_GLTF_PATH, (gltf) => {
-    const textureLoader = new THREE.TextureLoader();
+    light = gltf.scene.children[6] as Light;
+    scene.add(light);
+
+    const textureLoader = new TextureLoader();
     const roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
-    gem = gltf.scene.children[6] as THREE.Mesh<
-      THREE.BufferGeometry,
-      THREE.MeshBasicMaterial & THREE.MeshStandardMaterial
-    >;
+    gem = gltf.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
     gem.material.roughnessMap = roughnessTexture;
     gem.material.displacementScale = 0.15;
     gem.material.emissiveIntensity = 0.4;
     gem.material.refractionRatio = 1;
     scene.add(gem);
-
-    light = gltf.scene.children[0];
-    scene.add(light);
     ready = true;
   });
 
   // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+  const ambientLight = new AmbientLight(0xffffff, 2);
   scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+  const directionalLight = new DirectionalLight(0xffffff, 3);
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
-  const directionalLight2 = new THREE.DirectionalLight(0xffffff, 3);
+  const directionalLight2 = new DirectionalLight(0xffffff, 3);
   directionalLight2.position.set(-1, -1, -1);
   scene.add(directionalLight2);
 
@@ -52,7 +62,7 @@ onMounted(async () => {
   const sizes = { width: 200, height: 200 };
 
   // Camera
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+  const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
   camera.position.set(2, 2, 6);
   scene.add(camera);
 
@@ -66,15 +76,15 @@ onMounted(async () => {
   controls.maxPolarAngle = Math.PI / 2;
 
   // Render
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = PCFSoftShadowMap;
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   // Animations
-  const clock = new THREE.Clock();
+  const clock = new Clock();
   const tick = () => {
     const elapsedTime = clock.getElapsedTime();
     if (gem) gem.rotation.y = 1.1 * elapsedTime;
