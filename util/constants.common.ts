@@ -24,7 +24,7 @@ export const TRPC_CLIENT_PATH = "/api/trpc";
 
 export const FETCH_LIMIT = 20;
 
-export const USER_USERNAME_MAX_LENGTH = 100;
+export const USER_NAME_MAX_LENGTH = 100;
 export const ROOM_NAME_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 100;
 export const POST_TITLE_MAX_LENGTH = 300;
