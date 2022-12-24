@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const { signIn } = useSession();
+import { INDEX_PATH } from "@/util/constants.common";
+
+definePageMeta({ middleware: "guest" });
+
+const { signIn } = $(useSession());
 </script>
 
 <template>
@@ -16,7 +20,7 @@ const { signIn } = useSession();
             <span class="text-h6" ml="2">Esposter</span>
           </div>
           <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with Esposter!</div>
-          <button class="github button" @click="signIn('github')">
+          <button class="github button" @click="signIn('github', { callbackUrl: INDEX_PATH, replace: true })">
             <VisualGithubLogo w="8" fill="white" />
             <span class="text-surface" mx="auto" font="bold">Github</span>
           </button>

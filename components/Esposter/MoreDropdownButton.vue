@@ -15,7 +15,7 @@ interface Item {
   onClick?: () => Promise<void>;
 }
 
-const { status, signOut } = useSession();
+const { status, signOut } = $(useSession());
 
 const items = $computed(() => {
   const result: Item[] = [
@@ -41,13 +41,13 @@ const items = $computed(() => {
     },
   ];
 
-  if (status.value === "unauthenticated")
+  if (status === "unauthenticated")
     result.unshift({
       title: "Login",
       href: LOGIN_PATH,
       icon: "mdi-login",
     });
-  else if (status.value === "authenticated")
+  else if (status === "authenticated")
     result.push({
       title: "Logout",
       icon: "mdi-logout",
