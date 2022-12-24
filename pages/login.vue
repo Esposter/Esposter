@@ -23,7 +23,7 @@ const { signIn } = $(useSession());
           <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with {{ SITE_NAME }}!</div>
           <button class="github button" @click="signIn('github', { callbackUrl: INDEX_PATH, replace: true })">
             <VisualGithubLogo w="8" fill="white" />
-            <span class="text-surface" mx="auto" font="bold">Github</span>
+            <span class="text-white" mx="auto" font="bold">Github</span>
           </button>
         </v-container>
       </StyledCard>

@@ -1,9 +1,3 @@
-export type RemoveIndexSignature<T> = {
-  [K in keyof T as string extends K ? never : number extends K ? never : K]: T[K];
-};
-
-export type ArrayElement<ArrayType extends unknown[]> = ArrayType extends (infer ElementType)[] ? ElementType : never;
-
 // https://stackoverflow.com/questions/67605122/obtain-a-slice-of-a-typescript-parameters-tuple
 type TupleSplitHead<T extends unknown[], N extends number> = T["length"] extends N
   ? T
