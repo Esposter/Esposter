@@ -10,37 +10,52 @@ import { mergeProps } from "vue";
 
 interface Item {
   title: string;
-  href: string;
+  href?: string;
   icon: string;
+  onClick?: () => Promise<void>;
 }
 
-const items: Item[] = [
-  {
-    title: "Login",
-    href: LOGIN_PATH,
-    icon: "mdi-login",
-  },
-  {
-    title: "Piña Colada Clicker",
-    href: CLICKER_PATH,
-    icon: "mdi-fruit-pineapple",
-  },
-  {
-    title: "About",
-    href: ABOUT_PATH,
-    icon: "mdi-information-outline",
-  },
-  {
-    title: "Privacy Policy",
-    href: PRIVACY_POLICY_PATH,
-    icon: "mdi-lock",
-  },
-  {
-    title: "Terms & Conditions",
-    href: TERMS_AND_CONDITIONS_PATH,
-    icon: "mdi-shield-lock",
-  },
-];
+const { status, signOut } = useSession();
+
+const items = $computed(() => {
+  const result: Item[] = [
+    {
+      title: "Piña Colada Clicker",
+      href: CLICKER_PATH,
+      icon: "mdi-fruit-pineapple",
+    },
+    {
+      title: "About",
+      href: ABOUT_PATH,
+      icon: "mdi-information-outline",
+    },
+    {
+      title: "Privacy Policy",
+      href: PRIVACY_POLICY_PATH,
+      icon: "mdi-lock",
+    },
+    {
+      title: "Terms & Conditions",
+      href: TERMS_AND_CONDITIONS_PATH,
+      icon: "mdi-shield-lock",
+    },
+  ];
+
+  if (status.value === "unauthenticated")
+    result.unshift({
+      title: "Login",
+      href: LOGIN_PATH,
+      icon: "mdi-login",
+    });
+  else if (status.value === "authenticated")
+    result.push({
+      title: "Logout",
+      icon: "mdi-logout",
+      onClick: signOut,
+    });
+
+  return result;
+});
 const menu = $ref(false);
 </script>
 
@@ -56,7 +71,17 @@ const menu = $ref(false);
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
+      <InvisibleNuxtLink
+        v-for="item in items"
+        :key="item.title"
+        :to="item.href"
+        @click="
+          async () => {
+            await item.onClick?.();
+            menu = false;
+          }
+        "
+      >
         <v-list-item :value="item.title">
           <template #prepend>
             <v-avatar color="background">

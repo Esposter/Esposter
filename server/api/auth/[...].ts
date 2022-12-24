@@ -1,6 +1,6 @@
 import { NuxtAuthHandler } from "#auth";
 import { prisma } from "@/prisma";
-import { LOGIN_PATH } from "@/util/constants.common";
+import { INDEX_PATH, LOGIN_PATH } from "@/util/constants.common";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import type { GithubProfile } from "next-auth/providers/github";
 import NextGithubProvider from "next-auth/providers/github";
@@ -21,5 +21,6 @@ export default NuxtAuthHandler({
   ],
   pages: {
     signIn: LOGIN_PATH,
+    signOut: INDEX_PATH,
   },
 });
