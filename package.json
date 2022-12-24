@@ -81,6 +81,9 @@
     "ws": "^8.11.0",
     "zod": "^3.20.2"
   },
+  "dependenciesComments": {
+    "@next-auth/prisma-adapter": "@NOTE: https://github.com/sidebase/nuxt-auth/issues/128"
+  },
   "overrides": {
     "vue": "latest"
   },
