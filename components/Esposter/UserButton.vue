@@ -8,6 +8,6 @@ const { status, data } = $(useSession());
       <v-img :src="data.user.image" :alt="data.user.name" />
     </v-avatar>
     <DefaultAvatar v-else :name="data.user.name" />
-    <div v-if="data.user.name" class="text-subtitle-1">{{ data.user.name }}</div>
+    <div class="text-subtitle-1" pl="1">{{ data.user.name }}</div>
   </div>
 </template>
