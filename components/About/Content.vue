@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { LINKEDIN_PROFILE_URL } from "@/util/constants.client";
+import { LINKEDIN_PROFILE_URL, SITE_NAME } from "@/util/constants.client";
 
 const { primary, "primary-darken-1": primaryDarken1 } = useColors();
 </script>
 
 <template>
-  <div class="text-h4" mb="8" font="bold">Why Esposter?</div>
+  <div class="text-h4" mb="8" font="bold">Why {{ SITE_NAME }}?</div>
   <div class="text-h6">
-    Esposter is an independent, community-driven lifetime project. It was created by
+    {{ SITE_NAME }} is an independent, community-driven lifetime project. It was created by
     <InvisibleNuxtLink class="author" font="bold" target="_blank" :to="LINKEDIN_PROFILE_URL">
       Jimmy Chen
     </InvisibleNuxtLink>

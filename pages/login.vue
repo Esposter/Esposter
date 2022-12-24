@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SITE_NAME } from "@/util/constants.client";
 import { INDEX_PATH } from "@/util/constants.common";
 
 definePageMeta({ middleware: "guest" });
@@ -17,9 +18,9 @@ const { signIn } = $(useSession());
           <div class="text-h5" mb="1" text="center">Sign in to</div>
           <div mb="2" display="flex" justify="center" items="center">
             <EsposterLogo />
-            <span class="text-h6" ml="2">Esposter</span>
+            <span class="text-h6" ml="2">{{ SITE_NAME }}</span>
           </div>
-          <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with Esposter!</div>
+          <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with {{ SITE_NAME }}!</div>
           <button class="github button" @click="signIn('github', { callbackUrl: INDEX_PATH, replace: true })">
             <VisualGithubLogo w="8" fill="white" />
             <span class="text-surface" mx="auto" font="bold">Github</span>
