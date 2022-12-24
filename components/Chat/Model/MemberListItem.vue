@@ -10,7 +10,7 @@ const { member } = $(toRefs(props));
 </script>
 
 <template>
-  <v-list-item :title="member.name" :value="member.name">
+  <v-list-item v-if="member.name" :title="member.name" :value="member.name">
     <template #prepend>
       <v-badge m="r-4" color="green" location="bottom end" dot>
         <v-avatar v-if="member.image">

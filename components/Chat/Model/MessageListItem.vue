@@ -24,16 +24,16 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
   <ChatConfirmDeleteMessageDialog :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
-        v-if="member"
+        v-if="member?.name"
         :active="active && !isDeleteMode"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
           <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.name ?? ''" />
+            <v-img :src="member.image" :alt="member.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.name ?? ''" />
+          <DefaultAvatar v-else :name="member.name" />
         </template>
         <v-list-item-title font="bold!">
           {{ member.name }}
@@ -70,12 +70,12 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       </div>
     </template>
     <template #messagePreview>
-      <v-list-item v-if="member">
+      <v-list-item v-if="member?.name">
         <template #prepend>
           <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.name ?? ''" />
+            <v-img :src="member.image" :alt="member.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.name ?? ''" />
+          <DefaultAvatar v-else :name="member.name" />
         </template>
         <v-list-item-title font="bold!">
           {{ member.name }}
