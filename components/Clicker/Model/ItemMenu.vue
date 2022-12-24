@@ -43,17 +43,17 @@ const icon = $computed(() => {
 <template>
   <v-menu v-model="menu" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-list-item :="menuProps">
+      <v-list-item select="none" :="menuProps">
         <template #prepend>
           <img width="32" height="32" :src="icon" :alt="name" />
         </template>
         <template #title>
-          <span select="none">
+          <span>
             {{ name }}
           </span>
         </template>
         <template v-if="level" #append>
-          <span font="bold" select="none">
+          <span font="bold">
             {{ level }}
           </span>
         </template>

@@ -1,4 +1,4 @@
-import { LOGO_IMAGE_PATH } from "@/util/constants.common";
+import { LOGO_IMAGE_PATH } from "@/util/constants.client";
 
 export const useLogoImageUrl = () => {
   const config = useRuntimeConfig();

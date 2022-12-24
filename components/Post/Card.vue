@@ -21,7 +21,7 @@ const { surfaceOpacity80 } = useColors();
       <v-avatar>
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
-      Posted by <span font="bold">{{ post.creator.username }}</span> <span class="text-grey">{{ createdAt }}</span>
+      Posted by <span font="bold">{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
       <v-card-title class="text-h6" px="0!" font="bold!">
         {{ post.title }}
       </v-card-title>

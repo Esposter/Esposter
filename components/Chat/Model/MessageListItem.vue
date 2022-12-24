@@ -31,12 +31,12 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       >
         <template #prepend>
           <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.username" />
+            <v-img :src="member.image" :alt="member.name ?? ''" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.username" />
+          <DefaultAvatar v-else :name="member.name ?? ''" />
         </template>
         <v-list-item-title font="bold!">
-          {{ member.username }}
+          {{ member.name }}
         </v-list-item-title>
         <ChatUpdatedMessage
           v-if="isUpdateMode"
@@ -73,12 +73,12 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       <v-list-item v-if="member">
         <template #prepend>
           <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.username" />
+            <v-img :src="member.image" :alt="member.name ?? ''" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.username" />
+          <DefaultAvatar v-else :name="member.name ?? ''" />
         </template>
         <v-list-item-title font="bold!">
-          {{ member.username }}
+          {{ member.name }}
         </v-list-item-title>
         <v-list-item-subtitle op="100!">
           {{ message.message }}

@@ -29,7 +29,7 @@ const { messages, nextCursor } = currentRoomId
 initialiseMessageList(messages);
 updateMessageListNextCursor(nextCursor);
 
-$client.message.onCreateMessage.subscribe(undefined, { onData: (data) => console.log(data) });
+$client.message.onCreateMessage.subscribe(undefined, { onData: (data) => console.log("onCreateMessage subscription") });
 </script>
 
 <template>
