@@ -6,7 +6,9 @@ import superjson from "superjson";
 
 export default defineNuxtPlugin(() => {
   const url = useTRPCClientUrl();
-  const links: TRPCLink<AppRouter>[] = [httpBatchLink({ url })];
+  // Grab auth cookie to pass to server
+  const headers = useRequestHeaders(["cookie"]);
+  const links: TRPCLink<AppRouter>[] = [httpBatchLink({ url, headers })];
 
   if (!isServer()) {
     const config = useRuntimeConfig();
