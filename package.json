@@ -55,6 +55,7 @@
     "@pinia/nuxt": "^0.4.6",
     "@prisma/client": "^4.8.0",
     "@tiptap/extension-character-count": "^2.0.0-beta.209",
+    "@tiptap/extension-hard-break": "^2.0.0-beta.209",
     "@tiptap/extension-placeholder": "^2.0.0-beta.209",
     "@tiptap/starter-kit": "^2.0.0-beta.209",
     "@tiptap/vue-3": "^2.0.0-beta.209",
