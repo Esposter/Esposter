@@ -17,5 +17,5 @@ const onDeleteRoom = async () => {
 </script>
 
 <template>
-  <v-btn icon="mdi-close" size="small" @click="onDeleteRoom" />
+  <v-btn icon="mdi-close" size="small" bg="transparent!" @click="onDeleteRoom" />
 </template>
