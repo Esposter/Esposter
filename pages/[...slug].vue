@@ -24,7 +24,7 @@ onMounted(() => {
   <NuxtLayout>
     <div class="image" h="full" display="flex" flex="col" justify="center" items="center">
       <div mt="25" display="flex" flex="col" items="center" z="1">
-        <div class="text" text="center 5xl">Lost in space?</div>
+        <div class="text-#ddd" text="center 5xl">Lost in space?</div>
         <InvisibleNuxtLink pt="4" :to="INDEX_PATH">
           <StyledButton>Go back home</StyledButton>
         </InvisibleNuxtLink>
@@ -37,10 +37,6 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-.text {
-  color: #ddd;
-}
-
 .image {
   background-image: v-bind(backgroundImageUrl);
   background-color: #000;

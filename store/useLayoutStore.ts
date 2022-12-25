@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, skipHydrate } from "pinia";
 import { useDisplay } from "vuetify";
 
 export const useLayoutStore = defineStore("layout", () => {
@@ -12,10 +12,11 @@ export const useLayoutStore = defineStore("layout", () => {
   // suddenly whenever we open and close the drawer
   const leftDrawerOpenAuto = ref(!mobile);
   const rightDrawerOpenAuto = ref(!mobile);
+  // mobile initial state can only be detected on client side so we skip SSR picking it up
   return {
-    leftDrawerOpen,
-    rightDrawerOpen,
-    leftDrawerOpenAuto,
-    rightDrawerOpenAuto,
+    leftDrawerOpen: skipHydrate(leftDrawerOpen),
+    rightDrawerOpen: skipHydrate(rightDrawerOpen),
+    leftDrawerOpenAuto: skipHydrate(leftDrawerOpenAuto),
+    rightDrawerOpenAuto: skipHydrate(rightDrawerOpenAuto),
   };
 });

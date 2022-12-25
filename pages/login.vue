@@ -1,10 +1,41 @@
 <script setup lang="ts">
 import { SITE_NAME } from "@/util/constants.client";
 import { INDEX_PATH } from "@/util/constants.common";
+import { toTitleCase } from "@/util/text";
+import type { BuiltInProviderType } from "next-auth/providers";
+import type { Component, CSSProperties } from "vue";
+
+interface ProviderProps {
+  provider: BuiltInProviderType;
+  logo: Component;
+  logoAttrs?: { [key: string]: unknown };
+  buttonStyle?: CSSProperties;
+  buttonAttrs?: { [key: string]: unknown };
+}
 
 definePageMeta({ middleware: "guest" });
 
 const { signIn } = $(useSession());
+const providerProps = $ref<ProviderProps[]>([
+  {
+    provider: "google",
+    logo: defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`)),
+    logoAttrs: { p: "2", w: "12", h: "12", bg: "#fff", rd: "l" },
+    buttonStyle: { backgroundColor: "#4285f4" },
+    buttonAttrs: { pl: "0" },
+  },
+  {
+    provider: "github",
+    logo: defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`)),
+    logoAttrs: { fill: "#fff" },
+    buttonStyle: { backgroundColor: "#252525" },
+  },
+  {
+    provider: "facebook",
+    logo: defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`)),
+    buttonStyle: { backgroundColor: "#1877f2" },
+  },
+]);
 </script>
 
 <template>
@@ -21,10 +52,24 @@ const { signIn } = $(useSession());
             <span class="text-h6" ml="2">{{ SITE_NAME }}</span>
           </div>
           <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with {{ SITE_NAME }}!</div>
-          <button class="github button" @click="signIn('github', { callbackUrl: INDEX_PATH, replace: true })">
-            <VisualGithubLogo w="8" fill="white" />
-            <span class="text-white" mx="auto" font="bold">Github</span>
-          </button>
+          <template v-for="{ provider, logo, logoAttrs, buttonStyle, buttonAttrs } in providerProps" :key="provider">
+            <button
+              class="button"
+              :style="{ ...buttonStyle }"
+              mb="3"
+              pl="2"
+              w="full"
+              h="12"
+              display="flex"
+              items="center"
+              rd="1"
+              :="{ ...buttonAttrs }"
+              @click="signIn(provider, { callbackUrl: INDEX_PATH, replace: true })"
+            >
+              <component :is="logo" w="8" :="{ ...logoAttrs }" />
+              <span class="text-#fff" mx="auto" font="bold">{{ toTitleCase(provider) }}</span>
+            </button>
+          </template>
         </v-container>
       </StyledCard>
     </v-container>
@@ -33,23 +78,12 @@ const { signIn } = $(useSession());
 
 <style scoped lang="scss">
 .button {
-  margin-bottom: 0.625rem;
-  padding: 0 0.625rem;
-  width: 100%;
-  height: 3.125rem;
-  display: flex;
-  align-items: center;
-  border-radius: 0.25rem;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
   transition: box-shadow 0.2s, transform 0.2s;
 
   &:hover {
-    transform: translateY(-3px);
     box-shadow: 0 2px 10px 2px rgba(0, 0, 0, 0.35);
+    transform: translateY(-3px);
   }
-}
-
-.github {
-  background-color: #252525;
 }
 </style>

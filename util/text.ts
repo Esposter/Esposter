@@ -28,3 +28,5 @@ export const getInitials = (fullName: string) => {
   }, "");
   return initials;
 };
+
+export const toTitleCase = (string: string) => string.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
