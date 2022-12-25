@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export const PostRelationsIncludeDefault = { creator: true, likes: true } satisfies Prisma.PostInclude;
 

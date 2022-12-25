@@ -1,14 +1,12 @@
-import { testUser } from "@/assets/data/test";
 import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
-import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post";
 import { FETCH_LIMIT, POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/util/constants.common";
 import { getNextCursor } from "@/util/pagination";
 import type { Post as PrismaPost } from "@prisma/client";
-import { toZod } from "tozod";
-import { v4 as uuidv4 } from "uuid";
+import type { toZod } from "tozod";
 import { z } from "zod";
 
 export const postSchema: toZod<PrismaPost> = z.object({
@@ -61,19 +59,19 @@ export const postRouter = router({
     });
     return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
   }),
-  createPost: rateLimitedProcedure.input(createPostInputSchema).mutation(({ input }) => {
+  createPost: authedProcedure.input(createPostInputSchema).mutation(({ input, ctx }) => {
     const now = new Date();
     return prisma.post.create({
-      data: { ...input, id: uuidv4(), creatorId: testUser.id, createdAt: now, ranking: ranking(0, now) },
+      data: { ...input, creatorId: ctx.session.user.id, createdAt: now, ranking: ranking(0, now) },
       include: PostRelationsIncludeDefault,
     });
   }),
-  updatePost: rateLimitedProcedure
+  updatePost: authedProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...other } }) =>
       prisma.post.update({ data: other, where: { id }, include: PostRelationsIncludeDefault })
     ),
-  deletePost: rateLimitedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {
       await prisma.post.delete({ where: { id: input } });
       return true;

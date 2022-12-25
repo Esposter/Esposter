@@ -9,8 +9,10 @@ interface CardProps {
 
 const props = defineProps<CardProps>();
 const { post } = $(toRefs(props));
-const sanitizedDescriptionHtml = $computed(() => DOMPurify.sanitize(post.description));
+const { data } = $(useSession());
 const createdAt = $computed(() => dayjs(post.createdAt).fromNow());
+const sanitizedDescriptionHtml = $computed(() => DOMPurify.sanitize(post.description));
+const isOwner = $computed(() => data?.user.id === post.creatorId);
 const { surfaceOpacity80 } = useColors();
 </script>
 
@@ -28,8 +30,8 @@ const { surfaceOpacity80 } = useColors();
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
       <v-card-text class="text-subtitle-1 card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
-        <PostUpdateCardButton :post-id="post.id" />
-        <PostConfirmDeleteDialogButton :post-id="post.id" />
+        <PostUpdateCardButton v-if="isOwner" :post-id="post.id" />
+        <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
       </v-card-actions>
     </v-card>
   </StyledCard>

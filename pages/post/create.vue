@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
+import type { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
 import { usePostStore } from "@/store/usePostStore";
 import { INDEX_PATH } from "@/util/constants.common";
-import { SubmitEventPromise } from "vuetify";
+import type { SubmitEventPromise } from "vuetify";
+
+definePageMeta({ middleware: "auth" });
 
 const { $client } = useNuxtApp();
 const { createPost } = usePostStore();

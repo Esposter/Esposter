@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { testUser } from "@/assets/data/test";
 import { PostWithRelations } from "@/prisma/types";
 import { useLikeStore } from "@/store/useLikeStore";
-import { Prisma } from "@prisma/client";
 
 interface LikeSectionProps {
   post: PostWithRelations;
@@ -10,23 +8,25 @@ interface LikeSectionProps {
 
 const props = defineProps<LikeSectionProps>();
 const { post } = $(toRefs(props));
-const id = $computed<Prisma.LikeUserIdPostIdCompoundUniqueInput>(() => ({ postId: post.id, userId: testUser.id }));
 const { $client } = useNuxtApp();
+const { data } = $(useSession());
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
-const liked = $computed(() => Boolean(post.likes.find((l) => l.userId === testUser.id && l.value === 1)));
-const unliked = $computed(() => Boolean(post.likes.find((l) => l.userId === testUser.id && l.value === -1)));
+const liked = $computed(() => Boolean(post.likes.find((l) => l.userId === data?.user.id && l.value === 1)));
+const unliked = $computed(() => Boolean(post.likes.find((l) => l.userId === data?.user.id && l.value === -1)));
 const onCreateLike = async (value: 1 | -1) => {
-  const newLike = await $client.like.createLike.mutate({ ...id, value });
+  const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
   createLike(newLike);
 };
 const onUpdateLike = async (value: 1 | -1) => {
-  const updatedLike = await $client.like.updateLike.mutate({ ...id, value });
+  const updatedLike = await $client.like.updateLike.mutate({ postId: post.id, value });
   if (updatedLike) updateLike(updatedLike);
 };
 const onDeleteLike = async () => {
-  const successful = await $client.like.deleteLike.mutate(id);
-  if (successful) deleteLike(id);
+  if (!data) return;
+
+  const successful = await $client.like.deleteLike.mutate({ postId: post.id });
+  if (successful) deleteLike({ userId: data.user.id, postId: post.id });
 };
 </script>
 

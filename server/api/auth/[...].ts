@@ -38,6 +38,12 @@ export default NuxtAuthHandler({
       allowDangerousEmailAccountLinking: true,
     }),
   ],
+  callbacks: {
+    session: ({ session, user }) => {
+      if (session.user) session.user.id = user.id;
+      return session;
+    },
+  },
   pages: {
     signIn: LOGIN_PATH,
     signOut: INDEX_PATH,

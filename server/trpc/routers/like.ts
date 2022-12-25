@@ -1,9 +1,9 @@
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
-import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post";
-import type { Like as PrismaLike } from "@prisma/client";
-import { toZod } from "tozod";
+import type { Like as PrismaLike, Prisma } from "@prisma/client";
+import type { toZod } from "tozod";
 import { z } from "zod";
 
 export const likeSchema: toZod<PrismaLike> = z.object({
@@ -19,19 +19,22 @@ export const likeSchema: toZod<PrismaLike> = z.object({
   deletedAt: z.date().nullable(),
 });
 
-const createLikeInputSchema = likeSchema.pick({ userId: true, postId: true, value: true });
+const createLikeInputSchema = likeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;
 
-const updateLikeInputSchema = likeSchema.pick({ userId: true, postId: true, value: true });
+const updateLikeInputSchema = likeSchema.pick({ postId: true, value: true });
 export type UpdateLikeInput = z.infer<typeof updateLikeInputSchema>;
 
-const deleteLikeInputSchema = likeSchema.pick({ userId: true, postId: true });
+const deleteLikeInputSchema = likeSchema.pick({ postId: true });
 export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
-  createLike: rateLimitedProcedure.input(createLikeInputSchema).mutation(({ input }) =>
+  createLike: authedProcedure.input(createLikeInputSchema).mutation(({ input, ctx }) =>
     prisma.$transaction(async (prisma) => {
-      const newLike = await prisma.like.create({ data: input, include: { post: true } });
+      const newLike = await prisma.like.create({
+        data: { ...input, userId: ctx.session.user.id },
+        include: { post: true },
+      });
       const noLikesNew = newLike.post.noLikes + newLike.value;
       await prisma.post.update({
         data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, newLike.post.createdAt) },
@@ -40,33 +43,32 @@ export const likeRouter = router({
       return newLike;
     })
   ),
-  updateLike: rateLimitedProcedure
-    .input(updateLikeInputSchema)
-    .mutation(async ({ input: { userId, postId, ...other } }) => {
-      const like = await prisma.like.findUnique({
-        where: { userId_postId: { userId, postId } },
-        include: { post: true },
-      });
-      if (!like || like.value === other.value) return null;
+  updateLike: authedProcedure.input(updateLikeInputSchema).mutation(async ({ input: { postId, ...other }, ctx }) => {
+    const where: Prisma.LikeWhereUniqueInput = { userId_postId: { userId: ctx.session.user.id, postId } };
+    const like = await prisma.like.findUnique({ where, include: { post: true } });
+    if (!like || like.value === other.value) return null;
 
-      const noLikesNew = like.post.noLikes + 2 * other.value;
-      const updatedLike = await prisma.like.update({
-        data: {
-          ...other,
-          post: { update: { noLikes: noLikesNew, ranking: ranking(noLikesNew, like.post.createdAt) } },
-        },
-        where: { userId_postId: { userId, postId } },
-      });
-      return updatedLike;
-    }),
-  deleteLike: rateLimitedProcedure.input(deleteLikeInputSchema).mutation(async ({ input }) => {
+    const noLikesNew = like.post.noLikes + 2 * other.value;
+    const updatedLike = await prisma.like.update({
+      data: {
+        ...other,
+        post: { update: { noLikes: noLikesNew, ranking: ranking(noLikesNew, like.post.createdAt) } },
+      },
+      where,
+    });
+    return updatedLike;
+  }),
+  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation(async ({ input: { postId }, ctx }) => {
     try {
       await prisma.$transaction(async (prisma) => {
-        const deletedLike = await prisma.like.delete({ where: { userId_postId: input }, include: { post: true } });
+        const deletedLike = await prisma.like.delete({
+          where: { userId_postId: { userId: ctx.session.user.id, postId } },
+          include: { post: true },
+        });
         const noLikesNew = deletedLike.post.noLikes - deletedLike.value;
         await prisma.post.update({
           data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, deletedLike.post.createdAt) },
-          where: { id: input.postId },
+          where: { id: postId },
         });
       });
       return true;

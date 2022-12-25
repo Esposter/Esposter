@@ -13,7 +13,7 @@ export const createContext = (opts: Contexts) => {
     const {
       node: { req, res },
     } = opts;
-    return { req, res };
+    return { req, res, event: opts };
   }
 
   const { req, res } = opts as NodeHTTPCreateContextFnOptions<IncomingMessage, ws>;

@@ -5,6 +5,8 @@ import { INDEX_PATH } from "@/util/constants.common";
 import { uuidValidateV4 } from "@/util/uuid";
 import { SubmitEventPromise } from "vuetify";
 
+definePageMeta({ middleware: "auth" });
+
 const { $client } = useNuxtApp();
 const route = useRoute();
 const postId = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;

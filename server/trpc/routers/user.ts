@@ -1,6 +1,6 @@
 import { USER_NAME_MAX_LENGTH } from "@/util/constants.common";
 import type { User as PrismaUser } from "@prisma/client";
-import { toZod } from "tozod";
+import type { toZod } from "tozod";
 import { z } from "zod";
 
 export const userSchema: toZod<PrismaUser> = z.object({

@@ -3,6 +3,8 @@ import { useRoomStore } from "@/store/useRoomStore";
 import { uuidValidateV4 } from "@/util/uuid";
 import { storeToRefs } from "pinia";
 
+definePageMeta({ middleware: "auth" });
+
 const route = useRoute();
 const roomStore = useRoomStore();
 const { currentRoomId, rooms, roomName } = $(storeToRefs(roomStore));
