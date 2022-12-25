@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { SITE_NAME } from "@/util/constants.client";
-import { INDEX_PATH } from "@/util/constants.common";
 import { toTitleCase } from "@/util/text";
 import type { BuiltInProviderType } from "next-auth/providers";
 import type { Component, CSSProperties } from "vue";
@@ -68,7 +67,7 @@ const providerProps = $ref<ProviderProps[]>([
               display="flex"
               items="center"
               rd="1"
-              @click="signIn(provider, { callbackUrl: INDEX_PATH, replace: true })"
+              @click="signIn(provider)"
             >
               <component :is="logo" :style="{ ...logoStyle }" w="8" :="{ ...logoAttrs }" />
               <span class="text-#fff" mx="auto" font="bold">{{ toTitleCase(provider) }}</span>

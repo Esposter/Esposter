@@ -1,6 +1,6 @@
 import { NuxtAuthHandler } from "#auth";
 import { prisma } from "@/prisma";
-import { INDEX_PATH, LOGIN_PATH } from "@/util/constants.common";
+import { LOGIN_PATH } from "@/util/constants.common";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import type { FacebookProfile } from "next-auth/providers/facebook";
 import NextFacebookProvider from "next-auth/providers/facebook";
@@ -46,6 +46,5 @@ export default NuxtAuthHandler({
   },
   pages: {
     signIn: LOGIN_PATH,
-    signOut: INDEX_PATH,
   },
 });
