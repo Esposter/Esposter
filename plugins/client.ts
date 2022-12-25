@@ -1,20 +1,33 @@
 import type { AppRouter } from "@/server/trpc/routers";
 import { isServer } from "@/util/constants.common";
+import { Environment } from "@/util/environment";
 import type { TRPCLink } from "@trpc/client";
-import { createTRPCProxyClient, createWSClient, httpBatchLink, wsLink } from "@trpc/client";
+import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import superjson from "superjson";
 
 export default defineNuxtPlugin(() => {
   const url = useTRPCClientUrl();
   // Grab auth cookie to pass to server
   const headers = useRequestHeaders(["cookie"]);
-  const links: TRPCLink<AppRouter>[] = [httpBatchLink({ url, headers })];
+  const links: TRPCLink<AppRouter>[] = [
+    // Log to your console in development and only log errors in production
+    loggerLink({
+      enabled: (opts) =>
+        (process.env.NODE_ENV === Environment.development && !isServer()) ||
+        (opts.direction === "down" && opts.result instanceof Error),
+    }),
+    splitLink({
+      condition: (op) => op.type === "subscription",
+      true: (() => {
+        if (isServer()) return httpBatchLink({ url, headers });
 
-  if (!isServer()) {
-    const config = useRuntimeConfig();
-    const wsClient = createWSClient({ url: `${config.public.wsBaseUrl}:${config.public.wsPort}` });
-    links.push(wsLink({ client: wsClient }));
-  }
+        const config = useRuntimeConfig();
+        const wsClient = createWSClient({ url: `${config.public.wsBaseUrl}:${config.public.wsPort}` });
+        return wsLink({ client: wsClient });
+      })(),
+      false: httpBatchLink({ url, headers }),
+    }),
+  ];
 
   const client = createTRPCProxyClient<AppRouter>({ links, transformer: superjson });
   return { provide: { client } };
