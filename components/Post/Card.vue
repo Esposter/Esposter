@@ -24,7 +24,7 @@ const { surfaceOpacity80 } = useColors();
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
       Posted by <span font="bold">{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
-      <v-card-title class="text-h6" px="0!" font="bold!">
+      <v-card-title class="text-h6" px="0!" font="bold!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
