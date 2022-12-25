@@ -8,9 +8,9 @@ import type { Component, CSSProperties } from "vue";
 interface ProviderProps {
   provider: BuiltInProviderType;
   logo: Component;
+  logoStyle?: CSSProperties;
   logoAttrs?: { [key: string]: unknown };
   buttonStyle?: CSSProperties;
-  buttonAttrs?: { [key: string]: unknown };
 }
 
 definePageMeta({ middleware: "guest" });
@@ -20,9 +20,14 @@ const providerProps = $ref<ProviderProps[]>([
   {
     provider: "google",
     logo: defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`)),
-    logoAttrs: { p: "2", w: "12", h: "12", bg: "#fff", rd: "l" },
-    buttonStyle: { backgroundColor: "#4285f4" },
-    buttonAttrs: { pl: "0" },
+    logoStyle: {
+      padding: ".625rem",
+      width: "3rem",
+      height: "3rem",
+      backgroundColor: "#fff",
+      borderRadius: "4px 0 0 4px",
+    },
+    buttonStyle: { paddingLeft: "0", backgroundColor: "#4285f4" },
   },
   {
     provider: "github",
@@ -52,7 +57,7 @@ const providerProps = $ref<ProviderProps[]>([
             <span class="text-h6" ml="2">{{ SITE_NAME }}</span>
           </div>
           <div class="text-subtitle-1" mb="2" text="center">Login and start taking rides with {{ SITE_NAME }}!</div>
-          <template v-for="{ provider, logo, logoAttrs, buttonStyle, buttonAttrs } in providerProps" :key="provider">
+          <template v-for="{ provider, logo, logoStyle, logoAttrs, buttonStyle } in providerProps" :key="provider">
             <button
               class="button"
               :style="{ ...buttonStyle }"
@@ -63,10 +68,9 @@ const providerProps = $ref<ProviderProps[]>([
               display="flex"
               items="center"
               rd="1"
-              :="{ ...buttonAttrs }"
               @click="signIn(provider, { callbackUrl: INDEX_PATH, replace: true })"
             >
-              <component :is="logo" w="8" :="{ ...logoAttrs }" />
+              <component :is="logo" :style="{ ...logoStyle }" w="8" :="{ ...logoAttrs }" />
               <span class="text-#fff" mx="auto" font="bold">{{ toTitleCase(provider) }}</span>
             </button>
           </template>
