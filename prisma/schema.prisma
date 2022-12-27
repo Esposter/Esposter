@@ -47,6 +47,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @default(now()) @updatedAt
   deletedAt     DateTime?
+  Room          Room[]
 }
 
 model VerificationToken {
@@ -61,6 +62,8 @@ model Room {
   id        String         @id @default(uuid())
   name      String
   image     String?
+  creator   User           @relation(fields: [creatorId], references: [id])
+  creatorId String
   users     RoomsOnUsers[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @default(now()) @updatedAt

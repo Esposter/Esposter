@@ -12,6 +12,7 @@ const roomSchema: toZod<PrismaRoom> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
   image: z.string().nullable(),
+  creatorId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
@@ -38,59 +39,73 @@ const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
-  filter: roomSchema.pick({ name: true }).optional(),
+  roomId: roomSchema.shape.id,
   cursor: z.string().nullable(),
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
-const addMembersInputSchema = z.object({
+const createMembersInputSchema = z.object({
   roomId: roomSchema.shape.id,
   userIds: z.array(userSchema.shape.id).min(1),
 });
-export type AddMembersInput = z.infer<typeof addMembersInputSchema>;
+export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
 export const roomRouter = router({
-  readRoom: authedProcedure
-    .input(readRoomInputSchema)
-    .query(({ input }) =>
-      input
-        ? prisma.room.findUnique({ where: { id: input } })
-        : prisma.room.findFirst({ orderBy: { updatedAt: "desc" } })
-    ),
-  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { filter, cursor } }) => {
+  readRoom: authedProcedure.input(readRoomInputSchema).query(({ input, ctx }) =>
+    input
+      ? prisma.room.findFirst({ where: { id: input, users: { some: { userId: ctx.session.user.id } } } })
+      : prisma.room.findFirst({
+          where: { users: { some: { userId: ctx.session.user.id } } },
+          orderBy: { updatedAt: "desc" },
+        })
+  ),
+  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { filter, cursor }, ctx }) => {
     const name = filter?.name;
     const rooms = await prisma.room.findMany({
       take: FETCH_LIMIT + 1,
-      where: { name: { contains: name, mode: "insensitive" } },
+      where: { name: { contains: name, mode: "insensitive" }, users: { some: { userId: ctx.session.user.id } } },
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
     return { rooms, nextCursor: getNextCursor(rooms, "id", FETCH_LIMIT) };
   }),
-  createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input }) => prisma.room.create({ data: input })),
-  updateRoom: authedProcedure
-    .input(updateRoomInputSchema)
-    .mutation(({ input: { id, ...other } }) => prisma.room.update({ data: other, where: { id } })),
-  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input }) => {
+  createRoom: authedProcedure
+    .input(createRoomInputSchema)
+    .mutation(({ input, ctx }) => prisma.room.create({ data: { ...input, creatorId: ctx.session.user.id } })),
+  updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...other }, ctx }) => {
+    // @NOTE: We should be able to return records we updated on updateMany in the future
+    // https://github.com/prisma/prisma/issues/5019
+    const { count } = await prisma.room.updateMany({ data: other, where: { id, creatorId: ctx.session.user.id } });
+    return count > 0 ? prisma.room.findUnique({ where: { id } }) : null;
+  }),
+  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {
     try {
-      await prisma.room.delete({ where: { id: input } });
-      return true;
+      const { count } = await prisma.room.deleteMany({ where: { id: input, creatorId: ctx.session.user.id } });
+      return count > 0;
     } catch (err) {
       return false;
     }
   }),
-  readMembers: authedProcedure.input(readMembersInputSchema).query(async ({ input: { cursor } }) => {
+  readMembers: authedProcedure.input(readMembersInputSchema).query(async ({ input: { roomId, cursor }, ctx }) => {
+    // @NOTE: We should be able to use "exists" function in the future
+    // https://github.com/prisma/prisma/issues/5022
+    const roomOnUser = await prisma.roomsOnUsers.findUnique({
+      where: { userId_roomId: { userId: ctx.session.user.id, roomId } },
+    });
+    if (!roomOnUser) return null;
+
     const members = await prisma.user.findMany({
       take: FETCH_LIMIT + 1,
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
+
     return {
       members,
       nextCursor: getNextCursor(members, "id", FETCH_LIMIT),
     };
   }),
-  addMembers: authedProcedure.input(addMembersInputSchema).mutation(async ({ input: { roomId, userIds } }) => {
+  createMembers: authedProcedure.input(createMembersInputSchema).mutation(async ({ input: { roomId, userIds } }) => {
     const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });
     return payload.count;
   }),
