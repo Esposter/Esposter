@@ -23,6 +23,7 @@ export enum UpgradeType {
   BuildingAdditive = "BuildingAdditive",
   // Considers all buildings except for buildings we specify
   BuildingAdditiveNor = "BuildingAdditiveNor",
+  UpgradeMultiplier = "UpgradeMultiplier",
 }
 
 export interface UpgradeConfiguration {

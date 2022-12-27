@@ -10,21 +10,16 @@ interface DefaultLayoutProps {
 
 const props = defineProps<DefaultLayoutProps>();
 const { mainAttrs } = $(toRefs(props));
-const { path } = useRoute();
+const { mobile } = $(useDisplay());
+const router = useRouter();
 const slots = useSlots();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
+let { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
 
-watch(
-  () => path,
-  () => {
-    const { mobile } = $(useDisplay());
-    const layoutStore = useLayoutStore();
-    let { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
-    // We need to reset layout structure on route change
-    leftDrawerOpen = rightDrawerOpen = leftDrawerOpenAuto = rightDrawerOpenAuto = !mobile;
-  }
-);
+router.afterEach(() => {
+  // We need to reset layout structure on route change
+  leftDrawerOpen = rightDrawerOpen = leftDrawerOpenAuto = rightDrawerOpenAuto = !mobile;
+});
 </script>
 
 <template>
