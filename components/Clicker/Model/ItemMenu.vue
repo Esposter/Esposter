@@ -25,14 +25,7 @@ const emit = defineEmits<{ (event: "buy", value: MouseEvent): void }>();
 // @NOTE: Can remove cast after it's fixed in vue 3.3
 const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
 const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
-let menu = $ref(false);
-const itemRef = ref<HTMLDivElement>();
-const cardRef = ref<HTMLDivElement>();
-
-onClickOutsideMultiple([itemRef, cardRef], () => {
-  menu = false;
-});
-
+const menu = $ref(false);
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
 // https://github.com/nuxt/framework/issues/7121
 const icon = $computed(() => {
@@ -47,7 +40,7 @@ const icon = $computed(() => {
 <template>
   <v-menu v-model="menu" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-list-item ref="itemRef" select="none" :="menuProps">
+      <v-list-item select="none" :="menuProps">
         <template #prepend>
           <img width="32" height="32" :src="icon" :alt="name" />
         </template>
@@ -63,7 +56,7 @@ const icon = $computed(() => {
         </template>
       </v-list-item>
     </template>
-    <v-card ref="cardRef">
+    <v-card>
       <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
         <img width="32" height="32" :src="icon" :alt="name" />
         {{ name }}
