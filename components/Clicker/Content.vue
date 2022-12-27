@@ -4,10 +4,12 @@ import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { usePopupStore } from "@/store/clicker/usePopupStore";
+import { AUTOSAVE_INTERVAL, FPS } from "@/util/constants.client";
 import { storeToRefs } from "pinia";
 import { clearInterval, setInterval } from "worker-timers";
 
 const gameStore = useGameStore();
+const { saveGame } = gameStore;
 const { game } = $(storeToRefs(gameStore));
 const pointStore = usePointStore();
 const { incrementPoints } = pointStore;
@@ -24,16 +26,17 @@ const cursorAmount = $computed(() => {
 });
 
 let buildingsClickerTimer = $ref<number>();
-const buildingsClickerFps = $ref<number>(60);
+let autosaveTimer = $ref<number>();
 
 onMounted(() => {
-  buildingsClickerTimer = setInterval(
-    () => incrementPoints(buildingPower / buildingsClickerFps),
-    1000 / buildingsClickerFps
-  );
+  buildingsClickerTimer = setInterval(() => incrementPoints(buildingPower / FPS), 1000 / FPS);
+  autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
 
-onUnmounted(() => buildingsClickerTimer && clearInterval(buildingsClickerTimer));
+onUnmounted(() => {
+  buildingsClickerTimer && clearInterval(buildingsClickerTimer);
+  autosaveTimer && clearInterval(autosaveTimer);
+});
 </script>
 
 <template>

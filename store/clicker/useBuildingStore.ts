@@ -34,13 +34,11 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!foundBuilding) {
       gameStore.game.boughtBuildings.push(newBuilding);
       gameStore.game.noPoints -= newBuildingPrice;
-      gameStore.saveGame();
       return;
     }
 
     foundBuilding.level++;
     gameStore.game.noPoints -= newBuildingPrice;
-    gameStore.saveGame();
   };
 
   return {

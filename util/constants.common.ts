@@ -8,7 +8,7 @@ export const now = () => {
   return (BigInt(ms) * BigInt(1e9) + BigInt(ns)).toString();
 };
 
-/* === route paths === */
+// #region Path constants
 export const INDEX_PATH = "/";
 export const LOGIN_PATH = "/login";
 export const ABOUT_PATH = "/about";
@@ -21,12 +21,15 @@ export const PRIVACY_POLICY_PATH = "https://www.termsfeed.com/live/367522f3-27be
 export const TERMS_AND_CONDITIONS_PATH = "https://www.termsfeed.com/live/7202726c-ae87-41cd-af54-9bde6ca4477a";
 
 export const TRPC_CLIENT_PATH = "/api/trpc";
+// #endregion
 
 export const FETCH_LIMIT = 20;
 
+// #region Validation constants
 export const USER_NAME_MAX_LENGTH = 100;
 export const ROOM_NAME_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 100;
 export const POST_TITLE_MAX_LENGTH = 300;
 export const POST_DESCRIPTION_MAX_LENGTH = 1000;
 export const CHATBOT_PROMPT_MAX_LENGTH = 100;
+// #endregion

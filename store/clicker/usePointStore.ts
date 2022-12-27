@@ -10,12 +10,10 @@ export const usePointStore = defineStore("clicker/point", () => {
   const incrementPoints = (points: number) => {
     if (!gameStore.game) return;
     gameStore.game.noPoints += points;
-    gameStore.saveGame();
   };
   const decrementPoints = (points: number) => {
     if (!gameStore.game) return;
     gameStore.game.noPoints -= points;
-    gameStore.saveGame();
   };
   return { noPoints, incrementPoints, decrementPoints };
 });

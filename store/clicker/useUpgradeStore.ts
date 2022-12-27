@@ -13,7 +13,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     if (!gameStore.game) return;
     gameStore.game.boughtUpgrades.push(newUpgrade);
     gameStore.game.noPoints -= newUpgrade.price;
-    gameStore.saveGame();
   };
   return { upgradeList, initialiseUpgradeList, createBoughtUpgrade };
 });
