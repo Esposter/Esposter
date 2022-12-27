@@ -9,10 +9,13 @@ const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore
 const { currentRoomId, rooms, roomListNextCursor } = $(storeToRefs(roomStore));
 const hasMore = $computed(() => Boolean(roomListNextCursor));
 const fetchMoreRooms = async (onComplete: () => void) => {
-  const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor });
-  pushRoomList(rooms);
-  updateRoomListNextCursor(nextCursor);
-  onComplete();
+  try {
+    const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor });
+    pushRoomList(rooms);
+    updateRoomListNextCursor(nextCursor);
+  } finally {
+    onComplete();
+  }
 };
 
 const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([

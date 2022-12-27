@@ -12,15 +12,18 @@ const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = 
 const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));
 const hasMore = $computed(() => Boolean(messageListNextCursor));
 const fetchMoreMessages = async (onComplete: () => void) => {
-  if (!currentRoomId) return;
+  try {
+    if (!currentRoomId) return;
 
-  const { messages, nextCursor } = await $client.message.readMessages.query({
-    filter: { partitionKey: currentRoomId },
-    cursor: messageListNextCursor,
-  });
-  pushMessageList(messages);
-  updateMessageListNextCursor(nextCursor);
-  onComplete();
+    const { messages, nextCursor } = await $client.message.readMessages.query({
+      filter: { partitionKey: currentRoomId },
+      cursor: messageListNextCursor,
+    });
+    pushMessageList(messages);
+    updateMessageListNextCursor(nextCursor);
+  } finally {
+    onComplete();
+  }
 };
 
 const { messages, nextCursor } = currentRoomId

@@ -8,10 +8,13 @@ const { pushPostList, updatePostListNextCursor, initialisePostList } = postStore
 const { postList, postListNextCursor } = $(storeToRefs(postStore));
 const hasMore = $computed(() => Boolean(postListNextCursor));
 const fetchMorePosts = async (onComplete: () => void) => {
-  const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor });
-  pushPostList(posts);
-  updatePostListNextCursor(nextCursor);
-  onComplete();
+  try {
+    const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor });
+    pushPostList(posts);
+    updatePostListNextCursor(nextCursor);
+  } finally {
+    onComplete();
+  }
 };
 
 const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: null });

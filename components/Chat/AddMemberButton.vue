@@ -1,3 +1,3 @@
 <template>
-  <v-btn icon="mdi-account-plus" size="small" flat />
+  <v-btn icon="mdi-account-plus" size="small" />
 </template>
