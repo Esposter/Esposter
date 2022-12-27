@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { marked } from "marked";
 import { filename } from "pathe/utils";
-import type { VMenu } from "vuetify/components";
 
 // @NOTE: Use this in vue 3.3
 // type ItemMenuProps = {
@@ -11,7 +11,8 @@ import type { VMenu } from "vuetify/components";
 
 type ItemMenuProps = {
   name: string;
-  description?: string;
+  // @NOTE: Can probably use question mark syntax in vue 3.3
+  description: string | undefined;
   flavorDescription: string;
   price: number;
   level?: number;
@@ -22,6 +23,8 @@ type ItemMenuProps = {
 const props = defineProps<ItemMenuProps>();
 const { name, description, flavorDescription, price, level, isAffordable, isBuyable } = $(toRefs(props));
 const emit = defineEmits<{ (event: "buy", value: MouseEvent): void }>();
+const descriptionHtml = $computed(() => (description ? marked.parse(description) : null));
+const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
 let menu = $ref(false);
 const cardRef = ref<HTMLDivElement>();
 
@@ -66,8 +69,13 @@ const icon = $computed(() => {
       </v-card-title>
       <v-card-text>
         <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
-        <div v-if="description" pb="4" v-html="description" />
-        <div pb="4" display="flex" justify="end" font="italic">"{{ flavorDescription }}"</div>
+        <div v-if="description" pb="4" v-html="descriptionHtml" />
+        <div pb="4" display="flex" justify="end" font="italic">
+          "
+          <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+          <span v-html="flavorDescriptionHtml" />
+          "
+        </div>
         <div display="flex">
           <v-spacer />
           {{ price }} <ClickerModelPinaColada width="24" height="24" />

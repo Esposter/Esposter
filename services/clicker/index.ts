@@ -18,7 +18,7 @@ export const applyMouseUpgrades = (basePower: number, boughtUpgrades: Upgrade[])
 const applyAdditiveUpgrades = (basePower: number, upgrades: Upgrade[]) => {
   let resultPower = basePower;
 
-  const additiveUpgrades = upgrades.filter((cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Additive);
+  const additiveUpgrades = upgrades.filter((u) => u.upgradeConfiguration.upgradeType === UpgradeType.Additive);
   for (const additiveUpgrade of additiveUpgrades) resultPower += additiveUpgrade.value;
 
   return resultPower;
@@ -28,7 +28,7 @@ const applyMultiplicativeUpgrades = (basePower: number, upgrades: Upgrade[]) => 
   let resultPower = basePower;
 
   const multiplicativeUpgrades = upgrades.filter(
-    (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.Multiplicative
+    (u) => u.upgradeConfiguration.upgradeType === UpgradeType.Multiplicative
   );
   for (const multiplicativeUpgrade of multiplicativeUpgrades) resultPower *= multiplicativeUpgrade.value;
 
@@ -39,7 +39,7 @@ const applyBuildingAdditiveUpgrades = (basePower: number, upgrades: Upgrade[], b
   let resultPower = basePower;
 
   const buildingAdditiveUpgrades = upgrades.filter(
-    (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
+    (u) => u.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
   );
   for (const buildingAdditiveUpgrade of buildingAdditiveUpgrades) {
     for (const affectedUpgradeTarget of buildingAdditiveUpgrade.upgradeConfiguration.affectedUpgradeTargets ?? []) {
@@ -57,7 +57,7 @@ const applyBuildingAdditiveNorUpgrades = (basePower: number, upgrades: Upgrade[]
   let resultPower = basePower;
 
   const buildingAdditiveNorUpgrades = upgrades.filter(
-    (cu) => cu.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
+    (u) => u.upgradeConfiguration.upgradeType === UpgradeType.BuildingAdditive
   );
   for (const buildingAdditiveNorUpgrade of buildingAdditiveNorUpgrades) {
     const affectedUpgradeTargets = buildingAdditiveNorUpgrade.upgradeConfiguration.affectedUpgradeTargets ?? [];
@@ -71,11 +71,34 @@ const applyBuildingAdditiveNorUpgrades = (basePower: number, upgrades: Upgrade[]
   return resultPower;
 };
 
+// Apply all upgrade multipliers to their specified upgrades
+const applyUpgradeMultiplierUpgrades = (upgrades: Upgrade[]) => {
+  const resultBoughtUpgrades: Upgrade[] = [];
+
+  for (const boughtUpgrade of upgrades) {
+    let resultPower = boughtUpgrade.value;
+
+    const upgradeMultiplierUpgrades = upgrades.filter(
+      (u) =>
+        u.upgradeConfiguration.upgradeType === UpgradeType.UpgradeMultiplier &&
+        u.upgradeTargets.includes(boughtUpgrade.name)
+    );
+    for (const upgradeMultiplierUpgrade of upgradeMultiplierUpgrades) resultPower *= upgradeMultiplierUpgrade.value;
+
+    resultBoughtUpgrades.push({ ...boughtUpgrade, value: resultPower });
+  }
+
+  return resultBoughtUpgrades;
+};
+
 export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+  let resultUpgrades = upgrades;
+  resultUpgrades = applyUpgradeMultiplierUpgrades(resultUpgrades);
+
   let resultPower = basePower;
-  resultPower = applyAdditiveUpgrades(resultPower, upgrades);
-  resultPower = applyMultiplicativeUpgrades(resultPower, upgrades);
-  resultPower = applyBuildingAdditiveUpgrades(resultPower, upgrades, boughtBuildings);
-  resultPower = applyBuildingAdditiveNorUpgrades(resultPower, upgrades, boughtBuildings);
+  resultPower = applyAdditiveUpgrades(resultPower, resultUpgrades);
+  resultPower = applyMultiplicativeUpgrades(resultPower, resultUpgrades);
+  resultPower = applyBuildingAdditiveUpgrades(resultPower, resultUpgrades, boughtBuildings);
+  resultPower = applyBuildingAdditiveNorUpgrades(resultPower, resultUpgrades, boughtBuildings);
   return resultPower;
 };

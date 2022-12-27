@@ -3,6 +3,7 @@ import { Editor } from "@tiptap/vue-3";
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
+  // @NOTE: Can probably use question mark syntax in vue 3.3
   editor: Editor | undefined;
 }
 

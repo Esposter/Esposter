@@ -3,8 +3,6 @@ import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Upgrade } from "@/models/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
 import { storeToRefs } from "pinia";
 
 interface UpgradeListItemProps {
@@ -21,7 +19,6 @@ const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
 let menu = $ref(false);
 const cardRef = ref<HTMLDivElement>();
-const sanitizedUpgradeDescription = $computed(() => DOMPurify.sanitize(marked.parse(upgrade.description)));
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.price));
 
 onClickOutside(cardRef, () => {
@@ -32,7 +29,7 @@ onClickOutside(cardRef, () => {
 <template>
   <ClickerModelItemMenu
     :name="upgrade.name"
-    :description="sanitizedUpgradeDescription"
+    :description="upgrade.description"
     :flavor-description="upgrade.flavorDescription"
     :price="upgrade.price"
     :is-affordable="isAffordable"
