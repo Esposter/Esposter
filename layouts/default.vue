@@ -16,7 +16,7 @@ const slots = useSlots();
 const layoutStore = useLayoutStore();
 let { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
 
-router.afterEach(() => {
+router.beforeEach(() => {
   // We need to reset layout structure on route change
   leftDrawerOpen = rightDrawerOpen = leftDrawerOpenAuto = rightDrawerOpenAuto = !mobile;
 });
