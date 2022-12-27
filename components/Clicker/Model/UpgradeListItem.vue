@@ -17,13 +17,7 @@ const { game } = $(storeToRefs(gameStore));
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
-let menu = $ref(false);
-const cardRef = ref<HTMLDivElement>();
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.price));
-
-onClickOutside(cardRef, () => {
-  if (menu) menu = false;
-});
 </script>
 
 <template>

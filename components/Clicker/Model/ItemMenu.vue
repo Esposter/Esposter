@@ -11,8 +11,7 @@ import { filename } from "pathe/utils";
 
 type ItemMenuProps = {
   name: string;
-  // @NOTE: Can probably use question mark syntax in vue 3.3
-  description: string | undefined;
+  description?: string;
   flavorDescription: string;
   price: number;
   level?: number;
@@ -23,13 +22,15 @@ type ItemMenuProps = {
 const props = defineProps<ItemMenuProps>();
 const { name, description, flavorDescription, price, level, isAffordable, isBuyable } = $(toRefs(props));
 const emit = defineEmits<{ (event: "buy", value: MouseEvent): void }>();
-const descriptionHtml = $computed(() => (description ? marked.parse(description) : null));
+// @NOTE: Can remove cast after it's fixed in vue 3.3
+const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
 const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
 let menu = $ref(false);
+const itemRef = ref<HTMLDivElement>();
 const cardRef = ref<HTMLDivElement>();
 
-onClickOutside(cardRef, () => {
-  if (menu) menu = false;
+onClickOutsideMultiple([itemRef, cardRef], () => {
+  menu = false;
 });
 
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
@@ -46,7 +47,7 @@ const icon = $computed(() => {
 <template>
   <v-menu v-model="menu" location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-list-item select="none" :="menuProps">
+      <v-list-item ref="itemRef" select="none" :="menuProps">
         <template #prepend>
           <img width="32" height="32" :src="icon" :alt="name" />
         </template>

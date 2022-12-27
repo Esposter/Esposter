@@ -16,15 +16,9 @@ const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
 const { createBoughtBuilding, getBuildingPrice, getBoughtBuildingLevel } = buildingStore;
 const { play } = useSound(buySfx);
-let menu = $ref(false);
-const cardRef = ref<HTMLDivElement>();
 const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
 const buildingPrice = $computed(() => getBuildingPrice(building));
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
-
-onClickOutside(cardRef, () => {
-  if (menu) menu = false;
-});
 </script>
 
 <template>
