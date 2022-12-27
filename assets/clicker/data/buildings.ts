@@ -5,7 +5,7 @@ export const buildings: Building[] = [
     name: BuildingName.Cursor,
     flavorDescription: "Autoclicks once every 10 seconds.",
     basePrice: 15,
-    baseValue: 0.1,
+    baseValue: 1e-1,
     level: 1,
   },
 ];
