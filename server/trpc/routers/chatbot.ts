@@ -5,7 +5,7 @@ import { CHATBOT_PROMPT_MAX_LENGTH } from "@/util/constants.common";
 import { z } from "zod";
 
 const inferSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().cuid(),
   prompt: z.string().min(1).max(CHATBOT_PROMPT_MAX_LENGTH),
   welcomeMessage: z.string().optional().default("Hello! How can I help you today?"),
 });

@@ -7,7 +7,7 @@ import type { toZod } from "tozod";
 import { z } from "zod";
 
 export const likeSchema: toZod<PrismaLike> = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().cuid(),
   postId: z.string().uuid(),
   value: z
     .number()

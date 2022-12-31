@@ -14,7 +14,7 @@ import { z } from "zod";
 const messageSchema: toZod<MessageEntity> = z.object({
   partitionKey: z.string().uuid(),
   rowKey: z.string(),
-  userId: z.string().uuid(),
+  creatorId: z.string().cuid(),
   message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
   createdAt: z.date(),
 });
@@ -66,7 +66,7 @@ export const messageRouter = router({
       const message: MessageEntity = {
         ...input,
         rowKey: getReverseTickedTimestamp(),
-        userId: ctx.session.user.id,
+        creatorId: ctx.session.user.id,
         createdAt: new Date(),
       };
       const successful = await submitTransaction(messageClient, [["create", message]]);
