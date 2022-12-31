@@ -30,8 +30,14 @@ export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 const createMessageInputSchema = messageSchema.pick({ partitionKey: true, message: true });
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
+const onUpdateMessageInputSchema = messageSchema.pick({ partitionKey: true });
+export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
+
 const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
+
+const onDeleteMessageInputSchema = messageSchema.pick({ partitionKey: true });
+export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
@@ -75,17 +81,46 @@ export const messageRouter = router({
       customEventEmitter.emit("onCreateMessage", message);
       return message;
     }),
+  onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "partitionKey")
+    .input(onUpdateMessageInputSchema)
+    .subscription(({ input }) =>
+      observable<UpdateMessageInput>((emit) => {
+        const onUpdateMessage = (data: UpdateMessageInput) => () => {
+          if (data.partitionKey === input.partitionKey) emit.next(data);
+        };
+        customEventEmitter.on("onUpdateMessage", onUpdateMessage);
+        return () => customEventEmitter.off("onUpdateMessage", onUpdateMessage);
+      })
+    ),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
       const successful = await submitTransaction(messageClient, [["update", input]]);
-      return successful ? input : null;
+      if (!successful) return null;
+
+      customEventEmitter.emit("onUpdateMessage", input);
+      return input;
     }),
+  onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "partitionKey")
+    .input(onDeleteMessageInputSchema)
+    .subscription(({ input }) =>
+      observable<DeleteMessageInput>((emit) => {
+        const onDeleteMessage = (data: DeleteMessageInput) => () => {
+          if (data.partitionKey === input.partitionKey) emit.next(data);
+        };
+        customEventEmitter.on("onDeleteMessage", onDeleteMessage);
+        return () => customEventEmitter.off("onDeleteMessage", onDeleteMessage);
+      })
+    ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
-      return submitTransaction(messageClient, [["delete", input]]);
+      const successful = await submitTransaction(messageClient, [["delete", input]]);
+      if (!successful) return false;
+
+      customEventEmitter.emit("onDeleteMessage", input);
+      return true;
     }),
 });
