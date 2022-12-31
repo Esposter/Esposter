@@ -28,7 +28,7 @@
     "@types/marked": "^4.0.8",
     "@types/three": "^0.146.0",
     "@types/uuid": "^9.0.0",
-    "@types/ws": "^8.5.3",
+    "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "@unocss/nuxt": "^0.48.0",
