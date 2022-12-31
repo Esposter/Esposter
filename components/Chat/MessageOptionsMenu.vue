@@ -2,6 +2,7 @@
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
+  creatorId: string;
   isHovering?: boolean;
   hoverProps?: Record<string, unknown>;
 }
@@ -14,16 +15,27 @@ interface Item {
 }
 
 const props = defineProps<MessageOptionsMenuProps>();
-const { isHovering, hoverProps } = $(toRefs(props));
+const { creatorId, isHovering, hoverProps } = $(toRefs(props));
 const emit = defineEmits<{
   (event: "update:menu", value: boolean): void;
   (event: "update:update-mode", value: true): void;
   (event: "update:delete-mode", value: true): void;
 }>();
-const items: Item[] = [
-  { title: "Update Message", icon: "mdi-pencil", onClick: () => emit("update:update-mode", true) },
-  { title: "Delete Message", icon: "mdi-delete", color: "error", onClick: () => emit("update:delete-mode", true) },
-];
+const { data } = $(useSession());
+const isCreator = $computed(() => data?.user.id === creatorId);
+const items = $computed(() => {
+  const result: Item[] = [];
+  if (!isCreator) return result;
+
+  result.unshift({ title: "Update Message", icon: "mdi-pencil", onClick: () => emit("update:update-mode", true) });
+  result.push({
+    title: "Delete Message",
+    icon: "mdi-delete",
+    color: "error",
+    onClick: () => emit("update:delete-mode", true),
+  });
+  return result;
+});
 </script>
 
 <template>
@@ -36,7 +48,7 @@ const items: Item[] = [
         @update:model-value="(value) => emit('update:menu', value)"
         @select="() => {}"
       />
-      <v-btn m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
+      <v-btn v-if="isCreator" m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">

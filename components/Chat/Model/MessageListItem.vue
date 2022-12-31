@@ -11,6 +11,8 @@ const props = defineProps<MessageListItemProps>();
 const { message } = $(toRefs(props));
 const memberStore = useMemberStore();
 const { memberList } = $(storeToRefs(memberStore));
+// @NOTE: We'll need to search for the creators in the user database in the future
+// if we want to show messages from members who have left the room
 const creator = $computed(() => memberList.find((m) => m.id === message.creatorId));
 const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
@@ -21,10 +23,10 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
 </script>
 
 <template>
-  <ChatConfirmDeleteMessageDialog :message="message">
+  <ChatConfirmDeleteMessageDialog v-if="creator" :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
-        v-if="creator?.name"
+        v-if="creator.name"
         :active="active && !isDeleteMode"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
@@ -59,6 +61,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         >
           <v-hover v-slot="{ isHovering, props: hoverProps }">
             <ChatMessageOptionsMenu
+              :creator-id="creator.id"
               :is-hovering="isHovering"
               :hover-props="hoverProps"
               @update:menu="(value) => (isOptionsChildrenActive = value)"
@@ -70,7 +73,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       </div>
     </template>
     <template #messagePreview>
-      <v-list-item v-if="creator?.name">
+      <v-list-item v-if="creator.name">
         <template #prepend>
           <v-avatar v-if="creator.image">
             <v-img :src="creator.image" :alt="creator.name" />
