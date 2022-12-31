@@ -184,7 +184,7 @@ const moveOneCard = () => {
 
 onMounted(() => {
   // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (duration > -1) moveCardsTimer = window.setInterval(moveCards, duration);
+  if (duration > 0) moveCardsTimer = window.setInterval(moveCards, duration);
   moveCards();
 });
 

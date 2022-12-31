@@ -22,7 +22,7 @@ const dialog = $ref(false);
 </script>
 
 <template>
-  <v-btn b="1!" case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+  <v-btn case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
   <v-dialog v-model="dialog" max-width="400">
     <v-card>
       <v-card-title>

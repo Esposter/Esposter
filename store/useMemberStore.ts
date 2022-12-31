@@ -14,16 +14,6 @@ export const useMemberStore = defineStore("member", () => {
     membersMap.value[roomStore.currentRoomId].push(...members);
   };
 
-  const memberListNextCursorMap = ref<Record<string, string | null>>({});
-  const memberListNextCursor = computed(() => {
-    if (!roomStore.currentRoomId || !memberListNextCursorMap.value[roomStore.currentRoomId]) return null;
-    return memberListNextCursorMap.value[roomStore.currentRoomId];
-  });
-  const updateMemberListNextCursor = (memberListNextCursor: string | null) => {
-    if (!roomStore.currentRoomId) return;
-    memberListNextCursorMap.value[roomStore.currentRoomId] = memberListNextCursor;
-  };
-
   const initialiseMembersList = (members: User[]) => {
     if (!roomStore.currentRoomId) return;
     membersMap.value[roomStore.currentRoomId] = members;
@@ -46,8 +36,6 @@ export const useMemberStore = defineStore("member", () => {
   return {
     memberList,
     pushMemberList,
-    memberListNextCursor,
-    updateMemberListNextCursor,
     initialiseMembersList,
     createMember,
     updateMember,

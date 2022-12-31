@@ -16,7 +16,7 @@ const fetchMoreMessages = async (onComplete: () => void) => {
     if (!currentRoomId) return;
 
     const { messages, nextCursor } = await $client.message.readMessages.query({
-      filter: { partitionKey: currentRoomId },
+      partitionKey: currentRoomId,
       cursor: messageListNextCursor,
     });
     pushMessageList(messages);
@@ -27,7 +27,7 @@ const fetchMoreMessages = async (onComplete: () => void) => {
 };
 
 const { messages, nextCursor } = currentRoomId
-  ? await $client.message.readMessages.query({ filter: { partitionKey: currentRoomId }, cursor: null })
+  ? await $client.message.readMessages.query({ partitionKey: currentRoomId, cursor: null })
   : { messages: [] as MessageEntity[], nextCursor: null };
 initialiseMessageList(messages);
 updateMessageListNextCursor(nextCursor);
