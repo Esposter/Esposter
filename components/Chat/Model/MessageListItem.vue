@@ -11,7 +11,7 @@ const props = defineProps<MessageListItemProps>();
 const { message } = $(toRefs(props));
 const memberStore = useMemberStore();
 const { memberList } = $(storeToRefs(memberStore));
-const member = $computed(() => memberList.find((m) => m.id === message.userId));
+const creator = $computed(() => memberList.find((m) => m.id === message.creatorId));
 const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
 const isOptionsActive = $ref(false);
@@ -24,19 +24,19 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
   <ChatConfirmDeleteMessageDialog :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
-        v-if="member?.name"
+        v-if="creator?.name"
         :active="active && !isDeleteMode"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
-          <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.name" />
+          <v-avatar v-if="creator.image">
+            <v-img :src="creator.image" :alt="creator.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.name" />
+          <DefaultAvatar v-else :name="creator.name" />
         </template>
         <v-list-item-title font="bold!">
-          {{ member.name }}
+          {{ creator.name }}
         </v-list-item-title>
         <ChatUpdatedMessage
           v-if="isUpdateMode"
@@ -70,15 +70,15 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
       </div>
     </template>
     <template #messagePreview>
-      <v-list-item v-if="member?.name">
+      <v-list-item v-if="creator?.name">
         <template #prepend>
-          <v-avatar v-if="member.image">
-            <v-img :src="member.image" :alt="member.name" />
+          <v-avatar v-if="creator.image">
+            <v-img :src="creator.image" :alt="creator.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="member.name" />
+          <DefaultAvatar v-else :name="creator.name" />
         </template>
         <v-list-item-title font="bold!">
-          {{ member.name }}
+          {{ creator.name }}
         </v-list-item-title>
         <v-list-item-subtitle op="100!">
           {{ message.message }}
