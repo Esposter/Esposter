@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import { storeToRefs } from "pinia";
@@ -8,7 +7,7 @@ const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = $(storeToRefs(roomStore));
 const messageStore = useMessageStore();
-const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
+const { pushMessageList, updateMessageListNextCursor, initialiseMessageList, createMessage } = messageStore;
 const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));
 const hasMore = $computed(() => Boolean(messageListNextCursor));
 const fetchMoreMessages = async (onComplete: () => void) => {
@@ -26,13 +25,16 @@ const fetchMoreMessages = async (onComplete: () => void) => {
   }
 };
 
-const { messages, nextCursor } = currentRoomId
-  ? await $client.message.readMessages.query({ partitionKey: currentRoomId, cursor: null })
-  : { messages: [] as MessageEntity[], nextCursor: null };
-initialiseMessageList(messages);
-updateMessageListNextCursor(nextCursor);
+if (currentRoomId) {
+  const { messages, nextCursor } = await $client.message.readMessages.query({
+    partitionKey: currentRoomId,
+    cursor: null,
+  });
+  initialiseMessageList(messages);
+  updateMessageListNextCursor(nextCursor);
 
-$client.message.onCreateMessage.subscribe(undefined, { onData: (data) => console.log("onCreateMessage subscription") });
+  $client.message.onCreateMessage.subscribe({ partitionKey: currentRoomId }, { onData: (data) => createMessage(data) });
+}
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 import { router } from "@/server/trpc";
 import { customEventEmitter } from "@/server/trpc/events";
-import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
+import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
 import { AzureTable, MessageEntity } from "@/services/azure/types";
 import { getReverseTickedTimestamp } from "@/services/azure/util";
@@ -24,6 +24,9 @@ const readMessagesInputSchema = messageSchema
   .merge(z.object({ cursor: z.string().nullable() }));
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
+const onCreateMessageInputSchema = messageSchema.pick({ partitionKey: true });
+export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
+
 const createMessageInputSchema = messageSchema.pick({ partitionKey: true, message: true });
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
@@ -44,15 +47,17 @@ export const messageRouter = router({
       const messages = await getTopNEntities(messageClient, FETCH_LIMIT + 1, MessageEntity, { filter });
       return { messages, nextCursor: getNextCursor(messages, "rowKey", FETCH_LIMIT) };
     }),
-  onCreateMessage: authedProcedure.subscription(() =>
-    observable<MessageEntity>((emit) => {
-      const onCreateMessage = (data: MessageEntity) => emit.next(data);
-      customEventEmitter.on("onCreateMessage", onCreateMessage);
-      return () => {
-        customEventEmitter.off("onCreateMessage", onCreateMessage);
-      };
-    })
-  ),
+  onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "partitionKey")
+    .input(onCreateMessageInputSchema)
+    .subscription(({ input }) =>
+      observable<MessageEntity>((emit) => {
+        const onCreateMessage = (data: MessageEntity) => () => {
+          if (data.partitionKey === input.partitionKey) emit.next(data);
+        };
+        customEventEmitter.on("onCreateMessage", onCreateMessage);
+        return () => customEventEmitter.off("onCreateMessage", onCreateMessage);
+      })
+    ),
   createMessage: getRoomUserProcedure(createMessageInputSchema, "partitionKey")
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
