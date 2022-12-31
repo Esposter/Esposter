@@ -1,6 +1,6 @@
 import type { AppRouter } from "@/server/trpc/routers";
 import { isServer } from "@/util/constants.common";
-import { Environment } from "@/util/environment";
+import { isDevelopment } from "@/util/constants.server";
 import type { TRPCLink } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import superjson from "superjson";
@@ -12,9 +12,7 @@ export default defineNuxtPlugin(() => {
   const links: TRPCLink<AppRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
-      enabled: (opts) =>
-        (process.env.NODE_ENV === Environment.development && !isServer()) ||
-        (opts.direction === "down" && opts.result instanceof Error),
+      enabled: (opts) => (isDevelopment && !isServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
     splitLink({
       condition: (op) => op.type === "subscription",

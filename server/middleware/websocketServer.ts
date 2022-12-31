@@ -1,6 +1,8 @@
 import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
+import { isProduction } from "@/util/constants.server";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
+import http from "http";
 import https from "https";
 import type { Server, WebSocket } from "ws";
 import { WebSocketServer } from "ws";
@@ -15,7 +17,7 @@ export default defineEventHandler(() => {
 
   const baseUrl = process.env.WS_BASE_URL;
   const port = parseInt(process.env.WS_PORT);
-  const server = https.createServer();
+  const server = isProduction ? https.createServer() : http.createServer();
   const wss = new WebSocketServer({ server });
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 

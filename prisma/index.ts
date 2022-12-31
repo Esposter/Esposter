@@ -1,11 +1,11 @@
-import { isProd } from "@/util/constants.server";
+import { isProduction } from "@/util/constants.server";
 import { PrismaClient } from "@prisma/client";
 import dedent from "dedent";
 import { highlight } from "sql-highlight";
 
 let prismaClient: PrismaClient;
 
-if (isProd) prismaClient = new PrismaClient({ log: ["error"] });
+if (isProduction) prismaClient = new PrismaClient({ log: ["error"] });
 else {
   const devPrismaClient = new PrismaClient({
     log: [
