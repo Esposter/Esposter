@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ITEM_NAME } from "@/util/constants.client";
 import {
   ABOUT_PATH,
   CLICKER_PATH,
@@ -20,7 +21,7 @@ const { status, signOut } = $(useSession());
 const items = $computed(() => {
   const result: Item[] = [
     {
-      title: "Piña Colada Clicker",
+      title: `${ITEM_NAME} Clicker`,
       href: CLICKER_PATH,
       icon: "mdi-fruit-pineapple",
     },

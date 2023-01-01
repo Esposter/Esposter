@@ -31,6 +31,7 @@ export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/${SITE_NAME}/logo.png`
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
 
 // #region Clicker constants
+export const ITEM_NAME = "Piña Colada";
 export const AUTOSAVE_INTERVAL = 60 * 1000;
 export const FPS = 60;
 // #endregion

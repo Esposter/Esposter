@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
+import { ITEM_NAME } from "@/util/constants.client";
 import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();
@@ -12,7 +13,7 @@ const { noPoints } = $(storeToRefs(pointStore));
 <template>
   <NuxtLayout>
     <Head>
-      <Title>{{ noPoints }} Piña Coladas</Title>
+      <Title>{{ noPoints }} {{ ITEM_NAME }}s</Title>
     </Head>
     <template #left>
       <ClickerStoreHeader pt="4" />
