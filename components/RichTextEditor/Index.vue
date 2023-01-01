@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { POST_DESCRIPTION_MAX_LENGTH } from "@/util/constants.common";
 import { CharacterCount } from "@tiptap/extension-character-count";
-import { HardBreak } from "@tiptap/extension-hard-break";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
@@ -18,14 +17,13 @@ const emit = defineEmits<{
 const editor = $(
   useEditor({
     extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder: "Text (optional)" }),
-      CharacterCount.configure({ limit: POST_DESCRIPTION_MAX_LENGTH }),
-      HardBreak.extend({
+      StarterKit.extend({
         addKeyboardShortcuts() {
           return { Enter: () => this.editor.commands.setHardBreak() };
         },
       }),
+      Placeholder.configure({ placeholder: "Text (optional)" }),
+      CharacterCount.configure({ limit: POST_DESCRIPTION_MAX_LENGTH }),
     ],
     content,
     onUpdate: ({ editor }) => emit("update:content", editor.getHTML()),
