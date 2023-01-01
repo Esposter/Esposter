@@ -1,7 +1,11 @@
-import type { Building, Upgrade } from "@/models/clicker";
+import type { BuildingWithStats, Upgrade } from "@/models/clicker";
 import { UpgradeTarget, UpgradeType } from "@/models/clicker";
 
-export const applyBuildingUpgrades = (basePower: number, boughtUpgrades: Upgrade[], boughtBuildings: Building[]) => {
+export const applyBuildingUpgrades = (
+  basePower: number,
+  boughtUpgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[]
+) => {
   let resultPower = basePower;
   for (const boughtBuilding of boughtBuildings) {
     const buildingUpgrades = boughtUpgrades.filter((u) => u.upgradeTargets.includes(boughtBuilding.name));
@@ -35,7 +39,11 @@ const applyMultiplicativeUpgrades = (basePower: number, upgrades: Upgrade[]) => 
   return resultPower;
 };
 
-const applyBuildingAdditiveUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+const applyBuildingAdditiveUpgrades = (
+  basePower: number,
+  upgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[] = []
+) => {
   let resultPower = basePower;
 
   const buildingAdditiveUpgrades = upgrades.filter(
@@ -53,7 +61,11 @@ const applyBuildingAdditiveUpgrades = (basePower: number, upgrades: Upgrade[], b
   return resultPower;
 };
 
-const applyBuildingAdditiveNorUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+const applyBuildingAdditiveNorUpgrades = (
+  basePower: number,
+  upgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[] = []
+) => {
   let resultPower = basePower;
 
   const buildingAdditiveNorUpgrades = upgrades.filter(
@@ -91,7 +103,7 @@ const applyUpgradeMultiplierUpgrades = (upgrades: Upgrade[]) => {
   return resultBoughtUpgrades;
 };
 
-export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: Building[] = []) => {
+export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: BuildingWithStats[] = []) => {
   let resultUpgrades = upgrades;
   resultUpgrades = applyUpgradeMultiplierUpgrades(resultUpgrades);
 

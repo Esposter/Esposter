@@ -32,7 +32,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const newBuildingPrice = getBuildingPrice.value(newBuilding);
     const foundBuilding = gameStore.game.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!foundBuilding) {
-      gameStore.game.boughtBuildings.push(newBuilding);
+      gameStore.game.boughtBuildings.push({ ...newBuilding, level: 1, producedValue: 0 });
       gameStore.game.noPoints -= newBuildingPrice;
       return;
     }

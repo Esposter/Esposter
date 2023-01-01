@@ -6,6 +6,5 @@ export const buildings: Building[] = [
     flavorDescription: "Autoclicks once every 10 seconds.",
     basePrice: 15,
     baseValue: 1e-1,
-    level: 1,
   },
 ];

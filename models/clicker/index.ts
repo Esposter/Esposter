@@ -60,11 +60,15 @@ export interface Building {
   flavorDescription: string;
   basePrice: number;
   baseValue: number;
+}
+
+export interface BuildingWithStats extends Building {
   level: number;
+  producedValue: number;
 }
 
 export interface Game {
   noPoints: number;
   boughtUpgrades: Upgrade[];
-  boughtBuildings: Building[];
+  boughtBuildings: BuildingWithStats[];
 }
