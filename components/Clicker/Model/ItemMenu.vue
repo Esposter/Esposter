@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 
@@ -25,6 +26,7 @@ const emit = defineEmits<{ (event: "buy", value: MouseEvent): void }>();
 // @NOTE: Can remove cast after it's fixed in vue 3.3
 const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
 const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
+const displayPrice = $computed(() => formatNumberLong(price));
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
 // https://github.com/nuxt/framework/issues/7121
 const icon = $computed(() => {
@@ -71,7 +73,7 @@ const icon = $computed(() => {
         </div>
         <div display="flex">
           <v-spacer />
-          {{ price }} <ClickerModelPinaColada width="24" height="24" />
+          {{ displayPrice }} <ClickerModelPinaColada width="24" height="24" />
         </div>
       </v-card-text>
       <template v-if="isBuyable">

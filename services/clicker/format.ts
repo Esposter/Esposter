@@ -1,0 +1,54 @@
+const formatLong = [
+  " thousand",
+  " million",
+  " billion",
+  " trillion",
+  " quadrillion",
+  " quintillion",
+  " sextillion",
+  " septillion",
+  " octillion",
+  " nonillion",
+];
+const prefixesLong = ["", "un", "duo", "tre", "quattuor", "quin", "sex", "septen", "octo", "novem"];
+const suffixesLong = [
+  "decillion",
+  "vigintillion",
+  "trigintillion",
+  "quadragintillion",
+  "quinquagintillion",
+  "sexagintillion",
+  "septuagintillion",
+  "octogintillion",
+  "nonagintillion",
+];
+
+for (const prefixLong of prefixesLong)
+  for (const suffixLong of suffixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
+
+const formatShort = ["k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
+const prefixesShort = ["", "Un", "Do", "Tr", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
+const suffixesShort = ["Dc", "V", "T", "Qa", "Qi", "Sx", "Sp", "O", "N"];
+
+for (const prefixShort of prefixesShort)
+  for (const suffixShort of suffixesShort) formatShort.push(` ${prefixShort}${suffixShort}`);
+
+const formatEveryThirdPower = (notations: string[]) => (number: number) => {
+  if (!isFinite(number)) return "Infinity";
+
+  let base = -1;
+  let notation = "";
+
+  while (Math.round(number) >= 1e3) {
+    number /= 1e3;
+    base++;
+  }
+
+  if (base > notations.length - 1) return "Infinity";
+  else if (base >= 0) notation = notations[base];
+
+  return `${Math.round(number * 1e3) / 1e3}${notation}`;
+};
+
+export const formatNumberLong = formatEveryThirdPower(formatLong);
+export const formatNumberShort = formatEveryThirdPower(formatShort);
