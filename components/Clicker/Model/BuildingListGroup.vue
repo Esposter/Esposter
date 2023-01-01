@@ -7,11 +7,10 @@ interface BuildingListGroupProps {
 
 const props = defineProps<BuildingListGroupProps>();
 const { buildings } = $(toRefs(props));
-const hasBuildings = $computed(() => buildings.length > 0);
 </script>
 
 <template>
-  <v-list-group v-if="hasBuildings">
+  <v-list-group>
     <template #activator="{ props: listProps }">
       <v-list-item :="listProps">
         <template #prepend>
