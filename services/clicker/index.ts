@@ -80,11 +80,11 @@ const applyBuildingAdditiveNorEffects = (
 
 // Apply all upgrade multiplier effects to their specified targets
 const applyUpgradeMultiplierEffects = (upgrades: Upgrade[]) => {
+  const effects = upgrades.flatMap((u) => u.effects);
   const resultUpgrades: Upgrade[] = [];
-  const resultEffects = resultUpgrades.flatMap((u) => u.effects);
 
   for (const upgrade of upgrades) {
-    const resultUpgrade = applyUpgradeMultiplierEffectsSingle(upgrade, resultEffects);
+    const resultUpgrade = applyUpgradeMultiplierEffectsSingle(upgrade, effects);
     resultUpgrades.push(resultUpgrade);
   }
 
