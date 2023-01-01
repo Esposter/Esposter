@@ -3,6 +3,7 @@ import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Building } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
+import { marked } from "marked";
 import { storeToRefs } from "pinia";
 
 interface BuildingListItemProps {
@@ -11,6 +12,7 @@ interface BuildingListItemProps {
 
 const props = defineProps<BuildingListItemProps>();
 const { building } = $(toRefs(props));
+const { background } = useColors();
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
@@ -18,8 +20,8 @@ const { getBoughtBuildingLevel, getBuildingPrice, getBuildingStats, createBought
 const { play } = useSound(buySfx);
 const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
 const buildingPrice = $computed(() => getBuildingPrice(building));
-const buildingStats = $computed(() => getBuildingStats(building));
-const hasBuildingStats = $computed(() => buildingStats.length > 0);
+const buildingStatsHtml = $computed(() => getBuildingStats(building).map((s) => marked.parse(s)));
+const hasBuildingStatsHtml = $computed(() => buildingStatsHtml.length > 0);
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
 </script>
 
@@ -30,10 +32,11 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     :price="buildingPrice"
     :level="boughtBuildingLevel"
   >
-    <template v-if="hasBuildingStats" #append-text>
-      <ul>
-        <li v-for="(buildingStat, index) in buildingStats" :key="index">
-          {{ buildingStat }}
+    <template v-if="hasBuildingStatsHtml" #append-text>
+      <ul px="8">
+        <li v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" class="list-item" mt="1" px="1" rd="1">
+          <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+          <div v-html="buildingStatHtml" />
         </li>
       </ul>
     </template>
@@ -53,3 +56,13 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     </template>
   </ClickerModelItemMenu>
 </template>
+
+<style scoped lang="scss">
+.list-item {
+  background-color: v-bind(background);
+
+  &:last-of-type {
+    margin-bottom: 0.25rem;
+  }
+}
+</style>
