@@ -1,10 +1,9 @@
 import type { inferAsyncReturnType } from "@trpc/server";
-import type { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
+import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
-import type { IncomingMessage } from "http";
-import ws from "ws";
 
-type Contexts = H3Event | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>;
+type Contexts = H3Event | CreateHTTPContextOptions | CreateWSSContextFnOptions;
 
 const isH3Event = (value: Contexts): value is H3Event => "node" in value;
 
@@ -16,7 +15,7 @@ export const createContext = (opts: Contexts) => {
     return { req, res, event: opts };
   }
 
-  const { req, res } = opts as NodeHTTPCreateContextFnOptions<IncomingMessage, ws>;
+  const { req, res } = opts;
   return { req, res };
 };
 
