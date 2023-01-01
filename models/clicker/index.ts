@@ -26,10 +26,10 @@ export enum BuildingName {
   Cursor = "Cursor",
 }
 
-export const UpgradeTarget = { ...GeneralName, ...UpgradeName, ...BuildingName };
-export type UpgradeTarget = GeneralName | UpgradeName | BuildingName;
+export const Target = { ...GeneralName, ...UpgradeName, ...BuildingName };
+export type Target = GeneralName | UpgradeName | BuildingName;
 
-export enum UpgradeType {
+export enum EffectType {
   Additive = "Additive",
   Multiplicative = "Multiplicative",
   // Adds value based on number of specific buildings we have
@@ -39,10 +39,17 @@ export enum UpgradeType {
   UpgradeMultiplier = "UpgradeMultiplier",
 }
 
-export interface UpgradeConfiguration {
-  upgradeType: UpgradeType;
-  // Only used for upgrade types that are based off other specific upgrade targets
-  affectedUpgradeTargets?: UpgradeTarget[];
+export interface EffectConfiguration {
+  type: EffectType;
+  // Only used for effect types that are based off other specific targets
+  // e.g. BuildingAdditive requires number of buildings (targets)
+  targets?: Target[];
+}
+
+export interface Effect {
+  value: number;
+  targets: Target[];
+  configuration: EffectConfiguration;
 }
 
 export interface Upgrade {
@@ -50,9 +57,7 @@ export interface Upgrade {
   description: string;
   flavorDescription: string;
   price: number;
-  value: number;
-  upgradeTargets: UpgradeTarget[];
-  upgradeConfiguration: UpgradeConfiguration;
+  effects: Effect[];
 }
 
 export interface Building {

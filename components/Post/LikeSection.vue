@@ -12,8 +12,8 @@ const { $client } = useNuxtApp();
 const { data } = $(useSession());
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
-const liked = $computed(() => Boolean(post.likes.find((l) => l.userId === data?.user.id && l.value === 1)));
-const unliked = $computed(() => Boolean(post.likes.find((l) => l.userId === data?.user.id && l.value === -1)));
+const liked = $computed(() => post.likes.some((l) => l.userId === data?.user.id && l.value === 1));
+const unliked = $computed(() => post.likes.some((l) => l.userId === data?.user.id && l.value === -1));
 const onCreateLike = async (value: 1 | -1) => {
   const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
   createLike(newLike);

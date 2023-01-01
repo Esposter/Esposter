@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UpgradeTarget } from "@/models/clicker";
+import { Target } from "@/models/clicker";
 import { filename } from "pathe/utils";
 
 interface RotatingCursorsProps {
@@ -50,6 +50,6 @@ watch(
     position="absolute"
     top="0"
   >
-    <img position="absolute" width="32" height="32" rotate="135" :src="icon" :alt="UpgradeTarget.Cursor" />
+    <img position="absolute" width="32" height="32" rotate="135" :src="icon" :alt="Target.Cursor" />
   </div>
 </template>
