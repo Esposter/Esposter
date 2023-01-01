@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { ITEM_NAME } from "@/util/constants.client";
@@ -8,12 +9,13 @@ const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const pointStore = usePointStore();
 const { noPoints } = $(storeToRefs(pointStore));
+const displayNoPoints = $computed(() => formatNumberLong(noPoints));
 </script>
 
 <template>
   <NuxtLayout>
     <Head>
-      <Title>{{ noPoints }} {{ ITEM_NAME }}s</Title>
+      <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
     </Head>
     <template #left>
       <ClickerStoreHeader pt="4" />
