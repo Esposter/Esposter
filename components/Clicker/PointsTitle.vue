@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
-import { usePointStore } from "@/store/clicker/usePointStore";
+import { useGameStore } from "@/store/clicker/useGameStore";
 import { ITEM_NAME } from "@/util/constants.client";
 import { storeToRefs } from "pinia";
 
-const pointStore = usePointStore();
-const { noPoints } = $(storeToRefs(pointStore));
+const gameStore = useGameStore();
+const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = $(storeToRefs(buildingStore));
-const displayNoPoints = $computed(() => formatNumberLong(noPoints));
+const displayNoPointsHtml = $computed(() => (game ? formatNumberLong(game.noPoints).replace(/\s/, "<br/>") : 0));
 const displayAllBuildingPower = $computed(() => formatNumberLong(allBuildingPower));
 </script>
 
 <template>
-  <div class="text-h3" text="center" font="bold" select="none">{{ displayNoPoints }} {{ ITEM_NAME }}s</div>
+  <div class="text-h3" text="center" font="bold" select="none">
+    <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+    <span v-html="displayNoPointsHtml" /> {{ ITEM_NAME }}s
+  </div>
   <div class="text-h5" text="center" font="bold" select="none">per second: {{ displayAllBuildingPower }}</div>
 </template>

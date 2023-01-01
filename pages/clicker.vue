@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
-import { usePointStore } from "@/store/clicker/usePointStore";
 import { ITEM_NAME } from "@/util/constants.client";
 import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
-const pointStore = usePointStore();
-const { noPoints } = $(storeToRefs(pointStore));
-const displayNoPoints = $computed(() => formatNumberLong(noPoints));
+const displayNoPoints = $computed(() => (game ? formatNumberLong(game.noPoints) : 0));
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout v-if="game">
     <Head>
       <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
     </Head>
@@ -21,7 +18,7 @@ const displayNoPoints = $computed(() => formatNumberLong(noPoints));
       <ClickerStoreHeader pt="4" />
       <ClickerStoreList />
     </template>
-    <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
+    <v-container h="full" display="flex" justify="center" items="center" flex="col">
       <ClickerHeader w="full" />
       <ClickerPointsTitle />
       <ClickerContent />

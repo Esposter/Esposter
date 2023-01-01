@@ -1,4 +1,4 @@
-import type { Building } from "@/models/clicker";
+import type { Building, BuildingWithStats } from "@/models/clicker";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
@@ -17,6 +17,10 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!gameStore.game) return 0;
     return applyBuildingUpgrades(0, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
   });
+  const getBoughtBuildingPower = computed(() => (boughtBuilding: BuildingWithStats) => {
+    if (!gameStore.game) return 0;
+    return applyBuildingUpgradesSingle(boughtBuilding, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
+  });
   const getBoughtBuildingLevel = computed(() => (building: Building) => {
     if (!gameStore.game) return 0;
 
@@ -24,21 +28,13 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!boughtBuilding) return 0;
     return boughtBuilding.level;
   });
-  const getBuildingPrice = computed(() => (building: Building) => {
-    const boughtBuildingLevel = getBoughtBuildingLevel.value(building);
-    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingLevel));
-  });
-  const getBuildingStats = computed(() => (building: Building) => {
+  const getBoughtBuildingStats = computed(() => (building: Building) => {
     if (!gameStore.game) return [];
 
     const boughtBuilding = gameStore.game.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return [];
 
-    const buildingPower = applyBuildingUpgradesSingle(
-      boughtBuilding,
-      gameStore.game.boughtUpgrades,
-      gameStore.game.boughtBuildings
-    );
+    const buildingPower = getBoughtBuildingPower.value(boughtBuilding);
 
     return [
       `Each ${boughtBuilding.name} produces **${formatNumberLong(
@@ -48,9 +44,13 @@ export const useBuildingStore = defineStore("clicker/building", () => {
         buildingPower
       )} ${ITEM_NAME}s** per second (**${(buildingPower / allBuildingPower.value) * 100}%** of total ${getInitials(
         ITEM_NAME
-      )})`,
+      )}pS)`,
       `**${formatNumberLong(boughtBuilding.producedValue)}** ${ITEM_NAME}s produced so far`,
     ];
+  });
+  const getBuildingPrice = computed(() => (building: Building) => {
+    const boughtBuildingLevel = getBoughtBuildingLevel.value(building);
+    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingLevel));
   });
 
   const createBoughtBuilding = (newBuilding: Building) => {
@@ -72,9 +72,10 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     buildingList,
     initialiseBuildingList,
     allBuildingPower,
+    getBoughtBuildingPower,
     getBoughtBuildingLevel,
     getBuildingPrice,
-    getBuildingStats,
+    getBoughtBuildingStats,
     createBoughtBuilding,
   };
 });

@@ -14,6 +14,7 @@ const { game } = $(storeToRefs(gameStore));
 const pointStore = usePointStore();
 const { incrementPoints } = pointStore;
 const buildingStore = useBuildingStore();
+const { getBoughtBuildingPower } = buildingStore;
 const { allBuildingPower } = $(storeToRefs(buildingStore));
 const popupStore = usePopupStore();
 const { onClick } = popupStore;
@@ -25,15 +26,26 @@ const cursorAmount = $computed(() => {
   return 0;
 });
 
+const buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
 onMounted(() => {
+  if (!game) return;
+
+  for (const boughtBuilding of game.boughtBuildings)
+    buildingsStatsTimers.push(
+      setInterval(() => {
+        const buildingPower = getBoughtBuildingPower(boughtBuilding);
+        boughtBuilding.producedValue += buildingPower / FPS;
+      }, 1000 / FPS)
+    );
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
 
 onUnmounted(() => {
+  buildingsStatsTimers.forEach((t) => clearInterval(t));
   buildingsClickerTimer && clearInterval(buildingsClickerTimer);
   autosaveTimer && clearInterval(autosaveTimer);
 });

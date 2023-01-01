@@ -12,16 +12,15 @@ interface BuildingListItemProps {
 
 const props = defineProps<BuildingListItemProps>();
 const { building } = $(toRefs(props));
-const { background } = useColors();
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
-const { getBoughtBuildingLevel, getBuildingPrice, getBuildingStats, createBoughtBuilding } = buildingStore;
+const { getBoughtBuildingLevel, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
 const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
-const buildingPrice = $computed(() => getBuildingPrice(building));
-const buildingStatsHtml = $computed(() => getBuildingStats(building).map((s) => marked.parse(s)));
+const buildingStatsHtml = $computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = $computed(() => buildingStatsHtml.length > 0);
+const buildingPrice = $computed(() => getBuildingPrice(building));
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
 </script>
 
@@ -58,11 +57,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
 </template>
 
 <style scoped lang="scss">
-.list-item {
-  background-color: v-bind(background);
-
-  &:last-of-type {
-    margin-bottom: 0.25rem;
-  }
+.list-item:last-of-type {
+  margin-bottom: 0.25rem;
 }
 </style>
