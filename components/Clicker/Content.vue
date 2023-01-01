@@ -14,7 +14,7 @@ const { game } = $(storeToRefs(gameStore));
 const pointStore = usePointStore();
 const { incrementPoints } = pointStore;
 const buildingStore = useBuildingStore();
-const { buildingPower } = $(storeToRefs(buildingStore));
+const { allBuildingPower } = $(storeToRefs(buildingStore));
 const popupStore = usePopupStore();
 const { onClick } = popupStore;
 const cursorAmount = $computed(() => {
@@ -29,7 +29,7 @@ let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
 onMounted(() => {
-  buildingsClickerTimer = setInterval(() => incrementPoints(buildingPower / FPS), 1000 / FPS);
+  buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
 

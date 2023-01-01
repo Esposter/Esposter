@@ -29,7 +29,7 @@ updatePostListNextCursor(nextCursor);
     </template>
     <v-container>
       <v-row>
-        <v-col v-for="(post, index) in postList" :key="index" cols="12">
+        <v-col v-for="post in postList" :key="post.id" cols="12">
           <PostCard :post="post" />
         </v-col>
       </v-row>

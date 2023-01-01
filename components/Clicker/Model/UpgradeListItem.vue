@@ -26,13 +26,20 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.pr
     :description="upgrade.description"
     :flavor-description="upgrade.flavorDescription"
     :price="upgrade.price"
-    :is-affordable="isAffordable"
-    :is-buyable="isBuyable"
-    @buy="
-      () => {
-        createBoughtUpgrade(upgrade);
-        play();
-      }
-    "
-  />
+  >
+    <template v-if="isBuyable" #action>
+      <v-spacer />
+      <StyledButton
+        :button-props="{ disabled: !isAffordable }"
+        @click="
+          () => {
+            createBoughtUpgrade(upgrade);
+            play();
+          }
+        "
+      >
+        Buy
+      </StyledButton>
+    </template>
+  </ClickerModelItemMenu>
 </template>

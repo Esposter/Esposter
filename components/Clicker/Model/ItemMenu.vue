@@ -4,11 +4,8 @@ import { marked } from "marked";
 import { filename } from "pathe/utils";
 
 // @NOTE: Use this in vue 3.3
-// type ItemMenuProps = {
-//   isAffordable: boolean;
-//   isBuyable?: true;
-// } & Pick<Upgrade & Building, "name" | "flavorDescription" | "price"> &
-//   Partial<Pick<Upgrade & Building, "description" | "level">>;
+// type ItemMenuProps = Pick<Upgrade & Building, "name" | "flavorDescription" | "price"> &
+// Partial<Pick<Upgrade & Building, "description" | "level">>;
 
 type ItemMenuProps = {
   name: string;
@@ -16,13 +13,11 @@ type ItemMenuProps = {
   flavorDescription: string;
   price: number;
   level?: number;
-  isAffordable: boolean;
-  isBuyable?: true;
 };
 
 const props = defineProps<ItemMenuProps>();
-const { name, description, flavorDescription, price, level, isAffordable, isBuyable } = $(toRefs(props));
-const emit = defineEmits<{ (event: "buy", value: MouseEvent): void }>();
+const { name, description, flavorDescription, price, level } = $(toRefs(props));
+const slots = useSlots();
 // @NOTE: Can remove cast after it's fixed in vue 3.3
 const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
 const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
@@ -76,11 +71,14 @@ const icon = $computed(() => {
           {{ displayPrice }} <ClickerModelPinaColada width="24" height="24" />
         </div>
       </v-card-text>
-      <template v-if="isBuyable">
+      <template v-if="slots['append-text']">
+        <v-divider />
+        <slot name="append-text" />
+      </template>
+      <template v-if="slots.action">
         <v-divider />
         <v-card-actions>
-          <v-spacer />
-          <StyledButton :button-props="{ disabled: !isAffordable }" @click="(e) => emit('buy', e)">Buy</StyledButton>
+          <slot name="action" />
         </v-card-actions>
       </template>
     </v-card>

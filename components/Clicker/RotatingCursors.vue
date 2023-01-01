@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Target } from "@/models/clicker";
 import { filename } from "pathe/utils";
+import { v4 as uuidV4 } from "uuid";
 
 interface RotatingCursorsProps {
   amount: number;
@@ -8,6 +9,7 @@ interface RotatingCursorsProps {
 
 const props = defineProps<RotatingCursorsProps>();
 const { amount } = $(toRefs(props));
+const rotatingDivIds = $computed(() => Array.from({ length: amount }, () => uuidV4()));
 
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
 // https://github.com/nuxt/framework/issues/7121
@@ -24,7 +26,8 @@ const animateCursors = (amount: number) => {
 
   for (let i = 0; i < amount; i++) {
     const rotationOffset = initialRotationOffsets[i];
-    const rotatingDiv = document.getElementById(`rotating-div-${i}`) as HTMLDivElement;
+    const rotatingDivId = rotatingDivIds[i];
+    const rotatingDiv = document.getElementById(rotatingDivId) as HTMLDivElement;
     rotatingDiv.animate(
       [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
       { duration: 60 * 1000, iterations: Infinity }
@@ -42,9 +45,9 @@ watch(
 
 <template>
   <div
-    v-for="(_, index) in amount"
-    :id="`rotating-div-${index}`"
-    :key="index"
+    v-for="rotatingDivId in rotatingDivIds"
+    :id="rotatingDivId"
+    :key="rotatingDivId"
     w="64"
     h="64"
     position="absolute"

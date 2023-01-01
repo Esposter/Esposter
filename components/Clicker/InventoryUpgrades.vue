@@ -4,10 +4,14 @@ import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
+const inventoryUpgrades = $computed(() => {
+  if (!game) return [];
+  return game.boughtUpgrades;
+});
 </script>
 
 <template>
-  <v-list>
-    <ClickerModelUpgradeListGroup v-if="game" :upgrades="game.boughtUpgrades" />
+  <v-list overflow-y="auto!">
+    <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" />
   </v-list>
 </template>

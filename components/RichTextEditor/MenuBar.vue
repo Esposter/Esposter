@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/vue-3";
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
@@ -77,7 +77,7 @@ const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
   <div display="flex" flex="wrap">
     <template v-for="(item, index) in items">
       <v-divider v-if="isDivider(item)" :key="`divider${index}`" thickness="2" vertical mx="4!" h="8!" self="center!" />
-      <v-tooltip v-else :key="index" location="top" :text="item.title">
+      <v-tooltip v-else :key="item.title" location="top" :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd="0!" :="mergeProps(item, tooltipProps)" />
         </template>

@@ -26,7 +26,7 @@ if (buildings) initialiseBuildingList(buildings);
 </script>
 
 <template>
-  <v-list>
+  <v-list overflow-y="auto!">
     <ClickerModelUpgradeListGroup :upgrades="storeUpgrades" is-buyable />
     <ClickerModelBuildingListGroup :buildings="buildingList" />
   </v-list>

@@ -14,10 +14,12 @@ const { building } = $(toRefs(props));
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
-const { createBoughtBuilding, getBuildingPrice, getBoughtBuildingLevel } = buildingStore;
+const { getBoughtBuildingLevel, getBuildingPrice, getBuildingStats, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
 const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
 const buildingPrice = $computed(() => getBuildingPrice(building));
+const buildingStats = $computed(() => getBuildingStats(building));
+const hasBuildingStats = $computed(() => buildingStats.length > 0);
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
 </script>
 
@@ -27,13 +29,27 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     :flavor-description="building.flavorDescription"
     :price="buildingPrice"
     :level="boughtBuildingLevel"
-    :is-affordable="isAffordable"
-    is-buyable
-    @buy="
-      () => {
-        createBoughtBuilding(building);
-        play();
-      }
-    "
-  />
+  >
+    <template v-if="hasBuildingStats" #append-text>
+      <ul>
+        <li v-for="(buildingStat, index) in buildingStats" :key="index">
+          {{ buildingStat }}
+        </li>
+      </ul>
+    </template>
+    <template #action>
+      <v-spacer />
+      <StyledButton
+        :button-props="{ disabled: !isAffordable }"
+        @click="
+          () => {
+            createBoughtBuilding(building);
+            play();
+          }
+        "
+      >
+        Buy
+      </StyledButton>
+    </template>
+  </ClickerModelItemMenu>
 </template>

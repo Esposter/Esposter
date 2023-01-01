@@ -7,13 +7,18 @@ export const applyBuildingUpgrades = (
   boughtBuildings: BuildingWithStats[]
 ) => {
   let resultPower = basePower;
-  for (const boughtBuilding of boughtBuildings) {
-    const buildingUpgrades = boughtUpgrades.filter((u) =>
-      u.effects.some((e) => e.targets.includes(boughtBuilding.name))
-    );
-    resultPower += applyUpgrades(boughtBuilding.baseValue * boughtBuilding.level, buildingUpgrades, boughtBuildings);
-  }
+  for (const boughtBuilding of boughtBuildings)
+    resultPower += applyBuildingUpgradesSingle(boughtBuilding, boughtUpgrades, boughtBuildings);
   return resultPower;
+};
+
+export const applyBuildingUpgradesSingle = (
+  building: BuildingWithStats,
+  boughtUpgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[]
+) => {
+  const buildingUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(building.name)));
+  return applyUpgrades(building.baseValue * building.level, buildingUpgrades, boughtBuildings);
 };
 
 export const applyMouseUpgrades = (basePower: number, boughtUpgrades: Upgrade[]) => {
@@ -99,9 +104,7 @@ const applyUpgradeMultiplierEffectsSingle = (upgrade: Upgrade, effects: Effect[]
 
   for (const effect of upgrade.effects) {
     let resultPower = effect.value;
-
     for (const upgradeMultiplierEffect of upgradeMultiplierEffects) resultPower *= upgradeMultiplierEffect.value;
-
     resultEffects.push({ ...effect, value: resultPower });
   }
 

@@ -66,7 +66,9 @@ router.beforeEach(() => {
 
 <style scoped lang="scss">
 // Only show scrollbar for part of the drawer that actually has
-// content greater than screen size rather than the entire drawer
+// content greater than screen size rather than the entire drawer.
+// Make sure to apply attribute overflow-y="auto" for the container
+// you want to show the scrollbar on in the drawer
 :deep(.v-navigation-drawer__content) {
   display: flex;
   flex-direction: column;

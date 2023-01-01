@@ -8,12 +8,12 @@ import { storeToRefs } from "pinia";
 const pointStore = usePointStore();
 const { noPoints } = $(storeToRefs(pointStore));
 const buildingStore = useBuildingStore();
-const { buildingPower } = $(storeToRefs(buildingStore));
+const { allBuildingPower } = $(storeToRefs(buildingStore));
 const displayNoPoints = $computed(() => formatNumberLong(noPoints));
-const displayBuildingPower = $computed(() => formatNumberLong(buildingPower));
+const displayAllBuildingPower = $computed(() => formatNumberLong(allBuildingPower));
 </script>
 
 <template>
   <div class="text-h3" text="center" font="bold" select="none">{{ displayNoPoints }} {{ ITEM_NAME }}s</div>
-  <div class="text-h5" text="center" font="bold" select="none">per second: {{ displayBuildingPower }}</div>
+  <div class="text-h5" text="center" font="bold" select="none">per second: {{ displayAllBuildingPower }}</div>
 </template>
