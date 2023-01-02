@@ -15,9 +15,9 @@ const { building } = $(toRefs(props));
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
-const { getBoughtBuildingLevel, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
+const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
-const boughtBuildingLevel = $computed(() => getBoughtBuildingLevel(building));
+const boughtBuildingAmount = $computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = $computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = $computed(() => buildingStatsHtml.length > 0);
 const buildingPrice = $computed(() => getBuildingPrice(building));
@@ -29,7 +29,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     :name="building.name"
     :flavor-description="building.flavorDescription"
     :price="buildingPrice"
-    :level="boughtBuildingLevel"
+    :amount="boughtBuildingAmount"
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
       <ul px="8">

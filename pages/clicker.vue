@@ -26,7 +26,7 @@ const displayNoPoints = $computed(() => (game ? formatNumberLong(game.noPoints) 
     <ClickerClickPopups />
     <template #right>
       <ClickerInventoryHeader pt="4" />
-      <ClickerInventoryUpgrades />
+      <ClickerInventoryList />
     </template>
   </NuxtLayout>
 </template>
@@ -39,10 +39,7 @@ const displayNoPoints = $computed(() => (game ? formatNumberLong(game.noPoints) 
 </style>
 
 <style scoped lang="scss">
-:deep(.clickable) {
-  &:active {
-    transform: $clickShrink;
-    transform-origin: center;
-  }
+:deep(.v-list-group__items > .v-list-item) {
+  padding-inline-start: 1rem !important;
 }
 </style>

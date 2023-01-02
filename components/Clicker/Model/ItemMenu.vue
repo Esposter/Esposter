@@ -5,18 +5,18 @@ import { filename } from "pathe/utils";
 
 // @NOTE: Use this in vue 3.3
 // type ItemMenuProps = Pick<Upgrade & Building, "name" | "flavorDescription" | "price"> &
-// Partial<Pick<Upgrade & Building, "description" | "level">>;
+// Partial<Pick<Upgrade & Building, "description" | "amount">>;
 
 type ItemMenuProps = {
   name: string;
   description?: string;
   flavorDescription: string;
   price: number;
-  level?: number;
+  amount?: number;
 };
 
 const props = defineProps<ItemMenuProps>();
-const { name, description, flavorDescription, price, level } = $(toRefs(props));
+const { name, description, flavorDescription, price, amount } = $(toRefs(props));
 const slots = useSlots();
 // @NOTE: Can remove cast after it's fixed in vue 3.3
 const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
@@ -38,15 +38,15 @@ const icon = $computed(() => {
     <template #activator="{ props: menuProps }">
       <v-list-item :title="name" select="none" :="menuProps">
         <template #prepend>
-          <img width="32" height="32" :src="icon" :alt="name" />
+          <img mr="1" width="32" height="32" :src="icon" :alt="name" />
         </template>
         <v-list-item-subtitle op="100!">
           {{ displayPrice }}
           <ClickerModelPinaColada width="16" height="16" />
         </v-list-item-subtitle>
-        <template v-if="level" #append>
+        <template v-if="amount" #append>
           <span font="bold">
-            {{ level }}
+            {{ amount }}
           </span>
         </template>
       </v-list-item>

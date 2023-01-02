@@ -18,7 +18,7 @@ export const applyBuildingUpgradesSingle = (
   boughtBuildings: BuildingWithStats[]
 ) => {
   const buildingUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(building.name)));
-  return applyUpgrades(building.baseValue, buildingUpgrades, boughtBuildings) * building.level;
+  return applyUpgrades(building.baseValue, buildingUpgrades, boughtBuildings) * building.amount;
 };
 
 export const applyMouseUpgrades = (
@@ -61,7 +61,7 @@ const applyBuildingAdditiveEffects = (
       const foundBuilding = boughtBuildings.find((b) => b.name === target);
       if (!foundBuilding) break;
 
-      resultPower += buildingAdditiveEffect.value * foundBuilding.level;
+      resultPower += buildingAdditiveEffect.value * foundBuilding.amount;
     }
   }
 
@@ -80,7 +80,8 @@ const applyBuildingAdditiveNorEffects = (
     const targets = buildingAdditiveNorEffect.configuration.targets ?? [];
 
     for (const boughtBuilding of boughtBuildings) {
-      if (!targets.includes(boughtBuilding.name)) resultPower += buildingAdditiveNorEffect.value * boughtBuilding.level;
+      if (!targets.includes(boughtBuilding.name))
+        resultPower += buildingAdditiveNorEffect.value * boughtBuilding.amount;
     }
   }
 

@@ -69,7 +69,7 @@ export interface Building {
 }
 
 export interface BuildingWithStats extends Building {
-  level: number;
+  amount: number;
   producedValue: number;
 }
 

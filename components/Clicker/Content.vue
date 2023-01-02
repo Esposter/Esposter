@@ -21,7 +21,7 @@ const { onClick } = popupStore;
 const cursorAmount = $computed(() => {
   if (!game) return 0;
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
-  return cursorBuilding?.level ?? 0;
+  return cursorBuilding?.amount ?? 0;
 });
 const boughtBuildingNames = $computed(() => game?.boughtBuildings.map((b) => b.name) ?? []);
 
@@ -77,3 +77,10 @@ watch(
     />
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.clickable:active) {
+  transform: $clickShrink;
+  transform-origin: center;
+}
+</style>
