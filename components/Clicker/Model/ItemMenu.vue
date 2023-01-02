@@ -36,15 +36,14 @@ const icon = $computed(() => {
 <template>
   <v-menu location="right center" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-list-item select="none" :="menuProps">
+      <v-list-item :title="name" select="none" :="menuProps">
         <template #prepend>
           <img width="32" height="32" :src="icon" :alt="name" />
         </template>
-        <template #title>
-          <span>
-            {{ name }}
-          </span>
-        </template>
+        <v-list-item-subtitle op="100!">
+          {{ displayPrice }}
+          <ClickerModelPinaColada width="16" height="16" />
+        </v-list-item-subtitle>
         <template v-if="level" #append>
           <span font="bold">
             {{ level }}
@@ -68,7 +67,7 @@ const icon = $computed(() => {
         </div>
         <div display="flex">
           <v-spacer />
-          {{ displayPrice }} <ClickerModelPinaColada width="24" height="24" />
+          {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
         </div>
       </v-card-text>
       <template v-if="slots['append-text']">
