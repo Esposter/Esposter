@@ -18,7 +18,7 @@ export const applyBuildingUpgradesSingle = (
   boughtBuildings: BuildingWithStats[]
 ) => {
   const buildingUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(building.name)));
-  return applyUpgrades(building.baseValue * building.level, buildingUpgrades, boughtBuildings);
+  return applyUpgrades(building.baseValue, buildingUpgrades, boughtBuildings) * building.level;
 };
 
 export const applyMouseUpgrades = (basePower: number, boughtUpgrades: Upgrade[]) => {
