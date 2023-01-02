@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatNumberLong } from "@/services/clicker/format";
+
 export interface ClickPopupProps {
   points: number;
   top: number;
@@ -9,13 +11,16 @@ export interface ClickPopupProps {
 const props = defineProps<ClickPopupProps>();
 const { points, top, left, duration } = $(toRefs(props));
 const { primary } = useColors();
+const displayPoints = $computed(() => formatNumberLong(points));
 const topPx = $computed(() => `${top}px`);
 const leftPx = $computed(() => `${left}px`);
 const durationMs = $computed(() => `${duration}ms`);
 </script>
 
 <template>
-  <div class="text-h5 popup" position="absolute" font="bold" select="none" pointer-events="none">+{{ points }}</div>
+  <div class="text-h5 popup" position="absolute" font="bold" select="none" pointer-events="none">
+    +{{ displayPoints }}
+  </div>
 </template>
 
 <style scoped lang="scss">
