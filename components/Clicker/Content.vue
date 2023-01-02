@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Target } from "@/models/clicker";
+import { BuildingWithStats, Target } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
@@ -20,26 +20,28 @@ const popupStore = usePopupStore();
 const { onClick } = popupStore;
 const cursorAmount = $computed(() => {
   if (!game) return 0;
-
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
-  if (cursorBuilding) return cursorBuilding.level;
-  return 0;
+  return cursorBuilding?.level ?? 0;
 });
 
 const buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
-onMounted(() => {
-  if (!game) return;
-
-  for (const boughtBuilding of game.boughtBuildings)
+const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[]) => {
+  for (const boughtBuilding of boughtBuildings)
     buildingsStatsTimers.push(
       setInterval(() => {
         const buildingPower = getBoughtBuildingPower(boughtBuilding);
         boughtBuilding.producedValue += buildingPower / FPS;
       }, 1000 / FPS)
     );
+};
+
+onMounted(() => {
+  if (!game) return;
+
+  setBuildingStatsTimers(game.boughtBuildings);
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
@@ -49,6 +51,16 @@ onUnmounted(() => {
   buildingsClickerTimer && clearInterval(buildingsClickerTimer);
   autosaveTimer && clearInterval(autosaveTimer);
 });
+
+watch(
+  () => game?.boughtBuildings,
+  (newValue) => {
+    buildingsStatsTimers.forEach((t) => clearInterval(t));
+    if (!newValue) return;
+    setBuildingStatsTimers(newValue);
+  },
+  { deep: true }
+);
 </script>
 
 <template>
