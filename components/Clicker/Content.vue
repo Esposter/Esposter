@@ -23,8 +23,9 @@ const cursorAmount = $computed(() => {
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.level ?? 0;
 });
+const boughtBuildingNames = $computed(() => game?.boughtBuildings.map((b) => b.name) ?? []);
 
-const buildingsStatsTimers = $ref<number[]>([]);
+let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
@@ -53,13 +54,14 @@ onUnmounted(() => {
 });
 
 watch(
-  () => game?.boughtBuildings,
-  (newValue) => {
+  () => boughtBuildingNames,
+  () => {
+    if (!game) return;
+
     buildingsStatsTimers.forEach((t) => clearInterval(t));
-    if (!newValue) return;
-    setBuildingStatsTimers(newValue);
-  },
-  { deep: true }
+    buildingsStatsTimers = [];
+    setBuildingStatsTimers(game.boughtBuildings);
+  }
 );
 </script>
 
