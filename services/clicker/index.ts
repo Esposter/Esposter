@@ -71,7 +71,7 @@ const applyBuildingAdditiveNorEffects = (
 ) => {
   let resultPower = basePower;
 
-  const buildingAdditiveNorEffects = effects.filter((e) => e.configuration.type === EffectType.BuildingAdditive);
+  const buildingAdditiveNorEffects = effects.filter((e) => e.configuration.type === EffectType.BuildingAdditiveNor);
   for (const buildingAdditiveNorEffect of buildingAdditiveNorEffects) {
     const targets = buildingAdditiveNorEffect.configuration.targets ?? [];
 
