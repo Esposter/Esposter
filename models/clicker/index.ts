@@ -24,6 +24,7 @@ export type UpgradeName = CursorUpgradeName;
 
 export enum BuildingName {
   Cursor = "Cursor",
+  Grandma = "Grandma",
 }
 
 export const Target = { ...GeneralName, ...UpgradeName, ...BuildingName };

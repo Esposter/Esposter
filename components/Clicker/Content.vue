@@ -23,7 +23,6 @@ const cursorAmount = $computed(() => {
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.level ?? 0;
 });
-const boughtBuildingNames = $computed(() => game?.boughtBuildings.map((b) => b.name) ?? []);
 
 let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
@@ -54,7 +53,7 @@ onUnmounted(() => {
 });
 
 watch(
-  () => boughtBuildingNames,
+  () => game?.boughtBuildings.map((b) => b.name),
   () => {
     if (!game) return;
 

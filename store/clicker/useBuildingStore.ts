@@ -42,9 +42,9 @@ export const useBuildingStore = defineStore("clicker/building", () => {
       )} ${ITEM_NAME}s** per second`,
       `${boughtBuilding.level} ${boughtBuilding.name}s producing **${formatNumberLong(
         buildingPower
-      )} ${ITEM_NAME}s** per second (**${(buildingPower / allBuildingPower.value) * 100}%** of total ${getInitials(
-        ITEM_NAME
-      )}pS)`,
+      )} ${ITEM_NAME}s** per second (**${formatNumberLong(
+        (buildingPower / allBuildingPower.value) * 100
+      )}%** of total ${getInitials(ITEM_NAME)}pS)`,
       `**${formatNumberLong(boughtBuilding.producedValue)}** ${ITEM_NAME}s produced so far`,
     ];
   });
