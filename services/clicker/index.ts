@@ -21,9 +21,13 @@ export const applyBuildingUpgradesSingle = (
   return applyUpgrades(building.baseValue, buildingUpgrades, boughtBuildings) * building.level;
 };
 
-export const applyMouseUpgrades = (basePower: number, boughtUpgrades: Upgrade[]) => {
+export const applyMouseUpgrades = (
+  basePower: number,
+  boughtUpgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[]
+) => {
   const mouseUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(Target.Mouse)));
-  return applyUpgrades(basePower, mouseUpgrades);
+  return applyUpgrades(basePower, mouseUpgrades, boughtBuildings);
 };
 
 const applyAdditiveEffects = (basePower: number, effects: Effect[]) => {
@@ -111,7 +115,7 @@ const applyUpgradeMultiplierEffectsSingle = (upgrade: Upgrade, effects: Effect[]
   return { ...upgrade, effects: resultEffects };
 };
 
-export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: BuildingWithStats[] = []) => {
+export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: BuildingWithStats[]) => {
   let resultUpgrades = upgrades;
   resultUpgrades = applyUpgradeMultiplierEffects(resultUpgrades);
 

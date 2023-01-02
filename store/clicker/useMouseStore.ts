@@ -6,7 +6,7 @@ export const useMouseStore = defineStore("clicker/mouse", () => {
   const gameStore = useGameStore();
   const mousePower = computed(() => {
     if (!gameStore.game) return 0;
-    return applyMouseUpgrades(1, gameStore.game.boughtUpgrades);
+    return applyMouseUpgrades(1, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
   });
   return { mousePower };
 });
