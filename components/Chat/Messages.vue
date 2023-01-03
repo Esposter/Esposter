@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
+import type { Unsubscribable } from "@trpc/server/observable";
 import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
@@ -39,11 +40,34 @@ if (currentRoomId) {
   });
   initialiseMessageList(messages);
   updateMessageListNextCursor(nextCursor);
-
-  $client.message.onCreateMessage.subscribe({ partitionKey: currentRoomId }, { onData: (data) => createMessage(data) });
-  $client.message.onUpdateMessage.subscribe({ partitionKey: currentRoomId }, { onData: (data) => updateMessage(data) });
-  $client.message.onDeleteMessage.subscribe({ partitionKey: currentRoomId }, { onData: (data) => deleteMessage(data) });
 }
+
+let createMessageUnsubscribable = $ref<Unsubscribable>();
+let updateMessageUnsubscribable = $ref<Unsubscribable>();
+let deleteMessageUnsubscribable = $ref<Unsubscribable>();
+
+onMounted(() => {
+  if (!currentRoomId) return;
+
+  createMessageUnsubscribable = $client.message.onCreateMessage.subscribe(
+    { partitionKey: currentRoomId },
+    { onData: (data) => createMessage(data) }
+  );
+  updateMessageUnsubscribable = $client.message.onUpdateMessage.subscribe(
+    { partitionKey: currentRoomId },
+    { onData: (data) => updateMessage(data) }
+  );
+  deleteMessageUnsubscribable = $client.message.onDeleteMessage.subscribe(
+    { partitionKey: currentRoomId },
+    { onData: (data) => deleteMessage(data) }
+  );
+});
+
+onUnmounted(() => {
+  createMessageUnsubscribable?.unsubscribe();
+  updateMessageUnsubscribable?.unsubscribe();
+  deleteMessageUnsubscribable?.unsubscribe();
+});
 </script>
 
 <template>
