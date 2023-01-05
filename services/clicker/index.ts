@@ -16,19 +16,25 @@ export const applyBuildingUpgradesSingle = (
   building: BuildingWithStats,
   boughtUpgrades: Upgrade[],
   boughtBuildings: BuildingWithStats[]
-) => {
-  const buildingUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(building.name)));
-  return applyUpgrades(building.baseValue, buildingUpgrades, boughtBuildings) * building.amount;
-};
+) =>
+  applyUpgrades(
+    building.baseValue,
+    (u) => u.effects.some((e) => e.targets.includes(building.name)),
+    boughtUpgrades,
+    boughtBuildings
+  ) * building.amount;
 
 export const applyMouseUpgrades = (
   basePower: number,
   boughtUpgrades: Upgrade[],
   boughtBuildings: BuildingWithStats[]
-) => {
-  const mouseUpgrades = boughtUpgrades.filter((u) => u.effects.some((e) => e.targets.includes(Target.Mouse)));
-  return applyUpgrades(basePower, mouseUpgrades, boughtBuildings);
-};
+) =>
+  applyUpgrades(
+    basePower,
+    (u) => u.effects.some((e) => e.targets.includes(Target.Mouse)),
+    boughtUpgrades,
+    boughtBuildings
+  );
 
 const applyAdditiveEffects = (basePower: number, effects: Effect[]) => {
   let resultPower = basePower;
@@ -116,9 +122,14 @@ const applyUpgradeMultiplierEffectsSingle = (upgrade: Upgrade, effects: Effect[]
   return { ...upgrade, effects: resultEffects };
 };
 
-export const applyUpgrades = (basePower: number, upgrades: Upgrade[], boughtBuildings: BuildingWithStats[]) => {
-  let resultUpgrades = upgrades;
-  resultUpgrades = applyUpgradeMultiplierEffects(resultUpgrades);
+const applyUpgrades = (
+  basePower: number,
+  upgradeFilterPredicate: Parameters<Upgrade[]["filter"]>[0],
+  boughtUpgrades: Upgrade[],
+  boughtBuildings: BuildingWithStats[]
+) => {
+  let resultUpgrades = applyUpgradeMultiplierEffects(boughtUpgrades);
+  resultUpgrades = resultUpgrades.filter(upgradeFilterPredicate);
 
   const resultEffects = resultUpgrades.flatMap((u) => u.effects);
 

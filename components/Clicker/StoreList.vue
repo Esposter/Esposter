@@ -13,10 +13,7 @@ const { upgradeList } = $(storeToRefs(upgradeStore));
 const buildingStore = useBuildingStore();
 const { initialiseBuildingList } = buildingStore;
 const { buildingList } = $(storeToRefs(buildingStore));
-const storeUpgrades = $computed(() => {
-  if (!game) return [];
-  return upgradeList.filter((u) => !game.boughtUpgrades.some((bu) => bu.name === u.name));
-});
+const storeUpgrades = $computed(() => upgradeList.filter((u) => !game.boughtUpgrades.some((bu) => bu.name === u.name)));
 
 const upgrades = await $client.clicker.readUpgrades.query();
 if (upgrades) initialiseUpgradeList(upgrades);

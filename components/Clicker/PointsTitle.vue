@@ -9,7 +9,7 @@ const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = $(storeToRefs(buildingStore));
-const displayNoPointsHtml = $computed(() => (game ? formatNumberLong(game.noPoints).replace(/\s/, "<br/>") : 0));
+const displayNoPointsHtml = $computed(() => formatNumberLong(game.noPoints).replace(/\s/, "<br/>"));
 const displayAllBuildingPower = $computed(() => formatNumberLong(allBuildingPower));
 </script>
 

@@ -6,11 +6,11 @@ import { storeToRefs } from "pinia";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
-const displayNoPoints = $computed(() => (game ? formatNumberLong(game.noPoints) : 0));
+const displayNoPoints = $computed(() => formatNumberLong(game.noPoints));
 </script>
 
 <template>
-  <NuxtLayout v-if="game">
+  <NuxtLayout>
     <Head>
       <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
     </Head>

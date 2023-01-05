@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { BuildingWithStats, Target } from "@/models/clicker";
+import type { BuildingWithStats } from "@/models/clicker";
+import { Target } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
@@ -19,29 +20,30 @@ const { allBuildingPower } = $(storeToRefs(buildingStore));
 const popupStore = usePopupStore();
 const { onClick } = popupStore;
 const cursorAmount = $computed(() => {
-  if (!game) return 0;
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const boughtBuildingNames = $computed(() => game?.boughtBuildings.map((b) => b.name) ?? []);
+const boughtItemsTracker = $computed<{ name: Target; amount?: number }[]>(() => [
+  ...game.boughtBuildings.map((b) => ({ name: b.name, amount: b.amount })),
+  ...game.boughtUpgrades.map((u) => ({ name: u.name })),
+]);
 
 let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
 const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[]) => {
-  for (const boughtBuilding of boughtBuildings)
+  for (const boughtBuilding of boughtBuildings) {
+    const buildingPower = getBoughtBuildingPower(boughtBuilding);
     buildingsStatsTimers.push(
       setInterval(() => {
-        const buildingPower = getBoughtBuildingPower(boughtBuilding);
         boughtBuilding.producedValue += buildingPower / FPS;
       }, 1000 / FPS)
     );
+  }
 };
 
 onMounted(() => {
-  if (!game) return;
-
   setBuildingStatsTimers(game.boughtBuildings);
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
@@ -54,10 +56,8 @@ onUnmounted(() => {
 });
 
 watch(
-  () => boughtBuildingNames,
+  () => boughtItemsTracker,
   () => {
-    if (!game) return;
-
     buildingsStatsTimers.forEach((t) => clearInterval(t));
     buildingsStatsTimers = [];
     setBuildingStatsTimers(game.boughtBuildings);

@@ -13,24 +13,19 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     buildingList.value = buildings;
   };
 
-  const allBuildingPower = computed(() => {
-    if (!gameStore.game) return 0;
-    return applyBuildingUpgrades(0, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
-  });
-  const getBoughtBuildingPower = computed(() => (boughtBuilding: BuildingWithStats) => {
-    if (!gameStore.game) return 0;
-    return applyBuildingUpgradesSingle(boughtBuilding, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings);
-  });
+  const allBuildingPower = computed(() =>
+    applyBuildingUpgrades(0, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings)
+  );
+  const getBoughtBuildingPower = computed(
+    () => (boughtBuilding: BuildingWithStats) =>
+      applyBuildingUpgradesSingle(boughtBuilding, gameStore.game.boughtUpgrades, gameStore.game.boughtBuildings)
+  );
   const getBoughtBuildingAmount = computed(() => (building: Building) => {
-    if (!gameStore.game) return 0;
-
     const boughtBuilding = gameStore.game.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   });
   const getBoughtBuildingStats = computed(() => (building: Building) => {
-    if (!gameStore.game) return [];
-
     const boughtBuilding = gameStore.game.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return [];
 
@@ -54,8 +49,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   });
 
   const createBoughtBuilding = (newBuilding: Building) => {
-    if (!gameStore.game) return;
-
     const newBuildingPrice = getBuildingPrice.value(newBuilding);
     const boughtBuilding = gameStore.game.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!boughtBuilding) {
@@ -74,8 +67,8 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     allBuildingPower,
     getBoughtBuildingPower,
     getBoughtBuildingAmount,
-    getBuildingPrice,
     getBoughtBuildingStats,
+    getBuildingPrice,
     createBoughtBuilding,
   };
 });
