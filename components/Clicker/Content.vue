@@ -22,20 +22,20 @@ const cursorAmount = $computed(() => {
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const boughtBuildingsPower = $computed<{ name: Target; power: number }[]>(() =>
+const boughtBuildingPowers = $computed<{ name: Target; power: number }[]>(() =>
   game.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) }))
 );
 
-let buildingsStatsTimers = $ref<number[]>([]);
-let buildingsClickerTimer = $ref<number>();
+let buildingStatsTimers = $ref<number[]>([]);
+let buildingClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
-const setBuildingsStatsTimers = (boughtBuildings: BuildingWithStats[], buildingsPower: typeof boughtBuildingsPower) => {
+const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[], buildingPowers: typeof boughtBuildingPowers) => {
   for (const boughtBuilding of boughtBuildings) {
-    const buildingPower = buildingsPower.find((b) => b.name === boughtBuilding.name);
+    const buildingPower = buildingPowers.find((b) => b.name === boughtBuilding.name);
     if (!buildingPower) return;
 
-    buildingsStatsTimers.push(
+    buildingStatsTimers.push(
       setInterval(() => {
         boughtBuilding.producedValue += buildingPower.power / FPS;
       }, 1000 / FPS)
@@ -44,21 +44,21 @@ const setBuildingsStatsTimers = (boughtBuildings: BuildingWithStats[], buildings
 };
 
 onMounted(() => {
-  setBuildingsStatsTimers(game.boughtBuildings, boughtBuildingsPower);
-  buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
+  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingPowers);
+  buildingClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
 
 onUnmounted(() => {
-  buildingsStatsTimers.forEach((t) => clearInterval(t));
-  buildingsClickerTimer && clearInterval(buildingsClickerTimer);
+  buildingStatsTimers.forEach((t) => clearInterval(t));
+  buildingClickerTimer && clearInterval(buildingClickerTimer);
   autosaveTimer && clearInterval(autosaveTimer);
 });
 
 watchEffect(() => {
-  buildingsStatsTimers.forEach((t) => clearInterval(t));
-  buildingsStatsTimers = [];
-  setBuildingsStatsTimers(game.boughtBuildings, boughtBuildingsPower);
+  buildingStatsTimers.forEach((t) => clearInterval(t));
+  buildingStatsTimers = [];
+  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingPowers);
 });
 </script>
 
