@@ -8,10 +8,11 @@ interface UpgradeListGroupProps {
 
 const props = defineProps<UpgradeListGroupProps>();
 const { upgrades, isBuyable } = $(toRefs(props));
+const hasUpgrades = $computed(() => upgrades.length > 0);
 </script>
 
 <template>
-  <v-list-group>
+  <v-list-group v-if="hasUpgrades">
     <template #activator="{ props: listProps }">
       <v-list-item :="listProps">
         <template #prepend>
