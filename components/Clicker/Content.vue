@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { BuildingWithStats } from "@/models/clicker";
 import { Target } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
@@ -32,8 +31,8 @@ let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
-const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[]) => {
-  for (const boughtBuilding of boughtBuildings) {
+const setBuildingStatsTimers = () => {
+  for (const boughtBuilding of game.boughtBuildings) {
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
     buildingsStatsTimers.push(
       setInterval(() => {
@@ -44,7 +43,7 @@ const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[]) => {
 };
 
 onMounted(() => {
-  setBuildingStatsTimers(game.boughtBuildings);
+  setBuildingStatsTimers();
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
@@ -60,7 +59,7 @@ watch(
   () => {
     buildingsStatsTimers.forEach((t) => clearInterval(t));
     buildingsStatsTimers = [];
-    setBuildingStatsTimers(game.boughtBuildings);
+    setBuildingStatsTimers();
   }
 );
 </script>
