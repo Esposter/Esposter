@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Target } from "@/models/clicker";
+import { BuildingWithStats, Target } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
@@ -22,28 +22,29 @@ const cursorAmount = $computed(() => {
   const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const boughtItemsTracker = $computed<{ name: Target; amount?: number }[]>(() => [
-  ...game.boughtBuildings.map((b) => ({ name: b.name, amount: b.amount })),
-  ...game.boughtUpgrades.map((u) => ({ name: u.name })),
-]);
+const boughtBuildingsPower = $computed<{ name: Target; power: number }[]>(() =>
+  game.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) }))
+);
 
 let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
-const setBuildingStatsTimers = () => {
-  for (const boughtBuilding of game.boughtBuildings) {
-    const buildingPower = getBoughtBuildingPower(boughtBuilding);
+const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[], buildingsPower: typeof boughtBuildingsPower) => {
+  for (const boughtBuilding of boughtBuildings) {
+    const buildingPower = buildingsPower.find((b) => b.name === boughtBuilding.name);
+    if (!buildingPower) return;
+
     buildingsStatsTimers.push(
       setInterval(() => {
-        boughtBuilding.producedValue += buildingPower / FPS;
+        boughtBuilding.producedValue += buildingPower.power / FPS;
       }, 1000 / FPS)
     );
   }
 };
 
 onMounted(() => {
-  setBuildingStatsTimers();
+  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingsPower);
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
@@ -54,14 +55,11 @@ onUnmounted(() => {
   autosaveTimer && clearInterval(autosaveTimer);
 });
 
-watch(
-  () => boughtItemsTracker,
-  () => {
-    buildingsStatsTimers.forEach((t) => clearInterval(t));
-    buildingsStatsTimers = [];
-    setBuildingStatsTimers();
-  }
-);
+watchEffect(() => {
+  buildingsStatsTimers.forEach((t) => clearInterval(t));
+  buildingsStatsTimers = [];
+  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingsPower);
+});
 </script>
 
 <template>
