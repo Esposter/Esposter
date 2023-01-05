@@ -30,7 +30,7 @@ let buildingsStatsTimers = $ref<number[]>([]);
 let buildingsClickerTimer = $ref<number>();
 let autosaveTimer = $ref<number>();
 
-const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[], buildingsPower: typeof boughtBuildingsPower) => {
+const setBuildingsStatsTimers = (boughtBuildings: BuildingWithStats[], buildingsPower: typeof boughtBuildingsPower) => {
   for (const boughtBuilding of boughtBuildings) {
     const buildingPower = buildingsPower.find((b) => b.name === boughtBuilding.name);
     if (!buildingPower) return;
@@ -44,7 +44,7 @@ const setBuildingStatsTimers = (boughtBuildings: BuildingWithStats[], buildingsP
 };
 
 onMounted(() => {
-  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingsPower);
+  setBuildingsStatsTimers(game.boughtBuildings, boughtBuildingsPower);
   buildingsClickerTimer = setInterval(() => incrementPoints(allBuildingPower / FPS), 1000 / FPS);
   autosaveTimer = setInterval(saveGame, AUTOSAVE_INTERVAL);
 });
@@ -58,7 +58,7 @@ onUnmounted(() => {
 watchEffect(() => {
   buildingsStatsTimers.forEach((t) => clearInterval(t));
   buildingsStatsTimers = [];
-  setBuildingStatsTimers(game.boughtBuildings, boughtBuildingsPower);
+  setBuildingsStatsTimers(game.boughtBuildings, boughtBuildingsPower);
 });
 </script>
 
