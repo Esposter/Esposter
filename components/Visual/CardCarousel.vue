@@ -190,12 +190,11 @@ onMounted(() => {
 
 onUnmounted(() => clearInterval(moveCardsTimer));
 
-// If cards update then we want to refresh the entire display to first steps.
-// This does make the reload animation a bit sudden/janky, and we could improve this in future.
+// If cards update then we want to refresh the entire display back to the first step.
 watch(
   () => cards,
-  () => {
-    cardIds = cards.map((_, index) => index);
+  (newValue) => {
+    cardIds = newValue.map((_, index) => index);
     inactiveCardId = null;
     activeCardId = 0;
   }
