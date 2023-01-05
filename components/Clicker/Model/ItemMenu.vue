@@ -38,7 +38,7 @@ const icon = $computed(() => {
     <template #activator="{ props: menuProps }">
       <v-list-item :title="name" select="none" :="menuProps">
         <template #prepend>
-          <img mr="1" width="32" height="32" :src="icon" :alt="name" />
+          <v-img mr="1" width="32" height="32" :src="icon" :alt="name" />
         </template>
         <v-list-item-subtitle op="100!">
           {{ displayPrice }}
@@ -53,7 +53,9 @@ const icon = $computed(() => {
     </template>
     <v-card>
       <v-card-title class="text-subtitle-1" display="flex!" font="bold!">
-        <img width="32" height="32" :src="icon" :alt="name" />
+        <div>
+          <v-img width="32" height="32" :src="icon" :alt="name" />
+        </div>
         {{ name }}
       </v-card-title>
       <v-card-text>

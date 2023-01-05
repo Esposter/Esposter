@@ -5,5 +5,7 @@ const logoImageUrl = useLogoImageUrl();
 </script>
 
 <template>
-  <img width="32" height="26" :src="logoImageUrl" :alt="SITE_NAME" />
+  <div>
+    <v-img width="32" height="26" :src="logoImageUrl" :alt="SITE_NAME" />
+  </div>
 </template>
