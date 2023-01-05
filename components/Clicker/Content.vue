@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { BuildingWithStats, Target } from "@/models/clicker";
+import type { BuildingWithStats } from "@/models/clicker";
+import { Target } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
