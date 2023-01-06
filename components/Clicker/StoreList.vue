@@ -9,11 +9,13 @@ const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const upgradeStore = useUpgradeStore();
 const { initialiseUpgradeList } = upgradeStore;
-const { upgradeList } = $(storeToRefs(upgradeStore));
+const { unlockedUpgrades } = $(storeToRefs(upgradeStore));
 const buildingStore = useBuildingStore();
 const { initialiseBuildingList } = buildingStore;
 const { buildingList } = $(storeToRefs(buildingStore));
-const storeUpgrades = $computed(() => upgradeList.filter((u) => !game.boughtUpgrades.some((bu) => bu.name === u.name)));
+const unlockedStoreUpgrades = $computed(() =>
+  unlockedUpgrades.filter((u) => !game.boughtUpgrades.some((bu) => bu.name === u.name))
+);
 
 const upgrades = await $client.clicker.readUpgrades.query();
 if (upgrades) initialiseUpgradeList(upgrades);
@@ -24,7 +26,7 @@ if (buildings) initialiseBuildingList(buildings);
 
 <template>
   <v-list overflow-y="auto!">
-    <ClickerModelUpgradeListGroup :upgrades="storeUpgrades" is-buyable />
+    <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" is-buyable />
     <ClickerModelBuildingListGroup :buildings="buildingList" />
   </v-list>
 </template>

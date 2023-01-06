@@ -16,6 +16,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 1 }],
   },
   {
     name: CursorUpgradeName["Carpal Tunnel Prevention Cream"],
@@ -31,6 +32,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 1 }],
   },
   {
     name: CursorUpgradeName.Ambidextrous,
@@ -46,6 +48,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 10 }],
   },
   {
     name: CursorUpgradeName["Thousand Fingers"],
@@ -62,6 +65,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 25 }],
   },
   {
     name: CursorUpgradeName["Million Fingers"],
@@ -77,6 +81,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 50 }],
   },
   {
     name: CursorUpgradeName["Billion Fingers"],
@@ -92,6 +97,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 100 }],
   },
   {
     name: CursorUpgradeName["Trillion Fingers"],
@@ -107,6 +113,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 150 }],
   },
   {
     name: CursorUpgradeName["Quadrillion Fingers"],
@@ -122,6 +129,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 200 }],
   },
   {
     name: CursorUpgradeName["Quintillion Fingers"],
@@ -137,6 +145,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 250 }],
   },
   {
     name: CursorUpgradeName["Sextillion Fingers"],
@@ -152,6 +161,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 300 }],
   },
   {
     name: CursorUpgradeName["Septillion Fingers"],
@@ -167,6 +177,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 350 }],
   },
   {
     name: CursorUpgradeName["Octillion Fingers"],
@@ -182,6 +193,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 400 }],
   },
   {
     name: CursorUpgradeName["Nonillion Fingers"],
@@ -197,6 +209,7 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 450 }],
   },
   {
     name: CursorUpgradeName["Decillion Fingers"],
@@ -212,5 +225,6 @@ export const upgrades: Upgrade[] = [
         },
       },
     ],
+    unlockConditions: [{ target: Target.Cursor, amount: 500 }],
   },
 ];

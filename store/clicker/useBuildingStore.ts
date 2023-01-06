@@ -2,12 +2,14 @@ import type { Building, BuildingWithStats } from "@/models/clicker";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
+import { usePointStore } from "@/store/clicker/usePointStore";
 import { ITEM_NAME } from "@/util/constants.client";
 import { getInitials } from "@/util/text";
 import { defineStore } from "pinia";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();
+  const pointStore = usePointStore();
   const buildingList = ref<Building[]>([]);
   const initialiseBuildingList = (buildings: Building[]) => {
     buildingList.value = buildings;
@@ -53,12 +55,12 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const boughtBuilding = gameStore.game.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!boughtBuilding) {
       gameStore.game.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
-      gameStore.game.noPoints -= newBuildingPrice;
+      pointStore.decrementPoints(newBuildingPrice);
       return;
     }
 
     boughtBuilding.amount++;
-    gameStore.game.noPoints -= newBuildingPrice;
+    pointStore.decrementPoints(newBuildingPrice);
   };
 
   return {

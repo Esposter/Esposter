@@ -53,12 +53,18 @@ export interface Effect {
   configuration: EffectConfiguration;
 }
 
+export interface UnlockCondition {
+  target: Target;
+  amount: number;
+}
+
 export interface Upgrade {
   name: UpgradeName;
   description: string;
   flavorDescription: string;
   price: number;
   effects: Effect[];
+  unlockConditions: UnlockCondition[];
 }
 
 export interface Building {
@@ -77,4 +83,5 @@ export interface Game {
   noPoints: number;
   boughtUpgrades: Upgrade[];
   boughtBuildings: BuildingWithStats[];
+  createdAt: Date;
 }
