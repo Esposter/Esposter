@@ -17,7 +17,7 @@ interface Item {
   onClick?: () => Promise<void>;
 }
 
-const { status, signOut } = $(useSession());
+const { status, data, signOut } = $(useSession());
 
 const items = $computed<Item[]>(() =>
   status === "unauthenticated"
@@ -89,7 +89,19 @@ const menu = $ref(false);
 <template>
   <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="More">
+      <v-tooltip v-if="status === 'authenticated' && data" location="bottom" text="Account">
+        <template #activator="{ props: tooltipProps }">
+          <v-avatar>
+            <v-btn :="mergeProps(menuProps, tooltipProps)">
+              <v-avatar v-if="data.user.image">
+                <v-img :src="data.user.image" />
+              </v-avatar>
+              <DefaultAvatar v-else :name="data.user.name ?? ''" />
+            </v-btn>
+          </v-avatar>
+        </template>
+      </v-tooltip>
+      <v-tooltip v-else location="bottom" text="More">
         <template #activator="{ props: tooltipProps }">
           <v-avatar color="background">
             <v-btn icon="mdi-chevron-down" :="mergeProps(menuProps, tooltipProps)" />
