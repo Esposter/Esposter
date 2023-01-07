@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
-
-const { mobile } = $(useDisplay());
+definePageMeta({ middleware: "auth" });
 </script>
 
 <template>
@@ -12,7 +10,6 @@ const { mobile } = $(useDisplay());
           <UserProfileCard />
         </v-col>
       </v-row>
-      <v-row> </v-row>
     </v-container>
   </NuxtLayout>
 </template>
