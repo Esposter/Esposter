@@ -53,6 +53,6 @@ watch(
     position="absolute"
     top="0"
   >
-    <v-img position="absolute" width="32" height="32" rotate="135" :src="icon" :alt="Target.Cursor" />
+    <v-img position="absolute" width="2rem" height="2rem" rotate="135" :src="icon" :alt="Target.Cursor" />
   </div>
 </template>

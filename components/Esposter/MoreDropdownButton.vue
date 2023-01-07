@@ -6,6 +6,7 @@ import {
   LOGIN_PATH,
   PRIVACY_POLICY_PATH,
   TERMS_AND_CONDITIONS_PATH,
+  USER_SETTINGS_PATH,
 } from "@/util/constants.common";
 import { mergeProps } from "vue";
 
@@ -18,45 +19,70 @@ interface Item {
 
 const { status, signOut } = $(useSession());
 
-const items = $computed(() => {
-  const result: Item[] = [
-    {
-      title: `${ITEM_NAME} Clicker`,
-      href: CLICKER_PATH,
-      icon: "mdi-fruit-pineapple",
-    },
-    {
-      title: "About",
-      href: ABOUT_PATH,
-      icon: "mdi-information-outline",
-    },
-    {
-      title: "Privacy Policy",
-      href: PRIVACY_POLICY_PATH,
-      icon: "mdi-lock",
-    },
-    {
-      title: "Terms & Conditions",
-      href: TERMS_AND_CONDITIONS_PATH,
-      icon: "mdi-shield-lock",
-    },
-  ];
-
-  if (status === "unauthenticated")
-    result.unshift({
-      title: "Login",
-      href: LOGIN_PATH,
-      icon: "mdi-login",
-    });
-  else if (status === "authenticated")
-    result.push({
-      title: "Logout",
-      icon: "mdi-logout",
-      onClick: signOut,
-    });
-
-  return result;
-});
+const items = $computed<Item[]>(() =>
+  status === "unauthenticated"
+    ? [
+        {
+          title: "Login",
+          href: LOGIN_PATH,
+          icon: "mdi-login",
+        },
+        {
+          title: `${ITEM_NAME} Clicker`,
+          href: CLICKER_PATH,
+          icon: "mdi-fruit-pineapple",
+        },
+        {
+          title: "About",
+          href: ABOUT_PATH,
+          icon: "mdi-information-outline",
+        },
+        {
+          title: "Privacy Policy",
+          href: PRIVACY_POLICY_PATH,
+          icon: "mdi-lock",
+        },
+        {
+          title: "Terms & Conditions",
+          href: TERMS_AND_CONDITIONS_PATH,
+          icon: "mdi-shield-lock",
+        },
+      ]
+    : status === "authenticated"
+    ? [
+        {
+          title: `${ITEM_NAME} Clicker`,
+          href: CLICKER_PATH,
+          icon: "mdi-fruit-pineapple",
+        },
+        {
+          title: "Settings",
+          href: USER_SETTINGS_PATH,
+          icon: "mdi-cog",
+        },
+        {
+          title: "About",
+          href: ABOUT_PATH,
+          icon: "mdi-information-outline",
+        },
+        {
+          title: "Privacy Policy",
+          href: PRIVACY_POLICY_PATH,
+          icon: "mdi-lock",
+        },
+        {
+          title: "Terms & Conditions",
+          href: TERMS_AND_CONDITIONS_PATH,
+          icon: "mdi-shield-lock",
+        },
+        {
+          title: "Logout",
+          icon: "mdi-logout",
+          onClick: signOut,
+        },
+      ]
+    : []
+);
 const menu = $ref(false);
 </script>
 

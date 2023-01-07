@@ -3,11 +3,11 @@ const { status, data } = $(useSession());
 </script>
 
 <template>
-  <div v-if="status === 'authenticated' && data?.user?.name" display="flex" items="center">
+  <div v-if="status === 'authenticated' && data" display="flex" items="center">
     <v-avatar v-if="data.user.image">
-      <v-img :src="data.user.image" :alt="data.user.name" />
+      <v-img :src="data.user.image" :alt="data.user.name ?? ''" />
     </v-avatar>
-    <DefaultAvatar v-else :name="data.user.name" />
-    <div class="text-subtitle-1" pl="1">{{ data.user.name }}</div>
+    <DefaultAvatar v-else :name="data.user.name ?? ''" />
+    <div v-if="data.user.name" pl="1">{{ data.user.name }}</div>
   </div>
 </template>

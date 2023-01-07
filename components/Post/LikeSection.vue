@@ -33,11 +33,11 @@ const onDeleteLike = async () => {
 <template>
   <div display="flex" flex="col" items="center">
     <v-btn
-      min-width="24"
-      w="6!"
-      h="6!"
       p="0!"
       rd="1!"
+      width="1.5rem"
+      min-width="1.5rem"
+      height="1.5rem"
       @click="liked ? onDeleteLike() : unliked ? onUpdateLike(1) : onCreateLike(1)"
     >
       <v-icon
@@ -49,11 +49,11 @@ const onDeleteLike = async () => {
     </v-btn>
     {{ post.noLikes }}
     <v-btn
-      min-width="24"
-      w="6!"
-      h="6!"
       p="0!"
       rd="1!"
+      width="1.5rem"
+      min-width="1.5rem"
+      height="1.5rem"
       @click="unliked ? onDeleteLike() : liked ? onUpdateLike(-1) : onCreateLike(-1)"
     >
       <v-icon

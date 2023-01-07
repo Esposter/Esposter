@@ -1,3 +1,6 @@
+import { prisma } from "@/prisma";
+import { router } from "@/server/trpc";
+import { authedProcedure } from "@/server/trpc/procedure";
 import { USER_NAME_MAX_LENGTH } from "@/util/constants.common";
 import type { User as PrismaUser } from "@prisma/client";
 import type { toZod } from "tozod";
@@ -12,4 +15,19 @@ export const userSchema: toZod<PrismaUser> = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
+});
+
+const readUserInputSchema = userSchema.shape.id.optional();
+export type ReadUserInput = z.infer<typeof readUserInputSchema>;
+
+export const userRouter = router({
+  readUser: authedProcedure
+    .input(readUserInputSchema)
+    // @NOTE: Exclude email unless it's their own user reading it
+    // https://github.com/prisma/prisma/issues/5042
+    .query(({ input, ctx }) =>
+      input
+        ? prisma.user.findUnique({ where: { id: input } })
+        : prisma.user.findUnique({ where: { id: ctx.session.user.id } })
+    ),
 });
