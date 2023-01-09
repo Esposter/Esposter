@@ -19,16 +19,13 @@ export const useMemberStore = defineStore("member", () => {
     membersMap.value[roomStore.currentRoomId] = members;
   };
   const createMember = (newMember: User) => {
-    if (!roomStore.currentRoomId) return;
-
-    const members = membersMap.value[roomStore.currentRoomId] ?? [];
-    members.push(newMember);
-    membersMap.value[roomStore.currentRoomId] = members;
+    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
+    membersMap.value[roomStore.currentRoomId].push(newMember);
   };
   const updateMember = (updatedMember: User) => {
-    if (!roomStore.currentRoomId) return;
+    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
 
-    const members = membersMap.value[roomStore.currentRoomId] ?? [];
+    const members = membersMap.value[roomStore.currentRoomId];
     const index = members.findIndex((m) => m.id === updatedMember.id);
     if (index > -1) membersMap.value[roomStore.currentRoomId][index] = { ...members[index], ...updatedMember };
   };

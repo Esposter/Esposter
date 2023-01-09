@@ -7,6 +7,7 @@ export const useLikeStore = defineStore("like", () => {
   const createLike = (newLike: Like) => {
     const post = postStore.readPost(newLike.postId);
     if (!post) return;
+
     post.likes.push(newLike);
     post.noLikes += newLike.value;
   };

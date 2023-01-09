@@ -1,7 +1,7 @@
-import { defineStore } from "pinia";
 import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
+import { defineStore } from "pinia";
 
 export const useMessageStore = defineStore("message", () => {
   const roomStore = useRoomStore();
@@ -11,7 +11,7 @@ export const useMessageStore = defineStore("message", () => {
     return messagesMap.value[roomStore.currentRoomId];
   });
   const pushMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId) return;
+    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
     messagesMap.value[roomStore.currentRoomId].push(...messages);
   };
 
@@ -30,12 +30,11 @@ export const useMessageStore = defineStore("message", () => {
     messagesMap.value[roomStore.currentRoomId] = messages;
   };
   const createMessage = (newMessage: MessageEntity) => {
-    if (!roomStore.currentRoomId) return;
-    const messages = messagesMap.value[roomStore.currentRoomId];
-    messagesMap.value[roomStore.currentRoomId] = [newMessage, ...messages];
+    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
+    messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
   };
   const updateMessage = (updatedMessage: UpdateMessageInput) => {
-    if (!roomStore.currentRoomId) return;
+    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
     const index = messages.findIndex(
@@ -44,7 +43,7 @@ export const useMessageStore = defineStore("message", () => {
     if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
   };
   const deleteMessage = (id: DeleteMessageInput) => {
-    if (!roomStore.currentRoomId) return;
+    if (!roomStore.currentRoomId || !!messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
     messagesMap.value[roomStore.currentRoomId] = messages.filter(
