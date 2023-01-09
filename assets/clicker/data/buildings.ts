@@ -23,7 +23,7 @@ export const buildings: Building[] = [
   },
   {
     name: BuildingName.Mine,
-    flavorDescription: `Mines out ${ITEM_NAME}.`,
+    flavorDescription: `Mines out ${ITEM_NAME}s.`,
     basePrice: 1.2e4,
     baseValue: 47,
   },
@@ -35,7 +35,7 @@ export const buildings: Building[] = [
   },
   {
     name: BuildingName.Bank,
-    flavorDescription: `Generates ${ITEM_NAME} from interest.`,
+    flavorDescription: `Generates ${ITEM_NAME}s from interest.`,
     basePrice: 1.4e6,
     baseValue: 1.4e3,
   },
@@ -101,7 +101,7 @@ export const buildings: Building[] = [
   },
   {
     name: BuildingName["Javascript Console"],
-    flavorDescription: `Creates ${ITEM_NAME} from the very code this game was written in.`,
+    flavorDescription: `Creates ${ITEM_NAME}s from the very code this game was written in.`,
     basePrice: 7.1e19,
     baseValue: 1.1e12,
   },
