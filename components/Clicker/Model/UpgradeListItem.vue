@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Upgrade } from "@/models/clicker";
+import { ItemType } from "@/models/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
 import { storeToRefs } from "pinia";
@@ -22,6 +23,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.pr
 
 <template>
   <ClickerModelItemMenu
+    :type="ItemType.Upgrade"
     :name="upgrade.name"
     :description="upgrade.description"
     :flavor-description="upgrade.flavorDescription"

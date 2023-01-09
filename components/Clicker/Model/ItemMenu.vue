@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ItemType } from "@/models/clicker";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
@@ -8,6 +9,7 @@ import { filename } from "pathe/utils";
 // Partial<Pick<Upgrade & Building, "description" | "amount">>;
 
 type ItemMenuProps = {
+  type: ItemType;
   name: string;
   description?: string;
   flavorDescription: string;
@@ -16,16 +18,31 @@ type ItemMenuProps = {
 };
 
 const props = defineProps<ItemMenuProps>();
-const { name, description, flavorDescription, price, amount } = $(toRefs(props));
+const { type, name, description, flavorDescription, price, amount } = $(toRefs(props));
 const slots = useSlots();
 // @NOTE: Can remove cast after it's fixed in vue 3.3
 const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
-const flavorDescriptionHtml = $computed(() => marked.parse(flavorDescription));
+const flavorDescriptionHtml = $computed(() => marked.parse(`"${flavorDescription}"`));
 const displayPrice = $computed(() => formatNumberLong(price));
+
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
 // https://github.com/nuxt/framework/issues/7121
-const icon = $computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/*.png", { eager: true, import: "default" });
+const buildingIcon = $computed(() => {
+  const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(
+    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
+  );
+  return images[name];
+});
+const menuIcon = $computed(() => {
+  const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(
+    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
+  );
+  return images[name];
+});
+const upgradeIcon = $computed(() => {
+  const glob = import.meta.glob("@/assets/clicker/icons/upgrades/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(
     Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
   );
@@ -38,7 +55,13 @@ const icon = $computed(() => {
     <template #activator="{ props: menuProps }">
       <v-list-item :title="name" select="none" :="menuProps">
         <template #prepend>
-          <v-img mr="1" width="2rem" height="2rem" :src="icon" :alt="name" />
+          <v-img
+            mr="1"
+            width="2rem"
+            height="2rem"
+            :src="type === ItemType.Building ? buildingIcon : upgradeIcon"
+            :alt="name"
+          />
         </template>
         <v-list-item-subtitle op="100!">
           {{ displayPrice }}
@@ -51,10 +74,10 @@ const icon = $computed(() => {
         </template>
       </v-list-item>
     </template>
-    <v-card>
+    <v-card max-width="500">
       <v-card-title display="flex!" font="bold!">
         <div>
-          <v-img width="2rem" height="2rem" :src="icon" :alt="name" />
+          <v-img width="2rem" height="2rem" :src="type === ItemType.Building ? menuIcon : upgradeIcon" :alt="name" />
         </div>
         {{ name }}
       </v-card-title>
@@ -62,10 +85,8 @@ const icon = $computed(() => {
         <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
         <div v-if="description" pb="4" v-html="descriptionHtml" />
         <div pb="4" display="flex" justify="end" font="italic">
-          "
           <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
-          <span v-html="flavorDescriptionHtml" />
-          "
+          <span text="right" v-html="flavorDescriptionHtml" />
         </div>
         <div display="flex">
           <v-spacer />

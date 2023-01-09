@@ -1,3 +1,8 @@
+export enum ItemType {
+  Upgrade = "Upgrade",
+  Building = "Building",
+}
+
 export enum GeneralName {
   Mouse = "Mouse",
 }
@@ -25,6 +30,23 @@ export type UpgradeName = CursorUpgradeName;
 export enum BuildingName {
   Cursor = "Cursor",
   Grandma = "Grandma",
+  Farm = "Farm",
+  Mine = "Mine",
+  Factory = "Factory",
+  Bank = "Bank",
+  Temple = "Temple",
+  "Wizard Tower" = "Wizard Tower",
+  Shipment = "Shipment",
+  "Alchemy Lab" = "Alchemy Lab",
+  Portal = "Portal",
+  "Time Machine" = "Time Machine",
+  "Antimatter Condenser" = "Antimatter Condenser",
+  Prism = "Prism",
+  Chancemaker = "Chancemaker",
+  "Fractal Engine" = "Fractal Engine",
+  "Javascript Console" = "Javascript Console",
+  Idleverse = "Idleverse",
+  "Cortex Baker" = "Cortex Baker",
 }
 
 export const Target = { ...GeneralName, ...UpgradeName, ...BuildingName };

@@ -19,9 +19,12 @@ const displayNoPoints = $computed(() => formatNumberLong(game.noPoints));
       <ClickerStoreList />
     </template>
     <v-container h="full" display="flex" justify="center" items="center" flex="col">
-      <ClickerHeader w="full" />
-      <ClickerPointsTitle />
-      <ClickerContent />
+      <!-- Only show the fully loaded game to the client, not the preloaded server state -->
+      <ClientOnly>
+        <ClickerHeader w="full" />
+        <ClickerPointsTitle />
+        <ClickerContent />
+      </ClientOnly>
     </v-container>
     <ClickerClickPopups />
     <template #right>

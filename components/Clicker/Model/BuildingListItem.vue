@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Building } from "@/models/clicker";
+import { ItemType } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { marked } from "marked";
@@ -26,6 +27,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
 
 <template>
   <ClickerModelItemMenu
+    :type="ItemType.Building"
     :name="building.name"
     :flavor-description="building.flavorDescription"
     :price="buildingPrice"
