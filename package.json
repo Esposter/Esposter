@@ -70,7 +70,7 @@
     "openai": "^3.1.0",
     "pinia": "^2.0.28",
     "rate-limiter-flexible": "^2.4.1",
-    "sql-highlight": "^4.2.2",
+    "sql-highlight": "^4.3.0",
     "superjson": "^1.12.1",
     "three": "^0.148.0",
     "trpc-nuxt": "^0.5.0",
