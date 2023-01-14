@@ -20,10 +20,10 @@ const unlockedStoreUpgrades = $computed(() =>
 );
 
 const upgrades = await $client.clicker.readUpgrades.query();
-if (upgrades) initialiseUpgradeList(upgrades);
+initialiseUpgradeList(upgrades);
 
 const buildings = await $client.clicker.readBuildings.query();
-if (buildings) initialiseBuildingList(buildings);
+initialiseBuildingList(buildings);
 </script>
 
 <template>

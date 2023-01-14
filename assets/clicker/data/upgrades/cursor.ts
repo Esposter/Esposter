@@ -1,7 +1,7 @@
 import type { Upgrade } from "@/models/clicker";
 import { CursorUpgradeName, EffectType, Target } from "@/models/clicker";
 
-export const upgrades: Upgrade[] = [
+export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
   {
     name: CursorUpgradeName["Reinforced Index Finger"],
     description: "The mouse and cursors are **twice** as efficient.",

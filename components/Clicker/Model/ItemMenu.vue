@@ -42,7 +42,7 @@ const menuIcon = $computed(() => {
   return images[name];
 });
 const upgradeIcon = $computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/upgrades/*.png", { eager: true, import: "default" });
+  const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(
     Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
   );

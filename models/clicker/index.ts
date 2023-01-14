@@ -1,9 +1,6 @@
 export enum ItemType {
   Upgrade = "Upgrade",
   Building = "Building",
-}
-
-export enum GeneralName {
   Mouse = "Mouse",
 }
 
@@ -22,6 +19,23 @@ export enum CursorUpgradeName {
   "Octillion Fingers" = "Octillion Fingers",
   "Nonillion Fingers" = "Nonillion Fingers",
   "Decillion Fingers" = "Decillion Fingers",
+}
+
+export enum GrandmaUpgradeName {
+  "Forwards From Grandma" = "Forwards From Grandma",
+  "Steel-plated Rolling Pins" = "Steel-plated Rolling Pins",
+  "Lubricated Dentures" = "Lubricated Dentures",
+  "Prune Juice" = "Prune Juice",
+  "Double-thick Glasses" = "Double-thick Glasses",
+  "Aging Agents" = "Aging Agents",
+  "Xtreme Walkers" = "Xtreme Walkers",
+  "The Unbridling" = "The Unbridling",
+  "Reverse Dementia" = "Reverse Dementia",
+  "Timeproof Hair Dyes" = "Timeproof Hair Dyes",
+  "Good Manners" = "Good Manners",
+  "Generation Degeneration" = "Generation Degeneration",
+  "Visits" = "Visits",
+  "Kitchen Cabinets" = "Kitchen Cabinets",
 }
 
 export const UpgradeName = { ...CursorUpgradeName };
@@ -49,8 +63,8 @@ export enum BuildingName {
   "Cortex Baker" = "Cortex Baker",
 }
 
-export const Target = { ...GeneralName, ...UpgradeName, ...BuildingName };
-export type Target = GeneralName | UpgradeName | BuildingName;
+export const Target = { ...ItemType, ...UpgradeName, ...BuildingName };
+export type Target = ItemType | UpgradeName | BuildingName;
 
 export enum EffectType {
   Additive = "Additive",
@@ -80,8 +94,8 @@ export interface UnlockCondition {
   amount: number;
 }
 
-export interface Upgrade {
-  name: UpgradeName;
+export interface Upgrade<TName = UpgradeName> {
+  name: TName;
   description: string;
   flavorDescription: string;
   price: number;

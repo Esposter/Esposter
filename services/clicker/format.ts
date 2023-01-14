@@ -23,15 +23,15 @@ const suffixesLong = [
   "nonagintillion",
 ];
 
-for (const prefixLong of prefixesLong)
-  for (const suffixLong of suffixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
+for (const suffixLong of suffixesLong)
+  for (const prefixLong of prefixesLong) formatLong.push(` ${prefixLong}${suffixLong}`);
 
 const formatShort = ["k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
 const prefixesShort = ["", "Un", "Do", "Tr", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
 const suffixesShort = ["Dc", "V", "T", "Qa", "Qi", "Sx", "Sp", "O", "N"];
 
-for (const prefixShort of prefixesShort)
-  for (const suffixShort of suffixesShort) formatShort.push(` ${prefixShort}${suffixShort}`);
+for (const suffixShort of suffixesShort)
+  for (const prefixShort of prefixesShort) formatShort.push(` ${prefixShort}${suffixShort}`);
 
 const formatEveryThirdPower = (notations: string[]) => (number: number) => {
   if (!isFinite(number)) return "Infinity";
