@@ -45,7 +45,7 @@
     "prisma": "^4.8.1",
     "sass": "^1.57.1",
     "tozod": "^3.0.0",
-    "type-fest": "^3.5.1"
+    "type-fest": "^3.5.2"
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.1",
