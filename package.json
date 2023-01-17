@@ -12,7 +12,6 @@
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
-    "prettify": "prettier --ignore-path .gitignore --write .",
     "prisma-migrate:dev": "prisma migrate dev",
     "prisma-migrate:deploy": "prisma migrate deploy",
     "prisma-generate": "prisma generate",
