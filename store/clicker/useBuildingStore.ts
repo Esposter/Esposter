@@ -5,7 +5,6 @@ import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { ITEM_NAME } from "@/util/constants.client";
 import { getInitials } from "@/util/text";
-import { defineStore } from "pinia";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();

@@ -2,7 +2,7 @@
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 import type { Unsubscribable } from "@trpc/server/observable";
-import { storeToRefs } from "pinia";
+import { ChatModelMessageList } from "~~/.nuxt/components";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

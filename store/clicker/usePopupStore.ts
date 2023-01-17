@@ -1,7 +1,6 @@
 import { ClickPopupProps } from "@/components/Clicker/Model/ClickPopup.vue";
 import { useMouseStore } from "@/store/clicker/useMouseStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
-import { defineStore } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 
 export const usePopupStore = defineStore("clicker/popup", () => {

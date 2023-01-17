@@ -1,5 +1,4 @@
 import { useGameStore } from "@/store/clicker/useGameStore";
-import { defineStore } from "pinia";
 
 export const usePointStore = defineStore("clicker/point", () => {
   const gameStore = useGameStore();

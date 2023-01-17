@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameStore } from "@/store/clicker/useGameStore";
-import { storeToRefs } from "pinia";
+import { VList } from "vuetify/lib/components";
+import { ClickerModelUpgradeListGroup } from "~~/.nuxt/components";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));

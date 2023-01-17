@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/services/azure/types";
 import { useMemberStore } from "@/store/useMemberStore";
-import { storeToRefs } from "pinia";
 
 interface MessageListItemProps {
   message: MessageEntity;

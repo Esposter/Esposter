@@ -1,5 +1,4 @@
 import type { Room } from "@prisma/client";
-import { defineStore } from "pinia";
 
 export const useRoomStore = defineStore("room", () => {
   const currentRoomId = ref<string | null>(null);

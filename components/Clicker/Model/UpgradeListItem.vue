@@ -4,7 +4,6 @@ import type { Upgrade } from "@/models/clicker";
 import { ItemType } from "@/models/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
-import { storeToRefs } from "pinia";
 
 interface UpgradeListItemProps {
   upgrade: Upgrade;

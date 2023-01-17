@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants.common";
-import { storeToRefs } from "pinia";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const { $client } = useNuxtApp();

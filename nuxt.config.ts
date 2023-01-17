@@ -66,6 +66,9 @@ export default defineNuxtConfig({
       Montserrat: true,
     },
   },
+  pinia: {
+    autoImports: ["defineStore", "storeToRefs"],
+  },
   auth: {
     origin: process.env.BASE_URL,
   },

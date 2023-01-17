@@ -5,7 +5,6 @@ import { ItemType } from "@/models/clicker";
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { marked } from "marked";
-import { storeToRefs } from "pinia";
 
 interface BuildingListItemProps {
   building: Building;

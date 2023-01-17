@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { usePostStore } from "@/store/usePostStore";
-import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const postStore = usePostStore();

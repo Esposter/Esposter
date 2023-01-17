@@ -1,7 +1,6 @@
 import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
 import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
-import { defineStore } from "pinia";
 
 export const useMessageStore = defineStore("message", () => {
   const roomStore = useRoomStore();

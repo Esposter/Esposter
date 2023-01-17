@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/useLayoutStore";
-import { storeToRefs } from "pinia";
 
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));

@@ -3,7 +3,6 @@ import type { CreateMessageInput } from "@/server/trpc/routers/message";
 import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

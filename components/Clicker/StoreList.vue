@@ -2,7 +2,6 @@
 import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
-import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const gameStore = useGameStore();

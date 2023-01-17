@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 import type { Room } from "@prisma/client";
-import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

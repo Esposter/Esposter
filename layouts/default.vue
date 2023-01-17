@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/useLayoutStore";
-import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { VMain } from "vuetify/components";
 

@@ -1,5 +1,4 @@
 import type { PostWithRelations } from "@/prisma/types";
-import { defineStore } from "pinia";
 
 export const usePostStore = defineStore("post", () => {
   const postList = ref<PostWithRelations[]>([]);

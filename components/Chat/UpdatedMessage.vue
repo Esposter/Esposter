@@ -2,7 +2,6 @@
 import type { MessageEntity } from "@/services/azure/types";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 interface UpdatedMessageProps {
   message: MessageEntity;

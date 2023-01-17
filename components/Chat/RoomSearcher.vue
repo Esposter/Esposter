@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { storeToRefs } from "pinia";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

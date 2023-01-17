@@ -1,5 +1,4 @@
 import { useRoomStore } from "@/store/useRoomStore";
-import { defineStore } from "pinia";
 
 export const useMessageInputStore = defineStore("messageInput", () => {
   const roomStore = useRoomStore();

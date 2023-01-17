@@ -6,7 +6,6 @@ import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { usePopupStore } from "@/store/clicker/usePopupStore";
 import { AUTOSAVE_INTERVAL, FPS } from "@/util/constants.client";
-import { storeToRefs } from "pinia";
 import { clearInterval, setInterval } from "worker-timers";
 
 const gameStore = useGameStore();

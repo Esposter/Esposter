@@ -1,7 +1,6 @@
 import type { Upgrade } from "@/models/clicker";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
-import { defineStore } from "pinia";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const gameStore = useGameStore();
