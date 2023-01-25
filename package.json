@@ -22,7 +22,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@sidebase/nuxt-auth": "^0.3.4",
+    "@sidebase/nuxt-auth": "^0.4.0-alpha.3",
     "@types/dedent": "^0.7.0",
     "@types/dompurify": "^2.4.0",
     "@types/marked": "^4.0.8",
@@ -67,6 +67,7 @@
     "emoji-mart-vue-fast": "^12.0.1",
     "gsap": "^3.11.4",
     "marked": "^4.2.12",
+    "next-auth": "^4.18.10",
     "openai": "^3.1.0",
     "pinia": "^2.0.28",
     "rate-limiter-flexible": "^2.4.1",
@@ -81,9 +82,6 @@
     "worker-timers": "^7.0.61",
     "ws": "^8.12.0",
     "zod": "^3.20.2"
-  },
-  "dependenciesComments": {
-    "@next-auth/prisma-adapter": "@NOTE: https://github.com/sidebase/nuxt-auth/issues/128"
   },
   "overrides": {
     "vue": "latest"

@@ -14,12 +14,9 @@ const slots = useSlots();
 
 <template>
   <v-btn class="button" un-color="#fff!" :="mergeProps(buttonProps ?? {}, buttonAttrs ?? {})">
-    <!-- @NOTE: We should also be able to access slots on the server -->
-    <ClientOnly>
-      <template v-for="(_, slot) of slots" #[slot]="scope">
-        <slot :name="slot" :="{ ...scope }" />
-      </template>
-    </ClientOnly>
+    <template v-for="(_, slot) of slots" #[slot]="scope">
+      <slot :name="slot" :="{ ...scope }" />
+    </template>
   </v-btn>
 </template>
 

@@ -15,7 +15,6 @@ const { border } = useColors();
 
 <template>
   <v-card class="border" :="mergeProps(cardProps ?? {}, cardAttrs ?? {})">
-    <!-- @NOTE: We should also be able to access slots on the server -->
     <ClientOnly>
       <template v-for="(_, slot) of slots" #[slot]="scope">
         <slot :name="slot" :="{ ...scope }" />
