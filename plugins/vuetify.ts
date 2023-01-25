@@ -27,7 +27,7 @@ const baseColors = {
   },
 } satisfies Record<ThemeMode, ThemeColors>;
 
-type BaseColors = typeof baseColors[ThemeMode];
+type BaseColors = (typeof baseColors)[ThemeMode];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;

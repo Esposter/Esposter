@@ -5,111 +5,35 @@ const { primary } = useColors();
 const config = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
+useServerSeoMeta({
+  description: SITE_DESCRIPTION,
+  fbAppId: config.public.facebookClientId,
+  ogTitle: SITE_NAME,
+  ogDescription: SITE_DESCRIPTION,
+  ogUrl: config.public.baseUrl,
+  ogType: "website",
+  ogImage: logoImageUrl,
+  // @NOTE: ogImageAlt: "logo"
+  ogImageWidth: 250,
+  ogImageHeight: 200,
+  ogSiteName: SITE_NAME,
+  twitterCard: "summary_large_image",
+  twitterSite: config.public.baseUrl,
+  applicationName: SITE_NAME,
+  themeColor: primary,
+  appleMobileWebAppCapable: "yes",
+  appleMobileWebAppStatusBarStyle: "default",
+  appleMobileWebAppTitle: SITE_NAME,
+  formatDetection: "telephone=no",
+  mobileWebAppCapable: "yes",
+  msapplicationConfig: "/browserconfig.xml",
+  msapplicationTileColor: primary,
+  // @NOTE: msapplicationTapHighlight: "no"
+});
+
 useHead({
   title: null,
   titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
-  meta: [
-    {
-      name: "robots",
-      content: "index,follow",
-    },
-    {
-      name: "description",
-      content: SITE_DESCRIPTION,
-    },
-    {
-      name: "twitter:card",
-      content: "summary_large_image",
-    },
-    {
-      name: "twitter:site",
-      content: config.public.baseUrl,
-    },
-    {
-      name: "twitter:creator",
-      content: "@jimmy",
-    },
-    {
-      property: "fb:app_id",
-      content: config.public.facebookClientId,
-    },
-    {
-      property: "og:title",
-      content: SITE_NAME,
-    },
-    {
-      property: "og:description",
-      content: SITE_DESCRIPTION,
-    },
-    {
-      property: "og:url",
-      content: config.public.baseUrl,
-    },
-    {
-      property: "og:type",
-      content: "website",
-    },
-    {
-      property: "og:image",
-      content: logoImageUrl,
-    },
-    {
-      property: "og:image:alt",
-      content: "logo",
-    },
-    {
-      property: "og:image:width",
-      content: "250",
-    },
-    {
-      property: "og:image:height",
-      content: "200",
-    },
-    {
-      property: "og:site_name",
-      content: config.public.baseUrl,
-    },
-    {
-      name: "application-name",
-      content: SITE_NAME,
-    },
-    {
-      name: "theme-color",
-      content: primary,
-    },
-    {
-      name: "apple-mobile-web-app-capable",
-      content: "yes",
-    },
-    {
-      name: "apple-mobile-web-app-status-bar-style",
-      content: "default",
-    },
-    {
-      name: "apple-mobile-web-app-title",
-      content: SITE_NAME,
-    },
-    {
-      name: "format-detection",
-      content: "telephone=no",
-    },
-    {
-      name: "mobile-web-app-capable",
-      content: "yes",
-    },
-    {
-      name: "msapplication-config",
-      content: "/browserconfig.xml",
-    },
-    {
-      name: "msapplication-TileColor",
-      content: primary,
-    },
-    {
-      name: "msapplication-tap-highlight",
-      content: "no",
-    },
-  ],
   link: [
     {
       rel: "canonical",
