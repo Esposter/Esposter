@@ -32,7 +32,6 @@ useServerSeoMeta({
 });
 
 useHead({
-  title: null,
   titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
   link: [
     {
