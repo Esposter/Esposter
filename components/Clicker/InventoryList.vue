@@ -3,10 +3,11 @@ import { useGameStore } from "@/store/clicker/useGameStore";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
+const inventoryUpgrades = $computed(() => game.boughtUpgrades.sort((a, b) => a.price - b.price));
 </script>
 
 <template>
   <v-list overflow-y="auto!">
-    <ClickerModelUpgradeListGroup :upgrades="game.boughtUpgrades" />
+    <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" />
   </v-list>
 </template>
