@@ -1,22 +1,8 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
 
-const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
-const { initialiseRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
-let { roomSearchQuery } = $(storeToRefs(roomStore));
-const updateSearchQuery = async (value: string) => {
-  roomSearchQuery = value;
-
-  if (value) {
-    const { rooms, nextCursor } = await $client.room.readRooms.query({ filter: { name: value }, cursor: null });
-    initialiseRoomListSearched(rooms);
-    updateRoomListSearchedNextCursor(nextCursor);
-  } else {
-    initialiseRoomListSearched([]);
-    updateRoomListSearchedNextCursor(null);
-  }
-};
+const { roomSearchQuery } = $(storeToRefs(roomStore));
 const dialog = $ref(false);
 </script>
 
@@ -26,12 +12,11 @@ const dialog = $ref(false);
     <v-card>
       <v-card-title>
         <v-text-field
+          v-model="roomSearchQuery"
           placeholder="Where would you like to go?"
           prepend-inner-icon="mdi-magnify"
           density="compact"
           hide-details
-          :model-value="roomSearchQuery"
-          @update:model-value="updateSearchQuery"
         />
       </v-card-title>
       <v-card-text overflow-y="auto">

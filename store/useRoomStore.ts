@@ -31,19 +31,13 @@ export const useRoomStore = defineStore("room", () => {
   };
 
   const roomSearchQuery = ref("");
-  const roomListSearched = ref<Room[]>([]);
-  const pushRoomListSearched = (rooms: Room[]) => roomListSearched.value.push(...rooms);
   const roomsSearched = computed(() =>
-    roomListSearched.value.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+    roomSearchQuery.value
+      ? roomList.value
+          .filter((r) => r.name.toLowerCase().includes(roomSearchQuery.value.toLowerCase()))
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      : []
   );
-
-  const roomListSearchedNextCursor = ref<string | null>(null);
-  const updateRoomListSearchedNextCursor = (nextCursor: string | null) => {
-    roomListSearchedNextCursor.value = nextCursor;
-  };
-  const initialiseRoomListSearched = (rooms: Room[]) => {
-    roomListSearched.value = rooms;
-  };
 
   return {
     currentRoomId,
@@ -57,10 +51,6 @@ export const useRoomStore = defineStore("room", () => {
     updateRoom,
     deleteRoom,
     roomSearchQuery,
-    pushRoomListSearched,
     roomsSearched,
-    roomListSearchedNextCursor,
-    updateRoomListSearchedNextCursor,
-    initialiseRoomListSearched,
   };
 });

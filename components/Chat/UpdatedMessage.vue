@@ -42,12 +42,11 @@ const onUpdateMessage = async () => {
 
 <template>
   <v-text-field
+    v-model="editedMessage"
     density="compact"
     variant="solo"
     hide-details
     autofocus
-    :model-value="editedMessage"
-    @update:model-value="(value) => (editedMessage = value)"
     @keydown.enter="onUpdateMessage"
     @keydown.esc="emit('update:update-mode', false)"
   />

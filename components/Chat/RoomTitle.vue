@@ -42,14 +42,13 @@ onClickOutside(titleRef, async () => {
   >
     <v-text-field
       v-if="isUpdateMode"
+      v-model="currentRoomName"
       font="bold"
       text="xl"
       density="compact"
       variant="solo"
       hide-details
       autofocus
-      :model-value="currentRoomName"
-      @update:model-value="(value) => (currentRoomName = value)"
       @keydown.enter="onUpdateRoom"
     />
     <v-toolbar-title v-else font="bold!" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>

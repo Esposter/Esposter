@@ -81,7 +81,13 @@ export const roomRouter = router({
   }),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {
     try {
-      const { count } = await prisma.room.deleteMany({ where: { id: input, creatorId: ctx.session.user.id } });
+      const count = await prisma.$transaction(async (prisma) => {
+        await prisma.roomsOnUsers.deleteMany({ where: { roomId: input } });
+        const { count } = await prisma.room.deleteMany({
+          where: { id: input, creatorId: ctx.session.user.id },
+        });
+        return count;
+      });
       return count === 1;
     } catch (err) {
       return false;

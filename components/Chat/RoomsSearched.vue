@@ -3,23 +3,8 @@ import { useRoomStore } from "@/store/useRoomStore";
 import { MESSAGES_PATH } from "@/util/constants.common";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
-const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
-const { pushRoomListSearched, updateRoomListSearchedNextCursor } = roomStore;
-const { roomSearchQuery, roomsSearched, roomListSearchedNextCursor } = $(storeToRefs(roomStore));
-const hasMore = $computed(() => Boolean(roomListSearchedNextCursor));
-const fetchMoreRooms = async (onComplete: () => void) => {
-  try {
-    const { rooms, nextCursor } = await $client.room.readRooms.query({
-      filter: roomSearchQuery ? { name: roomSearchQuery } : undefined,
-      cursor: roomListSearchedNextCursor,
-    });
-    pushRoomListSearched(rooms);
-    updateRoomListSearchedNextCursor(nextCursor);
-  } finally {
-    onComplete();
-  }
-};
+const { roomsSearched } = $(storeToRefs(roomStore));
 </script>
 
 <template>
@@ -39,6 +24,5 @@ const fetchMoreRooms = async (onComplete: () => void) => {
         </template>
       </v-list-item>
     </InvisibleNuxtLink>
-    <VWaypoint :active="hasMore" @change="fetchMoreRooms" />
   </v-list>
 </template>
