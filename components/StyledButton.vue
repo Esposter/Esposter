@@ -14,9 +14,11 @@ const slots = useSlots();
 
 <template>
   <v-btn class="button" un-color="#fff!" :="mergeProps(buttonProps ?? {}, buttonAttrs ?? {})">
-    <template v-for="(_, slot) of slots" #[slot]="scope">
-      <slot :name="slot" :="{ ...scope }" />
-    </template>
+    <ClientOnly>
+      <template v-for="(_, slot) of slots" #[slot]="scope">
+        <slot :name="slot" :="{ ...scope }" />
+      </template>
+    </ClientOnly>
   </v-btn>
 </template>
 

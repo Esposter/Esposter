@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/useLayoutStore";
+import type { CSSProperties } from "vue";
 import { useDisplay } from "vuetify";
-import { VMain } from "vuetify/components";
 
 interface DefaultLayoutProps {
-  mainAttrs?: InstanceType<typeof VMain>["$attrs"];
+  mainStyle?: CSSProperties;
 }
 
 const props = defineProps<DefaultLayoutProps>();
-const { mainAttrs } = $(toRefs(props));
+const { mainStyle } = $(toRefs(props));
 const { mobile } = $(useDisplay());
 const router = useRouter();
 const slots = useSlots();
@@ -53,7 +53,7 @@ router.beforeEach(() => {
       <slot name="right" />
     </v-navigation-drawer>
 
-    <v-main :="{ ...mainAttrs }">
+    <v-main :style="mainStyle">
       <slot />
     </v-main>
 

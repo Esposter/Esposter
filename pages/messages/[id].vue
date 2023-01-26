@@ -16,7 +16,7 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 </script>
 
 <template>
-  <NuxtLayout :main-attrs="{ 'max-h': 'screen' }">
+  <NuxtLayout :main-style="{ 'max-height': '100vh' }">
     <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
     <template #left>
