@@ -42,7 +42,7 @@ export const useMessageStore = defineStore("message", () => {
     if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
   };
   const deleteMessage = (id: DeleteMessageInput) => {
-    if (!roomStore.currentRoomId || !!messagesMap.value[roomStore.currentRoomId]) return;
+    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
     messagesMap.value[roomStore.currentRoomId] = messages.filter(
