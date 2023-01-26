@@ -59,3 +59,9 @@ const sendMessage = async () => {
     </template>
   </v-text-field>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-field__append-inner) {
+  padding-top: 0;
+}
+</style>
