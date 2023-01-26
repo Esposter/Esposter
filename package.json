@@ -67,7 +67,7 @@
     "emoji-mart-vue-fast": "^12.0.1",
     "gsap": "^3.11.4",
     "marked": "^4.2.12",
-    "next-auth": "^4.18.10",
+    "next-auth": "4.18.8",
     "openai": "^3.1.0",
     "pinia": "^2.0.28",
     "rate-limiter-flexible": "^2.4.1",
