@@ -22,7 +22,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@sidebase/nuxt-auth": "^0.4.0-alpha.3",
+    "@sidebase/nuxt-auth": "^0.4.0-alpha.4",
     "@types/dedent": "^0.7.0",
     "@types/dompurify": "^2.4.0",
     "@types/marked": "^4.0.8",
