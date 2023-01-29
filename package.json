@@ -33,7 +33,7 @@
     "@typescript-eslint/parser": "^5.49.0",
     "@unocss/nuxt": "^0.49.1",
     "@vueuse/core": "^9.12.0",
-    "@vueuse/nuxt": "^9.11.1",
+    "@vueuse/nuxt": "^9.12.0",
     "@vueuse/sound": "^2.0.0",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
