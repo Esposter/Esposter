@@ -5,7 +5,7 @@ import type { TRPCLink } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import superjson from "superjson";
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   const url = useTRPCClientUrl();
   // Grab auth cookie to pass to server
   const headers = useRequestHeaders(["cookie"]);
@@ -19,8 +19,8 @@ export default defineNuxtPlugin(() => {
       true: (() => {
         if (isServer()) return httpBatchLink({ url, headers });
 
-        const config = useRuntimeConfig();
-        const wsClient = createWSClient({ url: `${config.public.wsBaseUrl}:${config.public.wsPort}` });
+        const wsProtocol = window.location.protocol === "https" ? "wss" : "ws";
+        const wsClient = createWSClient({ url: `${wsProtocol}://${window.location.host}` });
         return wsLink({ client: wsClient });
       })(),
       false: httpBatchLink({ url, headers }),

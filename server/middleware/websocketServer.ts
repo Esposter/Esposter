@@ -1,7 +1,8 @@
 import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
-import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
+import chalk from "chalk";
+import type { Server as HTTPServer } from "http";
 import type { Server, WebSocket } from "ws";
 import { WebSocketServer } from "ws";
 
@@ -10,12 +11,13 @@ declare global {
   var websocketServer: Server<WebSocket> | undefined;
 }
 
-export default defineEventHandler(() => {
+export default defineEventHandler((event) => {
   if (global.websocketServer) return;
 
-  const baseUrl = process.env.WS_BASE_URL;
-  const port = parseInt(process.env.WS_PORT);
-  const { server, listen } = createHTTPServer({ router: appRouter, createContext });
+  const server =
+    event.node.res.socket && "server" in event.node.res.socket ? (event.node.res.socket.server as HTTPServer) : null;
+  if (!server) return;
+
   const wss = new WebSocketServer({ server });
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 
@@ -28,7 +30,6 @@ export default defineEventHandler(() => {
     wss.close();
   });
 
-  listen(port);
-  console.log(`WebSocket Server is listening on ${baseUrl}:${port}`);
+  console.log(chalk.yellow("WebSocket Server is listening"));
   global.websocketServer = wss;
 });
