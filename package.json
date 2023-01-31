@@ -85,8 +85,5 @@
   },
   "overrides": {
     "vue": "latest"
-  },
-  "overridesComments": {
-    "vue": "@NOTE: https://github.com/vuejs/pinia/issues/853"
   }
 }
