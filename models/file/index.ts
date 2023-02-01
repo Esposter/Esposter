@@ -183,3 +183,9 @@ export const fileTypes: FileType[] = Object.entries(CodeExtension).map(([type, c
 export const SupportedCodeExtensions = Object.values(CodeExtension).map(
   (codeExtension) => new RegExp(getFilenameSupportPatternRegex(codeExtension), "gi")
 );
+
+export interface RendererProps {
+  url: string;
+  type: string;
+  preview?: true;
+}
