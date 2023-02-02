@@ -20,11 +20,6 @@ const languageExtension = $computed(() =>
   languageSupport.value ? languageConfiguration.of(languageSupport.value) : undefined
 );
 const editorView = shallowRef<EditorView>();
-
-// watch([editorView, languageSupport], ([editorView, languageSupport]) => {
-//   if (!editorView || !languageSupport) return;
-//   editorView.dispatch({ effects: languageConfiguration.reconfigure(languageSupport) });
-// });
 </script>
 
 <template>
