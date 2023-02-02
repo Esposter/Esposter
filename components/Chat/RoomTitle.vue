@@ -5,22 +5,22 @@ const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, roomName } = $(storeToRefs(roomStore));
-let currentRoomName = $ref(roomName);
+const currentRoomName = ref(roomName);
 let isUpdateMode = $ref(false);
 const titleRef = ref<HTMLDivElement>();
 const titleHovered = $ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId || !currentRoomName || currentRoomName === roomName) return;
+    if (!currentRoomId || !currentRoomName.value || currentRoomName.value === roomName) return;
 
     const updatedRoom = await $client.room.updateRoom.mutate({
       id: currentRoomId,
-      name: currentRoomName,
+      name: currentRoomName.value,
     });
     if (updatedRoom) updateRoom(updatedRoom);
   } finally {
     isUpdateMode = false;
-    currentRoomName = roomName;
+    currentRoomName.value = roomName;
   }
 };
 
