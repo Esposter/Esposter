@@ -1,10 +1,10 @@
-import { CodeExtension, fileTypes } from "@/models/file";
+import { LanguageRegexSupportMap } from "@/models/file";
 
-export const getFileTypeForPath = (path: string): keyof typeof CodeExtension => {
-  const filename = path.split(/[/\\]/).pop();
-  if (!filename) return "Text";
+export const getLanguageForUrl = (url: string) => {
+  const filename = url.substring(url.lastIndexOf("/") + 1).toLowerCase();
 
-  for (const fileType of fileTypes) if (filename.match(fileType.filenameSupportPattern)) return fileType.type;
+  for (const [language, supportPattern] of Object.entries(LanguageRegexSupportMap))
+    if (filename.match(supportPattern)) return language;
 
-  return "Text";
+  return null;
 };
