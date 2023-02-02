@@ -1,13 +1,10 @@
 import { languages } from "@codemirror/language-data";
 import type { Component } from "vue";
 
-const getLanguageRegexSupportPattern = (supportedExtensions: string) =>
-  /\^/.test(supportedExtensions)
-    ? supportedExtensions.replace(/\|(\^)?/g, (_, b) => "$|" + (b ? "^" : "^.*\\.")) + "$"
-    : "^.*\\.(" + supportedExtensions + ")$";
+const getLanguageRegexSupportPattern = (extensions: readonly string[]) => `^.*\\.(${extensions.join("|")})$`;
 
 export const LanguageRegexSupportMap = languages.reduce<Record<string, string>>((acc, curr) => {
-  acc[curr.name] = getLanguageRegexSupportPattern(curr.extensions.join("|"));
+  acc[curr.name] = getLanguageRegexSupportPattern(curr.extensions);
   return acc;
 }, {});
 export type LanguageRegexSupportMap = typeof LanguageRegexSupportMap;
