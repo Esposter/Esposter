@@ -15,8 +15,8 @@ const getLanguageRegexSupportPattern = (supportedExtensions: string) =>
     ? supportedExtensions.replace(/\|(\^)?/g, (_, b) => `$|${b ? "^" : "^.*\\."}$`)
     : `^.*\\.(${supportedExtensions})$`;
 
-export const LanguageRegexSupportMap = extendedLanguages.reduce<Record<string, string>>((acc, curr) => {
+export const LanguageRegexSupportPatternMap = extendedLanguages.reduce<Record<string, string>>((acc, curr) => {
   acc[curr.name] = getLanguageRegexSupportPattern(curr.extensions.map((ext) => escapeRegExp(ext)).join("|"));
   return acc;
 }, {});
-export type LanguageRegexSupportMap = typeof LanguageRegexSupportMap;
+export type LanguageRegexSupportPatternMap = typeof LanguageRegexSupportPatternMap;
