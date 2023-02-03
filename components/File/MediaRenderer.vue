@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/file";
 import { typeRendererMap } from "@/models/file";
-import { getLanguageForUrl } from "@/services/file";
+import { getLanguageForUrl } from "@/services/file/code";
 import type { Component } from "vue";
 
 const props = defineProps<FileRendererProps>();

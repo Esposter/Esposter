@@ -1,4 +1,4 @@
-import { LanguageRegexSupportMap } from "@/models/file";
+import { LanguageRegexSupportMap } from "@/models/file/code";
 
 export const getLanguageForUrl = (url: string) => {
   const filename = url.substring(url.lastIndexOf("/") + 1).toLowerCase();
