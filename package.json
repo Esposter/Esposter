@@ -11,7 +11,7 @@
     "typecheck": "nuxt typecheck",
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
-    "test": "nuxt test",
+    "test": "vitest",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
     "prisma-migrate:dev": "prisma migrate dev",
