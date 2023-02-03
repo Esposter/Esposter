@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/file";
-import { languages } from "@codemirror/language-data";
+import { extendedLanguages } from "@/models/file";
 import { Compartment } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
@@ -12,7 +12,7 @@ interface CodeRendererProps extends FileRendererProps {
 const props = defineProps<CodeRendererProps>();
 const { url, language } = $(toRefs(props));
 const code = $ref(await (await fetch(url)).text());
-const languageRequested = $computed(() => languages.find((l) => l.name === language));
+const languageRequested = $computed(() => extendedLanguages.find((l) => l.name === language));
 const languageConfiguration = $ref(new Compartment());
 const languageSupport = ref(languageRequested ? await languageRequested.load() : undefined);
 const languageExtension = $computed(() =>
@@ -23,5 +23,7 @@ const editorView = shallowRef<EditorView>();
 </script>
 
 <template>
-  <Codemirror v-model="code" :extensions="languageExtension" @ready="({ view }) => (editorView = view)" />
+  <StyledCard w="full">
+    <Codemirror v-model="code" :extensions="languageExtension" disabled @ready="({ view }) => (editorView = view)" />
+  </StyledCard>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/file";
+import { FileRendererProps } from "@/models/file";
 
 const props = defineProps<FileRendererProps>();
 const { url } = $(toRefs(props));
@@ -13,7 +13,9 @@ const niceFilename = $computed(() => uniqueFilename.substring(uniqueFilename.ind
 
 <template>
   <InvisibleNuxtLink :href="url" :download="niceFilename">
-    <v-icon icon="mdi-download" />
-    {{ niceFilename }}
+    <StyledCard pl="2!" pr="1!" py="2!">
+      {{ niceFilename }}
+      <v-icon icon="mdi-download" />
+    </StyledCard>
   </InvisibleNuxtLink>
 </template>
