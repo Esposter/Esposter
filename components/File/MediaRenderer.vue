@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/file";
 import { typeRendererMap } from "@/models/file";
-import { getLanguageForUrl } from "@/services/file/code";
+import { getLanguageForFileUrl } from "@/services/file/code";
 import type { Component } from "vue";
 
 const props = defineProps<FileRendererProps>();
@@ -14,7 +14,7 @@ const renderer = $computed<Component>(() => {
     typeRendererMap[mimetype] || typeRendererMap[mimetype.substring(0, mimetype.indexOf("/"))] || defaultRenderer;
   if (result !== defaultRenderer) return result;
 
-  const language = getLanguageForUrl(url);
+  const language = getLanguageForFileUrl(url);
   if (!language) return result;
 
   rendererProps.language = language;
