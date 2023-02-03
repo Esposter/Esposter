@@ -11,6 +11,7 @@
     "typecheck": "nuxt typecheck",
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
+    "test": "nuxt test",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
     "prisma-migrate:dev": "prisma migrate dev",
@@ -19,6 +20,7 @@
     "gen-env": "gen-env-types .env -o env.d.ts -e ."
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^3.1.1",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/google-fonts": "^3.0.0-1",
     "@rollup/plugin-node-resolve": "^15.0.1",
@@ -46,7 +48,8 @@
     "prisma": "^4.9.0",
     "sass": "^1.58.0",
     "tozod": "^3.0.0",
-    "type-fest": "^3.5.4"
+    "type-fest": "^3.5.4",
+    "vitest": "^0.28.3"
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.1",
