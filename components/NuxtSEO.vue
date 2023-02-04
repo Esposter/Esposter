@@ -11,7 +11,7 @@ useServerSeoMeta({
   ogUrl: config.public.baseUrl,
   ogType: "website",
   ogImage: logoImageUrl,
-  // @NOTE: ogImageAlt: "logo"
+  ogImageAlt: SITE_NAME,
   ogImageWidth: 250,
   ogImageHeight: 200,
   ogSiteName: SITE_NAME,
