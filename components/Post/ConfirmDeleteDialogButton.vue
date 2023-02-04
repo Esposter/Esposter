@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { usePostStore } from "@/store/usePostStore";
-import { INDEX_PATH } from "@/util/constants.common";
-
+  
 interface ConfirmDeleteDialogButtonProps {
   postId: string;
 }

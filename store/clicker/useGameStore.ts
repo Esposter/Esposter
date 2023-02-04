@@ -1,6 +1,4 @@
 import { Game } from "@/models/clicker";
-import { CLICKER_STORE } from "@/util/constants.client";
-import { isServer } from "@/util/constants.common";
 import { skipHydrate } from "pinia";
 
 export const useGameStore = defineStore("clicker/game", () => {

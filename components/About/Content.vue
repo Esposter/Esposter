@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { LINKEDIN_PROFILE_URL, SITE_NAME } from "@/util/constants.client";
-
 const { primary, "primary-darken-1": primaryDarken1 } = useColors();
 </script>
 

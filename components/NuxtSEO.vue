@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SITE_DESCRIPTION, SITE_NAME } from "@/util/constants.client";
-
 const { primary } = useColors();
 const config = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();

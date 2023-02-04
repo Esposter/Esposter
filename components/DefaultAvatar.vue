@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { getInitials } from "@/util/text";
-
 interface DefaultAvatarProps {
   name: string;
 }

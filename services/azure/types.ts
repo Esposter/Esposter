@@ -1,4 +1,4 @@
-import type { TupleSlice } from "@/util/types";
+import type { TupleSlice } from "@/utils/types";
 import type { TableEntity, TransactionAction as AzureTransactionAction } from "@azure/data-tables";
 import type { OmitIndexSignature } from "type-fest";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";

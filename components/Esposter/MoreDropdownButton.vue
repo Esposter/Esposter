@@ -1,13 +1,4 @@
 <script setup lang="ts">
-import { ITEM_NAME } from "@/util/constants.client";
-import {
-  ABOUT_PATH,
-  CLICKER_PATH,
-  LOGIN_PATH,
-  PRIVACY_POLICY_PATH,
-  TERMS_AND_CONDITIONS_PATH,
-  USER_SETTINGS_PATH,
-} from "@/util/constants.common";
 import { mergeProps } from "vue";
 
 interface Item {

@@ -1,9 +1,7 @@
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
 import { generateAIResponse } from "@/services/chatbot";
-import { CHATBOT_PROMPT_MAX_LENGTH } from "@/util/constants.common";
 import { z } from "zod";
-
 const inferSchema = z.object({
   userId: z.string().cuid(),
   prompt: z.string().min(1).max(CHATBOT_PROMPT_MAX_LENGTH),

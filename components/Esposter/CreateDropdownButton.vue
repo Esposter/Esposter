@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { POST_CREATE_PATH } from "@/util/constants.common";
-import { mergeProps } from "vue";
+  import { mergeProps } from "vue";
 
 interface Item {
   title: string;

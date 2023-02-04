@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { SITE_NAME } from "@/util/constants.client";
-import { toTitleCase } from "@/util/text";
-import type { BuiltInProviderType } from "next-auth/providers";
+    import type { BuiltInProviderType } from "next-auth/providers";
 import type { Component, CSSProperties } from "vue";
 
 interface ProviderProps {

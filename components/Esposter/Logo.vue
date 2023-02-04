@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { SITE_NAME } from "@/util/constants.client";
-
 const logoImageUrl = useLogoImageUrl();
 </script>
 

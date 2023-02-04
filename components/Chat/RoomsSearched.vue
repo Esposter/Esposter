@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { MESSAGES_PATH } from "@/util/constants.common";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const roomStore = useRoomStore();

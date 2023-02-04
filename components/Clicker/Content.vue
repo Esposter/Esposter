@@ -5,7 +5,6 @@ import { useBuildingStore } from "@/store/clicker/useBuildingStore";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { usePopupStore } from "@/store/clicker/usePopupStore";
-import { AUTOSAVE_INTERVAL, FPS } from "@/util/constants.client";
 import { clearInterval, setInterval } from "worker-timers";
 
 const gameStore = useGameStore();

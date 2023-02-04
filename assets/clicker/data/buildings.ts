@@ -1,6 +1,6 @@
 import type { Building } from "@/models/clicker";
 import { BuildingName } from "@/models/clicker";
-import { ITEM_NAME } from "@/util/constants.client";
+import { ITEM_NAME } from "@/utils/constants.client";
 
 export const buildings: Building[] = [
   {

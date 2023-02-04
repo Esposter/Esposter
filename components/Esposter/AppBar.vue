@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { SITE_NAME } from "@/util/constants.client";
-import { INDEX_PATH } from "@/util/constants.common";
-</script>
+    </script>
 
 <template>
   <v-app-bar density="comfortable" app :title="SITE_NAME">

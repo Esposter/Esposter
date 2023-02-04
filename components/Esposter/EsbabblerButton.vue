@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import { MESSAGES_INDEX_PATH } from "@/util/constants.common";
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <v-tooltip location="bottom" text="Esbabbler">

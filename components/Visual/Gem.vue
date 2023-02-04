@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/util/constants.client";
 import {
-  AmbientLight,
-  BufferGeometry,
-  Clock,
-  DirectionalLight,
-  Light,
-  Mesh,
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-  PCFSoftShadowMap,
-  PerspectiveCamera,
-  Scene,
-  TextureLoader,
-  WebGLRenderer,
+AmbientLight,
+BufferGeometry,
+Clock,
+DirectionalLight,
+Light,
+Mesh,
+MeshBasicMaterial,
+MeshStandardMaterial,
+PCFSoftShadowMap,
+PerspectiveCamera,
+Scene,
+TextureLoader,
+WebGLRenderer
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";

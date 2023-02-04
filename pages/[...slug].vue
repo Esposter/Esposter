@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { NOT_FOUND_BACKGROUND } from "@/util/constants.client";
-import { INDEX_PATH } from "@/util/constants.common";
-import { gsap } from "gsap";
+    import { gsap } from "gsap";
 
 const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;
 

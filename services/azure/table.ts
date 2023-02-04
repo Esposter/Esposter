@@ -1,6 +1,6 @@
 import type { CompositeKey, TransactionAction } from "@/services/azure/types";
 import { AzureTable } from "@/services/azure/types";
-import { AZURE_MAX_BATCH_SIZE } from "@/util/constants.server";
+import { AZURE_MAX_BATCH_SIZE } from "@/utils/constants.server";
 import type { TableEntityQueryOptions, TransactionAction as AzureTransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
 import { JsonSerializer } from "typescript-json-serializer";

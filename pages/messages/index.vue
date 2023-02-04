@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { MESSAGES_PATH } from "@/util/constants.common";
-
 definePageMeta({ middleware: "auth" });
 
 const { $client } = useNuxtApp();

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/useRoomStore";
-import { uuidValidateV4 } from "@/util/uuid";
-
+  
 definePageMeta({ middleware: "auth" });
 
 const route = useRoute();

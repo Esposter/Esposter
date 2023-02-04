@@ -1,6 +1,4 @@
 import type { AppRouter } from "@/server/trpc/routers";
-import { isServer } from "@/util/constants.common";
-import { isDevelopment } from "@/util/constants.server";
 import type { TRPCLink } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import superjson from "superjson";

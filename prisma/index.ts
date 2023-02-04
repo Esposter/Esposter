@@ -1,4 +1,4 @@
-import { isProduction } from "@/util/constants.server";
+import { isProduction } from "@/utils/constants.server";
 import { PrismaClient } from "@prisma/client";
 import dedent from "dedent";
 import { highlight } from "sql-highlight";

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { SITE_NAME } from "@/util/constants.client";
-import dayjs from "dayjs";
+  import dayjs from "dayjs";
 import { useDisplay } from "vuetify";
 
 const { mobile } = $(useDisplay());
