@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import {
-AmbientLight,
-BufferGeometry,
-Clock,
-DirectionalLight,
-Light,
-Mesh,
-MeshBasicMaterial,
-MeshStandardMaterial,
-PCFSoftShadowMap,
-PerspectiveCamera,
-Scene,
-TextureLoader,
-WebGLRenderer
+  AmbientLight,
+  BufferGeometry,
+  Clock,
+  DirectionalLight,
+  Light,
+  Mesh,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  PCFSoftShadowMap,
+  PerspectiveCamera,
+  Scene,
+  TextureLoader,
+  WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { gsap } from "gsap";
+import { gsap } from "gsap";
 
 const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import type { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import { SubmitEventPromise } from "vuetify";
 
 export interface UpsertCardProps {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  
 const theme = useGlobalTheme();
 let themeCookie = $(useCookie(THEME_COOKIE_NAME));
 const toggleTheme = () => {

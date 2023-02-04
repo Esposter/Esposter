@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { CharacterCount } from "@tiptap/extension-character-count";
+import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";

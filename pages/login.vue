@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import type { BuiltInProviderType } from "next-auth/providers";
+import type { BuiltInProviderType } from "next-auth/providers";
 import type { Component, CSSProperties } from "vue";
 
 interface ProviderProps {

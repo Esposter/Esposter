@@ -1,6 +1,3 @@
-<script setup lang="ts">
-    </script>
-
 <template>
   <v-app-bar density="comfortable" app :title="SITE_NAME">
     <template #prepend>

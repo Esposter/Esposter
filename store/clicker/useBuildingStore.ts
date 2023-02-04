@@ -3,7 +3,7 @@ import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/c
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
-    
+
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();
   const pointStore = usePointStore();

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  
 interface Item {
   title: string;
   href: string;

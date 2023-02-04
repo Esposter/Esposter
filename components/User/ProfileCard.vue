@@ -1,8 +1,6 @@
 <script setup lang="ts">
-  import dayjs from "dayjs";
-import { useDisplay } from "vuetify";
+import dayjs from "dayjs";
 
-const { mobile } = $(useDisplay());
 const { $client } = useNuxtApp();
 const user = await $client.user.readUser.query();
 </script>

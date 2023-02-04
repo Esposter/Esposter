@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { mergeProps } from "vue";
+import { mergeProps } from "vue";
 
 interface Item {
   title: string;

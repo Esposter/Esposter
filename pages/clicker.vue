@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/useGameStore";
-  
+
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const displayNoPoints = $computed(() => formatNumberLong(game.noPoints));
