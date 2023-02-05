@@ -10,7 +10,7 @@ describe("App", async () => {
   await setup();
 
   test("renders about page", async () => {
-    const status = await fetch(RoutePath.About);
+    const { status } = await fetch(RoutePath.About);
     expect(status).toBe(200);
   });
 });
