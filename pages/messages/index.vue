@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
+
 definePageMeta({ middleware: "auth" });
 
 const { $client } = useNuxtApp();

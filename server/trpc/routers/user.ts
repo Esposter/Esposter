@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
-import { USER_NAME_MAX_LENGTH } from "@/utils/constants.common";
+import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
 import type { User as PrismaUser } from "@prisma/client";
 import type { toZod } from "tozod";
 import { z } from "zod";

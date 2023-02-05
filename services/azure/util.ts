@@ -1,5 +1,5 @@
-import { now } from "@/utils/constants.common";
-import { AZURE_SELF_DESTRUCT_TIMER } from "@/utils/constants.server";
+import { AZURE_SELF_DESTRUCT_TIMER } from "@/utils/azure";
+import { now } from "@/utils/time";
 
 // Calculation for azure table storage row key by using reverse-ticked timestamp in nanoseconds
 export const getReverseTickedTimestamp = () =>

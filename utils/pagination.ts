@@ -1,3 +1,5 @@
+export const FETCH_LIMIT = 20;
+
 export const getNextCursor = <T extends object, U extends keyof T>(
   items: T[],
   itemCursorKey: U,
