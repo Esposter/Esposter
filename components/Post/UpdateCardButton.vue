@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
+
 interface UpdateCardButtonProps {
   postId: string;
 }
 
 const props = defineProps<UpdateCardButtonProps>();
 const { postId } = $(toRefs(props));
-const onUpdatePost = () => navigateTo(POST_UPDATE_PATH(postId));
+const onUpdatePost = () => navigateTo(RoutePath.PostUpdate(postId));
 </script>
 
 <template>

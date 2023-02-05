@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { useRoomStore } from "@/store/useRoomStore";
 import type { Room } from "@prisma/client";
 
@@ -16,7 +17,7 @@ const active = $computed(() => room.id === currentRoomId);
 
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <InvisibleNuxtLink :to="MESSAGES_PATH(room.id)">
+    <InvisibleNuxtLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge m="r-4" color="green" location="bottom end" dot>

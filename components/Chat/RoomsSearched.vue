@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { useRoomStore } from "@/store/useRoomStore";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
@@ -11,7 +12,7 @@ const { roomsSearched } = $(storeToRefs(roomStore));
     <InvisibleNuxtLink
       v-for="room in roomsSearched"
       :key="room.id"
-      :to="MESSAGES_PATH(room.id)"
+      :to="RoutePath.Messages(room.id)"
       @click="emit('update:room')"
     >
       <v-list-item :title="room.name" :value="room.id">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
+import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/usePostStore";
 import type { SubmitEventPromise } from "vuetify";
 
@@ -11,7 +12,7 @@ const onCreatePost = async (e: SubmitEventPromise, values: NonNullable<UpsertCar
   e.preventDefault();
   const newPost = await $client.post.createPost.mutate(values);
   createPost(newPost);
-  await navigateTo(INDEX_PATH);
+  await navigateTo(RoutePath.Index);
 };
 </script>
 

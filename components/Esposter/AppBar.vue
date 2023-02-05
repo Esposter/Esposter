@@ -1,7 +1,11 @@
+<script setup lang="ts">
+import { RoutePath } from "@/models/router";
+</script>
+
 <template>
   <v-app-bar density="comfortable" app :title="SITE_NAME">
     <template #prepend>
-      <NuxtLink display="contents" :to="INDEX_PATH">
+      <NuxtLink display="contents" :to="RoutePath.Index">
         <EsposterLogo />
       </NuxtLink>
     </template>

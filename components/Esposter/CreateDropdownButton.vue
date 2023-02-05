@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { mergeProps } from "vue";
 
 interface Item {
@@ -10,7 +11,7 @@ interface Item {
 const items: Item[] = [
   {
     title: "Create Post",
-    href: POST_CREATE_PATH,
+    href: RoutePath.PostCreate,
     icon: "mdi-pencil",
   },
 ];

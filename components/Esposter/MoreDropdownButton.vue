@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { mergeProps } from "vue";
 
 interface Item {
@@ -15,27 +16,27 @@ const items = $computed<Item[]>(() =>
     ? [
         {
           title: "Login",
-          href: LOGIN_PATH,
+          href: RoutePath.Index,
           icon: "mdi-login",
         },
         {
           title: `${ITEM_NAME} Clicker`,
-          href: CLICKER_PATH,
+          href: RoutePath.Clicker,
           icon: "mdi-fruit-pineapple",
         },
         {
           title: "About",
-          href: ABOUT_PATH,
+          href: RoutePath.About,
           icon: "mdi-information-outline",
         },
         {
           title: "Privacy Policy",
-          href: PRIVACY_POLICY_PATH,
+          href: RoutePath.PrivacyPolicy,
           icon: "mdi-lock",
         },
         {
           title: "Terms & Conditions",
-          href: TERMS_AND_CONDITIONS_PATH,
+          href: RoutePath.TermsAndConditions,
           icon: "mdi-shield-lock",
         },
       ]
@@ -43,27 +44,27 @@ const items = $computed<Item[]>(() =>
     ? [
         {
           title: `${ITEM_NAME} Clicker`,
-          href: CLICKER_PATH,
+          href: RoutePath.Clicker,
           icon: "mdi-fruit-pineapple",
         },
         {
           title: "Settings",
-          href: USER_SETTINGS_PATH,
+          href: RoutePath.UserSettings,
           icon: "mdi-cog",
         },
         {
           title: "About",
-          href: ABOUT_PATH,
+          href: RoutePath.About,
           icon: "mdi-information-outline",
         },
         {
           title: "Privacy Policy",
-          href: PRIVACY_POLICY_PATH,
+          href: RoutePath.PrivacyPolicy,
           icon: "mdi-lock",
         },
         {
           title: "Terms & Conditions",
-          href: TERMS_AND_CONDITIONS_PATH,
+          href: RoutePath.TermsAndConditions,
           icon: "mdi-shield-lock",
         },
         {

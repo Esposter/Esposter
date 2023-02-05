@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/usePostStore";
 
 interface ConfirmDeleteDialogButtonProps {
@@ -13,7 +14,7 @@ const onDeletePost = async (onComplete: () => void) => {
   try {
     const successful = await $client.post.deletePost.mutate(postId);
     if (successful) deletePost(postId);
-    await navigateTo(INDEX_PATH);
+    await navigateTo(RoutePath.Index);
   } finally {
     onComplete();
   }

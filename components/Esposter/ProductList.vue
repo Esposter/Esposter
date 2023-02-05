@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
+
 interface Item {
   title: string;
   href: string;
@@ -8,7 +10,7 @@ interface Item {
 const items: Item[] = [
   {
     title: "Esbabbler",
-    href: MESSAGES_INDEX_PATH,
+    href: RoutePath.MessagesIndex,
     icon: "mdi-message-fast",
   },
 ];

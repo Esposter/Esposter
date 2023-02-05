@@ -1,3 +1,4 @@
+import { RoutePath } from "@/models/router";
 import { fetch, setup } from "@nuxt/test-utils";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -8,8 +9,8 @@ describe("App", async () => {
 
   await setup();
 
-  test("loads about page", async () => {
-    const { status } = await fetch("/about");
+  test("renders about page", async () => {
+    const status = await fetch(RoutePath.About);
     expect(status).toBe(200);
   });
 });

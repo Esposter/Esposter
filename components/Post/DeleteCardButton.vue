@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/usePostStore";
 
 interface DeleteCardButtonProps {
@@ -12,7 +13,7 @@ const { deletePost } = usePostStore();
 const onDeletePost = async () => {
   const successful = await $client.post.deletePost.mutate(postId);
   if (successful) deletePost(postId);
-  await navigateTo(INDEX_PATH);
+  await navigateTo(RoutePath.Index);
 };
 </script>
 
