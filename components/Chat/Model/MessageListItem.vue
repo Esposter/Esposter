@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@/services/azure/types";
+import type { MessageEntity } from "@/models/azure/message";
 import { useMemberStore } from "@/store/useMemberStore";
 
 interface MessageListItemProps {

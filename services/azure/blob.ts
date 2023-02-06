@@ -1,5 +1,5 @@
+import { AzureContainer } from "@/models/azure/blob";
 import { AppendBlobClient, BlobServiceClient, HttpRequestBody } from "@azure/storage-blob";
-import { AzureContainer } from "@/services/azure/types";
 
 const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
 

@@ -1,5 +1,5 @@
+import type { MessageEntity } from "@/models/azure/message";
 import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
-import { MessageEntity } from "@/services/azure/types";
 import { EventEmitter } from "events";
 
 interface CustomEvents {

@@ -1,5 +1,5 @@
-import type { CompositeKey, TransactionAction } from "@/services/azure/types";
-import { AzureTable } from "@/services/azure/types";
+import type { CompositeKey, TransactionAction } from "@/models/azure";
+import type { AzureTable } from "@/models/azure/table";
 import { AZURE_MAX_BATCH_SIZE } from "@/utils/azure";
 import type { TableEntityQueryOptions, TransactionAction as AzureTransactionAction } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";

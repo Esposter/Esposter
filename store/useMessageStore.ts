@@ -1,5 +1,5 @@
+import type { MessageEntity } from "@/models/azure/message";
 import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
-import type { MessageEntity } from "@/services/azure/types";
 import { useRoomStore } from "@/store/useRoomStore";
 
 export const useMessageStore = defineStore("message", () => {

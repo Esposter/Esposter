@@ -1,9 +1,10 @@
+import { MessageEntity } from "@/models/azure/message";
+import { AzureTable } from "@/models/azure/table";
 import { router } from "@/server/trpc";
 import { customEventEmitter } from "@/server/trpc/events";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
-import { AzureTable, MessageEntity } from "@/services/azure/types";
-import { getReverseTickedTimestamp } from "@/services/azure/util";
+import { getReverseTickedTimestamp } from "@/utils/azure";
 import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
 import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
 import { odata } from "@azure/data-tables";

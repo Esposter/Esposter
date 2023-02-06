@@ -1,5 +1,5 @@
+import { AzureContainer } from "@/models/azure/blob";
 import { append, getContainerClient } from "@/services/azure/blob";
-import { AzureContainer } from "@/services/azure/types";
 import { generateResponse } from "@/services/openai";
 import { sanitiseText, streamToText } from "@/utils/text";
 import dedent from "dedent";

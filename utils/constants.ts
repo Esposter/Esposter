@@ -1,4 +1,4 @@
-import { AzureContainer } from "@/services/azure/types";
+import { AzureContainer } from "@/models/azure/blob";
 
 // #region Site constants
 export const SITE_NAME = "Esposter";

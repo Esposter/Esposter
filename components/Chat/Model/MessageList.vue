@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VWaypoint from "@/components/VWaypoint.vue";
-import type { MessageEntity } from "@/services/azure/types";
+import type { MessageEntity } from "@/models/azure/message";
 
 interface MessageListProps {
   messages: MessageEntity[];
