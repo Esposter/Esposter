@@ -16,7 +16,7 @@ const items = $computed<Item[]>(() =>
     ? [
         {
           title: "Login",
-          href: RoutePath.Index,
+          href: RoutePath.Login,
           icon: "mdi-login",
         },
         {
