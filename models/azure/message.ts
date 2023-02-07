@@ -2,6 +2,7 @@ import type { EmojiMetadataTagEntity } from "@/models/azure/emoji";
 import { emojiMetadataTagSchema } from "@/models/azure/emoji";
 import type { FileEntity } from "@/models/azure/file";
 import { fileSchema } from "@/models/azure/file";
+import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
 import type { toZod } from "tozod";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
