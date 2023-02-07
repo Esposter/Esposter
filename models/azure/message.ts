@@ -1,3 +1,4 @@
+import { CompositeKeyEntity } from "@/models/azure";
 import type { EmojiMetadataTagEntity } from "@/models/azure/emoji";
 import { emojiMetadataTagSchema } from "@/models/azure/emoji";
 import type { FileEntity } from "@/models/azure/file";
@@ -8,9 +9,7 @@ import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
 
 @JsonObject()
-export class MessageEntity {
-  @JsonProperty() partitionKey!: string;
-  @JsonProperty() rowKey!: string;
+export class MessageEntity extends CompositeKeyEntity {
   @JsonProperty() creatorId!: string;
   @JsonProperty() message!: string;
   @JsonProperty() files!: FileEntity[];
@@ -27,4 +26,13 @@ export const messageSchema: toZod<MessageEntity> = z.object({
   files: z.array(fileSchema),
   emojiMetadataTags: z.array(emojiMetadataTagSchema),
   createdAt: z.date(),
+});
+
+@JsonObject()
+export class MessageMetadataTagEntity {
+  @JsonProperty() rowKey!: string;
+}
+
+export const messageMetadataTagSchema: toZod<MessageMetadataTagEntity> = z.object({
+  rowKey: z.string().uuid(),
 });

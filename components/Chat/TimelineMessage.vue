@@ -19,17 +19,19 @@ const displayDate = $computed(() => {
 </script>
 
 <template>
-  <v-row v-if="areDifferentDays" display="flex" items="center" no-gutters>
-    <v-col flex="1">
-      <v-divider />
-    </v-col>
-    <div class="text-subtitle-2 border" px="4" py="2" rd="full" text="center">
-      {{ displayDate }}
-    </div>
-    <v-col flex="1">
-      <v-divider />
-    </v-col>
-  </v-row>
+  <v-container v-if="areDifferentDays" px="0!" fluid>
+    <v-row display="flex" items="center" no-gutters>
+      <v-col flex="1">
+        <v-divider />
+      </v-col>
+      <div class="text-subtitle-2 border" px="4" py="2" rd="full" text="center">
+        {{ displayDate }}
+      </div>
+      <v-col flex="1">
+        <v-divider />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped lang="scss">

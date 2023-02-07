@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
-import { useMemberStore } from "@/store/useMemberStore";
+import type { User } from "@prisma/client";
 import dayjs from "dayjs";
 
 interface MessageListItemProps {
   message: MessageEntity;
+  creator: User;
 }
 
 const props = defineProps<MessageListItemProps>();
 const { message } = $(toRefs(props));
-const memberStore = useMemberStore();
-const { memberList } = $(storeToRefs(memberStore));
-// @NOTE: We'll need to search for the creators in the user database in the future
-// if we want to show messages from members who have left the room
-const creator = $computed(() => memberList.find((m) => m.id === message.creatorId));
 const displayCreatedAt = $computed(() => dayjs(message.createdAt).format("h:mm A"));
 const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
@@ -24,7 +20,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
 </script>
 
 <template>
-  <ChatConfirmDeleteMessageDialog v-if="creator" :message="message">
+  <ChatConfirmDeleteMessageDialog :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
         v-if="creator.name"

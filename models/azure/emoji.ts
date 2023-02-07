@@ -1,22 +1,37 @@
+import { CompositeKeyEntity } from "@/models/azure";
 import type { toZod } from "tozod";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
+
+export interface Emoji {
+  // We'll need the metadata row key to identify what emoji in the metadata table we're talking about
+  messageMetadataRowKey: string;
+  emoji: string;
+  userIds: string[];
+}
 
 @JsonObject()
 export class EmojiMetadataTagEntity {
   @JsonProperty()
   rowKey!: string;
-
-  @JsonProperty()
-  emojiTag!: string;
-
-  // Only used for sorting emoji metadata tag list in order from highest count to lowest
-  @JsonProperty()
-  count!: number;
 }
 
 export const emojiMetadataTagSchema: toZod<EmojiMetadataTagEntity> = z.object({
+  rowKey: z.string().uuid(),
+});
+
+@JsonObject()
+export class MessageEmojiMetadataEntity extends CompositeKeyEntity {
+  @JsonProperty()
+  emojiTag!: string;
+
+  @JsonProperty()
+  userIds!: string[];
+}
+
+export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = z.object({
+  partitionKey: z.string().uuid(),
   rowKey: z.string(),
   emojiTag: z.string(),
-  count: z.number().int(),
+  userIds: z.array(z.string()),
 });

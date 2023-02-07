@@ -1,9 +1,10 @@
+import type { AzureEntity, AzureUpdateEntity } from "@/models/azure";
 import { MessageEntity, messageSchema } from "@/models/azure/message";
 import { AzureTable } from "@/models/azure/table";
 import { router } from "@/server/trpc";
 import { customEventEmitter } from "@/server/trpc/events";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
-import { getTableClient, getTopNEntities, submitTransaction } from "@/services/azure/table";
+import { getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getReverseTickedTimestamp } from "@/utils/azure";
 import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
@@ -68,11 +69,19 @@ export const messageRouter = router({
         emojiMetadataTags: [],
         createdAt: new Date(),
       };
-      const successful = await submitTransaction(messageClient, [["create", message]]);
-      if (!successful) return null;
 
-      customEventEmitter.emit("onCreateMessage", message);
-      return message;
+      try {
+        await messageClient.createEntity<AzureEntity<MessageEntity>>({
+          ...message,
+          files: JSON.stringify(message.files),
+          emojiMetadataTags: JSON.stringify(message.emojiMetadataTags),
+        });
+
+        customEventEmitter.emit("onCreateMessage", message);
+        return message;
+      } catch {
+        return null;
+      }
     }),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "partitionKey")
     .input(onUpdateMessageInputSchema)
@@ -89,11 +98,15 @@ export const messageRouter = router({
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
-      const successful = await submitTransaction(messageClient, [["update", input]]);
-      if (!successful) return null;
 
-      customEventEmitter.emit("onUpdateMessage", input);
-      return input;
+      try {
+        await messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>(input);
+
+        customEventEmitter.emit("onUpdateMessage", input);
+        return input;
+      } catch {
+        return null;
+      }
     }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "partitionKey")
     .input(onDeleteMessageInputSchema)
@@ -108,12 +121,15 @@ export const messageRouter = router({
     ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
-    .mutation(async ({ input }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
-      const successful = await submitTransaction(messageClient, [["delete", input]]);
-      if (!successful) return false;
+    .mutation(async ({ input: { partitionKey, rowKey } }) => {
+      try {
+        const messageClient = await getTableClient(AzureTable.Messages);
+        await messageClient.deleteEntity(partitionKey, rowKey);
 
-      customEventEmitter.emit("onDeleteMessage", input);
-      return true;
+        customEventEmitter.emit("onDeleteMessage", { partitionKey, rowKey });
+        return true;
+      } catch {
+        return false;
+      }
     }),
 });
