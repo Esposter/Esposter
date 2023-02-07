@@ -59,8 +59,7 @@ export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "partitionKey")
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
-      // Auto create properties we know from the backend
+      // Auto create properties we already know
       const message: MessageEntity = {
         ...input,
         rowKey: getReverseTickedTimestamp(),
@@ -71,6 +70,7 @@ export const messageRouter = router({
       };
 
       try {
+        const messageClient = await getTableClient(AzureTable.Messages);
         await messageClient.createEntity<AzureEntity<MessageEntity>>({
           ...message,
           files: JSON.stringify(message.files),
@@ -97,9 +97,8 @@ export const messageRouter = router({
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
-
       try {
+        const messageClient = await getTableClient(AzureTable.Messages);
         await messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>(input);
 
         customEventEmitter.emit("onUpdateMessage", input);
