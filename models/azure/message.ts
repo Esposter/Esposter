@@ -1,5 +1,5 @@
 import { CompositeKeyEntity } from "@/models/azure";
-import type { EmojiMetadataTagEntity } from "@/models/azure/emoji";
+import type { MessageEmojiMetadataTagEntity } from "@/models/azure/emoji";
 import { emojiMetadataTagSchema } from "@/models/azure/emoji";
 import type { FileEntity } from "@/models/azure/file";
 import { fileSchema } from "@/models/azure/file";
@@ -14,7 +14,7 @@ export class MessageEntity extends CompositeKeyEntity {
   @JsonProperty() message!: string;
   @JsonProperty() files!: FileEntity[];
   // We'll assume that this is already sorted in order from highest count to lowest
-  @JsonProperty() emojiMetadataTags!: EmojiMetadataTagEntity[];
+  @JsonProperty() emojiMetadataTags!: MessageEmojiMetadataTagEntity[];
   @JsonProperty() createdAt!: Date;
 }
 

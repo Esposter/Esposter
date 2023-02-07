@@ -1,22 +1,13 @@
 import { CompositeKeyEntity } from "@/models/azure";
+import { MessageMetadataTagEntity } from "@/models/azure/message";
 import type { toZod } from "tozod";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
 
-export interface Emoji {
-  // We'll need the metadata row key to identify what emoji in the metadata table we're talking about
-  messageMetadataRowKey: string;
-  emoji: string;
-  userIds: string[];
-}
-
 @JsonObject()
-export class EmojiMetadataTagEntity {
-  @JsonProperty()
-  rowKey!: string;
-}
+export class MessageEmojiMetadataTagEntity extends MessageMetadataTagEntity {}
 
-export const emojiMetadataTagSchema: toZod<EmojiMetadataTagEntity> = z.object({
+export const emojiMetadataTagSchema: toZod<MessageEmojiMetadataTagEntity> = z.object({
   rowKey: z.string().uuid(),
 });
 
