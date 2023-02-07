@@ -14,7 +14,13 @@ const { messages, hasMore, fetchMoreMessages } = $(toRefs(props));
 
 <template>
   <v-list display="flex" flex="1 col-reverse" basis="full" overflow-y="auto!" lines="two">
-    <ChatModelMessageListItem v-for="message in messages" :key="message.rowKey" :message="message" />
+    <template v-for="(message, index) in messages" :key="message.rowKey">
+      <ChatModelMessageListItem :message="message" />
+      <ChatTimelineMessage
+        :current-message-date="message.createdAt"
+        :next-message-date="messages[index + 1]?.createdAt"
+      />
+    </template>
     <VWaypoint :active="hasMore" @change="fetchMoreMessages" />
   </v-list>
 </template>

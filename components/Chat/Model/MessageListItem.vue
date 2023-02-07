@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
 import { useMemberStore } from "@/store/useMemberStore";
+import dayjs from "dayjs";
 
 interface MessageListItemProps {
   message: MessageEntity;
@@ -13,6 +14,7 @@ const { memberList } = $(storeToRefs(memberStore));
 // @NOTE: We'll need to search for the creators in the user database in the future
 // if we want to show messages from members who have left the room
 const creator = $computed(() => memberList.find((m) => m.id === message.creatorId));
+const displayCreatedAt = $computed(() => dayjs(message.createdAt).format("h:mm A"));
 const isUpdateMode = $ref(false);
 const isMessageActive = $ref(false);
 const isOptionsActive = $ref(false);
@@ -36,8 +38,13 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
           </v-avatar>
           <DefaultAvatar v-else :name="creator.name" />
         </template>
-        <v-list-item-title font="bold!">
-          {{ creator.name }}
+        <v-list-item-title>
+          <span font="bold">
+            {{ creator.name }}
+          </span>
+          <span class="text-subtitle-2" pl="2" op="60">
+            {{ displayCreatedAt }}
+          </span>
         </v-list-item-title>
         <ChatUpdatedMessage
           v-if="isUpdateMode"

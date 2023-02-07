@@ -36,7 +36,7 @@ onClickOutside(titleRef, async () => {
     display="flex"
     items="center"
     :w="isUpdateMode ? 'full' : ''"
-    :b="!isUpdateMode && titleHovered ? '1 rd' : '1 rd transparent'"
+    :b="!isUpdateMode && titleHovered ? '1 solid rd' : '1 solid transparent rd'"
     @mouseenter="titleHovered = true"
     @mouseleave="titleHovered = false"
   >

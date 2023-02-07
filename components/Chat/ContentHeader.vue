@@ -7,9 +7,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
 
 <template>
   <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
-    <template v-if="!leftDrawerOpenAuto" #prepend>
-      <v-btn icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
-    </template>
+    <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     <ChatRoomTitle />
     <template #append>
       <v-btn icon="mdi-phone" size="small" />
