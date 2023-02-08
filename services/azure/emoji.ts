@@ -4,12 +4,12 @@ import { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import type { MessageMetadataTagEntity } from "@/models/azure/message/metadata";
 import { AzureTable } from "@/models/azure/table";
 import {
-createEntity,
-deleteEntity,
-getEntity,
-getTableClient,
-getTopNEntities,
-updateEntity
+  createEntity,
+  deleteEntity,
+  getEntity,
+  getTableClient,
+  getTopNEntities,
+  updateEntity,
 } from "@/services/azure/table";
 import { FETCH_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
