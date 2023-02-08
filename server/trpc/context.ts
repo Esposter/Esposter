@@ -1,9 +1,8 @@
 import type { inferAsyncReturnType } from "@trpc/server";
-import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
 
-type Contexts = H3Event | CreateHTTPContextOptions | CreateWSSContextFnOptions;
+type Contexts = H3Event | CreateWSSContextFnOptions;
 
 const isH3Event = (value: Contexts): value is H3Event => "node" in value;
 
