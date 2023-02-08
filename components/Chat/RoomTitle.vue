@@ -51,6 +51,6 @@ onClickOutside(titleRef, async () => {
       autofocus
       @keydown.enter="onUpdateRoom"
     />
-    <v-toolbar-title v-else font="bold!" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
+    <v-toolbar-title v-else font="bold!" select="all" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
   </div>
 </template>
