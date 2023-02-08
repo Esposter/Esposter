@@ -1,9 +1,9 @@
 {
   "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript][typescript][vue]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"]
   },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
