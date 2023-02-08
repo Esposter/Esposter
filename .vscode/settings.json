@@ -1,20 +1,12 @@
 {
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[json]": {
-    "editor.formatOnSave": true
-  },
-  "[jsonc]": {
-    "editor.formatOnSave": true
+  "[javascript][typescript][vue]": {
+    "editor.formatOnSave": false
   },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[xml]": {
-    "editor.defaultFormatter": "redhat.vscode-xml"
   },
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
