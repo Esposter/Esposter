@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { Target } from "@/models/clicker";
+import { useGameStore } from "@/store/clicker/useGameStore";
 import { filename } from "pathe/utils";
 import { v4 as uuidV4 } from "uuid";
 
-interface RotatingCursorsProps {
-  amount: number;
-}
-
-const props = defineProps<RotatingCursorsProps>();
-const { amount } = $(toRefs(props));
+const gameStore = useGameStore();
+const { game } = $(storeToRefs(gameStore));
+const amount = $computed(() => {
+  const cursorBuilding = game.boughtBuildings.find((b) => b.name === Target.Cursor);
+  return cursorBuilding?.amount ?? 0;
+});
 const rotatingDivIds = $computed(() => Array.from({ length: amount }, () => uuidV4()));
 
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
