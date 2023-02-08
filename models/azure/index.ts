@@ -9,6 +9,3 @@ export class CompositeKeyEntity implements CompositeKey {
   @JsonProperty() partitionKey!: string;
   @JsonProperty() rowKey!: string;
 }
-
-export type AzureEntity<T> = TableEntity<Record<keyof T, string | number | Date>>;
-export type AzureUpdateEntity<T> = TableEntity<Partial<AzureEntity<T>>>;

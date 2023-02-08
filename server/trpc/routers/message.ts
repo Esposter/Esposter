@@ -1,10 +1,9 @@
-import type { AzureEntity, AzureUpdateEntity } from "@/models/azure";
 import { MessageEntity, messageSchema } from "@/models/azure/message";
 import { AzureTable } from "@/models/azure/table";
 import { router } from "@/server/trpc";
 import { customEventEmitter } from "@/server/trpc/events";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
-import { getTableClient, getTopNEntities } from "@/services/azure/table";
+import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
 import { getReverseTickedTimestamp } from "@/utils/azure";
 import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
@@ -71,10 +70,10 @@ export const messageRouter = router({
 
       try {
         const messageClient = await getTableClient(AzureTable.Messages);
-        await messageClient.createEntity<AzureEntity<MessageEntity>>({
+        await createEntity<MessageEntity>(messageClient, {
           ...message,
-          files: JSON.stringify(message.files),
-          emojiMetadataTags: JSON.stringify(message.emojiMetadataTags),
+          files: message.files,
+          emojiMetadataTags: message.emojiMetadataTags,
         });
 
         customEventEmitter.emit("onCreateMessage", message);
@@ -99,7 +98,7 @@ export const messageRouter = router({
     .mutation(async ({ input }) => {
       try {
         const messageClient = await getTableClient(AzureTable.Messages);
-        await messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>(input);
+        await updateEntity<MessageEntity>(messageClient, input);
 
         customEventEmitter.emit("onUpdateMessage", input);
         return input;
@@ -123,7 +122,7 @@ export const messageRouter = router({
     .mutation(async ({ input: { partitionKey, rowKey } }) => {
       try {
         const messageClient = await getTableClient(AzureTable.Messages);
-        await messageClient.deleteEntity(partitionKey, rowKey);
+        await deleteEntity(messageClient, partitionKey, rowKey);
 
         customEventEmitter.emit("onDeleteMessage", { partitionKey, rowKey });
         return true;
