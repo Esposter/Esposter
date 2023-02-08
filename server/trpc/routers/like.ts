@@ -72,7 +72,7 @@ export const likeRouter = router({
         });
       });
       return true;
-    } catch (err) {
+    } catch {
       return false;
     }
   }),

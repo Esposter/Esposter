@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@/models/azure";
+import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable } from "@/models/azure/table";
 import type { SkipFirst } from "@/utils/types";
 import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
@@ -32,10 +32,7 @@ export const createEntity = <Entity extends CompositeKey>(
 
 export const updateEntity = <Entity extends CompositeKey>(
   tableClient: TableClient,
-  ...args: [
-    CompositeKey & Partial<Entity>,
-    ...SkipFirst<Parameters<InstanceType<typeof TableClient>["updateEntity"]>, 1>
-  ]
+  ...args: [AzureUpdateEntity<Entity>, ...SkipFirst<Parameters<InstanceType<typeof TableClient>["updateEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(

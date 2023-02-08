@@ -1,14 +1,15 @@
+import { AzureUpdateEntity } from "@/models/azure";
 import { MessageEntity } from "@/models/azure/message";
 import { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import type { MessageMetadataTagEntity } from "@/models/azure/message/metadata";
 import { AzureTable } from "@/models/azure/table";
 import {
-  createEntity,
-  deleteEntity,
-  getEntity,
-  getTableClient,
-  getTopNEntities,
-  updateEntity,
+createEntity,
+deleteEntity,
+getEntity,
+getTableClient,
+getTopNEntities,
+updateEntity
 } from "@/services/azure/table";
 import { FETCH_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
@@ -41,21 +42,17 @@ export const createEmojiMetadataEntity = async (
     getTableClient(AzureTable.Messages),
     readEmojiMetadataTags(newEmojiMetadataEntity.partitionKey, messageRowKey),
   ]);
-  try {
-    await createEntity<MessageEmojiMetadataEntity>(messageMetadataClient, newEmojiMetadataEntity);
-    await updateEntity<MessageEntity>(messageClient, {
-      partitionKey: newEmojiMetadataEntity.partitionKey,
-      rowKey: messageRowKey,
-      emojiMetadataTags: [...emojiMetadataTags, { rowKey: messageRowKey }],
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  const result = await createEntity<MessageEmojiMetadataEntity>(messageMetadataClient, newEmojiMetadataEntity);
+  await updateEntity<MessageEntity>(messageClient, {
+    partitionKey: newEmojiMetadataEntity.partitionKey,
+    rowKey: messageRowKey,
+    emojiMetadataTags: [...emojiMetadataTags, { rowKey: messageRowKey }],
+  });
+  return result;
 };
 
 export const updateEmojiMetadataEntity = async (
-  updatedEmojiMetadataEntity: MessageEmojiMetadataEntity,
+  updatedEmojiMetadataEntity: AzureUpdateEntity<MessageEmojiMetadataEntity>,
   messageRowKey: string
 ) => {
   const [messageMetadataClient, messageClient, emojiMetadataTags] = await Promise.all([
@@ -67,42 +64,26 @@ export const updateEmojiMetadataEntity = async (
     updatedEmojiMetadataEntity.partitionKey,
     emojiMetadataTags
   );
-
-  for (const emojiMetadataEntity of emojiMetadataEntities) {
-    if (emojiMetadataEntity.rowKey === updatedEmojiMetadataEntity.rowKey) {
-      try {
-        await updateEntity<MessageEmojiMetadataEntity>(messageMetadataClient, updatedEmojiMetadataEntity);
-        await updateEntity<MessageEntity>(messageClient, {
-          partitionKey: updatedEmojiMetadataEntity.partitionKey,
-          rowKey: messageRowKey,
-          emojiMetadataTags: sortEmojiMetadataTags(emojiMetadataTags, emojiMetadataEntities),
-        });
-        return true;
-      } catch {
-        return false;
-      }
-    }
-  }
-
-  return false;
+  const result = await updateEntity<MessageEmojiMetadataEntity>(messageMetadataClient, updatedEmojiMetadataEntity);
+  await updateEntity<MessageEntity>(messageClient, {
+    partitionKey: updatedEmojiMetadataEntity.partitionKey,
+    rowKey: messageRowKey,
+    emojiMetadataTags: sortEmojiMetadataTags(emojiMetadataTags, emojiMetadataEntities),
+  });
+  return result;
 };
 
 export const deleteEmojiMetadataEntity = async (partitionKey: string, rowKey: string, messageRowKey: string) => {
   const messageClient = await getTableClient(AzureTable.Messages);
   const messageMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
   const emojiMetadataTags = await readEmojiMetadataTags(partitionKey, messageRowKey);
-
-  try {
-    await deleteEntity(messageMetadataClient, partitionKey, rowKey);
-    await updateEntity<MessageEntity>(messageClient, {
-      partitionKey,
-      rowKey: messageRowKey,
-      emojiMetadataTags: emojiMetadataTags.filter((e) => e.rowKey !== rowKey),
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  const result = await deleteEntity(messageMetadataClient, partitionKey, rowKey);
+  await updateEntity<MessageEntity>(messageClient, {
+    partitionKey,
+    rowKey: messageRowKey,
+    emojiMetadataTags: emojiMetadataTags.filter((e) => e.rowKey !== rowKey),
+  });
+  return result;
 };
 
 // We'll sort this based on number of emojis from highest to lowest per update

@@ -75,7 +75,7 @@ export const postRouter = router({
     try {
       await prisma.post.delete({ where: { id: input } });
       return true;
-    } catch (err) {
+    } catch {
       return false;
     }
   }),

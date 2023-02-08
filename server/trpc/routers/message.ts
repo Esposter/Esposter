@@ -1,7 +1,8 @@
+import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import { MessageEntity, messageSchema } from "@/models/azure/message";
 import { AzureTable } from "@/models/azure/table";
+import { messageEventEmitter } from "@/models/events/message";
 import { router } from "@/server/trpc";
-import { customEventEmitter } from "@/server/trpc/events";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
 import { getReverseTickedTimestamp } from "@/utils/azure";
@@ -51,33 +52,30 @@ export const messageRouter = router({
         const onCreateMessage = (data: MessageEntity) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
-        customEventEmitter.on("onCreateMessage", onCreateMessage);
-        return () => customEventEmitter.off("onCreateMessage", onCreateMessage);
+        messageEventEmitter.on("onCreateMessage", onCreateMessage);
+        return () => messageEventEmitter.off("onCreateMessage", onCreateMessage);
       })
     ),
   createMessage: getRoomUserProcedure(createMessageInputSchema, "partitionKey")
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
-      // Auto create properties we already know
-      const message: MessageEntity = {
-        ...input,
-        rowKey: getReverseTickedTimestamp(),
-        creatorId: ctx.session.user.id,
-        files: [],
-        emojiMetadataTags: [],
-        createdAt: new Date(),
-      };
-
       try {
+        const newMessage: MessageEntity = {
+          ...input,
+          rowKey: getReverseTickedTimestamp(),
+          creatorId: ctx.session.user.id,
+          files: [],
+          emojiMetadataTags: [],
+          createdAt: new Date(),
+        };
         const messageClient = await getTableClient(AzureTable.Messages);
         await createEntity<MessageEntity>(messageClient, {
-          ...message,
-          files: message.files,
-          emojiMetadataTags: message.emojiMetadataTags,
+          ...newMessage,
+          files: newMessage.files,
+          emojiMetadataTags: newMessage.emojiMetadataTags,
         });
-
-        customEventEmitter.emit("onCreateMessage", message);
-        return message;
+        messageEventEmitter.emit("onCreateMessage", newMessage);
+        return newMessage;
       } catch {
         return null;
       }
@@ -85,23 +83,23 @@ export const messageRouter = router({
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "partitionKey")
     .input(onUpdateMessageInputSchema)
     .subscription(({ input }) =>
-      observable<UpdateMessageInput>((emit) => {
-        const onUpdateMessage = (data: UpdateMessageInput) => () => {
+      observable<AzureUpdateEntity<MessageEntity>>((emit) => {
+        const onUpdateMessage = (data: AzureUpdateEntity<MessageEntity>) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
-        customEventEmitter.on("onUpdateMessage", onUpdateMessage);
-        return () => customEventEmitter.off("onUpdateMessage", onUpdateMessage);
+        messageEventEmitter.on("onUpdateMessage", onUpdateMessage);
+        return () => messageEventEmitter.off("onUpdateMessage", onUpdateMessage);
       })
     ),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .input(updateMessageInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input: { partitionKey, rowKey, message } }) => {
       try {
+        const updatedMessage = { partitionKey, rowKey, message };
         const messageClient = await getTableClient(AzureTable.Messages);
-        await updateEntity<MessageEntity>(messageClient, input);
-
-        customEventEmitter.emit("onUpdateMessage", input);
-        return input;
+        await updateEntity<MessageEntity>(messageClient, updatedMessage);
+        messageEventEmitter.emit("onUpdateMessage", updatedMessage);
+        return updatedMessage;
       } catch {
         return null;
       }
@@ -109,12 +107,12 @@ export const messageRouter = router({
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "partitionKey")
     .input(onDeleteMessageInputSchema)
     .subscription(({ input }) =>
-      observable<DeleteMessageInput>((emit) => {
-        const onDeleteMessage = (data: DeleteMessageInput) => () => {
+      observable<CompositeKey>((emit) => {
+        const onDeleteMessage = (data: CompositeKey) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
-        customEventEmitter.on("onDeleteMessage", onDeleteMessage);
-        return () => customEventEmitter.off("onDeleteMessage", onDeleteMessage);
+        messageEventEmitter.on("onDeleteMessage", onDeleteMessage);
+        return () => messageEventEmitter.off("onDeleteMessage", onDeleteMessage);
       })
     ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
@@ -123,8 +121,7 @@ export const messageRouter = router({
       try {
         const messageClient = await getTableClient(AzureTable.Messages);
         await deleteEntity(messageClient, partitionKey, rowKey);
-
-        customEventEmitter.emit("onDeleteMessage", { partitionKey, rowKey });
+        messageEventEmitter.emit("onDeleteMessage", { partitionKey, rowKey });
         return true;
       } catch {
         return false;

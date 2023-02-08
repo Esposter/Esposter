@@ -2,7 +2,7 @@ import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import chalk from "chalk";
-import type { Server as HTTPServer } from "http";
+import type { Server as HTTPServer } from "node:http";
 import type { Server, WebSocket } from "ws";
 import { WebSocketServer } from "ws";
 

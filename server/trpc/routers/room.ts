@@ -89,7 +89,7 @@ export const roomRouter = router({
         return count;
       });
       return count === 1;
-    } catch (err) {
+    } catch {
       return false;
     }
   }),
