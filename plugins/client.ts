@@ -4,7 +4,7 @@ import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, split
 import superjson from "superjson";
 
 export default defineNuxtPlugin(() => {
-  const url = useTRPCClientUrl();
+  const url = useClientUrl();
   // Grab auth cookie to pass to server
   const headers = useRequestHeaders(["cookie"]);
   const links: TRPCLink<AppRouter>[] = [

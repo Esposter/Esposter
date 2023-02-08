@@ -39,6 +39,9 @@ export default defineNuxtConfig({
       typeRoots: ["types"],
     },
   },
+  imports: {
+    dirs: ["composables/**"],
+  },
   runtimeConfig: {
     public: {
       azureBlobUrl: process.env.AZURE_BLOB_URL,

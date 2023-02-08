@@ -1,14 +1,21 @@
-import type { AzureEntity, AzureUpdateEntity } from "@/models/azure";
-import { MessageEmojiMetadataEntity } from "@/models/azure/emoji";
-import { MessageEntity, MessageMetadataTagEntity } from "@/models/azure/message";
+import { MessageEntity } from "@/models/azure/message";
+import { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
+import type { MessageMetadataTagEntity } from "@/models/azure/message/metadata";
 import { AzureTable } from "@/models/azure/table";
-import { getEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
+import {
+  createEntity,
+  deleteEntity,
+  getEntity,
+  getTableClient,
+  getTopNEntities,
+  updateEntity,
+} from "@/services/azure/table";
 import { FETCH_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
 
 export const readEmojiMetadataTags = async (partitionKey: string, rowKey: string) => {
   const client = await getTableClient(AzureTable.Messages);
-  const message = await getEntity(client, partitionKey, rowKey, MessageEntity);
+  const message = await getEntity(client, MessageEntity, partitionKey, rowKey);
   return message.emojiMetadataTags;
 };
 
@@ -26,7 +33,7 @@ export const readEmojiMetadataEntities = async (
 };
 
 export const createEmojiMetadataEntity = async (
-  newEmojiMetadataEntity: AzureEntity<MessageEmojiMetadataEntity>,
+  newEmojiMetadataEntity: MessageEmojiMetadataEntity,
   messageRowKey: string
 ) => {
   const [messageMetadataClient, messageClient, emojiMetadataTags] = await Promise.all([
@@ -35,14 +42,12 @@ export const createEmojiMetadataEntity = async (
     readEmojiMetadataTags(newEmojiMetadataEntity.partitionKey, messageRowKey),
   ]);
   try {
-    await Promise.all([
-      messageMetadataClient.createEntity<AzureEntity<MessageEmojiMetadataEntity>>(newEmojiMetadataEntity),
-      messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>({
-        partitionKey: newEmojiMetadataEntity.partitionKey,
-        rowKey: messageRowKey,
-        emojiMetadataTags: JSON.stringify([...emojiMetadataTags, { rowKey: messageRowKey }]),
-      }),
-    ]);
+    await createEntity<MessageEmojiMetadataEntity>(messageMetadataClient, newEmojiMetadataEntity);
+    await updateEntity<MessageEntity>(messageClient, {
+      partitionKey: newEmojiMetadataEntity.partitionKey,
+      rowKey: messageRowKey,
+      emojiMetadataTags: [...emojiMetadataTags, { rowKey: messageRowKey }],
+    });
     return true;
   } catch {
     return false;
@@ -50,7 +55,7 @@ export const createEmojiMetadataEntity = async (
 };
 
 export const updateEmojiMetadataEntity = async (
-  updatedEmojiMetadataEntity: AzureUpdateEntity<MessageEmojiMetadataEntity>,
+  updatedEmojiMetadataEntity: MessageEmojiMetadataEntity,
   messageRowKey: string
 ) => {
   const [messageMetadataClient, messageClient, emojiMetadataTags] = await Promise.all([
@@ -64,16 +69,14 @@ export const updateEmojiMetadataEntity = async (
   );
 
   for (const emojiMetadataEntity of emojiMetadataEntities) {
-    if (emojiMetadataEntity.emojiTag === updatedEmojiMetadataEntity.emojiTag) {
+    if (emojiMetadataEntity.rowKey === updatedEmojiMetadataEntity.rowKey) {
       try {
-        await Promise.all([
-          messageMetadataClient.updateEntity<AzureUpdateEntity<MessageEmojiMetadataEntity>>(updatedEmojiMetadataEntity),
-          messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>({
-            partitionKey: updatedEmojiMetadataEntity.partitionKey,
-            rowKey: messageRowKey,
-            emojiMetadataTags: JSON.stringify(sortEmojiMetadataTags(emojiMetadataTags, emojiMetadataEntities)),
-          }),
-        ]);
+        await updateEntity<MessageEmojiMetadataEntity>(messageMetadataClient, updatedEmojiMetadataEntity);
+        await updateEntity<MessageEntity>(messageClient, {
+          partitionKey: updatedEmojiMetadataEntity.partitionKey,
+          rowKey: messageRowKey,
+          emojiMetadataTags: sortEmojiMetadataTags(emojiMetadataTags, emojiMetadataEntities),
+        });
         return true;
       } catch {
         return false;
@@ -90,14 +93,12 @@ export const deleteEmojiMetadataEntity = async (partitionKey: string, rowKey: st
   const emojiMetadataTags = await readEmojiMetadataTags(partitionKey, messageRowKey);
 
   try {
-    await Promise.all([
-      messageMetadataClient.deleteEntity(partitionKey, rowKey),
-      messageClient.updateEntity<AzureUpdateEntity<MessageEntity>>({
-        partitionKey,
-        rowKey: messageRowKey,
-        emojiMetadataTags: JSON.stringify(emojiMetadataTags.filter((e) => e.rowKey !== rowKey)),
-      }),
-    ]);
+    await deleteEntity(messageMetadataClient, partitionKey, rowKey);
+    await updateEntity<MessageEntity>(messageClient, {
+      partitionKey,
+      rowKey: messageRowKey,
+      emojiMetadataTags: emojiMetadataTags.filter((e) => e.rowKey !== rowKey),
+    });
     return true;
   } catch {
     return false;

@@ -3,6 +3,8 @@ import { useRoomStore } from "@/store/useRoomStore";
 
 definePageMeta({ middleware: "auth" });
 
+useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+
 const route = useRoute();
 const roomStore = useRoomStore();
 const { currentRoomId, rooms, roomName } = $(storeToRefs(roomStore));
@@ -11,7 +13,7 @@ roomStore.currentRoomId =
   typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomStore.roomSearchQuery = "";
 
-useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+useSubscribables();
 </script>
 
 <template>

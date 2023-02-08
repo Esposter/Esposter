@@ -32,8 +32,6 @@ if (currentRoomId) {
   initialiseMessageList(messages);
   updateMessageListNextCursor(nextCursor);
 }
-
-useMessageSubscribables();
 </script>
 
 <template>

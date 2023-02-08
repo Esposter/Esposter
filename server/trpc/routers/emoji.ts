@@ -1,5 +1,5 @@
-import { MessageEmojiMetadataEntity } from "@/models/azure/emoji";
 import { messageSchema } from "@/models/azure/message";
+import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { createEmojiMetadataEntity } from "@/services/azure/emoji";
@@ -21,10 +21,7 @@ export const emojiRouter = router({
         emojiTag: unemojify(emoji),
         userIds: [ctx.session.user.id],
       };
-      await createEmojiMetadataEntity(
-        { ...newEmojiMetadataEntity, userIds: JSON.stringify(newEmojiMetadataEntity.userIds) },
-        messageRowKey
-      );
+      await createEmojiMetadataEntity(newEmojiMetadataEntity, messageRowKey);
       return newEmojiMetadataEntity;
     }),
 });

@@ -1,6 +1,7 @@
 import type { CompositeKey } from "@/models/azure";
 import type { AzureTable } from "@/models/azure/table";
-import type { GetTableEntityOptions, TableEntityQueryOptions } from "@azure/data-tables";
+import type { SkipFirst } from "@/utils/types";
+import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
 import { JsonSerializer } from "typescript-json-serializer";
 import type { Type } from "typescript-json-serializer/dist/helpers";
@@ -15,16 +16,52 @@ export const getTableClient = async (tableName: AzureTable) => {
   }
 };
 
+export const createEntity = <Entity extends CompositeKey>(
+  tableClient: TableClient,
+  ...args: [Entity, ...SkipFirst<Parameters<InstanceType<typeof TableClient>["createEntity"]>, 1>]
+) => {
+  const [entity, ...rest] = args;
+  const serializedEntity = Object.fromEntries(
+    Object.entries(entity).map(([prop, value]) => {
+      if (Array.isArray(value)) return [prop, JSON.stringify(value)];
+      else return [prop, value];
+    })
+  ) as TableEntity;
+  return tableClient.createEntity(serializedEntity, ...rest);
+};
+
+export const updateEntity = <Entity extends CompositeKey>(
+  tableClient: TableClient,
+  ...args: [
+    CompositeKey & Partial<Entity>,
+    ...SkipFirst<Parameters<InstanceType<typeof TableClient>["updateEntity"]>, 1>
+  ]
+) => {
+  const [entity, ...rest] = args;
+  const serializedEntity = Object.fromEntries(
+    Object.entries(entity).map(([prop, value]) => {
+      if (Array.isArray(value)) return [prop, JSON.stringify(value)];
+      else return [prop, value];
+    })
+  ) as TableEntity;
+  return tableClient.updateEntity(serializedEntity, ...rest);
+};
+
+export const deleteEntity = (
+  tableClient: TableClient,
+  ...args: Parameters<InstanceType<typeof TableClient>["deleteEntity"]>
+) => {
+  return tableClient.deleteEntity(...args);
+};
+
 const jsonSerializer = new JsonSerializer();
 
 export const getEntity = async <Entity extends CompositeKey>(
   tableClient: TableClient,
-  partitionKey: string,
-  rowKey: string,
   type: Type<Entity>,
-  options?: GetTableEntityOptions
+  ...args: Parameters<InstanceType<typeof TableClient>["getEntity"]>
 ): Promise<Entity> => {
-  const result = await tableClient.getEntity<Entity>(partitionKey, rowKey, options);
+  const result = await tableClient.getEntity<Entity>(...args);
   return jsonSerializer.deserialize<Entity>(result, type) as Entity;
 };
 
