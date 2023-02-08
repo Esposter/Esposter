@@ -30,9 +30,7 @@ export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 const createRoomInputSchema = roomSchema.pick({ name: true });
 export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
 
-const updateRoomInputSchema = roomSchema
-  .pick({ id: true })
-  .merge(roomSchema.partial().pick({ name: true, updatedAt: true }));
+const updateRoomInputSchema = roomSchema.pick({ id: true }).merge(roomSchema.partial().pick({ name: true }));
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 
 const deleteRoomInputSchema = roomSchema.shape.id;
