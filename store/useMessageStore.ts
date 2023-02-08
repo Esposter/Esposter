@@ -1,5 +1,5 @@
+import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
-import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
 import { useRoomStore } from "@/store/useRoomStore";
 
 export const useMessageStore = defineStore("message", () => {
@@ -32,7 +32,7 @@ export const useMessageStore = defineStore("message", () => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
     messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
   };
-  const updateMessage = (updatedMessage: UpdateMessageInput) => {
+  const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
@@ -41,7 +41,7 @@ export const useMessageStore = defineStore("message", () => {
     );
     if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
   };
-  const deleteMessage = (id: DeleteMessageInput) => {
+  const deleteMessage = (id: CompositeKey) => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
