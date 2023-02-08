@@ -5,7 +5,7 @@
   "rangeStrategy": "bump",
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "bump"],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "automergeType": "branch"
     }
