@@ -19,6 +19,9 @@ const creator = $computed(() => memberList.find((m) => m.id === currentMessage.c
 <template>
   <template v-if="creator">
     <ChatModelMessageListItem :message="currentMessage" :creator="creator" />
-    <ChatTimelineMessage :current-message-date="currentMessage.createdAt" :next-message-date="nextMessage?.createdAt" />
+    <ChatModelTimelineMessage
+      :current-message-date="currentMessage.createdAt"
+      :next-message-date="nextMessage?.createdAt"
+    />
   </template>
 </template>

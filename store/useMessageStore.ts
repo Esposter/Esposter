@@ -1,9 +1,13 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
+import type { CreateMessageInput } from "@/server/trpc/routers/message";
+import { useMessageInputStore } from "@/store/useMessageInputStore";
 import { useRoomStore } from "@/store/useRoomStore";
 
 export const useMessageStore = defineStore("message", () => {
+  const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
+  const messageInputStore = useMessageInputStore();
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed(() => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return [];
@@ -32,6 +36,17 @@ export const useMessageStore = defineStore("message", () => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
     messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
   };
+  const sendMessage = async () => {
+    if (!roomStore.currentRoomId || !messageInputStore.messageInput) return;
+
+    const createMessageInput: CreateMessageInput = {
+      partitionKey: roomStore.currentRoomId,
+      message: messageInputStore.messageInput,
+    };
+    messageInputStore.updateMessageInput("");
+    const newMessage = await $client.message.createMessage.mutate(createMessageInput);
+    if (newMessage) createMessage(newMessage);
+  };
   const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
@@ -56,7 +71,7 @@ export const useMessageStore = defineStore("message", () => {
     messageListNextCursor,
     updateMessageListNextCursor,
     initialiseMessageList,
-    createMessage,
+    sendMessage,
     updateMessage,
     deleteMessage,
   };
