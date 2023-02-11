@@ -6,9 +6,9 @@ const { primary, "primary-darken-1": primaryDarken1 } = useColors();
   <div class="text-h4" mb="8" font="bold">Why {{ SITE_NAME }}?</div>
   <div class="text-h6">
     {{ SITE_NAME }} is an independent, community-driven lifetime project. It was created by
-    <InvisibleNuxtLink class="author" font="bold" target="_blank" :to="LINKEDIN_PROFILE_URL">
+    <NuxtInvisibleLink class="author" font="bold" target="_blank" :to="LINKEDIN_PROFILE_URL">
       Jimmy Chen
-    </InvisibleNuxtLink>
+    </NuxtInvisibleLink>
     as a personal attempt to incorporate the best features of social media in a minimalistic way with the least amount
     of code.
   </div>

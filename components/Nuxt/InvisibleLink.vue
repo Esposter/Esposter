@@ -1,5 +1,5 @@
 <script lang="ts">
-export default defineNuxtLink({ componentName: "InvisibleNuxtLink" });
+export default defineNuxtLink({ componentName: "NuxtInvisibleLink" });
 </script>
 
 <style scoped lang="scss">

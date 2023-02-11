@@ -12,10 +12,10 @@ const niceFilename = $computed(() => uniqueFilename.substring(uniqueFilename.ind
 </script>
 
 <template>
-  <InvisibleNuxtLink :href="url" :download="niceFilename">
+  <NuxtInvisibleLink :href="url" :download="niceFilename">
     <StyledCard pl="2!" pr="1!" py="2!">
       {{ niceFilename }}
       <v-icon icon="mdi-download" />
     </StyledCard>
-  </InvisibleNuxtLink>
+  </NuxtInvisibleLink>
 </template>

@@ -5,11 +5,11 @@ import { RoutePath } from "@/models/router";
 <template>
   <v-tooltip location="bottom" text="Esbabbler">
     <template #activator="{ props }">
-      <InvisibleNuxtLink :to="RoutePath.MessagesIndex">
+      <NuxtInvisibleLink :to="RoutePath.MessagesIndex">
         <v-avatar color="background">
           <v-btn icon="mdi-message-fast" :="props" />
         </v-avatar>
-      </InvisibleNuxtLink>
+      </NuxtInvisibleLink>
     </template>
   </v-tooltip>
 </template>

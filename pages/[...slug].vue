@@ -24,9 +24,9 @@ onMounted(() => {
     <div class="image" h="full" display="flex" flex="col" justify="center" items="center">
       <div mt="25" display="flex" flex="col" items="center" z="1">
         <div class="text-#ddd" text="center 5xl">Lost in space?</div>
-        <InvisibleNuxtLink pt="4" :to="RoutePath.Index">
+        <NuxtInvisibleLink pt="4" :to="RoutePath.Index">
           <StyledButton>Go back home</StyledButton>
-        </InvisibleNuxtLink>
+        </NuxtInvisibleLink>
       </div>
       <div class="hover" mt="-25">
         <VisualFloatingAstronaut />

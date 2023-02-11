@@ -17,7 +17,7 @@ const active = $computed(() => room.id === currentRoomId);
 
 <template>
   <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <InvisibleNuxtLink :to="RoutePath.Messages(room.id)">
+    <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge m="r-4" color="green" location="bottom end" dot>
@@ -28,7 +28,7 @@ const active = $computed(() => room.id === currentRoomId);
           </v-badge>
         </template>
       </v-list-item>
-    </InvisibleNuxtLink>
+    </NuxtInvisibleLink>
     <ChatModelRoomDeleteButton
       v-show="isHovering"
       position="absolute"

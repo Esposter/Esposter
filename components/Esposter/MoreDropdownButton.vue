@@ -102,7 +102,7 @@ const menu = $ref(false);
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <InvisibleNuxtLink
+      <NuxtInvisibleLink
         v-for="item in items"
         :key="item.title"
         :to="item.href"
@@ -121,7 +121,7 @@ const menu = $ref(false);
           </template>
           <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
         </v-list-item>
-      </InvisibleNuxtLink>
+      </NuxtInvisibleLink>
     </v-list>
   </v-menu>
 </template>

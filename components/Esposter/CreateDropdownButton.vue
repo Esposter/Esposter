@@ -30,7 +30,7 @@ const menu = $ref(false);
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
+      <NuxtInvisibleLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
         <v-list-item :value="item.title">
           <template #prepend>
             <v-avatar color="background">
@@ -39,7 +39,7 @@ const menu = $ref(false);
           </template>
           <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
         </v-list-item>
-      </InvisibleNuxtLink>
+      </NuxtInvisibleLink>
     </v-list>
   </v-menu>
 </template>

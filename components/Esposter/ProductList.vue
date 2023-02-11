@@ -18,7 +18,7 @@ const items: Item[] = [
 
 <template>
   <v-list>
-    <InvisibleNuxtLink v-for="item in items" :key="item.title" :to="item.href">
+    <NuxtInvisibleLink v-for="item in items" :key="item.title" :to="item.href">
       <v-list-item :value="item.title">
         <template #prepend>
           <v-avatar color="background">
@@ -27,6 +27,6 @@ const items: Item[] = [
         </template>
         <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
       </v-list-item>
-    </InvisibleNuxtLink>
+    </NuxtInvisibleLink>
   </v-list>
 </template>

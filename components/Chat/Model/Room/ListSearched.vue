@@ -9,7 +9,7 @@ const { roomsSearched } = $(storeToRefs(roomStore));
 
 <template>
   <v-list>
-    <InvisibleNuxtLink
+    <NuxtInvisibleLink
       v-for="room in roomsSearched"
       :key="room.id"
       :to="RoutePath.Messages(room.id)"
@@ -23,6 +23,6 @@ const { roomsSearched } = $(storeToRefs(roomStore));
           <DefaultAvatar v-else :name="room.name" />
         </template>
       </v-list-item>
-    </InvisibleNuxtLink>
+    </NuxtInvisibleLink>
   </v-list>
 </template>
