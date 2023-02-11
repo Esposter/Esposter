@@ -107,8 +107,8 @@ export const emojiRouter = router({
         return () => emojiEventEmitter.off("onDeleteEmoji", onDeleteEmoji);
       })
     ),
-  deleteEmoji: getRoomUserProcedure(updateEmojiInputSchema, "partitionKey")
-    .input(updateEmojiInputSchema)
+  deleteEmoji: getRoomUserProcedure(deleteEmojiInputSchema, "partitionKey")
+    .input(deleteEmojiInputSchema)
     .mutation(async ({ input }) => {
       try {
         await deleteEmojiMetadataEntity(input.partitionKey, input.rowKey, input.messageRowKey);
