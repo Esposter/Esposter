@@ -15,21 +15,21 @@ useTimers();
       <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
     </Head>
     <template #left>
-      <ClickerStoreHeader pt="4" />
-      <ClickerStoreList />
+      <ClickerModelStoreHeader pt="4" />
+      <ClickerModelStoreList />
     </template>
     <v-container h="full" display="flex" justify="center" items="center" flex="col">
       <!-- Only show the fully loaded game to the client, not the preloaded server state -->
       <ClientOnly>
         <ClickerHeader w="full" />
-        <ClickerPointsTitle />
+        <ClickerModelPointsTitle />
         <ClickerContent />
       </ClientOnly>
     </v-container>
-    <ClickerClickPopups />
+    <ClickerModelPointsPopups />
     <template #right>
-      <ClickerInventoryHeader pt="4" />
-      <ClickerInventoryList />
+      <ClickerModelInventoryHeader pt="4" />
+      <ClickerModelInventoryList />
     </template>
   </NuxtLayout>
 </template>

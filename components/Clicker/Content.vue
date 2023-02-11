@@ -7,7 +7,7 @@ const { onClick } = popupStore;
 
 <template>
   <div mt="12" position="relative">
-    <ClickerRotatingCursors />
+    <ClickerModelRotatingCursors />
     <ClickerModelPinaColada
       position="relative"
       width="256"

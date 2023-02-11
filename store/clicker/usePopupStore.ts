@@ -1,4 +1,4 @@
-import { ClickPopupProps } from "@/components/Clicker/Model/ClickPopup.vue";
+import type { PointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
 import { useMouseStore } from "@/store/clicker/useMouseStore";
 import { usePointStore } from "@/store/clicker/usePointStore";
 import { v4 as uuidv4 } from "uuid";
@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
   const { incrementPoints } = usePointStore();
-  const popups = ref<({ id: string } & ClickPopupProps)[]>([]);
+  const popups = ref<({ id: string } & PointsPopupProps)[]>([]);
   const onClick = ({ pageX, pageY }: MouseEvent) => {
     const id = uuidv4();
     const duration = 10000;

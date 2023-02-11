@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
 
-export interface ClickPopupProps {
+export interface PointsPopupProps {
   points: number;
   top: number;
   left: number;
   duration: number;
 }
 
-const props = defineProps<ClickPopupProps>();
+const props = defineProps<PointsPopupProps>();
 const { points, top, left, duration } = $(toRefs(props));
 const { primary } = useColors();
 const displayPoints = $computed(() => formatNumberLong(points));
