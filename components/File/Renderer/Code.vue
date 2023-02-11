@@ -5,11 +5,11 @@ import { Compartment } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
 
-interface CodeRendererProps extends FileRendererProps {
+interface FileRendererCodeProps extends FileRendererProps {
   language: string;
 }
 
-const props = defineProps<CodeRendererProps>();
+const props = defineProps<FileRendererCodeProps>();
 const { url, language } = $(toRefs(props));
 const code = $ref(await (await fetch(url)).text());
 const languageRequested = $computed(() => extendedLanguages.find((l) => l.name === language));

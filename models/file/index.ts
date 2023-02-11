@@ -7,7 +7,7 @@ export interface FileRendererProps {
 }
 
 export const typeRendererMap: Record<string, Component> = {
-  image: defineAsyncComponent(() => import("@/components/File/ImageRenderer.vue")),
-  video: defineAsyncComponent(() => import("@/components/File/VideoRenderer.vue")),
-  audio: defineAsyncComponent(() => import("@/components/File/AudioRenderer.vue")),
+  image: defineAsyncComponent(() => import("@/components/File/Renderer/Image.vue")),
+  video: defineAsyncComponent(() => import("@/components/File/Renderer/Video.vue")),
+  audio: defineAsyncComponent(() => import("@/components/File/Renderer/Audio.vue")),
 };

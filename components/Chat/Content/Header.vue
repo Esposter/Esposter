@@ -8,11 +8,11 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
 <template>
   <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
     <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
-    <ChatRoomTitle />
+    <ChatModelRoomTitle />
     <template #append>
       <v-btn icon="mdi-phone" size="small" />
       <v-btn icon="mdi-video" size="small" />
-      <ChatAddMemberButton />
+      <ChatModelMemberCreateButton />
       <v-btn v-if="!rightDrawerOpenAuto" icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = true" />
     </template>
   </v-toolbar>

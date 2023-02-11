@@ -29,7 +29,7 @@ const active = $computed(() => room.id === currentRoomId);
         </template>
       </v-list-item>
     </InvisibleNuxtLink>
-    <ChatDeleteRoomButton
+    <ChatModelRoomDeleteButton
       v-show="isHovering"
       position="absolute"
       top="1/2"

@@ -1,5 +1,5 @@
 <template>
   <v-container fluid>
-    <ChatLeftSideBarRoomSearcher />
+    <ChatModelRoomSearcher />
   </v-container>
 </template>

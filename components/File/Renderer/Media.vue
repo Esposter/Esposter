@@ -7,7 +7,7 @@ import type { Component } from "vue";
 const props = defineProps<FileRendererProps>();
 const { url, mimetype } = $(toRefs(props));
 
-const defaultRenderer = defineAsyncComponent(() => import("@/components/File/DefaultRenderer.vue"));
+const defaultRenderer = defineAsyncComponent(() => import("@/components/File/Renderer/Default.vue"));
 const rendererProps = $ref<FileRendererProps & Record<string, string>>({ url, mimetype });
 const renderer = $computed<Component>(() => {
   const result =
@@ -18,7 +18,7 @@ const renderer = $computed<Component>(() => {
   if (!language) return result;
 
   rendererProps.language = language;
-  return defineAsyncComponent(() => import("@/components/File/CodeRenderer.vue"));
+  return defineAsyncComponent(() => import("@/components/File/Renderer/Code.vue"));
 });
 </script>
 

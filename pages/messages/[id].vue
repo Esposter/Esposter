@@ -33,7 +33,7 @@ useSubscribables();
       <ChatContent />
     </template>
     <template v-if="roomExists" #footer>
-      <ChatMessageInput />
+      <ChatModelMessageInput />
     </template>
   </NuxtLayout>
 </template>

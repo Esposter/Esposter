@@ -19,11 +19,11 @@ const { sendMessage } = useMessageStore();
     @keydown.enter="sendMessage"
   >
     <template #clear>
-      <ChatMessageInputClearButton />
+      <ChatModelMessageInputClearButton />
     </template>
     <template #append-inner>
-      <ChatMessageInputEmojiPickerButton />
-      <ChatMessageInputSendMessageButton />
+      <ChatModelMessageInputEmojiPickerButton />
+      <ChatModelMessageInputSendMessageButton />
     </template>
   </v-text-field>
 </template>

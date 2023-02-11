@@ -1,6 +1,6 @@
 <template>
   <div display="flex" flex="col" h="full">
     <ChatContentHeader />
-    <ChatMessages />
+    <ChatContentMessages />
   </div>
 </template>
