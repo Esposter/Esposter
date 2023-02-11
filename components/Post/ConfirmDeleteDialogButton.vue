@@ -2,11 +2,11 @@
 import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/post/usePostStore";
 
-interface ConfirmDeleteDialogButtonProps {
+interface PostConfirmDeleteDialogButtonProps {
   postId: string;
 }
 
-const props = defineProps<ConfirmDeleteDialogButtonProps>();
+const props = defineProps<PostConfirmDeleteDialogButtonProps>();
 const { postId } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();

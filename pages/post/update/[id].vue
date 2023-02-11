@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UpsertCardProps } from "@/components/Post/UpsertCard.vue";
+import { PostUpsertFormProps } from "@/components/Post/UpsertForm.vue";
 import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/post/usePostStore";
 import { SubmitEventPromise } from "vuetify";
@@ -12,7 +12,7 @@ const postId = typeof route.params.id === "string" && uuidValidateV4(route.param
 const post = postId ? await $client.post.readPost.query(postId) : null;
 if (!post) throw createError({ statusCode: 404, statusMessage: "Post could not be found" });
 const { updatePost } = usePostStore();
-const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<UpsertCardProps["initialValues"]>) => {
+const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>) => {
   e.preventDefault();
   if (post) {
     const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
@@ -26,7 +26,7 @@ const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<UpsertCar
   <div>
     <NuxtLayout>
       <v-container>
-        <PostUpsertCard
+        <PostUpsertForm
           v-if="post"
           :initial-values="{ title: post.title, description: post.description }"
           @submit="onUpdatePost"

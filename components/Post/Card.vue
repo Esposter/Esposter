@@ -3,11 +3,11 @@ import type { PostWithRelations } from "@/prisma/types";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 
-interface CardProps {
+interface PostCardProps {
   post: PostWithRelations;
 }
 
-const props = defineProps<CardProps>();
+const props = defineProps<PostCardProps>();
 const { post } = $(toRefs(props));
 const { data } = $(useSession());
 const createdAt = $computed(() => dayjs(post.createdAt).fromNow());
@@ -30,7 +30,7 @@ const { surfaceOpacity80 } = useColors();
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
       <v-card-text class="card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
-        <PostUpdateCardButton v-if="isOwner" :post-id="post.id" />
+        <PostUpdateButton v-if="isOwner" :post-id="post.id" />
         <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
       </v-card-actions>
     </v-card>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Post } from "@prisma/client";
-import { SubmitEventPromise } from "vuetify";
+import type { SubmitEventPromise } from "vuetify";
 
-export interface UpsertCardProps {
+export interface PostUpsertFormProps {
   initialValues?: Pick<Post, "title" | "description">;
 }
 
-const props = withDefaults(defineProps<UpsertCardProps>(), {
+const props = withDefaults(defineProps<PostUpsertFormProps>(), {
   initialValues: () => ({ title: "", description: "" }),
 });
 const { initialValues } = $(toRefs(props));
@@ -14,7 +14,7 @@ const emit = defineEmits<{
   (
     event: "submit",
     submitEventPromise: SubmitEventPromise,
-    values: NonNullable<UpsertCardProps["initialValues"]>
+    values: NonNullable<PostUpsertFormProps["initialValues"]>
   ): void;
 }>();
 const title = $ref(initialValues.title);

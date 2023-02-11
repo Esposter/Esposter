@@ -2,11 +2,11 @@
 import { PostWithRelations } from "@/prisma/types";
 import { useLikeStore } from "@/store/post/useLikeStore";
 
-interface LikeSectionProps {
+interface PostLikeSectionProps {
   post: PostWithRelations;
 }
 
-const props = defineProps<LikeSectionProps>();
+const props = defineProps<PostLikeSectionProps>();
 const { post } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const { data } = $(useSession());

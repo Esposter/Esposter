@@ -2,11 +2,11 @@
 import { RoutePath } from "@/models/router";
 import { usePostStore } from "@/store/post/usePostStore";
 
-interface DeleteCardButtonProps {
+interface PostDeleteButtonProps {
   postId: string;
 }
 
-const props = defineProps<DeleteCardButtonProps>();
+const props = defineProps<PostDeleteButtonProps>();
 const { postId } = $(toRefs(props));
 const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();
