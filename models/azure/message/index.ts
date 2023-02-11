@@ -19,7 +19,9 @@ export class MessageEntity extends CompositeKeyEntity {
 }
 
 export const messageSchema: toZod<MessageEntity> = z.object({
+  // room id
   partitionKey: z.string().uuid(),
+  // reverse tick timestamp
   rowKey: z.string(),
   creatorId: z.string().cuid(),
   message: z.string().min(1).max(MESSAGE_MAX_LENGTH),

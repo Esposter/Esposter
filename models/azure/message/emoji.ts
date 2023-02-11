@@ -13,8 +13,9 @@ export class MessageEmojiMetadataEntity extends CompositeKeyEntity {
 }
 
 export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = z.object({
+  // room id
   partitionKey: z.string().uuid(),
-  rowKey: z.string(),
+  rowKey: z.string().uuid(),
   emojiTag: z.string(),
-  userIds: z.array(z.string()),
+  userIds: z.array(z.string().uuid()),
 });
