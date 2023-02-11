@@ -65,4 +65,12 @@ const sendMessage = async () => {
 :deep(.v-field__clearable) {
   padding-top: 0;
 }
+
+:deep(.v-field) {
+  border-radius: 9999px;
+}
+
+:deep(.v-field__outline) {
+  display: none;
+}
 </style>
