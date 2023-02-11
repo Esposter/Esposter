@@ -20,7 +20,7 @@ const dialog = $ref(false);
         />
       </v-card-title>
       <v-card-text overflow-y="auto">
-        <ChatRoomsSearched @update:room="dialog = false" />
+        <ChatLeftSideBarRoomsSearched @update:room="dialog = false" />
       </v-card-text>
     </v-card>
   </v-dialog>

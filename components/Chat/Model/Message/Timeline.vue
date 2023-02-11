@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 
-interface TimelineMessageProps {
+interface MessageTimelineProps {
   currentMessageDate: Date;
   nextMessageDate: Date | undefined;
 }
 
-const props = defineProps<TimelineMessageProps>();
+const props = defineProps<MessageTimelineProps>();
 const { currentMessageDate, nextMessageDate } = $(toRefs(props));
 const { border } = useColors();
 const currentMessageDateDayjs = $computed(() => dayjs(currentMessageDate));

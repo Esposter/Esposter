@@ -20,7 +20,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
 </script>
 
 <template>
-  <ChatConfirmDeleteMessageDialog :message="message">
+  <ChatModelMessageConfirmDeleteDialog :message="message">
     <template #default="{ isDeleteMode, updateDeleteMode }">
       <v-list-item
         v-if="creator.name"
@@ -42,7 +42,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
-        <ChatUpdatedMessage
+        <ChatModelMessageEditor
           v-if="isUpdateMode"
           :message="message"
           @update:update-mode="(value) => (isUpdateMode = value)"
@@ -62,7 +62,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
           @mouseleave="isOptionsActive = false"
         >
           <v-hover v-slot="{ isHovering, props: hoverProps }">
-            <ChatMessageOptionsMenu
+            <ChatModelMessageOptionsMenu
               :creator-id="creator.id"
               :is-hovering="isHovering"
               :hover-props="hoverProps"
@@ -90,5 +90,5 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         </v-list-item-subtitle>
       </v-list-item>
     </template>
-  </ChatConfirmDeleteMessageDialog>
+  </ChatModelMessageConfirmDeleteDialog>
 </template>

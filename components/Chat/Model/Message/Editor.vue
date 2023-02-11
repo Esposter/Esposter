@@ -3,11 +3,11 @@ import type { MessageEntity } from "@/models/azure/message";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
-interface UpdatedMessageProps {
+interface MessageEditorProps {
   message: MessageEntity;
 }
 
-const props = defineProps<UpdatedMessageProps>();
+const props = defineProps<MessageEditorProps>();
 const emit = defineEmits<{
   (event: "update:update-mode", value: false): void;
   (event: "update:delete-mode", value: true): void;

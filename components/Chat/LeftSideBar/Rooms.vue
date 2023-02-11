@@ -34,7 +34,7 @@ initialiseRoomList(initialRooms);
       <v-list-item font="bold">
         DIRECT MESSAGES
         <template #append>
-          <ChatCreateRoomButton />
+          <ChatLeftSideBarCreateRoomButton />
         </template>
       </v-list-item>
     </template>

@@ -1,5 +1,5 @@
 <template>
   <ChatLeftSideBarHeader />
   <v-divider />
-  <ChatRooms />
+  <ChatLeftSideBarRooms />
 </template>

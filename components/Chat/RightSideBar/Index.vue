@@ -1,5 +1,5 @@
 <template>
   <ChatRightSideBarHeader />
   <v-divider />
-  <ChatMembers />
+  <ChatRightSideBarMembers />
 </template>
