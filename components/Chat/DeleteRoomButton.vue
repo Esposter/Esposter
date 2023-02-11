@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/useRoomStore";
+import { useRoomStore } from "@/store/chat/useRoomStore";
 
 interface DeleteRoomButtonProps {
   roomId: string;

@@ -61,8 +61,9 @@ export const emojiRouter = router({
           userIds: [ctx.session.user.id],
         };
         await createEmojiMetadataEntity(newEmojiMetadataEntity, input.messageRowKey);
-        emojiEventEmitter.emit("onCreateEmoji", newEmojiMetadataEntity);
-        return newEmojiMetadataEntity;
+        const result = { ...input, ...newEmojiMetadataEntity };
+        emojiEventEmitter.emit("onCreateEmoji", result);
+        return result;
       } catch {
         return null;
       }
@@ -90,7 +91,7 @@ export const emojiRouter = router({
         };
         await updateEmojiMetadataEntity(updatedEmojiMetadataEntity, input.messageRowKey);
         emojiEventEmitter.emit("onUpdateEmoji", input);
-        return updatedEmojiMetadataEntity;
+        return input;
       } catch {
         return null;
       }

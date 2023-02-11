@@ -74,8 +74,9 @@ export const messageRouter = router({
           files: newMessage.files,
           emojiMetadataTags: newMessage.emojiMetadataTags,
         });
-        messageEventEmitter.emit("onCreateMessage", newMessage);
-        return newMessage;
+        const result = { ...input, ...newMessage };
+        messageEventEmitter.emit("onCreateMessage", result);
+        return result;
       } catch {
         return null;
       }

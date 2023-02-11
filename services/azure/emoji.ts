@@ -1,4 +1,4 @@
-import { AzureUpdateEntity } from "@/models/azure";
+import type { AzureUpdateEntity } from "@/models/azure";
 import { MessageEntity } from "@/models/azure/message";
 import { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import type { MessageMetadataTagEntity } from "@/models/azure/message/metadata";

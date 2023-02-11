@@ -43,15 +43,15 @@ export const likeRouter = router({
       return newLike;
     })
   ),
-  updateLike: authedProcedure.input(updateLikeInputSchema).mutation(async ({ input: { postId, ...other }, ctx }) => {
+  updateLike: authedProcedure.input(updateLikeInputSchema).mutation(async ({ input: { postId, ...rest }, ctx }) => {
     const where: Prisma.LikeWhereUniqueInput = { userId_postId: { userId: ctx.session.user.id, postId } };
     const like = await prisma.like.findUnique({ where, include: { post: true } });
-    if (!like || like.value === other.value) return null;
+    if (!like || like.value === rest.value) return null;
 
-    const noLikesNew = like.post.noLikes + 2 * other.value;
+    const noLikesNew = like.post.noLikes + 2 * rest.value;
     const updatedLike = await prisma.like.update({
       data: {
-        ...other,
+        ...rest,
         post: { update: { noLikes: noLikesNew, ranking: ranking(noLikesNew, like.post.createdAt) } },
       },
       where,

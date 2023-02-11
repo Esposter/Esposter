@@ -71,10 +71,10 @@ export const roomRouter = router({
       data: { ...input, creatorId: ctx.session.user.id, users: { create: { userId: ctx.session.user.id } } },
     })
   ),
-  updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...other }, ctx }) => {
+  updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
     // @NOTE: We should be able to return records we updated on updateMany in the future
     // https://github.com/prisma/prisma/issues/5019
-    const { count } = await prisma.room.updateMany({ data: other, where: { id, creatorId: ctx.session.user.id } });
+    const { count } = await prisma.room.updateMany({ data: rest, where: { id, creatorId: ctx.session.user.id } });
     return count === 1 ? prisma.room.findUnique({ where: { id } }) : null;
   }),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {

@@ -1,79 +1,75 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
-import type { MessageEntity } from "@/models/azure/message";
-import type { CreateMessageInput } from "@/server/trpc/routers/message";
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
+import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
+import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
+import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
 export const useEmojiStore = defineStore("chat/emoji", () => {
-  const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const messageInputStore = useMessageInputStore();
-  const messagesMap = ref<Record<string, MessageEntity[]>>({});
-  const messageList = computed(() => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return [];
-    return messagesMap.value[roomStore.currentRoomId];
+  const messageStore = useMessageStore();
+  const getMessage = (partitionKey: string, rowKey: string) => {
+    if (!messageStore.messageList) return;
+    const message = messageStore.messageList.find((m) => m.partitionKey === partitionKey && m.rowKey === rowKey);
+    return message;
+  };
+
+  const emojiMap = ref<Record<string, MessageEmojiMetadataEntity[]>>({});
+  const emojiList = computed(() => {
+    if (!roomStore.currentRoomId || !emojiMap.value[roomStore.currentRoomId]) return null;
+    return emojiMap.value[roomStore.currentRoomId];
   });
-  const pushMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
-    messagesMap.value[roomStore.currentRoomId].push(...messages);
+  const pushEmojiList = (emojis: MessageEmojiMetadataEntity[]) => {
+    if (!roomStore.currentRoomId || !emojiMap.value[roomStore.currentRoomId]) return;
+    emojiMap.value[roomStore.currentRoomId].push(...emojis);
   };
 
-  const messageListNextCursorMap = ref<Record<string, string | null>>({});
-  const messageListNextCursor = computed(() => {
-    if (!roomStore.currentRoomId || !messageListNextCursorMap.value[roomStore.currentRoomId]) return null;
-    return messageListNextCursorMap.value[roomStore.currentRoomId];
-  });
-  const updateMessageListNextCursor = (messageListNextCursor: string | null) => {
+  const initialiseEmojiList = (emojis: MessageEmojiMetadataEntity[]) => {
     if (!roomStore.currentRoomId) return;
-    messageListNextCursorMap.value[roomStore.currentRoomId] = messageListNextCursor;
+    emojiMap.value[roomStore.currentRoomId] = emojis;
   };
+  const createEmoji = (input: CreateEmojiInput & MessageEmojiMetadataEntity) => {
+    const message = getMessage(input.partitionKey, input.rowKey);
+    if (!message) return;
+    if (!roomStore.currentRoomId || !emojiMap.value[roomStore.currentRoomId]) return;
 
-  const initialiseMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId) return;
-    messagesMap.value[roomStore.currentRoomId] = messages;
+    const { emoji, messageRowKey, ...newEmoji } = input;
+    emojiMap.value[roomStore.currentRoomId].push(newEmoji);
+    messageStore.updateMessage({
+      ...message,
+      emojiMetadataTags: [...message.emojiMetadataTags, { rowKey: newEmoji.rowKey }],
+    });
   };
-  const createMessage = (newMessage: MessageEntity) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
-    messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
-  };
-  const sendMessage = async () => {
-    if (!roomStore.currentRoomId || !messageInputStore.messageInput) return;
+  const updateEmoji = (input: UpdateEmojiInput) => {
+    const message = getMessage(input.partitionKey, input.rowKey);
+    if (!message) return;
+    if (!roomStore.currentRoomId || !emojiMap.value[roomStore.currentRoomId]) return;
 
-    const createMessageInput: CreateMessageInput = {
-      partitionKey: roomStore.currentRoomId,
-      message: messageInputStore.messageInput,
-    };
-    messageInputStore.updateMessageInput("");
-    const newMessage = await $client.message.createMessage.mutate(createMessageInput);
-    if (newMessage) createMessage(newMessage);
+    const { messageRowKey, ...updatedEmoji } = input;
+    const emojis = emojiMap.value[roomStore.currentRoomId];
+    const index = emojis.findIndex((e) => e.partitionKey === input.partitionKey && e.rowKey === input.rowKey);
+    if (index > -1)
+      emojiMap.value[roomStore.currentRoomId][index] = {
+        ...emojis[index],
+        ...updatedEmoji,
+        userIds: [...emojis[index].userIds, ...updatedEmoji.userIds],
+      };
   };
-  const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
+  const deleteEmoji = (input: DeleteEmojiInput) => {
+    const message = getMessage(input.partitionKey, input.rowKey);
+    if (!message) return;
+    if (!roomStore.currentRoomId || !emojiMap.value[roomStore.currentRoomId]) return;
 
-    const messages = messagesMap.value[roomStore.currentRoomId];
-    const index = messages.findIndex(
-      (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey
-    );
-    if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
-  };
-  const deleteMessage = (id: CompositeKey) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
-
-    const messages = messagesMap.value[roomStore.currentRoomId];
-    messagesMap.value[roomStore.currentRoomId] = messages.filter(
-      (m) => !(m.partitionKey === id.partitionKey && m.rowKey === id.rowKey)
+    const emojis = emojiMap.value[roomStore.currentRoomId];
+    emojiMap.value[roomStore.currentRoomId] = emojis.filter(
+      (e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey)
     );
   };
 
   return {
-    messageList,
-    pushMessageList,
-    messageListNextCursor,
-    updateMessageListNextCursor,
-    initialiseMessageList,
-    createMessage,
-    sendMessage,
-    updateMessage,
-    deleteMessage,
+    emojiList,
+    pushEmojiList,
+    initialiseEmojiList,
+    createEmoji,
+    updateEmoji,
+    deleteEmoji,
   };
 });

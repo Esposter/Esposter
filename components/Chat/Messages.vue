@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/useRoomStore";
+import { useRoomStore } from "@/store/chat/useRoomStore";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -35,5 +35,10 @@ if (currentRoomId) {
 </script>
 
 <template>
-  <ChatModelMessageList :messages="messageList" :has-more="hasMore" :fetch-more-messages="fetchMoreMessages" />
+  <ChatModelMessageList
+    v-if="messageList"
+    :messages="messageList"
+    :has-more="hasMore"
+    :fetch-more-messages="fetchMoreMessages"
+  />
 </template>

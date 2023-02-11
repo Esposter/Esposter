@@ -1,5 +1,5 @@
 import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/useRoomStore";
+import { useRoomStore } from "@/store/chat/useRoomStore";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 export const useEmojiSubscribables = () => {

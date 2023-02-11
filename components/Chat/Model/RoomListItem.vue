@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router";
-import { useRoomStore } from "@/store/useRoomStore";
+import { useRoomStore } from "@/store/chat/useRoomStore";
 import type { Room } from "@prisma/client";
 
 interface RoomListItemProps {

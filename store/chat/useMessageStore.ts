@@ -1,6 +1,6 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
+import type { AzureUpdateEntity } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
-import type { CreateMessageInput } from "@/server/trpc/routers/message";
+import type { CreateMessageInput, DeleteMessageInput } from "@/server/trpc/routers/message";
 import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
@@ -10,7 +10,7 @@ export const useMessageStore = defineStore("chat/message", () => {
   const messageInputStore = useMessageInputStore();
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed(() => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return [];
+    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return null;
     return messagesMap.value[roomStore.currentRoomId];
   });
   const pushMessageList = (messages: MessageEntity[]) => {
@@ -32,7 +32,7 @@ export const useMessageStore = defineStore("chat/message", () => {
     if (!roomStore.currentRoomId) return;
     messagesMap.value[roomStore.currentRoomId] = messages;
   };
-  const createMessage = (newMessage: MessageEntity) => {
+  const createMessage = (newMessage: CreateMessageInput & MessageEntity) => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
     messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
   };
@@ -56,12 +56,12 @@ export const useMessageStore = defineStore("chat/message", () => {
     );
     if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
   };
-  const deleteMessage = (id: CompositeKey) => {
+  const deleteMessage = (input: DeleteMessageInput) => {
     if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
 
     const messages = messagesMap.value[roomStore.currentRoomId];
     messagesMap.value[roomStore.currentRoomId] = messages.filter(
-      (m) => !(m.partitionKey === id.partitionKey && m.rowKey === id.rowKey)
+      (m) => !(m.partitionKey === input.partitionKey && m.rowKey === input.rowKey)
     );
   };
 

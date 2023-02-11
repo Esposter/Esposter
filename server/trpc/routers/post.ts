@@ -68,8 +68,8 @@ export const postRouter = router({
   }),
   updatePost: authedProcedure
     .input(updatePostInputSchema)
-    .mutation(({ input: { id, ...other } }) =>
-      prisma.post.update({ data: other, where: { id }, include: PostRelationsIncludeDefault })
+    .mutation(({ input: { id, ...rest } }) =>
+      prisma.post.update({ data: rest, where: { id }, include: PostRelationsIncludeDefault })
     ),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {
