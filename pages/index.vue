@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePostStore } from "@/store/usePostStore";
+import { usePostStore } from "@/store/post/usePostStore";
 
 const { $client } = useNuxtApp();
 const postStore = usePostStore();

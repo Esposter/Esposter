@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
-import { useMessageStore } from "@/store/useMessageStore";
+import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/useRoomStore";
 
 interface UpdatedMessageProps {

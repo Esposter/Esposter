@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useMessageInputStore } from "@/store/useMessageInputStore";
-import { useMessageStore } from "@/store/useMessageStore";
+import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
+import { useMessageStore } from "@/store/chat/useMessageStore";
 
 const messageInputStore = useMessageInputStore();
 const { updateMessageInput } = messageInputStore;

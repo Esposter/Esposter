@@ -1,4 +1,4 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
+import type { CompositeKey } from "@/models/azure";
 import { MessageEntity, messageSchema } from "@/models/azure/message";
 import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/events/message";
@@ -83,8 +83,8 @@ export const messageRouter = router({
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "partitionKey")
     .input(onUpdateMessageInputSchema)
     .subscription(({ input }) =>
-      observable<AzureUpdateEntity<MessageEntity>>((emit) => {
-        const onUpdateMessage = (data: AzureUpdateEntity<MessageEntity>) => () => {
+      observable<UpdateMessageInput>((emit) => {
+        const onUpdateMessage = (data: UpdateMessageInput) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
         messageEventEmitter.on("onUpdateMessage", onUpdateMessage);
@@ -93,13 +93,12 @@ export const messageRouter = router({
     ),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .input(updateMessageInputSchema)
-    .mutation(async ({ input: { partitionKey, rowKey, message } }) => {
+    .mutation(async ({ input }) => {
       try {
-        const updatedMessage = { partitionKey, rowKey, message };
         const messageClient = await getTableClient(AzureTable.Messages);
-        await updateEntity<MessageEntity>(messageClient, updatedMessage);
-        messageEventEmitter.emit("onUpdateMessage", updatedMessage);
-        return updatedMessage;
+        await updateEntity<MessageEntity>(messageClient, input);
+        messageEventEmitter.emit("onUpdateMessage", input);
+        return input;
       } catch {
         return null;
       }
@@ -117,11 +116,11 @@ export const messageRouter = router({
     ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
-    .mutation(async ({ input: { partitionKey, rowKey } }) => {
+    .mutation(async ({ input }) => {
       try {
         const messageClient = await getTableClient(AzureTable.Messages);
-        await deleteEntity(messageClient, partitionKey, rowKey);
-        messageEventEmitter.emit("onDeleteMessage", { partitionKey, rowKey });
+        await deleteEntity(messageClient, input.partitionKey, input.rowKey);
+        messageEventEmitter.emit("onDeleteMessage", input);
         return true;
       } catch {
         return false;

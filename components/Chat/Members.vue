@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/useMemberStore";
+import { useMemberStore } from "@/store/chat/useMemberStore";
 import { useRoomStore } from "@/store/useRoomStore";
 
 const { $client } = useNuxtApp();

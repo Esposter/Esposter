@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router";
-import { usePostStore } from "@/store/usePostStore";
+import { usePostStore } from "@/store/post/usePostStore";
 
 interface DeleteCardButtonProps {
   postId: string;

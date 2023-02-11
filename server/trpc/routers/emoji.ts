@@ -1,4 +1,3 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import { messageEmojiMetadataSchema } from "@/models/azure/message/emoji";
 import { emojiEventEmitter } from "@/models/events/emoji";
@@ -10,7 +9,9 @@ import {
   updateEmojiMetadataEntity,
 } from "@/services/azure/emoji";
 import { observable } from "@trpc/server/observable";
-import { unemojify } from "node-emoji";
+// @NOTE: ESModule issue
+// eslint-disable-next-line import/default
+import nodeEmoji from "node-emoji";
 import { z } from "zod";
 
 const onCreateEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
@@ -51,15 +52,15 @@ export const emojiRouter = router({
     ),
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
     .input(createEmojiInputSchema)
-    .mutation(async ({ input: { partitionKey, rowKey, emoji, messageRowKey }, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         const newEmojiMetadataEntity: MessageEmojiMetadataEntity = {
-          partitionKey,
-          rowKey,
-          emojiTag: unemojify(emoji),
+          partitionKey: input.partitionKey,
+          rowKey: input.rowKey,
+          emojiTag: nodeEmoji.unemojify(input.emoji),
           userIds: [ctx.session.user.id],
         };
-        await createEmojiMetadataEntity(newEmojiMetadataEntity, messageRowKey);
+        await createEmojiMetadataEntity(newEmojiMetadataEntity, input.messageRowKey);
         emojiEventEmitter.emit("onCreateEmoji", newEmojiMetadataEntity);
         return newEmojiMetadataEntity;
       } catch {
@@ -69,8 +70,8 @@ export const emojiRouter = router({
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "partitionKey")
     .input(onUpdateEmojiInputSchema)
     .subscription(({ input }) =>
-      observable<AzureUpdateEntity<MessageEmojiMetadataEntity>>((emit) => {
-        const onUpdateEmoji = (data: AzureUpdateEntity<MessageEmojiMetadataEntity>) => () => {
+      observable<UpdateEmojiInput>((emit) => {
+        const onUpdateEmoji = (data: UpdateEmojiInput) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
         emojiEventEmitter.on("onUpdateEmoji", onUpdateEmoji);
@@ -80,15 +81,15 @@ export const emojiRouter = router({
   // An update is adding the user to the user id list for the already existing emoji
   updateEmoji: getRoomUserProcedure(updateEmojiInputSchema, "partitionKey")
     .input(updateEmojiInputSchema)
-    .mutation(async ({ input: { partitionKey, rowKey, userIds, messageRowKey }, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         const updatedEmojiMetadataEntity = {
-          partitionKey,
-          rowKey,
-          userIds: [...userIds, ctx.session.user.id],
+          partitionKey: input.partitionKey,
+          rowKey: input.rowKey,
+          userIds: [...input.userIds, ctx.session.user.id],
         };
-        await updateEmojiMetadataEntity(updatedEmojiMetadataEntity, messageRowKey);
-        emojiEventEmitter.emit("onUpdateEmoji", updatedEmojiMetadataEntity);
+        await updateEmojiMetadataEntity(updatedEmojiMetadataEntity, input.messageRowKey);
+        emojiEventEmitter.emit("onUpdateEmoji", input);
         return updatedEmojiMetadataEntity;
       } catch {
         return null;
@@ -97,8 +98,8 @@ export const emojiRouter = router({
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "partitionKey")
     .input(onDeleteEmojiInputSchema)
     .subscription(({ input }) =>
-      observable<CompositeKey>((emit) => {
-        const onDeleteEmoji = (data: CompositeKey) => () => {
+      observable<DeleteEmojiInput>((emit) => {
+        const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
         emojiEventEmitter.on("onDeleteEmoji", onDeleteEmoji);
@@ -107,10 +108,10 @@ export const emojiRouter = router({
     ),
   deleteEmoji: getRoomUserProcedure(updateEmojiInputSchema, "partitionKey")
     .input(updateEmojiInputSchema)
-    .mutation(async ({ input: { partitionKey, rowKey, messageRowKey } }) => {
+    .mutation(async ({ input }) => {
       try {
-        await deleteEmojiMetadataEntity(partitionKey, rowKey, messageRowKey);
-        emojiEventEmitter.emit("onDeleteEmoji", { partitionKey, rowKey });
+        await deleteEmojiMetadataEntity(input.partitionKey, input.rowKey, input.messageRowKey);
+        emojiEventEmitter.emit("onDeleteEmoji", input);
         return true;
       } catch {
         return false;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMessageStore } from "@/store/useMessageStore";
+import { useMessageStore } from "@/store/chat/useMessageStore";
 
 const { sendMessage } = useMessageStore();
 </script>
