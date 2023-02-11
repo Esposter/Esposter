@@ -42,8 +42,8 @@ export const emojiRouter = router({
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "partitionKey")
     .input(onCreateEmojiInputSchema)
     .subscription(({ input }) =>
-      observable<MessageEmojiMetadataEntity>((emit) => {
-        const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
+      observable<CreateEmojiInput & MessageEmojiMetadataEntity>((emit) => {
+        const onCreateEmoji = (data: CreateEmojiInput & MessageEmojiMetadataEntity) => () => {
           if (data.partitionKey === input.partitionKey) emit.next(data);
         };
         emojiEventEmitter.on("onCreateEmoji", onCreateEmoji);

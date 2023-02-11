@@ -1,4 +1,4 @@
-import { useMessageStore } from "@/store/chat/useMessageStore";
+import { useEmojiStore } from "@/store/chat/useEmojiStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 import type { Unsubscribable } from "@trpc/server/observable";
 
@@ -6,8 +6,8 @@ export const useEmojiSubscribables = () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = $(storeToRefs(roomStore));
-  const messageStore = useMessageStore();
-  const { updateMessage } = messageStore;
+  const emojiStore = useEmojiStore();
+  const { createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 
   let createEmojiUnsubscribable = $ref<Unsubscribable>();
   let updateEmojiUnsubscribable = $ref<Unsubscribable>();
@@ -18,15 +18,15 @@ export const useEmojiSubscribables = () => {
 
     createEmojiUnsubscribable = $client.emoji.onCreateEmoji.subscribe(
       { partitionKey: currentRoomId },
-      { onData: (data) => updateMessage(data) }
+      { onData: (data) => createEmoji(data) }
     );
     updateEmojiUnsubscribable = $client.emoji.onUpdateEmoji.subscribe(
       { partitionKey: currentRoomId },
-      { onData: (data) => updateMessage(data) }
+      { onData: (data) => updateEmoji(data) }
     );
     deleteEmojiUnsubscribable = $client.emoji.onDeleteEmoji.subscribe(
       { partitionKey: currentRoomId },
-      { onData: (data) => updateMessage(data) }
+      { onData: (data) => deleteEmoji(data) }
     );
   });
 
