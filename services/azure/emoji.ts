@@ -11,7 +11,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { FETCH_LIMIT } from "@/utils/pagination";
+import { READ_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
 
 export const readEmojiMetadataTags = async (partitionKey: string, rowKey: string) => {
@@ -25,9 +25,9 @@ export const readEmojiMetadataEntities = async (
   emojiMetadataTagEntities: MessageMetadataTagEntity[]
 ) => {
   const client = await getTableClient(AzureTable.MessagesMetadata);
-  return getTopNEntities(client, FETCH_LIMIT, MessageEmojiMetadataEntity, {
+  return getTopNEntities(client, READ_LIMIT, MessageEmojiMetadataEntity, {
     filter: `PartitionKey eq ${odata`${partitionKey}`} and (${emojiMetadataTagEntities
-      .slice(0, FETCH_LIMIT)
+      .slice(0, READ_LIMIT)
       .map((e) => `RowKey eq ${odata`${e.rowKey}`}`)
       .join(" or ")})`,
   });

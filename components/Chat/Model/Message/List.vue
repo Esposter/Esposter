@@ -5,11 +5,11 @@ import type { MessageEntity } from "@/models/azure/message";
 interface MessageListProps {
   messages: MessageEntity[];
   hasMore: boolean;
-  fetchMoreMessages: InstanceType<typeof VWaypoint>["$props"]["onChange"];
+  readMoreMessages: InstanceType<typeof VWaypoint>["$props"]["onChange"];
 }
 
 const props = defineProps<MessageListProps>();
-const { messages, hasMore, fetchMoreMessages } = $(toRefs(props));
+const { messages, hasMore, readMoreMessages } = $(toRefs(props));
 </script>
 
 <template>
@@ -20,6 +20,6 @@ const { messages, hasMore, fetchMoreMessages } = $(toRefs(props));
       :current-message="message"
       :next-message="messages[index + 1]"
     />
-    <VWaypoint :active="hasMore" @change="fetchMoreMessages" />
+    <VWaypoint :active="hasMore" @change="readMoreMessages" />
   </v-list>
 </template>

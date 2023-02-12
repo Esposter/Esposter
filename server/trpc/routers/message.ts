@@ -6,7 +6,7 @@ import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
 import { getReverseTickedTimestamp } from "@/utils/azure";
-import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
+import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
@@ -42,8 +42,8 @@ export const messageRouter = router({
         ? odata`PartitionKey eq ${partitionKey} and RowKey gt ${cursor}`
         : odata`PartitionKey eq ${partitionKey}`;
       const messageClient = await getTableClient(AzureTable.Messages);
-      const messages = await getTopNEntities(messageClient, FETCH_LIMIT + 1, MessageEntity, { filter });
-      return { messages, nextCursor: getNextCursor(messages, "rowKey", FETCH_LIMIT) };
+      const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });
+      return { messages, nextCursor: getNextCursor(messages, "rowKey", READ_LIMIT) };
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "partitionKey")
     .input(onCreateMessageInputSchema)

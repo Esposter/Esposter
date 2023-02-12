@@ -1,24 +1,10 @@
 <script setup lang="ts">
 import { usePostStore } from "@/store/post/usePostStore";
 
-const { $client } = useNuxtApp();
 const postStore = usePostStore();
-const { pushPostList, updatePostListNextCursor, initialisePostList } = postStore;
 const { postList, postListNextCursor } = $(storeToRefs(postStore));
 const hasMore = $computed(() => Boolean(postListNextCursor));
-const fetchMorePosts = async (onComplete: () => void) => {
-  try {
-    const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: postListNextCursor });
-    pushPostList(posts);
-    updatePostListNextCursor(nextCursor);
-  } finally {
-    onComplete();
-  }
-};
-
-const { posts, nextCursor } = await $client.post.readPosts.query({ cursor: null });
-initialisePostList(posts);
-updatePostListNextCursor(nextCursor);
+const { readMorePosts } = await useReadPosts();
 </script>
 
 <template>
@@ -32,7 +18,7 @@ updatePostListNextCursor(nextCursor);
           <PostCard :post="post" />
         </v-col>
       </v-row>
-      <VWaypoint :active="hasMore" @change="fetchMorePosts" />
+      <VWaypoint :active="hasMore" @change="readMorePosts" />
     </v-container>
   </NuxtLayout>
 </template>

@@ -14,10 +14,10 @@ const { url, language } = $(toRefs(props));
 const code = $ref(await (await fetch(url)).text());
 const languageRequested = $computed(() => extendedLanguages.find((l) => l.name === language));
 const languageConfiguration = $ref(new Compartment());
-const languageSupport = ref(languageRequested ? await languageRequested.load() : undefined);
+const languageSupport = $ref(languageRequested ? await languageRequested.load() : undefined);
 const languageExtension = $computed(() =>
   // @ts-ignore
-  languageSupport.value ? languageConfiguration.of(languageSupport.value) : undefined
+  languageSupport ? languageConfiguration.of(languageSupport) : undefined
 );
 const editorView = shallowRef<EditorView>();
 </script>

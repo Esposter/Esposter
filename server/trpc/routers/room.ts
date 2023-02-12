@@ -2,7 +2,7 @@ import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
-import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
+import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { ROOM_NAME_MAX_LENGTH } from "@/utils/validation";
 import type { Room as PrismaRoom } from "@prisma/client";
 import type { toZod } from "tozod";
@@ -59,12 +59,12 @@ export const roomRouter = router({
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { filter, cursor }, ctx }) => {
     const name = filter?.name;
     const rooms = await prisma.room.findMany({
-      take: FETCH_LIMIT + 1,
+      take: READ_LIMIT + 1,
       where: { name: { contains: name, mode: "insensitive" }, users: { some: { userId: ctx.session.user.id } } },
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
-    return { rooms, nextCursor: getNextCursor(rooms, "id", FETCH_LIMIT) };
+    return { rooms, nextCursor: getNextCursor(rooms, "id", READ_LIMIT) };
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     prisma.room.create({

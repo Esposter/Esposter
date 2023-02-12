@@ -3,7 +3,7 @@ import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post";
-import { FETCH_LIMIT, getNextCursor } from "@/utils/pagination";
+import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
 import type { Post as PrismaPost } from "@prisma/client";
 import type { toZod } from "tozod";
@@ -52,12 +52,12 @@ export const postRouter = router({
     ),
   readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
     const posts = await prisma.post.findMany({
-      take: FETCH_LIMIT + 1,
+      take: READ_LIMIT + 1,
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { ranking: "desc" },
       include: PostRelationsIncludeDefault,
     });
-    return { posts, nextCursor: getNextCursor(posts, "id", FETCH_LIMIT) };
+    return { posts, nextCursor: getNextCursor(posts, "id", READ_LIMIT) };
   }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(({ input, ctx }) => {
     const now = new Date();

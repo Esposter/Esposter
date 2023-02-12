@@ -1,37 +1,10 @@
 <script setup lang="ts">
 import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/chat/useRoomStore";
 
-const { $client } = useNuxtApp();
-const roomStore = useRoomStore();
-const { currentRoomId } = $(storeToRefs(roomStore));
 const messageStore = useMessageStore();
-const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
 const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));
 const hasMore = $computed(() => Boolean(messageListNextCursor));
-const fetchMoreMessages = async (onComplete: () => void) => {
-  try {
-    if (!currentRoomId) return;
-
-    const { messages, nextCursor } = await $client.message.readMessages.query({
-      partitionKey: currentRoomId,
-      cursor: messageListNextCursor,
-    });
-    pushMessageList(messages);
-    updateMessageListNextCursor(nextCursor);
-  } finally {
-    onComplete();
-  }
-};
-
-if (currentRoomId) {
-  const { messages, nextCursor } = await $client.message.readMessages.query({
-    partitionKey: currentRoomId,
-    cursor: null,
-  });
-  initialiseMessageList(messages);
-  updateMessageListNextCursor(nextCursor);
-}
+const { readMoreMessages } = await useReadMessages();
 </script>
 
 <template>
@@ -39,6 +12,6 @@ if (currentRoomId) {
     v-if="messageList"
     :messages="messageList"
     :has-more="hasMore"
-    :fetch-more-messages="fetchMoreMessages"
+    :read-more-messages="readMoreMessages"
   />
 </template>
