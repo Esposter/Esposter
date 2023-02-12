@@ -22,14 +22,10 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
   });
   const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
     if (!currentRoomId) return;
-    // Initialise object if it doesn't exist
-    if (!emojiMap.value[currentRoomId]) {
-      emojiMap.value[currentRoomId] = {
-        [messageRowKey]: emojiList,
-      };
-    } else {
-      emojiMap.value[currentRoomId][messageRowKey] = emojiList;
-    }
+    emojiMap.value[currentRoomId] = {
+      ...emojiMap.value[currentRoomId],
+      [messageRowKey]: emojiList,
+    };
   };
   const pushEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
     const emojiList = getEmojiList.value(messageRowKey);
