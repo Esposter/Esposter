@@ -1,3 +1,4 @@
+import { messageSchema } from "@/models/azure/message";
 import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import { messageEmojiMetadataSchema } from "@/models/azure/message/emoji";
 import { emojiEventEmitter } from "@/models/events/emoji";
@@ -13,6 +14,9 @@ import { observable } from "@trpc/server/observable";
 // eslint-disable-next-line import/default
 import nodeEmoji from "node-emoji";
 import { z } from "zod";
+
+const readEmojisInputSchema = z.array(messageSchema.pick({ partitionKey: true, emojiMetadataTags: true }));
+export type ReadEmojisInput = z.infer<typeof readEmojisInputSchema>;
 
 const onCreateEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;

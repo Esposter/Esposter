@@ -6,29 +6,29 @@ export const useMemberStore = defineStore("chat/member", () => {
   const { currentRoomId } = $(storeToRefs(roomStore));
 
   const membersMap = ref<Record<string, User[]>>({});
-  const memberList = computed(() => {
-    if (!currentRoomId || !membersMap.value[currentRoomId]) return [];
-    return membersMap.value[currentRoomId];
+  const memberList = computed({
+    get: () => {
+      if (!currentRoomId || !membersMap.value[currentRoomId]) return [];
+      return membersMap.value[currentRoomId];
+    },
+    set: (newMemberList) => {
+      if (!currentRoomId) return;
+      membersMap.value[currentRoomId] = newMemberList;
+    },
   });
   const pushMemberList = (members: User[]) => {
-    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
-    membersMap.value[currentRoomId].push(...members);
+    memberList.value.push(...members);
   };
 
   const initialiseMembersList = (members: User[]) => {
-    if (!currentRoomId) return;
-    membersMap.value[currentRoomId] = members;
+    memberList.value = members;
   };
   const createMember = (newMember: User) => {
-    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
-    membersMap.value[currentRoomId].push(newMember);
+    memberList.value.push(newMember);
   };
   const updateMember = (updatedMember: User) => {
-    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
-
-    const members = membersMap.value[currentRoomId];
-    const index = members.findIndex((m) => m.id === updatedMember.id);
-    if (index > -1) membersMap.value[currentRoomId][index] = { ...members[index], ...updatedMember };
+    const index = memberList.value.findIndex((m) => m.id === updatedMember.id);
+    if (index > -1) memberList.value[index] = { ...memberList.value[index], ...updatedMember };
   };
 
   return {

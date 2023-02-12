@@ -94,8 +94,12 @@ const sortEmojiMetadataTags = (
 ) => {
   const result = [...emojiMetadataTags];
   result.sort((a, b) => {
-    const aMetadataEntity = emojiMetadataEntities.find((e) => e.rowKey === a.rowKey)!;
-    const bMetadataEntity = emojiMetadataEntities.find((e) => e.rowKey === b.rowKey)!;
+    const bMetadataEntity = emojiMetadataEntities.find((e) => e.rowKey === b.rowKey);
+    if (!bMetadataEntity) return -1;
+
+    const aMetadataEntity = emojiMetadataEntities.find((e) => e.rowKey === a.rowKey);
+    if (!aMetadataEntity) return 1;
+
     return bMetadataEntity.userIds.length - aMetadataEntity.userIds.length;
   });
   return result;

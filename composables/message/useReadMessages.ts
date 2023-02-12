@@ -8,6 +8,7 @@ export const useReadMessages = async () => {
   const messageStore = useMessageStore();
   const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
   const { messageListNextCursor } = $(storeToRefs(messageStore));
+
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId) return;

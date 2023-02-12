@@ -10,7 +10,7 @@ const props = defineProps<MessageTimelineProps>();
 const { currentMessageDate, nextMessageDate } = $(toRefs(props));
 const { border } = useColors();
 const currentMessageDateDayjs = $computed(() => dayjs(currentMessageDate));
-const areDifferentDays = $computed(() => !currentMessageDateDayjs.isSame(nextMessageDate, "day"));
+const areDifferentDays = $computed(() => !nextMessageDate || !currentMessageDateDayjs.isSame(nextMessageDate, "day"));
 const displayDate = $computed(() => {
   if (currentMessageDateDayjs.isToday()) return "Today";
   if (currentMessageDateDayjs.isYesterday()) return "Yesterday";

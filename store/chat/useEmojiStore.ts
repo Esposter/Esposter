@@ -14,28 +14,38 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
     const message = messageList.find((m) => m.partitionKey === partitionKey && m.rowKey === rowKey);
     return message;
   };
-
-  const emojiMap = ref<Record<string, MessageEmojiMetadataEntity[]>>({});
-  const emojiList = computed(() => {
-    if (!currentRoomId || !emojiMap.value[currentRoomId]) return null;
-    return emojiMap.value[currentRoomId];
+  // Record<partitionKey, Record<messageRowKey, MessageEmojiMetadataEntity[]>>
+  const emojiMap = ref<Record<string, Record<string, MessageEmojiMetadataEntity[]>>>({});
+  const getEmojiList = computed(() => (messageRowKey: string) => {
+    if (!currentRoomId || !emojiMap.value[currentRoomId][messageRowKey]) return [];
+    return emojiMap.value[currentRoomId][messageRowKey];
   });
-  const pushEmojiList = (emojis: MessageEmojiMetadataEntity[]) => {
-    if (!currentRoomId || !emojiMap.value[currentRoomId]) return;
-    emojiMap.value[currentRoomId].push(...emojis);
+  const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
+    if (!currentRoomId) return;
+    // Initialise object if it doesn't exist
+    if (!emojiMap.value[currentRoomId]) {
+      emojiMap.value[currentRoomId] = {
+        [messageRowKey]: emojiList,
+      };
+    } else {
+      emojiMap.value[currentRoomId][messageRowKey] = emojiList;
+    }
+  };
+  const pushEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
+    const emojiList = getEmojiList.value(messageRowKey);
+    emojiList.push(...emojis);
   };
 
-  const initialiseEmojiList = (emojis: MessageEmojiMetadataEntity[]) => {
-    if (!currentRoomId) return;
-    emojiMap.value[currentRoomId] = emojis;
+  const initialiseEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
+    setEmojiList(messageRowKey, emojis);
   };
   const createEmoji = (input: CreateEmojiInput & MessageEmojiMetadataEntity) => {
     const message = getMessage(input.partitionKey, input.rowKey);
     if (!message) return;
-    if (!currentRoomId || !emojiMap.value[currentRoomId]) return;
 
     const { emoji, messageRowKey, ...newEmoji } = input;
-    emojiMap.value[currentRoomId].push(newEmoji);
+    const emojiList = getEmojiList.value(messageRowKey);
+    emojiList.push(newEmoji);
     updateMessage({
       ...message,
       emojiMetadataTags: [...message.emojiMetadataTags, { rowKey: newEmoji.rowKey }],
@@ -44,31 +54,31 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
   const updateEmoji = (input: UpdateEmojiInput) => {
     const message = getMessage(input.partitionKey, input.rowKey);
     if (!message) return;
-    if (!currentRoomId || !emojiMap.value[currentRoomId]) return;
 
     const { messageRowKey, ...updatedEmoji } = input;
-    const emojis = emojiMap.value[currentRoomId];
-    const index = emojis.findIndex((e) => e.partitionKey === input.partitionKey && e.rowKey === input.rowKey);
+    const emojiList = getEmojiList.value(messageRowKey);
+    const index = emojiList.findIndex((e) => e.partitionKey === input.partitionKey && e.rowKey === input.rowKey);
     if (index > -1)
-      emojiMap.value[currentRoomId][index] = {
-        ...emojis[index],
+      emojiList[index] = {
+        ...emojiList[index],
         ...updatedEmoji,
-        userIds: [...emojis[index].userIds, ...updatedEmoji.userIds],
+        userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
       };
   };
   const deleteEmoji = (input: DeleteEmojiInput) => {
     const message = getMessage(input.partitionKey, input.rowKey);
     if (!message) return;
-    if (!currentRoomId || !emojiMap.value[currentRoomId]) return;
 
-    const emojis = emojiMap.value[currentRoomId];
-    emojiMap.value[currentRoomId] = emojis.filter(
-      (e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey)
+    const { messageRowKey } = input;
+    const emojiList = getEmojiList.value(messageRowKey);
+    setEmojiList(
+      messageRowKey,
+      emojiList.filter((e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey))
     );
   };
 
   return {
-    emojiList,
+    getEmojiList,
     pushEmojiList,
     initialiseEmojiList,
     createEmoji,
