@@ -7,40 +7,42 @@ import { useRoomStore } from "@/store/chat/useRoomStore";
 export const useMessageStore = defineStore("chat/message", () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
+  const { currentRoomId } = $(storeToRefs(roomStore));
   const messageInputStore = useMessageInputStore();
+
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed(() => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return null;
-    return messagesMap.value[roomStore.currentRoomId];
+    if (!currentRoomId || !messagesMap.value[currentRoomId]) return null;
+    return messagesMap.value[currentRoomId];
   });
   const pushMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
-    messagesMap.value[roomStore.currentRoomId].push(...messages);
+    if (!currentRoomId || !messagesMap.value[currentRoomId]) return;
+    messagesMap.value[currentRoomId].push(...messages);
   };
 
   const messageListNextCursorMap = ref<Record<string, string | null>>({});
   const messageListNextCursor = computed(() => {
-    if (!roomStore.currentRoomId || !messageListNextCursorMap.value[roomStore.currentRoomId]) return null;
-    return messageListNextCursorMap.value[roomStore.currentRoomId];
+    if (!currentRoomId || !messageListNextCursorMap.value[currentRoomId]) return null;
+    return messageListNextCursorMap.value[currentRoomId];
   });
   const updateMessageListNextCursor = (messageListNextCursor: string | null) => {
-    if (!roomStore.currentRoomId) return;
-    messageListNextCursorMap.value[roomStore.currentRoomId] = messageListNextCursor;
+    if (!currentRoomId) return;
+    messageListNextCursorMap.value[currentRoomId] = messageListNextCursor;
   };
 
   const initialiseMessageList = (messages: MessageEntity[]) => {
-    if (!roomStore.currentRoomId) return;
-    messagesMap.value[roomStore.currentRoomId] = messages;
+    if (!currentRoomId) return;
+    messagesMap.value[currentRoomId] = messages;
   };
   const createMessage = (newMessage: CreateMessageInput & MessageEntity) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
-    messagesMap.value[roomStore.currentRoomId].unshift(newMessage);
+    if (!currentRoomId || !messagesMap.value[currentRoomId]) return;
+    messagesMap.value[currentRoomId].unshift(newMessage);
   };
   const sendMessage = async () => {
-    if (!roomStore.currentRoomId || !messageInputStore.messageInput) return;
+    if (!currentRoomId || !messageInputStore.messageInput) return;
 
     const createMessageInput: CreateMessageInput = {
-      partitionKey: roomStore.currentRoomId,
+      partitionKey: currentRoomId,
       message: messageInputStore.messageInput,
     };
     messageInputStore.updateMessageInput("");
@@ -48,19 +50,19 @@ export const useMessageStore = defineStore("chat/message", () => {
     if (newMessage) createMessage(newMessage);
   };
   const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
+    if (!currentRoomId || !messagesMap.value[currentRoomId]) return;
 
-    const messages = messagesMap.value[roomStore.currentRoomId];
+    const messages = messagesMap.value[currentRoomId];
     const index = messages.findIndex(
       (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey
     );
-    if (index > -1) messagesMap.value[roomStore.currentRoomId][index] = { ...messages[index], ...updatedMessage };
+    if (index > -1) messagesMap.value[currentRoomId][index] = { ...messages[index], ...updatedMessage };
   };
   const deleteMessage = (input: DeleteMessageInput) => {
-    if (!roomStore.currentRoomId || !messagesMap.value[roomStore.currentRoomId]) return;
+    if (!currentRoomId || !messagesMap.value[currentRoomId]) return;
 
-    const messages = messagesMap.value[roomStore.currentRoomId];
-    messagesMap.value[roomStore.currentRoomId] = messages.filter(
+    const messages = messagesMap.value[currentRoomId];
+    messagesMap.value[currentRoomId] = messages.filter(
       (m) => !(m.partitionKey === input.partitionKey && m.rowKey === input.rowKey)
     );
   };

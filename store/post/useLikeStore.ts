@@ -3,15 +3,17 @@ import type { Like, Prisma } from "@prisma/client";
 
 export const useLikeStore = defineStore("post/like", () => {
   const postStore = usePostStore();
+  const { readPost } = postStore;
+
   const createLike = (newLike: Like) => {
-    const post = postStore.readPost(newLike.postId);
+    const post = readPost(newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
     post.noLikes += newLike.value;
   };
   const updateLike = (updatedLike: Like) => {
-    const post = postStore.readPost(updatedLike.postId);
+    const post = readPost(updatedLike.postId);
     if (!post) return;
 
     const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
@@ -21,7 +23,7 @@ export const useLikeStore = defineStore("post/like", () => {
     }
   };
   const deleteLike = (id: Prisma.LikeUserIdPostIdCompoundUniqueInput) => {
-    const post = postStore.readPost(id.postId);
+    const post = readPost(id.postId);
     if (!post) return;
 
     const like = post.likes.find((l) => l.userId === id.userId && l.postId === id.postId);

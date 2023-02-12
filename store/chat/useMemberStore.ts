@@ -3,30 +3,32 @@ import type { User } from "@prisma/client";
 
 export const useMemberStore = defineStore("chat/member", () => {
   const roomStore = useRoomStore();
+  const { currentRoomId } = $(storeToRefs(roomStore));
+
   const membersMap = ref<Record<string, User[]>>({});
   const memberList = computed(() => {
-    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return [];
-    return membersMap.value[roomStore.currentRoomId];
+    if (!currentRoomId || !membersMap.value[currentRoomId]) return [];
+    return membersMap.value[currentRoomId];
   });
   const pushMemberList = (members: User[]) => {
-    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
-    membersMap.value[roomStore.currentRoomId].push(...members);
+    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
+    membersMap.value[currentRoomId].push(...members);
   };
 
   const initialiseMembersList = (members: User[]) => {
-    if (!roomStore.currentRoomId) return;
-    membersMap.value[roomStore.currentRoomId] = members;
+    if (!currentRoomId) return;
+    membersMap.value[currentRoomId] = members;
   };
   const createMember = (newMember: User) => {
-    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
-    membersMap.value[roomStore.currentRoomId].push(newMember);
+    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
+    membersMap.value[currentRoomId].push(newMember);
   };
   const updateMember = (updatedMember: User) => {
-    if (!roomStore.currentRoomId || !membersMap.value[roomStore.currentRoomId]) return;
+    if (!currentRoomId || !membersMap.value[currentRoomId]) return;
 
-    const members = membersMap.value[roomStore.currentRoomId];
+    const members = membersMap.value[currentRoomId];
     const index = members.findIndex((m) => m.id === updatedMember.id);
-    if (index > -1) membersMap.value[roomStore.currentRoomId][index] = { ...members[index], ...updatedMember };
+    if (index > -1) membersMap.value[currentRoomId][index] = { ...members[index], ...updatedMember };
   };
 
   return {
