@@ -70,7 +70,6 @@
     "@tiptap/vue-3": "^2.0.0-beta.217",
     "@trpc/client": "^10.11.0",
     "@trpc/server": "^10.11.0",
-    "browser-hrtime": "^1.1.8",
     "chalk": "^5.2.0",
     "codemirror": "^6.0.1",
     "dayjs": "^1.11.7",
