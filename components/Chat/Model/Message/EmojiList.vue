@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useEmojiStore } from "@/store/chat/useEmojiStore";
 
-interface MessageReactionListProps {
+interface MessageEmojiListProps {
   messageRowKey: string;
 }
 
-const props = defineProps<MessageReactionListProps>();
+const props = defineProps<MessageEmojiListProps>();
 const { messageRowKey } = toRefs(props);
 const emojiStore = useEmojiStore();
 const { getEmojiList } = emojiStore;

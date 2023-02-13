@@ -1,4 +1,3 @@
-import { messageSchema } from "@/models/azure/message";
 import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import { messageEmojiMetadataSchema } from "@/models/azure/message/emoji";
 import { emojiEventEmitter } from "@/models/events/emoji";
@@ -14,8 +13,17 @@ import { observable } from "@trpc/server/observable";
 // eslint-disable-next-line import/default
 import nodeEmoji from "node-emoji";
 import { z } from "zod";
+import { messageSchema } from "~~/models/azure/message";
 
-const readEmojisInputSchema = z.array(messageSchema.pick({ partitionKey: true, emojiMetadataTags: true }));
+const readEmojisInputSchema = z.object({
+  partitionKey: z.string().uuid(),
+  messages: z.array(
+    messageSchema.pick({
+      rowKey: true,
+      emojiMetadataTags: true,
+    })
+  ),
+});
 export type ReadEmojisInput = z.infer<typeof readEmojisInputSchema>;
 
 const onCreateEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
@@ -43,6 +51,9 @@ const deleteEmojiInputSchema = messageEmojiMetadataSchema
 export type DeleteEmojiInput = z.infer<typeof deleteEmojiInputSchema>;
 
 export const emojiRouter = router({
+  readEmojis: getRoomUserProcedure(readEmojisInputSchema, "partitionKey")
+    .input(readEmojisInputSchema)
+    .query(async ({ input: { partitionKey, messages } }) => {}),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "partitionKey")
     .input(onCreateEmojiInputSchema)
     .subscription(({ input }) =>
