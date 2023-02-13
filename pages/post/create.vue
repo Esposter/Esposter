@@ -20,7 +20,7 @@ const onCreatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpser
   <div>
     <NuxtLayout>
       <v-container>
-        <PostUpsertCard @submit="onCreatePost" />
+        <PostUpsertForm @submit="onCreatePost" />
       </v-container>
     </NuxtLayout>
   </div>
