@@ -16,20 +16,18 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const allBuildingPower = computed(() => applyBuildingUpgrades(0, game.boughtUpgrades, game.boughtBuildings));
-  const getBoughtBuildingPower = computed(
-    () => (boughtBuilding: BuildingWithStats) =>
-      applyBuildingUpgradesSingle(boughtBuilding, game.boughtUpgrades, game.boughtBuildings)
-  );
-  const getBoughtBuildingAmount = computed(() => (building: Building) => {
+  const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
+    applyBuildingUpgradesSingle(boughtBuilding, game.boughtUpgrades, game.boughtBuildings);
+  const getBoughtBuildingAmount = (building: Building) => {
     const boughtBuilding = game.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
-  });
-  const getBoughtBuildingStats = computed(() => (building: Building) => {
+  };
+  const getBoughtBuildingStats = (building: Building) => {
     const boughtBuilding = game.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return [];
 
-    const buildingPower = getBoughtBuildingPower.value(boughtBuilding);
+    const buildingPower = getBoughtBuildingPower(boughtBuilding);
 
     return [
       `Each ${boughtBuilding.name} produces **${formatNumberLong(
@@ -42,14 +40,14 @@ export const useBuildingStore = defineStore("clicker/building", () => {
       )}%** of total ${getInitials(ITEM_NAME)}pS)`,
       `**${formatNumberLong(boughtBuilding.producedValue)}** ${ITEM_NAME}s produced so far`,
     ];
-  });
-  const getBuildingPrice = computed(() => (building: Building) => {
-    const boughtBuildingAmount = getBoughtBuildingAmount.value(building);
+  };
+  const getBuildingPrice = (building: Building) => {
+    const boughtBuildingAmount = getBoughtBuildingAmount(building);
     return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
-  });
+  };
 
   const createBoughtBuilding = (newBuilding: Building) => {
-    const newBuildingPrice = getBuildingPrice.value(newBuilding);
+    const newBuildingPrice = getBuildingPrice(newBuilding);
     const boughtBuilding = game.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!boughtBuilding) {
       game.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });

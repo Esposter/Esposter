@@ -16,10 +16,10 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
   };
   // Record<partitionKey, Record<messageRowKey, MessageEmojiMetadataEntity[]>>
   const emojiMap = ref<Record<string, Record<string, MessageEmojiMetadataEntity[]>>>({});
-  const getEmojiList = computed(() => (messageRowKey: string) => {
+  const getEmojiList = (messageRowKey: string) => {
     if (!currentRoomId || !emojiMap.value[currentRoomId][messageRowKey]) return [];
     return emojiMap.value[currentRoomId][messageRowKey];
-  });
+  };
   const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
     if (!currentRoomId) return;
     emojiMap.value[currentRoomId] = {
@@ -28,7 +28,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
     };
   };
   const pushEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
-    const emojiList = getEmojiList.value(messageRowKey);
+    const emojiList = getEmojiList(messageRowKey);
     emojiList.push(...emojis);
   };
 
@@ -40,7 +40,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
     if (!message) return;
 
     const { emoji, messageRowKey, ...newEmoji } = input;
-    const emojiList = getEmojiList.value(messageRowKey);
+    const emojiList = getEmojiList(messageRowKey);
     emojiList.push(newEmoji);
     updateMessage({
       ...message,
@@ -52,7 +52,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
     if (!message) return;
 
     const { messageRowKey, ...updatedEmoji } = input;
-    const emojiList = getEmojiList.value(messageRowKey);
+    const emojiList = getEmojiList(messageRowKey);
     const index = emojiList.findIndex((e) => e.partitionKey === input.partitionKey && e.rowKey === input.rowKey);
     if (index > -1)
       emojiList[index] = {
@@ -66,7 +66,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
     if (!message) return;
 
     const { messageRowKey } = input;
-    const emojiList = getEmojiList.value(messageRowKey);
+    const emojiList = getEmojiList(messageRowKey);
     setEmojiList(
       messageRowKey,
       emojiList.filter((e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey))
