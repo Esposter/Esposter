@@ -18,14 +18,15 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
       [messageRowKey]: emojiList,
     };
   };
-  const pushEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
-    const emojiList = getEmojiList(messageRowKey);
-    emojiList.push(...emojis);
+  const pushEmojiMap = (emojis: MessageEmojiMetadataEntity[]) => {
+    const messageRowKeys = new Set(emojis.map((e) => e.messageRowKey));
+    for (const messageRowKey of messageRowKeys)
+      setEmojiList(
+        messageRowKey,
+        emojis.filter((e) => e.rowKey === messageRowKey)
+      );
   };
 
-  const initialiseEmojiList = (messageRowKey: string, emojis: MessageEmojiMetadataEntity[]) => {
-    setEmojiList(messageRowKey, emojis);
-  };
   const createEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
     const emojiList = getEmojiList(newEmoji.messageRowKey);
     emojiList.push(newEmoji);
@@ -50,8 +51,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
 
   return {
     getEmojiList,
-    pushEmojiList,
-    initialiseEmojiList,
+    pushEmojiMap,
     createEmoji,
     updateEmoji,
     deleteEmoji,

@@ -1,3 +1,4 @@
+import { useEmojiStore } from "@/store/chat/useEmojiStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
@@ -8,7 +9,8 @@ export const useReadMessages = async () => {
   const messageStore = useMessageStore();
   const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
   const { messageListNextCursor } = $(storeToRefs(messageStore));
-
+  const emojiStore = useEmojiStore();
+  const { pushEmojiMap } = emojiStore;
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId) return;
@@ -19,6 +21,12 @@ export const useReadMessages = async () => {
       });
       pushMessageList(messages);
       updateMessageListNextCursor(nextCursor);
+
+      const emojis = await $client.emoji.readEmojis.query({
+        roomId: currentRoomId,
+        messages: messages.map((m) => ({ rowKey: m.rowKey })),
+      });
+      pushEmojiMap(emojis);
     } finally {
       onComplete();
     }
@@ -31,6 +39,12 @@ export const useReadMessages = async () => {
     });
     initialiseMessageList(messages);
     updateMessageListNextCursor(nextCursor);
+
+    const emojis = await $client.emoji.readEmojis.query({
+      roomId: currentRoomId,
+      messages: messages.map((m) => ({ rowKey: m.rowKey })),
+    });
+    pushEmojiMap(emojis);
   }
 
   return { readMoreMessages };

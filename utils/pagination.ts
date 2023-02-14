@@ -1,4 +1,4 @@
-export const READ_LIMIT = 20;
+export const READ_LIMIT = 15;
 
 export const getNextCursor = <T extends object, U extends keyof T>(items: T[], itemCursorKey: U, readLimit: number) => {
   let nextCursor: T[U] | null = null;
