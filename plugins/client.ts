@@ -1,4 +1,5 @@
 import type { AppRouter } from "@/server/trpc/routers";
+import { errorLink } from "@/services/trpc/errorLink";
 import type { TRPCLink } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import superjson from "superjson";
@@ -12,6 +13,7 @@ export default defineNuxtPlugin(() => {
     loggerLink({
       enabled: (opts) => (isDevelopment && !isServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
+    errorLink,
     splitLink({
       condition: (op) => op.type === "subscription",
       true: (() => {
