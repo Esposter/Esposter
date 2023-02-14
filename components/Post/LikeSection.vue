@@ -35,6 +35,7 @@ const onDeleteLike = async () => {
     <v-btn
       p="0!"
       rd="1!"
+      bg="transparent!"
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"
@@ -51,6 +52,7 @@ const onDeleteLike = async () => {
     <v-btn
       p="0!"
       rd="1!"
+      bg="transparent!"
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"

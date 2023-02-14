@@ -72,8 +72,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     theme,
     ssr: true,
-    // @NOTE: https://github.com/vuetifyjs/vuetify/issues/16589
-    // defaults: { VBtn: { flat: true } },
+    defaults: { VBtn: { flat: true } },
   });
   nuxtApp.vueApp.use(vuetify);
 });
