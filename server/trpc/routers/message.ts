@@ -7,6 +7,7 @@ import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import {
   createEntity,
   deleteEntity,
+  getMessagesPartitionKey,
   getMessagesPartitionKeyFilter,
   getReverseTickedTimestamp,
   getTableClient,
@@ -44,8 +45,8 @@ export const messageRouter = router({
     .input(readMessagesInputSchema)
     .query(async ({ input: { roomId, cursor } }) => {
       const filter = cursor
-        ? odata`${getMessagesPartitionKeyFilter(roomId)} and RowKey gt ${cursor}`
-        : odata`${getMessagesPartitionKeyFilter(roomId)}`;
+        ? `${getMessagesPartitionKeyFilter(roomId)} and RowKey gt ${odata`${cursor}`}`
+        : getMessagesPartitionKeyFilter(roomId);
       const messageClient = await getTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });
       return { messages, nextCursor: getNextCursor(messages, "rowKey", READ_LIMIT) };

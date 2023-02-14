@@ -14,7 +14,7 @@ export const useReadMessages = async () => {
       if (!currentRoomId) return;
 
       const { messages, nextCursor } = await $client.message.readMessages.query({
-        partitionKey: currentRoomId,
+        roomId: currentRoomId,
         cursor: messageListNextCursor,
       });
       pushMessageList(messages);
@@ -26,7 +26,7 @@ export const useReadMessages = async () => {
 
   if (currentRoomId) {
     const { messages, nextCursor } = await $client.message.readMessages.query({
-      partitionKey: currentRoomId,
+      roomId: currentRoomId,
       cursor: null,
     });
     initialiseMessageList(messages);

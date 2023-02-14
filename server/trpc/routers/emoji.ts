@@ -60,9 +60,9 @@ export const emojiRouter = router({
     .query(async ({ input: { roomId, messages } }) => {
       const client = await getTableClient(AzureTable.MessagesMetadata);
       return getTopNEntities(client, READ_LIMIT, MessageEmojiMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${messages.map(
-          (m) => `messageRowKey eq ${odata`${m.rowKey}`}`
-        )})`,
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${messages
+          .map((m) => `messageRowKey eq ${odata`${m.rowKey}`}`)
+          .join(" or ")})`,
       });
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "partitionKey")
