@@ -5,7 +5,14 @@ import { AzureTable } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/events/emoji";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
-import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
+import {
+  createEntity,
+  deleteEntity,
+  getMessagesPartitionKeyFilter,
+  getTableClient,
+  getTopNEntities,
+  updateEntity,
+} from "@/services/azure/table";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 // @NOTE: ESModule issue
@@ -53,7 +60,7 @@ export const emojiRouter = router({
     .query(async ({ input: { roomId, messages } }) => {
       const client = await getTableClient(AzureTable.MessagesMetadata);
       return getTopNEntities(client, READ_LIMIT, MessageEmojiMetadataEntity, {
-        filter: `PartitionKey gt ${odata`${roomId}`} and PartitionKey lt ${odata`${roomId}~`} and (${messages.map(
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${messages.map(
           (m) => `messageRowKey eq ${odata`${m.rowKey}`}`
         )})`,
       });

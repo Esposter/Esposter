@@ -7,6 +7,7 @@ import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import {
   createEntity,
   deleteEntity,
+  getMessagesPartitionKeyFilter,
   getReverseTickedTimestamp,
   getTableClient,
   getTopNEntities,
@@ -17,9 +18,7 @@ import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-const readMessagesInputSchema = messageSchema
-  .pick({ partitionKey: true })
-  .merge(z.object({ cursor: z.string().nullable() }));
+const readMessagesInputSchema = z.object({ roomId: z.string(), cursor: z.string().nullable() });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const onCreateMessageInputSchema = messageSchema.pick({ partitionKey: true });
@@ -41,12 +40,12 @@ const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey
 export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
-  readMessages: getRoomUserProcedure(readMessagesInputSchema, "partitionKey")
+  readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
     .input(readMessagesInputSchema)
-    .query(async ({ input: { partitionKey, cursor } }) => {
+    .query(async ({ input: { roomId, cursor } }) => {
       const filter = cursor
-        ? odata`PartitionKey eq ${partitionKey} and RowKey gt ${cursor}`
-        : odata`PartitionKey eq ${partitionKey}`;
+        ? odata`${getMessagesPartitionKeyFilter(roomId)} and RowKey gt ${cursor}`
+        : odata`${getMessagesPartitionKeyFilter(roomId)}`;
       const messageClient = await getTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });
       return { messages, nextCursor: getNextCursor(messages, "rowKey", READ_LIMIT) };

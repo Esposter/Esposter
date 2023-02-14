@@ -2,8 +2,7 @@ import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable } from "@/models/azure/table";
 import { now } from "@/utils/time";
 import type { SkipFirst } from "@/utils/types";
-import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
-import { TableClient } from "@azure/data-tables";
+import { odata, TableClient, TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import dayjs from "dayjs";
 import { JsonSerializer } from "typescript-json-serializer";
 import type { Type } from "typescript-json-serializer/dist/helpers";
@@ -88,8 +87,11 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
 export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
 export const AZURE_MAX_BATCH_SIZE = 100;
 
-export const getMessagesPartitionKey = (partitionKey: string, createdAt: Date) =>
-  `${partitionKey}-${dayjs(createdAt).format("yyyyMMdd")}`;
+export const getMessagesPartitionKey = (roomId: string, createdAt: Date) =>
+  `${roomId}-${dayjs(createdAt).format("yyyyMMdd")}`;
+
+export const getMessagesPartitionKeyFilter = (roomId: string) =>
+  `PartitionKey gt ${odata`${roomId}`} and PartitionKey lt ${odata`${roomId}😆`}`;
 
 // Calculation for azure table storage row key by using reverse-ticked timestamp in nanoseconds
 export const getReverseTickedTimestamp = () =>
