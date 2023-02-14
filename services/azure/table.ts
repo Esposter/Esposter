@@ -1,8 +1,10 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable } from "@/models/azure/table";
+import { now } from "@/utils/time";
 import type { SkipFirst } from "@/utils/types";
 import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
+import dayjs from "dayjs";
 import { JsonSerializer } from "typescript-json-serializer";
 import type { Type } from "typescript-json-serializer/dist/helpers";
 
@@ -80,3 +82,15 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   // before deserializing the json to handle transforming Date objects
   // return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
 };
+
+// A crazy big timestamp that indicates how long before azure table storage
+// completely ***ks up trying to insert a negative row key
+export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
+export const AZURE_MAX_BATCH_SIZE = 100;
+
+export const getMessagesPartitionKey = (partitionKey: string, createdAt: Date) =>
+  `${partitionKey}-${dayjs(createdAt).format("yyyyMMdd")}`;
+
+// Calculation for azure table storage row key by using reverse-ticked timestamp in nanoseconds
+export const getReverseTickedTimestamp = () =>
+  (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(now())).toString().padStart(AZURE_SELF_DESTRUCT_TIMER.length, "0");

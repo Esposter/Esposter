@@ -1,10 +1,30 @@
 import { CompositeKeyEntity } from "@/models/azure";
+import { MessageMetadataType } from "@/models/azure/message/metadata";
 import type { toZod } from "tozod";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
 
 @JsonObject()
-export class MessageEmojiMetadataEntity extends CompositeKeyEntity {
+class MessageMetadataEntity extends CompositeKeyEntity {
+  @JsonProperty()
+  messageRowKey!: string;
+
+  @JsonProperty()
+  type!: MessageMetadataType;
+}
+
+// @NOTE: Add strict type, toZod<MessageMetadataEntity>
+// once toZod supports native enums
+export const messageMetadataSchema = z.object({
+  // ${roomId}-${createdAt.format("yyyyMMdd")}
+  partitionKey: z.string(),
+  rowKey: z.string().uuid(),
+  messageRowKey: z.string(),
+  type: z.nativeEnum(MessageMetadataType),
+});
+
+@JsonObject()
+export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
   @JsonProperty()
   emojiTag!: string;
 
@@ -12,10 +32,9 @@ export class MessageEmojiMetadataEntity extends CompositeKeyEntity {
   userIds!: string[];
 }
 
-export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = z.object({
-  // room id
-  partitionKey: z.string().uuid(),
-  rowKey: z.string().uuid(),
-  emojiTag: z.string(),
-  userIds: z.array(z.string().uuid()),
-});
+export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = messageMetadataSchema.merge(
+  z.object({
+    emojiTag: z.string(),
+    userIds: z.array(z.string().uuid()),
+  })
+);

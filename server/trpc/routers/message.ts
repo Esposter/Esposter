@@ -4,8 +4,14 @@ import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/events/message";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
-import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
-import { getReverseTickedTimestamp } from "@/utils/azure";
+import {
+  createEntity,
+  deleteEntity,
+  getReverseTickedTimestamp,
+  getTableClient,
+  getTopNEntities,
+  updateEntity,
+} from "@/services/azure/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
@@ -60,19 +66,19 @@ export const messageRouter = router({
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
+        const createdAt = new Date();
         const newMessage: MessageEntity = {
           ...input,
+          partitionKey: getMessagesPartitionKey(input.partitionKey, createdAt),
           rowKey: getReverseTickedTimestamp(),
           creatorId: ctx.session.user.id,
           files: [],
-          emojiMetadataTags: [],
-          createdAt: new Date(),
+          createdAt,
         };
         const messageClient = await getTableClient(AzureTable.Messages);
         await createEntity<MessageEntity>(messageClient, {
           ...newMessage,
           files: newMessage.files,
-          emojiMetadataTags: newMessage.emojiMetadataTags,
         });
         const result = { ...input, ...newMessage };
         messageEventEmitter.emit("onCreateMessage", result);
