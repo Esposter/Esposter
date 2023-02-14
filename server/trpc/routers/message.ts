@@ -15,7 +15,6 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
-import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
@@ -45,7 +44,7 @@ export const messageRouter = router({
     .input(readMessagesInputSchema)
     .query(async ({ input: { roomId, cursor } }) => {
       const filter = cursor
-        ? `${getMessagesPartitionKeyFilter(roomId)} and RowKey gt ${odata`${cursor}`}`
+        ? `${getMessagesPartitionKeyFilter(roomId)} and RowKey gt '${cursor}'`
         : getMessagesPartitionKeyFilter(roomId);
       const messageClient = await getTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });

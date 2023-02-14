@@ -13,7 +13,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { odata } from "@azure/data-tables";
+import { READ_LIMIT } from "@/utils/pagination";
 import { observable } from "@trpc/server/observable";
 // @NOTE: ESModule issue
 // eslint-disable-next-line import/default
@@ -61,7 +61,7 @@ export const emojiRouter = router({
       const client = await getTableClient(AzureTable.MessagesMetadata);
       return getTopNEntities(client, READ_LIMIT, MessageEmojiMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and (${messages
-          .map((m) => `messageRowKey eq ${odata`${m.rowKey}`}`)
+          .map((m) => `messageRowKey eq '${m.rowKey}'`)
           .join(" or ")})`,
       });
     }),
