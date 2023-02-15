@@ -21,19 +21,19 @@ import { z } from "zod";
 const readMessagesInputSchema = z.object({ roomId: z.string(), cursor: z.string().nullable() });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
-const onCreateMessageInputSchema = messageSchema.pick({ partitionKey: true });
+const onCreateMessageInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
-const createMessageInputSchema = messageSchema.pick({ partitionKey: true, message: true });
+const createMessageInputSchema = z.object({ roomId: z.string() }).merge(messageSchema.pick({ message: true }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
-const onUpdateMessageInputSchema = messageSchema.pick({ partitionKey: true });
+const onUpdateMessageInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
 const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
 
-const onDeleteMessageInputSchema = messageSchema.pick({ partitionKey: true });
+const onDeleteMessageInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
@@ -50,35 +50,32 @@ export const messageRouter = router({
       const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });
       return { messages, nextCursor: getNextCursor(messages, "rowKey", READ_LIMIT) };
     }),
-  onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "partitionKey")
+  onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(({ input }) =>
       observable<MessageEntity>((emit) => {
         const onCreateMessage = (data: MessageEntity) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         messageEventEmitter.on("onCreateMessage", onCreateMessage);
         return () => messageEventEmitter.off("onCreateMessage", onCreateMessage);
       })
     ),
-  createMessage: getRoomUserProcedure(createMessageInputSchema, "partitionKey")
+  createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
         const createdAt = new Date();
         const newMessage: MessageEntity = {
-          ...input,
-          partitionKey: getMessagesPartitionKey(input.partitionKey, createdAt),
+          partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
           rowKey: getReverseTickedTimestamp(),
           creatorId: ctx.session.user.id,
+          message: input.message,
           files: [],
           createdAt,
         };
         const messageClient = await getTableClient(AzureTable.Messages);
-        await createEntity<MessageEntity>(messageClient, {
-          ...newMessage,
-          files: newMessage.files,
-        });
+        await createEntity<MessageEntity>(messageClient, newMessage);
         const result = { ...input, ...newMessage };
         messageEventEmitter.emit("onCreateMessage", result);
         return result;
@@ -86,12 +83,12 @@ export const messageRouter = router({
         return null;
       }
     }),
-  onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "partitionKey")
+  onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
     .subscription(({ input }) =>
       observable<UpdateMessageInput>((emit) => {
         const onUpdateMessage = (data: UpdateMessageInput) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         messageEventEmitter.on("onUpdateMessage", onUpdateMessage);
         return () => messageEventEmitter.off("onUpdateMessage", onUpdateMessage);
@@ -109,12 +106,12 @@ export const messageRouter = router({
         return null;
       }
     }),
-  onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "partitionKey")
+  onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
     .subscription(({ input }) =>
       observable<CompositeKey>((emit) => {
         const onDeleteMessage = (data: CompositeKey) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         messageEventEmitter.on("onDeleteMessage", onDeleteMessage);
         return () => messageEventEmitter.off("onDeleteMessage", onDeleteMessage);

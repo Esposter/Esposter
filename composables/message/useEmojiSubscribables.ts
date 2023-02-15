@@ -17,15 +17,15 @@ export const useEmojiSubscribables = () => {
     if (!currentRoomId) return;
 
     createEmojiUnsubscribable = $client.emoji.onCreateEmoji.subscribe(
-      { partitionKey: currentRoomId },
+      { roomId: currentRoomId },
       { onData: (data) => createEmoji(data) }
     );
     updateEmojiUnsubscribable = $client.emoji.onUpdateEmoji.subscribe(
-      { partitionKey: currentRoomId },
+      { roomId: currentRoomId },
       { onData: (data) => updateEmoji(data) }
     );
     deleteEmojiUnsubscribable = $client.emoji.onDeleteEmoji.subscribe(
-      { partitionKey: currentRoomId },
+      { roomId: currentRoomId },
       { onData: (data) => deleteEmoji(data) }
     );
   });

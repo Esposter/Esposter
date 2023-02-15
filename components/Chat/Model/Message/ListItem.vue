@@ -63,7 +63,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         >
           <v-hover v-slot="{ isHovering, props: hoverProps }">
             <ChatModelMessageOptionsMenu
-              :creator-id="creator.id"
+              :message="message"
               :is-hovering="isHovering"
               :hover-props="hoverProps"
               @update:menu="(value) => (isOptionsChildrenActive = value)"

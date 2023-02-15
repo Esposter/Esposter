@@ -18,7 +18,8 @@ class MessageMetadataEntity extends CompositeKeyEntity {
 export const messageMetadataSchema = z.object({
   // ${roomId}-${createdAt.format("yyyyMMdd")}
   partitionKey: z.string(),
-  rowKey: z.string().uuid(),
+  // reverse tick timestamp
+  rowKey: z.string(),
   messageRowKey: z.string(),
   type: z.nativeEnum(MessageMetadataType),
 });

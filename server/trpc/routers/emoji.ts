@@ -9,6 +9,7 @@ import {
   createEntity,
   deleteEntity,
   getMessagesPartitionKeyFilter,
+  getReverseTickedTimestamp,
   getTableClient,
   getTopNEntities,
   updateEntity,
@@ -30,15 +31,15 @@ const readEmojisInputSchema = z.object({
 });
 export type ReadEmojisInput = z.infer<typeof readEmojisInputSchema>;
 
-const onCreateEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
+const onCreateEmojiInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const createEmojiInputSchema = messageEmojiMetadataSchema
-  .pick({ partitionKey: true, rowKey: true })
-  .merge(z.object({ emoji: z.string(), messageRowKey: z.string() }));
+const createEmojiInputSchema = messageSchema
+  .pick({ partitionKey: true })
+  .merge(z.object({ messageRowKey: z.string(), emoji: z.string() }));
 export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
+const onUpdateEmojiInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
 const updateEmojiInputSchema = messageEmojiMetadataSchema
@@ -46,7 +47,7 @@ const updateEmojiInputSchema = messageEmojiMetadataSchema
   .merge(z.object({ messageRowKey: z.string() }));
 export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = messageEmojiMetadataSchema.pick({ partitionKey: true });
+const onDeleteEmojiInputSchema = z.object({ roomId: z.string().uuid() });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 const deleteEmojiInputSchema = messageEmojiMetadataSchema
@@ -65,12 +66,12 @@ export const emojiRouter = router({
           .join(" or ")})`,
       });
     }),
-  onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "partitionKey")
+  onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
     .subscription(({ input }) =>
       observable<MessageEmojiMetadataEntity>((emit) => {
         const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         emojiEventEmitter.on("onCreateEmoji", onCreateEmoji);
         return () => emojiEventEmitter.off("onCreateEmoji", onCreateEmoji);
@@ -81,7 +82,9 @@ export const emojiRouter = router({
     .mutation(async ({ input, ctx }) => {
       try {
         const newEmojiMetadataEntity: MessageEmojiMetadataEntity = {
-          ...input,
+          partitionKey: input.partitionKey,
+          rowKey: getReverseTickedTimestamp(),
+          messageRowKey: input.messageRowKey,
           type: MessageMetadataType.Emoji,
           emojiTag: nodeEmoji.unemojify(input.emoji),
           userIds: [ctx.session.user.id],
@@ -95,12 +98,12 @@ export const emojiRouter = router({
         return null;
       }
     }),
-  onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "partitionKey")
+  onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
     .subscription(({ input }) =>
       observable<UpdateEmojiInput>((emit) => {
         const onUpdateEmoji = (data: UpdateEmojiInput) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         emojiEventEmitter.on("onUpdateEmoji", onUpdateEmoji);
         return () => emojiEventEmitter.off("onUpdateEmoji", onUpdateEmoji);
@@ -124,12 +127,12 @@ export const emojiRouter = router({
         return null;
       }
     }),
-  onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "partitionKey")
+  onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
     .subscription(({ input }) =>
       observable<DeleteEmojiInput>((emit) => {
         const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
-          if (data.partitionKey === input.partitionKey) emit.next(data);
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
         emojiEventEmitter.on("onDeleteEmoji", onDeleteEmoji);
         return () => emojiEventEmitter.off("onDeleteEmoji", onDeleteEmoji);

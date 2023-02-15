@@ -45,14 +45,14 @@ export const useMessageStore = defineStore("chat/message", () => {
   const initialiseMessageList = (messages: MessageEntity[]) => {
     messageList.value = messages;
   };
-  const createMessage = (newMessage: CreateMessageInput & MessageEntity) => {
+  const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };
   const sendMessage = async () => {
     if (!currentRoomId || !messageInput) return;
 
     const createMessageInput: CreateMessageInput = {
-      partitionKey: currentRoomId,
+      roomId: currentRoomId,
       message: messageInput,
     };
     updateMessageInput("");

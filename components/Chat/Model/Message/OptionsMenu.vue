@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { MessageEntity } from "@/models/azure/message";
 import { mergeProps } from "vue";
+import { useEmojiStore } from "~~/store/chat/useEmojiStore";
 
 interface MessageOptionsMenuProps {
-  creatorId: string;
+  message: MessageEntity;
   isHovering?: boolean;
   hoverProps?: Record<string, unknown>;
 }
@@ -15,14 +17,17 @@ interface Item {
 }
 
 const props = defineProps<MessageOptionsMenuProps>();
-const { creatorId, isHovering, hoverProps } = $(toRefs(props));
+const { message, isHovering, hoverProps } = $(toRefs(props));
 const emit = defineEmits<{
   (event: "update:menu", value: boolean): void;
   (event: "update:update-mode", value: true): void;
   (event: "update:delete-mode", value: true): void;
 }>();
+const { $client } = useNuxtApp();
 const { data } = $(useSession());
-const isCreator = $computed(() => data?.user.id === creatorId);
+const emojiStore = useEmojiStore();
+const { createEmoji } = emojiStore;
+const isCreator = $computed(() => data?.user.id === message.creatorId);
 const items = $computed(() => {
   const result: Item[] = [];
   if (!isCreator) return result;
@@ -36,6 +41,15 @@ const items = $computed(() => {
   });
   return result;
 });
+
+const onCreateEmoji = async (emoji: string) => {
+  const newEmoji = await $client.emoji.createEmoji.mutate({
+    partitionKey: message.partitionKey,
+    messageRowKey: message.rowKey,
+    emoji,
+  });
+  if (newEmoji) createEmoji(newEmoji);
+};
 </script>
 
 <template>
@@ -46,7 +60,7 @@ const items = $computed(() => {
         :button-props="{ size: 'small' }"
         :button-attrs="{ rd: '0!' }"
         @update:model-value="(value) => emit('update:menu', value)"
-        @select="() => {}"
+        @select="onCreateEmoji"
       />
       <v-btn v-if="isCreator" m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
