@@ -5,6 +5,7 @@ import { AzureTable } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/events/emoji";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { roomSchema } from "@/server/trpc/routers/room";
 import {
   createEntity,
   deleteEntity,
@@ -31,7 +32,7 @@ const readEmojisInputSchema = z.object({
 });
 export type ReadEmojisInput = z.infer<typeof readEmojisInputSchema>;
 
-const onCreateEmojiInputSchema = z.object({ roomId: z.string().uuid() });
+const onCreateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
 const createEmojiInputSchema = messageSchema
@@ -39,7 +40,7 @@ const createEmojiInputSchema = messageSchema
   .merge(z.object({ messageRowKey: z.string(), emoji: z.string() }));
 export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: z.string().uuid() });
+const onUpdateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
 const updateEmojiInputSchema = messageEmojiMetadataSchema
@@ -47,7 +48,7 @@ const updateEmojiInputSchema = messageEmojiMetadataSchema
   .merge(z.object({ messageRowKey: z.string() }));
 export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: z.string().uuid() });
+const onDeleteEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 const deleteEmojiInputSchema = messageEmojiMetadataSchema

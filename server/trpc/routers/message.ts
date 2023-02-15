@@ -4,6 +4,7 @@ import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/events/message";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { roomSchema } from "@/server/trpc/routers/room";
 import {
   createEntity,
   deleteEntity,
@@ -21,19 +22,19 @@ import { z } from "zod";
 const readMessagesInputSchema = z.object({ roomId: z.string(), cursor: z.string().nullable() });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ roomId: z.string().uuid() });
+const onCreateMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
 const createMessageInputSchema = z.object({ roomId: z.string() }).merge(messageSchema.pick({ message: true }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
-const onUpdateMessageInputSchema = z.object({ roomId: z.string().uuid() });
+const onUpdateMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
 const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
 
-const onDeleteMessageInputSchema = z.object({ roomId: z.string().uuid() });
+const onDeleteMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
