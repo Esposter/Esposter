@@ -19,10 +19,9 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schem
 
     const roomId = value.match(UUID_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
-    // @NOTE: We should be able to use "exists" function in the future
-    // https://github.com/prisma/prisma/issues/5022
-    const roomOnUser = await prisma.roomsOnUsers.findUnique({
-      where: { userId_roomId: { userId: ctx.session.user.id, roomId } },
+
+    const roomOnUser = await prisma.roomsOnUsers.existsUnique({
+      userId_roomId: { userId: ctx.session.user.id, roomId },
     });
     if (!roomOnUser) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();

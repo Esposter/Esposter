@@ -2,6 +2,7 @@ import { NuxtAuthHandler } from "#auth";
 import { RoutePath } from "@/models/router";
 import { prisma } from "@/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type { PrismaClient } from "@prisma/client";
 import type { FacebookProfile } from "next-auth/providers/facebook";
 import NextFacebookProvider from "next-auth/providers/facebook";
 import type { GithubProfile } from "next-auth/providers/github";
@@ -20,7 +21,7 @@ const GoogleProvider = NextGoogleProvider.default as typeof NextGoogleProvider<G
 export default NuxtAuthHandler({
   // Secret needed to run nuxt-auth in production mode (used to encrypt data)
   secret: process.env.NUXT_AUTH_SECRET,
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma as unknown as PrismaClient),
   providers: [
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
