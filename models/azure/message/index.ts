@@ -1,6 +1,7 @@
 import { CompositeKeyEntity } from "@/models/azure";
 import { FileEntity, fileSchema } from "@/models/azure/message/file";
 import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
+// @NOTE: Fix class-transformer when decorator gets supported in nuxt 3
 // import { Type } from "class-transformer";
 import type { toZod } from "tozod";
 import { z } from "zod";
@@ -19,7 +20,7 @@ export class MessageEntity extends CompositeKeyEntity {
 export const messageSchema: toZod<MessageEntity> = z.object({
   // ${roomId}-${createdAt.format("yyyyMMdd")}
   partitionKey: z.string(),
-  // reverse tick timestamp
+  // reverse-ticked timestamp
   rowKey: z.string(),
   creatorId: z.string().cuid(),
   message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
