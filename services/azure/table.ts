@@ -82,17 +82,21 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   // return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
 };
 
-// A crazy big timestamp that indicates how long before azure table storage
-// completely ***ks up trying to insert a negative row key
+// Crazy big timestamps for calculating reverse-ticked timestamps.
+// It also indicates how long before azure table storage
+// completely ***ks up trying to insert a negative partition / row key
 export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
+export const AZURE_SELF_DESTRUCT_TIMER_SMALL = "9".repeat(15);
 export const AZURE_MAX_BATCH_SIZE = 100;
 
 export const getMessagesPartitionKey = (roomId: string, createdAt: Date) =>
-  `${roomId}-${dayjs(createdAt).format("YYYYMMDD")}`;
+  `${roomId}-${getReverseTickedDay(createdAt)}`;
 
 export const getMessagesPartitionKeyFilter = (roomId: string) =>
   `PartitionKey gt '${roomId}' and PartitionKey lt '${roomId}😆'`;
 
-// Calculation for azure table storage row key by using reverse-ticked timestamp in nanoseconds
-export const getReverseTickedTimestamp = () =>
-  (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(now())).toString().padStart(AZURE_SELF_DESTRUCT_TIMER.length, "0");
+export const getReverseTickedDay = (createdAt: Date) =>
+  (BigInt(AZURE_SELF_DESTRUCT_TIMER_SMALL) - BigInt(dayjs(createdAt).format("YYYYMMDD"))).toString();
+
+// Reverse-ticked timestamp in nanoseconds
+export const getReverseTickedTimestamp = () => (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(now())).toString();
