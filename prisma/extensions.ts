@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const existsExtension = {
   model: {
@@ -6,11 +7,6 @@ export const existsExtension = {
       async exists<T>(this: T, where: Prisma.Args<T, "findFirst">["where"]): Promise<boolean> {
         const context = Prisma.getExtensionContext(this);
         const result = await (context as any).findFirst({ where });
-        return result !== null;
-      },
-      async existsUnique<T>(this: T, where: Prisma.Args<T, "findUnique">["where"]): Promise<boolean> {
-        const context = Prisma.getExtensionContext(this);
-        const result = await (context as any).findUnique({ where });
         return result !== null;
       },
     },
