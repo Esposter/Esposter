@@ -8,7 +8,7 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
   // Record<partitionKey, Record<messageRowKey, MessageEmojiMetadataEntity[]>>
   const emojiMap = ref<Record<string, Record<string, MessageEmojiMetadataEntity[]>>>({});
   const getEmojiList = (messageRowKey: string) => {
-    if (!currentRoomId || !emojiMap.value[currentRoomId][messageRowKey]) return [];
+    if (!currentRoomId || !emojiMap.value[currentRoomId]?.[messageRowKey]) return [];
     return emojiMap.value[currentRoomId][messageRowKey];
   };
   const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
