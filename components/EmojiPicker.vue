@@ -18,7 +18,11 @@ const emit = defineEmits<{
   (event: "select", emoji: string): void;
 }>();
 const emojiIndex = new EmojiIndex(data);
-const onEmojiSelect = (emoji: { native: string }) => emit("select", emoji.native);
+const menu = ref(false);
+const onEmojiSelect = (emoji: { native: string }) => {
+  emit("select", emoji.native);
+  menu.value = false;
+};
 </script>
 
 <template>
@@ -26,7 +30,13 @@ const onEmojiSelect = (emoji: { native: string }) => emit("select", emoji.native
     transition="none"
     location="left"
     :close-on-content-click="false"
-    @update:model-value="(value) => emit('update:model-value', value)"
+    :model-value="menu"
+    @update:model-value="
+      (value) => {
+        emit('update:model-value', value);
+        menu = value;
+      }
+    "
   >
     <template #activator="{ props: menuProps }">
       <v-tooltip location="top" :="tooltipProps">

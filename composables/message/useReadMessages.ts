@@ -26,7 +26,10 @@ export const useReadMessages = async () => {
         roomId: currentRoomId,
         messages: messages.map((m) => ({ rowKey: m.rowKey })),
       });
-      pushEmojiMap(emojis);
+      pushEmojiMap(
+        messages.map((m) => m.rowKey),
+        emojis
+      );
     } finally {
       onComplete();
     }
@@ -44,7 +47,10 @@ export const useReadMessages = async () => {
       roomId: currentRoomId,
       messages: messages.map((m) => ({ rowKey: m.rowKey })),
     });
-    pushEmojiMap(emojis);
+    pushEmojiMap(
+      messages.map((m) => m.rowKey),
+      emojis
+    );
   }
 
   return { readMoreMessages };

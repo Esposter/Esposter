@@ -3,9 +3,9 @@ import type { AzureTable } from "@/models/azure/table";
 import { now } from "@/utils/time";
 import type { SkipFirst } from "@/utils/types";
 import { TableClient, TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
+import type { ClassConstructor } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 import dayjs from "dayjs";
-import { JsonSerializer } from "typescript-json-serializer";
-import type { Type } from "typescript-json-serializer/dist/helpers";
 
 export const getTableClient = async (tableName: AzureTable) => {
   const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
@@ -52,21 +52,19 @@ export const deleteEntity = (
   return tableClient.deleteEntity(...args);
 };
 
-const jsonSerializer = new JsonSerializer();
-
 export const getEntity = async <Entity extends CompositeKey>(
   tableClient: TableClient,
-  type: Type<Entity>,
+  cls: ClassConstructor<Entity>,
   ...args: Parameters<InstanceType<typeof TableClient>["getEntity"]>
 ): Promise<Entity> => {
   const result = await tableClient.getEntity<Entity>(...args);
-  return jsonSerializer.deserialize<Entity>(result, type) as Entity;
+  return plainToInstance(cls, result);
 };
 
 export const getTopNEntities = async <Entity extends CompositeKey>(
   tableClient: TableClient,
   topN: number,
-  type: Type<Entity>,
+  cls: ClassConstructor<Entity>,
   queryOptions?: TableEntityQueryOptions
 ): Promise<Entity[]> => {
   const listResults = tableClient.listEntities<Entity>({ queryOptions });
@@ -75,11 +73,9 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   // This only sends a single request to the service
   const firstPage = (await iterator.next()).value as (Entity | string)[];
   if (!firstPage) return [];
-  return firstPage.slice(0, topN - 1) as Entity[];
-  // @NOTE: Fix this when ES decorators are implemented
   // Filter out metadata like continuation token
   // before deserializing the json to handle transforming Date objects
-  // return jsonSerializer.deserializeObjectArray<Entity>(firstPage.slice(0, topN - 1), type) as Entity[];
+  return plainToInstance(cls, firstPage.slice(0, topN));
 };
 
 // Crazy big timestamps for calculating reverse-ticked timestamps.
@@ -88,6 +84,7 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
 export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
 export const AZURE_SELF_DESTRUCT_TIMER_SMALL = "9".repeat(15);
 export const AZURE_MAX_BATCH_SIZE = 100;
+export const AZURE_MAX_PAGE_SIZE = 1000;
 
 export const getMessagesPartitionKey = (roomId: string, createdAt: Date) =>
   `${roomId}-${getReverseTickedDay(createdAt)}`;

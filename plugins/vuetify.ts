@@ -12,6 +12,7 @@ type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
 const baseColorsCommon = {
   primary: "#42b883",
   border: "#ccc",
+  info: "#2d88ff",
 } satisfies ThemeColors;
 
 const baseColors = {
@@ -39,6 +40,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
   }, {}) as BaseColors;
   return {
     surfaceOpacity80: `${sanitisedColors.surface}cc`,
+    infoOpacity10: `${sanitisedColors.info}1a`,
   };
 };
 

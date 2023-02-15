@@ -9,14 +9,16 @@ interface MessageListItemProps {
 }
 
 const props = defineProps<MessageListItemProps>();
-const { message } = $(toRefs(props));
-const displayCreatedAt = $computed(() => dayjs(message.createdAt).format("h:mm A"));
-const isUpdateMode = $ref(false);
-const isMessageActive = $ref(false);
-const isOptionsActive = $ref(false);
-const isOptionsChildrenActive = $ref(false);
-const active = $computed(() => isMessageActive || isOptionsActive || isOptionsChildrenActive || isUpdateMode);
-const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
+const { message } = toRefs(props);
+const displayCreatedAt = computed(() => dayjs(message.value.createdAt).format("h:mm A"));
+const isUpdateMode = ref(false);
+const isMessageActive = ref(false);
+const isOptionsActive = ref(false);
+const isOptionsChildrenActive = ref(false);
+const active = computed(
+  () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value
+);
+const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 </script>
 
 <template>
@@ -51,6 +53,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         <v-list-item-subtitle v-else op="100!">
           {{ message.message }}
         </v-list-item-subtitle>
+        <ChatModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div position="relative" z="1">
         <div
@@ -88,6 +91,7 @@ const activeAndNotUpdateMode = $computed(() => active && !isUpdateMode);
         <v-list-item-subtitle op="100!">
           {{ message.message }}
         </v-list-item-subtitle>
+        <ChatModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
     </template>
   </ChatModelMessageConfirmDeleteDialog>

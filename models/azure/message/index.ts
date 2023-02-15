@@ -1,17 +1,19 @@
 import { CompositeKeyEntity } from "@/models/azure";
-import type { FileEntity } from "@/models/azure/message/file";
-import { fileSchema } from "@/models/azure/message/file";
+import { FileEntity, fileSchema } from "@/models/azure/message/file";
 import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
+// import { Type } from "class-transformer";
 import type { toZod } from "tozod";
-import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { z } from "zod";
 
-@JsonObject()
 export class MessageEntity extends CompositeKeyEntity {
-  @JsonProperty() creatorId!: string;
-  @JsonProperty() message!: string;
-  @JsonProperty() files!: FileEntity[];
-  @JsonProperty() createdAt!: Date;
+  creatorId!: string;
+
+  message!: string;
+
+  // @Type(() => FileEntity)
+  files!: FileEntity[];
+
+  createdAt!: Date;
 }
 
 export const messageSchema: toZod<MessageEntity> = z.object({

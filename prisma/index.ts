@@ -1,9 +1,23 @@
 import { isProduction } from "@/utils/environment";
 import { PrismaClient } from "@prisma/client";
+import chalk from "chalk";
+import { highlight } from "cli-highlight";
 import dedent from "dedent";
-import { highlight } from "sql-highlight";
 
 let prismaClient: PrismaClient;
+
+const highlightSql = (sql: string) =>
+  highlight(sql, {
+    theme: {
+      keyword: chalk.blueBright,
+      literal: chalk.blueBright,
+      string: chalk.white,
+      type: chalk.magentaBright,
+      built_in: chalk.magentaBright,
+      comment: chalk.gray,
+    },
+    language: "sql",
+  });
 
 if (isProduction) prismaClient = new PrismaClient({ log: ["error"] });
 else {
@@ -31,7 +45,7 @@ else {
 
   devPrismaClient.$on("query", (e) => {
     console.log(
-      highlight(dedent`Query: ${e.query}
+      highlightSql(dedent`Query: ${e.query}
     Parameters: ${e.params}
     Duration: ${e.duration}ms
     Time: ${e.timestamp}
@@ -45,7 +59,7 @@ else {
     const result = await next(params);
     const duration = Date.now() - before;
     // Log more info about where the query possibly originated from
-    console.log(highlight(`Prisma ${params.model}.${params.action} took ${duration}ms`));
+    console.log(highlightSql(`Prisma ${params.model}.${params.action} took ${duration}ms`));
     console.log();
     return result;
   });

@@ -18,7 +18,6 @@ const creator = $computed(() => memberList.find((m) => m.id === currentMessage.c
 
 <template>
   <template v-if="creator">
-    <ChatModelMessageEmojiList :message-row-key="currentMessage.rowKey" />
     <ChatModelMessageListItem :message="currentMessage" :creator="creator" />
     <ChatModelMessageTimeline
       :current-message-date="currentMessage.createdAt"

@@ -18,12 +18,11 @@ export const useEmojiStore = defineStore("chat/emoji", () => {
       [messageRowKey]: emojiList,
     };
   };
-  const pushEmojiMap = (emojis: MessageEmojiMetadataEntity[]) => {
-    const messageRowKeys = new Set(emojis.map((e) => e.messageRowKey));
+  const pushEmojiMap = (messageRowKeys: string[], emojis: MessageEmojiMetadataEntity[]) => {
     for (const messageRowKey of messageRowKeys)
       setEmojiList(
         messageRowKey,
-        emojis.filter((e) => e.rowKey === messageRowKey)
+        emojis.filter((e) => e.messageRowKey === messageRowKey)
       );
   };
 

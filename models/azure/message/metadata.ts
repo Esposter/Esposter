@@ -1,4 +1,4 @@
 export enum MessageMetadataType {
-  Emoji = "Emoji",
+  EmojiTag = "EmojiTag",
   Reply = "Reply",
 }

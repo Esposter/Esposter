@@ -1,6 +1,3 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import type { Plugin } from "nuxt/dist/app/nuxt";
-
 export default defineNuxtConfig({
   css: [
     "vuetify/lib/styles/main.sass",
@@ -15,14 +12,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    build: {
-      // Set build targets to esnext to allow top-level awaits in ts files
-      target: "esnext",
-      rollupOptions: {
-        // @NOTE: https://github.com/vitejs/vite/issues/7385
-        plugins: [nodeResolve() as Plugin],
-      },
-    },
   },
   build: {
     transpile: ["vuetify"],
@@ -32,7 +21,6 @@ export default defineNuxtConfig({
     tsConfig: {
       compilerOptions: {
         // @NOTE: https://github.com/unjs/nitro/issues/273
-        // typescript-json-deserializer
         emitDecoratorMetadata: true,
         experimentalDecorators: true,
       },

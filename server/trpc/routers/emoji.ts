@@ -7,19 +7,17 @@ import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { roomSchema } from "@/server/trpc/routers/room";
 import {
+  AZURE_MAX_PAGE_SIZE,
   createEntity,
   deleteEntity,
   getMessagesPartitionKeyFilter,
-  getReverseTickedTimestamp,
   getTableClient,
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { READ_LIMIT } from "@/utils/pagination";
+import { now } from "@/utils/time";
+import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
-// @NOTE: ESModule issue
-// eslint-disable-next-line import/default
-import nodeEmoji from "node-emoji";
 import { z } from "zod";
 
 const readEmojisInputSchema = z.object({
@@ -37,7 +35,8 @@ export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
 const createEmojiInputSchema = messageSchema
   .pick({ partitionKey: true })
-  .merge(z.object({ messageRowKey: z.string(), emoji: z.string() }));
+  .merge(z.object({ messageRowKey: messageSchema.shape.rowKey }))
+  .merge(messageEmojiMetadataSchema.pick({ emojiTag: true }));
 export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
 
 const onUpdateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
@@ -45,7 +44,7 @@ export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
 const updateEmojiInputSchema = messageEmojiMetadataSchema
   .pick({ partitionKey: true, rowKey: true, userIds: true })
-  .merge(z.object({ messageRowKey: z.string() }));
+  .merge(z.object({ messageRowKey: messageSchema.shape.rowKey }));
 export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;
 
 const onDeleteEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
@@ -53,7 +52,7 @@ export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 const deleteEmojiInputSchema = messageEmojiMetadataSchema
   .pick({ partitionKey: true, rowKey: true })
-  .merge(z.object({ messageRowKey: z.string() }));
+  .merge(z.object({ messageRowKey: messageSchema.shape.rowKey }));
 export type DeleteEmojiInput = z.infer<typeof deleteEmojiInputSchema>;
 
 export const emojiRouter = router({
@@ -61,7 +60,7 @@ export const emojiRouter = router({
     .input(readEmojisInputSchema)
     .query(async ({ input: { roomId, messages } }) => {
       const client = await getTableClient(AzureTable.MessagesMetadata);
-      return getTopNEntities(client, READ_LIMIT, MessageEmojiMetadataEntity, {
+      return getTopNEntities(client, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and (${messages
           .map((m) => `messageRowKey eq '${m.rowKey}'`)
           .join(" or ")})`,
@@ -82,15 +81,20 @@ export const emojiRouter = router({
     .input(createEmojiInputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
+        const client = await getTableClient(AzureTable.MessagesMetadata);
+        const foundEmojis = await getTopNEntities(client, 1, MessageEmojiMetadataEntity, {
+          filter: odata`PartitionKey eq ${input.partitionKey} and messageRowKey eq ${input.messageRowKey} and emojiTag eq ${input.emojiTag}`,
+        });
+        if (foundEmojis.length > 0) return null;
+
         const newEmojiMetadataEntity: MessageEmojiMetadataEntity = {
           partitionKey: input.partitionKey,
-          rowKey: getReverseTickedTimestamp(),
+          rowKey: now(),
           messageRowKey: input.messageRowKey,
-          type: MessageMetadataType.Emoji,
-          emojiTag: nodeEmoji.unemojify(input.emoji),
+          type: MessageMetadataType.EmojiTag,
+          emojiTag: input.emojiTag,
           userIds: [ctx.session.user.id],
         };
-        const client = await getTableClient(AzureTable.MessagesMetadata);
         await createEntity<MessageEmojiMetadataEntity>(client, newEmojiMetadataEntity);
         const result = { ...input, ...newEmojiMetadataEntity };
         emojiEventEmitter.emit("onCreateEmoji", result);
@@ -117,7 +121,6 @@ export const emojiRouter = router({
       try {
         const updatedEmojiMetadataEntity = {
           ...input,
-          type: MessageMetadataType.Emoji,
           userIds: [...input.userIds, ctx.session.user.id],
         };
         const client = await getTableClient(AzureTable.MessagesMetadata);

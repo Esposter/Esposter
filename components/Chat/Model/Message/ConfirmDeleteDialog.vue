@@ -34,7 +34,7 @@ const onDeleteMessage = async (onComplete: () => void) => {
       <slot :="defaultProps" />
     </template>
     <template #content>
-      <div mx="4" b="1 solid" rd="2" shadow="md">
+      <div py="2" mx="4" b="1 solid" rd="2" shadow="md">
         <slot name="messagePreview" />
       </div>
     </template>

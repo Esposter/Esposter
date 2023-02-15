@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
+import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
+import { useEmojiStore } from "@/store/chat/useEmojiStore";
+import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
-import { useEmojiStore } from "~~/store/chat/useEmojiStore";
 
 interface MessageOptionsMenuProps {
   message: MessageEntity;
@@ -24,14 +26,15 @@ const emit = defineEmits<{
   (event: "update:delete-mode", value: true): void;
 }>();
 const { $client } = useNuxtApp();
-const { data } = $(useSession());
+const { data } = useSession();
 const emojiStore = useEmojiStore();
-const { createEmoji } = emojiStore;
-const isCreator = $computed(() => data?.user.id === message.creatorId);
-const items = $computed(() => {
-  const result: Item[] = [];
-  if (!isCreator) return result;
+const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
+const emojis = computed(() => getEmojiList(message.rowKey));
+const isCreator = computed(() => data.value?.user.id === message.creatorId);
+const items = computed(() => {
+  if (!isCreator.value) return [];
 
+  const result: Item[] = [];
   result.unshift({ title: "Update Message", icon: "mdi-pencil", onClick: () => emit("update:update-mode", true) });
   result.push({
     title: "Delete Message",
@@ -42,13 +45,54 @@ const items = $computed(() => {
   return result;
 });
 
-const onCreateEmoji = async (emoji: string) => {
-  const newEmoji = await $client.emoji.createEmoji.mutate({
-    partitionKey: message.partitionKey,
-    messageRowKey: message.rowKey,
-    emoji,
+const onSelect = async (emoji: string) => {
+  if (!data.value) return;
+
+  const foundEmoji = emojis.value.find((e) => e.emojiTag === unemojify(emoji));
+  if (!foundEmoji) {
+    await onCreateEmoji({
+      partitionKey: message.partitionKey,
+      messageRowKey: message.rowKey,
+      emojiTag: unemojify(emoji),
+    });
+    return;
+  }
+
+  if (foundEmoji.userIds.includes(data.value.user.id)) {
+    if (foundEmoji.userIds.length === 1)
+      await onDeleteEmoji({
+        partitionKey: foundEmoji.partitionKey,
+        rowKey: foundEmoji.rowKey,
+        messageRowKey: foundEmoji.messageRowKey,
+      });
+    else
+      await onUpdateEmoji({
+        partitionKey: foundEmoji.partitionKey,
+        rowKey: foundEmoji.rowKey,
+        messageRowKey: foundEmoji.messageRowKey,
+        userIds: foundEmoji.userIds.filter((userId) => userId !== data.value?.user.id),
+      });
+    return;
+  }
+
+  await onUpdateEmoji({
+    partitionKey: foundEmoji.partitionKey,
+    rowKey: foundEmoji.rowKey,
+    messageRowKey: foundEmoji.messageRowKey,
+    userIds: [...foundEmoji.userIds, data.value.user.id],
   });
+};
+const onCreateEmoji = async (input: CreateEmojiInput) => {
+  const newEmoji = await $client.emoji.createEmoji.mutate(input);
   if (newEmoji) createEmoji(newEmoji);
+};
+const onUpdateEmoji = async (input: UpdateEmojiInput) => {
+  const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
+  if (updatedEmoji) updateEmoji(updatedEmoji);
+};
+const onDeleteEmoji = async (input: DeleteEmojiInput) => {
+  const isSuccessful = await $client.emoji.deleteEmoji.mutate(input);
+  if (isSuccessful) deleteEmoji(input);
 };
 </script>
 
@@ -60,7 +104,7 @@ const onCreateEmoji = async (emoji: string) => {
         :button-props="{ size: 'small' }"
         :button-attrs="{ rd: '0!' }"
         @update:model-value="(value) => emit('update:menu', value)"
-        @select="onCreateEmoji"
+        @select="onSelect"
       />
       <v-btn v-if="isCreator" m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">

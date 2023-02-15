@@ -10,10 +10,10 @@ interface PostCardProps {
 const props = defineProps<PostCardProps>();
 const { post } = $(toRefs(props));
 const { data } = $(useSession());
+const { surfaceOpacity80 } = useColors();
 const createdAt = $computed(() => dayjs(post.createdAt).fromNow());
 const sanitizedDescriptionHtml = $computed(() => DOMPurify.sanitize(post.description));
 const isOwner = $computed(() => data?.user.id === post.creatorId);
-const { surfaceOpacity80 } = useColors();
 </script>
 
 <template>
