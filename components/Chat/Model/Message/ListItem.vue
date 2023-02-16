@@ -98,6 +98,10 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 </template>
 
 <style scoped lang="scss">
+:deep(.v-list-item__prepend) {
+  align-self: flex-start;
+}
+
 :deep(.v-list-item__content) {
   overflow: visible;
 }
