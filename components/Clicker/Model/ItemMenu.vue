@@ -15,38 +15,39 @@ type ItemMenuProps = {
   flavorDescription: string;
   price: number;
   amount?: number;
+  isAffordable: boolean;
 };
 
 const props = defineProps<ItemMenuProps>();
-const { type, name, description, flavorDescription, price, amount } = $(toRefs(props));
+const { type, name, description, flavorDescription, price, amount, isAffordable } = toRefs(props);
+const { error } = useColors();
 const slots = useSlots();
-// @NOTE: Can remove cast after it's fixed in vue 3.3
-const descriptionHtml = $computed(() => (description ? marked.parse(description as unknown as string) : null));
-const flavorDescriptionHtml = $computed(() => marked.parse(`"${flavorDescription}"`));
-const displayPrice = $computed(() => formatNumberLong(price));
+const descriptionHtml = computed(() => (description?.value ? marked.parse(description.value) : ""));
+const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription.value}"`));
+const displayPrice = computed(() => formatNumberLong(price.value));
 
 // @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
 // https://github.com/nuxt/framework/issues/7121
-const buildingIcon = $computed(() => {
+const buildingIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(
     Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
   );
-  return images[name];
+  return images[name.value];
 });
-const menuIcon = $computed(() => {
+const menuIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(
     Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
   );
-  return images[name];
+  return images[name.value];
 });
-const upgradeIcon = $computed(() => {
+const upgradeIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(
     Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
   );
-  return images[name];
+  return images[name.value];
 });
 </script>
 
@@ -88,7 +89,7 @@ const upgradeIcon = $computed(() => {
           <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
           <span text="right" v-html="flavorDescriptionHtml" />
         </div>
-        <div display="flex">
+        <div :class="isAffordable ? undefined : 'not-affordable'" display="flex">
           <v-spacer />
           {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
         </div>
@@ -107,8 +108,8 @@ const upgradeIcon = $computed(() => {
   </v-menu>
 </template>
 
-<!-- @NOTE: Seems like reactivity transform doesn't work with v-bind -->
-<!-- This might be fixed in Vue 3.3 -->
+<!-- @NOTE: Cannot use v-bind with element for v-menu
+TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'  -->
 <!-- <style scoped lang="scss">
 .not-affordable {
   color: v-bind(error);

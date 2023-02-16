@@ -27,6 +27,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.pr
     :description="upgrade.description"
     :flavor-description="upgrade.flavorDescription"
     :price="upgrade.price"
+    :is-affordable="isAffordable"
   >
     <template v-if="isBuyable" #action>
       <v-spacer />

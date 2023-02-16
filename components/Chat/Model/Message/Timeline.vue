@@ -3,18 +3,20 @@ import dayjs from "dayjs";
 
 interface MessageTimelineProps {
   currentMessageDate: Date;
-  nextMessageDate: Date | undefined;
+  nextMessageDate?: Date;
 }
 
 const props = defineProps<MessageTimelineProps>();
-const { currentMessageDate, nextMessageDate } = $(toRefs(props));
+const { currentMessageDate, nextMessageDate } = toRefs(props);
 const { border } = useColors();
-const currentMessageDateDayjs = $computed(() => dayjs(currentMessageDate));
-const areDifferentDays = $computed(() => !nextMessageDate || !currentMessageDateDayjs.isSame(nextMessageDate, "day"));
-const displayDate = $computed(() => {
-  if (currentMessageDateDayjs.isToday()) return "Today";
-  if (currentMessageDateDayjs.isYesterday()) return "Yesterday";
-  return currentMessageDateDayjs.format("dddd, MMMM Do");
+const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate.value));
+const areDifferentDays = computed(
+  () => !nextMessageDate?.value || !currentMessageDateDayjs.value.isSame(nextMessageDate.value, "day")
+);
+const displayDate = computed(() => {
+  if (currentMessageDateDayjs.value.isToday()) return "Today";
+  if (currentMessageDateDayjs.value.isYesterday()) return "Yesterday";
+  return currentMessageDateDayjs.value.format("dddd, MMMM Do");
 });
 </script>
 

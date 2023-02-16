@@ -3,8 +3,7 @@ import type { Editor } from "@tiptap/vue-3";
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
-  // @NOTE: Can probably use question mark syntax in vue 3.3
-  editor: Editor | undefined;
+  editor?: Editor;
 }
 
 type IsDivider = {
@@ -21,25 +20,25 @@ type Item = {
 type MenuItem = Item | IsDivider;
 
 const props = defineProps<MenuBarProps>();
-const { editor } = $(toRefs(props));
-const items = $computed<MenuItem[]>(() => [
+const { editor } = toRefs(props);
+const items = computed<MenuItem[]>(() => [
   {
     icon: "mdi-format-bold",
     title: "Bold",
-    onClick: () => editor?.chain().focus().toggleBold().run(),
-    active: editor?.isActive("bold"),
+    onClick: () => editor?.value?.chain().focus().toggleBold().run(),
+    active: editor?.value?.isActive("bold"),
   },
   {
     icon: "mdi-format-italic",
     title: "Italic",
-    onClick: () => editor?.chain().focus().toggleItalic().run(),
-    active: editor?.isActive("italic"),
+    onClick: () => editor?.value?.chain().focus().toggleItalic().run(),
+    active: editor?.value?.isActive("italic"),
   },
   {
     icon: "mdi-format-strikethrough-variant",
     title: "Strike",
-    onClick: () => editor?.chain().focus().toggleStrike().run(),
-    active: editor?.isActive("strike"),
+    onClick: () => editor?.value?.chain().focus().toggleStrike().run(),
+    active: editor?.value?.isActive("strike"),
   },
   {
     isDivider: true,
@@ -47,14 +46,14 @@ const items = $computed<MenuItem[]>(() => [
   {
     icon: "mdi-format-list-bulleted",
     title: "Bullet List",
-    onClick: () => editor?.chain().focus().toggleBulletList().run(),
-    active: editor?.isActive("bulletList"),
+    onClick: () => editor?.value?.chain().focus().toggleBulletList().run(),
+    active: editor?.value?.isActive("bulletList"),
   },
   {
     icon: "mdi-format-list-numbered",
     title: "Ordered List",
-    onClick: () => editor?.chain().focus().toggleOrderedList().run(),
-    active: editor?.isActive("orderedList"),
+    onClick: () => editor?.value?.chain().focus().toggleOrderedList().run(),
+    active: editor?.value?.isActive("orderedList"),
   },
   {
     isDivider: true,
@@ -62,12 +61,12 @@ const items = $computed<MenuItem[]>(() => [
   {
     icon: "mdi-arrow-u-left-top",
     title: "Undo",
-    onClick: () => editor?.chain().focus().undo().run(),
+    onClick: () => editor?.value?.chain().focus().undo().run(),
   },
   {
     icon: "mdi-arrow-u-right-top",
     title: "Redo",
-    onClick: () => editor?.chain().focus().redo().run(),
+    onClick: () => editor?.value?.chain().focus().redo().run(),
   },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;

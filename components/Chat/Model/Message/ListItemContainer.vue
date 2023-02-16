@@ -8,12 +8,12 @@ interface MessageListItemContainerProps {
 }
 
 const props = defineProps<MessageListItemContainerProps>();
-const { currentMessage, nextMessage } = $(toRefs(props));
+const { currentMessage, nextMessage } = toRefs(props);
 const memberStore = useMemberStore();
-const { memberList } = $(storeToRefs(memberStore));
+const { memberList } = storeToRefs(memberStore);
 // @NOTE: We'll need to search for the creators in the user database in the future
 // if we want to show messages from members who have left the room
-const creator = $computed(() => memberList.find((m) => m.id === currentMessage.creatorId));
+const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.value.creatorId));
 </script>
 
 <template>

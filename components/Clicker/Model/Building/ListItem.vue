@@ -31,6 +31,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     :flavor-description="building.flavorDescription"
     :price="buildingPrice"
     :amount="boughtBuildingAmount"
+    :is-affordable="isAffordable"
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
       <ul px="8">
