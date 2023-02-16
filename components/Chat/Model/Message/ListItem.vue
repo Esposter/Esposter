@@ -96,3 +96,9 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
     </template>
   </ChatModelMessageConfirmDeleteDialog>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item__content) {
+  overflow: visible;
+}
+</style>

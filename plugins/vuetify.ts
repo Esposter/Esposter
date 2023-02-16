@@ -39,6 +39,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
     return acc;
   }, {}) as BaseColors;
   return {
+    backgroundOpacity80: `${sanitisedColors.background}cc`,
     surfaceOpacity80: `${sanitisedColors.surface}cc`,
     infoOpacity10: `${sanitisedColors.info}1a`,
   };

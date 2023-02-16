@@ -11,7 +11,7 @@ const props = defineProps<MessageEmojiListProps>();
 const { messageRowKey } = toRefs(props);
 const { $client } = useNuxtApp();
 const { data } = useSession();
-const { surfaceOpacity80, background, border, info, infoOpacity10 } = useColors();
+const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 const emojis = computed(() =>
@@ -40,7 +40,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 </script>
 
 <template>
-  <div v-if="hasEmojis" pt="2" display="flex" flex="wrap" gap="1">
+  <div v-if="hasEmojis" mt="2" display="flex" flex="wrap" gap="1">
     <div
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } in emojis"
       :key="rowKey"
@@ -52,6 +52,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
       rd="full!"
       shadow="md"
       cursor="pointer"
+      z="1"
       @click="
         isReacted
           ? onDeleteEmoji({ partitionKey, rowKey, messageRowKey })
@@ -77,7 +78,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 }
 
 .not-reacted {
-  background-color: v-bind(background);
+  background-color: v-bind(backgroundOpacity80);
   border: 1px solid transparent;
 
   &:hover {
