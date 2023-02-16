@@ -21,6 +21,7 @@ const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
 const onEmojiSelect = (emoji: { native: string }) => {
   emit("select", emoji.native);
+  emit("update:model-value", false);
   menu.value = false;
 };
 </script>
