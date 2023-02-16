@@ -28,7 +28,7 @@ const isOwner = $computed(() => data?.user.id === post.creatorId);
         {{ post.title }}
       </v-card-title>
       <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
-      <v-card-text class="card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
+      <v-card-text class="text-subtitle-1 card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
         <PostUpdateButton v-if="isOwner" :post-id="post.id" />
         <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
