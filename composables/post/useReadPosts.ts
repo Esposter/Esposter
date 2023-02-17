@@ -19,5 +19,5 @@ export const useReadPosts = async () => {
   initialisePostList(posts);
   updatePostListNextCursor(nextCursor);
 
-  return { readMorePosts };
+  return readMorePosts;
 };

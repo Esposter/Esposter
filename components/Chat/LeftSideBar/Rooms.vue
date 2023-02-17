@@ -4,7 +4,7 @@ import { useRoomStore } from "@/store/chat/useRoomStore";
 const roomStore = useRoomStore();
 const { rooms, roomListNextCursor } = $(storeToRefs(roomStore));
 const hasMore = $computed(() => Boolean(roomListNextCursor));
-const { readMoreRooms } = await useReadRooms();
+const readMoreRooms = await useReadRooms();
 </script>
 
 <template>

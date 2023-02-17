@@ -26,5 +26,5 @@ export const useReadRooms = async () => {
   updateRoomListNextCursor(nextCursor);
   initialiseRoomList(initialRooms);
 
-  return { readMoreRooms };
+  return readMoreRooms;
 };
