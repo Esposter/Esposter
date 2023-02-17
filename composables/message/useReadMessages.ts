@@ -19,6 +19,8 @@ export const useReadMessages = async () => {
         roomId: currentRoomId,
         cursor: messageListNextCursor,
       });
+      if (messages.length === 0) return;
+
       pushMessageList(messages);
       updateMessageListNextCursor(nextCursor);
 
@@ -26,6 +28,8 @@ export const useReadMessages = async () => {
         roomId: currentRoomId,
         messages: messages.map((m) => ({ rowKey: m.rowKey })),
       });
+      if (emojis.length === 0) return;
+
       pushEmojiMap(
         messages.map((m) => m.rowKey),
         emojis
@@ -40,6 +44,8 @@ export const useReadMessages = async () => {
       roomId: currentRoomId,
       cursor: null,
     });
+    if (messages.length === 0) return;
+
     initialiseMessageList(messages);
     updateMessageListNextCursor(nextCursor);
 
@@ -47,6 +53,8 @@ export const useReadMessages = async () => {
       roomId: currentRoomId,
       messages: messages.map((m) => ({ rowKey: m.rowKey })),
     });
+    if (emojis.length === 0) return;
+
     pushEmojiMap(
       messages.map((m) => m.rowKey),
       emojis

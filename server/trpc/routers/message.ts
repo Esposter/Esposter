@@ -21,11 +21,13 @@ import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
   roomId: z.string().uuid(),
-  messages: z.array(
-    messageSchema.pick({
-      rowKey: true,
-    })
-  ),
+  messages: z
+    .array(
+      messageSchema.pick({
+        rowKey: true,
+      })
+    )
+    .min(1),
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
