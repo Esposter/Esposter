@@ -7,7 +7,7 @@ import type { toZod } from "tozod";
 import { z } from "zod";
 
 export const userSchema: toZod<PrismaUser> = z.object({
-  id: z.string().uuid(),
+  id: z.string().cuid(),
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH).nullable(),
   email: z.string().nullable(),
   emailVerified: z.date().nullable(),

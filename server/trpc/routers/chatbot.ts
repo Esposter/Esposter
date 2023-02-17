@@ -1,10 +1,11 @@
 import { router } from "@/server/trpc";
 import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { userSchema } from "@/server/trpc/routers/user";
 import { generateAIResponse } from "@/services/chatbot";
 import { z } from "zod";
 
 const inferSchema = z.object({
-  userId: z.string().cuid(),
+  userId: userSchema.shape.id,
   prompt: z.string().min(1).max(CHATBOT_PROMPT_MAX_LENGTH),
   welcomeMessage: z.string().optional().default("Hello! How can I help you today?"),
 });
