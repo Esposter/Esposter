@@ -87,9 +87,8 @@ export const messageRouter = router({
         };
         const messageClient = await getTableClient(AzureTable.Messages);
         await createEntity<MessageEntity>(messageClient, newMessage);
-        const result = { ...input, ...newMessage };
-        messageEventEmitter.emit("onCreateMessage", result);
-        return result;
+        messageEventEmitter.emit("onCreateMessage", newMessage);
+        return newMessage;
       } catch {
         return null;
       }
