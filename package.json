@@ -48,7 +48,7 @@
     "prisma": "^4.10.1",
     "sass": "^1.58.2",
     "tozod": "^3.0.0",
-    "type-fest": "^3.5.7",
+    "type-fest": "^3.6.0",
     "vitest": "^0.28.5"
   },
   "dependencies": {
