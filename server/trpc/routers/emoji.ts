@@ -5,6 +5,7 @@ import { AzureTable } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/events/emoji";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { roomSchema } from "@/server/trpc/routers/room";
 import {
   AZURE_MAX_PAGE_SIZE,
@@ -19,16 +20,6 @@ import { now } from "@/utils/time";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
-
-const readEmojisInputSchema = z.object({
-  roomId: z.string().uuid(),
-  messages: z.array(
-    messageSchema.pick({
-      rowKey: true,
-    })
-  ),
-});
-export type ReadEmojisInput = z.infer<typeof readEmojisInputSchema>;
 
 const onCreateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
@@ -56,8 +47,8 @@ const deleteEmojiInputSchema = messageEmojiMetadataSchema
 export type DeleteEmojiInput = z.infer<typeof deleteEmojiInputSchema>;
 
 export const emojiRouter = router({
-  readEmojis: getRoomUserProcedure(readEmojisInputSchema, "roomId")
-    .input(readEmojisInputSchema)
+  readEmojis: getRoomUserProcedure(readMetadataInputSchema, "roomId")
+    .input(readMetadataInputSchema)
     .query(async ({ input: { roomId, messages } }) => {
       const client = await getTableClient(AzureTable.MessagesMetadata);
       return getTopNEntities(client, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {

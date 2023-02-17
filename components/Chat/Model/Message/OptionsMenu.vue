@@ -2,7 +2,8 @@
 import type { MessageEntity } from "@/models/azure/message";
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
 import { useEmojiStore } from "@/store/chat/useEmojiStore";
-import { unemojify } from "node-emoji";
+// eslint-disable-next-line import/default
+import nodeEmoji from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -48,12 +49,13 @@ const items = computed(() => {
 const onSelect = async (emoji: string) => {
   if (!data.value) return;
 
-  const foundEmoji = emojis.value.find((e) => e.emojiTag === unemojify(emoji));
+  const emojiTag = nodeEmoji.unemojify(emoji);
+  const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
     await onCreateEmoji({
       partitionKey: message.partitionKey,
       messageRowKey: message.rowKey,
-      emojiTag: unemojify(emoji),
+      emojiTag,
     });
     return;
   }

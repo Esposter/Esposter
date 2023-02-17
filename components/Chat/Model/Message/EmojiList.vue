@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
 import { useEmojiStore } from "@/store/chat/useEmojiStore";
-import { emojify } from "node-emoji";
+// @NOTE: ES Module issue
+// eslint-disable-next-line import/default
+import nodeEmoji from "node-emoji";
 
 interface MessageEmojiListProps {
   messageRowKey: string;
@@ -20,7 +22,7 @@ const emojis = computed(() =>
     rowKey: e.rowKey,
     emojiTag: e.emojiTag,
     userIds: e.userIds,
-    emoji: emojify(e.emojiTag),
+    emoji: nodeEmoji.emojify(e.emojiTag),
     isReacted: Boolean(data.value && e.userIds.includes(data.value.user.id)),
   }))
 );

@@ -19,6 +19,16 @@ import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
+export const readMetadataInputSchema = z.object({
+  roomId: z.string().uuid(),
+  messages: z.array(
+    messageSchema.pick({
+      rowKey: true,
+    })
+  ),
+});
+export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
+
 const readMessagesInputSchema = z.object({ roomId: z.string(), cursor: z.string().nullable() });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
