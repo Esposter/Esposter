@@ -23,10 +23,3 @@ const { messages, hasMore, readMoreMessages } = $(toRefs(props));
     <VWaypoint :active="hasMore" @change="readMoreMessages" />
   </v-list>
 </template>
-
-<style scoped lang="scss">
-// We don't want to hide message content even if they added a bunch of newlines
-:deep(.v-list-item-subtitle) {
-  -webkit-line-clamp: unset;
-}
-</style>

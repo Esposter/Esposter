@@ -20,11 +20,11 @@ const isDeleteMode = $ref(false);
       <slot name="content" />
       <v-card-actions>
         <v-spacer />
-        <v-btn px="6!" text="3" @click="isDeleteMode = false">Cancel</v-btn>
+        <v-btn text="3" variant="outlined" @click="isDeleteMode = false">Cancel</v-btn>
         <v-btn
-          px="6!"
           text="3"
           color="error"
+          variant="outlined"
           @click="
             emit('delete', () => {
               isDeleteMode = false;

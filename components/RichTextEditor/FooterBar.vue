@@ -10,7 +10,7 @@ const { editor } = toRefs(props);
 </script>
 
 <template>
-  <div display="flex">
+  <div pr="2" display="flex" items="center">
     <slot name="prepend" :editor="editor" />
     <v-spacer />
     <slot name="append" :editor="editor" />

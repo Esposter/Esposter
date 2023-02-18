@@ -6,7 +6,7 @@ const rateLimiter = new RateLimiterMemory({ points: 5, duration: 1, blockDuratio
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const ip =
-    ((ctx.req.headers["x-forwarded-for"] as string | undefined) || "").split(",").pop()?.trim() ||
+    ((ctx.req.headers["x-forwarded-for"] as string | undefined) ?? "").split(",").pop()?.trim() ||
     ctx.req.socket.remoteAddress;
   if (!ip) throw new TRPCError({ code: "BAD_REQUEST" });
 

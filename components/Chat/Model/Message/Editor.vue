@@ -2,6 +2,7 @@
 import type { MessageEntity } from "@/models/azure/message";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
+import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {
   message: MessageEntity;
@@ -38,22 +39,35 @@ const onUpdateMessage = async () => {
     editedMessage = message.message;
   }
 };
+const keyboardExtension = new Extension({
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => {
+        onUpdateMessage();
+        return true;
+      },
+      Esc: () => {
+        emit("update:update-mode", false);
+        return true;
+      },
+    };
+  },
+});
 </script>
 
 <template>
-  <v-text-field
+  <RichTextEditor
     v-model="editedMessage"
-    density="compact"
-    variant="solo"
-    hide-details
-    autofocus
-    @keydown.enter="onUpdateMessage"
-    @keydown.esc="emit('update:update-mode', false)"
-  />
-  <span text="3">
-    escape to
-    <span class="text-info underline" cursor="pointer" @click="emit('update:update-mode', false)">cancel</span> • enter
-    to
-    <span class="text-info underline" cursor="pointer" @click="onUpdateMessage">save</span>
-  </span>
+    placeholder="Edit message"
+    :max-length="MESSAGE_MAX_LENGTH"
+    :extensions="[keyboardExtension]"
+  >
+    <template #prepend-footer="editorProps">
+      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
+    </template>
+    <template #append-footer>
+      <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
+      <StyledButton ml="2" size="small" @click="onUpdateMessage">Save</StyledButton>
+    </template>
+  </RichTextEditor>
 </template>

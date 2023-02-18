@@ -105,4 +105,14 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 :deep(.v-list-item__content) {
   overflow: visible;
 }
+
+// We don't want to hide message content even if they added a bunch of newlines
+:deep(.v-list-item-subtitle) {
+  -webkit-line-clamp: unset;
+}
+
+:deep(.ProseMirror) {
+  height: auto;
+  max-height: 15rem;
+}
 </style>
