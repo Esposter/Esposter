@@ -108,7 +108,19 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         @update:model-value="(value) => emit('update:menu', value)"
         @select="onSelect"
       />
-      <v-btn v-if="isCreator" m="0!" rd="0!" icon="mdi-pencil" size="small" @click="emit('update:update-mode', true)" />
+      <v-tooltip location="top" text="Edit">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-if="isCreator"
+            m="0!"
+            rd="0!"
+            icon="mdi-pencil"
+            size="small"
+            :="tooltipProps"
+            @click="emit('update:update-mode', true)"
+          />
+        </template>
+      </v-tooltip>
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
         <template #activator="{ props: menuProps }">
           <v-tooltip location="top" text="More">
