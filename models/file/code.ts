@@ -1,6 +1,5 @@
 import { LanguageDescription } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
-import { escapeRegExp } from "@unocss/core";
 
 export const extendedLanguages = languages.concat(
   LanguageDescription.of({

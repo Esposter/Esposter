@@ -1,15 +1,12 @@
 import type { AzureUpdateEntity } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
 import type { CreateMessageInput, DeleteMessageInput } from "@/server/trpc/routers/message";
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
 export const useMessageStore = defineStore("chat/message", () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageInputStore = useMessageInputStore();
-  const { messageInput } = storeToRefs(messageInputStore);
 
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed({
