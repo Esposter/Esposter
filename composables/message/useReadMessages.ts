@@ -1,23 +1,26 @@
 import { useEmojiStore } from "@/store/chat/useEmojiStore";
+import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
 export const useReadMessages = async () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
+  const messageInputStore = useMessageInputStore();
+  const { initialiseMessageInput } = messageInputStore;
   const messageStore = useMessageStore();
   const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
-  const { messageListNextCursor } = $(storeToRefs(messageStore));
+  const { messageListNextCursor } = storeToRefs(messageStore);
   const emojiStore = useEmojiStore();
   const { pushEmojiMap } = emojiStore;
   const readMoreMessages = async (onComplete: () => void) => {
     try {
-      if (!currentRoomId) return;
+      if (!currentRoomId.value) return;
 
       const { messages, nextCursor } = await $client.message.readMessages.query({
-        roomId: currentRoomId,
-        cursor: messageListNextCursor,
+        roomId: currentRoomId.value,
+        cursor: messageListNextCursor.value,
       });
       if (messages.length === 0) return;
 
@@ -25,7 +28,7 @@ export const useReadMessages = async () => {
       updateMessageListNextCursor(nextCursor);
 
       const emojis = await $client.emoji.readEmojis.query({
-        roomId: currentRoomId,
+        roomId: currentRoomId.value,
         messages: messages.map((m) => ({ rowKey: m.rowKey })),
       });
       if (emojis.length === 0) return;
@@ -39,10 +42,12 @@ export const useReadMessages = async () => {
     }
   };
 
-  if (currentRoomId) {
+  if (currentRoomId.value) {
+    initialiseMessageInput();
+
     const { messages, nextCursor } = await $client.message.readMessages.query({
-      roomId: currentRoomId,
-      cursor: null,
+      roomId: currentRoomId.value,
+      cursor: messageListNextCursor.value,
     });
     if (messages.length === 0) return readMoreMessages;
 
@@ -50,7 +55,7 @@ export const useReadMessages = async () => {
     updateMessageListNextCursor(nextCursor);
 
     const emojis = await $client.emoji.readEmojis.query({
-      roomId: currentRoomId,
+      roomId: currentRoomId.value,
       messages: messages.map((m) => ({ rowKey: m.rowKey })),
     });
     if (emojis.length === 0) return readMoreMessages;

@@ -1,12 +1,16 @@
 import type { AzureUpdateEntity } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
 import type { CreateMessageInput, DeleteMessageInput } from "@/server/trpc/routers/message";
+import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
+import type { Editor } from "@tiptap/core";
 
 export const useMessageStore = defineStore("chat/message", () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const messageInputStore = useMessageInputStore();
+  const { messageInputHtml, messageInputText } = storeToRefs(messageInputStore);
 
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed({
@@ -44,10 +48,11 @@ export const useMessageStore = defineStore("chat/message", () => {
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };
-  const sendMessage = async (message: string) => {
-    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(message)) return;
+  const sendMessage = async (editor: Editor) => {
+    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(messageInputText.value)) return;
 
-    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message };
+    editor.commands.clearContent();
+    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInputHtml.value };
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
     if (newMessage) createMessage(newMessage);
   };

@@ -3,26 +3,30 @@ import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 
 const messageInputStore = useMessageInputStore();
-const { messageInput } = storeToRefs(messageInputStore);
+const { messageInputHtml, messageInputText } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 </script>
 
 <template>
   <RichTextEditor
-    v-model="messageInput"
+    v-model="messageInputHtml"
     w="full"
     placeholder="Aa"
     :max-length="MESSAGE_MAX_LENGTH"
     :on-enter="
       ({ editor }) => {
-        sendMessage(editor.getText());
-        return editor.commands.clearContent();
+        sendMessage(editor);
+        return true;
       }
     "
+    @update:text="(value) => (messageInputText = value)"
   >
-    <template #append-menu="{ editor }">
-      <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Emoji" />
+    <template #prepend-footer="editorProps">
+      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
+    </template>
+    <template #append-footer="editorProps">
+      <RichTextEditorCustomSendMessageButton :="editorProps" />
     </template>
   </RichTextEditor>
 </template>

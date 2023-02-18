@@ -13,7 +13,7 @@ const { editor, tooltip } = toRefs(props);
 <template>
   <EmojiPicker
     :tooltip-props="{ text: tooltip }"
-    :button-attrs="{ rd: '0!' }"
+    :button-props="{ size: 'small' }"
     @select="(emoji) => editor?.chain().focus().insertContent(emoji).run()"
   />
 </template>

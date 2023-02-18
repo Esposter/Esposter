@@ -16,7 +16,9 @@ const props = defineProps<RichTextEditorProps>();
 const { modelValue, placeholder, maxLength, onEnter } = toRefs(props);
 const emit = defineEmits<{
   (event: "update:model-value", value: string): void;
+  (event: "update:text", value: string): void;
 }>();
+const slots = useSlots();
 const extensions = computed(() => {
   const result: Extension[] = [
     StarterKit,
@@ -42,7 +44,10 @@ const extensions = computed(() => {
 const editor = useEditor({
   extensions: extensions.value,
   content: modelValue.value,
-  onUpdate: ({ editor }) => emit("update:model-value", editor.getHTML()),
+  onUpdate: ({ editor }) => {
+    emit("update:model-value", editor.getHTML());
+    emit("update:text", editor.getText());
+  },
 });
 
 onBeforeUnmount(() => editor.value?.destroy());
@@ -50,15 +55,19 @@ onBeforeUnmount(() => editor.value?.destroy());
 
 <template>
   <StyledCard>
-    <RichTextEditorMenuBar :editor="editor">
-      <template #append="{ editor: editorProp }">
-        <slot name="append-menu" :editor="editorProp" />
-      </template>
-    </RichTextEditorMenuBar>
+    <RichTextEditorMenuBar :editor="editor" />
     <v-divider thickness="2" />
     <ClientOnly>
       <EditorContent :editor="editor" />
     </ClientOnly>
+    <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
+      <template #prepend="editorProps">
+        <slot name="prepend-footer" :="editorProps" />
+      </template>
+      <template #append="editorProps">
+        <slot name="append-footer" :="editorProps" />
+      </template>
+    </RichTextEditorFooterBar>
   </StyledCard>
 </template>
 

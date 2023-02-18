@@ -9,11 +9,12 @@ interface CustomEmojiPickerButtonProps {
 
 const props = defineProps<CustomEmojiPickerButtonProps>();
 const { editor } = toRefs(props);
-const messageInputStore = useMessageInputStore();
-const { messageInput } = storeToRefs(messageInputStore);
-const disabled = computed(() => messageInput.value.length === 0);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
+const messageInputStore = useMessageInputStore();
+const { messageInputText } = storeToRefs(messageInputStore);
+const disabled = computed(() => EMPTY_TEXT_REGEX.test(messageInputText.value));
+const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 
 <template>
@@ -28,11 +29,16 @@ const { sendMessage } = messageStore;
         @click="
           () => {
             if (!editor) return;
-            sendMessage(editor.getText());
-            editor.commands.clearContent();
+            sendMessage(editor);
           }
         "
       />
     </template>
   </v-tooltip>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-btn__overlay) {
+  background-color: v-bind(backgroundColor);
+}
+</style>
