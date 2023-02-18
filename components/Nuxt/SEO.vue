@@ -26,7 +26,6 @@ useServerSeoMeta({
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",
   msapplicationTileColor: primary,
-  // @NOTE: msapplicationTapHighlight: "no"
 });
 
 useHead({
