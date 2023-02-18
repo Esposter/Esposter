@@ -30,3 +30,5 @@ export const getInitials = (fullName: string) => {
 };
 
 export const toTitleCase = (string: string) => string.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+
+export const EMPTY_TEXT_REGEX = /^\s*$/;

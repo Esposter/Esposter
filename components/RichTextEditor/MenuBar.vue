@@ -1,23 +1,11 @@
 <script setup lang="ts">
+import type { IsDivider, MenuItem } from "@/models/richTextEditor";
 import type { Editor } from "@tiptap/vue-3";
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
   editor?: Editor;
 }
-
-type IsDivider = {
-  isDivider: boolean;
-};
-
-type Item = {
-  icon: string;
-  title: string;
-  onClick: () => void;
-  active?: boolean;
-};
-
-type MenuItem = Item | IsDivider;
 
 const props = defineProps<MenuBarProps>();
 const { editor } = toRefs(props);
@@ -55,19 +43,6 @@ const items = computed<MenuItem[]>(() => [
     onClick: () => editor?.value?.chain().focus().toggleOrderedList().run(),
     active: editor?.value?.isActive("orderedList"),
   },
-  {
-    isDivider: true,
-  },
-  {
-    icon: "mdi-arrow-u-left-top",
-    title: "Undo",
-    onClick: () => editor?.value?.chain().focus().undo().run(),
-  },
-  {
-    icon: "mdi-arrow-u-right-top",
-    title: "Redo",
-    onClick: () => editor?.value?.chain().focus().redo().run(),
-  },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
@@ -75,18 +50,15 @@ const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 <template>
   <div display="flex" flex="wrap">
     <template v-for="(item, index) in items" :key="index">
-      <v-divider v-if="isDivider(item)" thickness="2" vertical mx="4!" h="8!" self="center!" />
+      <v-divider v-if="isDivider(item)" thickness="2" vertical h="8!" self="center!" />
       <v-tooltip v-else location="top" :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd="0!" :="mergeProps(item, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
-    <v-divider thickness="2" vertical mx="4!" h="8!" self="center!" />
-    <EmojiPicker
-      :tooltip-props="{ text: 'Choose an emoji' }"
-      :button-attrs="{ rd: '0!' }"
-      @select="(emoji) => editor?.chain().focus().insertContent(emoji).run()"
-    />
+    <RichTextEditorCustomButtonWrapper>
+      <slot name="append" :editor="editor" />
+    </RichTextEditorCustomButtonWrapper>
   </div>
 </template>

@@ -2,35 +2,59 @@
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
+import type { KeyboardShortcutCommand } from "@tiptap/vue-3";
+import { EditorContent, Extension, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
-  content?: string;
+  modelValue: string;
+  placeholder: string;
+  maxLength: number;
+  onEnter?: KeyboardShortcutCommand;
 }
 
-const props = withDefaults(defineProps<RichTextEditorProps>(), { content: "" });
-const { content } = $(toRefs(props));
+const props = defineProps<RichTextEditorProps>();
+const { modelValue, placeholder, maxLength, onEnter } = toRefs(props);
 const emit = defineEmits<{
-  (event: "update:content", value: string): void;
+  (event: "update:model-value", value: string): void;
 }>();
-const editor = $(
-  useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({ placeholder: "Text (optional)" }),
-      CharacterCount.configure({ limit: POST_DESCRIPTION_MAX_LENGTH }),
-    ],
-    content,
-    onUpdate: ({ editor }) => emit("update:content", editor.getHTML()),
-  })
-);
+const extensions = computed(() => {
+  const result: Extension[] = [
+    StarterKit,
+    Placeholder.configure({ placeholder: placeholder.value }),
+    CharacterCount.configure({ limit: maxLength.value }),
+  ];
+  if (!onEnter?.value) return result;
 
-onBeforeUnmount(() => editor?.destroy());
+  result.push(
+    new Extension({
+      addKeyboardShortcuts() {
+        return {
+          Enter: () => {
+            if (!onEnter.value) return true;
+            return onEnter.value({ editor: this.editor });
+          },
+        };
+      },
+    })
+  );
+  return result;
+});
+const editor = useEditor({
+  extensions: extensions.value,
+  content: modelValue.value,
+  onUpdate: ({ editor }) => emit("update:model-value", editor.getHTML()),
+});
+
+onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <template>
   <StyledCard>
-    <RichTextEditorMenuBar :editor="editor" />
+    <RichTextEditorMenuBar :editor="editor">
+      <template #append="{ editor: editorProp }">
+        <slot name="append-menu" :editor="editorProp" />
+      </template>
+    </RichTextEditorMenuBar>
     <v-divider thickness="2" />
     <ClientOnly>
       <EditorContent :editor="editor" />
@@ -43,6 +67,7 @@ onBeforeUnmount(() => editor?.destroy());
   padding: 1rem;
   height: 15rem;
   overflow-y: auto;
+  outline: none;
 
   ul,
   ol {

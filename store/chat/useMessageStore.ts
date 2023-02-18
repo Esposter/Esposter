@@ -7,20 +7,19 @@ import { useRoomStore } from "@/store/chat/useRoomStore";
 export const useMessageStore = defineStore("chat/message", () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
   const messageInputStore = useMessageInputStore();
-  const { updateMessageInput } = messageInputStore;
-  const { messageInput } = $(storeToRefs(messageInputStore));
+  const { messageInput } = storeToRefs(messageInputStore);
 
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed({
     get: () => {
-      if (!currentRoomId || !messagesMap.value[currentRoomId]) return [];
-      return messagesMap.value[currentRoomId];
+      if (!currentRoomId.value || !messagesMap.value[currentRoomId.value]) return [];
+      return messagesMap.value[currentRoomId.value];
     },
     set: (newMessageList) => {
-      if (!currentRoomId) return;
-      messagesMap.value[currentRoomId] = newMessageList;
+      if (!currentRoomId.value) return;
+      messagesMap.value[currentRoomId.value] = newMessageList;
     },
   });
   const pushMessageList = (messages: MessageEntity[]) => {
@@ -30,12 +29,12 @@ export const useMessageStore = defineStore("chat/message", () => {
   const messageListNextCursorMap = ref<Record<string, string | null>>({});
   const messageListNextCursor = computed({
     get: () => {
-      if (!currentRoomId || !messageListNextCursorMap.value[currentRoomId]) return null;
-      return messageListNextCursorMap.value[currentRoomId];
+      if (!currentRoomId.value || !messageListNextCursorMap.value[currentRoomId.value]) return null;
+      return messageListNextCursorMap.value[currentRoomId.value];
     },
     set: (newMessageListNextCursor) => {
-      if (!currentRoomId) return;
-      messageListNextCursorMap.value[currentRoomId] = newMessageListNextCursor;
+      if (!currentRoomId.value) return;
+      messageListNextCursorMap.value[currentRoomId.value] = newMessageListNextCursor;
     },
   });
   const updateMessageListNextCursor = (updatedMessageListNextCursor: string | null) => {
@@ -48,14 +47,10 @@ export const useMessageStore = defineStore("chat/message", () => {
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };
-  const sendMessage = async () => {
-    if (!currentRoomId || !messageInput) return;
+  const sendMessage = async (message: string) => {
+    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(message)) return;
 
-    const createMessageInput: CreateMessageInput = {
-      roomId: currentRoomId,
-      message: messageInput,
-    };
-    updateMessageInput("");
+    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message };
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
     if (newMessage) createMessage(newMessage);
   };

@@ -68,8 +68,13 @@ router.beforeEach(() => {
 // content greater than screen size rather than the entire drawer.
 // Make sure to apply attribute overflow-y="auto" for the container
 // you want to show the scrollbar on in the drawer
-:deep(.v-navigation-drawer__content) {
+.v-navigation-drawer__content {
   display: flex;
   flex-direction: column;
+}
+// Don't use transition for flexed backgrounds as that will reveal
+// the underlying default background color, not the surface background color of the chat
+.v-main {
+  transition: none;
 }
 </style>

@@ -41,7 +41,15 @@ const description = $ref(initialValues.description);
         </v-row>
         <v-row>
           <v-col>
-            <RichTextEditor :content="description" @update:content="(value) => (description = value)" />
+            <RichTextEditor
+              v-model="description"
+              placeholder="Text (optional)"
+              :max-length="POST_DESCRIPTION_MAX_LENGTH"
+            >
+              <template #append="{ editor }">
+                <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Choose an emoji" />
+              </template>
+            </RichTextEditor>
           </v-col>
         </v-row>
         <v-row>

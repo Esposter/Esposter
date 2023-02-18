@@ -2,6 +2,7 @@
 import type { MessageEntity } from "@/models/azure/message";
 import type { User } from "@prisma/client";
 import dayjs from "dayjs";
+import DOMPurify from "dompurify";
 
 interface MessageListItemProps {
   message: MessageEntity;
@@ -10,6 +11,7 @@ interface MessageListItemProps {
 
 const props = defineProps<MessageListItemProps>();
 const { message } = toRefs(props);
+const sanitizedMessageHtml = computed(() => DOMPurify.sanitize(message.value.message));
 const displayCreatedAt = computed(() => dayjs(message.value.createdAt).format("h:mm A"));
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
@@ -50,9 +52,8 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateDeleteMode"
         />
-        <v-list-item-subtitle v-else op="100!">
-          {{ message.message }}
-        </v-list-item-subtitle>
+        <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+        <v-list-item-subtitle v-else op="100!" v-html="sanitizedMessageHtml" />
         <ChatModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div position="relative" z="1">
@@ -88,9 +89,8 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <v-list-item-title font="bold!">
           {{ creator.name }}
         </v-list-item-title>
-        <v-list-item-subtitle op="100!">
-          {{ message.message }}
-        </v-list-item-subtitle>
+        <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
+        <v-list-item-subtitle op="100!" v-html="sanitizedMessageHtml" />
         <ChatModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
     </template>
