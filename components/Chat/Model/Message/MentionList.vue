@@ -12,7 +12,7 @@ const { items, command } = toRefs(props);
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
   const item = items.value[index];
-  if (item) command.value({ id: item.name });
+  if (item) command.value({ label: item.name });
 };
 const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
   if (event.key === "ArrowUp") {
