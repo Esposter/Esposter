@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
-import { mentionExtension } from "@/services/message/mentionExtension";
+import { mentionExtension, refreshMentions } from "@/services/message/mention";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 import { Editor } from "@tiptap/core";
@@ -16,7 +16,7 @@ const emit = defineEmits<{
   (event: "update:delete-mode", value: true): void;
 }>();
 const { message } = toRefs(props);
-const editedMessageHtml = ref(message.value.message);
+const editedMessageHtml = ref(refreshMentions(message.value.message));
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

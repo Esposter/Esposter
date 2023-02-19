@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
+import { refreshMentions } from "@/services/message/mention";
 import type { User } from "@prisma/client";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
@@ -11,7 +12,10 @@ interface MessageListItemProps {
 
 const props = defineProps<MessageListItemProps>();
 const { message } = toRefs(props);
-const sanitizedMessageHtml = computed(() => DOMPurify.sanitize(message.value.message));
+const sanitizedMessageHtml = computed(() => {
+  const newMessage = refreshMentions(message.value.message);
+  return DOMPurify.sanitize(newMessage);
+});
 const displayCreatedAt = computed(() => dayjs(message.value.createdAt).format("h:mm A"));
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);

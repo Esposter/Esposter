@@ -11,8 +11,7 @@ const props = defineProps<MessageListItemContainerProps>();
 const { currentMessage, nextMessage } = toRefs(props);
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
-// @NOTE: We'll need to search for the creators in the user database in the future
-// if we want to show messages from members who have left the room
+// We won't show messages from members that have left the room for simplicity
 const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.value.creatorId));
 </script>
 
