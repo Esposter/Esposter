@@ -46,7 +46,7 @@ onClickOutside(titleRef, async () => {
       font="bold"
       text="xl"
       density="compact"
-      variant="solo"
+      variant="outlined"
       hide-details
       autofocus
       @keydown.enter="onUpdateRoom"
