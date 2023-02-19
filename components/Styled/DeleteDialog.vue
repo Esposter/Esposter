@@ -6,11 +6,11 @@ interface StyledDeleteProps {
 }
 
 const props = defineProps<StyledDeleteProps>();
-const { cardProps } = $(toRefs(props));
+const { cardProps } = toRefs(props);
 const emit = defineEmits<{
   (event: "delete", onComplete: () => void): void;
 }>();
-const isDeleteMode = $ref(false);
+const isDeleteMode = ref(false);
 </script>
 
 <template>

@@ -44,7 +44,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPr
     <template #action>
       <v-spacer />
       <StyledButton
-        :button-props="{ disabled: !isAffordable }"
+        :disabled="!isAffordable"
         @click="
           () => {
             createBoughtBuilding(building);

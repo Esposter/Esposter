@@ -1,20 +1,10 @@
 <script setup lang="ts">
-import { mergeProps } from "vue";
-import type { VCard } from "vuetify/components";
-
-interface StyledCardProps {
-  cardProps?: InstanceType<typeof VCard>["$props"];
-  cardAttrs?: InstanceType<typeof VCard>["$attrs"];
-}
-
-const props = defineProps<StyledCardProps>();
-const { cardProps, cardAttrs } = $(toRefs(props));
 const slots = useSlots();
 const { border } = useColors();
 </script>
 
 <template>
-  <v-card class="border" :="mergeProps(cardProps ?? {}, cardAttrs ?? {})">
+  <v-card class="border">
     <ClientOnly>
       <template v-for="(_, slot) of slots" #[slot]="scope">
         <slot :name="slot" :="{ ...scope }" />

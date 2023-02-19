@@ -32,7 +32,7 @@ const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.pr
     <template v-if="isBuyable" #action>
       <v-spacer />
       <StyledButton
-        :button-props="{ disabled: !isAffordable }"
+        :disabled="!isAffordable"
         @click="
           () => {
             createBoughtUpgrade(upgrade);
