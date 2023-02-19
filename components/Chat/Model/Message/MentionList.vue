@@ -7,6 +7,7 @@ interface MessageMentionListProps {
 }
 
 const props = defineProps<MessageMentionListProps>();
+const { infoOpacity10 } = useColors();
 const { items, command } = toRefs(props);
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
@@ -48,12 +49,12 @@ watch(
     <StyledCard :style="{ overflow: 'auto' }" max-height="250" width="450">
       <v-btn
         v-for="(item, index) in items"
-        :key="index"
+        :key="item.id"
+        :class="{ button: index === selectedIndex }"
         w="full"
         justify="start!"
         rd="1"
         :ripple="false"
-        :color="index === selectedIndex ? 'background' : undefined"
         @click="selectItem(index)"
       >
         <v-avatar v-if="item.image" size="x-small">
@@ -67,3 +68,9 @@ watch(
     </StyledCard>
   </div>
 </template>
+
+<style scoped lang="scss">
+.button {
+  background-color: v-bind(infoOpacity10);
+}
+</style>
