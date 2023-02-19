@@ -4,7 +4,7 @@ import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { ROOM_NAME_MAX_LENGTH } from "@/utils/validation";
-import type { Room as PrismaRoom } from "@prisma/client";
+import { Room as PrismaRoom, User } from "@prisma/client";
 import type { toZod } from "tozod";
 import { z } from "zod";
 
@@ -36,7 +36,10 @@ export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
-const readMembersInputSchema = z.object({ roomId: roomSchema.shape.id });
+const readMembersInputSchema = z.object({
+  roomId: roomSchema.shape.id,
+  filter: userSchema.pick({ name: true }).optional(),
+});
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
@@ -93,12 +96,12 @@ export const roomRouter = router({
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
-    .query(async ({ input: { roomId } }) => {
-      const room = await prisma.room.findUnique({
-        where: { id: roomId },
-        include: { users: { include: { user: true } } },
+    .query<User[]>(async ({ input: { roomId, filter } }) => {
+      const name = filter?.name ?? undefined;
+      const members = await prisma.user.findMany({
+        where: { name: { contains: name, mode: "insensitive" }, rooms: { some: { roomId } } },
       });
-      return room ? { members: room.users.map((u) => u.user) } : null;
+      return members;
     }),
   createMembers: getRoomUserProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)

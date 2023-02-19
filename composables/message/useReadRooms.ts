@@ -5,10 +5,10 @@ export const useReadRooms = async () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
   const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
-  const { currentRoomId, roomListNextCursor } = $(storeToRefs(roomStore));
+  const { currentRoomId, roomListNextCursor } = storeToRefs(roomStore);
   const readMoreRooms = async (onComplete: () => void) => {
     try {
-      const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor });
+      const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
       pushRoomList(rooms);
       updateRoomListNextCursor(nextCursor);
     } finally {
@@ -17,7 +17,7 @@ export const useReadRooms = async () => {
   };
 
   const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([
-    currentRoomId ? $client.room.readRoom.query(currentRoomId) : null,
+    currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : null,
     $client.room.readRooms.query({ cursor: null }),
   ]);
   const initialRooms: Room[] = [];

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
+import { mentionExtension } from "@/services/message/mentionExtension";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 import { Extension } from "@tiptap/vue-3";
@@ -60,7 +61,7 @@ const keyboardExtension = new Extension({
     v-model="editedMessage"
     placeholder="Edit message"
     :max-length="MESSAGE_MAX_LENGTH"
-    :extensions="[keyboardExtension]"
+    :extensions="[keyboardExtension, mentionExtension]"
   >
     <template #prepend-footer="editorProps">
       <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />

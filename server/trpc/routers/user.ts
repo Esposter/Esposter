@@ -8,7 +8,7 @@ import { z } from "zod";
 
 export const userSchema: toZod<PrismaUser> = z.object({
   id: z.string().cuid(),
-  name: z.string().min(1).max(USER_NAME_MAX_LENGTH).nullable(),
+  name: z.string().max(USER_NAME_MAX_LENGTH).nullable(),
   email: z.string().nullable(),
   emailVerified: z.date().nullable(),
   image: z.string().nullable(),

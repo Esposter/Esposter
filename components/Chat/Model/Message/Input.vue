@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { mentionExtension } from "@/services/message/mentionExtension";
 import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { Extension } from "@tiptap/vue-3";
@@ -24,7 +25,7 @@ const keyboardExtension = new Extension({
     v-model="messageInputHtml"
     placeholder="Aa"
     :max-length="MESSAGE_MAX_LENGTH"
-    :extensions="[keyboardExtension]"
+    :extensions="[keyboardExtension, mentionExtension]"
     @update:text="(value) => (messageInputText = value)"
   >
     <template #prepend-footer="editorProps">

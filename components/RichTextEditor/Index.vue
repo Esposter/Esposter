@@ -2,13 +2,14 @@
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
-import { EditorContent, Extension, useEditor } from "@tiptap/vue-3";
+import type { AnyExtension } from "@tiptap/vue-3";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
   modelValue: string;
   placeholder: string;
   maxLength: number;
-  extensions?: Extension[];
+  extensions?: AnyExtension[];
 }
 
 const props = defineProps<RichTextEditorProps>();
