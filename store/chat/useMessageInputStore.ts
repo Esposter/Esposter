@@ -15,8 +15,5 @@ export const useMessageInputStore = defineStore("chat/messageInput", () => {
       messageInputMap.value[currentRoomId.value] = newMessageInput;
     },
   });
-  const initialiseMessageInput = () => {
-    messageInput.value = "";
-  };
-  return { messageInput, initialiseMessageInput };
+  return { messageInput };
 });

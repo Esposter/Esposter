@@ -1,5 +1,4 @@
 import { useEmojiStore } from "@/store/chat/useEmojiStore";
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
@@ -7,8 +6,6 @@ export const useReadMessages = async () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageInputStore = useMessageInputStore();
-  const { initialiseMessageInput } = messageInputStore;
   const messageStore = useMessageStore();
   const { pushMessageList, updateMessageListNextCursor, initialiseMessageList } = messageStore;
   const { messageListNextCursor } = storeToRefs(messageStore);
@@ -43,8 +40,6 @@ export const useReadMessages = async () => {
   };
 
   if (currentRoomId.value) {
-    initialiseMessageInput();
-
     const { messages, nextCursor } = await $client.message.readMessages.query({
       roomId: currentRoomId.value,
       cursor: messageListNextCursor.value,
