@@ -21,10 +21,7 @@ export const roomSchema: toZod<PrismaRoom> = z.object({
 const readRoomInputSchema = roomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = z.object({
-  filter: roomSchema.pick({ name: true }).optional(),
-  cursor: z.string().nullable(),
-});
+const readRoomsInputSchema = z.object({ cursor: z.string().nullable() });
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const createRoomInputSchema = roomSchema.pick({ name: true });
@@ -59,11 +56,10 @@ export const roomRouter = router({
           orderBy: { updatedAt: "desc" },
         })
   ),
-  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { filter, cursor }, ctx }) => {
-    const name = filter?.name;
+  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
     const rooms = await prisma.room.findMany({
       take: READ_LIMIT + 1,
-      where: { name: { contains: name, mode: "insensitive" }, users: { some: { userId: ctx.session.user.id } } },
+      where: { users: { some: { userId: ctx.session.user.id } } },
       cursor: cursor ? { id: cursor } : undefined,
       orderBy: { updatedAt: "desc" },
     });
