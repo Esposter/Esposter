@@ -12,7 +12,7 @@ const { xs, sm } = $(useDisplay());
 </script>
 
 <template>
-  <v-card
+  <StyledCard
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
     p="4"
     min-height="200"
@@ -24,5 +24,5 @@ const { xs, sm } = $(useDisplay());
     break="word"
   >
     {{ card.text }}
-  </v-card>
+  </StyledCard>
 </template>
