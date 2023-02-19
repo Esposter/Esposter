@@ -4,6 +4,7 @@ import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { Extension } from "@tiptap/vue-3";
 
+const { info, infoOpacity10 } = useColors();
 const messageInputStore = useMessageInputStore();
 const { messageInputHtml, messageInputText } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
@@ -41,5 +42,11 @@ const keyboardExtension = new Extension({
 :deep(.ProseMirror) {
   height: auto;
   max-height: 15rem;
+}
+
+:deep(.mention) {
+  color: v-bind(info);
+  background-color: v-bind(infoOpacity10);
+  border-radius: 0.25rem;
 }
 </style>

@@ -13,7 +13,7 @@ export const suggestion: MentionOptions["suggestion"] = {
 
     const { $client } = useNuxtApp();
     const members = await $client.room.readMembers.query({ roomId: currentRoomId.value, filter: { name: query } });
-    return members.filter((m) => m.name).map((m) => m.name);
+    return members.filter((m) => m.name);
   },
 
   render: () => {

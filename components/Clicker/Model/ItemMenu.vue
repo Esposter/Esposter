@@ -89,7 +89,7 @@ const upgradeIcon = computed(() => {
           <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
           <span text="right" v-html="flavorDescriptionHtml" />
         </div>
-        <div :class="isAffordable ? undefined : 'not-affordable'" display="flex">
+        <div :class="{ 'not-affordable': isAffordable }" display="flex">
           <v-spacer />
           {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
         </div>

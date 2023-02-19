@@ -14,30 +14,31 @@ const emit = defineEmits<{
   (event: "update:update-mode", value: false): void;
   (event: "update:delete-mode", value: true): void;
 }>();
-const { message } = $(toRefs(props));
-let editedMessage = $ref(message.message);
+const { message } = toRefs(props);
+const editedMessageHtml = ref(message.value.message);
 
 const { $client } = useNuxtApp();
+const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
-const { currentRoomId } = $(storeToRefs(roomStore));
+const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
 const onUpdateMessage = async () => {
   try {
-    if (!currentRoomId || editedMessage === message.message) return;
-    if (!editedMessage) {
+    if (!currentRoomId.value || editedMessageHtml.value === message.value.message) return;
+    if (!editedMessageHtml.value) {
       emit("update:delete-mode", true);
       return;
     }
 
     const updatedMessage = await $client.message.updateMessage.mutate({
-      partitionKey: message.partitionKey,
-      rowKey: message.rowKey,
-      message: editedMessage,
+      partitionKey: message.value.partitionKey,
+      rowKey: message.value.rowKey,
+      message: editedMessageHtml.value,
     });
     if (updatedMessage) updateMessage(updatedMessage);
   } finally {
     emit("update:update-mode", false);
-    editedMessage = message.message;
+    editedMessageHtml.value = message.value.message;
   }
 };
 const keyboardExtension = new Extension({
@@ -58,7 +59,7 @@ const keyboardExtension = new Extension({
 
 <template>
   <RichTextEditor
-    v-model="editedMessage"
+    v-model="editedMessageHtml"
     placeholder="Edit message"
     :max-length="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
@@ -72,3 +73,16 @@ const keyboardExtension = new Extension({
     </template>
   </RichTextEditor>
 </template>
+
+<style scoped lang="scss">
+:deep(.ProseMirror) {
+  height: auto;
+  max-height: 15rem;
+}
+
+:deep(.mention) {
+  color: v-bind(info);
+  background-color: v-bind(infoOpacity10);
+  border-radius: 0.25rem;
+}
+</style>
