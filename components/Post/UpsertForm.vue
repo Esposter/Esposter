@@ -46,7 +46,7 @@ const description = $ref(initialValues.description);
               placeholder="Text (optional)"
               :max-length="POST_DESCRIPTION_MAX_LENGTH"
             >
-              <template #append="{ editor }">
+              <template #prepend-footer="{ editor }">
                 <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Choose an emoji" />
               </template>
             </RichTextEditor>
