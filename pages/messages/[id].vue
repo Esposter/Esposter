@@ -6,6 +6,7 @@ definePageMeta({ middleware: "auth" });
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
 const route = useRoute();
+const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, rooms, roomName, roomSearchQuery } = storeToRefs(roomStore);
 const roomExists = $computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
@@ -36,3 +37,11 @@ useSubscribables();
     </template>
   </NuxtLayout>
 </template>
+
+<style scoped lang="scss">
+:deep(.mention) {
+  color: v-bind(info);
+  background-color: v-bind(infoOpacity10);
+  border-radius: 0.25rem;
+}
+</style>

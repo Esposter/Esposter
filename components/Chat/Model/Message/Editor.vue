@@ -3,6 +3,7 @@ import type { MessageEntity } from "@/models/azure/message";
 import { mentionExtension } from "@/services/message/mentionExtension";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { useRoomStore } from "@/store/chat/useRoomStore";
+import { Editor } from "@tiptap/core";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {
@@ -18,14 +19,13 @@ const { message } = toRefs(props);
 const editedMessageHtml = ref(message.value.message);
 
 const { $client } = useNuxtApp();
-const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
-const onUpdateMessage = async () => {
+const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.value.message) return;
-    if (!editedMessageHtml.value) {
+    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
       emit("update:delete-mode", true);
       return;
     }
@@ -45,7 +45,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        onUpdateMessage();
+        onUpdateMessage(this.editor);
         return true;
       },
       Esc: () => {
@@ -67,9 +67,9 @@ const keyboardExtension = new Extension({
     <template #prepend-footer="editorProps">
       <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
     </template>
-    <template #append-footer>
+    <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
-      <StyledButton ml="2" size="small" @click="onUpdateMessage">Save</StyledButton>
+      <StyledButton v-if="editor" ml="2" size="small" @click="onUpdateMessage(editor)">Save</StyledButton>
     </template>
   </RichTextEditor>
 </template>
@@ -78,11 +78,5 @@ const keyboardExtension = new Extension({
 :deep(.ProseMirror) {
   height: auto;
   max-height: 15rem;
-}
-
-:deep(.mention) {
-  color: v-bind(info);
-  background-color: v-bind(infoOpacity10);
-  border-radius: 0.25rem;
 }
 </style>

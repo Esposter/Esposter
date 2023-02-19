@@ -10,7 +10,7 @@ export const useMessageStore = defineStore("chat/message", () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageInputStore = useMessageInputStore();
-  const { messageInputHtml, messageInputText } = storeToRefs(messageInputStore);
+  const { messageInput } = storeToRefs(messageInputStore);
 
   const messagesMap = ref<Record<string, MessageEntity[]>>({});
   const messageList = computed({
@@ -49,10 +49,10 @@ export const useMessageStore = defineStore("chat/message", () => {
     messageList.value.unshift(newMessage);
   };
   const sendMessage = async (editor: Editor) => {
-    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(messageInputText.value)) return;
+    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
-    editor.commands.clearContent();
-    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInputHtml.value };
+    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInput.value };
+    editor.commands.clearContent(true);
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
     if (newMessage) createMessage(newMessage);
   };

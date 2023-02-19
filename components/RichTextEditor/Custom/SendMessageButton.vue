@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import type { Editor } from "@tiptap/vue-3";
 
@@ -11,9 +10,7 @@ const props = defineProps<CustomEmojiPickerButtonProps>();
 const { editor } = toRefs(props);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
-const messageInputStore = useMessageInputStore();
-const { messageInputText } = storeToRefs(messageInputStore);
-const disabled = computed(() => EMPTY_TEXT_REGEX.test(messageInputText.value));
+const disabled = computed(() => Boolean(editor?.value && EMPTY_TEXT_REGEX.test(editor.value.getText())));
 const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 

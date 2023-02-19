@@ -4,9 +4,8 @@ import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
 import { useMessageStore } from "@/store/chat/useMessageStore";
 import { Extension } from "@tiptap/vue-3";
 
-const { info, infoOpacity10 } = useColors();
 const messageInputStore = useMessageInputStore();
-const { messageInputHtml, messageInputText } = storeToRefs(messageInputStore);
+const { messageInput } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 const keyboardExtension = new Extension({
@@ -23,11 +22,10 @@ const keyboardExtension = new Extension({
 
 <template>
   <RichTextEditor
-    v-model="messageInputHtml"
+    v-model="messageInput"
     placeholder="Aa"
     :max-length="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
-    @update:text="(value) => (messageInputText = value)"
   >
     <template #prepend-footer="editorProps">
       <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
@@ -42,11 +40,5 @@ const keyboardExtension = new Extension({
 :deep(.ProseMirror) {
   height: auto;
   max-height: 15rem;
-}
-
-:deep(.mention) {
-  color: v-bind(info);
-  background-color: v-bind(infoOpacity10);
-  border-radius: 0.25rem;
 }
 </style>

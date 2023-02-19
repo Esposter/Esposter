@@ -16,7 +16,6 @@ const props = defineProps<RichTextEditorProps>();
 const { modelValue, placeholder, maxLength, extensions } = toRefs(props);
 const emit = defineEmits<{
   (event: "update:model-value", value: string): void;
-  (event: "update:text", value: string): void;
 }>();
 const slots = useSlots();
 const editor = useEditor({
@@ -29,7 +28,6 @@ const editor = useEditor({
   content: modelValue.value,
   onUpdate: ({ editor }) => {
     emit("update:model-value", editor.getHTML());
-    emit("update:text", editor.getText());
   },
 });
 
