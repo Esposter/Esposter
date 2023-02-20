@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const menu = $ref(false);
+const menu = ref(false);
 </script>
 
 <template>

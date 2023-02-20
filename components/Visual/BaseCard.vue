@@ -7,8 +7,8 @@ interface BaseCardProps {
 }
 
 const props = defineProps<BaseCardProps>();
-const { card } = $(toRefs(props));
-const { xs, sm } = $(useDisplay());
+const { card } = toRefs(props);
+const { xs, sm } = useDisplay();
 </script>
 
 <template>

@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import type { ListItem } from "@/models/esposter";
 import { RoutePath } from "@/models/router";
 
-interface Item {
-  title: string;
-  href: string;
-  icon: string;
-}
-
-const items: Item[] = [
+const items: ListItem[] = [
   {
     title: "Esbabbler",
     href: RoutePath.MessagesIndex,
     icon: "mdi-message-fast",
+  },
+  {
+    title: `${ITEM_NAME} Clicker`,
+    href: RoutePath.Clicker,
+    icon: "mdi-fruit-pineapple",
   },
 ];
 </script>

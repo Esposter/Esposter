@@ -11,7 +11,7 @@ import { RoutePath } from "@/models/router";
     </template>
     <template #append>
       <div display="flex" gap-x="2">
-        <EsposterCreateDropdownButton />
+        <EsposterMenuButton />
         <EsposterEsbabblerButton />
         <EsposterToggleThemeButton />
         <EsposterGithubButton />

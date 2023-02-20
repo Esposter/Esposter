@@ -1,28 +1,17 @@
 <script setup lang="ts">
+import type { ListItem } from "@/models/esposter";
 import { RoutePath } from "@/models/router";
 import { mergeProps } from "vue";
 
-interface Item {
-  title: string;
-  href?: string;
-  icon: string;
-  onClick?: () => Promise<void>;
-}
+const { status, data, signOut } = useSession();
 
-const { status, data, signOut } = $(useSession());
-
-const items = $computed<Item[]>(() =>
-  status === "unauthenticated"
+const items = computed<ListItem[]>(() =>
+  status.value === "unauthenticated"
     ? [
         {
           title: "Login",
           href: RoutePath.Login,
           icon: "mdi-login",
-        },
-        {
-          title: `${ITEM_NAME} Clicker`,
-          href: RoutePath.Clicker,
-          icon: "mdi-fruit-pineapple",
         },
         {
           title: "About",
@@ -40,13 +29,8 @@ const items = $computed<Item[]>(() =>
           icon: "mdi-shield-lock",
         },
       ]
-    : status === "authenticated"
+    : status.value === "authenticated"
     ? [
-        {
-          title: `${ITEM_NAME} Clicker`,
-          href: RoutePath.Clicker,
-          icon: "mdi-fruit-pineapple",
-        },
         {
           title: "Settings",
           href: RoutePath.UserSettings,
@@ -75,7 +59,7 @@ const items = $computed<Item[]>(() =>
       ]
     : []
 );
-const menu = $ref(false);
+const menu = ref(false);
 </script>
 
 <template>

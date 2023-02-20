@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const theme = useGlobalTheme();
-let themeCookie = $(useCookie(THEME_COOKIE_NAME));
+const themeCookie = useCookie(THEME_COOKIE_NAME);
 const toggleTheme = () => {
   const newThemeValue = theme.current.value.dark ? "light" : "dark";
-  themeCookie = theme.name.value = newThemeValue;
+  themeCookie.value = theme.name.value = newThemeValue;
 };
 </script>
 

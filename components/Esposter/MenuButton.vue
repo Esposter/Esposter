@@ -1,30 +1,30 @@
 <script setup lang="ts">
+import type { ListItem } from "@/models/esposter";
 import { RoutePath } from "@/models/router";
 import { mergeProps } from "vue";
 
-interface Item {
-  title: string;
-  href: string;
-  icon: string;
-}
-
-const items: Item[] = [
+const items: ListItem[] = [
   {
     title: "Create Post",
     href: RoutePath.PostCreate,
     icon: "mdi-pencil",
   },
+  {
+    title: `${ITEM_NAME} Clicker`,
+    href: RoutePath.Clicker,
+    icon: "mdi-fruit-pineapple",
+  },
 ];
-const menu = $ref(false);
+const menu = ref(false);
 </script>
 
 <template>
   <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="Create">
+      <v-tooltip location="bottom" text="Menu">
         <template #activator="{ props: tooltipProps }">
           <v-avatar color="background">
-            <v-btn icon="mdi-plus" :="mergeProps(menuProps, tooltipProps)" />
+            <v-btn icon="mdi-dots-grid" :="mergeProps(menuProps, tooltipProps)" />
           </v-avatar>
         </template>
       </v-tooltip>
