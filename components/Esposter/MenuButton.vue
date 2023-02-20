@@ -7,7 +7,12 @@ const items: ListItem[] = [
   {
     title: "Create Post",
     href: RoutePath.PostCreate,
-    icon: "mdi-pencil",
+    icon: "mdi-square-edit-outline",
+  },
+  {
+    title: "Esbabbler",
+    href: RoutePath.MessagesIndex,
+    icon: "mdi-message-fast",
   },
   {
     title: `${ITEM_NAME} Clicker`,
