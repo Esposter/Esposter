@@ -7,7 +7,7 @@ import { RoutePath } from "@/models/router";
     <template #activator="{ props }">
       <NuxtInvisibleLink :to="RoutePath.Github">
         <v-avatar color="background">
-          <v-btn :="props">
+          <v-btn h="full!" :="props">
             <VisualLogoGithub w="6" fill="currentColor" />
           </v-btn>
         </v-avatar>
