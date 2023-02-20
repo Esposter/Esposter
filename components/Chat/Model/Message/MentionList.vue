@@ -50,7 +50,7 @@ watch(
       <v-btn
         v-for="(item, index) in items"
         :key="item.id"
-        :class="{ button: index === selectedIndex }"
+        :style="{ backgroundColor: infoOpacity10 }"
         w="full"
         justify="start!"
         rd="1"
@@ -68,9 +68,3 @@ watch(
     </StyledCard>
   </div>
 </template>
-
-<style scoped lang="scss">
-.button {
-  background-color: v-bind(infoOpacity10);
-}
-</style>

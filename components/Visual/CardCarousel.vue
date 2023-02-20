@@ -206,7 +206,7 @@ watch(
     <div
       v-for="(card, index) in cards"
       :key="index"
-      :style="`z-index: ${cardIds.length - cardIds.indexOf(index)}`"
+      :style="{ zIndex: cardIds.length - cardIds.indexOf(index) }"
       :class="
         index === activeCardId
           ? 'active-card'
