@@ -83,7 +83,7 @@
     "gsap": "^3.11.4",
     "marked": "^4.2.12",
     "node-emoji": "^1.11.0",
-    "node-html-parser": "^6.1.4",
+    "node-html-parser": "^6.1.5",
     "openai": "^3.1.0",
     "pinia": "^2.0.31",
     "rate-limiter-flexible": "^2.4.1",
