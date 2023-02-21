@@ -9,7 +9,7 @@ const route = useRoute();
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, rooms, roomName, roomSearchQuery } = storeToRefs(roomStore);
-const roomExists = $computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
+const roomExists = computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
 currentRoomId.value = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomSearchQuery.value = "";
 
