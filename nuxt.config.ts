@@ -13,6 +13,14 @@ export default defineNuxtConfig({
       },
     },
   },
+  nitro: {
+    esbuild: {
+      options: {
+        // Set build target to esnext to allow top-level awaits in ts files
+        target: "esnext",
+      },
+    },
+  },
   build: {
     transpile: ["vuetify"],
   },

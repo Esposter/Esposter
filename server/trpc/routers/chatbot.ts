@@ -1,18 +1,19 @@
 import { router } from "@/server/trpc";
-import { rateLimitedProcedure } from "@/server/trpc/procedure";
-import { userSchema } from "@/server/trpc/routers/user";
-import { generateAIResponse } from "@/services/chatbot";
+import { authedProcedure } from "@/server/trpc/procedure";
+import { generateAIResponse } from "@/services/openai/chatbot";
+import { CHATBOT_PROMPT_MAX_LENGTH } from "@/utils/validation";
 import { z } from "zod";
 
 const inferSchema = z.object({
-  userId: userSchema.shape.id,
   prompt: z.string().min(1).max(CHATBOT_PROMPT_MAX_LENGTH),
   welcomeMessage: z.string().optional().default("Hello! How can I help you today?"),
 });
 export type InferInput = z.infer<typeof inferSchema>;
 
 export const chatbotRouter = router({
-  infer: rateLimitedProcedure
+  infer: authedProcedure
     .input(inferSchema)
-    .mutation(({ input: { userId, prompt, welcomeMessage } }) => generateAIResponse(userId, prompt, welcomeMessage)),
+    .mutation(({ input: { prompt, welcomeMessage }, ctx }) =>
+      generateAIResponse(ctx.session.user.id, prompt, welcomeMessage)
+    ),
 });
