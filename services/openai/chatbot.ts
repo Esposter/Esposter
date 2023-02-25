@@ -5,9 +5,9 @@ import { sanitiseText, streamToText } from "@/utils/text";
 import dedent from "dedent";
 
 const chatHistoryFileName = "ChatHistory.txt";
-const containerClient = await getContainerClient(AzureContainer.AIChatbot);
 
 export const getChatHistory = async (userId: string, AIName: string) => {
+  const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
   if (!(await blobClient.exists())) return "";
@@ -18,6 +18,7 @@ export const getChatHistory = async (userId: string, AIName: string) => {
 };
 
 export const appendChatHistory = async (userId: string, AIName: string, chatContent: string) => {
+  const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
   await append(blobClient, chatContent);
