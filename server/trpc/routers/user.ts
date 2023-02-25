@@ -2,11 +2,11 @@ import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
-import type { User as PrismaUser } from "@prisma/client";
+import type { User } from "@prisma/client";
 import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const userSchema: toZod<PrismaUser> = z.object({
+export const userSchema: toZod<User> = z.object({
   id: z.string().cuid(),
   name: z.string().max(USER_NAME_MAX_LENGTH).nullable(),
   email: z.string().nullable(),

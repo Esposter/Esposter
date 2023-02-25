@@ -4,11 +4,11 @@ import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { ROOM_NAME_MAX_LENGTH } from "@/utils/validation";
-import { Room as PrismaRoom, User } from "@prisma/client";
+import { Room, User } from "@prisma/client";
 import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const roomSchema: toZod<PrismaRoom> = z.object({
+export const roomSchema: toZod<Room> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
   image: z.string().nullable(),

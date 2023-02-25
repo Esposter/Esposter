@@ -5,11 +5,11 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
-import type { Post as PrismaPost } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const postSchema: toZod<PrismaPost> = z.object({
+export const postSchema: toZod<Post> = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
