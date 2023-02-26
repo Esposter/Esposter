@@ -2,7 +2,7 @@
 import { useLayoutStore } from "@/store/useLayoutStore";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
@@ -11,7 +11,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
     <ChatModelRoomTitle />
     <template #append>
       <ChatModelMemberCreateDialogButton />
-      <v-btn v-if="!rightDrawerOpenAuto" icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = true" />
+      <v-btn icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = !rightDrawerOpen" />
     </template>
   </v-toolbar>
 </template>

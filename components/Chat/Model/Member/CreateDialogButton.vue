@@ -19,7 +19,11 @@ const { copy, copied } = useClipboard({ source: inviteLink });
 <template>
   <v-dialog v-model="dialog" max-width="500">
     <template #activator>
-      <v-btn icon="mdi-account-plus" size="small" @click="dialog = true" />
+      <v-tooltip location="bottom" text="Add friends to Room">
+        <template #activator="{ props }">
+          <v-btn icon="mdi-account-plus" size="small" :="props" @click="dialog = true" />
+        </template>
+      </v-tooltip>
     </template>
     <v-card px="4!">
       <v-card-title px="0!">
