@@ -118,12 +118,10 @@ export const roomRouter = router({
     await prisma.roomsOnUsers.create({ data: { roomId: results[0].roomId, userId: ctx.session.user.id } });
     return true;
   }),
-  leaveRoom: getRoomUserProcedure(leaveRoomInputSchema, "roomId")
-    .input(leaveRoomInputSchema)
-    .mutation(async ({ input: { roomId }, ctx }) => {
-      await prisma.roomsOnUsers.delete({ where: { userId_roomId: { roomId, userId: ctx.session.user.id } } });
-      return true;
-    }),
+  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input: { roomId }, ctx }) => {
+    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { roomId, userId: ctx.session.user.id } } });
+    return true;
+  }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query<User[]>(async ({ input: { roomId, filter } }) => {
