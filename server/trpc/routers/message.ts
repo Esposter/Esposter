@@ -8,26 +8,19 @@ import { roomSchema } from "@/server/trpc/routers/room";
 import {
   createEntity,
   deleteEntity,
-  getMessagesPartitionKey,
-  getMessagesPartitionKeyFilter,
   getReverseTickedTimestamp,
   getTableClient,
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/message/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
   roomId: z.string().uuid(),
-  messages: z
-    .array(
-      messageSchema.pick({
-        rowKey: true,
-      })
-    )
-    .min(1),
+  messages: z.array(messageSchema.pick({ rowKey: true })).min(1),
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 

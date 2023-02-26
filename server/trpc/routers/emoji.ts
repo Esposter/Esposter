@@ -10,11 +10,11 @@ import {
   AZURE_MAX_PAGE_SIZE,
   createEntity,
   deleteEntity,
-  getMessagesPartitionKeyFilter,
   getTableClient,
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { getMessagesPartitionKeyFilter } from "@/services/message/table";
 import { now } from "@/utils/time";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";

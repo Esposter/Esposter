@@ -86,12 +86,6 @@ export const AZURE_SELF_DESTRUCT_TIMER_SMALL = "9".repeat(15);
 export const AZURE_MAX_BATCH_SIZE = 100;
 export const AZURE_MAX_PAGE_SIZE = 1000;
 
-export const getMessagesPartitionKey = (roomId: string, createdAt: Date) =>
-  `${roomId}-${getReverseTickedDay(createdAt)}`;
-
-export const getMessagesPartitionKeyFilter = (roomId: string) =>
-  `PartitionKey gt '${roomId}' and PartitionKey lt '${roomId}😆'`;
-
 export const getReverseTickedDay = (createdAt: Date) =>
   (BigInt(AZURE_SELF_DESTRUCT_TIMER_SMALL) - BigInt(dayjs(createdAt).format("YYYYMMDD"))).toString();
 

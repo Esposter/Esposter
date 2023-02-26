@@ -6,13 +6,8 @@ import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { roomSchema } from "@/server/trpc/routers/room";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  createEntity,
-  getMessagesPartitionKeyFilter,
-  getTableClient,
-  getTopNEntities,
-} from "@/services/azure/table";
+import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
+import { getMessagesPartitionKeyFilter } from "@/services/message/table";
 import { now } from "@/utils/time";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
