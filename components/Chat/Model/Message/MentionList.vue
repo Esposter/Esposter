@@ -64,7 +64,7 @@ watch(
           {{ item.name }}
         </span>
       </v-btn>
-      <span v-if="items.length === 0" font="bold">No result</span>
+      <div v-if="items.length === 0" p="2" text="center" font="bold">No result</div>
     </StyledCard>
   </div>
 </template>
