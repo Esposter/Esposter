@@ -4,23 +4,23 @@ import { useRoomStore } from "@/store/chat/useRoomStore";
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
-const { currentRoomId, roomName } = $(storeToRefs(roomStore));
-const currentRoomName = ref(roomName);
-let isUpdateMode = $ref(false);
+const { currentRoomId, roomName } = storeToRefs(roomStore);
+const currentRoomName = ref(roomName.value);
+const isUpdateMode = ref(false);
 const titleRef = ref<HTMLDivElement>();
-const titleHovered = $ref(false);
+const titleHovered = ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId || !currentRoomName.value || currentRoomName.value === roomName) return;
+    if (!currentRoomId.value || !currentRoomName.value || currentRoomName.value === roomName.value) return;
 
     const updatedRoom = await $client.room.updateRoom.mutate({
-      id: currentRoomId,
+      id: currentRoomId.value,
       name: currentRoomName.value,
     });
     if (updatedRoom) updateRoom(updatedRoom);
   } finally {
-    isUpdateMode = false;
-    currentRoomName.value = roomName;
+    isUpdateMode.value = false;
+    currentRoomName.value = roomName.value;
   }
 };
 

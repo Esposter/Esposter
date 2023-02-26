@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { User } from "@prisma/client";
 
-interface MessageListProps {
+interface MemberListProps {
   members: User[];
 }
 
-const props = defineProps<MessageListProps>();
+const props = defineProps<MemberListProps>();
 const { members } = $(toRefs(props));
 </script>
 

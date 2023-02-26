@@ -3,7 +3,7 @@ const slots = useSlots();
 </script>
 
 <template>
-  <v-btn class="button" un-color="#fff!">
+  <v-btn class="button" un-color="#fff!" case="normal!">
     <ClientOnly>
       <template v-for="(_, slot) of slots" #[slot]="scope">
         <slot :name="slot" :="{ ...scope }" />

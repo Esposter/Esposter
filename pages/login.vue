@@ -46,7 +46,7 @@ const providerProps = $ref<ProviderProps[]>([
       <EsposterProductList />
     </template>
     <v-container h="full" display="flex" justify="center" items="center">
-      <StyledCard width="400" max-width="100%">
+      <StyledCard width="500" max-width="100%">
         <v-container>
           <div class="text-h5" mb="1" text="center">Sign in to</div>
           <div mb="2" display="flex" justify="center" items="center">
