@@ -10,8 +10,6 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto
     <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     <ChatModelRoomTitle />
     <template #append>
-      <v-btn icon="mdi-phone" size="small" />
-      <v-btn icon="mdi-video" size="small" />
       <ChatModelMemberCreateDialogButton />
       <v-btn v-if="!rightDrawerOpenAuto" icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = true" />
     </template>
