@@ -160,7 +160,9 @@ export const roomRouter = router({
       while (results.length > 0) {
         // If the code already exists, generate a new code and check again
         inviteCode = generateCode(6);
-        results = await getTopNEntities(tableClient, 1, InviteCodeEntity, { filter: odata`RowKey eq ${inviteCode}` });
+        results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+          filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode}`,
+        });
       }
 
       await createEntity(tableClient, {
