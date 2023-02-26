@@ -4,7 +4,13 @@ import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
-import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
+import {
+  AZURE_MAX_PAGE_SIZE,
+  createEntity,
+  deleteEntity,
+  getTableClient,
+  getTopNEntities,
+} from "@/services/azure/table";
 import { inviteCodePartitionKey } from "@/services/room/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
@@ -115,7 +121,9 @@ export const roomRouter = router({
     });
     if (invites.length === 0) return false;
 
-    await prisma.roomsOnUsers.create({ data: { roomId: invites[0].roomId, userId: ctx.session.user.id } });
+    const invite = invites[0];
+    await prisma.roomsOnUsers.create({ data: { roomId: invite.roomId, userId: ctx.session.user.id } });
+    await deleteEntity(tableClient, invite.partitionKey, invite.rowKey);
     return true;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input: { roomId }, ctx }) => {
