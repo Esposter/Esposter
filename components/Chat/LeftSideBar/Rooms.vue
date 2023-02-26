@@ -11,7 +11,7 @@ const readMoreRooms = await useReadRooms();
   <ChatModelRoomList :rooms="rooms" :has-more="hasMore" :read-more-rooms="readMoreRooms">
     <template #prepend>
       <v-list-item font="bold">
-        DIRECT MESSAGES
+        Rooms
         <template #append>
           <ChatModelRoomCreateButton />
         </template>

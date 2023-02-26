@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { VCard } from "vuetify/components";
 
-interface StyledDeleteProps {
+interface StyledDeleteDialogProps {
   cardProps?: InstanceType<typeof VCard>["$props"];
 }
 
-const props = defineProps<StyledDeleteProps>();
+const props = defineProps<StyledDeleteDialogProps>();
 const { cardProps } = toRefs(props);
 const emit = defineEmits<{
   (event: "delete", onComplete: () => void): void;

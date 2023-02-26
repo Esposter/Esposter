@@ -29,13 +29,23 @@ const active = $computed(() => room.id === currentRoomId);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <ChatModelRoomDeleteButton
-      v-show="isHovering"
-      position="absolute"
-      top="1/2"
-      right="0"
-      translate-y="-1/2"
-      :room-id="room.id"
-    />
+    <ChatModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.creatorId">
+      <template #default="{ updateDeleteMode, tooltipProps }">
+        <v-btn
+          v-show="isHovering"
+          position="absolute"
+          top="1/2"
+          right="0"
+          translate-y="-1/2"
+          bg="transparent!"
+          icon="mdi-close"
+          variant="plain"
+          size="small"
+          :ripple="false"
+          :="tooltipProps"
+          @click="updateDeleteMode(true)"
+        />
+      </template>
+    </ChatModelRoomConfirmDeleteDialog>
   </div>
 </template>
