@@ -15,7 +15,9 @@ const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 const onDeleteRoom = async () => {
   deleteRoom(roomId.value);
-  await $client.room.deleteRoom.mutate(roomId.value);
+  isCreator.value
+    ? await $client.room.deleteRoom.mutate(roomId.value)
+    : await $client.room.leaveRoom.mutate(roomId.value);
 };
 </script>
 

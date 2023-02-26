@@ -34,10 +34,10 @@ export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 const deleteRoomInputSchema = roomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
-const joinRoomInputSchema = z.object({ inviteCode: inviteCodeSchema.shape.rowKey });
+const joinRoomInputSchema = inviteCodeSchema.shape.rowKey;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 
-const leaveRoomInputSchema = z.object({ roomId: roomSchema.shape.id });
+const leaveRoomInputSchema = roomSchema.shape.id;
 export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
@@ -102,11 +102,11 @@ export const roomRouter = router({
       return false;
     }
   }),
-  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input: { inviteCode }, ctx }) => {
+  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
     const tableClient = await getTableClient(AzureTable.Invites);
     const now = new Date();
     const invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
-      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode} and expiredAt lt ${now.toISOString()}`,
+      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${input} and expiredAt lt ${now.toISOString()}`,
     });
     if (invites.length === 0) return false;
 
@@ -115,8 +115,8 @@ export const roomRouter = router({
     await deleteEntity(tableClient, invite.partitionKey, invite.rowKey);
     return true;
   }),
-  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input: { roomId }, ctx }) => {
-    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { roomId, userId: ctx.session.user.id } } });
+  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input, ctx }) => {
+    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { roomId: input, userId: ctx.session.user.id } } });
     return true;
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
