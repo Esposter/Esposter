@@ -51,10 +51,10 @@ export const replyRouter = router({
     .mutation(async ({ input }) => {
       try {
         const client = await getTableClient(AzureTable.MessagesMetadata);
-        const foundReplies = await getTopNEntities(client, 1, MessageReplyMetadataEntity, {
+        const replies = await getTopNEntities(client, 1, MessageReplyMetadataEntity, {
           filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.Reply} and messageRowKey eq ${input.messageRowKey} and messageReplyRowKey eq ${input.messageReplyRowKey}`,
         });
-        if (foundReplies.length > 0) return null;
+        if (replies.length > 0) return null;
 
         const newReply: MessageReplyMetadataEntity = {
           partitionKey: input.partitionKey,

@@ -110,12 +110,12 @@ export const roomRouter = router({
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input: { inviteCode }, ctx }) => {
     const tableClient = await getTableClient(AzureTable.Invites);
     const now = new Date();
-    const results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+    const invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
       filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode} and expiredAt lt ${now.toISOString()}`,
     });
-    if (results.length === 0) return false;
+    if (invites.length === 0) return false;
 
-    await prisma.roomsOnUsers.create({ data: { roomId: results[0].roomId, userId: ctx.session.user.id } });
+    await prisma.roomsOnUsers.create({ data: { roomId: invites[0].roomId, userId: ctx.session.user.id } });
     return true;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input: { roomId }, ctx }) => {
