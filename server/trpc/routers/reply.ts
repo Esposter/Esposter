@@ -1,11 +1,11 @@
 import { MessageMetadataType } from "@/models/azure/message/metadata";
 import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/azure/message/reply";
+import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
 import { replyEventEmitter } from "@/models/events/reply";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { roomSchema } from "@/server/trpc/routers/room";
 import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getMessagesPartitionKeyFilter } from "@/services/message/table";
 import { now } from "@/utils/time";

@@ -10,8 +10,5 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
 }
 
 export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = messageMetadataSchema.merge(
-  z.object({
-    emojiTag: z.string(),
-    userIds: z.array(userSchema.shape.id),
-  })
+  z.object({ emojiTag: z.string(), userIds: z.array(userSchema.shape.id) })
 );

@@ -7,7 +7,4 @@ export class FileEntity {
   mimetype!: string;
 }
 
-export const fileSchema: toZod<FileEntity> = z.object({
-  url: z.string(),
-  mimetype: z.string(),
-});
+export const fileSchema: toZod<FileEntity> = z.object({ url: z.string(), mimetype: z.string() });

@@ -1,5 +1,5 @@
 import { CompositeKeyEntity } from "@/models/azure";
-import { roomSchema } from "@/server/trpc/routers/room";
+import { roomSchema } from "@/models/azure/room";
 import { userSchema } from "@/server/trpc/routers/user";
 import type { toZod } from "tozod";
 import { z } from "zod";

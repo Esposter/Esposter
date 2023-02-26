@@ -1,11 +1,11 @@
 import { MessageEmojiMetadataEntity, messageEmojiMetadataSchema } from "@/models/azure/message/emoji";
 import { MessageMetadataType } from "@/models/azure/message/metadata";
+import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/events/emoji";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { roomSchema } from "@/server/trpc/routers/room";
 import {
   AZURE_MAX_PAGE_SIZE,
   createEntity,

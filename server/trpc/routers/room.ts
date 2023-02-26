@@ -1,4 +1,5 @@
-import { InviteCodeEntity, inviteCodeSchema } from "@/models/azure/message/inviteCode";
+import { roomSchema } from "@/models/azure/room";
+import { InviteCodeEntity, inviteCodeSchema } from "@/models/azure/room/inviteCode";
 import { AzureTable } from "@/models/azure/table";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
@@ -14,21 +15,9 @@ import {
 import { inviteCodePartitionKey } from "@/services/room/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
-import { ROOM_NAME_MAX_LENGTH } from "@/utils/validation";
 import { odata } from "@azure/data-tables";
-import { Room, User } from "@prisma/client";
-import type { toZod } from "tozod";
+import { User } from "@prisma/client";
 import { z } from "zod";
-
-export const roomSchema: toZod<Room> = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
-  image: z.string().nullable(),
-  creatorId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
-});
 
 const readRoomInputSchema = roomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;

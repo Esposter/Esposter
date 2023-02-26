@@ -1,10 +1,10 @@
 import type { CompositeKey } from "@/models/azure";
 import { MessageEntity, messageSchema } from "@/models/azure/message";
+import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/events/message";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
-import { roomSchema } from "@/server/trpc/routers/room";
 import {
   createEntity,
   deleteEntity,
