@@ -3,15 +3,9 @@ import { InviteCodeEntity, inviteCodeSchema } from "@/models/azure/room/inviteCo
 import { AzureTable } from "@/models/azure/table";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
-import { authedProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
+import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { userSchema } from "@/server/trpc/routers/user";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  createEntity,
-  deleteEntity,
-  getTableClient,
-  getTopNEntities,
-} from "@/services/azure/table";
+import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { inviteCodePartitionKey } from "@/services/room/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
@@ -104,19 +98,17 @@ export const roomRouter = router({
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
     const tableClient = await getTableClient(AzureTable.Invites);
-    const now = new Date();
     const invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
-      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${input} and expiredAt lt ${now.toISOString()}`,
+      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${input}`,
     });
     if (invites.length === 0) return false;
 
     const invite = invites[0];
-    await prisma.roomsOnUsers.create({ data: { roomId: invite.roomId, userId: ctx.session.user.id } });
-    await deleteEntity(tableClient, invite.partitionKey, invite.rowKey);
+    await prisma.roomsOnUsers.create({ data: { userId: ctx.session.user.id, roomId: invite.roomId } });
     return true;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input, ctx }) => {
-    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { roomId: input, userId: ctx.session.user.id } } });
+    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { userId: ctx.session.user.id, roomId: input } } });
     return true;
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
@@ -134,40 +126,36 @@ export const roomRouter = router({
       const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });
       return payload.count;
     }),
-  generateInviteCode: getRoomUserProcedure(generateInviteCodeInputSchema, "roomId")
+  generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)
-    .mutation(async ({ input: { roomId }, ctx }) => {
+    .mutation(async ({ input: { roomId } }) => {
       const tableClient = await getTableClient(AzureTable.Invites);
-
-      // Delete expired invite codes
-      const now = new Date();
-      const expiredResults = await getTopNEntities(tableClient, AZURE_MAX_PAGE_SIZE, InviteCodeEntity, {
-        filter: odata`PartitionKey eq ${inviteCodePartitionKey} and expiredAt lt ${now.toISOString()}`,
+      // We only allow one invite code per room
+      // So let's return the code to the user if it exists
+      let invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+        filter: odata`PartitionKey eq ${inviteCodePartitionKey} and roomId eq ${roomId}`,
       });
-      for (const { partitionKey, rowKey } of expiredResults) await tableClient.deleteEntity(partitionKey, rowKey);
+      if (invites.length > 0) return invites[0].rowKey;
 
-      let inviteCode = generateCode(6);
-      // Check if the invite code already exists in the table
-      let results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+      // Generate non-colliding invite code
+      let inviteCode = generateCode(8);
+      invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
         filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode}`,
       });
 
-      while (results.length > 0) {
-        // If the code already exists, generate a new code and check again
-        inviteCode = generateCode(6);
-        results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+      while (invites.length > 0) {
+        inviteCode = generateCode(8);
+        invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
           filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode}`,
         });
       }
 
+      const now = new Date();
       await createEntity<InviteCodeEntity>(tableClient, {
         partitionKey: inviteCodePartitionKey,
         rowKey: inviteCode,
-        creatorId: ctx.session.user.id,
         roomId,
         createdAt: now,
-        // Expire 1 day from now
-        expiredAt: new Date(now.getTime() + 24 * 60 * 60 * 1000),
       });
 
       return inviteCode;

@@ -20,10 +20,26 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schem
     const roomId = value.match(UUID_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const roomOnUser = await prisma.roomsOnUsers.exists({
-      userId: ctx.session.user.id,
-      roomId,
-    });
-    if (!roomOnUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+    const isMember = await prisma.roomsOnUsers.exists({ userId: ctx.session.user.id, roomId });
+    if (!isMember) throw new TRPCError({ code: "UNAUTHORIZED" });
+    return next();
+  });
+
+export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
+  schema: T,
+  key: keyof T["shape"] & string
+) =>
+  authedProcedure.use(async ({ ctx, rawInput, next }) => {
+    const result = schema.safeParse(rawInput);
+    if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
+
+    const value = result.data[key];
+    if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
+
+    const roomId = value.match(UUID_REGEX)?.[0];
+    if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
+
+    const isOwner = await prisma.room.exists({ id: roomId, creatorId: ctx.session.user.id });
+    if (!isOwner) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });
