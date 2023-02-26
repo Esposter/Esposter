@@ -154,7 +154,7 @@ export const roomRouter = router({
       let inviteCode = generateCode(6);
       // Check if the invite code already exists in the table
       let results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
-        filter: odata`PartitionKey eq ${inviteCodePartitionKey} and roomId eq ${roomId}`,
+        filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode}`,
       });
 
       while (results.length > 0) {
@@ -165,11 +165,11 @@ export const roomRouter = router({
         });
       }
 
-      await createEntity(tableClient, {
+      await createEntity<InviteCodeEntity>(tableClient, {
         partitionKey: inviteCodePartitionKey,
         rowKey: inviteCode,
         creatorId: ctx.session.user.id,
-        numUses: 0,
+        roomId,
         createdAt: now,
         // Expire 1 day from now
         expiredAt: new Date(now.getTime() + 24 * 60 * 60 * 1000),
