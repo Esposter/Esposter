@@ -6,6 +6,7 @@ export const RoutePath = {
   Login: "/login",
   Messages: (id: string) => `/messages/${id}`,
   MessagesIndex: "/messages",
+  MessagesGg: (inviteCode: string) => `/messages/gg/${inviteCode}`,
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "https://www.termsfeed.com/live/367522f3-27be-4faa-a7bd-dda7b419a8fc",

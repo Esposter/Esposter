@@ -1,16 +1,25 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router";
 import { useRoomStore } from "@/store/chat/useRoomStore";
 
 const roomStore = useRoomStore();
-const { roomName } = storeToRefs(roomStore);
-const inviteCode = ref("");
-const { copy, copied } = useClipboard({ source: inviteCode });
+const { currentRoomId, roomName } = storeToRefs(roomStore);
+const config = useRuntimeConfig();
+const { $client } = useNuxtApp();
+const dialog = ref(false);
+const inviteCode = ref(
+  currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : ""
+);
+const inviteLink = computed(() =>
+  inviteCode.value ? `${config.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : ""
+);
+const { copy, copied } = useClipboard({ source: inviteLink });
 </script>
 
 <template>
-  <v-dialog max-width="500">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-account-plus" size="small" :="props" />
+  <v-dialog v-model="dialog" max-width="500">
+    <template #activator>
+      <v-btn icon="mdi-account-plus" size="small" @click="dialog = true" />
     </template>
     <v-card px="4!">
       <v-card-title px="0!">
@@ -18,10 +27,10 @@ const { copy, copied } = useClipboard({ source: inviteCode });
       </v-card-title>
       <v-card-text px="0!">
         <div mb="2">Send a room invite link to a friend</div>
-        <v-text-field v-model="inviteCode" variant="filled" readonly hide-details>
+        <v-text-field v-model="inviteLink" variant="filled" readonly hide-details>
           <template #append-inner>
             <v-btn v-if="copied" w="20" case="normal!" color="primary">Copied</v-btn>
-            <StyledButton v-else w="20" @click="copy(inviteCode)">Copy</StyledButton>
+            <StyledButton v-else w="20" @click="copy(inviteLink)">Copy</StyledButton>
           </template>
         </v-text-field>
       </v-card-text>
