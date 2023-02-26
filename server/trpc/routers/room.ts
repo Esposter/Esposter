@@ -111,7 +111,7 @@ export const roomRouter = router({
     const tableClient = await getTableClient(AzureTable.Invites);
     const now = new Date();
     const results = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
-      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey lt ${inviteCode} and expiredAt lt ${now.toISOString()}`,
+      filter: odata`PartitionKey eq ${inviteCodePartitionKey} and RowKey eq ${inviteCode} and expiredAt lt ${now.toISOString()}`,
     });
     if (results.length === 0) return false;
 
