@@ -89,7 +89,7 @@
     "rate-limiter-flexible": "^2.4.1",
     "reflect-metadata": "^0.1.13",
     "superjson": "^1.12.2",
-    "three": "^0.150.0",
+    "three": "^0.150.1",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.7.0",
     "uuid": "^9.0.0",
