@@ -1,6 +1,6 @@
 import { BuildingWithStats, Target } from "@/models/clicker";
-import { useBuildingStore } from "@/store/clicker/useBuildingStore";
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useBuildingStore } from "@/store/clicker/building";
+import { useGameStore } from "@/store/clicker/game";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingStatsTimer = () => {

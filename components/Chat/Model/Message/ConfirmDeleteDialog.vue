@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
 import type { DeleteMessageInput } from "@/server/trpc/routers/message";
-import { useMessageStore } from "@/store/chat/useMessageStore";
+import { useMessageStore } from "@/store/chat/message";
 
 interface ConfirmDeleteMessageDialogProps {
   message: MessageEntity;

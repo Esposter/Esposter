@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useGameStore } from "@/store/clicker/game";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));

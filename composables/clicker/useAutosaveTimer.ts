@@ -1,4 +1,4 @@
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useGameStore } from "@/store/clicker/game";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useAutosaveTimer = () => {

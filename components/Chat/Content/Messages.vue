@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMessageStore } from "@/store/chat/useMessageStore";
+import { useMessageStore } from "@/store/chat/message";
 
 const messageStore = useMessageStore();
 const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));

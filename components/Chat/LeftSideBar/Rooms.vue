@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 
 const roomStore = useRoomStore();
 const { rooms, roomListNextCursor } = $(storeToRefs(roomStore));

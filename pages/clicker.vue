@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useGameStore } from "@/store/clicker/game";
 
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));

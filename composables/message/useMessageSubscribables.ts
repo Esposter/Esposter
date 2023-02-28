@@ -1,5 +1,5 @@
-import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useMessageStore } from "@/store/chat/message";
+import { useRoomStore } from "@/store/chat/room";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 export const useMessageSubscribables = () => {

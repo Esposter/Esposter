@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
 import { mentionExtension, refreshMentions } from "@/services/message/mention";
-import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useMessageStore } from "@/store/chat/message";
+import { useRoomStore } from "@/store/chat/room";
 import { Editor } from "@tiptap/core";
 import { Extension } from "@tiptap/vue-3";
 

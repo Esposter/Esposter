@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PostWithRelations } from "@/prisma/types";
-import { useLikeStore } from "@/store/post/useLikeStore";
+import { useLikeStore } from "@/store/post/like";
 
 interface PostLikeSectionProps {
   post: PostWithRelations;

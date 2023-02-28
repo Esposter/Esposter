@@ -1,19 +1,19 @@
-import { usePostStore } from "@/store/post/usePostStore";
+import { usePostStore } from "@/store/post";
 import type { Like, Prisma } from "@prisma/client";
 
 export const useLikeStore = defineStore("post/like", () => {
   const postStore = usePostStore();
-  const { readPost } = postStore;
+  const { postList } = storeToRefs(postStore);
 
   const createLike = (newLike: Like) => {
-    const post = readPost(newLike.postId);
+    const post = postList.value.find((p) => p.id === newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
     post.noLikes += newLike.value;
   };
   const updateLike = (updatedLike: Like) => {
-    const post = readPost(updatedLike.postId);
+    const post = postList.value.find((p) => p.id === updatedLike.postId);
     if (!post) return;
 
     const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
@@ -23,7 +23,7 @@ export const useLikeStore = defineStore("post/like", () => {
     }
   };
   const deleteLike = (id: Prisma.LikeUserIdPostIdCompoundUniqueInput) => {
-    const post = readPost(id.postId);
+    const post = postList.value.find((p) => p.id === id.postId);
     if (!post) return;
 
     const like = post.likes.find((l) => l.userId === id.userId && l.postId === id.postId);

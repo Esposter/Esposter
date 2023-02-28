@@ -1,8 +1,8 @@
 import type { Building, BuildingWithStats } from "@/models/clicker";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker";
 import { formatNumberLong } from "@/services/clicker/format";
-import { useGameStore } from "@/store/clicker/useGameStore";
-import { usePointStore } from "@/store/clicker/usePointStore";
+import { useGameStore } from "@/store/clicker/game";
+import { usePointStore } from "@/store/clicker/point";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();

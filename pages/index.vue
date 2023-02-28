@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePostStore } from "@/store/post/usePostStore";
+import { usePostStore } from "@/store/post";
 
 const postStore = usePostStore();
 const { postList, postListNextCursor } = $(storeToRefs(postStore));

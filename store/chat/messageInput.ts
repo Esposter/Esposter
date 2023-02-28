@@ -1,4 +1,4 @@
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 
 export const useMessageInputStore = defineStore("chat/messageInput", () => {
   const roomStore = useRoomStore();

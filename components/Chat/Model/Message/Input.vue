@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { mentionExtension } from "@/services/message/mention";
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
-import { useMessageStore } from "@/store/chat/useMessageStore";
+import { useMessageStore } from "@/store/chat/message";
+import { useMessageInputStore } from "@/store/chat/messageInput";
 import { Extension } from "@tiptap/vue-3";
 
 const messageInputStore = useMessageInputStore();

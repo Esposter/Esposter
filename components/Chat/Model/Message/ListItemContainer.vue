@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
-import { useMemberStore } from "@/store/chat/useMemberStore";
+import { useMemberStore } from "@/store/chat/member";
 
 interface MessageListItemContainerProps {
   currentMessage: MessageEntity;

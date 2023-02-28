@@ -1,4 +1,4 @@
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useGameStore } from "@/store/clicker/game";
 
 export const usePointStore = defineStore("clicker/point", () => {
   const gameStore = useGameStore();

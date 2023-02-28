@@ -1,8 +1,8 @@
 import type { AzureUpdateEntity } from "@/models/azure";
 import type { MessageEntity } from "@/models/azure/message";
 import type { CreateMessageInput, DeleteMessageInput } from "@/server/trpc/routers/message";
-import { useMessageInputStore } from "@/store/chat/useMessageInputStore";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useMessageInputStore } from "@/store/chat/messageInput";
+import { useRoomStore } from "@/store/chat/room";
 import type { Editor } from "@tiptap/core";
 
 export const useMessageStore = defineStore("chat/message", () => {

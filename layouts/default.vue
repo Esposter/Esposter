@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/useLayoutStore";
+import { useLayoutStore } from "@/store/layout";
 import type { CSSProperties } from "vue";
 import { useDisplay } from "vuetify";
 

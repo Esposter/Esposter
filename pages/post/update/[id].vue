@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PostUpsertFormProps } from "@/components/Post/UpsertForm.vue";
 import { RoutePath } from "@/models/router";
-import { usePostStore } from "@/store/post/usePostStore";
+import { usePostStore } from "@/store/post";
 import { SubmitEventPromise } from "vuetify";
 
 definePageMeta({ middleware: "auth" });

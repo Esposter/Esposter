@@ -1,5 +1,5 @@
-import { useBuildingStore } from "@/store/clicker/useBuildingStore";
-import { usePointStore } from "@/store/clicker/usePointStore";
+import { useBuildingStore } from "@/store/clicker/building";
+import { usePointStore } from "@/store/clicker/point";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingClickerTimer = () => {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const roomStore = useRoomStore();

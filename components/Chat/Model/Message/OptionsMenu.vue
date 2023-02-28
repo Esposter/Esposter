@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/azure/message";
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
-import { useEmojiStore } from "@/store/chat/useEmojiStore";
+import { useEmojiStore } from "@/store/chat/emoji";
 // eslint-disable-next-line import/default
 import nodeEmoji from "node-emoji";
 import { mergeProps } from "vue";

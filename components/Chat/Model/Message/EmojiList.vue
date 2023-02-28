@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
-import { useEmojiStore } from "@/store/chat/useEmojiStore";
+import { useEmojiStore } from "@/store/chat/emoji";
 // @NOTE: ES Module issue
 // eslint-disable-next-line import/default
 import nodeEmoji from "node-emoji";

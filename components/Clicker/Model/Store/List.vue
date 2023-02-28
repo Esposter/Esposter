@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useBuildingStore } from "@/store/clicker/useBuildingStore";
-import { useGameStore } from "@/store/clicker/useGameStore";
-import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
+import { useBuildingStore } from "@/store/clicker/building";
+import { useGameStore } from "@/store/clicker/game";
+import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 const { $client } = useNuxtApp();
 const gameStore = useGameStore();

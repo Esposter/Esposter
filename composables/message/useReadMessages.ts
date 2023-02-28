@@ -1,6 +1,6 @@
-import { useEmojiStore } from "@/store/chat/useEmojiStore";
-import { useMessageStore } from "@/store/chat/useMessageStore";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useEmojiStore } from "@/store/chat/emoji";
+import { useMessageStore } from "@/store/chat/message";
+import { useRoomStore } from "@/store/chat/room";
 
 export const useReadMessages = async () => {
   const { $client } = useNuxtApp();

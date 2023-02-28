@@ -1,6 +1,6 @@
 import type { MessageEmojiMetadataEntity } from "@/models/azure/message/emoji";
 import type { DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 
 export const useEmojiStore = defineStore("chat/emoji", () => {
   const roomStore = useRoomStore();

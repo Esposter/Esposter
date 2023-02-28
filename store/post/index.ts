@@ -1,6 +1,6 @@
 import type { PostWithRelations } from "@/prisma/types";
 
-export const usePostStore = defineStore("post/post", () => {
+export const usePostStore = defineStore("post", () => {
   const postList = ref<PostWithRelations[]>([]);
   const pushPostList = (posts: PostWithRelations[]) => postList.value.push(...posts);
 
@@ -12,7 +12,6 @@ export const usePostStore = defineStore("post/post", () => {
   const initialisePostList = (posts: PostWithRelations[]) => {
     postList.value = posts;
   };
-  const readPost = (id: string) => postList.value.find((p) => p.id === id);
   const createPost = (newPost: PostWithRelations) => {
     postList.value.push(newPost);
   };
@@ -30,7 +29,6 @@ export const usePostStore = defineStore("post/post", () => {
     postListNextCursor,
     updatePostListNextCursor,
     initialisePostList,
-    readPost,
     createPost,
     updatePost,
     deletePost,

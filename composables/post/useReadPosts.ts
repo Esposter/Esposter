@@ -1,4 +1,4 @@
-import { usePostStore } from "@/store/post/usePostStore";
+import { usePostStore } from "@/store/post";
 
 export const useReadPosts = async () => {
   const { $client } = useNuxtApp();

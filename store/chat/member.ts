@@ -1,4 +1,4 @@
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 import type { User } from "@prisma/client";
 
 export const useMemberStore = defineStore("chat/member", () => {

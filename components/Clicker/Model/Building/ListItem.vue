@@ -2,8 +2,8 @@
 import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Building } from "@/models/clicker";
 import { ItemType } from "@/models/clicker";
-import { useBuildingStore } from "@/store/clicker/useBuildingStore";
-import { useGameStore } from "@/store/clicker/useGameStore";
+import { useBuildingStore } from "@/store/clicker/building";
+import { useGameStore } from "@/store/clicker/game";
 import { marked } from "marked";
 
 interface BuildingListItemProps {

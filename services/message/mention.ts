@@ -1,5 +1,5 @@
 import { suggestion } from "@/services/message/suggestion";
-import { useMemberStore } from "@/store/chat/useMemberStore";
+import { useMemberStore } from "@/store/chat/member";
 import Mention from "@tiptap/extension-mention";
 import { parse } from "node-html-parser";
 

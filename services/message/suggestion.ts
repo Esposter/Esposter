@@ -1,5 +1,5 @@
 import MentionList from "@/components/Chat/Model/Message/MentionList.vue";
-import { useRoomStore } from "@/store/chat/useRoomStore";
+import { useRoomStore } from "@/store/chat/room";
 import { MentionOptions } from "@tiptap/extension-mention";
 import { VueRenderer } from "@tiptap/vue-3";
 import type { Instance } from "tippy.js";

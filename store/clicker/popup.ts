@@ -1,6 +1,6 @@
 import type { PointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
-import { useMouseStore } from "@/store/clicker/useMouseStore";
-import { usePointStore } from "@/store/clicker/usePointStore";
+import { useMouseStore } from "@/store/clicker/mouse";
+import { usePointStore } from "@/store/clicker/point";
 import { v4 as uuidv4 } from "uuid";
 
 export const usePopupStore = defineStore("clicker/popup", () => {

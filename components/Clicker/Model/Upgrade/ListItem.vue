@@ -2,8 +2,8 @@
 import buySfx from "@/assets/clicker/sound/buy.mp3";
 import type { Upgrade } from "@/models/clicker";
 import { ItemType } from "@/models/clicker";
-import { useGameStore } from "@/store/clicker/useGameStore";
-import { useUpgradeStore } from "@/store/clicker/useUpgradeStore";
+import { useGameStore } from "@/store/clicker/game";
+import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface UpgradeListItemProps {
   upgrade: Upgrade;

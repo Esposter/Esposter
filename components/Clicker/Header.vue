@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/useLayoutStore";
+import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = $(toRefs(layoutStore));
