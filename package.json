@@ -85,7 +85,7 @@
     "node-emoji": "^1.11.0",
     "node-html-parser": "^6.1.5",
     "openai": "^3.2.1",
-    "pinia": "^2.0.32",
+    "pinia": "^2.0.33",
     "rate-limiter-flexible": "^2.4.1",
     "reflect-metadata": "^0.1.13",
     "superjson": "^1.12.2",
