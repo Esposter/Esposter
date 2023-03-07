@@ -3,7 +3,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { postSchema } from "@/server/trpc/routers/post";
 import { userSchema } from "@/server/trpc/routers/user";
-import { ranking } from "@/services/post";
+import { ranking } from "@/services/post/ranking";
 import type { Like, Prisma } from "@prisma/client";
 import { z } from "zod";
 

@@ -2,7 +2,7 @@ import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
-import { ranking } from "@/services/post";
+import { ranking } from "@/services/post/ranking";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
 import type { Post } from "@prisma/client";
