@@ -6,10 +6,9 @@ import { ranking } from "@/services/post";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
 import type { Post } from "@prisma/client";
-import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const postSchema: toZod<Post> = z.object({
+export const postSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
@@ -23,7 +22,7 @@ export const postSchema: toZod<Post> = z.object({
   updated: z.boolean(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-});
+}) satisfies z.ZodType<Post>;
 
 const readPostInputSchema = postSchema.shape.id.optional();
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

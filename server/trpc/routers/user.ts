@@ -3,10 +3,9 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
 import type { User } from "@prisma/client";
-import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const userSchema: toZod<User> = z.object({
+export const userSchema = z.object({
   id: z.string().cuid(),
   name: z.string().max(USER_NAME_MAX_LENGTH).nullable(),
   email: z.string().nullable(),
@@ -15,7 +14,7 @@ export const userSchema: toZod<User> = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-});
+}) satisfies z.ZodType<User>;
 
 const readUserInputSchema = userSchema.shape.id.optional();
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;

@@ -4,7 +4,6 @@ import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
 // @NOTE: Fix class-transformer when decorator gets supported in nuxt 3
 // import { Type } from "class-transformer";
 import { userSchema } from "@/server/trpc/routers/user";
-import type { toZod } from "tozod";
 import { z } from "zod";
 
 export class MessageEntity extends CompositeKeyEntity {
@@ -18,7 +17,7 @@ export class MessageEntity extends CompositeKeyEntity {
   createdAt!: Date;
 }
 
-export const messageSchema: toZod<MessageEntity> = z.object({
+export const messageSchema = z.object({
   // ${roomId}-${createdAt.format("yyyyMMdd")}
   partitionKey: z.string(),
   // reverse-ticked timestamp
@@ -27,4 +26,4 @@ export const messageSchema: toZod<MessageEntity> = z.object({
   message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
   files: z.array(fileSchema),
   createdAt: z.date(),
-});
+}) satisfies z.ZodType<MessageEntity>;

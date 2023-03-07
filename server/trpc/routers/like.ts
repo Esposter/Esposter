@@ -5,10 +5,9 @@ import { postSchema } from "@/server/trpc/routers/post";
 import { userSchema } from "@/server/trpc/routers/user";
 import { ranking } from "@/services/post";
 import type { Like, Prisma } from "@prisma/client";
-import type { toZod } from "tozod";
 import { z } from "zod";
 
-export const likeSchema: toZod<Like> = z.object({
+export const likeSchema = z.object({
   userId: userSchema.shape.id,
   postId: postSchema.shape.id,
   value: z
@@ -19,7 +18,7 @@ export const likeSchema: toZod<Like> = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
-});
+}) satisfies z.ZodType<Like>;
 
 const createLikeInputSchema = likeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;

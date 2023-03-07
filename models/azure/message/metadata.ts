@@ -13,11 +13,9 @@ export class MessageMetadataEntity extends CompositeKeyEntity {
   type!: MessageMetadataType;
 }
 
-// @NOTE: Add strict type, toZod<MessageMetadataEntity>
-// once toZod supports native enums
 export const messageMetadataSchema = z.object({
   partitionKey: messageSchema.shape.partitionKey,
   rowKey: z.string(),
   messageRowKey: messageSchema.shape.rowKey,
   type: z.nativeEnum(MessageMetadataType),
-});
+}) satisfies z.ZodType<MessageMetadataEntity>;

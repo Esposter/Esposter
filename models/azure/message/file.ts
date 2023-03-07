@@ -1,4 +1,3 @@
-import type { toZod } from "tozod";
 import { z } from "zod";
 
 export class FileEntity {
@@ -7,4 +6,4 @@ export class FileEntity {
   mimetype!: string;
 }
 
-export const fileSchema: toZod<FileEntity> = z.object({ url: z.string(), mimetype: z.string() });
+export const fileSchema = z.object({ url: z.string(), mimetype: z.string() }) satisfies z.ZodType<FileEntity>;

@@ -1,6 +1,5 @@
 import { MessageMetadataEntity, messageMetadataSchema } from "@/models/azure/message/metadata";
 import { userSchema } from "@/server/trpc/routers/user";
-import type { toZod } from "tozod";
 import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
@@ -9,6 +8,6 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
   userIds!: string[];
 }
 
-export const messageEmojiMetadataSchema: toZod<MessageEmojiMetadataEntity> = messageMetadataSchema.merge(
+export const messageEmojiMetadataSchema = messageMetadataSchema.merge(
   z.object({ emojiTag: z.string(), userIds: z.array(userSchema.shape.id) })
-);
+) satisfies z.ZodType<MessageEmojiMetadataEntity>;
