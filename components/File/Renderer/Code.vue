@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/file";
-import { extendedLanguages } from "@/models/file/code";
+import type { FileRendererProps } from "@/models/file/FileRendererProps";
+import { extendedLanguages } from "@/models/file/LanguageRegexSupportPatternMap";
 import { Compartment } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";

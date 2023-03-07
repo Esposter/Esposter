@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/file";
-import { typeRendererMap } from "@/models/file";
+import type { FileRendererProps } from "@/models/file/FileRendererProps";
+import { TypeRendererMap } from "@/models/file/TypeRendererMap";
 import { getLanguageForFileUrl } from "@/services/file/code";
 import type { Component } from "vue";
 
@@ -11,7 +11,7 @@ const defaultRenderer = defineAsyncComponent(() => import("@/components/File/Ren
 const rendererProps = $ref<FileRendererProps & Record<string, string>>({ url, mimetype });
 const renderer = $computed<Component>(() => {
   const result =
-    typeRendererMap[mimetype] || typeRendererMap[mimetype.substring(0, mimetype.indexOf("/"))] || defaultRenderer;
+    TypeRendererMap[mimetype] || TypeRendererMap[mimetype.substring(0, mimetype.indexOf("/"))] || defaultRenderer;
   if (result !== defaultRenderer) return result;
 
   const language = getLanguageForFileUrl(url);

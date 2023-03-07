@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ListItem } from "@/models/esposter";
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
+import type { ListItem } from "@/models/shared/ListItem";
 
 const items: ListItem[] = [
   {

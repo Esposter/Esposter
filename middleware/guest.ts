@@ -1,4 +1,4 @@
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 
 export default defineNuxtRouteMiddleware((to) => {
   const { status } = useSession();

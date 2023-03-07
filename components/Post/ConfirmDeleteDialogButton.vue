@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
 
 interface PostConfirmDeleteDialogButtonProps {

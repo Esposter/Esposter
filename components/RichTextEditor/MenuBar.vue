@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { IsDivider, MenuItem } from "@/models/richTextEditor";
+import type { IsDivider } from "@/models/richTextEditor/IsDivider";
+import type { MenuItem } from "@/models/richTextEditor/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 import { mergeProps } from "vue";
 

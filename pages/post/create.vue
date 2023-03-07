@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PostUpsertFormProps } from "@/components/Post/UpsertForm.vue";
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
 import type { SubmitEventPromise } from "vuetify";
 

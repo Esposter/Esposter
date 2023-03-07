@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/file";
+import type { FileRendererProps } from "@/models/file/FileRendererProps";
 
 const props = defineProps<FileRendererProps>();
 const { url, mimetype } = $(toRefs(props));

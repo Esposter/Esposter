@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/chat/room";
 import type { Room } from "@prisma/client";
 

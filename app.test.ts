@@ -1,4 +1,4 @@
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import { fetch, setup } from "@nuxt/test-utils";
 import { beforeAll, describe, expect, test } from "vitest";
 

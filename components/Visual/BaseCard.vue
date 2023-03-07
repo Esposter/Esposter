@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Card } from "@/models/visual/card";
+import type { Card } from "@/models/visual/Card";
 import { useDisplay } from "vuetify";
 
 interface BaseCardProps {

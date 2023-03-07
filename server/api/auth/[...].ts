@@ -1,5 +1,5 @@
 import { NuxtAuthHandler } from "#auth";
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import { prisma } from "@/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import type { PrismaClient } from "@prisma/client";

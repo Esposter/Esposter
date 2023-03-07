@@ -1,4 +1,4 @@
-import { RoutePath } from "@/models/router";
+import { RoutePath } from "@/models/router/RoutePath";
 import type { AppRouter } from "@/server/trpc/routers";
 import { TRPCLink } from "@trpc/client";
 import { observable } from "@trpc/server/observable";

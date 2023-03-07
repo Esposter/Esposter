@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Card } from "@/models/visual/card";
+import type { Card } from "@/models/visual/Card";
 
 const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { text: "Arsentiy Zakharchenko" }];
 </script>
