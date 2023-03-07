@@ -1,4 +1,4 @@
-import { Game } from "@/models/clicker";
+import type { Game } from "@/models/clicker/Game";
 import { skipHydrate } from "pinia";
 
 export const useGameStore = defineStore("clicker/game", () => {

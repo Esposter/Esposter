@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
-import type { Building } from "@/models/clicker";
-import { ItemType } from "@/models/clicker";
+import type { Building } from "@/models/clicker/Building";
+import { ItemType } from "@/models/clicker/ItemType";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
 import { marked } from "marked";
@@ -11,16 +11,16 @@ interface BuildingListItemProps {
 }
 
 const props = defineProps<BuildingListItemProps>();
-const { building } = $(toRefs(props));
+const { building } = toRefs(props);
 const gameStore = useGameStore();
 const { game } = $(storeToRefs(gameStore));
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
-const boughtBuildingAmount = $computed(() => getBoughtBuildingAmount(building));
-const buildingStatsHtml = $computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
+const boughtBuildingAmount = $computed(() => getBoughtBuildingAmount(building.value));
+const buildingStatsHtml = $computed(() => getBoughtBuildingStats(building.value).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = $computed(() => buildingStatsHtml.length > 0);
-const buildingPrice = $computed(() => getBuildingPrice(building));
+const buildingPrice = $computed(() => getBuildingPrice(building.value));
 const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
 </script>
 

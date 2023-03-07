@@ -1,4 +1,5 @@
-import type { Building, BuildingWithStats } from "@/models/clicker";
+import type { Building } from "@/models/clicker/Building";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";

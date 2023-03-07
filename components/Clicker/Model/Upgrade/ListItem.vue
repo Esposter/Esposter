@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
-import type { Upgrade } from "@/models/clicker";
-import { ItemType } from "@/models/clicker";
+import { ItemType } from "@/models/clicker/ItemType";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 

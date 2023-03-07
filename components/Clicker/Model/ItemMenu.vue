@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ItemType } from "@/models/clicker";
+import { ItemType } from "@/models/clicker/ItemType";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";

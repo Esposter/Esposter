@@ -1,5 +1,5 @@
-import type { Building } from "@/models/clicker";
-import { BuildingName } from "@/models/clicker";
+import { Building } from "@/models/clicker/Building";
+import { BuildingName } from "@/models/clicker/BuildingName";
 import { ITEM_NAME } from "@/utils/constants";
 
 export const buildings: Building[] = [

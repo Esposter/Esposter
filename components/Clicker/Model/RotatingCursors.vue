@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Target } from "@/models/clicker";
+import { Target } from "@/models/clicker/Target";
 import { useGameStore } from "@/store/clicker/game";
 import { filename } from "pathe/utils";
 import { v4 as uuidV4 } from "uuid";
