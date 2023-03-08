@@ -35,7 +35,7 @@ onUnmounted(() => {
       <ClickerModelStoreHeader pt="4" />
       <ClickerModelStoreList />
     </template>
-    <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
+    <v-container h="full" display="flex" justify="center" items="center" flex="col">
       <ClickerHeader w="full" />
       <ClickerModelPointsTitle />
       <ClickerContent />
