@@ -9,7 +9,7 @@ const memberStore = useMemberStore();
 const { initialiseMembersList } = memberStore;
 const { memberList } = storeToRefs(memberStore);
 
-if (currentRoomId) {
+if (currentRoomId.value) {
   const members = await $client.room.readMembers.query({ roomId: currentRoomId.value });
   initialiseMembersList(members);
 }
