@@ -8,7 +8,7 @@ export const getContainerClient = async (containerName: AzureContainer) => {
   return containerClient;
 };
 
-export const append = async (appendBlobClient: AppendBlobClient, data: HttpRequestBody) => {
+export const appendBlock = async (appendBlobClient: AppendBlobClient, data: HttpRequestBody) => {
   await appendBlobClient.createIfNotExists();
   return appendBlobClient.appendBlock(data, data.toString().length);
 };

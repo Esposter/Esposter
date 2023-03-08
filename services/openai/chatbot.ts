@@ -1,5 +1,5 @@
 import { AzureContainer } from "@/models/azure/blob";
-import { append, getContainerClient } from "@/services/azure/blob";
+import { appendBlock, getContainerClient } from "@/services/azure/blob";
 import { generateResponse } from "@/services/openai/generateResponse";
 import { sanitiseText, streamToText } from "@/utils/text";
 import dedent from "dedent";
@@ -21,7 +21,7 @@ export const appendChatHistory = async (userId: string, AIName: string, chatCont
   const containerClient = await getContainerClient(AzureContainer.AIChatbot);
   const blobName = `${userId}/${AIName}/${chatHistoryFileName}`;
   const blobClient = containerClient.getAppendBlobClient(blobName);
-  await append(blobClient, chatContent);
+  await appendBlock(blobClient, chatContent);
 };
 
 const AIName = "Vivy";
