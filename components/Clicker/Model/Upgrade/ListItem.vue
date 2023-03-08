@@ -11,13 +11,13 @@ interface UpgradeListItemProps {
 }
 
 const props = defineProps<UpgradeListItemProps>();
-const { upgrade, isBuyable } = $(toRefs(props));
+const { upgrade, isBuyable } = toRefs(props);
 const gameStore = useGameStore();
-const { game } = $(storeToRefs(gameStore));
+const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
-const isAffordable = $computed(() => Boolean(game && game.noPoints >= upgrade.price));
+const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >= upgrade.value.price));
 </script>
 
 <template>

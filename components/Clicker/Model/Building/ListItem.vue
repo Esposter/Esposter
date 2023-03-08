@@ -13,15 +13,15 @@ interface BuildingListItemProps {
 const props = defineProps<BuildingListItemProps>();
 const { building } = toRefs(props);
 const gameStore = useGameStore();
-const { game } = $(storeToRefs(gameStore));
+const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
-const boughtBuildingAmount = $computed(() => getBoughtBuildingAmount(building.value));
-const buildingStatsHtml = $computed(() => getBoughtBuildingStats(building.value).map((s) => marked.parse(s)));
-const hasBuildingStatsHtml = $computed(() => buildingStatsHtml.length > 0);
-const buildingPrice = $computed(() => getBuildingPrice(building.value));
-const isAffordable = $computed(() => Boolean(game && game.noPoints >= buildingPrice));
+const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building.value));
+const buildingStatsHtml = computed(() => getBoughtBuildingStats(building.value).map((s) => marked.parse(s)));
+const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
+const buildingPrice = computed(() => getBuildingPrice(building.value));
+const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >= buildingPrice.value));
 </script>
 
 <template>
