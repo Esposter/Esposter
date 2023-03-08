@@ -1,11 +1,15 @@
 import type { Game } from "@/models/clicker/Game";
-import { skipHydrate } from "pinia";
+import { CLICKER_STORE } from "@/services/clicker/settings";
 
 export const useGameStore = defineStore("clicker/game", () => {
-  const initialGame: Game = { noPoints: 0, boughtUpgrades: [], boughtBuildings: [], createdAt: new Date() };
-  const clickerStore = isServer() ? null : localStorage.getItem(CLICKER_STORE);
-  const game = ref<Game>(!isServer() && clickerStore ? JSON.parse(clickerStore) : initialGame);
-  const saveGame = () => localStorage.setItem(CLICKER_STORE, JSON.stringify(game.value));
-  // Game state requires local storage which only exists in the client so we won't hydrate in the server
-  return { game: skipHydrate(game), saveGame };
+  const { $client } = useNuxtApp();
+  const { status } = useSession();
+  const game = ref<Game | null>(null);
+  const saveGame = async () => {
+    if (!game.value) return;
+
+    if (status.value === "authenticated") await $client.clicker.saveGame.mutate(game.value);
+    else localStorage.setItem(CLICKER_STORE, JSON.stringify(game.value));
+  };
+  return { game, saveGame };
 });

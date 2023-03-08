@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum CursorUpgradeName {
   "Reinforced Index Finger" = "Reinforced Index Finger",
   "Carpal Tunnel Prevention Cream" = "Carpal Tunnel Prevention Cream",
@@ -14,6 +16,8 @@ export enum CursorUpgradeName {
   "Nonillion Fingers" = "Nonillion Fingers",
   "Decillion Fingers" = "Decillion Fingers",
 }
+
+const cursorUpgradeNameSchema = z.nativeEnum(CursorUpgradeName) satisfies z.ZodType<CursorUpgradeName>;
 
 export enum GrandmaUpgradeName {
   "Forwards From Grandma" = "Forwards From Grandma",
@@ -32,5 +36,12 @@ export enum GrandmaUpgradeName {
   "Kitchen Cabinets" = "Kitchen Cabinets",
 }
 
+const grandmaUpgradeNameSchema = z.nativeEnum(GrandmaUpgradeName) satisfies z.ZodType<GrandmaUpgradeName>;
+
 export const UpgradeName = { ...CursorUpgradeName, ...GrandmaUpgradeName };
 export type UpgradeName = CursorUpgradeName | GrandmaUpgradeName;
+
+export const upgradeNameSchema = z.union([
+  cursorUpgradeNameSchema,
+  grandmaUpgradeNameSchema,
+]) satisfies z.ZodType<UpgradeName>;

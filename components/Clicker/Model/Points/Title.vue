@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
+import { ITEM_NAME } from "@/services/clicker/settings";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
 
 const gameStore = useGameStore();
-const { game } = $(storeToRefs(gameStore));
+const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
-const { allBuildingPower } = $(storeToRefs(buildingStore));
-const displayNoPointsHtml = $computed(() => formatNumberLong(game.noPoints).replace(/\s/, "<br/>"));
-const displayAllBuildingPower = $computed(() => formatNumberLong(allBuildingPower));
+const { allBuildingPower } = storeToRefs(buildingStore);
+const displayNoPointsHtml = computed(() => formatNumberLong(game.value?.noPoints ?? 0).replace(/\s/, "<br/>"));
+const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 
 <template>

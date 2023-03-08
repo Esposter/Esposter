@@ -1,5 +1,6 @@
-import type { EffectType } from "@/models/clicker/EffectType";
-import type { Target } from "@/models/clicker/Target";
+import { EffectType, effectTypeSchema } from "@/models/clicker/EffectType";
+import { Target, targetSchema } from "@/models/clicker/Target";
+import { z } from "zod";
 
 export interface EffectConfiguration {
   type: EffectType;
@@ -7,3 +8,8 @@ export interface EffectConfiguration {
   // e.g. BuildingAdditive requires number of buildings (targets)
   targets?: Target[];
 }
+
+export const effectConfigurationSchema = z.object({
+  type: effectTypeSchema,
+  targets: z.array(targetSchema).optional(),
+}) satisfies z.ZodType<EffectConfiguration>;

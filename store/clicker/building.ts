@@ -1,13 +1,14 @@
 import type { Building } from "@/models/clicker/Building";
 import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { formatNumberLong } from "@/services/clicker/format";
+import { ITEM_NAME } from "@/services/clicker/settings";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker/upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();
-  const { game } = $(storeToRefs(gameStore));
+  const { game } = storeToRefs(gameStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
 
@@ -16,16 +17,22 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     buildingList.value = buildings;
   };
 
-  const allBuildingPower = computed(() => applyBuildingUpgrades(0, game.boughtUpgrades, game.boughtBuildings));
+  const allBuildingPower = computed(() =>
+    game.value ? applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings) : 0
+  );
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
-    applyBuildingUpgradesSingle(boughtBuilding, game.boughtUpgrades, game.boughtBuildings);
+    game.value ? applyBuildingUpgradesSingle(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings) : 0;
   const getBoughtBuildingAmount = (building: Building) => {
-    const boughtBuilding = game.boughtBuildings.find((b) => b.name === building.name);
+    if (!game.value) return 0;
+
+    const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   };
   const getBoughtBuildingStats = (building: Building) => {
-    const boughtBuilding = game.boughtBuildings.find((b) => b.name === building.name);
+    if (!game.value) return [];
+
+    const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
@@ -48,10 +55,12 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {
+    if (!game.value) return;
+
     const newBuildingPrice = getBuildingPrice(newBuilding);
-    const boughtBuilding = game.boughtBuildings.find((b) => b.name === newBuilding.name);
+    const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!boughtBuilding) {
-      game.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
+      game.value.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
       decrementPoints(newBuildingPrice);
       return;
     }

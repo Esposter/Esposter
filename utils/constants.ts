@@ -3,23 +3,13 @@ import { AzureContainer } from "@/models/azure/blob";
 // #region Site constants
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
-export const LOGO_IMAGE_PATH = `/${AzureContainer.Assets}/${SITE_NAME}/logo.png`;
+export const LOGO_IMAGE_PATH = `/${AzureContainer.EsposterAssets}/${SITE_NAME}/logo.png`;
 
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
 // #endregion
 
-// #region Clicker constants
-export const ITEM_NAME = "Piña Colada";
-export const AUTOSAVE_INTERVAL = 60 * 1000;
-export const FPS = 60;
-// #endregion
-
 // #region Cookie name constants, yum! C:
 export const THEME_COOKIE_NAME = "theme";
-// #endregion
-
-// #region local storage key constants
-export const CLICKER_STORE = "clicker-store";
 // #endregion
 
 // #region public folder path constants

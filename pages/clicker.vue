@@ -1,12 +1,29 @@
 <script setup lang="ts">
+import { createInitialGame } from "@/services/clicker/createInitialGame";
 import { formatNumberLong } from "@/services/clicker/format";
+import { CLICKER_STORE, ITEM_NAME } from "@/services/clicker/settings";
 import { useGameStore } from "@/store/clicker/game";
 
+const { $client } = useNuxtApp();
+const { status } = useSession();
 const gameStore = useGameStore();
-const { game } = $(storeToRefs(gameStore));
-const displayNoPoints = $computed(() => formatNumberLong(game.noPoints));
+const { game } = storeToRefs(gameStore);
+const displayNoPoints = computed(() => formatNumberLong(game.value?.noPoints ?? 0));
+
+if (status.value === "authenticated") game.value = await $client.clicker.readGame.query();
 
 useTimers();
+
+onMounted(() => {
+  if (status.value === "unauthenticated") {
+    const clickerStore = localStorage.getItem(CLICKER_STORE);
+    game.value = clickerStore ? JSON.parse(clickerStore) : createInitialGame();
+  }
+});
+
+onUnmounted(() => {
+  game.value = null;
+});
 </script>
 
 <template>
@@ -18,13 +35,10 @@ useTimers();
       <ClickerModelStoreHeader pt="4" />
       <ClickerModelStoreList />
     </template>
-    <v-container h="full" display="flex" justify="center" items="center" flex="col">
-      <!-- Only show the fully loaded game to the client, not the preloaded server state -->
-      <ClientOnly>
-        <ClickerHeader w="full" />
-        <ClickerModelPointsTitle />
-        <ClickerContent />
-      </ClientOnly>
+    <v-container v-if="game" h="full" display="flex" justify="center" items="center" flex="col">
+      <ClickerHeader w="full" />
+      <ClickerModelPointsTitle />
+      <ClickerContent />
     </v-container>
     <ClickerModelPointsPopups />
     <template #right>

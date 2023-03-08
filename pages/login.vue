@@ -12,8 +12,8 @@ interface ProviderProps {
 
 definePageMeta({ middleware: "guest" });
 
-const { signIn } = $(useSession());
-const providerProps = $ref<ProviderProps[]>([
+const { signIn } = useSession();
+const providerProps = ref<ProviderProps[]>([
   {
     provider: "google",
     logo: shallowRef(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
