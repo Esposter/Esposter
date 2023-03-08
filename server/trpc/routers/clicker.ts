@@ -10,6 +10,7 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { createInitialGame } from "@/services/clicker/createInitialGame";
 import { SAVE_FILENAME } from "@/services/clicker/settings";
+import { jsonDateParser } from "@/utils/json";
 import { streamToText } from "@/utils/text";
 
 export const clickerRouter = router({
@@ -22,7 +23,7 @@ export const clickerRouter = router({
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
       if (!response.readableStreamBody) return createInitialGame();
-      return JSON.parse(await streamToText(response.readableStreamBody));
+      return JSON.parse(await streamToText(response.readableStreamBody), jsonDateParser);
     } catch {
       return createInitialGame();
     }
