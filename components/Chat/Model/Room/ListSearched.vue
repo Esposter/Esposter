@@ -4,7 +4,7 @@ import { useRoomStore } from "@/store/chat/room";
 
 const emit = defineEmits<{ (event: "update:room"): void }>();
 const roomStore = useRoomStore();
-const { roomsSearched } = $(storeToRefs(roomStore));
+const { roomsSearched } = storeToRefs(roomStore);
 </script>
 
 <template>

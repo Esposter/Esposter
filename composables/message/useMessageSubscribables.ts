@@ -5,34 +5,34 @@ import type { Unsubscribable } from "@trpc/server/observable";
 export const useMessageSubscribables = () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
   const { createMessage, updateMessage, deleteMessage } = messageStore;
 
-  let createMessageUnsubscribable = $ref<Unsubscribable>();
-  let updateMessageUnsubscribable = $ref<Unsubscribable>();
-  let deleteMessageUnsubscribable = $ref<Unsubscribable>();
+  const createMessageUnsubscribable = ref<Unsubscribable>();
+  const updateMessageUnsubscribable = ref<Unsubscribable>();
+  const deleteMessageUnsubscribable = ref<Unsubscribable>();
 
   onMounted(() => {
-    if (!currentRoomId) return;
+    if (!currentRoomId.value) return;
 
-    createMessageUnsubscribable = $client.message.onCreateMessage.subscribe(
-      { roomId: currentRoomId },
+    createMessageUnsubscribable.value = $client.message.onCreateMessage.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => createMessage(data) }
     );
-    updateMessageUnsubscribable = $client.message.onUpdateMessage.subscribe(
-      { roomId: currentRoomId },
+    updateMessageUnsubscribable.value = $client.message.onUpdateMessage.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => updateMessage(data) }
     );
-    deleteMessageUnsubscribable = $client.message.onDeleteMessage.subscribe(
-      { roomId: currentRoomId },
+    deleteMessageUnsubscribable.value = $client.message.onDeleteMessage.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => deleteMessage(data) }
     );
   });
 
   onUnmounted(() => {
-    createMessageUnsubscribable?.unsubscribe();
-    updateMessageUnsubscribable?.unsubscribe();
-    deleteMessageUnsubscribable?.unsubscribe();
+    createMessageUnsubscribable.value?.unsubscribe();
+    updateMessageUnsubscribable.value?.unsubscribe();
+    deleteMessageUnsubscribable.value?.unsubscribe();
   });
 };

@@ -9,7 +9,7 @@ export interface PostUpsertFormProps {
 const props = withDefaults(defineProps<PostUpsertFormProps>(), {
   initialValues: () => ({ title: "", description: "" }),
 });
-const { initialValues } = $(toRefs(props));
+const { initialValues } = toRefs(props);
 const emit = defineEmits<{
   (
     event: "submit",
@@ -17,8 +17,8 @@ const emit = defineEmits<{
     values: NonNullable<PostUpsertFormProps["initialValues"]>
   ): void;
 }>();
-const title = $ref(initialValues.title);
-const description = $ref(initialValues.description);
+const title = ref(initialValues.value.title);
+const description = ref(initialValues.value.description);
 </script>
 
 <template>

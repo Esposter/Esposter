@@ -5,34 +5,34 @@ import type { Unsubscribable } from "@trpc/server/observable";
 export const useEmojiSubscribables = () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
   const { createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 
-  let createEmojiUnsubscribable = $ref<Unsubscribable>();
-  let updateEmojiUnsubscribable = $ref<Unsubscribable>();
-  let deleteEmojiUnsubscribable = $ref<Unsubscribable>();
+  const createEmojiUnsubscribable = ref<Unsubscribable>();
+  const updateEmojiUnsubscribable = ref<Unsubscribable>();
+  const deleteEmojiUnsubscribable = ref<Unsubscribable>();
 
   onMounted(() => {
-    if (!currentRoomId) return;
+    if (!currentRoomId.value) return;
 
-    createEmojiUnsubscribable = $client.emoji.onCreateEmoji.subscribe(
-      { roomId: currentRoomId },
+    createEmojiUnsubscribable.value = $client.emoji.onCreateEmoji.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => createEmoji(data) }
     );
-    updateEmojiUnsubscribable = $client.emoji.onUpdateEmoji.subscribe(
-      { roomId: currentRoomId },
+    updateEmojiUnsubscribable.value = $client.emoji.onUpdateEmoji.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => updateEmoji(data) }
     );
-    deleteEmojiUnsubscribable = $client.emoji.onDeleteEmoji.subscribe(
-      { roomId: currentRoomId },
+    deleteEmojiUnsubscribable.value = $client.emoji.onDeleteEmoji.subscribe(
+      { roomId: currentRoomId.value },
       { onData: (data) => deleteEmoji(data) }
     );
   });
 
   onUnmounted(() => {
-    createEmojiUnsubscribable?.unsubscribe();
-    updateEmojiUnsubscribable?.unsubscribe();
-    deleteEmojiUnsubscribable?.unsubscribe();
+    createEmojiUnsubscribable.value?.unsubscribe();
+    updateEmojiUnsubscribable.value?.unsubscribe();
+    deleteEmojiUnsubscribable.value?.unsubscribe();
   });
 };

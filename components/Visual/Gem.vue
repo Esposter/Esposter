@@ -17,8 +17,8 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-let ready = $ref(false);
-const opacity = $computed(() => (ready ? 1 : 0));
+const ready = ref(false);
+const opacity = computed(() => (ready.value ? 1 : 0));
 
 onMounted(() => {
   // Canvas
@@ -44,7 +44,7 @@ onMounted(() => {
     gem.material.emissiveIntensity = 0.4;
     gem.material.refractionRatio = 1;
     scene.add(gem);
-    ready = true;
+    ready.value = true;
   });
 
   // Lighting

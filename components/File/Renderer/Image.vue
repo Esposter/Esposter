@@ -2,7 +2,7 @@
 import type { FileRendererProps } from "@/models/file/FileRendererProps";
 
 const props = defineProps<FileRendererProps>();
-const { url, mimetype } = $(toRefs(props));
+const { url, mimetype } = toRefs(props);
 </script>
 
 <template>

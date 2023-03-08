@@ -8,16 +8,16 @@ interface DefaultLayoutProps {
 }
 
 const props = defineProps<DefaultLayoutProps>();
-const { mainStyle } = $(toRefs(props));
-const { mobile } = $(useDisplay());
+const { mainStyle } = toRefs(props);
+const { mobile } = useDisplay();
 const router = useRouter();
 const slots = useSlots();
 const layoutStore = useLayoutStore();
-let { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = $(storeToRefs(layoutStore));
+const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
 
 router.beforeEach(() => {
   // We need to reset layout structure on route change
-  leftDrawerOpen = rightDrawerOpen = leftDrawerOpenAuto = rightDrawerOpenAuto = !mobile;
+  leftDrawerOpen.value = rightDrawerOpen.value = leftDrawerOpenAuto.value = rightDrawerOpenAuto.value = !mobile.value;
 });
 </script>
 

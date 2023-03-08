@@ -7,13 +7,13 @@ interface PostConfirmDeleteDialogButtonProps {
 }
 
 const props = defineProps<PostConfirmDeleteDialogButtonProps>();
-const { postId } = $(toRefs(props));
+const { postId } = toRefs(props);
 const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();
 const onDeletePost = async (onComplete: () => void) => {
   try {
-    const successful = await $client.post.deletePost.mutate(postId);
-    if (successful) deletePost(postId);
+    const successful = await $client.post.deletePost.mutate(postId.value);
+    if (successful) deletePost(postId.value);
     await navigateTo(RoutePath.Index);
   } finally {
     onComplete();

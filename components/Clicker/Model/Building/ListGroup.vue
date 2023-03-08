@@ -6,7 +6,7 @@ interface BuildingListGroupProps {
 }
 
 const props = defineProps<BuildingListGroupProps>();
-const { buildings } = $(toRefs(props));
+const { buildings } = toRefs(props);
 </script>
 
 <template>

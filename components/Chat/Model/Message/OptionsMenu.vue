@@ -20,7 +20,7 @@ interface Item {
 }
 
 const props = defineProps<MessageOptionsMenuProps>();
-const { message, isHovering, hoverProps } = $(toRefs(props));
+const { message, isHovering, hoverProps } = toRefs(props);
 const emit = defineEmits<{
   (event: "update:menu", value: boolean): void;
   (event: "update:update-mode", value: true): void;
@@ -30,8 +30,8 @@ const { $client } = useNuxtApp();
 const { data } = useSession();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
-const emojis = computed(() => getEmojiList(message.rowKey));
-const isCreator = computed(() => data.value?.user.id === message.creatorId);
+const emojis = computed(() => getEmojiList(message.value.rowKey));
+const isCreator = computed(() => data.value?.user.id === message.value.creatorId);
 const items = computed(() => {
   if (!isCreator.value) return [];
 
@@ -53,8 +53,8 @@ const onSelect = async (emoji: string) => {
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
     await onCreateEmoji({
-      partitionKey: message.partitionKey,
-      messageRowKey: message.rowKey,
+      partitionKey: message.value.partitionKey,
+      messageRowKey: message.value.rowKey,
       emojiTag,
     });
     return;

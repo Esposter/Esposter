@@ -24,7 +24,7 @@ const props = withDefaults(
     cardTemplate: BaseCard,
   }
 );
-const { cards, duration, maxShownCards, cardScaleYRatioLoss } = $(toRefs(props));
+const { cards, duration, maxShownCards, cardScaleYRatioLoss } = toRefs(props);
 
 /**
  * === Generation of styling for css cards ===
@@ -68,34 +68,34 @@ interface CardStyleVariables {
 // We will create fake card ids that are just the indexes of our cards.
 // By doing this, we can "rotate" the cards by just incrementing the whole list by 1.
 // This can also act as a z index for us to use, which is pretty convenient C:
-let cardIds = $ref<number[]>(cards.map((_, index) => index));
+const cardIds = ref<number[]>(cards.value.map((_, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
-let activeCardId = $ref<number | null>(null);
-let inactiveCardId = $ref<number | null>(null);
+const activeCardId = ref<number | null>(null);
+const inactiveCardId = ref<number | null>(null);
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
-const { width, thresholds } = $(useDisplay());
+const { width, thresholds } = useDisplay();
 
-const gap = $computed<string>(() => {
+const gap = computed<string>(() => {
   let gap = 2;
-  if (width >= thresholds.xxl) gap = 6;
-  else if (width >= thresholds.xl) gap = 3;
+  if (width.value >= thresholds.value.xxl) gap = 6;
+  else if (width.value >= thresholds.value.xl) gap = 3;
   return `${gap}rem`;
 });
 
 // Every card from right -> left has increasing margin (by 1rem each time)
 // this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
-const scale = $computed<number>(() => {
+const scale = computed<number>(() => {
   let scale = 1;
-  if (width >= thresholds.xxl) scale = 2.5;
-  else if (width >= thresholds.xl) scale = 1.25;
+  if (width.value >= thresholds.value.xxl) scale = 2.5;
+  else if (width.value >= thresholds.value.xl) scale = 1.25;
   return scale;
 });
 
-const normalCardStyles = $computed<CardStyleVariables[]>(() => {
+const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
-  const numberOfCards = Math.min(maxShownCards, cards.length - 1);
+  const numberOfCards = Math.min(maxShownCards.value, cards.value.length - 1);
   // start at right most and move to the left
   // we just need items for the rest so that we don't try to do operations on undefined
   const items: CardStyleVariables[] = [];
@@ -104,35 +104,37 @@ const normalCardStyles = $computed<CardStyleVariables[]>(() => {
   for (let i = 0; i < numberOfCards - 1; i++)
     items.push({
       // normal cards talk about how they move from their position to the next one
-      oldMarginRight: `${i * scale}rem`,
-      marginRight: `${(i + 1) * scale}rem`,
-      oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
+      oldMarginRight: `${i * scale.value}rem`,
+      marginRight: `${(i + 1) * scale.value}rem`,
+      oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss.value * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
     });
 
   // this is for the SFC style bindings that need this to exist
   items.reverse();
 
   // we just need items for the rest so that we don't try to do operations on undefined
-  for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
+  for (let i = numberOfCards - 1; i < maxShownCards.value; i++) items.push({});
   return items;
 });
 
-const activeCardStyle = $computed<CardStyleVariables>(() => ({
-  oldMarginRight: normalCardStyles.length ? normalCardStyles[0].marginRight : "0",
+const activeCardStyle = computed<CardStyleVariables>(() => ({
+  oldMarginRight: normalCardStyles.value.length ? normalCardStyles.value[0].marginRight : "0",
 }));
 
-const inactiveCardStyle = $computed<CardStyleVariables>(() => {
+const inactiveCardStyle = computed<CardStyleVariables>(() => {
   // don't care about size if we just have 1 card
-  if (cards.length === 1) return { scaleY: "1" };
-  return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
+  if (cards.value.length === 1) return { scaleY: "1" };
+  return { scaleY: `${1 - cardScaleYRatioLoss.value * (Math.min(maxShownCards.value, cards.value.length - 1) - 1)}` };
 });
 
-const secondLastCardStyle = $computed<CardStyleVariables>(() => normalCardStyles[normalCardStyles.length - 2]);
+const secondLastCardStyle = computed<CardStyleVariables>(
+  () => normalCardStyles.value[normalCardStyles.value.length - 2]
+);
 
-const classes = $computed<string[]>(() => {
+const classes = computed<string[]>(() => {
   const newClasses = [];
-  for (const cardId of cardIds) newClasses.push(getClass(cardId));
+  for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
   return newClasses;
 });
 
@@ -142,63 +144,60 @@ const classes = $computed<string[]>(() => {
 // InActive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
 // 'Normal', this is just one of the normal cards on the right that make their way to become active.
 const getClass = (cardId: number): string => {
-  const offset = cardIds.indexOf(cardId);
+  const offset = cardIds.value.indexOf(cardId);
 
   if (inactiveCardId === null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
-    if (cardId === activeCardId) return "initial-active-card";
-    if (offset === Math.min(maxShownCards + 1, cards.length) - 2) return "last-card";
-    if (offset > maxShownCards - 2) return "overflow-card";
+    if (cardId === activeCardId.value) return "initial-active-card";
+    if (offset === Math.min(maxShownCards.value + 1, cards.value.length) - 2) return "last-card";
+    if (offset > maxShownCards.value - 2) return "overflow-card";
     return `initial-normal-card-${offset}`;
   }
 
-  if (cardId === activeCardId) return "active-card";
-  if (cardId === inactiveCardId) return "inactive-card";
-  if (offset > maxShownCards - 2) return "overflow-card";
+  if (cardId === activeCardId.value) return "active-card";
+  if (cardId === inactiveCardId.value) return "inactive-card";
+  if (offset > maxShownCards.value - 2) return "overflow-card";
   return `normal-card-${offset}`;
 };
 
 // This is the main timer that drives the movement of cards
-let moveCardsTimer = $ref<number>();
+const moveCardsTimer = ref<number>();
 
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
-  if (!cards.length) return;
-  if (cards.length === 1) {
+  if (!cards.value.length) return;
+  if (cards.value.length === 1) {
     moveOneCard();
     return;
   }
 
-  inactiveCardId = activeCardId;
-  activeCardId = cardIds[0];
+  inactiveCardId.value = activeCardId.value;
+  activeCardId.value = cardIds.value[0];
   // "Rotate" the cards
-  cardIds = cardIds.map((id) => (id + 1) % cards.length);
+  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.value.length);
 };
 
 const moveOneCard = () => {
-  inactiveCardId = activeCardId;
-  if (activeCardId === null) activeCardId = cardIds[0];
-  else activeCardId = null;
+  inactiveCardId.value = activeCardId.value;
+  if (activeCardId.value === null) activeCardId.value = cardIds.value[0];
+  else activeCardId.value = null;
 };
 
 onMounted(() => {
   // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (duration > 0) moveCardsTimer = window.setInterval(moveCards, duration);
+  if (duration.value > 0) moveCardsTimer.value = window.setInterval(moveCards, duration.value);
   moveCards();
 });
 
-onUnmounted(() => clearInterval(moveCardsTimer));
+onUnmounted(() => clearInterval(moveCardsTimer.value));
 
 // If cards update then we want to refresh the entire display back to the first step.
-watch(
-  () => cards,
-  (newValue) => {
-    cardIds = newValue.map((_, index) => index);
-    inactiveCardId = null;
-    activeCardId = 0;
-  }
-);
+watch(cards, (newValue) => {
+  cardIds.value = newValue.map((_, index) => index);
+  inactiveCardId.value = null;
+  activeCardId.value = 0;
+});
 </script>
 
 <template>

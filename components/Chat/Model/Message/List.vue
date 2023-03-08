@@ -9,7 +9,7 @@ interface MessageListProps {
 }
 
 const props = defineProps<MessageListProps>();
-const { messages, hasMore, readMoreMessages } = $(toRefs(props));
+const { messages, hasMore, readMoreMessages } = toRefs(props);
 </script>
 
 <template>

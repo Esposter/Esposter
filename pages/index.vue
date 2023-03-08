@@ -2,8 +2,8 @@
 import { usePostStore } from "@/store/post";
 
 const postStore = usePostStore();
-const { postList, postListNextCursor } = $(storeToRefs(postStore));
-const hasMore = $computed(() => Boolean(postListNextCursor));
+const { postList, postListNextCursor } = storeToRefs(postStore);
+const hasMore = computed(() => Boolean(postListNextCursor.value));
 const readMorePosts = await useReadPosts();
 </script>
 

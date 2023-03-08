@@ -7,26 +7,26 @@ interface PostLikeSectionProps {
 }
 
 const props = defineProps<PostLikeSectionProps>();
-const { post } = $(toRefs(props));
+const { post } = toRefs(props);
 const { $client } = useNuxtApp();
-const { data } = $(useSession());
+const { data } = useSession();
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
-const liked = $computed(() => post.likes.some((l) => l.userId === data?.user.id && l.value === 1));
-const unliked = $computed(() => post.likes.some((l) => l.userId === data?.user.id && l.value === -1));
+const liked = computed(() => post.value.likes.some((l) => l.userId === data.value?.user.id && l.value === 1));
+const unliked = computed(() => post.value.likes.some((l) => l.userId === data.value?.user.id && l.value === -1));
 const onCreateLike = async (value: 1 | -1) => {
-  const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
+  const newLike = await $client.like.createLike.mutate({ postId: post.value.id, value });
   createLike(newLike);
 };
 const onUpdateLike = async (value: 1 | -1) => {
-  const updatedLike = await $client.like.updateLike.mutate({ postId: post.id, value });
+  const updatedLike = await $client.like.updateLike.mutate({ postId: post.value.id, value });
   if (updatedLike) updateLike(updatedLike);
 };
 const onDeleteLike = async () => {
-  if (!data) return;
+  if (!data.value) return;
 
-  const successful = await $client.like.deleteLike.mutate({ postId: post.id });
-  if (successful) deleteLike({ userId: data.user.id, postId: post.id });
+  const successful = await $client.like.deleteLike.mutate({ postId: post.value.id });
+  if (successful) deleteLike({ userId: data.value.user.id, postId: post.value.id });
 };
 </script>
 

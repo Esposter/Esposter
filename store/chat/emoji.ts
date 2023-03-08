@@ -4,17 +4,17 @@ import { useRoomStore } from "@/store/chat/room";
 
 export const useEmojiStore = defineStore("chat/emoji", () => {
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
   // Record<partitionKey, Record<messageRowKey, MessageEmojiMetadataEntity[]>>
   const emojiMap = ref<Record<string, Record<string, MessageEmojiMetadataEntity[]>>>({});
   const getEmojiList = (messageRowKey: string) => {
-    if (!currentRoomId || !emojiMap.value[currentRoomId]?.[messageRowKey]) return [];
-    return emojiMap.value[currentRoomId][messageRowKey];
+    if (!currentRoomId.value || !emojiMap.value[currentRoomId.value]?.[messageRowKey]) return [];
+    return emojiMap.value[currentRoomId.value][messageRowKey];
   };
   const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
-    if (!currentRoomId) return;
-    emojiMap.value[currentRoomId] = {
-      ...emojiMap.value[currentRoomId],
+    if (!currentRoomId.value) return;
+    emojiMap.value[currentRoomId.value] = {
+      ...emojiMap.value[currentRoomId.value],
       [messageRowKey]: emojiList,
     };
   };

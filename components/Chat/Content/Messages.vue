@@ -2,8 +2,8 @@
 import { useMessageStore } from "@/store/chat/message";
 
 const messageStore = useMessageStore();
-const { messageList, messageListNextCursor } = $(storeToRefs(messageStore));
-const hasMore = $computed(() => Boolean(messageListNextCursor));
+const { messageList, messageListNextCursor } = storeToRefs(messageStore);
+const hasMore = computed(() => Boolean(messageListNextCursor.value));
 const readMoreMessages = await useReadMessages();
 </script>
 

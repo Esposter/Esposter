@@ -2,8 +2,8 @@
 import { useRoomStore } from "@/store/chat/room";
 
 const roomStore = useRoomStore();
-const { rooms, roomListNextCursor } = $(storeToRefs(roomStore));
-const hasMore = $computed(() => Boolean(roomListNextCursor));
+const { rooms, roomListNextCursor } = storeToRefs(roomStore);
+const hasMore = computed(() => Boolean(roomListNextCursor.value));
 const readMoreRooms = await useReadRooms();
 </script>
 

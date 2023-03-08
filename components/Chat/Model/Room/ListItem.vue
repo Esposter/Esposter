@@ -8,11 +8,11 @@ interface RoomListItemProps {
 }
 
 const props = defineProps<RoomListItemProps>();
-const { room } = $(toRefs(props));
+const { room } = toRefs(props);
 const roomStore = useRoomStore();
-const { currentRoomId } = $(storeToRefs(roomStore));
-const isHovering = $ref(false);
-const active = $computed(() => room.id === currentRoomId);
+const { currentRoomId } = storeToRefs(roomStore);
+const isHovering = ref(false);
+const active = computed(() => room.value.id === currentRoomId.value);
 </script>
 
 <template>

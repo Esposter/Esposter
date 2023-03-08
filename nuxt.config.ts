@@ -41,9 +41,6 @@ export default defineNuxtConfig({
       nodeEnv: process.env.NODE_ENV,
     },
   },
-  experimental: {
-    reactivityTransform: true,
-  },
   // @NOTE: "@vueuse/sound/nuxt"
   modules: ["@nuxtjs/google-fonts", "@pinia/nuxt", "@sidebase/nuxt-auth", "@unocss/nuxt", "@vueuse/nuxt"],
   googleFonts: {

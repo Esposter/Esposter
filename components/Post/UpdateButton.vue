@@ -6,8 +6,8 @@ interface PostUpdateButtonProps {
 }
 
 const props = defineProps<PostUpdateButtonProps>();
-const { postId } = $(toRefs(props));
-const onUpdatePost = () => navigateTo(RoutePath.PostUpdate(postId));
+const { postId } = toRefs(props);
+const onUpdatePost = () => navigateTo(RoutePath.PostUpdate(postId.value));
 </script>
 
 <template>

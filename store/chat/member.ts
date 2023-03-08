@@ -3,17 +3,17 @@ import type { User } from "@prisma/client";
 
 export const useMemberStore = defineStore("chat/member", () => {
   const roomStore = useRoomStore();
-  const { currentRoomId } = $(storeToRefs(roomStore));
+  const { currentRoomId } = storeToRefs(roomStore);
 
   const membersMap = ref<Record<string, User[]>>({});
   const memberList = computed({
     get: () => {
-      if (!currentRoomId || !membersMap.value[currentRoomId]) return [];
-      return membersMap.value[currentRoomId];
+      if (!currentRoomId.value || !membersMap.value[currentRoomId.value]) return [];
+      return membersMap.value[currentRoomId.value];
     },
     set: (newMemberList) => {
-      if (!currentRoomId) return;
-      membersMap.value[currentRoomId] = newMemberList;
+      if (!currentRoomId.value) return;
+      membersMap.value[currentRoomId.value] = newMemberList;
     },
   });
   const pushMemberList = (members: User[]) => {

@@ -2,7 +2,7 @@
 import { usePopupStore } from "@/store/clicker/popup";
 
 const popupStore = usePopupStore();
-const { popups } = $(storeToRefs(popupStore));
+const { popups } = storeToRefs(popupStore);
 </script>
 
 <template>

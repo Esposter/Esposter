@@ -7,7 +7,7 @@ interface UpgradeListGroupProps {
 }
 
 const props = defineProps<UpgradeListGroupProps>();
-const { upgrades, isBuyable } = $(toRefs(props));
+const { upgrades, isBuyable } = toRefs(props);
 </script>
 
 <template>

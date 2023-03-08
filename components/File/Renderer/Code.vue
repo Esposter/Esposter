@@ -10,14 +10,14 @@ interface FileRendererCodeProps extends FileRendererProps {
 }
 
 const props = defineProps<FileRendererCodeProps>();
-const { url, language } = $(toRefs(props));
-const code = $ref(await (await fetch(url)).text());
-const languageRequested = $computed(() => extendedLanguages.find((l) => l.name === language));
-const languageConfiguration = $ref(new Compartment());
-const languageSupport = $ref(languageRequested ? await languageRequested.load() : undefined);
-const languageExtension = $computed(() =>
+const { url, language } = toRefs(props);
+const code = ref(await (await fetch(url.value)).text());
+const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language.value));
+const languageConfiguration = ref(new Compartment());
+const languageSupport = ref(languageRequested.value ? await languageRequested.value.load() : undefined);
+const languageExtension = computed(() =>
   // @ts-ignore
-  languageSupport ? languageConfiguration.of(languageSupport) : undefined
+  languageSupport.value ? languageConfiguration.value.of(languageSupport.value) : undefined
 );
 const editorView = shallowRef<EditorView>();
 </script>

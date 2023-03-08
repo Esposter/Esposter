@@ -2,8 +2,8 @@
 import { useMemberStore } from "@/store/chat/member";
 
 const memberStore = useMemberStore();
-const { memberList } = $(storeToRefs(memberStore));
-const membersCount = $computed(() => memberList.length);
+const { memberList } = storeToRefs(memberStore);
+const membersCount = computed(() => memberList.value.length);
 </script>
 
 <template>
