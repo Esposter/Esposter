@@ -10,8 +10,5 @@ export const getContainerClient = async (containerName: AzureContainer) => {
 
 export const append = async (appendBlobClient: AppendBlobClient, data: HttpRequestBody) => {
   await appendBlobClient.createIfNotExists();
-  const response = await appendBlobClient.appendBlock(data, data.toString().length);
-  const error = response._response.status >= 400;
-  if (error) console.error(`Failed to append data to blob ${appendBlobClient.name}`);
-  return !error;
+  return appendBlobClient.appendBlock(data, data.toString().length);
 };
