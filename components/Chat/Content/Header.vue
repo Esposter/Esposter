@@ -6,7 +6,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layo
 </script>
 
 <template>
-  <v-toolbar class="v-app-bar" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
+  <v-toolbar color="surface" height="56" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
     <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     <ChatModelRoomTitle />
     <template #append>

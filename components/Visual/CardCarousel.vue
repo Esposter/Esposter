@@ -4,7 +4,6 @@
 import BaseCard from "@/components/Visual/BaseCard.vue";
 import type { Card } from "@/models/visual/Card";
 import type { Component } from "vue";
-import { onMounted, onUnmounted } from "vue";
 import { useDisplay } from "vuetify";
 
 const props = withDefaults(

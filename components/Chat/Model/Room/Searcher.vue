@@ -7,8 +7,10 @@ const dialog = ref(false);
 </script>
 
 <template>
-  <v-btn case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
-  <v-dialog v-model="dialog" max-width="500">
+  <v-dialog v-model="dialog">
+    <template #activator>
+      <v-btn case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+    </template>
     <v-card>
       <v-card-title>
         <v-text-field

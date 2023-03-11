@@ -15,7 +15,7 @@ const backgroundColor = computed(() => (disabled.value ? "transparent" : "curren
 </script>
 
 <template>
-  <v-tooltip location="top" text="Send now">
+  <v-tooltip text="Send now">
     <template #activator="{ props: tooltipProps }">
       <v-btn
         icon="mdi-send"

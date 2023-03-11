@@ -11,6 +11,6 @@ export const formRules: {
   required: ValidationRule;
   requireAtMostNCharacters: (n: number) => ValidationRule;
 } = {
-  required: (value: FormFieldValue) => value.length > 0 || "Required",
-  requireAtMostNCharacters: (n) => (value: FormFieldValue) => value.length <= n || `Max ${n} characters`,
+  required: (value: FormFieldValue) => value.length > 0 || "required",
+  requireAtMostNCharacters: (n) => (value: FormFieldValue) => value.length <= n || `max ${n} characters`,
 };

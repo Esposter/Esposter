@@ -75,7 +75,7 @@ const upgradeIcon = computed(() => {
         </template>
       </v-list-item>
     </template>
-    <v-card max-width="500">
+    <StyledCard>
       <v-card-title display="flex!" font="bold!">
         <div>
           <v-img width="2rem" height="2rem" :src="type === ItemType.Building ? menuIcon : upgradeIcon" :alt="name" />
@@ -104,7 +104,7 @@ const upgradeIcon = computed(() => {
           <slot name="action" />
         </v-card-actions>
       </template>
-    </v-card>
+    </StyledCard>
   </v-menu>
 </template>
 

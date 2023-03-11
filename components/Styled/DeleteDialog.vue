@@ -14,8 +14,10 @@ const isDeleteMode = ref(false);
 </script>
 
 <template>
-  <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
-  <v-dialog v-model="isDeleteMode" max-width="500">
+  <v-dialog v-model="isDeleteMode">
+    <template #activator>
+      <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
+    </template>
     <v-card :="cardProps">
       <slot name="content" />
       <v-card-actions>

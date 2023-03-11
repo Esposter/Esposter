@@ -108,7 +108,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         @update:model-value="(value) => emit('update:menu', value)"
         @select="onSelect"
       />
-      <v-tooltip location="top" text="Edit">
+      <v-tooltip text="Edit">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             v-if="isCreator"
@@ -123,7 +123,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
       </v-tooltip>
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
         <template #activator="{ props: menuProps }">
-          <v-tooltip location="top" text="More">
+          <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">
               <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
             </template>

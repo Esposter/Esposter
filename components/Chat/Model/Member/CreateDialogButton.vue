@@ -17,7 +17,7 @@ const { copy, copied } = useClipboard({ source: inviteLink });
 </script>
 
 <template>
-  <v-dialog v-model="dialog" max-width="500">
+  <v-dialog v-model="dialog">
     <template #activator>
       <v-tooltip location="bottom" text="Add friends to Room">
         <template #activator="{ props }">

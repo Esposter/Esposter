@@ -40,7 +40,7 @@ const onEmojiSelect = (emoji: { native: string }) => {
     "
   >
     <template #activator="{ props: menuProps }">
-      <v-tooltip location="top" :="tooltipProps">
+      <v-tooltip :="tooltipProps">
         <template #activator="{ props: tooltipActivatorProps }">
           <v-btn
             icon="mdi-emoticon"

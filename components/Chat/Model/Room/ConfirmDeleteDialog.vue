@@ -31,7 +31,7 @@ const onDeleteRoom = async () => {
     @delete="onDeleteRoom"
   >
     <template #default="defaultProps">
-      <v-tooltip location="top" :text="isCreator ? 'Delete Room' : 'Leave Room'">
+      <v-tooltip :text="isCreator ? 'Delete Room' : 'Leave Room'">
         <template #activator="{ props: tooltipProps }">
           <slot :="{ ...defaultProps, tooltipProps }" />
         </template>

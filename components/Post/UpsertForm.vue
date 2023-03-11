@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formRules } from "@/services/vuetify/formRules";
 import type { Post } from "@prisma/client";
 import type { SubmitEventPromise } from "vuetify";
 

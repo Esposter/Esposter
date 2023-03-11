@@ -75,7 +75,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     theme,
     ssr: true,
-    defaults: { VBtn: { flat: true } },
+    defaults: { VBtn: { flat: true }, VDialog: { width: 500, maxWidth: "100%" }, VTooltip: { location: "top" } },
   });
   nuxtApp.vueApp.use(vuetify);
 });

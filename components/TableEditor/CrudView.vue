@@ -1,0 +1,48 @@
+<script setup lang="ts">
+import type { IItem } from "@/models/tableEditor/IItem";
+import {
+  getItemCategoryDefinition,
+  tableEditorItemCategoryDefinitions,
+} from "@/services/tableEditor/itemCategoryDefinition";
+import type { DataTableHeader } from "@/services/vuetify/dataTable";
+import { useTableEditorStore } from "@/store/tableEditor";
+import { useItemStore } from "@/store/tableEditor/item";
+import { VDataTable } from "vuetify/labs/VDataTable";
+
+const tableEditorStore = useTableEditorStore();
+const { searchQuery } = storeToRefs(tableEditorStore);
+const itemStore = useItemStore();
+const { itemList } = storeToRefs(itemStore);
+const headers = ref<DataTableHeader[]>([
+  { title: "Type", key: "type", align: "start" },
+  { title: "Name", key: "name" },
+]);
+const getItemCategoryDefinitionByItem = (item: unknown) =>
+  getItemCategoryDefinition(tableEditorItemCategoryDefinitions, (item as { raw: IItem }).raw);
+</script>
+
+<template>
+  <v-container h="full" display="flex" flex="col" fluid>
+    <v-data-table
+      display="flex"
+      flex="1 col"
+      :headers="headers"
+      :items="itemList"
+      :search="searchQuery"
+      :sort-by="[{ key: 'name', order: 'asc' }]"
+      height="100%"
+    >
+      <template #top>
+        <TableEditorCrudViewHeader />
+      </template>
+      <template #[`item.type`]="{ item }">
+        <v-chip>
+          <v-avatar>
+            <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
+          </v-avatar>
+          {{ getItemCategoryDefinitionByItem(item).title }}
+        </v-chip>
+      </template>
+    </v-data-table>
+  </v-container>
+</template>
