@@ -36,6 +36,7 @@ const animateCursors = (amount: number) => {
   }
 };
 
+onMounted(() => animateCursors(amount.value));
 watch(amount, (newValue) => animateCursors(newValue), { flush: "post" });
 </script>
 
