@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { Game } from "@/models/clicker/Game";
 import { CLICKER_STORE, ITEM_NAME } from "@/services/clicker/constants";
-import { createInitialGame } from "@/services/clicker/createInitialGame";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";
 
@@ -17,7 +17,7 @@ useTimers();
 onMounted(() => {
   if (status.value === "unauthenticated") {
     const clickerStore = localStorage.getItem(CLICKER_STORE);
-    game.value = clickerStore ? JSON.parse(clickerStore) : createInitialGame();
+    game.value = clickerStore ? JSON.parse(clickerStore) : new Game();
   }
 });
 

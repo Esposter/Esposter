@@ -2,14 +2,12 @@ import { buildings } from "@/assets/clicker/data/buildings";
 import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursor";
 import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandma";
 import { AzureContainer } from "@/models/azure/blob";
-import type { Game } from "@/models/clicker/Game";
-import { gameSchema } from "@/models/clicker/Game";
+import { Game, gameSchema } from "@/models/clicker/Game";
 import { Upgrade } from "@/models/clicker/Upgrade";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
-import { createInitialGame } from "@/services/clicker/createInitialGame";
 import { jsonDateParser } from "@/utils/json";
 import { streamToText } from "@/utils/text";
 
@@ -22,10 +20,10 @@ export const clickerRouter = router({
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
-      if (!response.readableStreamBody) return createInitialGame();
+      if (!response.readableStreamBody) return new Game();
       return JSON.parse(await streamToText(response.readableStreamBody), jsonDateParser);
     } catch {
-      return createInitialGame();
+      return new Game();
     }
   }),
   saveGame: authedProcedure.input(gameSchema).mutation(async ({ input, ctx }) => {

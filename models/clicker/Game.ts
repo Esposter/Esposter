@@ -3,11 +3,11 @@ import { createUpgradeSchema, Upgrade } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { z } from "zod";
 
-export interface Game {
-  noPoints: number;
-  boughtUpgrades: Upgrade[];
-  boughtBuildings: BuildingWithStats[];
-  createdAt: Date;
+export class Game {
+  noPoints = 0;
+  boughtUpgrades: Upgrade[] = [];
+  boughtBuildings: BuildingWithStats[] = [];
+  createdAt = new Date();
 }
 
 export const gameSchema = z.object({
