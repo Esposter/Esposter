@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/chat/room";
+import { useRoomStore } from "@/store/esbabbler/room";
 
 definePageMeta({ middleware: "auth" });
 
@@ -21,19 +21,19 @@ useSubscribables();
     <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
     <template #left>
-      <ChatLeftSideBar />
+      <EsbabblerLeftSideBar />
     </template>
     <template v-if="roomExists" #right>
-      <ChatRightSideBar />
+      <EsbabblerRightSideBar />
     </template>
     <template v-if="roomExists">
       <Head>
         <Title>{{ roomName }}</Title>
       </Head>
-      <ChatContent />
+      <EsbabblerContent />
     </template>
     <template v-if="roomExists" #footer>
-      <ChatModelMessageInput />
+      <EsbabblerModelMessageInput />
     </template>
   </NuxtLayout>
 </template>

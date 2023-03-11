@@ -1,8 +1,8 @@
 import type { CompositeKey } from "@/models/azure";
-import { MessageEntity, messageSchema } from "@/models/azure/message";
-import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
-import { messageEventEmitter } from "@/models/events/message";
+import { messageEventEmitter } from "@/models/esbabbler/events/message";
+import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
+import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import {
@@ -13,7 +13,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/message/table";
+import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

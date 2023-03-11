@@ -1,4 +1,4 @@
-import { LanguageRegexSupportPatternMap } from "@/models/file/LanguageRegexSupportPatternMap";
+import { LanguageRegexSupportPatternMap } from "@/models/esbabbler/file/LanguageRegexSupportPatternMap";
 
 export const getLanguageForFileUrl = (url: string) => {
   const filename = url.substring(url.lastIndexOf("/") + 1).toLowerCase();

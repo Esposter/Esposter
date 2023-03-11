@@ -1,13 +1,13 @@
-import { MessageMetadataType } from "@/models/azure/message/metadata";
-import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/azure/message/reply";
-import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
-import { replyEventEmitter } from "@/models/events/reply";
+import { replyEventEmitter } from "@/models/esbabbler/events/reply";
+import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
+import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/esbabbler/message/reply";
+import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
-import { getMessagesPartitionKeyFilter } from "@/services/message/table";
+import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/utils/time";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";

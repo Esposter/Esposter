@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMessageStore } from "@/store/chat/message";
+import { useMessageStore } from "@/store/esbabbler/message";
 import type { Editor } from "@tiptap/vue-3";
 
 interface CustomEmojiPickerButtonProps {

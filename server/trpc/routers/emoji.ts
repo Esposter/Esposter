@@ -1,8 +1,8 @@
-import { MessageEmojiMetadataEntity, messageEmojiMetadataSchema } from "@/models/azure/message/emoji";
-import { MessageMetadataType } from "@/models/azure/message/metadata";
-import { roomSchema } from "@/models/azure/room";
 import { AzureTable } from "@/models/azure/table";
-import { emojiEventEmitter } from "@/models/events/emoji";
+import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
+import { MessageEmojiMetadataEntity, messageEmojiMetadataSchema } from "@/models/esbabbler/message/emoji";
+import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
+import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
@@ -14,7 +14,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { getMessagesPartitionKeyFilter } from "@/services/message/table";
+import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/utils/time";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";

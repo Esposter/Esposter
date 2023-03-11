@@ -1,6 +1,6 @@
-import { roomSchema } from "@/models/azure/room";
-import { InviteCodeEntity, inviteCodeSchema } from "@/models/azure/room/inviteCode";
 import { AzureTable } from "@/models/azure/table";
+import { roomSchema } from "@/models/esbabbler/room";
+import { InviteCodeEntity, inviteCodeSchema } from "@/models/esbabbler/room/inviteCode";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
