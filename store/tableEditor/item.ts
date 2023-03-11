@@ -17,16 +17,16 @@ export const useItemStore = defineStore("tableEditor/item", () => {
   };
   const createItem = (newItem: IItem) => {
     itemList.value.push(newItem);
-    tableEditorStore.resetEditor();
+    tableEditorStore.editFormDialog = false;
   };
   const updateItem = (updatedItem: IItem) => {
     const index = itemList.value.findIndex((r) => r.id === updatedItem.id);
     if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem };
-    tableEditorStore.resetEditor();
+    tableEditorStore.editFormDialog = false;
   };
   const deleteItem = (id: string) => {
     itemList.value = itemList.value.filter((r) => r.id !== id);
-    tableEditorStore.resetEditor();
+    tableEditorStore.editFormDialog = false;
   };
 
   return {

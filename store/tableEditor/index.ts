@@ -37,10 +37,9 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
     if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
-    resetEditor();
-  };
-  const resetEditor = () => {
     editFormDialog.value = false;
+  };
+  const resetItem = () => {
     editedItem.value = null;
     editedIndex.value = -1;
   };
@@ -56,6 +55,6 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
     isSavable,
     editItem,
     save,
-    resetEditor,
+    resetItem,
   };
 });

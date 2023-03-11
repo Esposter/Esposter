@@ -2,8 +2,8 @@
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
-const { save, resetEditor } = tableEditorStore;
-const { isSavable, editedItem } = storeToRefs(tableEditorStore);
+const { save } = tableEditorStore;
+const { editFormDialog, editedItem, isSavable } = storeToRefs(tableEditorStore);
 const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));
 const dialog = ref(false);
 </script>
@@ -19,7 +19,7 @@ const dialog = ref(false);
             @click="
               () => {
                 if (isSavable) dialog = true;
-                else resetEditor();
+                else editFormDialog = false;
               }
             "
           />
@@ -39,7 +39,7 @@ const dialog = ref(false);
           @click="
             () => {
               dialog = false;
-              resetEditor();
+              editFormDialog = false;
             }
           "
         >

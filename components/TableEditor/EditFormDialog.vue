@@ -2,7 +2,12 @@
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
+const { resetItem } = tableEditorStore;
 const { editFormRef, editFormDialog, isFullScreenDialog } = storeToRefs(tableEditorStore);
+
+watch(editFormDialog, (newValue) => {
+  if (!newValue) resetItem();
+});
 </script>
 
 <template>
