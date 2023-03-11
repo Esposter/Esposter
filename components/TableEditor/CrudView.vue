@@ -10,12 +10,13 @@ import { useItemStore } from "@/store/tableEditor/item";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 const tableEditorStore = useTableEditorStore();
+const { editItem } = tableEditorStore;
 const { searchQuery } = storeToRefs(tableEditorStore);
 const itemStore = useItemStore();
 const { itemList } = storeToRefs(itemStore);
 const headers = ref<DataTableHeader[]>([
-  { title: "Type", key: "type", align: "start" },
   { title: "Name", key: "name" },
+  { title: "Type", key: "type" },
 ]);
 const getItemCategoryDefinitionByItem = (item: unknown) =>
   getItemCategoryDefinition(tableEditorItemCategoryDefinitions, (item as { raw: IItem }).raw);
@@ -31,15 +32,14 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       height="100%"
+      @click:row="(_, { item }) => editItem(item.raw.id)"
     >
       <template #top>
         <TableEditorCrudViewHeader />
       </template>
       <template #[`item.type`]="{ item }">
         <v-chip>
-          <v-avatar>
-            <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
-          </v-avatar>
+          <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
           {{ getItemCategoryDefinitionByItem(item).title }}
         </v-chip>
       </template>

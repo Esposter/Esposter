@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     "@mdi/font/css/materialdesignicons.min.css",
     "emoji-mart-vue-fast/css/emoji-mart.css",
   ],
+  build: {
+    transpile: ["vuetify"],
+  },
   vite: {
     css: {
       preprocessorOptions: {
@@ -15,9 +18,6 @@ export default defineNuxtConfig({
         },
       },
     },
-  },
-  build: {
-    transpile: ["vuetify"],
   },
   typescript: {
     shim: false,

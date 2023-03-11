@@ -1,19 +1,10 @@
 <script setup lang="ts">
-import type { IItem } from "@/models/tableEditor/IItem";
-import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { tableEditorItemCategoryDefinitions } from "@/services/tableEditor/itemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { useItemStore } from "@/store/tableEditor/item";
 import { mergeProps } from "vue";
 
 const tableEditorStore = useTableEditorStore();
-const { editFormDialog } = storeToRefs(tableEditorStore);
-const itemStore = useItemStore();
-const { editedItem } = storeToRefs(itemStore);
-const createItem = (itemCategoryDefinition: ItemCategoryDefinition<IItem>) => {
-  editedItem.value = itemCategoryDefinition.create();
-  editFormDialog.value = true;
-};
+const { editFormDialog, editedItem } = storeToRefs(tableEditorStore);
 </script>
 
 <template>
@@ -31,10 +22,16 @@ const createItem = (itemCategoryDefinition: ItemCategoryDefinition<IItem>) => {
       <v-list-item
         v-for="icd in tableEditorItemCategoryDefinitions"
         :key="icd.value"
-        :prepend-icon="icd.icon"
-        :title="icd.title"
-        @click="createItem(icd)"
-      />
+        @click="
+          () => {
+            editedItem = icd.create();
+            editFormDialog = true;
+          }
+        "
+      >
+        <v-icon :icon="icd.icon" />
+        {{ icd.title }}
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>

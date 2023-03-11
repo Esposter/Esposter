@@ -1,16 +1,20 @@
 <script setup lang="ts">
+import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 
-const emit = defineEmits<{ (event: "delete"): void }>();
+const tableEditorStore = useTableEditorStore();
+const { editedItem, editedIndex } = storeToRefs(tableEditorStore);
+const isExistingItem = computed(() => editedIndex.value > -1);
 const itemStore = useItemStore();
-const { editedItem } = storeToRefs(itemStore);
+const { deleteItem } = itemStore;
+const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));
 const dialog = ref(false);
-const itemNameConfirmation = ref("");
-const isDeletable = computed(() => itemNameConfirmation.value === editedItem.value?.name);
+const itemName = ref("");
+const isDeletable = computed(() => itemName.value === editedItem.value?.name);
 </script>
 
 <template>
-  <v-dialog v-if="editedItem" v-model="dialog">
+  <v-dialog v-if="isExistingItem && editedItem" v-model="dialog">
     <template #activator>
       <v-tooltip text="Delete">
         <template #activator="{ props: tooltipProps }">
@@ -18,24 +22,26 @@ const isDeletable = computed(() => itemNameConfirmation.value === editedItem.val
         </template>
       </v-tooltip>
     </template>
-    <StyledCard :title="`Confirm Deletion of ${editedItem.type}: '${editedItem.name}'`">
+    <StyledCard>
+      <v-card-title>Confirm Deletion of {{ displayItemType }}: '{{ editedItem.name }}'</v-card-title>
       <v-card-text>
         To confirm the delete action please enter the name of the
-        {{ editedItem.type }} exactly as it occurs.
-        <v-text-field v-model="itemNameConfirmation" />
+        {{ displayItemType }} exactly as it occurs.
+        <v-text-field v-model="itemName" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="dialog = false">Cancel</v-btn>
+        <v-btn variant="outlined" @click="dialog = false">Cancel</v-btn>
         <v-btn
           color="error"
           variant="outlined"
           :disabled="!isDeletable"
           @click="
             () => {
-              if (isDeletable) {
-                emit('delete');
-                itemNameConfirmation = '';
+              if (isDeletable && editedItem) {
+                deleteItem(editedItem.id);
+                dialog = false;
+                itemName = '';
               }
             }
           "

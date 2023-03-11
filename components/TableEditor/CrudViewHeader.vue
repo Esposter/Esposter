@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
-import { useItemStore } from "@/store/tableEditor/item";
 
 const tableEditorStore = useTableEditorStore();
-const { searchQuery } = storeToRefs(tableEditorStore);
-const itemStore = useItemStore();
-const { editedItem } = storeToRefs(itemStore);
+const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
 const EditForm = computed(() =>
   defineAsyncComponent(() =>
     editedItem.value
