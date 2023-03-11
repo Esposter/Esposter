@@ -11,10 +11,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
   const editFormDialog = ref(false);
   const editedIndex = ref(-1);
   const isFullScreenDialog = ref(false);
-  const isEditFormValid = computed(() => {
-    console.log(editFormRef.value?.errors);
-    return editFormRef.value?.errors.length === 0;
-  });
+  const isEditFormValid = computed(() => editFormRef.value?.errors.length === 0);
 
   const save = () => {
     if (!editedItem.value) return;
