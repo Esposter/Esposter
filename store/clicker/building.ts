@@ -1,7 +1,7 @@
 import type { Building } from "@/models/clicker/Building";
 import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
-import { ITEM_NAME } from "@/services/clicker/settings";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker/upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";

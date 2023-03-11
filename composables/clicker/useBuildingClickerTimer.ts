@@ -1,4 +1,4 @@
-import { FPS } from "@/services/clicker/settings";
+import { FPS } from "@/services/clicker/constants";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
 import { clearInterval, setInterval } from "worker-timers";

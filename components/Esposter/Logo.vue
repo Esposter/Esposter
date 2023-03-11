@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SITE_NAME } from "@/services/esposter/constants";
+
 const logoImageUrl = useLogoImageUrl();
 </script>
 

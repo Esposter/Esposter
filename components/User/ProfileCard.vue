@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SITE_NAME } from "@/services/esposter/constants";
 import dayjs from "dayjs";
 
 const { $client } = useNuxtApp();

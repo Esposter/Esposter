@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SITE_DESCRIPTION, SITE_NAME } from "@/services/esposter/constants";
+
 const { primary } = useColors();
 const config = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
-import { ITEM_NAME } from "@/services/clicker/settings";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
 

@@ -1,6 +1,6 @@
 import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { Target } from "@/models/clicker/Target";
-import { FPS } from "@/services/clicker/settings";
+import { FPS } from "@/services/clicker/constants";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
 import { clearInterval, setInterval } from "worker-timers";

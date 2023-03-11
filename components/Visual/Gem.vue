@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
 import {
   AmbientLight,
   BufferGeometry,

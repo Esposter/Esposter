@@ -1,1 +1,1 @@
-export const inviteCodePartitionKey = "Default";
+export const INVITES_PARTITION_KEY = "Default";

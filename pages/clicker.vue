@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { CLICKER_STORE, ITEM_NAME } from "@/services/clicker/constants";
 import { createInitialGame } from "@/services/clicker/createInitialGame";
 import { formatNumberLong } from "@/services/clicker/format";
-import { CLICKER_STORE, ITEM_NAME } from "@/services/clicker/settings";
 import { useGameStore } from "@/store/clicker/game";
 
 const { $client } = useNuxtApp();

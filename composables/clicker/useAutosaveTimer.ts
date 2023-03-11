@@ -1,4 +1,4 @@
-import { AUTOSAVE_INTERVAL } from "@/services/clicker/settings";
+import { AUTOSAVE_INTERVAL } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 import { clearInterval, setInterval } from "worker-timers";
 

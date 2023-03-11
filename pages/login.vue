@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SITE_NAME } from "@/services/esposter/constants";
 import type { BuiltInProviderType } from "next-auth/providers";
 import type { Component, CSSProperties } from "vue";
 

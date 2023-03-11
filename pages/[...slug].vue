@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
+import { NOT_FOUND_BACKGROUND } from "@/services/esposter/constants";
 import { gsap } from "gsap";
 
 const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;

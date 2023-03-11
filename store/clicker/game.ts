@@ -1,5 +1,5 @@
 import type { Game } from "@/models/clicker/Game";
-import { CLICKER_STORE } from "@/services/clicker/settings";
+import { CLICKER_STORE } from "@/services/clicker/constants";
 
 export const useGameStore = defineStore("clicker/game", () => {
   const { $client } = useNuxtApp();

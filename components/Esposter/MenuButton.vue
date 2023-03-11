@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
-import { ITEM_NAME } from "@/services/clicker/settings";
+import { ITEM_NAME } from "@/services/clicker/constants";
 import { mergeProps } from "vue";
 
 const items: ListItem[] = [
