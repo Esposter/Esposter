@@ -35,7 +35,7 @@ const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >=
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
       <ul px="8">
-        <li v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" class="list-item" mt="1" px="1" rd="1">
+        <li v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" class="list-item" mt="1" px="1" rd>
           <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
           <div v-html="buildingStatHtml" />
         </li>

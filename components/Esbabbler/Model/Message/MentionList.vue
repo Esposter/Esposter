@@ -53,7 +53,7 @@ watch(
         :style="{ backgroundColor: infoOpacity10 }"
         w="full"
         justify="start!"
-        rd="1"
+        rd
         :ripple="false"
         @click="selectItem(index)"
       >

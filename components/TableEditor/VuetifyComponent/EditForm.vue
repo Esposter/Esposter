@@ -7,6 +7,7 @@ import * as components from "vuetify/components";
 const tableEditorStore = useTableEditorStore();
 // @NOTE: Fix up this type cast when pinia team fixes type issues
 const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: VuetifyComponent };
+const { background } = useColors();
 const tab = ref<number>();
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once
@@ -32,7 +33,7 @@ const onIntersect = (isIntersecting: boolean) => {
 
   <v-window v-if="editedItem" v-model="tab">
     <v-window-item value="tab-1">
-      <v-container>
+      <v-container overflow-y="auto">
         <v-row>
           <v-col>
             <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
@@ -57,7 +58,21 @@ const onIntersect = (isIntersecting: boolean) => {
             </v-autocomplete>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            Preview
+            <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>
+              <component :is="editedItem.component" />
+            </div>
+          </v-col>
+        </v-row>
       </v-container>
     </v-window-item>
   </v-window>
 </template>
+
+<style scoped lang="scss">
+.preview {
+  background: v-bind(background);
+}
+</style>

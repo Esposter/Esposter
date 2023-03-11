@@ -65,7 +65,7 @@ const providerProps = ref<ProviderProps[]>([
               h="12"
               display="flex"
               items="center"
-              rd="1"
+              rd
               @click="signIn(provider)"
             >
               <component :is="logo" :style="{ ...logoStyle }" w="8" :="{ ...logoAttrs }" />
