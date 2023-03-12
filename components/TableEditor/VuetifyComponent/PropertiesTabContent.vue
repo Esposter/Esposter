@@ -38,7 +38,7 @@ watch(
 </script>
 
 <template>
-  <v-container v-if="editedItem" max-h="70vh" overflow-y="auto">
+  <v-container v-if="editedItem">
     <v-row v-for="propertyRenderer in propertyRendererMap" :key="propertyRenderer[0]">
       <v-col>
         {{ propertyRenderer[0] }}

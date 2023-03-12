@@ -79,6 +79,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       VBtn: { flat: true },
       VDialog: { width: 500, maxWidth: "100%" },
       VTooltip: { location: "top" },
+      VWindowItem: {
+        VContainer: {
+          fluid: true,
+        },
+      },
     },
   });
   nuxtApp.vueApp.use(vuetify);

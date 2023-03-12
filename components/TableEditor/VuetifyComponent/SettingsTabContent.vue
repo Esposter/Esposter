@@ -22,7 +22,7 @@ const onIntersect = (isIntersecting: boolean) => {
 </script>
 
 <template>
-  <v-container v-if="editedItem" max-h="70vh" overflow-y="auto">
+  <v-container v-if="editedItem">
     <v-row>
       <v-col>
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />

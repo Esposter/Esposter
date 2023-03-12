@@ -9,7 +9,7 @@ const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem:
 </script>
 
 <template>
-  <v-container v-if="editedItem" max-h="70vh" overflow-y="auto">
+  <v-container v-if="editedItem">
     <v-row>
       <v-col>
         <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>

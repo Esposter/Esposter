@@ -4,7 +4,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
 // @NOTE: Fix up this type cast when pinia team fixes type issues
-const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: VuetifyComponent };
+const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: Ref<VuetifyComponent | null> };
 const tab = ref<number>();
 </script>
 
