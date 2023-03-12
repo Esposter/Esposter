@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
+import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/constants";
 import { getComponent } from "@/services/tableEditor/vuetifyComponent/getComponent";
-import { VuetifyComponentMap } from "@/services/vuetify/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { Constructor } from "type-fest";
 

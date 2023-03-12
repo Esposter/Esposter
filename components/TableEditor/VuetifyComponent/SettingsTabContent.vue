@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
-import { VuetifyComponentMap } from "@/services/vuetify/constants";
+import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
