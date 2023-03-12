@@ -33,7 +33,7 @@ const onIntersect = (isIntersecting: boolean) => {
 
   <v-window v-if="editedItem" v-model="tab">
     <v-window-item value="tab-1">
-      <v-container overflow-y="auto">
+      <v-container max-h="70vh" overflow-y="auto">
         <v-row>
           <v-col>
             <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
