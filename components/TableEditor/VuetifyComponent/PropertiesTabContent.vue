@@ -8,8 +8,8 @@ import { Constructor } from "type-fest";
 const tableEditorStore = useTableEditorStore();
 // @NOTE: Fix up this type cast when pinia team fixes type issues
 const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: Ref<VuetifyComponent | null> };
-const typePropertyRendererMap = ref<[string, Component][]>([]);
-const updateTypePropertyRendererMap = (component: NonNullable<(typeof editedItem)["value"]>["component"]) => {
+const propertyRendererMap = ref<[string, Component][]>([]);
+const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["value"]>["component"]) => {
   const result: [string, Component][] = [];
   const props = VuetifyComponentMap[component].props as Record<
     string,
@@ -21,28 +21,28 @@ const updateTypePropertyRendererMap = (component: NonNullable<(typeof editedItem
     else result.push([name, markRaw(getComponent(prop.type as Constructor<unknown>))]);
   }
 
-  typePropertyRendererMap.value = result;
+  propertyRendererMap.value = result;
 };
 
 onMounted(() => {
   if (!editedItem.value) return;
-  updateTypePropertyRendererMap(editedItem.value.component);
+  updatePropertyRendererMap(editedItem.value.component);
 });
 watch(
   () => editedItem.value?.component,
   (newValue) => {
     if (!newValue) return;
-    updateTypePropertyRendererMap(newValue);
+    updatePropertyRendererMap(newValue);
   }
 );
 </script>
 
 <template>
-  <v-container max-h="70vh" overflow-y="auto">
-    <v-row v-for="typePropertyRenderer in typePropertyRendererMap" :key="typePropertyRenderer[0]">
+  <v-container v-if="editedItem" max-h="70vh" overflow-y="auto">
+    <v-row v-for="propertyRenderer in propertyRendererMap" :key="propertyRenderer[0]">
       <v-col>
-        {{ typePropertyRenderer[0] }}
-        <component :is="typePropertyRenderer[1]" hide-details />
+        {{ propertyRenderer[0] }}
+        <component :is="propertyRenderer[1]" v-model="editedItem.props[propertyRenderer[0]]" hide-details />
       </v-col>
     </v-row>
   </v-container>

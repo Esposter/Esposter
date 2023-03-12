@@ -13,7 +13,7 @@ const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem:
     <v-row>
       <v-col>
         <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>
-          <component :is="editedItem.component" />
+          <component :is="editedItem.component" :="editedItem.props" />
         </div>
       </v-col>
     </v-row>
