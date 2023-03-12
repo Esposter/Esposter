@@ -6,7 +6,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
 // @NOTE: Fix up this type cast when pinia team fixes type issues
-const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: VuetifyComponent };
+const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: Ref<VuetifyComponent | null> };
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once
 const vuetifyComponents = computed(() => Object.keys(VuetifyComponentMap));
@@ -22,7 +22,7 @@ const onIntersect = (isIntersecting: boolean) => {
 </script>
 
 <template>
-  <v-container max-h="70vh" overflow-y="auto">
+  <v-container v-if="editedItem" max-h="70vh" overflow-y="auto">
     <v-row>
       <v-col>
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />

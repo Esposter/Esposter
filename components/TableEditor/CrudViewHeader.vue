@@ -7,7 +7,7 @@ const EditForm = computed(() =>
   defineAsyncComponent(() =>
     editedItem.value
       ? import(`@/components/TableEditor/${editedItem.value.type}/EditForm.vue`)
-      : new Promise(() => null)
+      : import("@/components/TableEditor/VuetifyComponent/PropertyRenderer/Empty.vue")
   )
 );
 </script>

@@ -1,0 +1,3 @@
+<template>
+  <v-switch />
+</template>
