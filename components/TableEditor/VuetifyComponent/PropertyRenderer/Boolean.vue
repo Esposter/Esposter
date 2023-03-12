@@ -1,3 +1,3 @@
 <template>
-  <v-switch />
+  <v-switch color="primary" />
 </template>
