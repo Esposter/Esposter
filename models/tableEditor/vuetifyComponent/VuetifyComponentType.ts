@@ -1,10 +1,8 @@
-import type { KebabCasedPropertiesDeep } from "type-fest";
-import * as components from "vuetify/components";
+import { VuetifyComponentMap } from "@/services/vuetify/constants";
 
-export const VuetifyComponentType = Object.keys(components).reduce<Record<string, string>>((acc, curr) => {
-  const newComponentName = toKebabCase(curr);
-  acc[newComponentName] = newComponentName;
+export const VuetifyComponentType = Object.keys(VuetifyComponentMap).reduce<Record<string, string>>((acc, curr) => {
+  acc[curr] = curr;
   return acc;
   // eslint-disable-next-line no-use-before-define
-}, {}) as { [P in keyof KebabCasedPropertiesDeep<typeof components>]: P };
+}, {}) as { [P in keyof VuetifyComponentMap]: P };
 export type VuetifyComponentType = typeof VuetifyComponentType;

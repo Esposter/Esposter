@@ -5,5 +5,5 @@ import { VuetifyComponentType } from "@/models/tableEditor/vuetifyComponent/Vuet
 
 export class VuetifyComponent extends Item implements IItemType<ItemType> {
   type = ItemType.VuetifyComponent;
-  component = VuetifyComponentType["v-alert"];
+  component: VuetifyComponentType[keyof VuetifyComponentType] = VuetifyComponentType["v-alert"];
 }
