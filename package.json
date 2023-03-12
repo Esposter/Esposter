@@ -10,7 +10,7 @@
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
     "cleanup": "nuxt cleanup",
-    "postinstall": "nuxt prepare",
+    "postinstall": "npm run prisma-generate && nuxt prepare",
     "test": "vitest",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
