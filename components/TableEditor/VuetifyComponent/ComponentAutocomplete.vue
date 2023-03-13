@@ -22,9 +22,8 @@ const onIntersect = (isIntersecting: boolean) => {
 </script>
 
 <template>
-  <v-col cols="12">
+  <v-col v-if="editedItem" cols="12">
     <v-autocomplete
-      v-if="editedItem"
       v-model="editedItem.component"
       label="Component"
       :items="displayVuetifyComponents"
