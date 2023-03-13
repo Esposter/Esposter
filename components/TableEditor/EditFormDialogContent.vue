@@ -4,10 +4,11 @@ import { useTableEditorStore } from "@/store/tableEditor";
 const tableEditorStore = useTableEditorStore();
 const { editFormRef, isFullScreenDialog } = storeToRefs(tableEditorStore);
 const maxHeight = computed(() => (isFullScreenDialog.value ? "initial" : "60vh"));
+
 </script>
 
 <template>
-  <StyledCard overflow="hidden!">
+  <StyledCard>
     <v-toolbar color="surface">
       <v-spacer />
       <TableEditorEditFormErrorIcon />
