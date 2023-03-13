@@ -22,30 +22,22 @@ const onIntersect = (isIntersecting: boolean) => {
 </script>
 
 <template>
-  <v-container v-if="editedItem">
-    <v-row>
-      <v-col>
-        <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-autocomplete
-          v-model="editedItem.component"
-          label="Component"
-          :items="displayVuetifyComponents"
-          :rules="[formRules.required]"
-          @update:menu="
-            (value) => {
-              if (!value) vuetifyComponentsCursor = Math.min(READ_LIMIT, vuetifyComponents.length);
-            }
-          "
-        >
-          <template #append-item>
-            <div v-intersect="onIntersect" />
-          </template>
-        </v-autocomplete>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-col cols="12">
+    <v-autocomplete
+      v-if="editedItem"
+      v-model="editedItem.component"
+      label="Component"
+      :items="displayVuetifyComponents"
+      :rules="[formRules.required]"
+      @update:menu="
+        (value) => {
+          if (!value) vuetifyComponentsCursor = Math.min(READ_LIMIT, vuetifyComponents.length);
+        }
+      "
+    >
+      <template #append-item>
+        <div v-intersect="onIntersect" />
+      </template>
+    </v-autocomplete>
+  </v-col>
 </template>

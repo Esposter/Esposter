@@ -76,6 +76,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     theme,
     ssr: true,
     defaults: {
+      VAutocomplete: { variant: "outlined" },
       VBtn: { flat: true },
       VDialog: { width: 500, maxWidth: "100%" },
       VTextField: { variant: "outlined" },

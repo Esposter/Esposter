@@ -9,15 +9,12 @@ const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem:
 </script>
 
 <template>
-  <v-container v-if="editedItem">
-    <v-row>
-      <v-col>
-        <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>
-          <component :is="editedItem.component" :="editedItem.props" />
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-col v-if="editedItem" cols="12">
+    Preview
+    <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>
+      <component :is="editedItem.component" :="editedItem.props" />
+    </div>
+  </v-col>
 </template>
 
 <style scoped lang="scss">
