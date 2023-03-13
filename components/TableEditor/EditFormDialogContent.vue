@@ -19,7 +19,7 @@ const maxHeight = computed(() => (isFullScreenDialog.value ? "initial" : "60vh")
       <TableEditorConfirmCloseDialogButton />
     </v-toolbar>
     <v-divider thickness="2" />
-    <v-form ref="editFormRef" display="flex" flex="1 col">
+    <v-form ref="editFormRef">
       <slot />
     </v-form>
   </StyledCard>
