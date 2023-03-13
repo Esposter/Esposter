@@ -29,7 +29,6 @@ const description = ref(initialValues.value.description);
         <v-row>
           <v-col>
             <v-text-field
-              variant="outlined"
               label="Title"
               placeholder="Title"
               autofocus

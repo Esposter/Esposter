@@ -42,7 +42,12 @@ watch(
     <v-row v-for="propertyRenderer in propertyRendererMap" :key="propertyRenderer[0]">
       <v-col>
         {{ propertyRenderer[0] }}
-        <component :is="propertyRenderer[1]" v-model="editedItem.props[propertyRenderer[0]]" hide-details />
+        <component
+          :is="propertyRenderer[1]"
+          v-model="editedItem.props[propertyRenderer[0]]"
+          :label="propertyRenderer[0]"
+          hide-details
+        />
       </v-col>
     </v-row>
   </v-container>

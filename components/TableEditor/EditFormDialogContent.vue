@@ -3,7 +3,6 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
 const { editFormRef, isFullScreenDialog } = storeToRefs(tableEditorStore);
-const maxHeight = computed(() => (isFullScreenDialog.value ? "initial" : "60vh"));
 </script>
 
 <template>
@@ -23,10 +22,3 @@ const maxHeight = computed(() => (isFullScreenDialog.value ? "initial" : "60vh")
     </v-form>
   </StyledCard>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-window-item > .v-container) {
-  max-height: v-bind(maxHeight);
-  overflow-y: auto;
-}
-</style>

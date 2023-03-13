@@ -78,6 +78,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     defaults: {
       VBtn: { flat: true },
       VDialog: { width: 500, maxWidth: "100%" },
+      VTextField: { variant: "outlined" },
       VTooltip: { location: "top" },
       VWindowItem: {
         VContainer: {
