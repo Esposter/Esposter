@@ -3,7 +3,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
 const { editFormRef, isFullScreenDialog } = storeToRefs(tableEditorStore);
-const maxHeight = computed(() => (isFullScreenDialog.value ? "100%" : "70vh"));
+const maxHeight = computed(() => (isFullScreenDialog.value ? "initial" : "60vh"));
 </script>
 
 <template>
@@ -25,18 +25,8 @@ const maxHeight = computed(() => (isFullScreenDialog.value ? "100%" : "70vh"));
 </template>
 
 <style scoped lang="scss">
-// Minus the height of the toolbar + tabs + 2px to perfectly match normal scrollbar
-:deep(.v-form) {
-  max-height: calc(100% - 64px);
-
-  & > .v-window {
-    max-height: calc(100% - 72px);
-
-    & > .v-window__container {
-      max-height: v-bind(maxHeight);
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-  }
+:deep(.v-window-item > .v-container) {
+  max-height: v-bind(maxHeight);
+  overflow-y: auto;
 }
 </style>
