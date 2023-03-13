@@ -9,7 +9,7 @@ const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem:
 </script>
 
 <template>
-  <v-container v-if="editedItem">
+  <v-container v-if="editedItem" fluid>
     <v-row>
       <v-col cols="12">
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
