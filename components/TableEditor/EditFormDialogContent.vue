@@ -8,8 +8,7 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
 
 <template>
   <StyledCard>
-    <v-toolbar color="surface" :title="`Configuration - ${displayType}`">
-      <v-toolbar-title></v-toolbar-title>
+    <v-toolbar flex="none" color="surface" :title="`Configuration - ${displayType}`">
       <v-spacer />
       <TableEditorEditFormErrorIcon />
       <TableEditorSaveButton />
@@ -26,6 +25,15 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
 </template>
 
 <style scoped lang="scss">
+:deep(.v-toolbar__content) {
+  height: auto !important;
+  flex-wrap: wrap;
+}
+
+:deep(.v-toolbar-title) {
+  flex: none;
+}
+
 :deep(.v-toolbar-title__placeholder) {
   overflow: initial;
 }
