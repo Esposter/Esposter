@@ -2,6 +2,7 @@
 import { TableEditor } from "@/models/tableEditor/TableEditor";
 import { TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { jsonDateParse } from "@/utils/json";
 
 const { $client } = useNuxtApp();
 const { status } = useSession();
@@ -15,7 +16,7 @@ useTimers();
 onMounted(() => {
   if (status.value === "unauthenticated") {
     const tableEditorStore = localStorage.getItem(TABLE_EDITOR_STORE);
-    tableEditor.value = tableEditorStore ? JSON.parse(tableEditorStore) : new TableEditor();
+    tableEditor.value = tableEditorStore ? jsonDateParse(tableEditorStore) : new TableEditor();
   }
 });
 

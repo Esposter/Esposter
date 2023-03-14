@@ -4,7 +4,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
-import { jsonDateParser } from "@/utils/json";
+import { jsonDateParse } from "@/utils/json";
 import { streamToText } from "@/utils/text";
 
 export const tableEditorRouter = router({
@@ -15,7 +15,7 @@ export const tableEditorRouter = router({
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
       if (!response.readableStreamBody) return new TableEditor();
-      return JSON.parse(await streamToText(response.readableStreamBody), jsonDateParser);
+      return jsonDateParse(await streamToText(response.readableStreamBody));
     } catch {
       return new TableEditor();
     }
