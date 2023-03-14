@@ -23,6 +23,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
   const isEditFormValid = computed(() => editFormRef.value?.errors.length === 0);
   const isSavable = computed(() => {
     if (!tableEditor.value) return;
+
     const originalItem = tableEditor.value.items.find((item) => item.id === editedItem.value?.id);
     if (!originalItem) return true;
     return isEditFormValid.value && !equal(editedItem.value, originalItem);

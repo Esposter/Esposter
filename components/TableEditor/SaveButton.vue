@@ -9,7 +9,7 @@ const { isSavable } = storeToRefs(tableEditorStore);
 <template>
   <v-tooltip text="Save & Close">
     <template #activator="{ props }">
-      <v-btn icon="mdi-content-save" :disabled="!isSavable" :="props" @click="save" />
+      <v-btn icon="mdi-content-save" :disabled="!isSavable" :="props" @click="() => save()" />
     </template>
   </v-tooltip>
 </template>
