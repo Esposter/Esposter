@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
-import { useItemStore } from "@/store/tableEditor/item";
 
 const tableEditorStore = useTableEditorStore();
+const { save } = tableEditorStore;
 const { editedItem, editedIndex } = storeToRefs(tableEditorStore);
 const isExistingItem = computed(() => editedIndex.value > -1);
-const itemStore = useItemStore();
-const { deleteItem } = itemStore;
 const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));
 const dialog = ref(false);
 const itemName = ref("");
@@ -38,11 +36,9 @@ const isDeletable = computed(() => itemName.value === editedItem.value?.name);
           :disabled="!isDeletable"
           @click="
             () => {
-              if (isDeletable && editedItem) {
-                deleteItem(editedItem.id);
-                dialog = false;
-                itemName = '';
-              }
+              save(true);
+              dialog = false;
+              itemName = '';
             }
           "
         >

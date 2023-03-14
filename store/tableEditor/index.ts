@@ -10,7 +10,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
   const { status } = useSession();
   const router = useRouter();
   const itemStore = useItemStore();
-  const { createItem, updateItem } = itemStore;
+  const { createItem, updateItem, deleteItem } = itemStore;
 
   const tableEditor = ref<TableEditor | null>(null);
   const searchQuery = ref("");
@@ -39,10 +39,11 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
     router.push({ ...router.currentRoute.value, query: { itemId: item.id } });
     editFormDialog.value = true;
   };
-  const save = async () => {
+  const save = async (deleteAction?: true) => {
     if (!tableEditor.value || !editedItem.value) return;
 
-    if (editedIndex.value > -1) updateItem(editedItem.value);
+    if (deleteAction) deleteItem(editedItem.value.id);
+    else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
     if (status.value === "authenticated") await $client.tableEditor.saveTableEditor.mutate(tableEditor.value);
