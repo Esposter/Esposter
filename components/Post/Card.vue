@@ -24,16 +24,10 @@ const isOwner = computed(() => data.value?.user.id === post.value.creatorId);
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
       Posted by <span font="bold">{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
-      <v-card-title class="text-h6" px="0!" font="bold!" whitespace="normal!" select="text">
+      <v-card-title class="text-h6" px="0!" font="bold!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>
-      <v-card-text
-        class="text-subtitle-1 card-content"
-        px="0!"
-        pb="0!"
-        select="text"
-        v-html="sanitizedDescriptionHtml"
-      />
+      <v-card-text class="text-subtitle-1 card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
       <v-card-actions p="0!">
         <PostUpdateButton v-if="isOwner" :post-id="post.id" />
         <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
