@@ -56,7 +56,6 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateDeleteMode"
         />
-        <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
         <v-list-item-subtitle v-else op="100!" v-html="sanitizedMessageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
@@ -93,7 +92,6 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <v-list-item-title font="bold!">
           {{ creator.name }}
         </v-list-item-title>
-        <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
         <v-list-item-subtitle op="100!" v-html="sanitizedMessageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>

@@ -83,10 +83,8 @@ const upgradeIcon = computed(() => {
         {{ name }}
       </v-card-title>
       <v-card-text>
-        <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
         <div v-if="description" pb="4" v-html="descriptionHtml" />
         <div pb="4" display="flex" justify="end" font="italic">
-          <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
           <span text="right" v-html="flavorDescriptionHtml" />
         </div>
         <div :class="{ 'not-affordable': isAffordable }" display="flex">

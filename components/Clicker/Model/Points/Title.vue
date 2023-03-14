@@ -14,7 +14,6 @@ const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower
 
 <template>
   <div class="text-h3" text="center" font="bold" select="none">
-    <!-- eslint-disable-next-line vue/no-v-html vue/no-v-text-v-html-on-component -->
     <span v-html="displayNoPointsHtml" /> {{ ITEM_NAME }}s
   </div>
   <div class="text-h5" text="center" font="bold" select="none">per second: {{ displayAllBuildingPower }}</div>
