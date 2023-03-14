@@ -1,6 +1,7 @@
 export enum AzureContainer {
+  AIChatbot = "ai-chatbot",
+  ClickerAssets = "clicker-assets",
   EsposterAssets = "esposter-assets",
   EsbabblerAssets = "esbabbler-assets",
-  ClickerAssets = "clicker-assets",
-  AIChatbot = "ai-chatbot",
+  TableEditorAssets = "table-editor-assets",
 }

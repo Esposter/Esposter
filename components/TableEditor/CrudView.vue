@@ -6,14 +6,11 @@ import {
 } from "@/services/tableEditor/itemCategoryDefinition";
 import type { DataTableHeader } from "@/services/vuetify/dataTable";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { useItemStore } from "@/store/tableEditor/item";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 const tableEditorStore = useTableEditorStore();
-const { editItem } = tableEditorStore;
+const { tableEditor, editItem } = tableEditorStore;
 const { searchQuery } = storeToRefs(tableEditorStore);
-const itemStore = useItemStore();
-const { itemList } = storeToRefs(itemStore);
 const headers = ref<DataTableHeader[]>([
   { title: "Name", key: "name" },
   { title: "Type", key: "type" },
@@ -28,7 +25,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       display="flex"
       flex="1 col"
       :headers="headers"
-      :items="itemList"
+      :items="tableEditor?.items"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       height="100%"

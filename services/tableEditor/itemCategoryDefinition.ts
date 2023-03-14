@@ -5,7 +5,7 @@ import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinit
 import { ItemType } from "@/models/tableEditor/ItemType";
 import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
 
-export const tableEditorItemCategoryDefinitions: ItemCategoryDefinition<IItem>[] = [
+export const tableEditorItemCategoryDefinitions: ItemCategoryDefinition<ItemType>[] = [
   {
     value: ItemType.VuetifyComponent,
     title: prettifyName(ItemType.VuetifyComponent),
@@ -19,7 +19,7 @@ class NullItem extends Item implements IItemType<string> {
   type = "None";
 }
 
-const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<NullItem> = {
+const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<string> = {
   value: "None",
   title: "None",
   icon: "mdi-help",
@@ -28,7 +28,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<NullItem> = {
 };
 
 export const getItemCategoryDefinition = <T extends IItem>(
-  itemCategoryDefinitions: ItemCategoryDefinition<T>[],
+  itemCategoryDefinitions: ItemCategoryDefinition<string>[],
   item: T | null
 ) => {
   if (!item) return NULL_ITEM_CATEGORY_DEFINITION;

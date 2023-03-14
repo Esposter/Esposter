@@ -11,8 +11,6 @@ export interface Upgrade<TName = UpgradeName> {
   effects: Effect[];
   unlockConditions: UnlockCondition[];
 }
-// @NOTE: Find a way we can add some typechecking
-// that can do something like 'satisfies z.ZodType<Upgrade>'
 export const createUpgradeSchema = <TNameSchema extends z.ZodTypeAny = z.ZodType<UpgradeName>>(
   nameSchema: TNameSchema
 ) =>

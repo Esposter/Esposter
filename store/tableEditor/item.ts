@@ -4,36 +4,41 @@ import { useTableEditorStore } from "@/store/tableEditor";
 export const useItemStore = defineStore("tableEditor/item", () => {
   const tableEditorStore = useTableEditorStore();
 
-  const itemList = ref<IItem[]>([]);
-  const pushItemList = (items: IItem[]) => itemList.value.push(...items);
-
-  const itemListNextCursor = ref<string | null>(null);
-  const updateItemListNextCursor = (nextCursor: string | null) => {
-    itemListNextCursor.value = nextCursor;
+  const pushItemList = (items: IItem[]) => {
+    if (!tableEditorStore.tableEditor) return;
+    tableEditorStore.tableEditor.items.push(...items);
   };
 
   const initialiseItemList = (items: IItem[]) => {
-    itemList.value = items;
+    if (!tableEditorStore.tableEditor) return;
+    tableEditorStore.tableEditor.items = items;
   };
   const createItem = (newItem: IItem) => {
-    itemList.value.push(newItem);
+    if (!tableEditorStore.tableEditor) return;
+
+    tableEditorStore.tableEditor.items.push(newItem);
     tableEditorStore.editFormDialog = false;
   };
   const updateItem = (updatedItem: IItem) => {
-    const index = itemList.value.findIndex((r) => r.id === updatedItem.id);
-    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem };
+    if (!tableEditorStore.tableEditor) return;
+
+    const index = tableEditorStore.tableEditor.items.findIndex((r) => r.id === updatedItem.id);
+    if (index > -1)
+      tableEditorStore.tableEditor.items[index] = {
+        ...tableEditorStore.tableEditor.items[index],
+        ...updatedItem,
+      };
     tableEditorStore.editFormDialog = false;
   };
   const deleteItem = (id: string) => {
-    itemList.value = itemList.value.filter((r) => r.id !== id);
+    if (!tableEditorStore.tableEditor) return;
+
+    tableEditorStore.tableEditor.items = tableEditorStore.tableEditor.items.filter((r) => r.id !== id);
     tableEditorStore.editFormDialog = false;
   };
 
   return {
-    itemList,
     pushItemList,
-    itemListNextCursor,
-    updateItemListNextCursor,
     initialiseItemList,
     createItem,
     updateItem,
