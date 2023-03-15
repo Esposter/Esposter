@@ -30,6 +30,7 @@ onMounted(() => {
   if (!editedItem.value) return;
   updatePropertyRendererMap(editedItem.value.component);
 });
+
 watch(
   () => editedItem.value?.component,
   (newValue) => {
