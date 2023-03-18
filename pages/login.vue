@@ -7,7 +7,7 @@ interface ProviderProps {
   provider: BuiltInProviderType;
   logo: Component;
   logoStyle?: CSSProperties;
-  logoAttrs?: { [key: string]: unknown };
+  logoAttrs?: Record<string, unknown>;
   buttonStyle?: CSSProperties;
 }
 
