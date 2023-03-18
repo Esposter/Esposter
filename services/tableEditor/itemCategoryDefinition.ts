@@ -1,5 +1,4 @@
-import type { IItem } from "@/models/tableEditor/IItem";
-import { IItemType } from "@/models/tableEditor/IItemType";
+import type { IItemType } from "@/models/tableEditor/IItemType";
 import { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { ItemType } from "@/models/tableEditor/ItemType";
@@ -27,13 +26,13 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<string> = {
   create: () => new NullItem(),
 };
 
-export const getItemCategoryDefinition = <T extends IItem>(
-  itemCategoryDefinitions: ItemCategoryDefinition<string>[],
-  item: T | null
+export const getItemCategoryDefinition = <T extends string, U extends Item & IItemType<T>>(
+  itemCategoryDefinitions: ItemCategoryDefinition<T>[],
+  item: U | null
 ) => {
   if (!item) return NULL_ITEM_CATEGORY_DEFINITION;
   return (
-    itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey as keyof IItem]) ??
+    itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey as keyof U]) ??
     NULL_ITEM_CATEGORY_DEFINITION
   );
 };
