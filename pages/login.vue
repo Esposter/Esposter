@@ -17,7 +17,7 @@ const { signIn } = useSession();
 const providerProps = ref<ProviderProps[]>([
   {
     provider: "google",
-    logo: shallowRef(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
+    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
     logoStyle: {
       padding: ".625rem",
       width: "3rem",
@@ -29,13 +29,13 @@ const providerProps = ref<ProviderProps[]>([
   },
   {
     provider: "github",
-    logo: shallowRef(defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`))),
+    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`))),
     logoAttrs: { fill: "#fff" },
     buttonStyle: { backgroundColor: "#252525" },
   },
   {
     provider: "facebook",
-    logo: shallowRef(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
+    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
     buttonStyle: { backgroundColor: "#1877f2" },
   },
 ]);
