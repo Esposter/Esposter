@@ -68,7 +68,7 @@ const menu = ref(false);
       <v-tooltip v-if="status === 'authenticated' && data" location="bottom" text="Account">
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
-            <v-btn :="mergeProps(menuProps, tooltipProps)">
+            <v-btn h="full!" :="mergeProps(menuProps, tooltipProps)">
               <v-avatar v-if="data.user.image">
                 <v-img :src="data.user.image" />
               </v-avatar>
