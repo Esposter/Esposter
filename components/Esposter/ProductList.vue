@@ -14,6 +14,11 @@ const items: ListItem[] = [
     href: RoutePath.Clicker,
     icon: "mdi-fruit-pineapple",
   },
+  {
+    title: "Table Editor",
+    href: RoutePath.TableEditor,
+    icon: "mdi-table-edit",
+  },
 ];
 </script>
 

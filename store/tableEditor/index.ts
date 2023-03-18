@@ -1,6 +1,6 @@
 import type { IItem } from "@/models/tableEditor/IItem";
 import type { TableEditor } from "@/models/tableEditor/TableEditor";
-import { TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import equal from "deep-equal";
 import { VForm } from "vuetify/components";
@@ -37,7 +37,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
 
     editedItem.value = structuredClone(toDeepRaw(item));
     editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
-    router.push({ ...router.currentRoute.value, query: { itemId: item.id } });
+    router.push({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
     editFormDialog.value = true;
   };
   const save = async (deleteAction?: true) => {
@@ -54,6 +54,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
   const resetItem = () => {
     editedItem.value = null;
     editedIndex.value = -1;
+    router.replace({ query: undefined });
   };
 
   return {
