@@ -35,7 +35,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
     const item = tableEditor.value.items.find((item) => item.id === id);
     if (!item) return;
 
-    editedItem.value = structuredClone(toRaw(item));
+    editedItem.value = structuredClone(toDeepRaw(item));
     editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
     router.push({ ...router.currentRoute.value, query: { itemId: item.id } });
     editFormDialog.value = true;
