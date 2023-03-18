@@ -14,7 +14,7 @@ const user = await $client.user.readUser.query();
         {{ user.email }}
       </div>
       <div>
-        Joined {{ SITE_NAME }} on {{ dayjs(user.createdAt).format("MMM d, YYYY") }} ({{
+        Joined {{ SITE_NAME }} on {{ dayjs(user.createdAt).format("MMM D, YYYY") }} ({{
           dayjs(user.createdAt).fromNow()
         }})
       </div>
