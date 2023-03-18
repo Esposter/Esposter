@@ -28,11 +28,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<string> = {
 
 export const getItemCategoryDefinition = <T extends string, U extends Item & IItemType<T>>(
   itemCategoryDefinitions: ItemCategoryDefinition<T>[],
-  item: U | null
-) => {
-  if (!item) return NULL_ITEM_CATEGORY_DEFINITION;
-  return (
-    itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey as keyof U]) ??
-    NULL_ITEM_CATEGORY_DEFINITION
-  );
-};
+  item: U
+) =>
+  itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey as keyof U]) ??
+  NULL_ITEM_CATEGORY_DEFINITION;
