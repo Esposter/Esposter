@@ -59,7 +59,7 @@
     "@codemirror/language": "^6.6.0",
     "@codemirror/language-data": "^6.1.0",
     "@codemirror/state": "^6.2.0",
-    "@codemirror/view": "^6.9.2",
+    "@codemirror/view": "^6.9.3",
     "@mdi/font": "^7.2.96",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@pinia/nuxt": "^0.4.7",
