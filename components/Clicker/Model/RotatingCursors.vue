@@ -12,13 +12,9 @@ const amount = computed(() => {
 });
 const rotatingDivIds = computed(() => Array.from({ length: amount.value }, () => uuidV4()));
 
-// @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
-// https://github.com/nuxt/framework/issues/7121
 const icon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(
-    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
-  );
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
   return images.Cursor;
 });
 

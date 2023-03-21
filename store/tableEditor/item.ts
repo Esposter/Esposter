@@ -1,8 +1,8 @@
-import { IItem } from "@/models/tableEditor/IItem";
+import type { IItem } from "@/models/tableEditor/IItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useItemStore = defineStore("tableEditor/item", () => {
-  const tableEditorStore = useTableEditorStore();
+  const tableEditorStore = useTableEditorStore()();
 
   const pushItemList = (items: IItem[]) => {
     if (!tableEditorStore.tableEditor) return;

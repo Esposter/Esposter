@@ -15,6 +15,6 @@ export const getComponent = (type: Constructor<unknown>) => {
         () => import("@/components/TableEditor/VuetifyComponent/PropertyRenderer/Number.vue")
       );
     default:
-      return defineAsyncComponent(() => import("@/components/TableEditor/VuetifyComponent/PropertyRenderer/Empty.vue"));
+      return defineAsyncComponent(() => import("@/components/EmptyComponent.vue"));
   }
 };

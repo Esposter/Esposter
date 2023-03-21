@@ -4,9 +4,8 @@ import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/con
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore();
-// @NOTE: Fix up this type cast when pinia team fixes type issues
-const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: Ref<VuetifyComponent | null> };
+const tableEditorStore = useTableEditorStore<VuetifyComponent>()();
+const { editedItem } = storeToRefs(tableEditorStore);
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once
 const vuetifyComponents = computed(() => Object.keys(VuetifyComponentMap));

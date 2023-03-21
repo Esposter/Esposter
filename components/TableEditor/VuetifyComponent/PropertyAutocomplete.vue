@@ -5,9 +5,8 @@ import { getComponent } from "@/services/tableEditor/vuetifyComponent/getCompone
 import { useTableEditorStore } from "@/store/tableEditor";
 import { Constructor } from "type-fest";
 
-const tableEditorStore = useTableEditorStore();
-// @NOTE: Fix up this type cast when pinia team fixes type issues
-const { editedItem } = storeToRefs(tableEditorStore) as unknown as { editedItem: Ref<VuetifyComponent | null> };
+const tableEditorStore = useTableEditorStore<VuetifyComponent>()();
+const { editedItem } = storeToRefs(tableEditorStore);
 const propertyRendererMap = ref<Record<string, Component>>({});
 const properties = computed(() => Object.keys(propertyRendererMap.value));
 const selectedProperty = ref<string | null>(null);

@@ -1,15 +1,9 @@
 <script setup lang="ts">
+import { EditFormMap } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
-const EditForm = computed(() =>
-  defineAsyncComponent(() =>
-    editedItem.value
-      ? import(`@/components/TableEditor/${editedItem.value.type}/EditForm.vue`)
-      : import("@/components/TableEditor/VuetifyComponent/PropertyRenderer/Empty.vue")
-  )
-);
 </script>
 
 <template>
@@ -19,7 +13,7 @@ const EditForm = computed(() =>
     <v-divider mx="4!" thickness="2" inset vertical />
     <TableEditorCreateItemButton />
     <TableEditorEditFormDialog>
-      <component :is="EditForm" />
+      <component :is="EditFormMap[editedItem.type]" v-if="editedItem" />
     </TableEditorEditFormDialog>
   </v-toolbar>
 </template>

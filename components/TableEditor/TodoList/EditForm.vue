@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
+import type { TodoList } from "@/models/tableEditor/todoList/TodoList";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponent>()();
+const tableEditorStore = useTableEditorStore<TodoList>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 
@@ -13,9 +13,9 @@ const { editedItem } = storeToRefs(tableEditorStore);
       <v-col cols="12">
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
       </v-col>
-      <TableEditorVuetifyComponentAutocomplete />
-      <TableEditorVuetifyComponentPropertyAutocomplete />
-      <TableEditorVuetifyComponentPreview />
+      <v-col cols="12">
+        <v-textarea v-model="editedItem.notes" label="Notes" />
+      </v-col>
     </v-row>
   </v-container>
 </template>

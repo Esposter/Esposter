@@ -3,7 +3,7 @@ import { tableEditorItemCategoryDefinitions } from "@/services/tableEditor/itemC
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { editFormDialog, editedItem } = storeToRefs(tableEditorStore);
 </script>
 

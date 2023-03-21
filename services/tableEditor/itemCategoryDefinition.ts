@@ -1,10 +1,18 @@
 import type { IItemType } from "@/models/tableEditor/IItemType";
 import { Item } from "@/models/tableEditor/Item";
-import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { ItemType } from "@/models/tableEditor/ItemType";
+import { TodoList } from "@/models/tableEditor/todoList/TodoList";
 import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
 
 export const tableEditorItemCategoryDefinitions: ItemCategoryDefinition<ItemType>[] = [
+  {
+    value: ItemType.TodoList,
+    title: prettifyName(ItemType.TodoList),
+    icon: "mdi-check",
+    targetTypeKey: "type",
+    create: () => new TodoList(),
+  },
   {
     value: ItemType.VuetifyComponent,
     title: prettifyName(ItemType.VuetifyComponent),

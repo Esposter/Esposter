@@ -8,7 +8,7 @@ import type { DataTableHeader } from "@/services/vuetify/dataTable";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
 const { tableEditor, searchQuery } = storeToRefs(tableEditorStore);
 const headers = ref<DataTableHeader[]>([

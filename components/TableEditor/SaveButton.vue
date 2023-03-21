@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { save } = tableEditorStore;
 const { isSavable } = storeToRefs(tableEditorStore);
 </script>

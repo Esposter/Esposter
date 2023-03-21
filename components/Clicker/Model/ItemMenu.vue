@@ -26,27 +26,19 @@ const descriptionHtml = computed(() => (description?.value ? marked.parse(descri
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription.value}"`));
 const displayPrice = computed(() => formatNumberLong(price.value));
 
-// @NOTE: Hacky way to do dynamic image paths with nuxt 3 for now
-// https://github.com/nuxt/framework/issues/7121
 const buildingIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(
-    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
-  );
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
   return images[name.value];
 });
 const menuIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(
-    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
-  );
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
   return images[name.value];
 });
 const upgradeIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(
-    Object.entries(glob).map(([key, value]) => [filename(key), value as unknown as string])
-  );
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
   return images[name.value];
 });
 </script>

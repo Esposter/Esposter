@@ -3,72 +3,76 @@ import type { TableEditor } from "@/models/tableEditor/TableEditor";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import equal from "deep-equal";
+import type { UnwrapRef } from "vue";
 import { VForm } from "vuetify/components";
 
-export const useTableEditorStore = defineStore("tableEditor", () => {
-  const { $client } = useNuxtApp();
-  const { status } = useSession();
-  const router = useRouter();
-  const itemStore = useItemStore();
-  const { createItem, updateItem, deleteItem } = itemStore;
+interface TableEditorState<T extends IItem> {
+  tableEditor: TableEditor | null;
+  searchQuery: string;
+  editFormRef: (typeof VForm & { errors: { id: string; errorMessages: string[] }[] }) | undefined;
+  editFormDialog: boolean;
+  editedItem: T | null;
+  editedIndex: number;
+  isFullScreenDialog: boolean;
+}
 
-  const tableEditor = ref<TableEditor | null>(null);
-  const searchQuery = ref("");
-  // @NOTE: Fix up this type once vuetify team exposes their types
-  const editFormRef = ref<typeof VForm & { errors: { id: string; errorMessages: string[] }[] }>();
-  const editFormDialog = ref(false);
-  const editedItem = ref<IItem | null>(null);
-  const editedIndex = ref(-1);
-  const isFullScreenDialog = ref(false);
-  const isEditFormValid = computed(() => editFormRef.value?.errors.length === 0);
-  const isSavable = computed(() => {
-    if (!tableEditor.value) return;
+export const useTableEditorStore = <T extends IItem = IItem>() =>
+  defineStore("tableEditor", {
+    state: (): TableEditorState<T> => ({
+      tableEditor: null,
+      searchQuery: "",
+      editFormRef: undefined,
+      editFormDialog: false,
+      editedItem: null,
+      editedIndex: -1,
+      isFullScreenDialog: false,
+    }),
+    getters: {
+      isEditFormValid(): boolean {
+        return this.editFormRef?.errors.length === 0;
+      },
+      isSavable(): boolean {
+        if (!this.tableEditor) return false;
 
-    const originalItem = tableEditor.value.items.find((item) => item.id === editedItem.value?.id);
-    if (!originalItem) return true;
-    return isEditFormValid.value && !equal(editedItem.value, originalItem);
+        const originalItem = this.tableEditor.items.find((item) => item.id === this.editedItem?.id);
+        if (!originalItem) return true;
+        return this.isEditFormValid && !equal(this.editedItem, originalItem);
+      },
+    },
+    actions: {
+      editItem(id: string) {
+        if (!this.tableEditor) return;
+
+        const item = this.tableEditor.items.find((item) => item.id === id);
+        if (!item) return;
+
+        const router = useRouter();
+        this.editedItem = structuredClone(toDeepRaw(item)) as UnwrapRef<T>;
+        this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
+        router.push({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
+        this.editFormDialog = true;
+      },
+      async save(deleteAction?: true) {
+        if (!this.tableEditor || !this.editedItem) return;
+
+        const { $client } = useNuxtApp();
+        const { status } = useSession();
+        const itemStore = useItemStore();
+        const { createItem, updateItem, deleteItem } = itemStore;
+
+        if (deleteAction) deleteItem(this.editedItem.id);
+        else if (this.editedIndex > -1) updateItem(this.editedItem);
+        else createItem(this.editedItem);
+
+        if (status.value === "authenticated") await $client.tableEditor.saveTableEditor.mutate(this.tableEditor);
+        else localStorage.setItem(TABLE_EDITOR_STORE, JSON.stringify(this.tableEditor));
+        this.editFormDialog = false;
+      },
+      resetItem() {
+        const router = useRouter();
+        this.editedItem = null;
+        this.editedIndex = -1;
+        router.replace({ query: undefined });
+      },
+    },
   });
-
-  const editItem = (id: string) => {
-    if (!tableEditor.value) return;
-
-    const item = tableEditor.value.items.find((item) => item.id === id);
-    if (!item) return;
-
-    editedItem.value = structuredClone(toDeepRaw(item));
-    editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
-    router.push({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
-    editFormDialog.value = true;
-  };
-  const save = async (deleteAction?: true) => {
-    if (!tableEditor.value || !editedItem.value) return;
-
-    if (deleteAction) deleteItem(editedItem.value.id);
-    else if (editedIndex.value > -1) updateItem(editedItem.value);
-    else createItem(editedItem.value);
-
-    if (status.value === "authenticated") await $client.tableEditor.saveTableEditor.mutate(tableEditor.value);
-    else localStorage.setItem(TABLE_EDITOR_STORE, JSON.stringify(tableEditor.value));
-    editFormDialog.value = false;
-  };
-  const resetItem = () => {
-    editedItem.value = null;
-    editedIndex.value = -1;
-    router.replace({ query: undefined });
-  };
-
-  return {
-    tableEditor,
-    searchQuery,
-    editFormRef,
-    editFormDialog,
-    editedItem,
-    editedIndex,
-    isFullScreenDialog,
-    isEditFormValid,
-    isSavable,
-    editItem,
-    save,
-    resetItem,
-  };
-});

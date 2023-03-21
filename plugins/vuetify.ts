@@ -79,6 +79,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       VAutocomplete: { variant: "outlined" },
       VBtn: { flat: true },
       VDialog: { width: 500, maxWidth: "100%" },
+      VTextarea: { variant: "outlined" },
       VTextField: { variant: "outlined" },
       VTooltip: { location: "top" },
       VWindowItem: {

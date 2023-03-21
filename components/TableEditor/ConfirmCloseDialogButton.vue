@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { save } = tableEditorStore;
 const { editFormDialog, editedItem, isSavable } = storeToRefs(tableEditorStore);
 const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));

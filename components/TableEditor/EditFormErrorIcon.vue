@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore()();
 const { editFormRef, isEditFormValid } = storeToRefs(tableEditorStore);
 const errorMessage = computed(() => {
   const error = editFormRef.value?.errors[0];
