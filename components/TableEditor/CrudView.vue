@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IItem } from "@/models/tableEditor/IItem";
+import { ItemType } from "@/models/tableEditor/ItemType";
 import {
   getItemCategoryDefinition,
   tableEditorItemCategoryDefinitions,
@@ -11,10 +12,17 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
 const { tableEditor, searchQuery } = storeToRefs(tableEditorStore);
-const headers = ref<DataTableHeader[]>([
-  { title: "Name", key: "name" },
-  { title: "Type", key: "type" },
-]);
+const headers = computed<DataTableHeader[]>(() => {
+  const result: DataTableHeader[] = [
+    { title: "Name", key: "name" },
+    { title: "Type", key: "type" },
+  ];
+
+  if (tableEditor.value?.items.some((item) => item.type === ItemType.TodoList))
+    result.push({ title: "Notes", key: "notes" });
+
+  return result;
+});
 const getItemCategoryDefinitionByItem = (item: unknown) =>
   getItemCategoryDefinition(tableEditorItemCategoryDefinitions, (item as { raw: IItem }).raw);
 </script>
