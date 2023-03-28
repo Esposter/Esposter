@@ -57,7 +57,7 @@
     "@azure/storage-blob": "^12.13.0",
     "@codemirror/lang-vue": "^0.1.1",
     "@codemirror/language": "^6.6.0",
-    "@codemirror/language-data": "^6.1.0",
+    "@codemirror/language-data": "^6.2.0",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.9.3",
     "@mdi/font": "^7.2.96",
