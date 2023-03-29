@@ -65,7 +65,7 @@
     "@pinia/nuxt": "^0.4.7",
     "@prisma/client": "^4.12.0",
     "@tiptap/extension-character-count": "^2.0.0",
-    "@tiptap/extension-mention": "^2.0.0-beta.220",
+    "@tiptap/extension-mention": "^2.0.0",
     "@tiptap/extension-placeholder": "^2.0.0-beta.220",
     "@tiptap/starter-kit": "^2.0.0-beta.220",
     "@tiptap/suggestion": "^2.0.0-beta.220",
