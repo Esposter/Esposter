@@ -68,7 +68,7 @@
     "@tiptap/extension-mention": "^2.0.1",
     "@tiptap/extension-placeholder": "^2.0.1",
     "@tiptap/starter-kit": "^2.0.1",
-    "@tiptap/suggestion": "^2.0.0",
+    "@tiptap/suggestion": "^2.0.1",
     "@tiptap/vue-3": "^2.0.0",
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
