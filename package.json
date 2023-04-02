@@ -29,7 +29,7 @@
     "@types/dompurify": "^3.0.0",
     "@types/marked": "^4.0.8",
     "@types/node-emoji": "^1.8.2",
-    "@types/three": "^0.150.0",
+    "@types/three": "^0.150.1",
     "@types/uuid": "^9.0.1",
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
