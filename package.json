@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.2",
-    "@azure/storage-blob": "^12.13.0",
+    "@azure/storage-blob": "^12.14.0",
     "@codemirror/lang-vue": "^0.1.1",
     "@codemirror/language": "^6.6.0",
     "@codemirror/language-data": "^6.2.0",
