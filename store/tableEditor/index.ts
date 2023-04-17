@@ -56,7 +56,7 @@ export const useTableEditorStore = <T extends IItem = IItem>() =>
         if (!this.tableEditor || !this.editedItem) return;
 
         const { $client } = useNuxtApp();
-        const { status } = useSession();
+        const { status } = useAuth();
         const itemStore = useItemStore();
         const { createItem, updateItem, deleteItem } = itemStore;
 

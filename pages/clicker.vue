@@ -6,7 +6,7 @@ import { useGameStore } from "@/store/clicker/game";
 import { jsonDateParse } from "@/utils/json";
 
 const { $client } = useNuxtApp();
-const { status } = useSession();
+const { status } = useAuth();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const displayNoPoints = computed(() => formatNumberLong(game.value?.noPoints ?? 0));

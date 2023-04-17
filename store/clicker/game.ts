@@ -3,7 +3,7 @@ import { CLICKER_STORE } from "@/services/clicker/constants";
 
 export const useGameStore = defineStore("clicker/game", () => {
   const { $client } = useNuxtApp();
-  const { status } = useSession();
+  const { status } = useAuth();
   const game = ref<Game | null>(null);
   const saveGame = async () => {
     if (!game.value) return;

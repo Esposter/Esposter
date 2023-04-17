@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RoutePath } from "@/models/router/RoutePath";
 import { SITE_NAME } from "@/services/esposter/constants";
 import type { BuiltInProviderType } from "next-auth/providers";
 import type { Component, CSSProperties } from "vue";
@@ -11,9 +12,14 @@ interface ProviderProps {
   buttonStyle?: CSSProperties;
 }
 
-definePageMeta({ middleware: "guest" });
+definePageMeta({
+  auth: {
+    unauthenticatedOnly: true,
+    navigateAuthenticatedTo: RoutePath.Index,
+  },
+});
 
-const { signIn } = useSession();
+const { signIn } = useAuth();
 const providerProps = ref<ProviderProps[]>([
   {
     provider: "google",

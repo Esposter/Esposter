@@ -9,7 +9,7 @@ interface PostLikeSectionProps {
 const props = defineProps<PostLikeSectionProps>();
 const { post } = toRefs(props);
 const { $client } = useNuxtApp();
-const { data } = useSession();
+const { data } = useAuth();
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
 const liked = computed(() => post.value.likes.some((l) => l.userId === data.value?.user.id && l.value === 1));

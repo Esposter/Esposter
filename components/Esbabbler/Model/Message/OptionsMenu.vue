@@ -27,7 +27,7 @@ const emit = defineEmits<{
   (event: "update:delete-mode", value: true): void;
 }>();
 const { $client } = useNuxtApp();
-const { data } = useSession();
+const { data } = useAuth();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 const emojis = computed(() => getEmojiList(message.value.rowKey));

@@ -3,7 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
 import { mergeProps } from "vue";
 
-const { status, data, signOut } = useSession();
+const { status, data, signOut } = useAuth();
 
 const items = computed<ListItem[]>(() =>
   status.value === "unauthenticated"

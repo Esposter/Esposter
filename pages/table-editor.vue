@@ -5,7 +5,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { jsonDateParse } from "@/utils/json";
 
 const { $client } = useNuxtApp();
-const { status } = useSession();
+const { status } = useAuth();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;

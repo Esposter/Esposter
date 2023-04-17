@@ -12,7 +12,7 @@ interface MessageEmojiListProps {
 const props = defineProps<MessageEmojiListProps>();
 const { messageRowKey } = toRefs(props);
 const { $client } = useNuxtApp();
-const { data } = useSession();
+const { data } = useAuth();
 const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;

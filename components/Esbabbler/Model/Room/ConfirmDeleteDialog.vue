@@ -9,7 +9,7 @@ interface RoomConfirmDeleteDialogProps {
 const props = defineProps<RoomConfirmDeleteDialogProps>();
 const { roomId, creatorId } = toRefs(props);
 const { $client } = useNuxtApp();
-const { data } = useSession();
+const { data } = useAuth();
 const isCreator = computed(() => data.value?.user.id === creatorId.value);
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
