@@ -13,6 +13,7 @@ interface ProviderProps {
 }
 
 definePageMeta({
+  middleware: "auth",
   auth: {
     unauthenticatedOnly: true,
     navigateAuthenticatedTo: RoutePath.Index,
