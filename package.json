@@ -38,7 +38,7 @@
     "@vueuse/core": "^10.0.2",
     "@vueuse/nuxt": "^10.0.2",
     "@vueuse/sound": "^2.0.1",
-    "eslint": "^8.38.0",
+    "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.11.0",
