@@ -5,7 +5,7 @@ import type { Room } from "@prisma/client";
 interface RoomListProps {
   rooms: Room[];
   hasMore: boolean;
-  readMoreRooms: InstanceType<typeof VWaypoint>["$props"]["onChange"];
+  readMoreRooms: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 
 const props = defineProps<RoomListProps>();

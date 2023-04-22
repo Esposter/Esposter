@@ -5,7 +5,7 @@ import type { MessageEntity } from "@/models/esbabbler/message";
 interface MessageListProps {
   messages: MessageEntity[];
   hasMore: boolean;
-  readMoreMessages: InstanceType<typeof VWaypoint>["$props"]["onChange"];
+  readMoreMessages: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 
 const props = defineProps<MessageListProps>();
