@@ -52,9 +52,6 @@ export default defineNuxtConfig({
     autoImports: ["defineStore", "storeToRefs"],
   },
   auth: {
-    provider: {
-      type: "authjs",
-    },
     origin: process.env.BASE_URL,
   },
   unocss: {
