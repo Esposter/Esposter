@@ -1,6 +1,8 @@
+import { RoutePath } from "./models/router/RoutePath";
+
 export default defineNuxtConfig({
   routeRules: {
-    "/clicker/**": { ssr: false },
+    [`${RoutePath.Clicker}/**"`]: { ssr: false },
   },
   css: [
     "vuetify/lib/styles/main.sass",
@@ -49,6 +51,9 @@ export default defineNuxtConfig({
   },
   pinia: {
     autoImports: ["defineStore", "storeToRefs"],
+  },
+  auth: {
+    origin: process.env.BASE_URL,
   },
   unocss: {
     attributify: true,
