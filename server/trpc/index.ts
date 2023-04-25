@@ -1,13 +1,13 @@
 import type { Context } from "@/server/trpc/context";
 import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
+import SuperJSON from "superjson";
 import { ZodError } from "zod";
 
 // Avoid exporting the entire t-object since it's not very
 // descriptive and can be confusing to newcomers used to t
 // meaning translation in i18n libraries
 const t = initTRPC.context<Context>().create({
-  transformer: superjson,
+  transformer: SuperJSON,
   errorFormatter: ({ shape, error }) => ({
     ...shape,
     data: {

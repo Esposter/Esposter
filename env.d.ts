@@ -1,6 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
+      AUTH_ORIGIN: string;
       AZURE_BLOB_URL: string;
       AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
       BASE_URL: string;

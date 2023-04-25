@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     "emoji-mart-vue-fast/css/emoji-mart.css",
   ],
   build: {
-    transpile: ["vuetify"],
+    transpile: ["vuetify", "trpc-nuxt"],
   },
   vite: {
     css: {
@@ -38,7 +38,6 @@ export default defineNuxtConfig({
       azureBlobUrl: process.env.AZURE_BLOB_URL,
       baseUrl: process.env.BASE_URL,
       facebookClientId: process.env.FACEBOOK_CLIENT_ID,
-      nodeEnv: process.env.NODE_ENV,
     },
   },
   // @NOTE: "@vueuse/sound/nuxt"
@@ -50,9 +49,6 @@ export default defineNuxtConfig({
   },
   pinia: {
     autoImports: ["defineStore", "storeToRefs"],
-  },
-  auth: {
-    origin: process.env.BASE_URL,
   },
   unocss: {
     attributify: true,
