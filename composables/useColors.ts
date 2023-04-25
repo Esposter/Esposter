@@ -6,11 +6,14 @@ type Colors = {
   [P in keyof BaseColors]: ComputedRef<BaseColors[P]>;
 };
 
-export const useColors = () =>
-  Object.entries(useTheme().global.current.value.colors).reduce<Record<string, ComputedRef<string>>>(
-    (acc, [color, hex]) => {
-      acc[color] = computed(() => hex);
+export const useColors = () => {
+  const theme = useTheme();
+  const colors = Object.keys(theme.global.current.value.colors).reduce<Record<string, ComputedRef<string>>>(
+    (acc, color) => {
+      acc[color] = computed(() => theme.global.current.value.colors[color]);
       return acc;
     },
     {}
   ) as Colors;
+  return colors;
+};
