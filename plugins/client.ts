@@ -25,7 +25,6 @@ export default defineNuxtPlugin(() => {
       false: httpBatchLink({ url }),
     }),
   ];
-
   const client = createTRPCNuxtClient<AppRouter>({ links, transformer: SuperJSON });
   return { provide: { client } };
 });
