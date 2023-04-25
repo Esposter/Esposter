@@ -1,9 +1,4 @@
-import { RoutePath } from "./models/router/RoutePath";
-
 export default defineNuxtConfig({
-  routeRules: {
-    [`${RoutePath.Clicker}/**`]: { ssr: false },
-  },
   css: [
     "vuetify/lib/styles/main.sass",
     "@mdi/font/css/materialdesignicons.min.css",
