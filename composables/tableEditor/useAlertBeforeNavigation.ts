@@ -6,7 +6,8 @@ export const useAlertBeforeNavigation = () => {
 
   const confirmNavigation = () => !isSavable.value || window.confirm("Changes that you made may not be saved.");
   onBeforeRouteLeave((_, __, next) => {
-    if (confirmNavigation()) next();
+    if (!confirmNavigation()) return false;
+    next();
   });
 
   const refreshListener = (e: BeforeUnloadEvent) => {
