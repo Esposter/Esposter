@@ -5,8 +5,8 @@ export const useConfirmBeforeNavigation = () => {
   const { isSavable } = storeToRefs(tableEditorStore);
 
   onBeforeRouteLeave((_, __, next) => {
-    if (isSavable.value && window.confirm("Changes that you made may not be saved.")) return next();
-    return false;
+    if (isSavable.value && !window.confirm("Changes that you made may not be saved.")) return false;
+    next();
   });
 
   const refreshListener = (e: BeforeUnloadEvent) => {
