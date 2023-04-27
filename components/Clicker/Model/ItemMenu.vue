@@ -79,7 +79,7 @@ const upgradeIcon = computed(() => {
         <div pb="4" display="flex" justify="end" font="italic">
           <span text="right" v-html="flavorDescriptionHtml" />
         </div>
-        <div :class="{ 'not-affordable': isAffordable }" display="flex">
+        <div :class="{ 'not-affordable': !isAffordable }" display="flex">
           <v-spacer />
           {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
         </div>
@@ -98,10 +98,9 @@ const upgradeIcon = computed(() => {
   </v-menu>
 </template>
 
-<!-- @NOTE: Cannot use v-bind with element for v-menu
-TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'  -->
-<!-- <style scoped lang="scss">
+<!-- @NOTE: This doesn't actually work, css binding doesn't work with v-menu -->
+<style scoped lang="scss">
 .not-affordable {
   color: v-bind(error);
 }
-</style> -->
+</style>
