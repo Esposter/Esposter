@@ -5,7 +5,7 @@ export default defineConfig({
     alias: { "@": "." },
   },
   test: {
-    globalSetup: "test/globalSetup/mock/environment.ts",
-    setupFiles: "test/setupFiles/mock/trpc.ts",
+    globalSetup: "test/globalSetup/environment.ts",
+    setupFiles: "test/setupFiles/msw.ts",
   },
 });
