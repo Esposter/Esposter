@@ -1,18 +1,18 @@
 import { useTableEditorStore } from "@/store/tableEditor";
 
-export const useAlertBeforeNavigation = () => {
+export const useConfirmBeforeNavigation = () => {
   const tableEditorStore = useTableEditorStore()();
   const { isSavable } = storeToRefs(tableEditorStore);
 
-  const confirmNavigation = () => !isSavable.value || window.confirm("Changes that you made may not be saved.");
   onBeforeRouteLeave((_, __, next) => {
-    if (!confirmNavigation()) return false;
-    next();
+    if (isSavable.value && window.confirm("Changes that you made may not be saved.")) return next();
+    return false;
   });
 
   const refreshListener = (e: BeforeUnloadEvent) => {
-    if (confirmNavigation()) return;
+    if (!isSavable.value) return;
     e.preventDefault();
+    e.returnValue = "";
   };
   onBeforeMount(() => window.addEventListener("beforeunload", refreshListener));
   onBeforeUnmount(() => window.removeEventListener("beforeunload", refreshListener));

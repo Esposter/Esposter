@@ -49,7 +49,7 @@ export const useTableEditorStore = <T extends IItem = IItem>() =>
         const router = useRouter();
         this.editedItem = structuredClone(toDeepRaw(item)) as UnwrapRef<T>;
         this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
-        router.push({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
+        router.replace({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
         this.editFormDialog = true;
       },
       async save(deleteAction?: true) {
