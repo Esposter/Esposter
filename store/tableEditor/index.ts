@@ -32,7 +32,7 @@ export const useTableEditorStore = <T extends IItem = IItem>() =>
         return this.editFormRef?.errors.length === 0;
       },
       isSavable(): boolean {
-        if (!this.tableEditor) return false;
+        if (!this.tableEditor || !this.editedItem) return false;
 
         const originalItem = this.tableEditor.items.find((item) => item.id === this.editedItem?.id);
         if (!originalItem) return true;

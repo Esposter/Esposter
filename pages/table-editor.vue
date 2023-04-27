@@ -13,7 +13,7 @@ const { tableEditor } = storeToRefs(tableEditorStore);
 
 if (status.value === "authenticated") tableEditor.value = await $client.tableEditor.readTableEditor.query();
 
-useTimers();
+useAlertBeforeNavigation();
 
 onMounted(() => {
   if (status.value === "unauthenticated") {
