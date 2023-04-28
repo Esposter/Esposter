@@ -3,7 +3,7 @@ import { useTheme } from "vuetify";
 // @NOTE: Remove this type when vuetify team exposes it
 type BaseColors = ReturnType<typeof useTheme>["global"]["current"]["value"]["colors"];
 type Colors = {
-  [P in keyof BaseColors]: ComputedRef<BaseColors[P]>;
+  [Property in keyof BaseColors]: ComputedRef<BaseColors[Property]>;
 };
 
 export const useColors = () => {

@@ -40,10 +40,10 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
     router.replace({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
     editFormDialog.value = true;
   };
-  const save = async (deleteAction?: true) => {
+  const save = async (isDeleteAction?: true) => {
     if (!tableEditor.value || !editedItem.value) return;
 
-    if (deleteAction) deleteItem(editedItem.value.id);
+    if (isDeleteAction) deleteItem(editedItem.value.id);
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 

@@ -52,7 +52,7 @@ export const useTableEditorStore = <T extends Item = Item>() =>
         router.replace({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
         this.editFormDialog = true;
       },
-      async save(deleteAction?: true) {
+      async save(isDeleteAction?: true) {
         if (!this.tableEditor || !this.editedItem) return;
 
         const { $client } = useNuxtApp();
@@ -60,7 +60,7 @@ export const useTableEditorStore = <T extends Item = Item>() =>
         const itemStore = useItemStore();
         const { createItem, updateItem, deleteItem } = itemStore;
 
-        if (deleteAction) deleteItem(this.editedItem.id);
+        if (isDeleteAction) deleteItem(this.editedItem.id);
         else if (this.editedIndex > -1) updateItem(this.editedItem);
         else createItem(this.editedItem);
 

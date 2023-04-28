@@ -4,5 +4,5 @@ export const VuetifyComponentType = Object.keys(VuetifyComponentMap).reduce<Reco
   acc[curr] = curr;
   return acc;
   // eslint-disable-next-line no-use-before-define
-}, {}) as { [P in keyof VuetifyComponentMap]: P };
+}, {}) as { [Property in keyof VuetifyComponentMap]: Property };
 export type VuetifyComponentType = typeof VuetifyComponentType;
