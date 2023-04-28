@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IItem } from "@/models/tableEditor/IItem";
+import type { Item } from "@/models/tableEditor/Item";
 import { ItemType } from "@/models/tableEditor/ItemType";
 import {
   getItemCategoryDefinition,
@@ -24,7 +24,7 @@ const headers = computed<DataTableHeader[]>(() => {
   return result;
 });
 const getItemCategoryDefinitionByItem = (item: unknown) =>
-  getItemCategoryDefinition(tableEditorItemCategoryDefinitions, (item as { raw: IItem }).raw);
+  getItemCategoryDefinition(tableEditorItemCategoryDefinitions, (item as { raw: Item }).raw);
 </script>
 
 <template>

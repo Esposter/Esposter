@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export enum ItemType {
-  VuetifyComponent = "VuetifyComponent",
   TodoList = "TodoList",
+  VuetifyComponent = "VuetifyComponent",
 }
 
 export const itemTypeSchema = z.nativeEnum(ItemType) satisfies z.ZodType<ItemType>;

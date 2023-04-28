@@ -1,25 +1,25 @@
-import type { IItem } from "@/models/tableEditor/IItem";
+import type { Item } from "@/models/tableEditor/Item";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useItemStore = defineStore("tableEditor/item", () => {
   const tableEditorStore = useTableEditorStore()();
 
-  const pushItemList = (items: IItem[]) => {
+  const pushItemList = (items: Item[]) => {
     if (!tableEditorStore.tableEditor) return;
     tableEditorStore.tableEditor.items.push(...items);
   };
 
-  const initialiseItemList = (items: IItem[]) => {
+  const initialiseItemList = (items: Item[]) => {
     if (!tableEditorStore.tableEditor) return;
     tableEditorStore.tableEditor.items = items;
   };
-  const createItem = (newItem: IItem) => {
+  const createItem = (newItem: Item) => {
     if (!tableEditorStore.tableEditor) return;
 
     tableEditorStore.tableEditor.items.push(newItem);
     tableEditorStore.editFormDialog = false;
   };
-  const updateItem = (updatedItem: IItem) => {
+  const updateItem = (updatedItem: Item) => {
     if (!tableEditorStore.tableEditor) return;
 
     const index = tableEditorStore.tableEditor.items.findIndex((r) => r.id === updatedItem.id);

@@ -1,12 +1,11 @@
-import { v4 as uuidv4 } from "uuid";
+import { AItemEntity, aItemEntitySchema } from "@/models/tableEditor/AItemEntity";
+import { ItemEntityType, createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
+import { ItemType, itemTypeSchema } from "@/models/tableEditor/ItemType";
 import { z } from "zod";
 
-export class Item {
-  id = uuidv4();
-  name = "Unnamed";
-}
+// This is not directly used when creating new classes
+// but is only used as a convenient wrapper type for helper functions
+// to enforce that all entities implement Item
+export type Item = AItemEntity & ItemEntityType<ItemType>;
 
-export const itemSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-}) satisfies z.ZodType<Item>;
+export const itemSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(itemTypeSchema)) satisfies z.ZodType<Item>;

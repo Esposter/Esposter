@@ -1,4 +1,4 @@
-import type { IItem } from "@/models/tableEditor/IItem";
+import type { Item } from "@/models/tableEditor/Item";
 import type { TableEditor } from "@/models/tableEditor/TableEditor";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
@@ -6,7 +6,7 @@ import equal from "deep-equal";
 import type { UnwrapRef } from "vue";
 import { VForm } from "vuetify/components";
 
-interface TableEditorState<T extends IItem> {
+interface TableEditorState<T extends Item> {
   tableEditor: TableEditor | null;
   searchQuery: string;
   editFormRef: (typeof VForm & { errors: { id: string; errorMessages: string[] }[] }) | undefined;
@@ -16,7 +16,7 @@ interface TableEditorState<T extends IItem> {
   isFullScreenDialog: boolean;
 }
 
-export const useTableEditorStore = <T extends IItem = IItem>() =>
+export const useTableEditorStore = <T extends Item = Item>() =>
   defineStore("tableEditor", {
     state: (): TableEditorState<T> => ({
       tableEditor: null,

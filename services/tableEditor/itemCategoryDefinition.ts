@@ -1,6 +1,6 @@
-import type { IItemType } from "@/models/tableEditor/IItemType";
-import { Item } from "@/models/tableEditor/Item";
+import { AItemEntity } from "@/models/tableEditor/AItemEntity";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { ItemType } from "@/models/tableEditor/ItemType";
 import { TodoList } from "@/models/tableEditor/todoList/TodoList";
 import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
@@ -22,7 +22,7 @@ export const tableEditorItemCategoryDefinitions: ItemCategoryDefinition<ItemType
   },
 ];
 
-class NullItem extends Item implements IItemType<string> {
+class NullItem extends AItemEntity implements ItemEntityType<string> {
   type = "None";
 }
 
@@ -34,7 +34,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<string> = {
   create: () => new NullItem(),
 };
 
-export const getItemCategoryDefinition = <T extends string, U extends Item & IItemType<T>>(
+export const getItemCategoryDefinition = <T extends string, U extends AItemEntity & ItemEntityType<T>>(
   itemCategoryDefinitions: ItemCategoryDefinition<T>[],
   item: U
 ) =>

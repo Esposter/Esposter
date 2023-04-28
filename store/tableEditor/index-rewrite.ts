@@ -1,4 +1,4 @@
-import type { IItem } from "@/models/tableEditor/IItem";
+import type { Item } from "@/models/tableEditor/Item";
 import type { TableEditor } from "@/models/tableEditor/TableEditor";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
@@ -17,7 +17,7 @@ export const useTableEditorStore = defineStore("tableEditor", () => {
   const searchQuery = ref("");
   const editFormRef = ref<typeof VForm & { errors: { id: string; errorMessages: string[] }[] }>();
   const editFormDialog = ref(false);
-  const editedItem = ref<IItem | null>(null);
+  const editedItem = ref<Item | null>(null);
   const editedIndex = ref(-1);
   const isFullScreenDialog = ref(false);
   const isEditFormValid = computed(() => editFormRef.value?.errors.length === 0);

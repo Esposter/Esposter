@@ -12,7 +12,7 @@ interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
 }
 
-interface Item {
+interface AItemEntity {
   title: string;
   icon: string;
   color?: string;
@@ -35,7 +35,7 @@ const isCreator = computed(() => data.value?.user.id === message.value.creatorId
 const items = computed(() => {
   if (!isCreator.value) return [];
 
-  const result: Item[] = [];
+  const result: AItemEntity[] = [];
   result.unshift({ title: "Update Message", icon: "mdi-pencil", onClick: () => emit("update:update-mode", true) });
   result.push({
     title: "Delete Message",

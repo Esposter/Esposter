@@ -1,10 +1,10 @@
-import type { IItemType } from "@/models/tableEditor/IItemType";
-import type { Item } from "@/models/tableEditor/Item";
+import type { AItemEntity } from "@/models/tableEditor/AItemEntity";
+import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 
 export interface ItemCategoryDefinition<T extends string> {
-  value: (Item & IItemType<T>)["type"];
+  value: (AItemEntity & ItemEntityType<T>)["type"];
   title: string;
   icon: string;
-  targetTypeKey: Extract<keyof (Item & IItemType<T>), "type">;
-  create: () => Item & IItemType<T>;
+  targetTypeKey: Extract<keyof (AItemEntity & ItemEntityType<T>), "type">;
+  create: () => AItemEntity & ItemEntityType<T>;
 }
