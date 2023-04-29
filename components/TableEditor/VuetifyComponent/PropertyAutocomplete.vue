@@ -9,7 +9,7 @@ const tableEditorStore = useTableEditorStore<VuetifyComponent>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 const propertyRendererMap = ref<Record<string, Component>>({});
 const properties = computed(() => Object.keys(propertyRendererMap.value));
-const selectedProperty = ref<string | null>(null);
+const selectedProperty = ref<string>();
 const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["value"]>["component"]) => {
   const result: Record<string, Component> = {};
   const props = VuetifyComponentMap[component].props as Record<
@@ -35,7 +35,7 @@ watch(
   (newValue) => {
     if (!newValue) return;
     updatePropertyRendererMap(newValue);
-    selectedProperty.value = null;
+    selectedProperty.value = undefined;
   }
 );
 </script>
