@@ -1,5 +1,3 @@
-import { AUTH_PATH } from "./services/auth/constants";
-
 export default defineNuxtConfig({
   css: [
     "vuetify/lib/styles/main.sass",
@@ -50,7 +48,7 @@ export default defineNuxtConfig({
     autoImports: ["defineStore", "storeToRefs"],
   },
   auth: {
-    baseURL: `${process.env.BASE_URL}${AUTH_PATH}`,
+    origin: process.env.BASE_URL,
   },
   unocss: {
     attributify: true,
