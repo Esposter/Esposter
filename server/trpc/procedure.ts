@@ -7,6 +7,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const rateLimitedProcedure = publicProcedure.use(isRateLimited);
+// @NOTE: trpc v10.21.0 update to Overwrite util type breaks multiple middlewares
+// @ts-ignore
 export const authedProcedure = rateLimitedProcedure.use(isAuthed);
 
 export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schema: T, key: keyof T["shape"] & string) =>
