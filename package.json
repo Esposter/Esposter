@@ -81,7 +81,7 @@
     "dayjs": "^1.11.7",
     "dedent": "^0.7.0",
     "deep-equal": "^2.2.1",
-    "dompurify": "^3.0.2",
+    "dompurify": "^3.0.3",
     "emoji-mart-vue-fast": "^12.0.3",
     "eventemitter3": "^5.0.1",
     "gsap": "^3.11.5",
