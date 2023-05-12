@@ -1,25 +1,17 @@
 <script setup lang="ts">
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ItemType } from "@/models/clicker/ItemType";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 
-// @NOTE: Use this in vue 3.3
-// type ItemMenuProps = Pick<Upgrade & Building, "name" | "flavorDescription" | "price"> &
-// Partial<Pick<Upgrade & Building, "description" | "amount">>;
-
-type ItemMenuProps = {
-  type: ItemType;
-  name: string;
-  description?: string;
-  flavorDescription: string;
-  price: number;
-  amount?: number;
-  isAffordable: boolean;
-};
+type ItemMenuProps = { type: ItemType; isAffordable: boolean } & Pick<Upgrade, "name" | "flavorDescription" | "price"> &
+  Partial<Pick<Upgrade, "description">> &
+  Partial<Pick<BuildingWithStats, "amount">>;
 
 const props = defineProps<ItemMenuProps>();
-const { type, name, description, flavorDescription, price, amount, isAffordable } = toRefs(props);
+const { type, isAffordable, name, description, flavorDescription, price, amount } = toRefs(props);
 const { error } = useColors();
 const slots = useSlots();
 const descriptionHtml = computed(() => (description?.value ? marked.parse(description.value) : ""));
