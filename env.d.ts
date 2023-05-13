@@ -12,7 +12,6 @@ declare global {
       GOOGLE_CLIENT_ID: string;
       GOOGLE_CLIENT_SECRET: string;
       NUXT_AUTH_SECRET: string;
-      OPENAI_API_KEY: string;
     }
   }
 }

@@ -1,5 +1,5 @@
-import { AzureContainer } from "@/models/azure/blob";
-import { AppendBlobClient, BlobServiceClient, ContainerClient, HttpRequestBody } from "@azure/storage-blob";
+import type { AzureContainer } from "@/models/azure/blob";
+import { BlobServiceClient, ContainerClient, HttpRequestBody } from "@azure/storage-blob";
 
 export const getContainerClient = async (containerName: AzureContainer) => {
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
@@ -10,8 +10,3 @@ export const getContainerClient = async (containerName: AzureContainer) => {
 
 export const uploadBlockBlob = (containerClient: ContainerClient, blobName: string, data: HttpRequestBody) =>
   containerClient.uploadBlockBlob(blobName, data, data.toString().length);
-
-export const appendBlock = async (appendBlobClient: AppendBlobClient, data: HttpRequestBody) => {
-  await appendBlobClient.createIfNotExists();
-  return appendBlobClient.appendBlock(data, data.toString().length);
-};

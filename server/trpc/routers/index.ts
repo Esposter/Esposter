@@ -1,5 +1,4 @@
 import { router } from "@/server/trpc";
-import { chatbotRouter } from "@/server/trpc/routers/chatbot";
 import { clickerRouter } from "@/server/trpc/routers/clicker";
 import { emojiRouter } from "@/server/trpc/routers/emoji";
 import { likeRouter } from "@/server/trpc/routers/like";
@@ -10,7 +9,6 @@ import { tableEditorRouter } from "@/server/trpc/routers/tableEditor";
 import { userRouter } from "@/server/trpc/routers/user";
 
 export const appRouter = router({
-  chatbot: chatbotRouter,
   clicker: clickerRouter,
   emoji: emojiRouter,
   like: likeRouter,
