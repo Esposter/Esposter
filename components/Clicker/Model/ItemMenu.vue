@@ -6,7 +6,8 @@ import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 
-type ItemMenuProps = { type: ItemType; isAffordable: boolean } & Pick<Upgrade, "name" | "flavorDescription" | "price"> &
+type ItemMenuProps = { type: ItemType; isAffordable: boolean } & Pick<Upgrade | BuildingWithStats, "name"> &
+  Pick<Upgrade, "flavorDescription" | "price"> &
   Partial<Pick<Upgrade, "description">> &
   Partial<Pick<BuildingWithStats, "amount">>;
 
