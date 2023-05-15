@@ -86,7 +86,7 @@
     "eventemitter3": "^5.0.1",
     "gsap": "^3.11.5",
     "marked": "^5.0.2",
-    "node-emoji": "^1.11.0",
+    "node-emoji": "^2.0.2",
     "node-html-parser": "^6.1.5",
     "pinia": "^2.0.36",
     "rate-limiter-flexible": "^2.4.1",
