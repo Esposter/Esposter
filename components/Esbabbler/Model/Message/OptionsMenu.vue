@@ -2,8 +2,7 @@
 import type { MessageEntity } from "@/models/esbabbler/message";
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
-// eslint-disable-next-line import/default
-import nodeEmoji from "node-emoji";
+import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -49,7 +48,7 @@ const items = computed(() => {
 const onSelect = async (emoji: string) => {
   if (!data.value) return;
 
-  const emojiTag = nodeEmoji.unemojify(emoji);
+  const emojiTag = unemojify(emoji);
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
     await onCreateEmoji({
