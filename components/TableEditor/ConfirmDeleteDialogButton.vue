@@ -3,9 +3,17 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore()();
 const { save } = tableEditorStore;
-const { editedItem, editedIndex } = storeToRefs(tableEditorStore);
+const { tableEditor, editedItem, editedIndex } = storeToRefs(tableEditorStore);
+// We don't need to show the delete button if user is creating a new item
 const isExistingItem = computed(() => editedIndex.value > -1);
-const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));
+const displayItemType = computed(() => {
+  if (!editedItem.value || !tableEditor.value) return "";
+
+  const originalItem = tableEditor.value.items.find((i) => i.id === editedItem.value?.id);
+  if (!originalItem) return "";
+
+  return prettifyName(originalItem.type);
+});
 const dialog = ref(false);
 const itemName = ref("");
 const isDeletable = computed(() => itemName.value === editedItem.value?.name);
