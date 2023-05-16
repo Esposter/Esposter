@@ -9,9 +9,15 @@ interface DefaultLayoutProps {
 
 const props = defineProps<DefaultLayoutProps>();
 const { mainStyle } = toRefs(props);
+const slots = defineSlots<{
+  default?: (props: {}) => unknown;
+  left?: (props: {}) => unknown;
+  right?: (props: {}) => unknown;
+  footer?: (props: {}) => unknown;
+}>();
+
 const { mobile } = useDisplay();
 const router = useRouter();
-const slots = useSlots();
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
 

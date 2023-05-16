@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -17,7 +18,10 @@ const { modelValue, placeholder, maxLength, extensions } = toRefs(props);
 const emit = defineEmits<{
   "update:model-value": [value: string];
 }>();
-const slots = useSlots();
+const slots = defineSlots<{
+  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
+  "append-footer": (props: FooterBarAppendSlotProps) => unknown;
+}>();
 const editor = useEditor({
   extensions: [
     StarterKit,

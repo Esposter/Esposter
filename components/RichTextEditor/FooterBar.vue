@@ -5,6 +5,19 @@ interface FooterBarProps {
   editor?: Editor;
 }
 
+export interface FooterBarPrependSlotProps {
+  editor?: Editor;
+}
+
+export interface FooterBarAppendSlotProps {
+  editor?: Editor;
+}
+
+defineSlots<{
+  prepend: (props: FooterBarPrependSlotProps) => unknown;
+  append: (props: FooterBarAppendSlotProps) => unknown;
+}>();
+
 const props = defineProps<FooterBarProps>();
 const { editor } = toRefs(props);
 </script>

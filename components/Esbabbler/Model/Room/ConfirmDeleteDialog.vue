@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { StyledDeleteDialogDefaultSlotProps } from "@/components/Styled/DeleteDialog.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomConfirmDeleteDialogProps {
@@ -6,6 +7,9 @@ interface RoomConfirmDeleteDialogProps {
   creatorId: string;
 }
 
+defineSlots<{
+  default: (props: StyledDeleteDialogDefaultSlotProps & { tooltipProps: unknown }) => unknown;
+}>();
 const props = defineProps<RoomConfirmDeleteDialogProps>();
 const { roomId, creatorId } = toRefs(props);
 const { $client } = useNuxtApp();

@@ -5,6 +5,15 @@ interface StyledDeleteDialogProps {
   cardProps?: InstanceType<typeof VCard>["$props"];
 }
 
+export interface StyledDeleteDialogDefaultSlotProps {
+  isDeleteMode: boolean;
+  updateDeleteMode: (value: true) => boolean;
+}
+
+defineSlots<{
+  default: (props: StyledDeleteDialogDefaultSlotProps) => unknown;
+  content: (props: {}) => unknown;
+}>();
 const props = defineProps<StyledDeleteDialogProps>();
 const { cardProps } = toRefs(props);
 const emit = defineEmits<{
@@ -16,7 +25,7 @@ const isDeleteMode = ref(false);
 <template>
   <v-dialog v-model="isDeleteMode">
     <template #activator>
-      <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => isDeleteMode = value" />
+      <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => (isDeleteMode = value)" />
     </template>
     <v-card :="cardProps">
       <slot name="content" />

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineSlots<{ default: (props: {}) => unknown }>();
+
 const divRef = ref<HTMLDivElement>();
 const transform = useRotatingTransform(divRef);
 </script>

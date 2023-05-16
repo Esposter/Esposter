@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { StyledDeleteDialogDefaultSlotProps } from "@/components/Styled/DeleteDialog.vue";
 import type { MessageEntity } from "@/models/esbabbler/message";
 import type { DeleteMessageInput } from "@/server/trpc/routers/message";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -7,6 +8,10 @@ interface ConfirmDeleteMessageDialogProps {
   message: MessageEntity;
 }
 
+defineSlots<{
+  default: (props: StyledDeleteDialogDefaultSlotProps) => unknown;
+  messagePreview: (props: {}) => unknown;
+}>();
 const props = defineProps<ConfirmDeleteMessageDialogProps>();
 const { message } = toRefs(props);
 const { $client } = useNuxtApp();

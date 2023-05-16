@@ -8,6 +8,7 @@ interface RoomListProps {
   readMoreRooms: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 
+defineSlots<{ prepend: (props: {}) => unknown }>();
 const props = defineProps<RoomListProps>();
 const { rooms, hasMore, readMoreRooms } = toRefs(props);
 </script>

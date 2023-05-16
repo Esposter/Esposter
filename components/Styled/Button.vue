@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const slots = useSlots();
+import { VBtn } from "vuetify/components";
+
+const slots = defineSlots<InstanceType<typeof VBtn>["$props"]>();
 </script>
 
 <template>

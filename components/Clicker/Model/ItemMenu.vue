@@ -13,8 +13,12 @@ type ItemMenuProps = { type: ItemType; isAffordable: boolean } & Pick<Upgrade | 
 
 const props = defineProps<ItemMenuProps>();
 const { type, isAffordable, name, description, flavorDescription, price, amount } = toRefs(props);
+const slots = defineSlots<{
+  "append-text"?: (props: {}) => unknown;
+  action?: (props: {}) => unknown;
+}>();
 const { error } = useColors();
-const slots = useSlots();
+
 const descriptionHtml = computed(() => (description?.value ? marked.parse(description.value) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription.value}"`));
 const displayPrice = computed(() => formatNumberLong(price.value));

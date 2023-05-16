@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const slots = useSlots();
+import { VCard } from "vuetify/components";
+
+const slots = defineSlots<InstanceType<typeof VCard>["$props"]>();
 const { border } = useColors();
 </script>
 
