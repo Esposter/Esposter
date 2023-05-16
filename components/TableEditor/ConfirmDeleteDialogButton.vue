@@ -6,17 +6,19 @@ const { save } = tableEditorStore;
 const { tableEditor, editedItem, editedIndex } = storeToRefs(tableEditorStore);
 // We don't need to show the delete button if user is creating a new item
 const isExistingItem = computed(() => editedIndex.value > -1);
-const displayItemType = computed(() => {
-  if (!editedItem.value || !tableEditor.value) return "";
+const originalItem = computed(() => {
+  if (!editedItem.value || !tableEditor.value) return undefined;
 
   const originalItem = tableEditor.value.items.find((i) => i.id === editedItem.value?.id);
-  if (!originalItem) return "";
+  if (!originalItem) return undefined;
 
-  return prettifyName(originalItem.type);
+  return originalItem;
 });
+const displayItemType = computed(() => (originalItem.value ? prettifyName(originalItem.value.type) : ""));
+const displayItemName = computed(() => (originalItem.value ? originalItem.value.name : ""));
 const dialog = ref(false);
-const itemName = ref("");
-const isDeletable = computed(() => itemName.value === editedItem.value?.name);
+const itemNameTyped = ref("");
+const isDeletable = computed(() => itemNameTyped.value === displayItemName.value);
 </script>
 
 <template>
@@ -30,12 +32,12 @@ const isDeletable = computed(() => itemName.value === editedItem.value?.name);
     </template>
     <StyledCard>
       <v-card-title whitespace="normal!">
-        Confirm Deletion of {{ displayItemType }}: <span font="bold">{{ editedItem.name }}</span>
+        Confirm Deletion of {{ displayItemType }}: <span font="bold">{{ displayItemName }}</span>
       </v-card-title>
       <v-card-text>
         To confirm the delete action please enter the name of the
         {{ displayItemType }} exactly as it occurs.
-        <v-text-field v-model="itemName" />
+        <v-text-field v-model="itemNameTyped" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -48,7 +50,7 @@ const isDeletable = computed(() => itemName.value === editedItem.value?.name);
             () => {
               save(true);
               dialog = false;
-              itemName = '';
+              itemNameTyped = '';
             }
           "
         >
