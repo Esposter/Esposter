@@ -2,7 +2,7 @@
 import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
-const emit = defineEmits<{ (event: "update:room"): void }>();
+const emit = defineEmits<{ "update:room": [] }>();
 const roomStore = useRoomStore();
 const { roomsSearched } = storeToRefs(roomStore);
 </script>

@@ -21,9 +21,9 @@ interface AItemEntity {
 const props = defineProps<MessageOptionsMenuProps>();
 const { message, isHovering, hoverProps } = toRefs(props);
 const emit = defineEmits<{
-  (event: "update:menu", value: boolean): void;
-  (event: "update:update-mode", value: true): void;
-  (event: "update:delete-mode", value: true): void;
+  "update:menu": [value: boolean];
+  "update:update-mode": [value: true];
+  "update:delete-mode": [value: true];
 }>();
 const { $client } = useNuxtApp();
 const { data } = useAuth();

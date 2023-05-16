@@ -14,8 +14,8 @@ interface EmojiPickerProps {
 const props = defineProps<EmojiPickerProps>();
 const { tooltipProps, buttonProps, buttonAttrs } = toRefs(props);
 const emit = defineEmits<{
-  (event: "update:model-value", value: boolean): void;
-  (event: "select", emoji: string): void;
+  "update:model-value": [value: boolean];
+  select: [emoji: string];
 }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);

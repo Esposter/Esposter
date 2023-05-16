@@ -12,11 +12,7 @@ const props = withDefaults(defineProps<PostUpsertFormProps>(), {
 });
 const { initialValues } = toRefs(props);
 const emit = defineEmits<{
-  (
-    event: "submit",
-    submitEventPromise: SubmitEventPromise,
-    values: NonNullable<PostUpsertFormProps["initialValues"]>
-  ): void;
+  submit: [submitEventPromise: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
 const title = ref(initialValues.value.title);
 const description = ref(initialValues.value.description);

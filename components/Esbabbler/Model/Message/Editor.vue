@@ -12,8 +12,8 @@ interface MessageEditorProps {
 
 const props = defineProps<MessageEditorProps>();
 const emit = defineEmits<{
-  (event: "update:update-mode", value: false): void;
-  (event: "update:delete-mode", value: true): void;
+  "update:update-mode": [value: false];
+  "update:delete-mode": [value: true];
 }>();
 const { message } = toRefs(props);
 const editedMessageHtml = ref(refreshMentions(message.value.message));

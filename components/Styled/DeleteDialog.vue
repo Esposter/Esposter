@@ -8,7 +8,7 @@ interface StyledDeleteDialogProps {
 const props = defineProps<StyledDeleteDialogProps>();
 const { cardProps } = toRefs(props);
 const emit = defineEmits<{
-  (event: "delete", onComplete: () => void): void;
+  delete: [onComplete: () => void];
 }>();
 const isDeleteMode = ref(false);
 </script>

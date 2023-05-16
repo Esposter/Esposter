@@ -15,7 +15,7 @@ interface RichTextEditorProps {
 const props = defineProps<RichTextEditorProps>();
 const { modelValue, placeholder, maxLength, extensions } = toRefs(props);
 const emit = defineEmits<{
-  (event: "update:model-value", value: string): void;
+  "update:model-value": [value: string];
 }>();
 const slots = useSlots();
 const editor = useEditor({

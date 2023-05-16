@@ -8,7 +8,7 @@ interface PinaColadaProps {
 const props = defineProps<PinaColadaProps>();
 const { gAttrs } = toRefs(props);
 const emit = defineEmits<{
-  (event: "click", value: MouseEvent): void;
+  click: [value: MouseEvent];
 }>();
 </script>
 
