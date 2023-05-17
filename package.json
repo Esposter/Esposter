@@ -64,7 +64,7 @@
     "@codemirror/view": "^6.11.2",
     "@mdi/font": "^7.2.96",
     "@next-auth/prisma-adapter": "^1.0.6",
-    "@pinia/nuxt": "^0.4.10",
+    "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^4.14.0",
     "@tiptap/extension-character-count": "^2.0.3",
     "@tiptap/extension-mention": "^2.0.3",
