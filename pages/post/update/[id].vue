@@ -11,6 +11,7 @@ const route = useRoute();
 const postId = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 const post = postId ? await $client.post.readPost.query(postId) : null;
 if (!post) throw createError({ statusCode: 404, statusMessage: "Post could not be found" });
+
 const { updatePost } = usePostStore();
 const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>) => {
   e.preventDefault();
