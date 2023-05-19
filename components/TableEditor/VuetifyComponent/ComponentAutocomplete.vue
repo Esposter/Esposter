@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { VuetifyComponent } from "@/models/tableEditor/vuetifyComponent/VuetifyComponent";
+import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponent>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once

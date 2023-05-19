@@ -1,8 +1,14 @@
-<script setup lang="ts">
-import { tableEditorItemCategoryDefinitions } from "@/services/tableEditor/itemCategoryDefinition";
+<script setup lang="ts" generic="T extends string">
+import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
+interface CreateItemButtonProps {
+  itemCategoryDefinitions: ItemCategoryDefinition<T>[];
+}
+
+const props = defineProps<CreateItemButtonProps>();
+const { itemCategoryDefinitions } = toRefs(props);
 const tableEditorStore = useTableEditorStore()();
 const { editFormDialog, editedItem } = storeToRefs(tableEditorStore);
 </script>
@@ -20,7 +26,7 @@ const { editFormDialog, editedItem } = storeToRefs(tableEditorStore);
     </template>
     <v-list>
       <v-list-item
-        v-for="icd in tableEditorItemCategoryDefinitions"
+        v-for="icd in itemCategoryDefinitions"
         :key="icd.value"
         @click="
           () => {

@@ -1,5 +1,6 @@
 import { AzureContainer } from "@/models/azure/blob";
-import { TableEditor, tableEditorSchema } from "@/models/tableEditor/TableEditor";
+import { Item, itemSchema } from "@/models/tableEditor/Item";
+import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
@@ -8,7 +9,7 @@ import { jsonDateParse } from "@/utils/json";
 import { streamToText } from "@/utils/text";
 
 export const tableEditorRouter = router({
-  readTableEditor: authedProcedure.query<TableEditor>(async ({ ctx }) => {
+  readTableEditor: authedProcedure.query<TableEditor<Item>>(async ({ ctx }) => {
     try {
       const containerClient = await getContainerClient(AzureContainer.TableEditorAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
@@ -20,7 +21,10 @@ export const tableEditorRouter = router({
       return new TableEditor();
     }
   }),
-  saveTableEditor: authedProcedure.input(tableEditorSchema).mutation(async ({ input, ctx }) => {
+  // @NOTE: We can't use createTableEditorSchema(itemSchema) here
+  // because zod doesn't support validations with inherited subclasses
+  // i.e. extra properties in the class will be seen as violating the validation
+  saveTableEditor: authedProcedure.input(createTableEditorSchema(itemSchema)).mutation(async ({ input, ctx }) => {
     try {
       const client = await getContainerClient(AzureContainer.TableEditorAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;

@@ -1,8 +1,9 @@
-import { Item, itemSchema } from "@/models/tableEditor/Item";
+import type { Item } from "@/models/tableEditor/Item";
 import { z } from "zod";
 
-export class TableEditor {
-  items: Item[] = [];
+export class TableEditor<T extends Item> {
+  items: T[] = [];
 }
 
-export const tableEditorSchema = z.object({ items: z.array(itemSchema) }) satisfies z.ZodType<TableEditor>;
+export const createTableEditorSchema = <T extends z.ZodTypeAny = z.ZodType<Item>>(schema: T) =>
+  z.object({ items: z.array(schema) });

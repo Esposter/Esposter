@@ -1,9 +1,21 @@
-<script setup lang="ts">
-import { EditFormMap } from "@/services/tableEditor/constants";
+<script setup lang="ts" generic="T extends string">
+import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
+import { GetEditFormMap } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore()();
+interface CrudViewHeaderProps {
+  itemCategoryDefinitions: ItemCategoryDefinition<T>[];
+}
+
+const props = defineProps<CrudViewHeaderProps>();
+const { itemCategoryDefinitions } = toRefs(props);
+const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
+const component = computed(() =>
+  editedItem.value ? GetEditFormMap(TodoListItemType.TodoList)[editedItem.value.type] : null
+);
 </script>
 
 <template>
@@ -11,9 +23,9 @@ const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
     <v-toolbar-title>Table Editor</v-toolbar-title>
     <v-text-field v-model="searchQuery" append-inner-icon="mdi-magnify" label="Search" hide-details />
     <v-divider mx="4!" thickness="2" inset vertical />
-    <TableEditorCreateItemButton />
+    <TableEditorCreateItemButton :item-category-definitions="itemCategoryDefinitions" />
     <TableEditorEditFormDialog>
-      <component :is="EditFormMap[editedItem.type]" v-if="editedItem" />
+      <component :is="component" v-if="editedItem" />
     </TableEditorEditFormDialog>
   </v-toolbar>
 </template>

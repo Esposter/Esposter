@@ -1,10 +1,10 @@
 import { AItemEntity } from "@/models/tableEditor/AItemEntity";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
-import { ItemType } from "@/models/tableEditor/ItemType";
+import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { VuetifyComponentType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
 
-export class VuetifyComponent extends AItemEntity implements ItemEntityType<ItemType> {
-  type = ItemType.VuetifyComponent;
+export class VuetifyComponentItem extends AItemEntity implements ItemEntityType<VuetifyComponentItemType> {
+  type = VuetifyComponentItemType.VuetifyComponent;
   component: VuetifyComponentType[keyof VuetifyComponentType] = VuetifyComponentType["v-alert"];
   props: Record<string, unknown> = {};
 }
