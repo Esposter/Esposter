@@ -7,17 +7,14 @@ import type { AnyExtension } from "@tiptap/vue-3";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
-  modelValue: string;
   placeholder: string;
   maxLength: number;
   extensions?: AnyExtension[];
 }
 
 const props = defineProps<RichTextEditorProps>();
-const { modelValue, placeholder, maxLength, extensions } = toRefs(props);
-const emit = defineEmits<{
-  "update:model-value": [value: string];
-}>();
+const { placeholder, maxLength, extensions } = toRefs(props);
+const model = defineModel<string>({ required: true });
 const slots = defineSlots<{
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
@@ -29,9 +26,9 @@ const editor = useEditor({
     CharacterCount.configure({ limit: maxLength.value }),
     ...(extensions?.value ?? []),
   ],
-  content: modelValue.value,
+  content: model.value,
   onUpdate: ({ editor }) => {
-    emit("update:model-value", editor.getHTML());
+    model.value = editor.getHTML();
   },
 });
 

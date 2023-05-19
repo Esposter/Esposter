@@ -104,7 +104,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
         :button-attrs="{ rd: '0!' }"
-        @update:model-value="(value) => emit('update:menu', value)"
+        @update:menu="(value) => emit('update:menu', value)"
         @select="onSelect"
       />
       <v-tooltip text="Edit">

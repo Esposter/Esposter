@@ -15,6 +15,11 @@ export default defineNuxtConfig({
         },
       },
     },
+    vue: {
+      script: {
+        defineModel: true,
+      },
+    },
   },
   typescript: {
     shim: false,

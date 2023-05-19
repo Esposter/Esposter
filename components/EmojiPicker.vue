@@ -14,14 +14,14 @@ interface EmojiPickerProps {
 const props = defineProps<EmojiPickerProps>();
 const { tooltipProps, buttonProps, buttonAttrs } = toRefs(props);
 const emit = defineEmits<{
-  "update:model-value": [value: boolean];
+  "update:menu": [value: boolean];
   select: [emoji: string];
 }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
 const onEmojiSelect = (emoji: { native: string }) => {
   emit("select", emoji.native);
-  emit("update:model-value", false);
+  emit("update:menu", false);
   menu.value = false;
 };
 </script>
@@ -34,7 +34,7 @@ const onEmojiSelect = (emoji: { native: string }) => {
     :model-value="menu"
     @update:model-value="
       (value) => {
-        emit('update:model-value', value);
+        emit('update:menu', value);
         menu = value;
       }
     "

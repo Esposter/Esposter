@@ -25,13 +25,12 @@ const description = ref(initialValues.value.description);
         <v-row>
           <v-col>
             <v-text-field
+              v-model="title"
               label="Title"
               placeholder="Title"
               autofocus
               :counter="POST_TITLE_MAX_LENGTH"
               :rules="[formRules.required, formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH)]"
-              :model-value="title"
-              @update:model-value="(value) => (title = value)"
             />
           </v-col>
         </v-row>
