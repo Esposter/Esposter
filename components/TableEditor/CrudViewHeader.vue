@@ -1,4 +1,5 @@
-<script setup lang="ts" generic="T extends string">
+<script setup lang="ts" generic="TItem extends Item">
+import type { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
@@ -6,12 +7,12 @@ import { GetEditFormMap } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 interface CrudViewHeaderProps {
-  itemCategoryDefinitions: ItemCategoryDefinition<T>[];
+  itemCategoryDefinitions: ItemCategoryDefinition<TItem>[];
 }
 
 const props = defineProps<CrudViewHeaderProps>();
 const { itemCategoryDefinitions } = toRefs(props);
-const tableEditorStore = useTableEditorStore<TodoListItemType, TodoListItem>()();
+const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
 const component = computed(() =>
   editedItem.value ? GetEditFormMap(TodoListItemType.Todo)[editedItem.value.type] : null

@@ -1,5 +1,4 @@
-import { AItemEntity } from "@/models/tableEditor/AItemEntity";
-import { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
+import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
@@ -10,10 +9,7 @@ import { VForm } from "vuetify/components";
 
 // @NOTE: This doesn't actually work yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
-export const useTableEditorStore = <
-  T extends string,
-  TItem extends AItemEntity & ItemEntityType<T> = AItemEntity & ItemEntityType<T>
->() =>
+export const useTableEditorStore = <TItem extends Item = Item>() =>
   defineStore("tableEditor", () => {
     const { $client } = useNuxtApp();
     const { status } = useAuth();

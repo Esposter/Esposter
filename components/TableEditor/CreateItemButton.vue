@@ -1,10 +1,11 @@
-<script setup lang="ts" generic="T extends string">
+<script setup lang="ts" generic="TItem extends Item">
+import type { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
 interface CreateItemButtonProps {
-  itemCategoryDefinitions: ItemCategoryDefinition<T>[];
+  itemCategoryDefinitions: ItemCategoryDefinition<TItem>[];
 }
 
 const props = defineProps<CreateItemButtonProps>();

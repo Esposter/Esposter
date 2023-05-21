@@ -1,10 +1,6 @@
-import type { AItemEntity } from "@/models/tableEditor/AItemEntity";
-import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
+import type { Item } from "@/models/tableEditor/Item";
 
-export interface ItemCategoryDefinition<
-  T extends string,
-  TItem extends AItemEntity & ItemEntityType<T> = AItemEntity & ItemEntityType<T>
-> {
+export interface ItemCategoryDefinition<TItem extends Item = Item> {
   value: TItem["type"];
   title: string;
   icon: string;

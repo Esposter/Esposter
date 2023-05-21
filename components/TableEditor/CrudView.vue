@@ -1,14 +1,13 @@
-<script setup lang="ts" generic="T extends string, TItem extends AItemEntity & ItemEntityType<T>">
-import type { AItemEntity } from "@/models/tableEditor/AItemEntity";
+<script setup lang="ts" generic="TItem extends Item">
+import type { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
-import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import type { DataTableHeader } from "@/services/vuetify/dataTable";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 interface CrudViewProps {
-  itemCategoryDefinitions: ItemCategoryDefinition<T>[];
+  itemCategoryDefinitions: ItemCategoryDefinition<TItem>[];
 }
 
 const props = defineProps<CrudViewProps>();
