@@ -1,5 +1,5 @@
 import type { Item } from "@/models/tableEditor/Item";
-import type { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
+import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";

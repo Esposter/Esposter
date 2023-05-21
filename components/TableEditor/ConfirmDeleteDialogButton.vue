@@ -35,8 +35,10 @@ const isDeletable = computed(() => itemNameTyped.value === displayItemName.value
         Confirm Deletion of {{ displayItemType }}: <span font="bold">{{ displayItemName }}</span>
       </v-card-title>
       <v-card-text>
-        To confirm the delete action please enter the name of the
-        {{ displayItemType }} exactly as it occurs.
+        <div pb="4">
+          To confirm the delete action please enter the name of the
+          <span font="bold">{{ displayItemType }}</span> exactly as it occurs.
+        </div>
         <v-text-field v-model="itemNameTyped" />
       </v-card-text>
       <v-card-actions>
