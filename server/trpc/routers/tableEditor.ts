@@ -23,9 +23,6 @@ export const tableEditorRouter = router({
       return new TableEditorConfiguration();
     }
   }),
-  // @NOTE: We can't use createTableEditorSchema(itemSchema) here
-  // because zod doesn't support validations with inherited subclasses
-  // i.e. extra properties in the class will be seen as violating the validation
   saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ input, ctx }) => {
     try {
       const client = await getContainerClient(AzureContainer.TableEditorAssets);
