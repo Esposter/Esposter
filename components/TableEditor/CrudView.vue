@@ -1,28 +1,21 @@
-<script setup lang="ts" generic="TItem extends Item">
+<script setup lang="ts">
 import type { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
-import type { DataTableHeader } from "@/services/vuetify/dataTable";
+import { propsMap } from "@/services/tableEditor/propsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
-interface CrudViewProps {
-  itemCategoryDefinitions: ItemCategoryDefinition<TItem>[];
-}
-
-const props = defineProps<CrudViewProps>();
-const { itemCategoryDefinitions } = toRefs(props);
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-const { tableEditor, searchQuery } = storeToRefs(tableEditorStore);
-const headers = ref<DataTableHeader[]>([
-  { title: "Name", key: "name" },
-  { title: "Type", key: "type" },
-  { title: "Notes", key: "notes" },
-]);
+const { tableEditor, tableEditorType, searchQuery } = storeToRefs(tableEditorStore);
+const props = computed(() => propsMap[tableEditorType.value]);
 
 const getItemCategoryDefinitionByItem = (item: unknown) =>
-  getItemCategoryDefinition(itemCategoryDefinitions.value, (item as { raw: TItem }).raw);
+  getItemCategoryDefinition(
+    props.value.itemCategoryDefinitions as unknown as ItemCategoryDefinition[],
+    (item as { raw: Item }).raw
+  );
 </script>
 
 <template>
@@ -30,7 +23,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
     <v-data-table
       display="flex"
       flex="1 col"
-      :headers="headers"
+      :headers="props.headers"
       :items="tableEditor?.items"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
@@ -38,7 +31,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       @click:row="(_, { item }) => editItem(item.raw.id)"
     >
       <template #top>
-        <TableEditorCrudViewHeader :item-category-definitions="itemCategoryDefinitions" />
+        <TableEditorCrudViewHeader />
       </template>
       <template #[`item.type`]="{ item }">
         <v-chip>

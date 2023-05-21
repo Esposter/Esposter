@@ -1,17 +1,11 @@
-<script setup lang="ts" generic="TItem extends Item">
-import type { Item } from "@/models/tableEditor/Item";
-import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+<script setup lang="ts">
+import { propsMap } from "@/services/tableEditor/propsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
-interface CreateItemButtonProps {
-  itemCategoryDefinitions: ItemCategoryDefinition<TItem>[];
-}
-
-const props = defineProps<CreateItemButtonProps>();
-const { itemCategoryDefinitions } = toRefs(props);
 const tableEditorStore = useTableEditorStore()();
-const { editFormDialog, editedItem } = storeToRefs(tableEditorStore);
+const { tableEditorType, editFormDialog, editedItem } = storeToRefs(tableEditorStore);
+const itemCategoryDefinitions = computed(() => propsMap[tableEditorType.value].itemCategoryDefinitions);
 </script>
 
 <template>
