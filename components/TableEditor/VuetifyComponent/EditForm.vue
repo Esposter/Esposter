@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import type { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItemType, VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 

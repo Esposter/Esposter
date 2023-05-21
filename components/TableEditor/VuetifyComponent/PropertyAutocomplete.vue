@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import type { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/constants";
 import { getComponent } from "@/services/tableEditor/vuetifyComponent/getComponent";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { Constructor } from "type-fest";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItemType, VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 const propertyRendererMap = ref<Record<string, Component>>({});
 const properties = computed(() => Object.keys(propertyRendererMap.value));

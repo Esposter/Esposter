@@ -1,3 +1,7 @@
+import { z } from "zod";
+
 export enum TodoListItemType {
-  TodoList = "TodoList",
+  Todo = "Todo",
 }
+
+export const todoListItemTypeSchema = z.nativeEnum(TodoListItemType) satisfies z.ZodType<TodoListItemType>;

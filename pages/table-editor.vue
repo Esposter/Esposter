@@ -10,16 +10,17 @@ const { status } = useAuth();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-const { tableEditor } = storeToRefs(tableEditorStore);
+const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
 
-if (status.value === "authenticated") tableEditor.value = await $client.tableEditor.readTableEditor.query();
+if (status.value === "authenticated")
+  tableEditorConfiguration.value = await $client.tableEditor.readTableEditor.query();
 
 useConfirmBeforeNavigation();
 
 onMounted(() => {
   if (status.value === "unauthenticated") {
     const tableEditorStore = localStorage.getItem(TABLE_EDITOR_STORE);
-    tableEditor.value = tableEditorStore ? jsonDateParse(tableEditorStore) : new TableEditor();
+    tableEditorConfiguration.value = tableEditorStore ? jsonDateParse(tableEditorStore) : new TableEditor();
   }
 
   const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
@@ -27,7 +28,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  tableEditor.value = null;
+  tableEditorConfiguration.value = null;
 });
 </script>
 

@@ -4,8 +4,8 @@ import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType
 
 export const todoListItemCategoryDefinitions: ItemCategoryDefinition<TodoListItemType>[] = [
   {
-    value: TodoListItemType.TodoList,
-    title: prettifyName(TodoListItemType.TodoList),
+    value: TodoListItemType.Todo,
+    title: prettifyName(TodoListItemType.Todo),
     icon: "mdi-check",
     targetTypeKey: "type",
     create: () => new TodoListItem(),

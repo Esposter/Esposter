@@ -11,10 +11,10 @@ interface CrudViewHeaderProps {
 
 const props = defineProps<CrudViewHeaderProps>();
 const { itemCategoryDefinitions } = toRefs(props);
-const tableEditorStore = useTableEditorStore<TodoListItem>()();
+const tableEditorStore = useTableEditorStore<TodoListItemType, TodoListItem>()();
 const { searchQuery, editedItem } = storeToRefs(tableEditorStore);
 const component = computed(() =>
-  editedItem.value ? GetEditFormMap(TodoListItemType.TodoList)[editedItem.value.type] : null
+  editedItem.value ? GetEditFormMap(TodoListItemType.Todo)[editedItem.value.type] : null
 );
 </script>
 

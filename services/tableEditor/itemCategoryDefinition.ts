@@ -14,9 +14,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition<string> = {
   create: () => new NullItem(),
 };
 
-export const getItemCategoryDefinition = <T extends string, U extends AItemEntity & ItemEntityType<T>>(
+export const getItemCategoryDefinition = <T extends string, TItem extends AItemEntity & ItemEntityType<T>>(
   itemCategoryDefinitions: ItemCategoryDefinition<T>[],
-  item: U
-) =>
-  itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey as keyof U]) ??
-  NULL_ITEM_CATEGORY_DEFINITION;
+  item: TItem
+) => itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey]) ?? NULL_ITEM_CATEGORY_DEFINITION;

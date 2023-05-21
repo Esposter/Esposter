@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends string">
+<script setup lang="ts" generic="T extends string, TItem extends AItemEntity & ItemEntityType<T>">
 import type { AItemEntity } from "@/models/tableEditor/AItemEntity";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
@@ -23,7 +23,7 @@ const headers = ref<DataTableHeader[]>([
 ]);
 
 const getItemCategoryDefinitionByItem = (item: unknown) =>
-  getItemCategoryDefinition(itemCategoryDefinitions.value, (item as { raw: AItemEntity & ItemEntityType<T> }).raw);
+  getItemCategoryDefinition(itemCategoryDefinitions.value, (item as { raw: TItem }).raw);
 </script>
 
 <template>
