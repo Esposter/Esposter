@@ -43,8 +43,15 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         if (!this.tableEditor || !this.editedItem) return false;
 
         const originalItem = this.tableEditor.items.find((item) => item.id === this.editedItem?.id);
-        if (!originalItem) return true;
-        return this.isEditFormValid && !equal(this.editedItem, originalItem);
+        // For the form to be savable, it has to have no errors
+        // and either it is a new item, or it is not equal to the original item
+        return this.isEditFormValid && (!originalItem || !equal(this.editedItem, originalItem));
+      },
+      isDirty(): boolean {
+        // We know it is dirty if:
+        // 1. the user has pucked up and the edit form isn't valid
+        // 2. or that it is savable
+        return !this.isEditFormValid || this.isSavable;
       },
     },
     actions: {
