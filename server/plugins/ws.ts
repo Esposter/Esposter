@@ -6,7 +6,8 @@ import WebSocket, { WebSocketServer as WSWebSocketServer } from "ws";
 
 export default defineNitroPlugin((nitro) => {
   const WebSocketServer = WebSocket.Server || WSWebSocketServer;
-  const wss = new WebSocketServer();
+  const port = 3001;
+  const wss = new WebSocketServer({ port });
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 
   wss.on("connection", (ws) => {
@@ -14,7 +15,7 @@ export default defineNitroPlugin((nitro) => {
     ws.once("close", () => console.log(`Connection closed, client size: ${wss.clients.size}`));
   });
 
-  console.log(chalk.yellow("WebSocket Server is listening"));
+  console.log(chalk.yellow(`WebSocket Server is listening on port:${port}`));
 
   nitro.hooks.hookOnce("close", () => {
     handler.broadcastReconnectNotification();

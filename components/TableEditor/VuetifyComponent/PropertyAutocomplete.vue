@@ -18,8 +18,13 @@ const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["v
   >;
 
   for (const [name, prop] of Object.entries(props).filter((propEntry) => propEntry[1].type)) {
-    if (Array.isArray(prop.type) && prop.type.length > 0) result[name] = markRaw(getComponent(prop.type[0]));
-    else result[name] = markRaw(getComponent(prop.type as Constructor<unknown>));
+    if (Array.isArray(prop.type) && prop.type.length > 0) {
+      const component = getComponent(prop.type[0]);
+      if (component) result[name] = markRaw(component);
+    } else {
+      const component = getComponent(prop.type as Constructor<unknown>);
+      if (component) result[name] = markRaw(component);
+    }
   }
 
   propertyRendererMap.value = result;
