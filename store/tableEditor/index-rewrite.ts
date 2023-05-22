@@ -30,7 +30,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const editedItem = ref<TItem | null>(null);
     const editedIndex = ref(-1);
     const isFullScreenDialog = ref(false);
-    const isEditFormValid = computed(() => editFormRef.value?.errors.length === 0);
+    // The form is "valid" if there's no form open/no errors
+    const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
     const isSavable = computed(() => {
       if (!tableEditor.value || !editedItem.value) return;
 
@@ -39,8 +40,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       // and either it is a new item, or it is not equal to the original item
       return isEditFormValid.value && (!originalItem || !equal(editedItem.value, originalItem));
     });
-    // We know it is dirty if:
-    // 1. the user has pucked up and the edit form isn't valid
+    // We know the form is dirty if:
+    // 1. The user has pucked up and the edit form isn't valid
     // 2. or that it is savable
     const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 

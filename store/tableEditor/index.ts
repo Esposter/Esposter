@@ -37,7 +37,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
           : null;
       },
       isEditFormValid(): boolean {
-        return this.editFormRef?.errors.length === 0;
+        // The form is "valid" if there's no form open/no errors
+        return !this.editFormRef || this.editFormRef.errors.length === 0;
       },
       isSavable(): boolean {
         if (!this.tableEditor || !this.editedItem) return false;
@@ -48,8 +49,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         return this.isEditFormValid && (!originalItem || !equal(this.editedItem, originalItem));
       },
       isDirty(): boolean {
-        // We know it is dirty if:
-        // 1. the user has pucked up and the edit form isn't valid
+        // We know the form is dirty if:
+        // 1. The user has pucked up and the edit form isn't valid
         // 2. or that it is savable
         return !this.isEditFormValid || this.isSavable;
       },
