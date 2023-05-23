@@ -4,8 +4,9 @@ export const useConfirmBeforeNavigation = () => {
   const tableEditorStore = useTableEditorStore()();
   const { isDirty } = storeToRefs(tableEditorStore);
 
-  onBeforeRouteLeave(() => {
+  onBeforeRouteLeave((_, __, next) => {
     if (isDirty.value && !window.confirm("Changes that you made may not be saved.")) return false;
+    next();
   });
 
   const refreshListener = (e: BeforeUnloadEvent) => {
