@@ -86,6 +86,8 @@
     "eventemitter3": "^5.0.1",
     "gsap": "^3.11.5",
     "marked": "^5.0.2",
+    "marked-gfm-heading-id": "^3.0.3",
+    "marked-mangle": "^1.0.1",
     "node-emoji": "^2.0.2",
     "node-html-parser": "^6.1.5",
     "pinia": "^2.1.3",
