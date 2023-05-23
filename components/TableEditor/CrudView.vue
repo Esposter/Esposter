@@ -34,8 +34,9 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
         <TableEditorCrudViewHeader />
       </template>
       <template #[`item.type`]="{ item }">
-        <v-chip>
+        <v-chip label>
           <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
+          &nbsp;
           {{ getItemCategoryDefinitionByItem(item).title }}
         </v-chip>
       </template>
