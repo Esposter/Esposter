@@ -10,6 +10,8 @@ const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
 const { tableEditor, tableEditorType, searchQuery } = storeToRefs(tableEditorStore);
 const props = computed(() => propsMap[tableEditorType.value]);
+// We can assume that the first element of the headers is the type
+const itemTypeKey = computed(() => props.value.headers[0].key);
 
 const getItemCategoryDefinitionByItem = (item: unknown) =>
   getItemCategoryDefinition(
@@ -33,7 +35,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       <template #top>
         <TableEditorCrudViewHeader />
       </template>
-      <template #[`item.type`]="{ item }">
+      <template #[`item.${itemTypeKey}`]="{ item }">
         <v-chip label>
           <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
           &nbsp;
