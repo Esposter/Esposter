@@ -4,8 +4,9 @@ import { errorLink } from "@/services/trpc/errorLink";
 import type { TRPCLink, WebSocketClientOptions } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
 import SuperJSON from "superjson";
+import WebSocket from "ws";
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(() => {
   const url = useClientUrl();
   const links: TRPCLink<AppRouter>[] = [
     // Log to your console in development and only log errors in production
@@ -15,15 +16,13 @@ export default defineNuxtPlugin(async () => {
     errorLink,
     splitLink({
       condition: (op) => op.type === "subscription",
-      true: await (async () => {
+      true: (() => {
         if (isServer()) return httpBatchLink({ url });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsClient = createWSClient({
-          url: `${wsProtocol}//${window.location.host}:${WS_PORT}`,
-          WebSocket: (isServer()
-            ? await import("ws").then((r) => r.default)
-            : WebSocket) as WebSocketClientOptions["WebSocket"],
+          url: `${wsProtocol}//${window.location.hostname}:${WS_PORT}`,
+          WebSocket: (isServer() ? WebSocket : globalThis.WebSocket) as WebSocketClientOptions["WebSocket"],
         });
         return wsLink({ client: wsClient });
       })(),

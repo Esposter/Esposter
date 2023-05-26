@@ -3,10 +3,9 @@ import { appRouter } from "@/server/trpc/routers";
 import { WS_PORT } from "@/services/trpc/constants";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import chalk from "chalk";
-import WebSocket, { WebSocketServer as WSWebSocketServer } from "ws";
+import { WebSocketServer } from "ws";
 
 export default defineNitroPlugin((nitro) => {
-  const WebSocketServer = WebSocket.Server || WSWebSocketServer;
   const wss = new WebSocketServer({ port: WS_PORT });
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 
