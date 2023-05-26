@@ -1,13 +1,13 @@
 import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
+import { WS_PORT } from "@/services/trpc/constants";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import chalk from "chalk";
 import WebSocket, { WebSocketServer as WSWebSocketServer } from "ws";
 
 export default defineNitroPlugin((nitro) => {
   const WebSocketServer = WebSocket.Server || WSWebSocketServer;
-  const port = 3001;
-  const wss = new WebSocketServer({ port });
+  const wss = new WebSocketServer({ port: WS_PORT });
   const handler = applyWSSHandler({ wss, router: appRouter, createContext });
 
   wss.on("connection", (ws) => {
@@ -15,7 +15,7 @@ export default defineNitroPlugin((nitro) => {
     ws.once("close", () => console.log(`Connection closed, client size: ${wss.clients.size}`));
   });
 
-  console.log(chalk.yellow(`WebSocket Server is listening on port:${port}`));
+  console.log(chalk.yellow(`WebSocket Server is listening on port:${WS_PORT}`));
 
   nitro.hooks.hookOnce("close", () => {
     handler.broadcastReconnectNotification();

@@ -1,4 +1,5 @@
 import type { AppRouter } from "@/server/trpc/routers";
+import { WS_PORT } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import type { TRPCLink } from "@trpc/client";
 import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
@@ -18,7 +19,7 @@ export default defineNuxtPlugin(() => {
         if (isServer()) return httpBatchLink({ url });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
+        const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}:${WS_PORT}` });
         return wsLink({ client: wsClient });
       })(),
       false: httpBatchLink({ url }),
