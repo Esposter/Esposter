@@ -96,7 +96,7 @@
     "superjson": "^1.12.3",
     "three": "^0.152.2",
     "tippy.js": "^6.3.7",
-    "trpc-nuxt": "^0.10.4",
+    "trpc-nuxt": "^0.10.5",
     "uuid": "^9.0.0",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.2.5",
