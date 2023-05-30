@@ -7,11 +7,11 @@ import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface UpgradeListItemProps {
   upgrade: Upgrade;
-  isBuyable?: true;
+  isBought?: true;
 }
 
 const props = defineProps<UpgradeListItemProps>();
-const { upgrade, isBuyable } = toRefs(props);
+const { upgrade, isBought } = toRefs(props);
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
@@ -23,13 +23,14 @@ const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >=
 <template>
   <ClickerModelItemMenu
     :type="ItemType.Upgrade"
+    :is-affordable="isAffordable"
+    :menu-props="{ location: isBought ? 'left center' : 'right center' }"
     :name="upgrade.name"
     :description="upgrade.description"
     :flavor-description="upgrade.flavorDescription"
     :price="upgrade.price"
-    :is-affordable="isAffordable"
   >
-    <template v-if="isBuyable" #action>
+    <template v-if="!isBought" #action>
       <v-spacer />
       <StyledButton
         :disabled="!isAffordable"

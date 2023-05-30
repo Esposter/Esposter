@@ -27,7 +27,7 @@ initialiseBuildingList(buildings);
 
 <template>
   <v-list overflow-y="auto!">
-    <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" is-buyable />
+    <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" />
     <ClickerModelBuildingListGroup :buildings="buildingList" />
   </v-list>
 </template>

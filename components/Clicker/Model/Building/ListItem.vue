@@ -25,13 +25,15 @@ const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >=
 </script>
 
 <template>
+  <!-- We can assume that buildings will always be displayed in store section for better UX -->
   <ClickerModelItemMenu
     :type="ItemType.Building"
+    :is-affordable="isAffordable"
+    :menu-props="{ location: 'right center' }"
     :name="building.name"
     :flavor-description="building.flavorDescription"
     :price="buildingPrice"
     :amount="boughtBuildingAmount"
-    :is-affordable="isAffordable"
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
       <ul px="8">

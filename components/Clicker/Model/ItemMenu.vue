@@ -5,14 +5,18 @@ import type { Upgrade } from "@/models/clicker/Upgrade";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
+import type { VMenu } from "vuetify/components";
 
-type ItemMenuProps = { type: ItemType; isAffordable: boolean } & Pick<Upgrade | BuildingWithStats, "name"> &
+type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["$props"] } & Pick<
+  Upgrade | BuildingWithStats,
+  "name"
+> &
   Pick<Upgrade, "flavorDescription" | "price"> &
   Partial<Pick<Upgrade, "description">> &
   Partial<Pick<BuildingWithStats, "amount">>;
 
 const props = defineProps<ItemMenuProps>();
-const { type, isAffordable, name, description, flavorDescription, price, amount } = toRefs(props);
+const { type, isAffordable, menuProps, name, description, flavorDescription, price, amount } = toRefs(props);
 const slots = defineSlots<{
   "append-text"?: (props: {}) => unknown;
   action?: (props: {}) => unknown;
@@ -41,9 +45,9 @@ const upgradeIcon = computed(() => {
 </script>
 
 <template>
-  <v-menu location="right center" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-list-item :title="name" select="none" :="menuProps">
+  <v-menu :close-on-content-click="false" :="menuProps">
+    <template #activator="{ props: activatorProps }">
+      <v-list-item :title="name" select="none" :="activatorProps">
         <template #prepend>
           <v-img
             mr="1"

@@ -8,6 +8,6 @@ const inventoryUpgrades = computed(() => game.value?.boughtUpgrades.sort((a, b) 
 
 <template>
   <v-list overflow-y="auto!">
-    <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" />
+    <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" is-bought />
   </v-list>
 </template>
