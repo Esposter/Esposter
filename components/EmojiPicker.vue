@@ -6,9 +6,9 @@ import { mergeProps } from "vue";
 import type { VBtn, VTooltip } from "vuetify/components";
 
 interface EmojiPickerProps {
-  tooltipProps: InstanceType<typeof VTooltip>["$props"];
-  buttonProps?: InstanceType<typeof VBtn>["$props"];
-  buttonAttrs?: InstanceType<typeof VBtn>["$attrs"];
+  tooltipProps: VTooltip["$props"];
+  buttonProps?: VBtn["$props"];
+  buttonAttrs?: VBtn["$attrs"];
 }
 
 const props = defineProps<EmojiPickerProps>();

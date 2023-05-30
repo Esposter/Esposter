@@ -11,7 +11,7 @@ const dialog = ref(false);
     <template #activator>
       <v-btn case="normal!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
     </template>
-    <v-card>
+    <StyledCard>
       <v-card-title>
         <v-text-field
           v-model="roomSearchQuery"
@@ -24,6 +24,6 @@ const dialog = ref(false);
       <v-card-text overflow-y="auto">
         <EsbabblerModelRoomListSearched @update:room="dialog = false" />
       </v-card-text>
-    </v-card>
+    </StyledCard>
   </v-dialog>
 </template>

@@ -25,7 +25,7 @@ const { copy, copied } = useClipboard({ source: inviteLink });
         </template>
       </v-tooltip>
     </template>
-    <v-card px="4!">
+    <StyledCard px="4!">
       <v-card-title px="0!">
         Invite friends to <span font="bold">{{ roomName }}</span>
       </v-card-title>
@@ -38,7 +38,7 @@ const { copy, copied } = useClipboard({ source: inviteLink });
           </template>
         </v-text-field>
       </v-card-text>
-    </v-card>
+    </StyledCard>
   </v-dialog>
 </template>
 

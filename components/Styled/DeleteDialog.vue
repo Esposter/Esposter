@@ -2,7 +2,7 @@
 import type { VCard } from "vuetify/components";
 
 interface StyledDeleteDialogProps {
-  cardProps?: InstanceType<typeof VCard>["$props"];
+  cardProps?: VCard["$props"];
 }
 
 export interface StyledDeleteDialogDefaultSlotProps {
@@ -27,7 +27,7 @@ const isDeleteMode = ref(false);
     <template #activator>
       <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => (isDeleteMode = value)" />
     </template>
-    <v-card :="cardProps">
+    <StyledCard :="cardProps">
       <slot name="content" />
       <v-card-actions>
         <v-spacer />
@@ -45,6 +45,6 @@ const isDeleteMode = ref(false);
           Delete
         </v-btn>
       </v-card-actions>
-    </v-card>
+    </StyledCard>
   </v-dialog>
 </template>

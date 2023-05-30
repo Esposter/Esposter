@@ -19,7 +19,7 @@ export const getTableClient = async (tableName: AzureTable) => {
 
 export const createEntity = <Entity extends CompositeKey>(
   tableClient: TableClient,
-  ...args: [Entity, ...SkipFirst<Parameters<InstanceType<typeof TableClient>["createEntity"]>, 1>]
+  ...args: [Entity, ...SkipFirst<Parameters<TableClient["createEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(
@@ -33,7 +33,7 @@ export const createEntity = <Entity extends CompositeKey>(
 
 export const updateEntity = <Entity extends CompositeKey>(
   tableClient: TableClient,
-  ...args: [AzureUpdateEntity<Entity>, ...SkipFirst<Parameters<InstanceType<typeof TableClient>["updateEntity"]>, 1>]
+  ...args: [AzureUpdateEntity<Entity>, ...SkipFirst<Parameters<TableClient["updateEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(
@@ -45,17 +45,14 @@ export const updateEntity = <Entity extends CompositeKey>(
   return tableClient.updateEntity(serializedEntity, ...rest);
 };
 
-export const deleteEntity = (
-  tableClient: TableClient,
-  ...args: Parameters<InstanceType<typeof TableClient>["deleteEntity"]>
-) => {
+export const deleteEntity = (tableClient: TableClient, ...args: Parameters<TableClient["deleteEntity"]>) => {
   return tableClient.deleteEntity(...args);
 };
 
 export const getEntity = async <Entity extends CompositeKey>(
   tableClient: TableClient,
   cls: ClassConstructor<Entity>,
-  ...args: Parameters<InstanceType<typeof TableClient>["getEntity"]>
+  ...args: Parameters<TableClient["getEntity"]>
 ): Promise<Entity> => {
   const result = await tableClient.getEntity<Entity>(...args);
   return plainToInstance(cls, result);

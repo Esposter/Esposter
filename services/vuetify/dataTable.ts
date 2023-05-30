@@ -1,4 +1,4 @@
-import { ArrayElement } from "type-fest/source/internal";
-import { VDataTable } from "vuetify/labs/VDataTable";
+import type { ArrayElement } from "type-fest/source/internal";
+import type { VDataTable } from "vuetify/labs/VDataTable";
 
-export type DataTableHeader = ArrayElement<ArrayElement<InstanceType<typeof VDataTable>["$props"]["headers"]>>;
+export type DataTableHeader = ArrayElement<ArrayElement<VDataTable["$props"]["headers"]>>;

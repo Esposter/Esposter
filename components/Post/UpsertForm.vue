@@ -19,7 +19,7 @@ const description = ref(initialValues.value.description);
 </script>
 
 <template>
-  <v-card>
+  <StyledCard>
     <v-form @submit="(e) => emit('submit', e, { title, description })">
       <v-container>
         <v-row>
@@ -54,5 +54,5 @@ const description = ref(initialValues.value.description);
         </v-row>
       </v-container>
     </v-form>
-  </v-card>
+  </StyledCard>
 </template>

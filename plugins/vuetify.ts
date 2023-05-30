@@ -1,6 +1,7 @@
 import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 export enum ThemeMode {
   light = "light",
@@ -71,13 +72,23 @@ const theme: VuetifyOptions["theme"] = {
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
-    components,
+    components: { ...components, VDataTable },
     directives,
     theme,
     ssr: true,
     defaults: {
       VAutocomplete: { variant: "outlined" },
       VBtn: { flat: true },
+      VDataTable: {
+        style: {
+          borderRadius: ".25rem",
+        },
+        VToolbar: {
+          style: {
+            borderRadius: ".25rem",
+          },
+        },
+      },
       VDialog: { width: 500, maxWidth: "100%" },
       VTextarea: { variant: "outlined" },
       VTextField: { variant: "outlined" },

@@ -98,7 +98,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 </script>
 
 <template>
-  <v-card :elevation="isHovering ? 12 : 2" :="hoverProps">
+  <StyledCard :elevation="isHovering ? 12 : 2" :="hoverProps">
     <v-card-actions p="0!" min-h="auto!">
       <EmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
@@ -138,5 +138,5 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         </v-list>
       </v-menu>
     </v-card-actions>
-  </v-card>
+  </StyledCard>
 </template>

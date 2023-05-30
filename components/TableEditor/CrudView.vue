@@ -4,7 +4,6 @@ import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinit
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import { propsMap } from "@/services/tableEditor/propsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { VDataTable } from "vuetify/labs/VDataTable";
 
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
@@ -22,7 +21,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
 
 <template>
   <v-container h="full" display="flex" flex="col" fluid>
-    <v-data-table
+    <StyledDataTable
       display="flex"
       flex="1 col"
       :headers="props.headers"
@@ -42,6 +41,6 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
           {{ getItemCategoryDefinitionByItem(item).title }}
         </v-chip>
       </template>
-    </v-data-table>
+    </StyledDataTable>
   </v-container>
 </template>
