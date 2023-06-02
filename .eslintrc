@@ -1,11 +1,5 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "plugin:vue/vue3-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "@nuxtjs/eslint-config-typescript",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["@nuxtjs/eslint-config-typescript", "plugin:prettier/recommended"],
   "rules": {
     "no-console": "off",
     "import/order": "off",
