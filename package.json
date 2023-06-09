@@ -43,7 +43,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.14.1",
     "gen-env-types": "^1.3.4",
-    "msw": "^1.2.1",
+    "msw": "^1.2.2",
     "msw-trpc": "^1.3.3",
     "next-auth": "^4.22.1",
     "nuxt": "^3.5.3",
