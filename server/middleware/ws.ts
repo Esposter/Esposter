@@ -2,20 +2,19 @@ import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import chalk from "chalk";
-import type { Server as HTTPServer } from "node:http";
-import type { Server, WebSocket } from "ws";
+import type { Server } from "node:http";
 import { WebSocketServer } from "ws";
 
 declare global {
   // eslint-disable-next-line no-var
-  var websocketServer: Server<WebSocket> | undefined;
+  var websocketServer: WebSocketServer | undefined;
 }
 
 export default defineEventHandler((event) => {
   if (global.websocketServer) return;
 
   const server =
-    event.node.res.socket && "server" in event.node.res.socket ? (event.node.res.socket.server as HTTPServer) : null;
+    event.node.res.socket && "server" in event.node.res.socket ? (event.node.res.socket.server as Server) : null;
   if (!server) return;
 
   const wss = new WebSocketServer({ server });
