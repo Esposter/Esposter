@@ -5,8 +5,6 @@ import type { MessageEntity } from "@/models/esbabbler/message";
 interface MessageListProps {
   messages: MessageEntity[];
   hasMore: boolean;
-  // @NOTE: Ignore ts-error here until vue fixes emits types
-  // @ts-ignore
   readMoreMessages: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 

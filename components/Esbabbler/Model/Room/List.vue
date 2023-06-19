@@ -5,8 +5,6 @@ import type { Room } from "@prisma/client";
 interface RoomListProps {
   rooms: Room[];
   hasMore: boolean;
-  // @NOTE: Ignore ts-error here until vue fixes emits types
-  // @ts-ignore
   readMoreRooms: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 
