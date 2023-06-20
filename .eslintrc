@@ -1,5 +1,5 @@
 {
-  "extends": ["@nuxtjs/eslint-config-typescript", "plugin:prettier/recommended"],
+  "extends": ["@nuxtjs/typescript", "plugin:prettier/recommended"],
   "rules": {
     "no-console": "off",
     "import/order": "off",
