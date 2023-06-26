@@ -5,11 +5,6 @@ import chalk from "chalk";
 import type { Server } from "node:http";
 import { WebSocketServer } from "ws";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var websocketServer: WebSocketServer | undefined;
-}
-
 export default defineEventHandler((event) => {
   if (global.websocketServer) return;
 
