@@ -98,7 +98,7 @@
     "uuid": "^9.0.0",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.2.5",
-    "vuetify": "^3.3.5",
+    "vuetify": "^3.3.6",
     "worker-timers": "^7.0.72",
     "ws": "^8.13.0",
     "zod": "^3.21.4"
