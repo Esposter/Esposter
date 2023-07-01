@@ -78,7 +78,7 @@
     "class-transformer": "^0.5.1",
     "cli-highlight": "^2.1.11",
     "codemirror": "^6.0.1",
-    "dayjs": "^1.11.8",
+    "dayjs": "^1.11.9",
     "dedent": "^0.7.0",
     "deep-equal": "^2.2.1",
     "dompurify": "^3.0.4",
