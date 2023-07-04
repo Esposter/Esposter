@@ -6,9 +6,9 @@ export const existsExtension = {
     $allModels: {
       async exists<T>(this: T, where: Prisma.Args<T, "findFirst">["where"]): Promise<boolean> {
         const context = Prisma.getExtensionContext(this);
-        const result = await (context as any).findFirst({ where });
-        return result !== null;
+        const result = await (context as any).count({ where });
+        return result > 0;
       },
     },
   },
-} satisfies Parameters<PrismaClient["$extends"]>[0];
+} satisfies Parameters<PrismaClient["$extends"]>[0] & { [K: string]: {} };
