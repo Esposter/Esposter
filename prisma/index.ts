@@ -47,8 +47,8 @@ export const prisma = isProduction
         console.log(
           highlightSql(dedent`Query: ${e.query}
     Parameters: ${e.params}
-    Duration: ${e.duration}ms
-    Time: ${e.timestamp}
+    Duration: ${e.duration.toString()}ms
+    Time: ${e.timestamp.toISOString()}
     Target: ${e.target}`)
         );
         console.log();
