@@ -22,7 +22,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     for (const messageRowKey of messageRowKeys)
       setEmojiList(
         messageRowKey,
-        emojis.filter((e) => e.messageRowKey === messageRowKey)
+        emojis.filter((e) => e.messageRowKey === messageRowKey),
       );
   };
 
@@ -44,7 +44,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     const emojiList = getEmojiList(input.messageRowKey);
     setEmojiList(
       input.messageRowKey,
-      emojiList.filter((e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey))
+      emojiList.filter((e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey)),
     );
   };
 

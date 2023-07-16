@@ -15,7 +15,7 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
 const getItemCategoryDefinitionByItem = (item: unknown) =>
   getItemCategoryDefinition(
     props.value.itemCategoryDefinitions as unknown as ItemCategoryDefinition[],
-    (item as { raw: Item }).raw
+    (item as { raw: Item }).raw,
   );
 </script>
 

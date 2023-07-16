@@ -12,7 +12,7 @@ export interface Upgrade<TName = UpgradeName> {
   unlockConditions: UnlockCondition[];
 }
 export const createUpgradeSchema = <TNameSchema extends z.ZodTypeAny = z.ZodType<UpgradeName>>(
-  nameSchema: TNameSchema
+  nameSchema: TNameSchema,
 ) =>
   z.object({
     name: nameSchema,

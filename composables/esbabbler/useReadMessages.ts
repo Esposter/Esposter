@@ -32,7 +32,7 @@ export const useReadMessages = async () => {
 
       pushEmojiMap(
         messages.map((m) => m.rowKey),
-        emojis
+        emojis,
       );
     } finally {
       onComplete();
@@ -57,7 +57,7 @@ export const useReadMessages = async () => {
 
     pushEmojiMap(
       messages.map((m) => m.rowKey),
-      emojis
+      emojis,
     );
   }
 

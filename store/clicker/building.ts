@@ -18,7 +18,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const allBuildingPower = computed(() =>
-    game.value ? applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings) : 0
+    game.value ? applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings) : 0,
   );
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
     game.value ? applyBuildingUpgradesSingle(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings) : 0;
@@ -39,12 +39,12 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
     return [
       `Each ${boughtBuilding.name} produces **${formatNumberLong(
-        buildingPower / boughtBuilding.amount
+        buildingPower / boughtBuilding.amount,
       )} ${ITEM_NAME}s** per second`,
       `${boughtBuilding.amount} ${boughtBuilding.name}s producing **${formatNumberLong(
-        buildingPower
+        buildingPower,
       )} ${ITEM_NAME}s** per second (**${formatNumberLong(
-        (buildingPower / allBuildingPower.value) * 100
+        (buildingPower / allBuildingPower.value) * 100,
       )}%** of total ${getInitials(ITEM_NAME)}pS)`,
       `**${formatNumberLong(boughtBuilding.producedValue)}** ${ITEM_NAME}s produced so far`,
     ];

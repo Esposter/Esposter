@@ -18,7 +18,7 @@ const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
 
 export const getItemCategoryDefinition = <TItem extends Item>(
   itemCategoryDefinitions: ItemCategoryDefinition<TItem>[],
-  item: TItem
+  item: TItem,
 ) => itemCategoryDefinitions.find((icd) => icd.value === item[icd.targetTypeKey]) ?? NULL_ITEM_CATEGORY_DEFINITION;
 
 export const tableEditorItemCategoryDefinitions: BaseItemCategoryDefinition[] = [

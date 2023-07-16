@@ -27,7 +27,7 @@ const animateCursors = (amount: number) => {
     const rotatingDiv = document.getElementById(rotatingDivId) as HTMLDivElement;
     rotatingDiv.animate(
       [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
-      { duration: 60 * 1000, iterations: Infinity }
+      { duration: 60 * 1000, iterations: Infinity },
     );
   }
 };
@@ -36,13 +36,13 @@ watch(
   () => amount.value,
   (newValue) => {
     rotatingDivIds.value = Array.from({ length: newValue }, () => uuidV4());
-  }
+  },
 );
 
 watch(
   () => amount.value,
   (newValue) => animateCursors(newValue),
-  { flush: "post" }
+  { flush: "post" },
 );
 </script>
 

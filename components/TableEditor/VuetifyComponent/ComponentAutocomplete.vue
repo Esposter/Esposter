@@ -15,7 +15,7 @@ const onIntersect = (isIntersecting: boolean) => {
   if (isIntersecting)
     vuetifyComponentsCursor.value = Math.min(
       vuetifyComponentsCursor.value + READ_LIMIT,
-      vuetifyComponents.value.length
+      vuetifyComponents.value.length,
     );
 };
 </script>

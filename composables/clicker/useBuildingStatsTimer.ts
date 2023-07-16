@@ -11,13 +11,13 @@ export const useBuildingStatsTimer = () => {
   const buildingStore = useBuildingStore();
   const { getBoughtBuildingPower } = buildingStore;
   const boughtBuildingPowers = computed<{ name: Target; power: number }[]>(
-    () => game.value?.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) })) ?? []
+    () => game.value?.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) })) ?? [],
   );
   const buildingStatsTimers = ref<number[]>([]);
 
   const setBuildingStatsTimers = (
     boughtBuildings: BuildingWithStats[],
-    buildingPowers: typeof boughtBuildingPowers.value
+    buildingPowers: typeof boughtBuildingPowers.value,
   ) => {
     for (const boughtBuilding of boughtBuildings) {
       const buildingPower = buildingPowers.find((b) => b.name === boughtBuilding.name);
@@ -26,7 +26,7 @@ export const useBuildingStatsTimer = () => {
       buildingStatsTimers.value.push(
         setInterval(() => {
           boughtBuilding.producedValue += buildingPower.power / FPS;
-        }, 1000 / FPS)
+        }, 1000 / FPS),
       );
     }
   };

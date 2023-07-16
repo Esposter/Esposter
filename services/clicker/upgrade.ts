@@ -7,7 +7,7 @@ import type { Upgrade } from "@/models/clicker/Upgrade";
 export const applyBuildingUpgrades = (
   basePower: number,
   boughtUpgrades: Upgrade[],
-  boughtBuildings: BuildingWithStats[]
+  boughtBuildings: BuildingWithStats[],
 ) => {
   let resultPower = basePower;
   for (const boughtBuilding of boughtBuildings)
@@ -18,25 +18,25 @@ export const applyBuildingUpgrades = (
 export const applyBuildingUpgradesSingle = (
   building: BuildingWithStats,
   boughtUpgrades: Upgrade[],
-  boughtBuildings: BuildingWithStats[]
+  boughtBuildings: BuildingWithStats[],
 ) =>
   applyUpgrades(
     building.baseValue,
     (u) => u.effects.some((e) => e.targets.includes(building.name)),
     boughtUpgrades,
-    boughtBuildings
+    boughtBuildings,
   ) * building.amount;
 
 export const applyMouseUpgrades = (
   basePower: number,
   boughtUpgrades: Upgrade[],
-  boughtBuildings: BuildingWithStats[]
+  boughtBuildings: BuildingWithStats[],
 ) =>
   applyUpgrades(
     basePower,
     (u) => u.effects.some((e) => e.targets.includes(Target.Mouse)),
     boughtUpgrades,
-    boughtBuildings
+    boughtBuildings,
   );
 
 const applyAdditiveEffects = (basePower: number, effects: Effect[]) => {
@@ -60,7 +60,7 @@ const applyMultiplicativeEffects = (basePower: number, effects: Effect[]) => {
 const applyBuildingAdditiveEffects = (
   basePower: number,
   effects: Effect[],
-  boughtBuildings: BuildingWithStats[] = []
+  boughtBuildings: BuildingWithStats[] = [],
 ) => {
   let resultPower = basePower;
 
@@ -80,7 +80,7 @@ const applyBuildingAdditiveEffects = (
 const applyBuildingAdditiveNorEffects = (
   basePower: number,
   effects: Effect[],
-  boughtBuildings: BuildingWithStats[] = []
+  boughtBuildings: BuildingWithStats[] = [],
 ) => {
   let resultPower = basePower;
 
@@ -113,7 +113,7 @@ const applyUpgradeMultiplierEffects = (upgrades: Upgrade[]) => {
 const applyUpgradeMultiplierEffectsSingle = (upgrade: Upgrade, effects: Effect[]): Upgrade => {
   const resultEffects: Effect[] = [];
   const upgradeMultiplierEffects = effects.filter(
-    (e) => e.configuration.type === EffectType.UpgradeMultiplier && e.targets.includes(upgrade.name)
+    (e) => e.configuration.type === EffectType.UpgradeMultiplier && e.targets.includes(upgrade.name),
   );
 
   for (const effect of upgrade.effects) {
@@ -129,7 +129,7 @@ const applyUpgrades = (
   basePower: number,
   upgradeFilterPredicate: Parameters<Upgrade[]["filter"]>[0],
   boughtUpgrades: Upgrade[],
-  boughtBuildings: BuildingWithStats[]
+  boughtBuildings: BuildingWithStats[],
 ) => {
   let resultUpgrades = applyUpgradeMultiplierEffects(boughtUpgrades);
   resultUpgrades = resultUpgrades.filter(upgradeFilterPredicate);

@@ -11,5 +11,5 @@ export const VuetifyComponentMap = Object.entries(components).reduce<Record<stri
     acc[toKebabCase(name)] = component;
     return acc;
   },
-  {}
+  {},
 ) as VuetifyComponentMap;

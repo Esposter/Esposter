@@ -49,7 +49,7 @@ export const prisma = isProduction
     Parameters: ${e.params}
     Duration: ${e.duration.toString()}ms
     Time: ${e.timestamp.toISOString()}
-    Target: ${e.target}`)
+    Target: ${e.target}`),
         );
         console.log();
       });

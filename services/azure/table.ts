@@ -26,7 +26,7 @@ export const createEntity = <Entity extends CompositeKey>(
     Object.entries(entity).map(([prop, value]) => {
       if (Array.isArray(value)) return [prop, JSON.stringify(value)];
       else return [prop, value];
-    })
+    }),
   ) as TableEntity;
   return tableClient.createEntity(serializedEntity, ...rest);
 };
@@ -40,7 +40,7 @@ export const updateEntity = <Entity extends CompositeKey>(
     Object.entries(entity).map(([prop, value]) => {
       if (Array.isArray(value)) return [prop, JSON.stringify(value)];
       else return [prop, value];
-    })
+    }),
   ) as TableEntity;
   return tableClient.updateEntity(serializedEntity, ...rest);
 };
@@ -62,7 +62,7 @@ export const getTopNEntities = async <Entity extends CompositeKey>(
   tableClient: TableClient,
   topN: number,
   cls: ClassConstructor<Entity>,
-  queryOptions?: TableEntityQueryOptions
+  queryOptions?: TableEntityQueryOptions,
 ): Promise<Entity[]> => {
   const listResults = tableClient.listEntities<Entity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });

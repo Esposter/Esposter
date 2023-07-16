@@ -21,9 +21,9 @@ export class TableEditorConfiguration implements TableEditorTypes {
 
 export const tableEditorConfigurationSchema = z.object({
   [TableEditorType.TodoList]: createTableEditorSchema(
-    aItemEntitySchema.merge(createItemEntityTypeSchema(todoListItemTypeSchema))
+    aItemEntitySchema.merge(createItemEntityTypeSchema(todoListItemTypeSchema)),
   ),
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(
-    aItemEntitySchema.merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
+    aItemEntitySchema.merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema)),
   ),
 }) satisfies z.ZodType<TableEditorConfiguration>;

@@ -13,7 +13,7 @@ export const useColors = () => {
       acc[color] = computed(() => theme.global.current.value.colors[color]);
       return acc;
     },
-    {}
+    {},
   ) as Colors;
   return colors;
 };

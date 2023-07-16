@@ -8,7 +8,7 @@ const { url } = toRefs(props);
  * the second decode is to decode the filename which is encoded to support utf8.
  */
 const uniqueFilename = computed(() =>
-  decodeURIComponent(decodeURIComponent(url.value.substring(url.value.lastIndexOf("/") + 1)))
+  decodeURIComponent(decodeURIComponent(url.value.substring(url.value.lastIndexOf("/") + 1))),
 );
 const niceFilename = computed(() => uniqueFilename.value.substring(uniqueFilename.value.indexOf(":") + 1));
 </script>

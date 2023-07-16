@@ -42,7 +42,7 @@ export const likeRouter = router({
         where: { id: newLike.post.id },
       });
       return newLike;
-    })
+    }),
   ),
   updateLike: authedProcedure.input(updateLikeInputSchema).mutation(async ({ input: { postId, ...rest }, ctx }) => {
     const where: Prisma.LikeWhereUniqueInput = { userId_postId: { userId: ctx.session.user.id, postId } };

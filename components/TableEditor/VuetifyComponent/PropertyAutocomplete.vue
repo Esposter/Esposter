@@ -41,7 +41,7 @@ watch(
     if (!newValue) return;
     updatePropertyRendererMap(newValue);
     selectedProperty.value = undefined;
-  }
+  },
 );
 </script>
 

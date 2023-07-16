@@ -21,7 +21,7 @@ const props = withDefaults(
     // Ratio of how much shorter the next card is
     cardScaleYRatioLoss: 0.05,
     cardTemplate: BaseCard,
-  }
+  },
 );
 const { cards, duration, maxShownCards, cardScaleYRatioLoss } = toRefs(props);
 
@@ -128,7 +128,7 @@ const inactiveCardStyle = computed<CardStyleVariables>(() => {
 });
 
 const secondLastCardStyle = computed<CardStyleVariables>(
-  () => normalCardStyles.value[normalCardStyles.value.length - 2]
+  () => normalCardStyles.value[normalCardStyles.value.length - 2],
 );
 
 const classes = computed<string[]>(() => {

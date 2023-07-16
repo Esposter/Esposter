@@ -11,7 +11,7 @@ const { currentMessageDate, nextMessageDate } = toRefs(props);
 const { border } = useColors();
 const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate.value));
 const areDifferentDays = computed(
-  () => !nextMessageDate?.value || !currentMessageDateDayjs.value.isSame(nextMessageDate.value, "day")
+  () => !nextMessageDate?.value || !currentMessageDateDayjs.value.isSame(nextMessageDate.value, "day"),
 );
 const displayDate = computed(() => {
   if (currentMessageDateDayjs.value.isToday()) return "Today";

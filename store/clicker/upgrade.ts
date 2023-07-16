@@ -24,8 +24,8 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
         for (const boughtUpgrade of game.value.boughtUpgrades) if (boughtUpgrade.name === uc.target) return true;
 
         return false;
-      })
-    )
+      }),
+    ),
   );
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {

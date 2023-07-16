@@ -58,13 +58,13 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
   const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
     const index = messageList.value.findIndex(
-      (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey
+      (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey,
     );
     if (index > -1) messageList.value[index] = { ...messageList.value[index], ...updatedMessage };
   };
   const deleteMessage = (input: DeleteMessageInput) => {
     messageList.value = messageList.value.filter(
-      (m) => !(m.partitionKey === input.partitionKey && m.rowKey === input.rowKey)
+      (m) => !(m.partitionKey === input.partitionKey && m.rowKey === input.rowKey),
     );
   };
 

@@ -60,7 +60,7 @@ export const roomRouter = router({
       : prisma.room.findFirst({
           where: { users: { some: { userId: ctx.session.user.id } } },
           orderBy: { updatedAt: "desc" },
-        })
+        }),
   ),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
     const rooms = await prisma.room.findMany({
@@ -74,7 +74,7 @@ export const roomRouter = router({
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     prisma.room.create({
       data: { ...input, creatorId: ctx.session.user.id, users: { create: { userId: ctx.session.user.id } } },
-    })
+    }),
   ),
   updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
     // @NOTE: We should be able to return records we updated on updateMany in the future

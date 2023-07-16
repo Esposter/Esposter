@@ -40,7 +40,7 @@ watch(
   () => {
     selectedIndex.value = 0;
   },
-  { deep: true }
+  { deep: true },
 );
 </script>
 

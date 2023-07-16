@@ -15,7 +15,7 @@ const { buildingList } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
     .filter((u) => game.value && !game.value.boughtUpgrades.some((bu) => bu.name === u.name))
-    .sort((a, b) => a.price - b.price)
+    .sort((a, b) => a.price - b.price),
 );
 
 const upgrades = await $client.clicker.readUpgrades.query();

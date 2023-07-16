@@ -65,7 +65,7 @@ export const messageRouter = router({
         };
         messageEventEmitter.on("onCreateMessage", onCreateMessage);
         return () => messageEventEmitter.off("onCreateMessage", onCreateMessage);
-      })
+      }),
     ),
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .input(createMessageInputSchema)
@@ -97,7 +97,7 @@ export const messageRouter = router({
         };
         messageEventEmitter.on("onUpdateMessage", onUpdateMessage);
         return () => messageEventEmitter.off("onUpdateMessage", onUpdateMessage);
-      })
+      }),
     ),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .input(updateMessageInputSchema)
@@ -120,7 +120,7 @@ export const messageRouter = router({
         };
         messageEventEmitter.on("onDeleteMessage", onDeleteMessage);
         return () => messageEventEmitter.off("onDeleteMessage", onDeleteMessage);
-      })
+      }),
     ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)

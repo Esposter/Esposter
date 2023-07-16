@@ -22,7 +22,7 @@ const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
 const active = computed(
-  () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value
+  () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value,
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 </script>

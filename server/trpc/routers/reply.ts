@@ -44,7 +44,7 @@ export const replyRouter = router({
         };
         replyEventEmitter.on("onCreateReply", onCreateReply);
         return () => replyEventEmitter.off("onCreateReply", onCreateReply);
-      })
+      }),
     ),
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
     .input(createReplyInputSchema)

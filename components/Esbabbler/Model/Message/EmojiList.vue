@@ -22,7 +22,7 @@ const emojis = computed(() =>
     userIds: e.userIds,
     emoji: emojify(e.emojiTag),
     isReacted: Boolean(data.value && e.userIds.includes(data.value.user.id)),
-  }))
+  })),
 );
 const hasEmojis = computed(() => emojis.value.length > 0);
 const onCreateEmoji = async (input: CreateEmojiInput) => {

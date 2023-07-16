@@ -19,14 +19,16 @@ const realActive = computed(() => !loading.value && active.value);
       display="flex"
       justify="center"
       :active="realActive"
-      @change="(waypointState: WaypointState) => {
-        if (waypointState.going === Going.In) {
-          loading = true;
-          emit('change', () => {
-            loading = false;
-          });
+      @change="
+        (waypointState: WaypointState) => {
+          if (waypointState.going === Going.In) {
+            loading = true;
+            emit('change', () => {
+              loading = false;
+            });
+          }
         }
-      }"
+      "
     >
       <v-progress-circular v-if="loading" size="small" indeterminate />
     </Waypoint>

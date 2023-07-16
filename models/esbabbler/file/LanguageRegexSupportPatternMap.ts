@@ -6,7 +6,7 @@ export const extendedLanguages = languages.concat(
     name: "Vue",
     extensions: ["vue"],
     load: () => import("@codemirror/lang-vue").then((m) => m.vue()),
-  })
+  }),
 );
 
 const getLanguageRegexSupportPattern = (supportedExtensions: string) =>

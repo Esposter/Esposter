@@ -36,7 +36,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
       ? roomList.value
           .filter((r) => r.name.toLowerCase().includes(roomSearchQuery.value.toLowerCase()))
           .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-      : []
+      : [],
   );
 
   return {

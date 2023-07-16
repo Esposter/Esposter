@@ -27,7 +27,7 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schem
 
 export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
   schema: T,
-  key: keyof T["shape"] & string
+  key: keyof T["shape"] & string,
 ) =>
   authedProcedure.use(async ({ ctx, rawInput, next }) => {
     const result = schema.safeParse(rawInput);

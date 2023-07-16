@@ -71,7 +71,7 @@ export const emojiRouter = router({
         };
         emojiEventEmitter.on("onCreateEmoji", onCreateEmoji);
         return () => emojiEventEmitter.off("onCreateEmoji", onCreateEmoji);
-      })
+      }),
     ),
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
     .input(createEmojiInputSchema)
@@ -107,7 +107,7 @@ export const emojiRouter = router({
         };
         emojiEventEmitter.on("onUpdateEmoji", onUpdateEmoji);
         return () => emojiEventEmitter.off("onUpdateEmoji", onUpdateEmoji);
-      })
+      }),
     ),
   // An update is adding the user to the user id list for the already existing emoji
   updateEmoji: getRoomUserProcedure(updateEmojiInputSchema, "partitionKey")
@@ -135,7 +135,7 @@ export const emojiRouter = router({
         };
         emojiEventEmitter.on("onDeleteEmoji", onDeleteEmoji);
         return () => emojiEventEmitter.off("onDeleteEmoji", onDeleteEmoji);
-      })
+      }),
     ),
   deleteEmoji: getRoomUserProcedure(deleteEmojiInputSchema, "partitionKey")
     .input(deleteEmojiInputSchema)

@@ -22,7 +22,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const tableEditor = computed(() =>
       tableEditorConfiguration.value
         ? (tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] })
-        : null
+        : null,
     );
     const searchQuery = ref("");
     const editFormRef = ref<typeof VForm & { errors: { id: string; errorMessages: string[] }[] }>();

@@ -8,10 +8,10 @@ const config = useRuntimeConfig();
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const inviteCode = ref(
-  currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : ""
+  currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : "",
 );
 const inviteLink = computed(() =>
-  inviteCode.value ? `${config.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : ""
+  inviteCode.value ? `${config.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
 const { copy, copied } = useClipboard({ source: inviteLink });
 </script>

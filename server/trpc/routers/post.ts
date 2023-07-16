@@ -47,7 +47,9 @@ export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ input }) =>
-      input ? prisma.post.findUnique({ where: { id: input } }) : prisma.post.findFirst({ orderBy: { ranking: "desc" } })
+      input
+        ? prisma.post.findUnique({ where: { id: input } })
+        : prisma.post.findFirst({ orderBy: { ranking: "desc" } }),
     ),
   readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
     const posts = await prisma.post.findMany({
@@ -68,7 +70,7 @@ export const postRouter = router({
   updatePost: authedProcedure
     .input(updatePostInputSchema)
     .mutation(({ input: { id, ...rest } }) =>
-      prisma.post.update({ data: rest, where: { id }, include: PostRelationsIncludeDefault })
+      prisma.post.update({ data: rest, where: { id }, include: PostRelationsIncludeDefault }),
     ),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
     try {

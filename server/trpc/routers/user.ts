@@ -27,6 +27,6 @@ export const userRouter = router({
     .query(({ input, ctx }) =>
       input
         ? prisma.user.findUnique({ where: { id: input } })
-        : prisma.user.findUnique({ where: { id: ctx.session.user.id } })
+        : prisma.user.findUnique({ where: { id: ctx.session.user.id } }),
     ),
 });

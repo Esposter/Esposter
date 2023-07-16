@@ -57,7 +57,7 @@ const items = computed<ListItem[]>(() =>
           onClick: signOut,
         },
       ]
-    : []
+    : [],
 );
 const menu = ref(false);
 </script>
