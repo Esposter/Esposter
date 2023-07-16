@@ -29,7 +29,6 @@ export default defineNuxtConfig({
         emitDecoratorMetadata: true,
         experimentalDecorators: true,
       },
-      typeRoots: ["types"],
     },
   },
   imports: {
