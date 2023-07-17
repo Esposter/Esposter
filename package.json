@@ -91,7 +91,7 @@
     "pinia": "^2.1.4",
     "rate-limiter-flexible": "^2.4.1",
     "reflect-metadata": "^0.1.13",
-    "superjson": "^1.12.4",
+    "superjson": "^1.13.1",
     "three": "^0.154.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.6",
