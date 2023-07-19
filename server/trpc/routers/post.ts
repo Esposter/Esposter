@@ -3,7 +3,7 @@ import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
-import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
+import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
 import type { Post } from "@prisma/client";
 import { z } from "zod";
@@ -73,11 +73,6 @@ export const postRouter = router({
       prisma.post.update({ data: rest, where: { id }, include: PostRelationsIncludeDefault }),
     ),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
-    try {
-      await prisma.post.delete({ where: { id: input } });
-      return true;
-    } catch {
-      return false;
-    }
+    await prisma.post.delete({ where: { id: input } });
   }),
 });

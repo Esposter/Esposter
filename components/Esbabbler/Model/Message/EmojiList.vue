@@ -34,8 +34,8 @@ const onUpdateEmoji = async (input: UpdateEmojiInput) => {
   if (updatedEmoji) updateEmoji(updatedEmoji);
 };
 const onDeleteEmoji = async (input: DeleteEmojiInput) => {
-  const isSuccessful = await $client.emoji.deleteEmoji.mutate(input);
-  if (isSuccessful) deleteEmoji(input);
+  await $client.emoji.deleteEmoji.mutate(input);
+  deleteEmoji(input);
 };
 </script>
 

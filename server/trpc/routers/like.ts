@@ -60,21 +60,16 @@ export const likeRouter = router({
     return updatedLike;
   }),
   deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation(async ({ input: { postId }, ctx }) => {
-    try {
-      await prisma.$transaction(async (prisma) => {
-        const deletedLike = await prisma.like.delete({
-          where: { userId_postId: { userId: ctx.session.user.id, postId } },
-          include: { post: true },
-        });
-        const noLikesNew = deletedLike.post.noLikes - deletedLike.value;
-        await prisma.post.update({
-          data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, deletedLike.post.createdAt) },
-          where: { id: postId },
-        });
+    await prisma.$transaction(async (prisma) => {
+      const deletedLike = await prisma.like.delete({
+        where: { userId_postId: { userId: ctx.session.user.id, postId } },
+        include: { post: true },
       });
-      return true;
-    } catch {
-      return false;
-    }
+      const noLikesNew = deletedLike.post.noLikes - deletedLike.value;
+      await prisma.post.update({
+        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, deletedLike.post.createdAt) },
+        where: { id: postId },
+      });
+    });
   }),
 });

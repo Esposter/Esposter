@@ -23,17 +23,14 @@ export const clickerRouter = router({
       if (!response.readableStreamBody) return new Game();
       return jsonDateParse(await streamToText(response.readableStreamBody));
     } catch {
+      // We need to catch the case where the user is reading for the very first time
+      // and there is no game saved yet
       return new Game();
     }
   }),
   saveGame: authedProcedure.input(gameSchema).mutation(async ({ input, ctx }) => {
-    try {
-      const client = await getContainerClient(AzureContainer.ClickerAssets);
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      await uploadBlockBlob(client, blobName, JSON.stringify(input));
-      return true;
-    } catch {
-      return false;
-    }
+    const client = await getContainerClient(AzureContainer.ClickerAssets);
+    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    await uploadBlockBlob(client, blobName, JSON.stringify(input));
   }),
 });

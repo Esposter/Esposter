@@ -49,25 +49,21 @@ export const replyRouter = router({
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
-      try {
-        const client = await getTableClient(AzureTable.MessagesMetadata);
-        const replies = await getTopNEntities(client, 1, MessageReplyMetadataEntity, {
-          filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.Reply} and messageRowKey eq ${input.messageRowKey} and messageReplyRowKey eq ${input.messageReplyRowKey}`,
-        });
-        if (replies.length > 0) return null;
+      const client = await getTableClient(AzureTable.MessagesMetadata);
+      const replies = await getTopNEntities(client, 1, MessageReplyMetadataEntity, {
+        filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.Reply} and messageRowKey eq ${input.messageRowKey} and messageReplyRowKey eq ${input.messageReplyRowKey}`,
+      });
+      if (replies.length > 0) return null;
 
-        const newReply: MessageReplyMetadataEntity = {
-          partitionKey: input.partitionKey,
-          rowKey: now(),
-          messageRowKey: input.messageRowKey,
-          type: MessageMetadataType.Reply,
-          messageReplyRowKey: input.messageReplyRowKey,
-        };
-        await createEntity<MessageReplyMetadataEntity>(client, newReply);
-        replyEventEmitter.emit("onCreateReply", newReply);
-        return newReply;
-      } catch {
-        return null;
-      }
+      const newReply: MessageReplyMetadataEntity = {
+        partitionKey: input.partitionKey,
+        rowKey: now(),
+        messageRowKey: input.messageRowKey,
+        type: MessageMetadataType.Reply,
+        messageReplyRowKey: input.messageReplyRowKey,
+      };
+      await createEntity<MessageReplyMetadataEntity>(client, newReply);
+      replyEventEmitter.emit("onCreateReply", newReply);
+      return newReply;
     }),
 });

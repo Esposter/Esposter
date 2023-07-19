@@ -25,8 +25,8 @@ const onUpdateLike = async (value: 1 | -1) => {
 const onDeleteLike = async () => {
   if (!data.value) return;
 
-  const successful = await $client.like.deleteLike.mutate({ postId: post.value.id });
-  if (successful) deleteLike({ userId: data.value.user.id, postId: post.value.id });
+  await $client.like.deleteLike.mutate({ postId: post.value.id });
+  deleteLike({ userId: data.value.user.id, postId: post.value.id });
 };
 </script>
 

@@ -7,7 +7,7 @@ import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/
 import { userSchema } from "@/server/trpc/routers/user";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { INVITES_PARTITION_KEY } from "@/services/room/table";
-import { getNextCursor, READ_LIMIT } from "@/utils/pagination";
+import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
 import { User } from "@prisma/client";
@@ -83,18 +83,14 @@ export const roomRouter = router({
     return count === 1 ? prisma.room.findUnique({ where: { id } }) : null;
   }),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {
-    try {
-      const count = await prisma.$transaction(async (prisma) => {
-        await prisma.roomsOnUsers.deleteMany({ where: { roomId: input } });
-        const { count } = await prisma.room.deleteMany({
-          where: { id: input, creatorId: ctx.session.user.id },
-        });
-        return count;
+    const count = await prisma.$transaction(async (prisma) => {
+      await prisma.roomsOnUsers.deleteMany({ where: { roomId: input } });
+      const { count } = await prisma.room.deleteMany({
+        where: { id: input, creatorId: ctx.session.user.id },
       });
-      return count === 1;
-    } catch {
-      return false;
-    }
+      return count;
+    });
+    return count === 1;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
     const tableClient = await getTableClient(AzureTable.Invites);

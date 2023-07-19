@@ -20,17 +20,14 @@ export const tableEditorRouter = router({
       if (!response.readableStreamBody) return new TableEditorConfiguration();
       return jsonDateParse(await streamToText(response.readableStreamBody));
     } catch {
+      // We need to catch the case where the user is reading for the very first time
+      // and there is no table editor configuration saved yet
       return new TableEditorConfiguration();
     }
   }),
   saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ input, ctx }) => {
-    try {
-      const client = await getContainerClient(AzureContainer.TableEditorAssets);
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      await uploadBlockBlob(client, blobName, JSON.stringify(input));
-      return true;
-    } catch {
-      return false;
-    }
+    const client = await getContainerClient(AzureContainer.TableEditorAssets);
+    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    await uploadBlockBlob(client, blobName, JSON.stringify(input));
   }),
 });

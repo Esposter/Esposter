@@ -22,8 +22,8 @@ const onDeleteMessage = async (onComplete: () => void) => {
       partitionKey: message.value.partitionKey,
       rowKey: message.value.rowKey,
     };
-    const successful = await $client.message.deleteMessage.mutate(deleteMessageInput);
-    if (successful) deleteMessage(deleteMessageInput);
+    await $client.message.deleteMessage.mutate(deleteMessageInput);
+    deleteMessage(deleteMessageInput);
   } finally {
     onComplete();
   }
