@@ -79,7 +79,7 @@
     "cli-highlight": "^2.1.11",
     "codemirror": "^6.0.1",
     "dayjs": "^1.11.9",
-    "dedent": "^1.1.0",
+    "dedent": "^1.2.0",
     "deep-equal": "^2.2.2",
     "dompurify": "^3.0.5",
     "emoji-mart-vue-fast": "^15.0.0",
