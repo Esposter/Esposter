@@ -9,6 +9,7 @@ onMounted(() => {
     showLogicTab: true,
     isAutoSave: true,
   });
+  creator.text = localStorage.getItem(SURVEYER_STORE) ?? "";
   creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
     localStorage.setItem(SURVEYER_STORE, creator.text);
     callback(saveNo, true);
