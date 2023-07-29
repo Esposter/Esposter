@@ -17,7 +17,7 @@ useSubscribables();
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ 'max-height': '100vh' }">
+  <NuxtLayout :main-style="{ 'max-height': '100dvh' }">
     <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
     <template #left>

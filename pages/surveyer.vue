@@ -23,9 +23,10 @@ onMounted(() => {
   </NuxtLayout>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 #surveyCreator {
-  height: 100%;
+  /* Esposter App Bar 56px */
+  height: calc(100dvh - 56px);
   width: 100%;
 }
 </style>
