@@ -25,6 +25,11 @@ const items: ListItem[] = [
     href: RoutePath.TableEditor,
     icon: "mdi-table-edit",
   },
+  {
+    title: "Surveyer",
+    href: RoutePath.Surveyer,
+    icon: "mdi-text-box-edit-outline",
+  },
 ];
 const menu = ref(false);
 </script>
