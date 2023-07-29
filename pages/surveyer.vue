@@ -4,6 +4,8 @@ import "survey-core/defaultV2.min.css";
 import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
+const surveyCreatorId = "surveyCreator";
+
 onMounted(() => {
   const creator = new SurveyCreator({
     showLogicTab: true,
@@ -14,13 +16,13 @@ onMounted(() => {
     localStorage.setItem(SURVEYER_STORE, creator.text);
     callback(saveNo, true);
   };
-  creator.render("surveyCreator");
+  creator.render(surveyCreatorId);
 });
 </script>
 
 <template>
   <NuxtLayout>
-    <div id="surveyCreator" />
+    <div :id="surveyCreatorId" />
   </NuxtLayout>
 </template>
 
