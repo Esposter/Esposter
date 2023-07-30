@@ -24,11 +24,11 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
     <StyledDataTable
       display="flex"
       flex="1 col"
+      height="100%"
       :headers="props.headers"
       :items="tableEditor?.items"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
-      height="100%"
       @click:row="(_, { item }) => editItem(item.raw.id)"
     >
       <template #top>

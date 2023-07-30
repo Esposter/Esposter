@@ -1,19 +1,32 @@
 <script setup lang="ts">
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
+import { useSurveyerStore } from "@/store/surveyer";
 import "survey-core/defaultV2.min.css";
 import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
+definePageMeta({ middleware: "surveyer" });
+
+const route = useRoute();
+const surveyerStore = useSurveyerStore();
+const { save } = surveyerStore;
+const { surveyerConfiguration } = storeToRefs(surveyerStore);
 const surveyCreatorId = "surveyCreator";
 
 onMounted(() => {
+  if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
+    throw createError({ statusCode: 404, statusMessage: "Survey id is invalid" });
+
   const creator = new SurveyCreator({
     showLogicTab: true,
     isAutoSave: true,
   });
-  creator.text = localStorage.getItem(SURVEYER_STORE) ?? "";
+  const surveyConfiguration = surveyerConfiguration.value?.find((s) => s.survey.id === route.params.id);
+  if (!surveyConfiguration) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
+
+  creator.text = JSON.stringify(surveyConfiguration.surveyModel);
   creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
-    localStorage.setItem(SURVEYER_STORE, creator.text);
+    save();
     callback(saveNo, true);
   };
   creator.render(surveyCreatorId);
