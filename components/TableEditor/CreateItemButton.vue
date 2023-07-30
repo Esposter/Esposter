@@ -11,7 +11,7 @@ const itemCategoryDefinitions = computed(() => propsMap[tableEditorType.value].i
 <template>
   <v-menu>
     <template #activator="{ props: menuProps }">
-      <v-tooltip :text="`Add an item`">
+      <v-tooltip text="Add an item">
         <template #activator="{ props: tooltipProps }">
           <v-btn variant="elevated" :flat="false" :="mergeProps(menuProps, tooltipProps)">
             <v-icon icon="mdi-plus" />
