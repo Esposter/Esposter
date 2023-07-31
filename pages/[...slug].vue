@@ -3,9 +3,10 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { NOT_FOUND_BACKGROUND } from "@/services/esposter/constants";
 import { gsap } from "gsap";
 
+const event = useRequestEvent();
 const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;
 
-setResponseStatus(404);
+setResponseStatus(event, 404);
 
 onMounted(() => {
   gsap.to(".hover", {

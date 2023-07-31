@@ -1,30 +1,15 @@
 <script setup lang="ts">
-import { Game } from "@/models/clicker/Game";
-import { CLICKER_STORE, ITEM_NAME } from "@/services/clicker/constants";
+import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";
-import { jsonDateParse } from "@/utils/json";
 
-const { $client } = useNuxtApp();
-const { status } = useAuth();
+definePageMeta({ middleware: "clicker" });
+
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const displayNoPoints = computed(() => formatNumberLong(game.value?.noPoints ?? 0));
 
-if (status.value === "authenticated") game.value = await $client.clicker.readGame.query();
-
 useTimers();
-
-onMounted(() => {
-  if (status.value === "unauthenticated") {
-    const clickerStore = localStorage.getItem(CLICKER_STORE);
-    game.value = clickerStore ? jsonDateParse(clickerStore) : new Game();
-  }
-});
-
-onUnmounted(() => {
-  game.value = null;
-});
 </script>
 
 <template>
