@@ -26,10 +26,10 @@ const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey)
         <SurveyerCrudViewHeader />
       </template>
       <template #[`item.createdAt`]="{ item }">
-        {{ dayjs((item as Survey).createdAt).format("ddd, MMM D, YYYY h:mm A") }}
+        {{ dayjs((item.raw as Survey).createdAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
       <template #[`item.updatedAt`]="{ item }">
-        {{ dayjs((item as Survey).updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
+        {{ dayjs((item.raw as Survey).updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
     </StyledDataTable>
   </v-container>
