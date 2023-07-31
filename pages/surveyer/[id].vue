@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { useSurveyerStore } from "@/store/surveyer";
-import "survey-core/defaultV2.min.css";
-import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
 definePageMeta({ middleware: "surveyer" });
@@ -39,6 +37,9 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+@import "survey-core/defaultV2.min.css";
+@import "survey-creator-core/survey-creator-core.min.css";
+
 #surveyCreator {
   /* Esposter App Bar 56px */
   height: calc(100dvh - 56px);
