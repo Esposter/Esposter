@@ -101,5 +101,14 @@
   },
   "overrides": {
     "vue": "latest"
-  }
+  },
+  "cssnano": {
+    "preset": [
+      "default",
+      {
+        "calc": false
+      }
+    ]
+  },
+  "cssnanoComments": "https://github.com/surveyjs/survey-library/issues/6270"
 }

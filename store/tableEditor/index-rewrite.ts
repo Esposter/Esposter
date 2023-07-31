@@ -33,7 +33,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     // The form is "valid" if there's no form open/no errors
     const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
     const isSavable = computed(() => {
-      if (!tableEditor.value || !editedItem.value) return;
+      if (!tableEditor.value || !editedItem.value) return false;
 
       const originalItem = tableEditor.value.items.find((item) => item.id === editedItem.value?.id);
       // For the form to be savable, it has to have no errors
