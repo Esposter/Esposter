@@ -1,9 +1,5 @@
 export default defineNuxtConfig({
-  css: [
-    "vuetify/lib/styles/main.sass",
-    "@mdi/font/css/materialdesignicons.min.css",
-    "emoji-mart-vue-fast/css/emoji-mart.css",
-  ],
+  css: ["vuetify/lib/styles/main.sass", "@mdi/font/css/materialdesignicons.min.css"],
   build: {
     transpile: ["vuetify", "trpc-nuxt"],
   },

@@ -1,3 +1,4 @@
+import "emoji-mart-vue-fast/css/emoji-mart.css";
 // @ts-ignore
 import VEmojiPicker from "emoji-mart-vue-fast/src/components/Picker.vue";
 
