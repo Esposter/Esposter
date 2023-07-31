@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { SURVEYER_STORE } from "@/services/surveyer/constants";
 import { useSurveyerStore } from "@/store/surveyer";
 import "survey-core/defaultV2.min.css";
 import "survey-creator-core/survey-creator-core.min.css";
