@@ -8,9 +8,6 @@ export default defineNuxtConfig({
     transpile: ["vuetify", "trpc-nuxt"],
   },
   vite: {
-    optimizeDeps: {
-      include: ["survey-core"],
-    },
     css: {
       preprocessorOptions: {
         scss: {
