@@ -5,6 +5,8 @@ import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyerStore } from "@/store/surveyer";
 import dayjs from "dayjs";
 
+type SurveyItem = { raw: Survey };
+
 const surveyerStore = useSurveyerStore();
 const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
 const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey) ?? []);
@@ -26,10 +28,10 @@ const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey)
         <SurveyerCrudViewHeader />
       </template>
       <template #[`item.createdAt`]="{ item }">
-        {{ dayjs((item.raw as Survey).createdAt).format("ddd, MMM D, YYYY h:mm A") }}
+        {{ dayjs((item as SurveyItem).raw.createdAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
       <template #[`item.updatedAt`]="{ item }">
-        {{ dayjs((item.raw as Survey).updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
+        {{ dayjs((item as SurveyItem).raw.updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
     </StyledDataTable>
   </v-container>
