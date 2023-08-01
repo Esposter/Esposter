@@ -25,7 +25,7 @@ onMounted(() => {
 
   creator.text = JSON.stringify(surveyConfiguration.surveyModel);
   creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
-    save();
+    save(surveyConfiguration.id);
     callback(saveNo, true);
   };
   creator.render(surveyCreatorId);
