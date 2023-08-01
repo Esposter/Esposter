@@ -12,6 +12,12 @@ export const useSurveyerStore = defineStore("surveyer", () => {
     surveyerConfiguration.value.push(newSurveyConfiguration);
     save();
   };
+  const deleteSurveyConfiguration = (id: string) => {
+    if (!surveyerConfiguration.value) return;
+
+    surveyerConfiguration.value = surveyerConfiguration.value.filter((s) => s.id !== id);
+    save();
+  };
 
   const searchQuery = ref("");
 
@@ -26,6 +32,7 @@ export const useSurveyerStore = defineStore("surveyer", () => {
   return {
     surveyerConfiguration,
     createSurveyConfiguration,
+    deleteSurveyConfiguration,
     searchQuery,
     save,
   };

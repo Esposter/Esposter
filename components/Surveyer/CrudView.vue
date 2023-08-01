@@ -8,8 +8,8 @@ import dayjs from "dayjs";
 type SurveyItem = { raw: Survey };
 
 const surveyerStore = useSurveyerStore();
+const { deleteSurveyConfiguration } = surveyerStore;
 const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
-const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey) ?? []);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey)
       flex="1 col"
       height="100%"
       :headers="surveyerHeaders"
-      :items="surveys"
+      :items="surveyerConfiguration"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.raw.id))"
@@ -32,6 +32,15 @@ const surveys = computed(() => surveyerConfiguration.value?.map((s) => s.survey)
       </template>
       <template #[`item.updatedAt`]="{ item }">
         {{ dayjs((item as SurveyItem).raw.updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
+      </template>
+      <template #[`item.actions`]="{ item }">
+        <StyledConfirmDeleteDialogButton
+          :card-props="{
+            title: 'Delete Survey',
+            text: 'Are you sure you want to delete this survey?',
+          }"
+          @delete="deleteSurveyConfiguration((item as SurveyItem).raw.id)"
+        />
       </template>
     </StyledDataTable>
   </v-container>

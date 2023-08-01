@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useSurveyerStore } from "@/store/surveyer";
+import "survey-core/defaultV2.min.css";
+import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
 definePageMeta({ middleware: "surveyer" });
@@ -18,7 +20,7 @@ onMounted(() => {
     showLogicTab: true,
     isAutoSave: true,
   });
-  const surveyConfiguration = surveyerConfiguration.value?.find((s) => s.survey.id === route.params.id);
+  const surveyConfiguration = surveyerConfiguration.value?.find((s) => s.id === route.params.id);
   if (!surveyConfiguration) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
   creator.text = JSON.stringify(surveyConfiguration.surveyModel);
@@ -37,9 +39,6 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-@import "survey-core/defaultV2.min.css";
-@import "survey-creator-core/survey-creator-core.min.css";
-
 #surveyCreator {
   /* Esposter App Bar 56px */
   height: calc(100dvh - 56px);

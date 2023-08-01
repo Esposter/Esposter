@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VCard } from "vuetify/components";
 
-interface StyledDeleteDialogProps {
+export interface StyledDeleteDialogProps {
   cardProps?: VCard["$props"];
 }
 
