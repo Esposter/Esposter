@@ -11,7 +11,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     <template #default="{ updateDeleteMode }">
       <v-tooltip :text="cardProps?.title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" :="tooltipProps" @click="updateDeleteMode(true)" />
+          <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" :="tooltipProps" @click.stop="updateDeleteMode(true)" />
         </template>
       </v-tooltip>
     </template>
