@@ -1,4 +1,4 @@
-import type { SurveyConfiguration } from "@/models/surveyer/SurveyConfiguration";
+import type { Survey } from "@/models/surveyer/Survey";
 import type { SurveyerConfiguration } from "@/models/surveyer/SurveyerConfiguration";
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
 
@@ -6,13 +6,13 @@ export const useSurveyerStore = defineStore("surveyer", () => {
   const { status } = useAuth();
   const surveyerConfiguration = ref<SurveyerConfiguration | null>(null);
 
-  const createSurveyConfiguration = (newSurveyConfiguration: SurveyConfiguration) => {
+  const createSurvey = (newSurvey: Survey) => {
     if (!surveyerConfiguration.value) return;
 
-    surveyerConfiguration.value.push(newSurveyConfiguration);
+    surveyerConfiguration.value.push(newSurvey);
     save();
   };
-  const deleteSurveyConfiguration = (id: string) => {
+  const deleteSurvey = (id: string) => {
     if (!surveyerConfiguration.value) return;
 
     surveyerConfiguration.value = surveyerConfiguration.value.filter((s) => s.id !== id);
@@ -25,10 +25,8 @@ export const useSurveyerStore = defineStore("surveyer", () => {
     if (!surveyerConfiguration.value) return;
 
     if (id) {
-      const surveyConfiguration = surveyerConfiguration.value.find((s) => s.id === id);
-      if (surveyConfiguration) {
-        surveyConfiguration.updatedAt = new Date();
-      }
+      const survey = surveyerConfiguration.value.find((s) => s.id === id);
+      if (survey) survey.updatedAt = new Date();
     }
 
     // @NOTE: Implement saving data from blob when user is authed
@@ -39,8 +37,8 @@ export const useSurveyerStore = defineStore("surveyer", () => {
 
   return {
     surveyerConfiguration,
-    createSurveyConfiguration,
-    deleteSurveyConfiguration,
+    createSurvey,
+    deleteSurvey,
     searchQuery,
     save,
   };

@@ -1,3 +1,3 @@
-import type { SurveyConfiguration } from "@/models/surveyer/SurveyConfiguration";
+import type { Survey } from "@/models/surveyer/Survey";
 
-export type SurveyerConfiguration = SurveyConfiguration[];
+export type SurveyerConfiguration = Survey[];

@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 type SurveyItem = { raw: Survey };
 
 const surveyerStore = useSurveyerStore();
-const { deleteSurveyConfiguration } = surveyerStore;
+const { deleteSurvey } = surveyerStore;
 const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
 </script>
 
@@ -39,7 +39,7 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
             title: 'Delete Survey',
             text: 'Are you sure you want to delete this survey?',
           }"
-          @delete="deleteSurveyConfiguration((item as SurveyItem).raw.id)"
+          @delete="deleteSurvey((item as SurveyItem).raw.id)"
         />
       </template>
     </StyledDataTable>

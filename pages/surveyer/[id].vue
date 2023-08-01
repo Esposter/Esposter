@@ -20,12 +20,12 @@ onMounted(() => {
     showLogicTab: true,
     isAutoSave: true,
   });
-  const surveyConfiguration = surveyerConfiguration.value?.find((s) => s.id === route.params.id);
-  if (!surveyConfiguration) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
+  const survey = surveyerConfiguration.value?.find((s) => s.id === route.params.id);
+  if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
-  creator.text = JSON.stringify(surveyConfiguration.surveyModel);
+  creator.text = JSON.stringify(survey.model);
   creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
-    save(surveyConfiguration.id);
+    save(survey.id);
     callback(saveNo, true);
   };
   creator.render(surveyCreatorId);
