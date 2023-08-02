@@ -1,4 +1,4 @@
-import { AItemEntity } from "@/models/tableEditor/AItemEntity";
+import { AItemEntity } from "@/models/shared/AItemEntity";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
 

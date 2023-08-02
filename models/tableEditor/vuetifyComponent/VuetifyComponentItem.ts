@@ -1,4 +1,4 @@
-import { AItemEntity } from "@/models/tableEditor/AItemEntity";
+import { AItemEntity } from "@/models/shared/AItemEntity";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { VuetifyComponentType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";

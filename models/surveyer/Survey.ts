@@ -1,14 +1,13 @@
-import { v4 as uuidv4 } from "uuid";
+import { AItemEntity } from "@/models/shared/AItemEntity";
 
-export class Survey {
-  id = uuidv4();
-  name = "Unnamed";
+export class Survey extends AItemEntity {
   group?: string;
   model: object = {};
   createdAt = new Date();
   updatedAt = new Date();
 
   constructor(init?: Partial<Survey>) {
+    super();
     Object.assign(this, init);
   }
 }

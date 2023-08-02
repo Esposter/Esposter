@@ -1,4 +1,4 @@
-import { AItemEntity } from "@/models/tableEditor/AItemEntity";
+import { AItemEntity } from "@/models/shared/AItemEntity";
 import type { Item } from "@/models/tableEditor/Item";
 import type { BaseItemCategoryDefinition, ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";

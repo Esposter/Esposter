@@ -1,4 +1,4 @@
-import { AItemEntity, aItemEntitySchema } from "@/models/tableEditor/AItemEntity";
+import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
 import { Item } from "@/models/tableEditor/Item";
 import { ItemEntityType, createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
 import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
