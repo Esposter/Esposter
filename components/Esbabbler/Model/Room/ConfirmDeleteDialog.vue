@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { StyledDeleteDialogDefaultSlotProps } from "@/components/Styled/DeleteDialog.vue";
+import type { StyledDialogDefaultSlotProps } from "@/components/Styled/Dialog.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomConfirmDeleteDialogProps {
@@ -8,7 +8,7 @@ interface RoomConfirmDeleteDialogProps {
 }
 
 defineSlots<{
-  default: (props: StyledDeleteDialogDefaultSlotProps & { tooltipProps: unknown }) => unknown;
+  default: (props: StyledDialogDefaultSlotProps & { tooltipProps: unknown }) => unknown;
 }>();
 const props = defineProps<RoomConfirmDeleteDialogProps>();
 const { roomId, creatorId } = toRefs(props);

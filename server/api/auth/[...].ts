@@ -11,11 +11,11 @@ import type { GoogleProfile } from "next-auth/providers/google";
 import NextGoogleProvider from "next-auth/providers/google";
 
 // @NOTE: Import is exported on .default during SSR, so we need to call it this way. May be fixed via Vite at some point
-// @ts-ignore
+// @ts-expect-error
 const FacebookProvider = NextFacebookProvider.default as typeof NextFacebookProvider<FacebookProfile>;
-// @ts-ignore
+// @ts-expect-error
 const GithubProvider = NextGithubProvider.default as typeof NextGithubProvider<GithubProfile>;
-// @ts-ignore
+// @ts-expect-error
 const GoogleProvider = NextGoogleProvider.default as typeof NextGoogleProvider<GoogleProfile>;
 
 export default NuxtAuthHandler({

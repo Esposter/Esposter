@@ -8,10 +8,10 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 
 <template>
   <StyledDeleteDialog :card-props="cardProps" @delete="(onComplete) => emit('delete', onComplete)">
-    <template #default="{ updateDeleteMode }">
+    <template #default="{ updateIsOpen }">
       <v-tooltip :text="cardProps?.title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" :="tooltipProps" @click.stop="updateDeleteMode(true)" />
+          <v-btn m="0!" rd="0!" icon="mdi-delete" size="small" :="tooltipProps" @click.stop="updateIsOpen(true)" />
         </template>
       </v-tooltip>
     </template>

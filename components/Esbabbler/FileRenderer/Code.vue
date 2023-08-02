@@ -16,7 +16,7 @@ const languageRequested = computed(() => extendedLanguages.find((l) => l.name ==
 const languageConfiguration = ref(new Compartment());
 const languageSupport = ref(languageRequested.value ? await languageRequested.value.load() : undefined);
 const languageExtension = computed(() =>
-  // @ts-ignore
+  // @ts-expect-error
   languageSupport.value ? languageConfiguration.value.of(languageSupport.value) : undefined,
 );
 const editorView = shallowRef<EditorView>();

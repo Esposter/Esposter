@@ -29,10 +29,10 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 
 <template>
   <EsbabblerModelMessageConfirmDeleteDialog :message="message">
-    <template #default="{ isDeleteMode, updateDeleteMode }">
+    <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         v-if="creator.name"
-        :active="active && !isDeleteMode"
+        :active="active && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
@@ -54,14 +54,14 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           v-if="isUpdateMode"
           :message="message"
           @update:update-mode="(value) => (isUpdateMode = value)"
-          @update:delete-mode="updateDeleteMode"
+          @update:delete-mode="updateIsOpen"
         />
         <v-list-item-subtitle v-else op="100!" v-html="sanitizedMessageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div position="relative" z="1">
         <div
-          v-show="activeAndNotUpdateMode && !isDeleteMode"
+          v-show="activeAndNotUpdateMode && !isOpen"
           position="absolute"
           top="-6"
           right="0"
@@ -75,7 +75,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
               :hover-props="hoverProps"
               @update:menu="(value) => (isOptionsChildrenActive = value)"
               @update:update-mode="(value) => (isUpdateMode = value)"
-              @update:delete-mode="updateDeleteMode"
+              @update:delete-mode="updateIsOpen"
             />
           </v-hover>
         </div>

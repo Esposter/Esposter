@@ -30,7 +30,7 @@ const active = computed(() => room.value.id === currentRoomId.value);
       </v-list-item>
     </NuxtInvisibleLink>
     <EsbabblerModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.creatorId">
-      <template #default="{ updateDeleteMode, tooltipProps }">
+      <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
           v-show="isHovering"
           position="absolute"
@@ -43,7 +43,7 @@ const active = computed(() => room.value.id === currentRoomId.value);
           size="small"
           :ripple="false"
           :="tooltipProps"
-          @click="updateDeleteMode(true)"
+          @click="updateIsOpen(true)"
         />
       </template>
     </EsbabblerModelRoomConfirmDeleteDialog>

@@ -1,50 +1,31 @@
 <script setup lang="ts">
+import type { StyledDialogDefaultSlotProps } from "@/components/Styled/Dialog.vue";
 import type { VCard } from "vuetify/components";
 
 export interface StyledDeleteDialogProps {
   cardProps?: VCard["$props"];
 }
 
-export interface StyledDeleteDialogDefaultSlotProps {
-  isDeleteMode: boolean;
-  updateDeleteMode: (value: true) => boolean;
-}
-
 defineSlots<{
-  default: (props: StyledDeleteDialogDefaultSlotProps) => unknown;
+  default: (props: StyledDialogDefaultSlotProps) => unknown;
   content: (props: {}) => unknown;
 }>();
 const props = defineProps<StyledDeleteDialogProps>();
 const { cardProps } = toRefs(props);
-const emit = defineEmits<{
-  delete: [onComplete: () => void];
-}>();
-const isDeleteMode = ref(false);
+const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <v-dialog v-model="isDeleteMode">
-    <template #activator>
-      <slot :is-delete-mode="isDeleteMode" :update-delete-mode="(value: true) => (isDeleteMode = value)" />
+  <StyledDialog
+    :card-props="cardProps"
+    confirm-button-text="Delete"
+    @change="(onComplete) => emit('delete', onComplete)"
+  >
+    <template #default="defaultProps">
+      <slot :="defaultProps" />
     </template>
-    <StyledCard :="cardProps">
+    <template #content>
       <slot name="content" />
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text="3" variant="outlined" @click="isDeleteMode = false">Cancel</v-btn>
-        <v-btn
-          text="3"
-          color="error"
-          variant="outlined"
-          @click="
-            emit('delete', () => {
-              isDeleteMode = false;
-            })
-          "
-        >
-          Delete
-        </v-btn>
-      </v-card-actions>
-    </StyledCard>
-  </v-dialog>
+    </template>
+  </StyledDialog>
 </template>
