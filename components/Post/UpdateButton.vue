@@ -7,9 +7,8 @@ interface PostUpdateButtonProps {
 
 const props = defineProps<PostUpdateButtonProps>();
 const { postId } = toRefs(props);
-const onUpdatePost = () => navigateTo(RoutePath.PostUpdate(postId.value));
 </script>
 
 <template>
-  <v-btn rd="0!" icon="mdi-pencil" size="small" @click="onUpdatePost" />
+  <v-btn rd="0!" icon="mdi-pencil" size="small" @click="navigateTo(RoutePath.PostUpdate(postId))" />
 </template>

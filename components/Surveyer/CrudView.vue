@@ -39,7 +39,12 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
             title: 'Delete Survey',
             text: 'Are you sure you want to delete this survey?',
           }"
-          @delete="deleteSurvey((item as SurveyItem).raw.id)"
+          @delete="
+            (onComplete) => {
+              deleteSurvey((item as SurveyItem).raw.id);
+              onComplete();
+            }
+          "
         />
       </template>
     </StyledDataTable>

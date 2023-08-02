@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
 
 interface PostConfirmDeleteDialogButtonProps {
@@ -10,15 +9,6 @@ const props = defineProps<PostConfirmDeleteDialogButtonProps>();
 const { postId } = toRefs(props);
 const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();
-const onDeletePost = async (onComplete: () => void) => {
-  try {
-    await $client.post.deletePost.mutate(postId.value);
-    deletePost(postId.value);
-    await navigateTo(RoutePath.Index);
-  } finally {
-    onComplete();
-  }
-};
 </script>
 
 <template>
@@ -27,6 +17,15 @@ const onDeletePost = async (onComplete: () => void) => {
       title: 'Delete Post',
       text: 'Are you sure you want to delete this post?',
     }"
-    @delete="onDeletePost"
+    @delete="
+      async (onComplete: () => void) => {
+        try {
+          await $client.post.deletePost.mutate(postId);
+          deletePost(postId);
+        } finally {
+          onComplete();
+        }
+      }
+    "
   />
 </template>

@@ -13,14 +13,6 @@ const post = postId ? await $client.post.readPost.query(postId) : null;
 if (!post) throw createError({ statusCode: 404, statusMessage: "Post could not be found" });
 
 const { updatePost } = usePostStore();
-const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>) => {
-  e.preventDefault();
-  if (post) {
-    const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
-    updatePost(updatedPost);
-    await navigateTo(RoutePath.Index);
-  }
-};
 </script>
 
 <template>
@@ -30,7 +22,16 @@ const onUpdatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpser
         <PostUpsertForm
           v-if="post"
           :initial-values="{ title: post.title, description: post.description }"
-          @submit="onUpdatePost"
+          @submit="
+            async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps['initialValues']>) => {
+              e.preventDefault();
+              if (post) {
+                const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
+                updatePost(updatedPost);
+                await navigateTo(RoutePath.Index);
+              }
+            }
+          "
         />
       </v-container>
     </NuxtLayout>

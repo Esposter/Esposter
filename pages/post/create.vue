@@ -8,19 +8,22 @@ definePageMeta({ middleware: "auth" });
 
 const { $client } = useNuxtApp();
 const { createPost } = usePostStore();
-const onCreatePost = async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>) => {
-  e.preventDefault();
-  const newPost = await $client.post.createPost.mutate(values);
-  createPost(newPost);
-  await navigateTo(RoutePath.Index);
-};
 </script>
 
 <template>
   <div>
     <NuxtLayout>
       <v-container>
-        <PostUpsertForm @submit="onCreatePost" />
+        <PostUpsertForm
+          @submit="
+            async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps['initialValues']>) => {
+              e.preventDefault();
+              const newPost = await $client.post.createPost.mutate(values);
+              createPost(newPost);
+              await navigateTo(RoutePath.Index);
+            }
+          "
+        />
       </v-container>
     </NuxtLayout>
   </div>
