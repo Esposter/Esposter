@@ -16,18 +16,6 @@ const props = defineProps<ConfirmDeleteMessageDialogProps>();
 const { message } = toRefs(props);
 const { $client } = useNuxtApp();
 const { deleteMessage } = useMessageStore();
-const onDeleteMessage = async (onComplete: () => void) => {
-  try {
-    const deleteMessageInput: DeleteMessageInput = {
-      partitionKey: message.value.partitionKey,
-      rowKey: message.value.rowKey,
-    };
-    await $client.message.deleteMessage.mutate(deleteMessageInput);
-    deleteMessage(deleteMessageInput);
-  } finally {
-    onComplete();
-  }
-};
 </script>
 
 <template>
@@ -36,7 +24,20 @@ const onDeleteMessage = async (onComplete: () => void) => {
       title: 'Delete Message',
       text: 'Are you sure you want to delete this message?',
     }"
-    @delete="onDeleteMessage"
+    @delete="
+      async (onComplete) => {
+        try {
+          const deleteMessageInput: DeleteMessageInput = {
+            partitionKey: message.partitionKey,
+            rowKey: message.rowKey,
+          };
+          await $client.message.deleteMessage.mutate(deleteMessageInput);
+          deleteMessage(deleteMessageInput);
+        } finally {
+          onComplete();
+        }
+      }
+    "
   >
     <template #default="defaultProps">
       <slot :="defaultProps" />

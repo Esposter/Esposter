@@ -17,12 +17,6 @@ const { data } = useAuth();
 const isCreator = computed(() => data.value?.user.id === creatorId.value);
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
-const onDeleteRoom = async () => {
-  deleteRoom(roomId.value);
-  isCreator.value
-    ? await $client.room.deleteRoom.mutate(roomId.value)
-    : await $client.room.leaveRoom.mutate(roomId.value);
-};
 </script>
 
 <template>
@@ -32,7 +26,16 @@ const onDeleteRoom = async () => {
         ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
         : { title: 'Leave Room', text: 'Are you sure you want to leave this room?' }
     "
-    @delete="onDeleteRoom"
+    @delete="
+      async (onComplete) => {
+        try {
+          deleteRoom(roomId);
+          isCreator ? await $client.room.deleteRoom.mutate(roomId) : await $client.room.leaveRoom.mutate(roomId);
+        } finally {
+          onComplete();
+        }
+      }
+    "
   >
     <template #default="defaultProps">
       <v-tooltip :text="isCreator ? 'Delete Room' : 'Leave Room'">

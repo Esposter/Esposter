@@ -18,7 +18,7 @@ const { deletePost } = usePostStore();
       text: 'Are you sure you want to delete this post?',
     }"
     @delete="
-      async (onComplete: () => void) => {
+      async (onComplete) => {
         try {
           await $client.post.deletePost.mutate(postId);
           deletePost(postId);
