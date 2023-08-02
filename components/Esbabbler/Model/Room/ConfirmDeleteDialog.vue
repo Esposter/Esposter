@@ -37,10 +37,10 @@ const { deleteRoom } = roomStore;
       }
     "
   >
-    <template #default="defaultProps">
+    <template #activator="activatorProps">
       <v-tooltip :text="isCreator ? 'Delete Room' : 'Leave Room'">
         <template #activator="{ props: tooltipProps }">
-          <slot :="{ ...defaultProps, tooltipProps }" />
+          <slot :="{ ...activatorProps, tooltipProps }" />
         </template>
       </v-tooltip>
     </template>

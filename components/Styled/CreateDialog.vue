@@ -2,7 +2,7 @@
 import type { StyledDialogDefaultSlotProps } from "@/components/Styled/Dialog.vue";
 import type { VCard } from "vuetify/components";
 
-export interface StyledDeleteDialogProps {
+export interface StyledCreateDialogProps {
   cardProps?: VCard["$props"];
 }
 
@@ -10,16 +10,16 @@ defineSlots<{
   activator: (props: StyledDialogDefaultSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
-const props = defineProps<StyledDeleteDialogProps>();
+const props = defineProps<StyledCreateDialogProps>();
 const { cardProps } = toRefs(props);
-const emit = defineEmits<{ delete: [onComplete: () => void] }>();
+const emit = defineEmits<{ create: [onComplete: () => void] }>();
 </script>
 
 <template>
   <StyledDialog
     :card-props="cardProps"
-    confirm-button-text="Delete"
-    @change="(onComplete) => emit('delete', onComplete)"
+    confirm-button-text="Create"
+    @change="(onComplete) => emit('create', onComplete)"
   >
     <template #activator="activatorProps">
       <slot :="activatorProps" />

@@ -12,8 +12,8 @@ export interface StyledDialogDefaultSlotProps {
 }
 
 defineSlots<{
-  default: (props: StyledDialogDefaultSlotProps) => unknown;
-  content: (props: {}) => unknown;
+  activator: (props: StyledDialogDefaultSlotProps) => unknown;
+  default: (props: {}) => unknown;
 }>();
 const props = defineProps<StyledDialogProps>();
 const { cardProps, confirmButtonText } = toRefs(props);
@@ -24,10 +24,10 @@ const isOpen = ref(false);
 <template>
   <v-dialog v-model="isOpen">
     <template #activator>
-      <slot :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
+      <slot name="activator" :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
     </template>
     <StyledCard :="cardProps">
-      <slot name="content" />
+      <slot />
       <v-card-actions>
         <v-spacer />
         <v-btn text="3" variant="outlined" @click="isOpen = false">Cancel</v-btn>
