@@ -87,7 +87,7 @@
     "rate-limiter-flexible": "^2.4.2",
     "reflect-metadata": "^0.1.13",
     "superjson": "^1.13.1",
-    "survey-creator-knockout": "^1.9.100",
+    "survey-creator-knockout": "^1.9.101",
     "three": "^0.155.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.6",
