@@ -93,11 +93,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       VTextarea: { variant: "outlined" },
       VTextField: { variant: "outlined" },
       VTooltip: { location: "top" },
-      VWindowItem: {
-        VContainer: {
-          fluid: true,
-        },
-      },
     },
   });
   nuxtApp.vueApp.use(vuetify);
