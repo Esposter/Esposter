@@ -22,7 +22,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     @change="(onComplete) => emit('delete', onComplete)"
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <slot />
   </StyledDialog>
