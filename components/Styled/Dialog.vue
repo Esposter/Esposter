@@ -17,7 +17,7 @@ defineSlots<{
 }>();
 const props = defineProps<StyledDialogProps>();
 const { cardProps, confirmButtonProps } = toRefs(props);
-const emit = defineEmits<{ change: [onComplete: () => void] }>();
+const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isOpen = ref(false);
 </script>
 
@@ -37,7 +37,7 @@ const isOpen = ref(false);
           variant="outlined"
           :="confirmButtonProps"
           @click="
-            emit('change', () => {
+            emit('confirm', () => {
               isOpen = false;
             })
           "

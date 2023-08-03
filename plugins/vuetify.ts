@@ -40,6 +40,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
     return acc;
   }, {}) as BaseColors;
   return {
+    backgroundOpacity40: `${sanitisedColors.background}66`,
     backgroundOpacity80: `${sanitisedColors.background}cc`,
     surfaceOpacity80: `${sanitisedColors.surface}cc`,
     infoOpacity10: `${sanitisedColors.info}1a`,
@@ -78,7 +79,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     ssr: true,
     defaults: {
       VAutocomplete: { variant: "outlined" },
-      VBtn: { flat: true },
+      VBtn: { style: { backgroundColor: "transparent" }, flat: true },
       VDataTable: {
         style: {
           borderRadius: ".25rem",

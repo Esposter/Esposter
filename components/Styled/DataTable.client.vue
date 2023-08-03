@@ -2,7 +2,7 @@
 import type { VDataTable } from "vuetify/labs/VDataTable";
 
 const slots = defineSlots<Record<keyof VDataTable["$slots"], Function>>();
-const { border } = useColors();
+const { border, backgroundOpacity40 } = useColors();
 </script>
 
 <template>
@@ -16,5 +16,13 @@ const { border } = useColors();
 <style scoped lang="scss">
 .border {
   border: 1px solid v-bind(border) !important;
+}
+
+:deep(.v-data-table__tr:hover) {
+  background-color: v-bind(backgroundOpacity40);
+}
+
+:deep(.v-data-table__td) {
+  background-color: transparent !important;
 }
 </style>
