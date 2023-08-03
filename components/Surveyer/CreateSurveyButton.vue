@@ -9,6 +9,13 @@ const { createSurvey } = surveyerStore;
 const formRef = ref<VFormRef>();
 const valid = computed(() => formRef.value?.errors.length === 0);
 const survey = ref(new Survey());
+const resetSurvey = () => {
+  // Hack resetting the item so the dialog content doesn't change
+  // until after the CSS animation that lasts 300ms ends
+  window.setTimeout(() => {
+    survey.value = new Survey();
+  }, 300);
+};
 </script>
 
 <template>
@@ -18,6 +25,7 @@ const survey = ref(new Survey());
     @create="
       (onComplete) => {
         createSurvey(survey);
+        resetSurvey();
         onComplete();
       }
     "
