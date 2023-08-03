@@ -1,4 +1,4 @@
-import type { DataTableHeader } from "@/services/vuetify/dataTable";
+import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 export const surveyerHeaders: DataTableHeader[] = [
   { title: "Name", key: "name" },

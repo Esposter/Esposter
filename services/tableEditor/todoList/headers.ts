@@ -1,5 +1,5 @@
+import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
-import type { DataTableHeader } from "@/services/vuetify/dataTable";
 
 export const todoListHeaders: DataTableHeader[] = [
   ...tableEditorHeaders,

@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import type { StyledDialogDefaultSlotProps } from "@/components/Styled/Dialog.vue";
-import type { VCard } from "vuetify/components";
+import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { VBtn, VCard } from "vuetify/components";
 
 export interface StyledCreateDialogProps {
   cardProps?: VCard["$props"];
+  confirmButtonProps?: VBtn["$props"];
 }
 
 defineSlots<{
-  activator: (props: StyledDialogDefaultSlotProps) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
 const props = defineProps<StyledCreateDialogProps>();
-const { cardProps } = toRefs(props);
+const { cardProps, confirmButtonProps } = toRefs(props);
 const emit = defineEmits<{ create: [onComplete: () => void] }>();
 </script>
 
 <template>
   <StyledDialog
     :card-props="cardProps"
-    confirm-button-text="Create"
+    :confirm-button-props="{ text: 'Create', ...confirmButtonProps }"
     @change="(onComplete) => emit('create', onComplete)"
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <slot />
   </StyledDialog>

@@ -1,17 +1,17 @@
 import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import type { VFormRef } from "@/models/vuetify/VFormRef";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import equal from "deep-equal";
 import type { UnwrapRef } from "vue";
-import { VForm } from "vuetify/components";
 
 interface TableEditorState<TItem extends Item = Item> {
   tableEditorConfiguration: TableEditorConfiguration | null;
   tableEditorType: TableEditorType;
   searchQuery: string;
-  editFormRef: (typeof VForm & { errors: { id: string; errorMessages: string[] }[] }) | undefined;
+  editFormRef: VFormRef | undefined;
   editFormDialog: boolean;
   editedItem: TItem | null;
   editedIndex: number;

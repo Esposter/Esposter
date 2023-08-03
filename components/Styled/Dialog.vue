@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { VCard } from "vuetify/components";
+import type { VBtn, VCard } from "vuetify/components";
 
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];
-  confirmButtonText: string;
+  confirmButtonProps: VBtn["$props"] & Required<Pick<VBtn["$props"], "text">>;
 }
 
-export interface StyledDialogDefaultSlotProps {
+export interface StyledDialogActivatorSlotProps {
   isOpen: boolean;
   updateIsOpen: (value: true) => boolean;
 }
 
 defineSlots<{
-  activator: (props: StyledDialogDefaultSlotProps) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
 const props = defineProps<StyledDialogProps>();
-const { cardProps, confirmButtonText } = toRefs(props);
+const { cardProps, confirmButtonProps } = toRefs(props);
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const isOpen = ref(false);
 </script>
@@ -30,19 +30,18 @@ const isOpen = ref(false);
       <slot />
       <v-card-actions>
         <v-spacer />
-        <v-btn text="3" variant="outlined" @click="isOpen = false">Cancel</v-btn>
+        <v-btn un-text="3" variant="outlined" @click="isOpen = false">Cancel</v-btn>
         <v-btn
-          text="3"
+          un-text="3"
           color="error"
           variant="outlined"
+          :="confirmButtonProps"
           @click="
             emit('change', () => {
               isOpen = false;
             })
           "
-        >
-          {{ confirmButtonText }}
-        </v-btn>
+        />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

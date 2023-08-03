@@ -1,9 +1,9 @@
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
 import { todoListHeaders } from "@/services/tableEditor/todoList/headers";
 import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList/itemCategoryDefinition";
 import { vuetifyComponentItemCategoryDefinitions } from "@/services/tableEditor/vuetifyComponent/itemCategoryDefinition";
-import type { DataTableHeader } from "@/services/vuetify/dataTable";
 
 export const propsMap = {
   [TableEditorType.TodoList]: {

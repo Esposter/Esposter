@@ -1,11 +1,11 @@
 import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import type { VFormRef } from "@/models/vuetify/VFormRef";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import equal from "deep-equal";
 import { UnwrapRef } from "vue";
-import { VForm } from "vuetify/components";
 
 // @NOTE: This doesn't actually work yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
@@ -25,7 +25,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         : null,
     );
     const searchQuery = ref("");
-    const editFormRef = ref<typeof VForm & { errors: { id: string; errorMessages: string[] }[] }>();
+    const editFormRef = ref<VFormRef>();
     const editFormDialog = ref(false);
     const editedItem = ref<TItem | null>(null);
     const editedIndex = ref(-1);

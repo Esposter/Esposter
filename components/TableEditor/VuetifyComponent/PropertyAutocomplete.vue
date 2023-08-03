@@ -14,7 +14,7 @@ const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["v
   const result: Record<string, Component> = {};
   const props = VuetifyComponentMap[component].props as Record<
     string,
-    { type: Constructor<unknown> | Constructor<unknown>[] | undefined }
+    { type?: Constructor<unknown> | Constructor<unknown>[] }
   >;
 
   for (const [name, prop] of Object.entries(props).filter((propEntry) => propEntry[1].type)) {
