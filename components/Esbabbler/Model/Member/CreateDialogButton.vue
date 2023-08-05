@@ -13,7 +13,6 @@ const inviteCode = ref(
 const inviteLink = computed(() =>
   inviteCode.value ? `${config.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
-const { copy, copied } = useClipboard({ source: inviteLink });
 </script>
 
 <template>
@@ -33,8 +32,7 @@ const { copy, copied } = useClipboard({ source: inviteLink });
         <div mb="2">Send a room invite link to a friend</div>
         <v-text-field v-model="inviteLink" variant="filled" readonly hide-details>
           <template #append-inner>
-            <v-btn v-if="copied" w="20" case="normal!" color="primary">Copied</v-btn>
-            <StyledButton v-else w="20" @click="copy(inviteLink)">Copy</StyledButton>
+            <StyledClipboardButton :source="inviteLink" />
           </template>
         </v-text-field>
       </v-card-text>

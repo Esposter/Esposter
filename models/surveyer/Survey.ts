@@ -1,10 +1,8 @@
 import { AItemEntity } from "@/models/shared/AItemEntity";
 
 export class Survey extends AItemEntity {
-  group?: string;
+  group: string | null = null;
   model: object = {};
-  createdAt = new Date();
-  updatedAt = new Date();
 
   constructor(init?: Partial<Survey>) {
     super();
