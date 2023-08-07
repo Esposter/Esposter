@@ -15,6 +15,6 @@ export const formRules: {
 } = {
   required: (value: FormFieldValue) => (value && value.length > 0) || "required",
   requireAtMostNCharacters: (n) => (value: FormFieldValue) => (value && value.length <= n) || `max ${n} characters`,
-  isNotEqual: (oldValue: FormFieldValue) => (value: FormFieldValue) =>
+  isNotEqual: (oldValue) => (value: FormFieldValue) =>
     !deepEqual(value, oldValue) || `new value cannot be the same as the existing value`,
 };
