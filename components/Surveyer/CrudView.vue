@@ -35,6 +35,7 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
         {{ dayjs((item as SurveyItem).raw.updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
       <template #[`item.actions`]="{ item }">
+        <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
         <StyledConfirmDeleteDialogButton
           :card-props="{
             title: 'Delete Survey',

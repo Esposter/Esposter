@@ -12,6 +12,13 @@ export const useSurveyerStore = defineStore("surveyer", () => {
     surveyerConfiguration.value.push(newSurvey);
     save();
   };
+  const updateSurvey = (updatedSurvey: Survey) => {
+    if (!surveyerConfiguration.value) return;
+
+    const index = surveyerConfiguration.value.findIndex((r) => r.id === updatedSurvey.id);
+    if (index > -1) surveyerConfiguration.value[index] = { ...surveyerConfiguration.value[index], ...updatedSurvey };
+    save();
+  };
   const deleteSurvey = (id: string) => {
     if (!surveyerConfiguration.value) return;
 
@@ -38,6 +45,7 @@ export const useSurveyerStore = defineStore("surveyer", () => {
   return {
     surveyerConfiguration,
     createSurvey,
+    updateSurvey,
     deleteSurvey,
     searchQuery,
     save,
