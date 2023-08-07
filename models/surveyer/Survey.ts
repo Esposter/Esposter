@@ -1,7 +1,7 @@
 import { AItemEntity } from "@/models/shared/AItemEntity";
 
 export class Survey extends AItemEntity {
-  group: string | null = null;
+  group = "";
   model: object = {};
 
   constructor(init?: Partial<Survey>) {

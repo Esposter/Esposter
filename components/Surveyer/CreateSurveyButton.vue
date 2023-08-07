@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Survey } from "@/models/surveyer/Survey";
-import type { VFormRef } from "@/models/vuetify/VFormRef";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyerStore } from "@/store/surveyer";
 
 const surveyerStore = useSurveyerStore();
 const { createSurvey } = surveyerStore;
-const formRef = ref<VFormRef>();
-const valid = computed(() => formRef.value?.errors.length === 0);
+const valid = ref(false);
 const survey = ref(new Survey());
 const resetSurvey = () => {
   // Hack resetting the item so the dialog content doesn't change
@@ -39,7 +37,7 @@ const resetSurvey = () => {
         </template>
       </v-tooltip>
     </template>
-    <v-form ref="formRef">
+    <v-form v-model="valid">
       <v-container fluid>
         <v-row>
           <v-col cols="12">
