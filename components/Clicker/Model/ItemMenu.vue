@@ -15,32 +15,32 @@ type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["
   Partial<Pick<Upgrade, "description">> &
   Partial<Pick<BuildingWithStats, "amount">>;
 
-const props = defineProps<ItemMenuProps>();
-const { type, isAffordable, menuProps, name, description, flavorDescription, price, amount } = toRefs(props);
+const { type, isAffordable, menuProps, name, description, flavorDescription, price, amount } =
+  defineProps<ItemMenuProps>();
 const slots = defineSlots<{
   "append-text"?: (props: {}) => unknown;
   action?: (props: {}) => unknown;
 }>();
 const { error } = useColors();
 
-const descriptionHtml = computed(() => (description?.value ? marked.parse(description.value) : ""));
-const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription.value}"`));
-const displayPrice = computed(() => formatNumberLong(price.value));
+const descriptionHtml = computed(() => (description ? marked.parse(description) : ""));
+const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`));
+const displayPrice = computed(() => formatNumberLong(price));
 
 const buildingIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name.value];
+  return images[name];
 });
 const menuIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name.value];
+  return images[name];
 });
 const upgradeIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name.value];
+  return images[name];
 });
 </script>
 

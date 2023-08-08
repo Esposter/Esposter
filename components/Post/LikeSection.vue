@@ -6,27 +6,26 @@ interface PostLikeSectionProps {
   post: PostWithRelations;
 }
 
-const props = defineProps<PostLikeSectionProps>();
-const { post } = toRefs(props);
+const { post } = defineProps<PostLikeSectionProps>();
 const { $client } = useNuxtApp();
 const { data } = useAuth();
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
-const liked = computed(() => post.value.likes.some((l) => l.userId === data.value?.user.id && l.value === 1));
-const unliked = computed(() => post.value.likes.some((l) => l.userId === data.value?.user.id && l.value === -1));
+const liked = computed(() => post.likes.some((l) => l.userId === data.value?.user.id && l.value === 1));
+const unliked = computed(() => post.likes.some((l) => l.userId === data.value?.user.id && l.value === -1));
 const onCreateLike = async (value: 1 | -1) => {
-  const newLike = await $client.like.createLike.mutate({ postId: post.value.id, value });
+  const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
   createLike(newLike);
 };
 const onUpdateLike = async (value: 1 | -1) => {
-  const updatedLike = await $client.like.updateLike.mutate({ postId: post.value.id, value });
+  const updatedLike = await $client.like.updateLike.mutate({ postId: post.id, value });
   if (updatedLike) updateLike(updatedLike);
 };
 const onDeleteLike = async () => {
   if (!data.value) return;
 
-  await $client.like.deleteLike.mutate({ postId: post.value.id });
-  deleteLike({ userId: data.value.user.id, postId: post.value.id });
+  await $client.like.deleteLike.mutate({ postId: post.id });
+  deleteLike({ userId: data.value.user.id, postId: post.id });
 };
 </script>
 

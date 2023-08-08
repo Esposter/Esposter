@@ -1,24 +1,35 @@
 <script setup lang="ts">
+import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import { Survey } from "@/models/surveyer/Survey";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyerStore } from "@/store/surveyer";
+import type { VCard } from "vuetify/components";
 
+interface CreateSurveyDialogProps {
+  initialValue: Survey;
+  cardProps?: VCard["$props"];
+}
+
+defineSlots<{
+  activator: (props: StyledDialogActivatorSlotProps) => unknown;
+}>();
+const { initialValue, cardProps } = defineProps<CreateSurveyDialogProps>();
 const surveyerStore = useSurveyerStore();
 const { createSurvey } = surveyerStore;
 const valid = ref(false);
-const survey = ref(new Survey());
+const survey = ref(initialValue);
 const resetSurvey = () => {
   // Hack resetting the item so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
   window.setTimeout(() => {
-    survey.value = new Survey();
+    survey.value = initialValue;
   }, 300);
 };
 </script>
 
 <template>
   <StyledCreateDialog
-    :card-props="{ title: 'Create Survey' }"
+    :card-props="cardProps"
     :confirm-button-props="{ disabled: !valid }"
     @create="
       (onComplete) => {
@@ -28,14 +39,8 @@ const resetSurvey = () => {
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Create Survey">
-        <template #activator="{ props }">
-          <v-btn variant="elevated" :flat="false" :="props" @click="updateIsOpen(true)">
-            <v-icon icon="mdi-plus" />
-          </v-btn>
-        </template>
-      </v-tooltip>
+    <template #activator="activatorProps">
+      <slot name="activator" :="activatorProps" />
     </template>
     <v-form v-model="valid">
       <v-container fluid>
@@ -44,7 +49,7 @@ const resetSurvey = () => {
             <v-text-field v-model="survey.name" label="Name" :rules="[formRules.required]" />
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="survey.group" label="Group" />
+            <SurveyerGroupCombobox v-model="survey.group" />
           </v-col>
         </v-row>
       </v-container>

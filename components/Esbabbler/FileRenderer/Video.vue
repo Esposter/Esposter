@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
-const props = defineProps<FileRendererProps>();
-const { url } = toRefs(props);
+const { url } = defineProps<FileRendererProps>();
 </script>
 
 <template>

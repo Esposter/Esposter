@@ -18,8 +18,7 @@ interface AItemEntity {
   onClick: (e: MouseEvent | KeyboardEvent) => void;
 }
 
-const props = defineProps<MessageOptionsMenuProps>();
-const { message, isHovering, hoverProps } = toRefs(props);
+const { message, isHovering, hoverProps } = defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{
   "update:menu": [value: boolean];
   "update:update-mode": [value: true];
@@ -29,8 +28,8 @@ const { $client } = useNuxtApp();
 const { data } = useAuth();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
-const emojis = computed(() => getEmojiList(message.value.rowKey));
-const isCreator = computed(() => data.value?.user.id === message.value.creatorId);
+const emojis = computed(() => getEmojiList(message.rowKey));
+const isCreator = computed(() => data.value?.user.id === message.creatorId);
 const items = computed(() => {
   if (!isCreator.value) return [];
 
@@ -52,8 +51,8 @@ const onSelect = async (emoji: string) => {
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
     await onCreateEmoji({
-      partitionKey: message.value.partitionKey,
-      messageRowKey: message.value.rowKey,
+      partitionKey: message.partitionKey,
+      messageRowKey: message.rowKey,
       emojiTag,
     });
     return;

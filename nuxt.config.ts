@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     vue: {
       script: {
         defineModel: true,
+        propsDestructure: true,
       },
     },
   },

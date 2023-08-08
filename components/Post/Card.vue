@@ -7,13 +7,12 @@ interface PostCardProps {
   post: PostWithRelations;
 }
 
-const props = defineProps<PostCardProps>();
-const { post } = toRefs(props);
+const { post } = defineProps<PostCardProps>();
 const { data } = useAuth();
 const { surfaceOpacity80 } = useColors();
-const createdAt = computed(() => dayjs(post.value.createdAt).fromNow());
-const sanitizedDescriptionHtml = computed(() => DOMPurify.sanitize(post.value.description));
-const isOwner = computed(() => data.value?.user.id === post.value.creatorId);
+const createdAt = computed(() => dayjs(post.createdAt).fromNow());
+const sanitizedDescriptionHtml = computed(() => DOMPurify.sanitize(post.description));
+const isOwner = computed(() => data.value?.user.id === post.creatorId);
 </script>
 
 <template>

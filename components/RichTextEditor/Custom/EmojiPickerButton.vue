@@ -6,8 +6,7 @@ interface CustomEmojiPickerButtonProps {
   tooltip: string;
 }
 
-const props = defineProps<CustomEmojiPickerButtonProps>();
-const { editor, tooltip } = toRefs(props);
+const { editor, tooltip } = defineProps<CustomEmojiPickerButtonProps>();
 </script>
 
 <template>

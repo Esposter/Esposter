@@ -7,12 +7,11 @@ interface RoomListItemProps {
   room: Room;
 }
 
-const props = defineProps<RoomListItemProps>();
-const { room } = toRefs(props);
+const { room } = defineProps<RoomListItemProps>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isHovering = ref(false);
-const active = computed(() => room.value.id === currentRoomId.value);
+const active = computed(() => room.id === currentRoomId.value);
 </script>
 
 <template>

@@ -7,15 +7,12 @@ export interface PostUpsertFormProps {
   initialValues?: Pick<Post, "title" | "description">;
 }
 
-const props = withDefaults(defineProps<PostUpsertFormProps>(), {
-  initialValues: () => ({ title: "", description: "" }),
-});
-const { initialValues } = toRefs(props);
+const { initialValues = { title: "", description: "" } } = defineProps<PostUpsertFormProps>();
 const emit = defineEmits<{
   submit: [submitEventPromise: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
-const title = ref(initialValues.value.title);
-const description = ref(initialValues.value.description);
+const title = ref(initialValues.title);
+const description = ref(initialValues.description);
 </script>
 
 <template>

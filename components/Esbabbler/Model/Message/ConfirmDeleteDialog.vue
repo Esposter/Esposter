@@ -12,8 +12,7 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
   messagePreview: (props: {}) => unknown;
 }>();
-const props = defineProps<ConfirmDeleteMessageDialogProps>();
-const { message } = toRefs(props);
+const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
 const { $client } = useNuxtApp();
 const { deleteMessage } = useMessageStore();
 </script>

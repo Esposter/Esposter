@@ -6,24 +6,21 @@ import type { Card } from "@/models/visual/Card";
 import type { Component } from "vue";
 import { useDisplay } from "vuetify";
 
-const props = withDefaults(
-  defineProps<{
-    cards: Card[];
-    duration?: number;
-    maxShownCards?: number;
-    cardScaleYRatioLoss?: number;
-    cardTemplate?: Component;
-  }>(),
-  {
-    // Duration before cards move
-    duration: 10000,
-    maxShownCards: 5,
-    // Ratio of how much shorter the next card is
-    cardScaleYRatioLoss: 0.05,
-    cardTemplate: BaseCard,
-  },
-);
-const { cards, duration, maxShownCards, cardScaleYRatioLoss } = toRefs(props);
+const {
+  cards,
+  // Duration before cards move
+  duration = 10000,
+  maxShownCards = 5,
+  // Ratio of how much shorter the next card is
+  cardScaleYRatioLoss = 0.05,
+  cardTemplate = BaseCard,
+} = defineProps<{
+  cards: Card[];
+  duration?: number;
+  maxShownCards?: number;
+  cardScaleYRatioLoss?: number;
+  cardTemplate?: Component;
+}>();
 
 /**
  * === Generation of styling for css cards ===
@@ -67,7 +64,7 @@ interface CardStyleVariables {
 // We will create fake card ids that are just the indexes of our cards.
 // By doing this, we can "rotate" the cards by just incrementing the whole list by 1.
 // This can also act as a z index for us to use, which is pretty convenient C:
-const cardIds = ref<number[]>(cards.value.map((_, index) => index));
+const cardIds = ref<number[]>(cards.map((_, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number | null>(null);
@@ -94,7 +91,7 @@ const scale = computed<number>(() => {
 
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
-  const numberOfCards = Math.min(maxShownCards.value, cards.value.length - 1);
+  const numberOfCards = Math.min(maxShownCards, cards.length - 1);
   // start at right most and move to the left
   // we just need items for the rest so that we don't try to do operations on undefined
   const items: CardStyleVariables[] = [];
@@ -106,14 +103,14 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
       oldMarginRight: `${i * scale.value}rem`,
       marginRight: `${(i + 1) * scale.value}rem`,
       oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss.value * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
     });
 
   // this is for the SFC style bindings that need this to exist
   items.reverse();
 
   // we just need items for the rest so that we don't try to do operations on undefined
-  for (let i = numberOfCards - 1; i < maxShownCards.value; i++) items.push({});
+  for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
   return items;
 });
 
@@ -123,8 +120,8 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
   // don't care about size if we just have 1 card
-  if (cards.value.length === 1) return { scaleY: "1" };
-  return { scaleY: `${1 - cardScaleYRatioLoss.value * (Math.min(maxShownCards.value, cards.value.length - 1) - 1)}` };
+  if (cards.length === 1) return { scaleY: "1" };
+  return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
 });
 
 const secondLastCardStyle = computed<CardStyleVariables>(
@@ -148,14 +145,14 @@ const getClass = (cardId: number): string => {
   if (inactiveCardId === null) {
     // set initial positions for everything, in these cases the 'activeCard' is the first card
     if (cardId === activeCardId.value) return "initial-active-card";
-    if (offset === Math.min(maxShownCards.value + 1, cards.value.length) - 2) return "last-card";
-    if (offset > maxShownCards.value - 2) return "overflow-card";
+    if (offset === Math.min(maxShownCards + 1, cards.length) - 2) return "last-card";
+    if (offset > maxShownCards - 2) return "overflow-card";
     return `initial-normal-card-${offset}`;
   }
 
   if (cardId === activeCardId.value) return "active-card";
   if (cardId === inactiveCardId.value) return "inactive-card";
-  if (offset > maxShownCards.value - 2) return "overflow-card";
+  if (offset > maxShownCards - 2) return "overflow-card";
   return `normal-card-${offset}`;
 };
 
@@ -165,8 +162,8 @@ const moveCardsTimer = ref<number>();
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
-  if (!cards.value.length) return;
-  if (cards.value.length === 1) {
+  if (!cards.length) return;
+  if (cards.length === 1) {
     moveOneCard();
     return;
   }
@@ -174,7 +171,7 @@ const moveCards = () => {
   inactiveCardId.value = activeCardId.value;
   activeCardId.value = cardIds.value[0];
   // "Rotate" the cards
-  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.value.length);
+  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
 };
 
 const moveOneCard = () => {
@@ -185,18 +182,21 @@ const moveOneCard = () => {
 
 onMounted(() => {
   // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
-  if (duration.value > 0) moveCardsTimer.value = window.setInterval(moveCards, duration.value);
+  if (duration > 0) moveCardsTimer.value = window.setInterval(moveCards, duration);
   moveCards();
 });
 
 onUnmounted(() => clearInterval(moveCardsTimer.value));
 
 // If cards update then we want to refresh the entire display back to the first step.
-watch(cards, (newValue) => {
-  cardIds.value = newValue.map((_, index) => index);
-  inactiveCardId.value = null;
-  activeCardId.value = 0;
-});
+watch(
+  () => cards,
+  (newValue) => {
+    cardIds.value = newValue.map((_, index) => index);
+    inactiveCardId.value = null;
+    activeCardId.value = 0;
+  },
+);
 </script>
 
 <template>

@@ -6,11 +6,10 @@ interface VWaypointProps {
   active: boolean;
 }
 
-const props = defineProps<VWaypointProps>();
-const { active } = toRefs(props);
+const { active } = defineProps<VWaypointProps>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const loading = ref(false);
-const realActive = computed(() => !loading.value && active.value);
+const realActive = computed(() => !loading.value && active);
 </script>
 
 <template>

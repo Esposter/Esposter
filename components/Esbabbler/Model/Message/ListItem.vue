@@ -10,13 +10,12 @@ interface MessageListItemProps {
   creator: User;
 }
 
-const props = defineProps<MessageListItemProps>();
-const { message } = toRefs(props);
+const { message } = defineProps<MessageListItemProps>();
 const sanitizedMessageHtml = computed(() => {
-  const newMessage = refreshMentions(message.value.message);
+  const newMessage = refreshMentions(message.message);
   return DOMPurify.sanitize(newMessage);
 });
-const displayCreatedAt = computed(() => dayjs(message.value.createdAt).format("h:mm A"));
+const displayCreatedAt = computed(() => dayjs(message.createdAt).format("h:mm A"));
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
