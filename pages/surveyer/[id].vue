@@ -23,9 +23,13 @@ onMounted(() => {
   const survey = surveyerConfiguration.value?.find((s) => s.id === route.params.id);
   if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
-  creator.text = JSON.stringify(survey.model);
+  creator.text = survey.model;
   creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
-    save(survey.id);
+    if (!surveyerConfiguration.value) return;
+
+    survey.model = creator.text;
+    survey.updatedAt = new Date();
+    save();
     callback(saveNo, true);
   };
   creator.render(surveyCreatorId);

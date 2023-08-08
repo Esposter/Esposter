@@ -28,13 +28,8 @@ export const useSurveyerStore = defineStore("surveyer", () => {
 
   const searchQuery = ref("");
 
-  const save = (id?: string) => {
+  const save = () => {
     if (!surveyerConfiguration.value) return;
-
-    if (id) {
-      const survey = surveyerConfiguration.value.find((s) => s.id === id);
-      if (survey) survey.updatedAt = new Date();
-    }
 
     // @NOTE: Implement saving data from blob when user is authed
     if (status.value === "authenticated") return;
