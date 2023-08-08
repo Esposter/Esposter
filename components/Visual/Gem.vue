@@ -49,12 +49,12 @@ onMounted(() => {
   });
 
   // Lighting
-  const ambientLight = new AmbientLight(0xffffff, 2);
+  const ambientLight = new AmbientLight(0xffffff, 4);
   scene.add(ambientLight);
-  const directionalLight = new DirectionalLight(0xffffff, 3);
+  const directionalLight = new DirectionalLight(0xffffff, 6);
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
-  const directionalLight2 = new DirectionalLight(0xffffff, 3);
+  const directionalLight2 = new DirectionalLight(0xffffff, 6);
   directionalLight2.position.set(-1, -1, -1);
   scene.add(directionalLight2);
 
