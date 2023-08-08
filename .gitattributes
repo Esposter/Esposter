@@ -46,7 +46,7 @@
 *.sql text
 *.styl text
 *.tag text
-*.ts text
+*.ts text eol=lf
 *.tsx text
 *.xml text
 *.xhtml text diff=html
@@ -97,7 +97,7 @@ TODO text
 *.tmpl text
 *.tpl text
 *.twig text
-*.vue text
+*.vue text eol=lf
 
 # Configs
 *.cnf text
