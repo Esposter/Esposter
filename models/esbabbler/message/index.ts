@@ -1,9 +1,8 @@
 import { CompositeKeyEntity } from "@/models/azure";
-import { FileEntity, fileSchema } from "@/models/esbabbler/message/file";
-import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
-// @NOTE: Fix class-transformer when decorator gets supported in nuxt 3
-// import { Type } from "class-transformer";
+import type { FileEntity } from "@/models/esbabbler/message/file";
+import { fileSchema } from "@/models/esbabbler/message/file";
 import { userSchema } from "@/server/trpc/routers/user";
+import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
 import { z } from "zod";
 
 export class MessageEntity extends CompositeKeyEntity {
@@ -11,7 +10,6 @@ export class MessageEntity extends CompositeKeyEntity {
 
   message!: string;
 
-  // @Type(() => FileEntity)
   files!: FileEntity[];
 
   createdAt!: Date;
