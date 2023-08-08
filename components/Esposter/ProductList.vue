@@ -22,7 +22,7 @@ const items: ListItem[] = [
   {
     title: "Surveyer",
     href: RoutePath.Surveyer,
-    icon: "mdi-text-box-edit-outline",
+    icon: "mdi-text-box-edit",
   },
 ];
 </script>

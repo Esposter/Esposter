@@ -16,7 +16,7 @@ const items = computed<ListItem[]>(() =>
         {
           title: "About",
           href: RoutePath.About,
-          icon: "mdi-information-outline",
+          icon: "mdi-information",
         },
         {
           title: "Privacy Policy",
@@ -39,7 +39,7 @@ const items = computed<ListItem[]>(() =>
         {
           title: "About",
           href: RoutePath.About,
-          icon: "mdi-information-outline",
+          icon: "mdi-information",
         },
         {
           title: "Privacy Policy",
