@@ -80,6 +80,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     defaults: {
       VAutocomplete: { variant: "outlined" },
       VBtn: { style: { backgroundColor: "transparent" }, flat: true },
+      VCombobox: { variant: "outlined" },
       VDataTable: {
         style: {
           borderRadius: ".25rem",

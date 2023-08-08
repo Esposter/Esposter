@@ -44,7 +44,7 @@ const group = ref(survey.value.group);
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-            <v-text-field v-model="group" label="Group" :rules="[formRules.isNotEqual(survey.group)]" />
+            <SurveyerGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
           </v-col>
         </v-row>
       </v-container>
