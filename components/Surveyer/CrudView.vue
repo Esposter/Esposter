@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 type SurveyItem = { raw: Survey };
 
 const surveyerStore = useSurveyerStore();
-const { deleteSurvey } = surveyerStore;
 const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
 </script>
 
@@ -36,18 +35,7 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
       </template>
       <template #[`item.actions`]="{ item }">
         <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
-        <StyledConfirmDeleteDialogButton
-          :card-props="{
-            title: 'Delete Survey',
-            text: 'Are you sure you want to delete this survey?',
-          }"
-          @delete="
-            (onComplete) => {
-              deleteSurvey((item as SurveyItem).raw.id);
-              onComplete();
-            }
-          "
-        />
+        <SurveyerDeleteSurveyDialogButton :survey-id="(item as SurveyItem).raw.id" />
       </template>
     </StyledDataTable>
   </v-container>
