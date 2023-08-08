@@ -12,7 +12,6 @@ interface CreateSurveyDialogProps {
 
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: {}) => unknown;
 }>();
 const { initialValue, cardProps } = defineProps<CreateSurveyDialogProps>();
 const surveyerStore = useSurveyerStore();
