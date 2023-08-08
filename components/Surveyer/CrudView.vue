@@ -35,6 +35,10 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
       </template>
       <template #[`item.actions`]="{ item }">
         <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
+        <SurveyerCloneSurveyDialogButton
+          :group="(item as SurveyItem).raw.group"
+          :model="(item as SurveyItem).raw.model"
+        />
         <SurveyerDeleteSurveyDialogButton :survey-id="(item as SurveyItem).raw.id" />
       </template>
     </StyledDataTable>
