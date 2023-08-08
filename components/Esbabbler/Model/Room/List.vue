@@ -9,8 +9,7 @@ interface RoomListProps {
 }
 
 defineSlots<{ prepend: (props: {}) => unknown }>();
-const props = defineProps<RoomListProps>();
-const { rooms, hasMore, readMoreRooms } = toRefs(props);
+const { rooms, hasMore, readMoreRooms } = defineProps<RoomListProps>();
 </script>
 
 <template>

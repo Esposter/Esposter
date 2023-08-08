@@ -5,8 +5,7 @@ interface PostConfirmDeleteDialogButtonProps {
   postId: string;
 }
 
-const props = defineProps<PostConfirmDeleteDialogButtonProps>();
-const { postId } = toRefs(props);
+const { postId } = defineProps<PostConfirmDeleteDialogButtonProps>();
 const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();
 </script>

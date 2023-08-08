@@ -8,13 +8,12 @@ export interface PointsPopupProps {
   duration: number;
 }
 
-const props = defineProps<PointsPopupProps>();
-const { points, top, left, duration } = toRefs(props);
+const { points, top, left, duration } = defineProps<PointsPopupProps>();
 const { primary } = useColors();
-const displayPoints = computed(() => formatNumberLong(points.value));
-const topPx = computed(() => `${top.value}px`);
-const leftPx = computed(() => `${left.value}px`);
-const durationMs = computed(() => `${duration.value}ms`);
+const displayPoints = computed(() => formatNumberLong(points));
+const topPx = computed(() => `${top}px`);
+const leftPx = computed(() => `${left}px`);
+const durationMs = computed(() => `${duration}ms`);
 </script>
 
 <template>

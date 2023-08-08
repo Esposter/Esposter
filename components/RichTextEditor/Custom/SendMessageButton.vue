@@ -6,11 +6,10 @@ interface CustomEmojiPickerButtonProps {
   editor?: Editor;
 }
 
-const props = defineProps<CustomEmojiPickerButtonProps>();
-const { editor } = toRefs(props);
+const { editor } = defineProps<CustomEmojiPickerButtonProps>();
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
-const disabled = computed(() => Boolean(editor?.value && EMPTY_TEXT_REGEX.test(editor.value.getText())));
+const disabled = computed(() => Boolean(editor && EMPTY_TEXT_REGEX.test(editor.getText())));
 const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 

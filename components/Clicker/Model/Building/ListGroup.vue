@@ -5,9 +5,8 @@ interface BuildingListGroupProps {
   buildings: Building[];
 }
 
-const props = defineProps<BuildingListGroupProps>();
-const { buildings } = toRefs(props);
-const hasBuildings = computed(() => buildings.value.length > 0);
+const { buildings } = defineProps<BuildingListGroupProps>();
+const hasBuildings = computed(() => buildings.length > 0);
 </script>
 
 <template>

@@ -18,8 +18,7 @@ defineSlots<{
   append: (props: FooterBarAppendSlotProps) => unknown;
 }>();
 
-const props = defineProps<FooterBarProps>();
-const { editor } = toRefs(props);
+const { editor } = defineProps<FooterBarProps>();
 </script>
 
 <template>

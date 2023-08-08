@@ -7,15 +7,14 @@ interface MessageEmojiListProps {
   messageRowKey: string;
 }
 
-const props = defineProps<MessageEmojiListProps>();
-const { messageRowKey } = toRefs(props);
+const { messageRowKey } = defineProps<MessageEmojiListProps>();
 const { $client } = useNuxtApp();
 const { data } = useAuth();
 const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 const emojis = computed(() =>
-  getEmojiList(messageRowKey.value).map((e) => ({
+  getEmojiList(messageRowKey).map((e) => ({
     partitionKey: e.partitionKey,
     rowKey: e.rowKey,
     emojiTag: e.emojiTag,

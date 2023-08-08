@@ -7,8 +7,7 @@ interface DefaultLayoutProps {
   mainStyle?: CSSProperties;
 }
 
-const props = defineProps<DefaultLayoutProps>();
-const { mainStyle } = toRefs(props);
+const { mainStyle } = defineProps<DefaultLayoutProps>();
 const slots = defineSlots<{
   default?: (props: {}) => unknown;
   left?: (props: {}) => unknown;

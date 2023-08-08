@@ -7,12 +7,11 @@ interface SurveyerChangeGroupDialogButtonProps {
   survey: Survey;
 }
 
-const props = defineProps<SurveyerChangeGroupDialogButtonProps>();
-const { survey } = toRefs(props);
+const { survey } = defineProps<SurveyerChangeGroupDialogButtonProps>();
 const surveyerStore = useSurveyerStore();
 const { updateSurvey } = surveyerStore;
 const valid = ref(false);
-const group = ref(survey.value.group);
+const group = ref(survey.group);
 </script>
 
 <template>

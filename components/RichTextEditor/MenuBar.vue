@@ -8,26 +8,25 @@ interface MenuBarProps {
   editor?: Editor;
 }
 
-const props = defineProps<MenuBarProps>();
-const { editor } = toRefs(props);
+const { editor } = defineProps<MenuBarProps>();
 const items = computed<MenuItem[]>(() => [
   {
     icon: "mdi-format-bold",
     title: "Bold",
-    onClick: () => editor?.value?.chain().focus().toggleBold().run(),
-    active: editor?.value?.isActive("bold"),
+    onClick: () => editor?.chain().focus().toggleBold().run(),
+    active: editor?.isActive("bold"),
   },
   {
     icon: "mdi-format-italic",
     title: "Italic",
-    onClick: () => editor?.value?.chain().focus().toggleItalic().run(),
-    active: editor?.value?.isActive("italic"),
+    onClick: () => editor?.chain().focus().toggleItalic().run(),
+    active: editor?.isActive("italic"),
   },
   {
     icon: "mdi-format-strikethrough-variant",
     title: "Strike",
-    onClick: () => editor?.value?.chain().focus().toggleStrike().run(),
-    active: editor?.value?.isActive("strike"),
+    onClick: () => editor?.chain().focus().toggleStrike().run(),
+    active: editor?.isActive("strike"),
   },
   {
     isDivider: true,
@@ -35,14 +34,14 @@ const items = computed<MenuItem[]>(() => [
   {
     icon: "mdi-format-list-bulleted",
     title: "Bullet List",
-    onClick: () => editor?.value?.chain().focus().toggleBulletList().run(),
-    active: editor?.value?.isActive("bulletList"),
+    onClick: () => editor?.chain().focus().toggleBulletList().run(),
+    active: editor?.isActive("bulletList"),
   },
   {
     icon: "mdi-format-list-numbered",
     title: "Ordered List",
-    onClick: () => editor?.value?.chain().focus().toggleOrderedList().run(),
-    active: editor?.value?.isActive("orderedList"),
+    onClick: () => editor?.chain().focus().toggleOrderedList().run(),
+    active: editor?.isActive("orderedList"),
   },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;

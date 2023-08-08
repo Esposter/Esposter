@@ -5,8 +5,7 @@ interface PostUpdateButtonProps {
   postId: string;
 }
 
-const props = defineProps<PostUpdateButtonProps>();
-const { postId } = toRefs(props);
+const { postId } = defineProps<PostUpdateButtonProps>();
 </script>
 
 <template>

@@ -12,8 +12,7 @@ interface RichTextEditorProps {
   extensions?: AnyExtension[];
 }
 
-const props = defineProps<RichTextEditorProps>();
-const { placeholder, maxLength, extensions } = toRefs(props);
+const { placeholder, maxLength, extensions } = defineProps<RichTextEditorProps>();
 const modelValue = defineModel<string>({ required: true });
 const slots = defineSlots<{
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
@@ -22,9 +21,9 @@ const slots = defineSlots<{
 const editor = useEditor({
   extensions: [
     StarterKit,
-    Placeholder.configure({ placeholder: placeholder.value }),
-    CharacterCount.configure({ limit: maxLength.value }),
-    ...(extensions?.value ?? []),
+    Placeholder.configure({ placeholder }),
+    CharacterCount.configure({ limit: maxLength }),
+    ...(extensions ?? []),
   ],
   content: modelValue.value,
   onUpdate: ({ editor }) => {

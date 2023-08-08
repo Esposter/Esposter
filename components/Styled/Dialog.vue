@@ -15,8 +15,7 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
-const props = defineProps<StyledDialogProps>();
-const { cardProps, confirmButtonProps } = toRefs(props);
+const { cardProps, confirmButtonProps } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isOpen = ref(false);
 </script>

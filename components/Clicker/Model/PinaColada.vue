@@ -5,8 +5,7 @@ interface PinaColadaProps {
   gAttrs?: SVGAttributes;
 }
 
-const props = defineProps<PinaColadaProps>();
-const { gAttrs } = toRefs(props);
+const { gAttrs } = defineProps<PinaColadaProps>();
 const emit = defineEmits<{
   click: [value: MouseEvent];
 }>();

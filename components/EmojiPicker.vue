@@ -11,8 +11,7 @@ interface EmojiPickerProps {
   buttonAttrs?: VBtn["$attrs"];
 }
 
-const props = defineProps<EmojiPickerProps>();
-const { tooltipProps, buttonProps, buttonAttrs } = toRefs(props);
+const { tooltipProps, buttonProps, buttonAttrs } = defineProps<EmojiPickerProps>();
 const emit = defineEmits<{
   "update:menu": [value: boolean];
   select: [emoji: string];

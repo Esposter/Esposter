@@ -7,12 +7,11 @@ interface MessageListItemContainerProps {
   nextMessage?: MessageEntity;
 }
 
-const props = defineProps<MessageListItemContainerProps>();
-const { currentMessage, nextMessage } = toRefs(props);
+const { currentMessage, nextMessage } = defineProps<MessageListItemContainerProps>();
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
 // We won't show messages from members that have left the room for simplicity
-const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.value.creatorId));
+const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.creatorId));
 </script>
 
 <template>

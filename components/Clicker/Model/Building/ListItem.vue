@@ -10,17 +10,16 @@ interface BuildingListItemProps {
   building: Building;
 }
 
-const props = defineProps<BuildingListItemProps>();
-const { building } = toRefs(props);
+const { building } = defineProps<BuildingListItemProps>();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useSound(buySfx);
-const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building.value));
-const buildingStatsHtml = computed(() => getBoughtBuildingStats(building.value).map((s) => marked.parse(s)));
+const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
+const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
-const buildingPrice = computed(() => getBuildingPrice(building.value));
+const buildingPrice = computed(() => getBuildingPrice(building));
 const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >= buildingPrice.value));
 </script>
 

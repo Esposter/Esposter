@@ -8,8 +8,7 @@ interface MessageListProps {
   readMoreMessages: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
 }
 
-const props = defineProps<MessageListProps>();
-const { messages, hasMore, readMoreMessages } = toRefs(props);
+const { messages, hasMore, readMoreMessages } = defineProps<MessageListProps>();
 </script>
 
 <template>

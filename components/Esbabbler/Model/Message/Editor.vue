@@ -10,13 +10,12 @@ interface MessageEditorProps {
   message: MessageEntity;
 }
 
-const props = defineProps<MessageEditorProps>();
+const { message } = defineProps<MessageEditorProps>();
 const emit = defineEmits<{
   "update:update-mode": [value: false];
   "update:delete-mode": [value: true];
 }>();
-const { message } = toRefs(props);
-const editedMessageHtml = ref(refreshMentions(message.value.message));
+const editedMessageHtml = ref(refreshMentions(message.message));
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -24,21 +23,21 @@ const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
 const onUpdateMessage = async (editor: Editor) => {
   try {
-    if (!currentRoomId.value || editedMessageHtml.value === message.value.message) return;
+    if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
     if (EMPTY_TEXT_REGEX.test(editor.getText())) {
       emit("update:delete-mode", true);
       return;
     }
 
     const updatedMessage = await $client.message.updateMessage.mutate({
-      partitionKey: message.value.partitionKey,
-      rowKey: message.value.rowKey,
+      partitionKey: message.partitionKey,
+      rowKey: message.rowKey,
       message: editedMessageHtml.value,
     });
     if (updatedMessage) updateMessage(updatedMessage);
   } finally {
     emit("update:update-mode", false);
-    editedMessageHtml.value = message.value.message;
+    editedMessageHtml.value = message.message;
   }
 };
 const keyboardExtension = new Extension({

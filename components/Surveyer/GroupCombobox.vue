@@ -7,8 +7,7 @@ interface GroupAutocompleteProps {
 }
 
 const modelValue = defineModel<string | null>();
-const props = defineProps<GroupAutocompleteProps>();
-const { autocompleteProps } = toRefs(props);
+const { autocompleteProps } = defineProps<GroupAutocompleteProps>();
 const surveyerStore = useSurveyerStore();
 const { surveyerConfiguration } = storeToRefs(surveyerStore);
 const groups = computed(() => (surveyerConfiguration.value ? surveyerConfiguration.value.map((s) => s.group) : []));

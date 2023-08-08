@@ -3,9 +3,8 @@ interface StyledClipboardIconButtonProps {
   source: string;
 }
 
-const props = defineProps<StyledClipboardIconButtonProps>();
-const { source } = toRefs(props);
-const { copy, copied } = useClipboard({ source: source.value });
+const { source } = defineProps<StyledClipboardIconButtonProps>();
+const { copy, copied } = useClipboard({ source });
 </script>
 
 <template>

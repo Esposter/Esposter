@@ -5,8 +5,7 @@ interface SurveyerDeleteSurveyButtonDialogProps {
   surveyId: string;
 }
 
-const props = defineProps<SurveyerDeleteSurveyButtonDialogProps>();
-const { surveyId } = toRefs(props);
+const { surveyId } = defineProps<SurveyerDeleteSurveyButtonDialogProps>();
 const surveyerStore = useSurveyerStore();
 const { deleteSurvey } = surveyerStore;
 </script>

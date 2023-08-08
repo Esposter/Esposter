@@ -6,22 +6,21 @@ interface MessageMentionListProps {
   command: (props: Record<string, unknown>) => void;
 }
 
-const props = defineProps<MessageMentionListProps>();
+const { items, command } = defineProps<MessageMentionListProps>();
 const { infoOpacity10 } = useColors();
-const { items, command } = toRefs(props);
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
-  const item = items.value[index];
-  if (item) command.value({ id: item.id, label: item.name });
+  const item = items[index];
+  if (item) command({ id: item.id, label: item.name });
 };
 const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
   if (event.key === "ArrowUp") {
-    selectedIndex.value = (selectedIndex.value + items.value.length - 1) % items.value.length;
+    selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
     return true;
   }
 
   if (event.key === "ArrowDown") {
-    selectedIndex.value = (selectedIndex.value + 1) % items.value.length;
+    selectedIndex.value = (selectedIndex.value + 1) % items.length;
     return true;
   }
 
@@ -36,7 +35,7 @@ const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
 defineExpose({ onKeyDown });
 
 watch(
-  items,
+  () => items,
   () => {
     selectedIndex.value = 0;
   },

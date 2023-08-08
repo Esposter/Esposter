@@ -5,8 +5,7 @@ interface MemberListItemProps {
   member: User;
 }
 
-const props = defineProps<MemberListItemProps>();
-const { member } = toRefs(props);
+const { member } = defineProps<MemberListItemProps>();
 </script>
 
 <template>

@@ -9,10 +9,9 @@ interface FileRendererCodeProps extends FileRendererProps {
   language: string;
 }
 
-const props = defineProps<FileRendererCodeProps>();
-const { url, language } = toRefs(props);
-const code = ref(await (await fetch(url.value)).text());
-const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language.value));
+const { url, language } = defineProps<FileRendererCodeProps>();
+const code = ref(await (await fetch(url)).text());
+const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language));
 const languageConfiguration = ref(new Compartment());
 const languageSupport = ref(languageRequested.value ? await languageRequested.value.load() : undefined);
 const languageExtension = computed(() =>

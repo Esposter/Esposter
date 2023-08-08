@@ -10,8 +10,7 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
-const props = defineProps<StyledDeleteDialogProps>();
-const { cardProps } = toRefs(props);
+const { cardProps } = defineProps<StyledDeleteDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 

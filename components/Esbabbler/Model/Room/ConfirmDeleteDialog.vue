@@ -10,11 +10,10 @@ interface RoomConfirmDeleteDialogProps {
 defineSlots<{
   default: (props: StyledDialogActivatorSlotProps & { tooltipProps: unknown }) => unknown;
 }>();
-const props = defineProps<RoomConfirmDeleteDialogProps>();
-const { roomId, creatorId } = toRefs(props);
+const { roomId, creatorId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { $client } = useNuxtApp();
 const { data } = useAuth();
-const isCreator = computed(() => data.value?.user.id === creatorId.value);
+const isCreator = computed(() => data.value?.user.id === creatorId);
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 </script>

@@ -6,12 +6,11 @@ interface MessageTimelineProps {
   nextMessageDate?: Date;
 }
 
-const props = defineProps<MessageTimelineProps>();
-const { currentMessageDate, nextMessageDate } = toRefs(props);
+const { currentMessageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
 const { border } = useColors();
-const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate.value));
+const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate));
 const areDifferentDays = computed(
-  () => !nextMessageDate?.value || !currentMessageDateDayjs.value.isSame(nextMessageDate.value, "day"),
+  () => !nextMessageDate || !currentMessageDateDayjs.value.isSame(nextMessageDate, "day"),
 );
 const displayDate = computed(() => {
   if (currentMessageDateDayjs.value.isToday()) return "Today";

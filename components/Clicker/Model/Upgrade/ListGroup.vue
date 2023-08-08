@@ -6,9 +6,8 @@ interface UpgradeListGroupProps {
   isBought?: true;
 }
 
-const props = defineProps<UpgradeListGroupProps>();
-const { upgrades, isBought } = toRefs(props);
-const hasUpgrades = computed(() => upgrades.value.length > 0);
+const { upgrades, isBought } = defineProps<UpgradeListGroupProps>();
+const hasUpgrades = computed(() => upgrades.length > 0);
 </script>
 
 <template>
