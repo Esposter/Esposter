@@ -9,6 +9,7 @@ import { UnwrapRef } from "vue";
 
 // @NOTE: This doesn't actually work yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
+// https://github.com/vuejs/core/issues/6766
 export const useTableEditorStore = <TItem extends Item = Item>() =>
   defineStore("tableEditor", () => {
     const { $client } = useNuxtApp();

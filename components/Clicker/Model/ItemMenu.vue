@@ -99,7 +99,8 @@ const upgradeIcon = computed(() => {
   </v-menu>
 </template>
 
-<!-- @NOTE: This doesn't actually work, css binding doesn't work with v-menu -->
+<!-- @NOTE: This doesn't actually work yet -->
+<!-- https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
 .not-affordable {
   color: v-bind(error);

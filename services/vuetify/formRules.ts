@@ -2,8 +2,8 @@ import deepEqual from "deep-equal";
 import type { ArrayElement } from "type-fest/source/internal";
 import type { VValidation } from "vuetify/components";
 
-// @NOTE: Vuetify 3 doesn't export ValidationRule type...
-// So we'll hack our way through to grab the type from a component
+// @NOTE: Remove this type when vuetify team exposes it
+// https://github.com/vuetifyjs/vuetify/issues/16680
 type ValidationRule = ArrayElement<NonNullable<VValidation["$props"]["rules"]>>;
 
 type FormFieldValue = string | string[] | null;
