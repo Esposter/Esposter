@@ -12,11 +12,11 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
   "files.associations": {
     ".env": "env",
     ".env.example": "env"
-  },
-  "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }
