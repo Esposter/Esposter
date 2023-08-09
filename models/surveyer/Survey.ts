@@ -1,4 +1,5 @@
-import { AItemEntity } from "@/models/shared/AItemEntity";
+import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
+import { z } from "zod";
 
 export class Survey extends AItemEntity {
   group: string | null = null;
@@ -9,3 +10,10 @@ export class Survey extends AItemEntity {
     Object.assign(this, init);
   }
 }
+
+export const surveySchema = aItemEntitySchema.merge(
+  z.object({
+    group: z.string().nullable(),
+    model: z.string(),
+  }),
+) satisfies z.ZodType<Survey>;

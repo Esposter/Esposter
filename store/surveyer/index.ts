@@ -3,6 +3,7 @@ import type { SurveyerConfiguration } from "@/models/surveyer/SurveyerConfigurat
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
 
 export const useSurveyerStore = defineStore("surveyer", () => {
+  const { $client } = useNuxtApp();
   const { status } = useAuth();
   const surveyerConfiguration = ref<SurveyerConfiguration | null>(null);
 
@@ -28,13 +29,11 @@ export const useSurveyerStore = defineStore("surveyer", () => {
 
   const searchQuery = ref("");
 
-  const save = () => {
+  const save = async () => {
     if (!surveyerConfiguration.value) return;
 
-    // @NOTE: Implement saving data from blob when user is authed
-    if (status.value === "authenticated") return;
-
-    localStorage.setItem(SURVEYER_STORE, JSON.stringify(surveyerConfiguration.value));
+    if (status.value === "authenticated") await $client.surveyer.saveSurveyer.mutate(surveyerConfiguration.value);
+    else localStorage.setItem(SURVEYER_STORE, JSON.stringify(surveyerConfiguration.value));
   };
 
   return {
