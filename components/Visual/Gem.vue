@@ -42,7 +42,7 @@ onMounted(() => {
     gem = gltf.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
     gem.material.roughnessMap = roughnessTexture;
     gem.material.displacementScale = 0.15;
-    gem.material.emissiveIntensity = 0.4;
+    gem.material.emissiveIntensity = 0;
     gem.material.refractionRatio = 1;
     scene.add(gem);
     ready.value = true;
