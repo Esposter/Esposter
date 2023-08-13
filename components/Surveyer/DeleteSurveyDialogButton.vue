@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useSurveyStore } from "@/store/surveyer/survey";
 
-interface SurveyerDeleteSurveyButtonDialogProps {
+interface DeleteSurveyButtonDialogProps {
   rowKey: string;
 }
 
-const { rowKey } = defineProps<SurveyerDeleteSurveyButtonDialogProps>();
+const { rowKey } = defineProps<DeleteSurveyButtonDialogProps>();
 const surveyerStore = useSurveyStore();
 const { deleteSurvey } = surveyerStore;
 </script>

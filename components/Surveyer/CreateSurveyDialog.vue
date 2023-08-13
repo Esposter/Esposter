@@ -7,27 +7,26 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 import type { VCard } from "vuetify/components";
 
 interface CreateSurveyDialogProps {
+  initialValue?: Pick<SurveyEntity, "name" | "group" | "model">;
   cardProps?: VCard["$props"];
 }
 
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
 }>();
-const modelValue = defineModel<{
-  name: SurveyEntity["name"];
-  group: SurveyEntity["group"];
-  model: SurveyEntity["model"];
-}>({ default: { name: DEFAULT_NAME, group: null, model: "" }, local: true });
-const initialModelValue = modelValue.value;
-const { cardProps } = defineProps<CreateSurveyDialogProps>();
+const { initialValue = { name: DEFAULT_NAME, group: null, model: "" }, cardProps } =
+  defineProps<CreateSurveyDialogProps>();
 const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;
 const valid = ref(false);
+const name = ref(initialValue.name);
+const group = ref(initialValue.group);
 const resetSurvey = () => {
   // Hack resetting the item so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
   window.setTimeout(() => {
-    modelValue.value = initialModelValue;
+    name.value = initialValue.name;
+    group.value = initialValue.group;
   }, 300);
 };
 </script>
@@ -38,7 +37,7 @@ const resetSurvey = () => {
     :confirm-button-props="{ disabled: !valid }"
     @create="
       async (onComplete) => {
-        await createSurvey(modelValue);
+        await createSurvey({ name, group, model: initialValue.model });
         resetSurvey();
         onComplete();
       }
@@ -51,10 +50,10 @@ const resetSurvey = () => {
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-            <v-text-field v-model="modelValue.name" label="Name" :rules="[formRules.required]" />
+            <v-text-field v-model="name" label="Name" :rules="[formRules.required]" />
           </v-col>
           <v-col cols="12">
-            <SurveyerGroupCombobox v-model="modelValue.group" />
+            <SurveyerGroupCombobox v-model="group" />
           </v-col>
         </v-row>
       </v-container>

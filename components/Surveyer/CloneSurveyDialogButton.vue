@@ -7,11 +7,11 @@ interface CloneSurveyDialogButton {
   model: SurveyEntity["model"];
 }
 
-const props = defineProps<CloneSurveyDialogButton>();
+const { name, group, model } = defineProps<CloneSurveyDialogButton>();
 </script>
 
 <template>
-  <SurveyerCreateSurveyDialog :card-props="{ title: 'Clone Survey' }" :="props">
+  <SurveyerCreateSurveyDialog :initial-value="{ name, group, model }" :card-props="{ title: 'Clone Survey' }">
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Clone Survey">
         <template #activator="{ props: activatorProps }">

@@ -23,7 +23,7 @@ const readMoreSurveys = await useReadSurveys();
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       :group-by="[{ key: 'group', order: 'asc' }]"
-      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.raw.id))"
+      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.raw.rowKey))"
     >
       <template #top>
         <SurveyerCrudViewHeader />
