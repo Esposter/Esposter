@@ -20,13 +20,6 @@ export default defineNuxtConfig({
   },
   typescript: {
     shim: false,
-    tsConfig: {
-      compilerOptions: {
-        // @NOTE: https://github.com/unjs/nitro/issues/273
-        emitDecoratorMetadata: true,
-        experimentalDecorators: true,
-      },
-    },
   },
   imports: {
     dirs: ["composables/**"],
