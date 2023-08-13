@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { Survey } from "@/models/surveyer/Survey";
+import { SurveyEntity } from "models/surveyer/SurveyEntity";
 
 interface CloneSurveyDialogButton {
-  group: Survey["group"];
-  model: Survey["model"];
+  name: SurveyEntity["name"];
+  group: SurveyEntity["group"];
+  model: SurveyEntity["model"];
 }
 
 const props = defineProps<CloneSurveyDialogButton>();
 </script>
 
 <template>
-  <SurveyerCreateSurveyDialog :initial-value="new Survey(props)" :card-props="{ title: 'Clone Survey' }">
+  <SurveyerCreateSurveyDialog :card-props="{ title: 'Clone Survey' }" :="props">
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Clone Survey">
         <template #activator="{ props: activatorProps }">

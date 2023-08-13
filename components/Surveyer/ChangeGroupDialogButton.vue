@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Survey } from "@/models/surveyer/Survey";
 import { formRules } from "@/services/vuetify/formRules";
-import { useSurveyerStore } from "@/store/surveyer";
+import { useSurveyStore } from "@/store/surveyer/survey";
+import type { SurveyEntity } from "models/surveyer/SurveyEntity";
 
 interface SurveyerChangeGroupDialogButtonProps {
-  survey: Survey;
+  survey: SurveyEntity;
 }
 
 const { survey } = defineProps<SurveyerChangeGroupDialogButtonProps>();
-const surveyerStore = useSurveyerStore();
+const surveyerStore = useSurveyStore();
 const { updateSurvey } = surveyerStore;
 const valid = ref(false);
 const group = ref(survey.group);
@@ -19,8 +19,8 @@ const group = ref(survey.group);
     :card-props="{ title: 'Change Group' }"
     :confirm-button-props="{ color: 'primary', text: 'Change', disabled: !valid }"
     @confirm="
-      (onComplete) => {
-        updateSurvey({ ...survey, group });
+      async (onComplete) => {
+        await updateSurvey({ ...survey, group });
         onComplete();
       }
     "

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useSurveyerStore } from "@/store/surveyer";
+import { useSurveyStore } from "@/store/surveyer/survey";
 
-const surveyerStore = useSurveyerStore();
+const surveyerStore = useSurveyStore();
 const { searchQuery } = storeToRefs(surveyerStore);
 </script>
 

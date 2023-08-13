@@ -51,8 +51,8 @@ const isDeletable = computed(() => itemNameTyped.value === displayItemName.value
           variant="outlined"
           :disabled="!isDeletable"
           @click="
-            () => {
-              save(true);
+            async () => {
+              await save(true);
               dialog = false;
               itemNameTyped = '';
             }

@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Account {
@@ -97,7 +97,6 @@ model Post {
   parentId    String?
   children    Post[]    @relation("children")
   createdAt   DateTime  @default(now())
-  updated     Boolean   @default(false)
   updatedAt   DateTime  @default(now()) @updatedAt
   deletedAt   DateTime?
 }

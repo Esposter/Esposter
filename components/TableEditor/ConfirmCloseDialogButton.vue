@@ -48,9 +48,9 @@ const dialog = ref(false);
         <v-btn
           variant="outlined"
           @click="
-            () => {
+            async () => {
               dialog = false;
-              save();
+              await save();
             }
           "
         >

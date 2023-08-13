@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useSurveyerStore } from "@/store/surveyer";
+import { useSurveyStore } from "@/store/surveyer/survey";
 import "survey-core/defaultV2.min.css";
 import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
-definePageMeta({ middleware: "surveyer" });
-
+const { status } = useAuth();
 const route = useRoute();
-const surveyerStore = useSurveyerStore();
-const { save } = surveyerStore;
-const { surveyerConfiguration } = storeToRefs(surveyerStore);
+const surveyerStore = useSurveyStore();
+const { updateSurvey, unauthedSave } = surveyerStore;
+const { surveyList } = storeToRefs(surveyerStore);
+const readMoreSurveys = await useReadSurveys();
 const surveyCreatorId = "surveyCreator";
 
 onMounted(() => {
@@ -20,17 +20,22 @@ onMounted(() => {
     showLogicTab: true,
     isAutoSave: true,
   });
-  const survey = surveyerConfiguration.value?.find((s) => s.id === route.params.id);
+  const survey = surveyList.value.find((s) => s.rowKey === route.params.id);
   if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
   creator.text = survey.model;
-  creator.saveSurveyFunc = (saveNo: number, callback: Function) => {
-    if (!surveyerConfiguration.value) return;
-
+  creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
     survey.model = creator.text;
     survey.updatedAt = new Date();
-    save();
-    callback(saveNo, true);
+
+    if (status.value === "authenticated") {
+      try {
+        await updateSurvey(survey);
+        callback(saveNo, true);
+      } catch {
+        callback(saveNo, false);
+      }
+    } else callback(saveNo, unauthedSave(survey));
   };
   creator.render(surveyCreatorId);
 });

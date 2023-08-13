@@ -78,6 +78,8 @@ export const messageRouter = router({
         message: input.message,
         files: [],
         createdAt,
+        updatedAt: createdAt,
+        deletedAt: null,
       };
       const messageClient = await getTableClient(AzureTable.Messages);
       await createEntity<MessageEntity>(messageClient, newMessage);
@@ -99,7 +101,7 @@ export const messageRouter = router({
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
-      await updateEntity<MessageEntity>(messageClient, input);
+      await updateEntity<MessageEntity>(messageClient, { ...input, updatedAt: new Date() });
       messageEventEmitter.emit("onUpdateMessage", input);
       return input;
     }),

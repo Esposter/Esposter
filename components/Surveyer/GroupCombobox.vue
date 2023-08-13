@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSurveyerStore } from "@/store/surveyer";
+import { useSurveyStore } from "@/store/surveyer/survey";
 import type { VCombobox } from "vuetify/components";
 
 interface GroupAutocompleteProps {
@@ -8,13 +8,11 @@ interface GroupAutocompleteProps {
 
 const modelValue = defineModel<string | null>();
 const { autocompleteProps } = defineProps<GroupAutocompleteProps>();
-const surveyerStore = useSurveyerStore();
-const { surveyerConfiguration } = storeToRefs(surveyerStore);
+const surveyerStore = useSurveyStore();
+const { surveyList } = storeToRefs(surveyerStore);
 const groups = computed(() => {
-  if (!surveyerConfiguration.value) return [];
-
   const results = new Set<string>();
-  for (const { group } of surveyerConfiguration.value) if (group) results.add(group);
+  for (const { group } of surveyList.value) if (group) results.add(group);
   return [...results];
 });
 </script>

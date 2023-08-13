@@ -19,7 +19,6 @@ export const postSchema = z.object({
   depth: z.number().int(),
   parentId: z.string().uuid().nullable(),
   createdAt: z.date(),
-  updated: z.boolean(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
 }) satisfies z.ZodType<Post>;

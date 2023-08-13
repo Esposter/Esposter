@@ -1,6 +1,5 @@
-import type { AzureUpdateEntity } from "@/models/azure";
 import type { MessageEntity } from "@/models/esbabbler/message";
-import type { CreateMessageInput, DeleteMessageInput } from "@/server/trpc/routers/message";
+import type { CreateMessageInput, DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import type { Editor } from "@tiptap/core";
@@ -56,11 +55,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
     if (newMessage) createMessage(newMessage);
   };
-  const updateMessage = (updatedMessage: AzureUpdateEntity<MessageEntity>) => {
+  const updateMessage = (input: UpdateMessageInput) => {
     const index = messageList.value.findIndex(
-      (m) => m.partitionKey === updatedMessage.partitionKey && m.rowKey === updatedMessage.rowKey,
+      (m) => m.partitionKey === input.partitionKey && m.rowKey === input.rowKey,
     );
-    if (index > -1) messageList.value[index] = { ...messageList.value[index], ...updatedMessage };
+    if (index > -1) messageList.value[index] = { ...messageList.value[index], ...input };
   };
   const deleteMessage = (input: DeleteMessageInput) => {
     messageList.value = messageList.value.filter(

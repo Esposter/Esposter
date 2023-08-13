@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
-import type { Survey } from "@/models/surveyer/Survey";
 import { surveyerHeaders } from "@/services/surveyer/headers";
-import { useSurveyerStore } from "@/store/surveyer";
+import { useSurveyStore } from "@/store/surveyer/survey";
 import dayjs from "dayjs";
+import type { SurveyEntity } from "models/surveyer/SurveyEntity";
 
-type SurveyItem = { raw: Survey };
+type SurveyItem = { raw: SurveyEntity };
 
-const surveyerStore = useSurveyerStore();
-const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
+const surveyerStore = useSurveyStore();
+const { surveyList, searchQuery } = storeToRefs(surveyerStore);
+const readMoreSurveys = await useReadSurveys();
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
       flex="1 col"
       height="100%"
       :headers="surveyerHeaders"
-      :items="surveyerConfiguration"
+      :items="surveyList"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       :group-by="[{ key: 'group', order: 'asc' }]"
@@ -36,10 +37,11 @@ const { surveyerConfiguration, searchQuery } = storeToRefs(surveyerStore);
       <template #[`item.actions`]="{ item }">
         <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
         <SurveyerCloneSurveyDialogButton
+          :name="(item as SurveyItem).raw.name"
           :group="(item as SurveyItem).raw.group"
           :model="(item as SurveyItem).raw.model"
         />
-        <SurveyerDeleteSurveyDialogButton :survey-id="(item as SurveyItem).raw.id" />
+        <SurveyerDeleteSurveyDialogButton :row-key="(item as SurveyItem).raw.rowKey" />
       </template>
     </StyledDataTable>
   </v-container>
