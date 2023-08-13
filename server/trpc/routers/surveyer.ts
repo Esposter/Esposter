@@ -53,9 +53,12 @@ export const surveyerRouter = router({
   updateSurvey: authedProcedure.input(updateSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const surveyClient = await getTableClient(AzureTable.Surveys);
     const existingSurvey = await getEntity(surveyClient, SurveyEntity, ctx.session.user.id, input.rowKey);
-    input.modelVersion++;
-    if (input.model !== existingSurvey.model && input.modelVersion <= existingSurvey.modelVersion)
-      throw new Error("Cannot not update existing survey model with old model version");
+
+    if (input.model !== existingSurvey.model) {
+      input.modelVersion++;
+      if (input.modelVersion <= existingSurvey.modelVersion)
+        throw new Error("Cannot not update existing survey model with old model version");
+    }
 
     await updateEntity<SurveyEntity>(surveyClient, {
       ...input,

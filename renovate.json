@@ -3,6 +3,7 @@
   "extends": ["config:base"],
   "ignorePresets": [":prHourlyLimit2"],
   "rangeStrategy": "bump",
+  "updatePinnedDependencies": false,
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
