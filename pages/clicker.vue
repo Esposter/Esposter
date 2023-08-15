@@ -3,11 +3,10 @@ import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";
 
-definePageMeta({ middleware: "clicker" });
-
+await useReadGame();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
-const displayNoPoints = computed(() => formatNumberLong(game.value?.noPoints ?? 0));
+const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints));
 
 useTimers();
 </script>

@@ -23,15 +23,11 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
     game.value ? applyBuildingUpgradesSingle(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings) : 0;
   const getBoughtBuildingAmount = (building: Building) => {
-    if (!game.value) return 0;
-
     const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   };
   const getBoughtBuildingStats = (building: Building) => {
-    if (!game.value) return [];
-
     const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return [];
 
@@ -55,8 +51,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {
-    if (!game.value) return;
-
     const newBuildingPrice = getBuildingPrice(newBuilding);
     const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === newBuilding.name);
     if (!boughtBuilding) {

@@ -1,5 +1,5 @@
 import { BuildingWithStats, buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
-import { createUpgradeSchema, Upgrade } from "@/models/clicker/Upgrade";
+import { Upgrade, createUpgradeSchema } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { z } from "zod";
 

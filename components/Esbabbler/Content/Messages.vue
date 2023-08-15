@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useMessageStore } from "@/store/esbabbler/message";
 
+const readMoreMessages = await useReadMessages();
 const messageStore = useMessageStore();
 const { messageList, messageListNextCursor } = storeToRefs(messageStore);
 const hasMore = computed(() => Boolean(messageListNextCursor.value));
-const readMoreMessages = await useReadMessages();
 </script>
 
 <template>

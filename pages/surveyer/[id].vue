@@ -4,12 +4,12 @@ import "survey-core/defaultV2.min.css";
 import "survey-creator-core/survey-creator-core.min.css";
 import { SurveyCreator } from "survey-creator-knockout";
 
+const readMoreSurveys = await useReadSurveys();
 const { status } = useAuth();
 const route = useRoute();
 const surveyerStore = useSurveyStore();
 const { updateSurvey, unauthedSave } = surveyerStore;
 const { surveyList } = storeToRefs(surveyerStore);
-const readMoreSurveys = await useReadSurveys();
 const surveyCreatorId = "surveyCreator";
 
 onMounted(() => {
