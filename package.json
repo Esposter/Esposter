@@ -96,7 +96,7 @@
     "vuetify": "^3.3.12",
     "worker-timers": "^7.0.75",
     "ws": "^8.13.0",
-    "zod": "^3.21.4"
+    "zod": "^3.22.0"
   },
   "overrides": {
     "vue": "latest"
