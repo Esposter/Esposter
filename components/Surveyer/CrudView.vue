@@ -7,9 +7,9 @@ import type { SurveyEntity } from "models/surveyer/SurveyEntity";
 
 type SurveyItem = { raw: SurveyEntity };
 
+const readMoreSurveys = await useReadSurveys();
 const surveyerStore = useSurveyStore();
 const { surveyList, searchQuery } = storeToRefs(surveyerStore);
-const readMoreSurveys = await useReadSurveys();
 </script>
 
 <template>

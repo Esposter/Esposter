@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const amount = computed(() => {
-  const cursorBuilding = game.value?.boughtBuildings.find((b) => b.name === Target.Cursor);
+  const cursorBuilding = game.value.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
 const rotatingDivIds = ref(Array.from({ length: amount.value }, () => uuidv4()));
@@ -31,8 +31,6 @@ const animateCursors = (amount: number) => {
     );
   }
 };
-
-onMounted(() => animateCursors(amount.value));
 
 watch(
   () => amount.value,

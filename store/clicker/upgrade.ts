@@ -16,8 +16,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const unlockedUpgrades = computed<Upgrade[]>(() =>
     upgradeList.value.filter((u) =>
       u.unlockConditions.every((uc) => {
-        if (!game.value) return false;
-
         for (const boughtBuilding of game.value.boughtBuildings)
           if (boughtBuilding.name === uc.target) return boughtBuilding.amount >= uc.amount;
 
@@ -29,8 +27,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   );
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    if (!game.value) return;
-
     game.value.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };

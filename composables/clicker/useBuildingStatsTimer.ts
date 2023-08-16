@@ -10,8 +10,8 @@ export const useBuildingStatsTimer = () => {
   const { game } = storeToRefs(gameStore);
   const buildingStore = useBuildingStore();
   const { getBoughtBuildingPower } = buildingStore;
-  const boughtBuildingPowers = computed<{ name: Target; power: number }[]>(
-    () => game.value?.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) })) ?? [],
+  const boughtBuildingPowers = computed<{ name: Target; power: number }[]>(() =>
+    game.value.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) })),
   );
   const buildingStatsTimers = ref<number[]>([]);
 
@@ -32,7 +32,6 @@ export const useBuildingStatsTimer = () => {
   };
 
   onMounted(() => {
-    if (!game.value) return;
     setBuildingStatsTimers(game.value.boughtBuildings, boughtBuildingPowers.value);
   });
 
@@ -41,7 +40,6 @@ export const useBuildingStatsTimer = () => {
   });
 
   watchEffect(() => {
-    if (!game.value) return;
     buildingStatsTimers.value.forEach((t) => clearInterval(t));
     buildingStatsTimers.value = [];
     setBuildingStatsTimers(game.value.boughtBuildings, boughtBuildingPowers.value);
