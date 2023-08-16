@@ -12,7 +12,7 @@ export class Game implements ItemMetadata {
   updatedAt = new Date();
   deletedAt: Date | null = null;
 
-  constructor(init: Partial<Game>) {
+  constructor(init?: Partial<Game>) {
     Object.assign(this, init);
   }
 
@@ -27,4 +27,4 @@ export const gameSchema = itemMetadataSchema.merge(
     boughtUpgrades: z.array(createUpgradeSchema(upgradeNameSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),
   }),
-) satisfies z.ZodType<Omit<Game, "toJSON" | "toClass">>;
+) satisfies z.ZodType<Omit<Game, "toJSON">>;

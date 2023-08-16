@@ -7,10 +7,10 @@ const { tableEditor, editedItem, editedIndex } = storeToRefs(tableEditorStore);
 // We don't need to show the delete button if user is creating a new item
 const isExistingItem = computed(() => editedIndex.value > -1);
 const originalItem = computed(() => {
-  if (!editedItem.value || !tableEditor.value) return undefined;
+  if (!editedItem.value) return null;
 
   const originalItem = tableEditor.value.items.find((i) => i.id === editedItem.value?.id);
-  if (!originalItem) return undefined;
+  if (!originalItem) return null;
 
   return originalItem;
 });

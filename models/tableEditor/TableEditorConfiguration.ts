@@ -17,6 +17,14 @@ type TableEditorTypes = {
 export class TableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<AItemEntity & ItemEntityType<TodoListItemType>>();
   [TableEditorType.VuetifyComponent] = new TableEditor<AItemEntity & ItemEntityType<VuetifyComponentItemType>>();
+
+  constructor(init?: Partial<TableEditorConfiguration>) {
+    Object.assign(this, init);
+  }
+
+  toJSON() {
+    return JSON.stringify({ ...this });
+  }
 }
 
 export const tableEditorConfigurationSchema = z.object({
@@ -26,4 +34,4 @@ export const tableEditorConfigurationSchema = z.object({
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(
     aItemEntitySchema.merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema)),
   ),
-}) satisfies z.ZodType<TableEditorConfiguration>;
+}) satisfies z.ZodType<Omit<TableEditorConfiguration, "toJSON">>;
