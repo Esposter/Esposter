@@ -18,13 +18,9 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const itemStore = useItemStore();
     const { createItem, updateItem, deleteItem } = itemStore;
 
-    const tableEditorConfiguration = ref<TableEditorConfiguration | null>(null);
+    const tableEditorConfiguration = ref(new TableEditorConfiguration());
     const tableEditorType = ref(TableEditorType.TodoList);
-    const tableEditor = computed(() =>
-      tableEditorConfiguration.value
-        ? (tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] })
-        : null,
-    );
+    const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] });
     const searchQuery = ref("");
     const editFormRef = ref<VFormRef>();
     const editFormDialog = ref(false);
@@ -34,7 +30,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     // The form is "valid" if there's no form open/no errors
     const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
     const isSavable = computed(() => {
-      if (!tableEditor.value || !editedItem.value) return false;
+      if (!editedItem.value) return false;
 
       const originalItem = tableEditor.value.items.find((item) => item.id === editedItem.value?.id);
       // For the form to be savable, it has to have no errors
@@ -47,8 +43,6 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
     const editItem = (id: string) => {
-      if (!tableEditor.value) return;
-
       const item = tableEditor.value.items.find((item) => item.id === id);
       if (!item) return;
 
@@ -59,7 +53,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       editFormDialog.value = true;
     };
     const save = async (isDeleteAction?: true) => {
-      if (!tableEditorConfiguration.value || !editedItem.value) return;
+      if (!editedItem.value) return;
 
       if (isDeleteAction) deleteItem(editedItem.value.id);
       else if (editedIndex.value > -1) updateItem(editedItem.value);

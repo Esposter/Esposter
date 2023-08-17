@@ -5,23 +5,17 @@ export const useItemStore = defineStore("tableEditor/item", () => {
   const tableEditorStore = useTableEditorStore()();
 
   const pushItemList = (items: Item[]) => {
-    if (!tableEditorStore.tableEditor) return;
     tableEditorStore.tableEditor.items.push(...items);
   };
 
   const initialiseItemList = (items: Item[]) => {
-    if (!tableEditorStore.tableEditor) return;
     tableEditorStore.tableEditor.items = items;
   };
   const createItem = (newItem: Item) => {
-    if (!tableEditorStore.tableEditor) return;
-
     tableEditorStore.tableEditor.items.push(newItem);
     tableEditorStore.editFormDialog = false;
   };
   const updateItem = (updatedItem: Item) => {
-    if (!tableEditorStore.tableEditor) return;
-
     const index = tableEditorStore.tableEditor.items.findIndex((r) => r.id === updatedItem.id);
     if (index > -1)
       tableEditorStore.tableEditor.items[index] = {
@@ -31,8 +25,6 @@ export const useItemStore = defineStore("tableEditor/item", () => {
     tableEditorStore.editFormDialog = false;
   };
   const deleteItem = (id: string) => {
-    if (!tableEditorStore.tableEditor) return;
-
     tableEditorStore.tableEditor.items = tableEditorStore.tableEditor.items.filter((r) => r.id !== id);
     tableEditorStore.editFormDialog = false;
   };

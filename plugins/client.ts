@@ -1,8 +1,9 @@
 import type { AppRouter } from "@/server/trpc/routers";
 import { errorLink } from "@/services/trpc/errorLink";
 import type { TRPCLink } from "@trpc/client";
-import { createTRPCProxyClient, createWSClient, httpBatchLink, loggerLink, splitLink, wsLink } from "@trpc/client";
+import { createWSClient, loggerLink, splitLink, wsLink } from "@trpc/client";
 import SuperJSON from "superjson";
+import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
   const url = useClientUrl();
@@ -24,6 +25,6 @@ export default defineNuxtPlugin(() => {
       false: httpBatchLink({ url }),
     }),
   ];
-  const client = createTRPCProxyClient<AppRouter>({ links, transformer: SuperJSON });
+  const client = createTRPCNuxtClient<AppRouter>({ links, transformer: SuperJSON });
   return { provide: { client } };
 });

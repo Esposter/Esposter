@@ -8,7 +8,7 @@ import equal from "deep-equal";
 import type { UnwrapRef } from "vue";
 
 interface TableEditorState<TItem extends Item = Item> {
-  tableEditorConfiguration: TableEditorConfiguration | null;
+  tableEditorConfiguration: TableEditorConfiguration;
   tableEditorType: TableEditorType;
   searchQuery: string;
   editFormRef: VFormRef | undefined;
@@ -21,7 +21,7 @@ interface TableEditorState<TItem extends Item = Item> {
 export const useTableEditorStore = <TItem extends Item = Item>() =>
   defineStore("tableEditor", {
     state: (): TableEditorState<TItem> => ({
-      tableEditorConfiguration: null,
+      tableEditorConfiguration: new TableEditorConfiguration(),
       tableEditorType: TableEditorType.TodoList,
       searchQuery: "",
       editFormRef: undefined,
@@ -31,10 +31,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       isFullScreenDialog: false,
     }),
     getters: {
-      tableEditor(): { items: TItem[] } | null {
-        return this.tableEditorConfiguration
-          ? (this.tableEditorConfiguration[this.tableEditorType] as { items: TItem[] })
-          : null;
+      tableEditor(): { items: TItem[] } {
+        return this.tableEditorConfiguration[this.tableEditorType] as { items: TItem[] };
       },
       isEditFormValid(): boolean {
         // The form is "valid" if there's no form open/no errors

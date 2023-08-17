@@ -3,8 +3,7 @@ import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
 import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList/itemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-definePageMeta({ middleware: "table-editor" });
-
+await useReadTableEditor();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
