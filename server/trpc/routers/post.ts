@@ -2,6 +2,7 @@ import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
+import { userSchema } from "@/server/trpc/routers/user";
 import { ranking } from "@/services/post/ranking";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
@@ -15,7 +16,7 @@ export const postSchema = z.object({
   noLikes: z.number().int().nonnegative(),
   noComments: z.number().int().nonnegative(),
   ranking: z.number(),
-  creatorId: z.string().uuid(),
+  creatorId: userSchema.shape.id,
   depth: z.number().int(),
   parentId: z.string().uuid().nullable(),
   createdAt: z.date(),

@@ -1,5 +1,6 @@
 import { AzureEntity, CompositeKeyEntity } from "@/models/azure";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { userSchema } from "@/server/trpc/routers/user";
 import { DEFAULT_NAME } from "@/services/shared/constants";
 import { z } from "zod";
 
@@ -17,9 +18,7 @@ export class SurveyEntity extends AzureEntity {
 
 export const surveySchema = itemMetadataSchema.merge(
   z.object({
-    // Creator id
-    partitionKey: z.string().uuid(),
-    // Guid
+    partitionKey: userSchema.shape.id,
     rowKey: z.string().uuid(),
     name: z.string(),
     group: z.string().nullable(),
