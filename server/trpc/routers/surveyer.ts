@@ -48,10 +48,9 @@ export const surveyerRouter = router({
       modelVersion: 1,
       createdAt,
       updatedAt: createdAt,
-      deletedAt: null,
     });
     const surveyClient = await getTableClient(AzureTable.Surveys);
-    await createEntity<SurveyEntity>(surveyClient, newSurvey);
+    await createEntity(surveyClient, newSurvey);
     return newSurvey;
   }),
   updateSurvey: authedProcedure.input(updateSurveyInputSchema).mutation(async ({ input, ctx }) => {
@@ -65,7 +64,7 @@ export const surveyerRouter = router({
         throw new Error("Cannot not update survey model with old model version");
     }
 
-    await updateEntity<SurveyEntity>(surveyClient, {
+    await updateEntity(surveyClient, {
       ...input,
       partitionKey: ctx.session.user.id,
       updatedAt: new Date(),
@@ -88,7 +87,7 @@ export const surveyerRouter = router({
     if (!survey) throw new Error("Cannot find survey");
     if (!publishedSurvey) {
       const newPublishedSurvey = new PublishedSurveyEntity(survey);
-      await createEntity<PublishedSurveyEntity>(publishedSurveyClient, newPublishedSurvey);
+      await createEntity(publishedSurveyClient, newPublishedSurvey);
       return;
     }
 
@@ -96,7 +95,7 @@ export const surveyerRouter = router({
     if (input.publishVersion <= publishedSurvey.publishVersion)
       throw new Error("Cannot not update survey publish with old publish version");
 
-    await updateEntity<PublishedSurveyEntity>(publishedSurveyClient, {
+    await updateEntity(publishedSurveyClient, {
       ...input,
       partitionKey: ctx.session.user.id,
       publishedAt: new Date(),

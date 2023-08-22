@@ -1,4 +1,4 @@
-import { AzureTable } from "@/models/azure/table";
+import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { replyEventEmitter } from "@/models/esbabbler/events/reply";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/esbabbler/message/reply";
@@ -28,8 +28,10 @@ export const replyRouter = router({
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)
     .query(async ({ input: { roomId, messages } }) => {
-      const client = await getTableClient(AzureTable.MessagesMetadata);
-      return getTopNEntities(client, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
+      const messagesMetadataClient = (await getTableClient(
+        AzureTable.MessagesMetadata,
+      )) as CustomTableClient<MessageReplyMetadataEntity>;
+      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and type eq '${MessageMetadataType.Reply}' and (${messages
           .map((m) => `messageRowKey eq '${m.rowKey}'`)
           .join(" or ")})`,
@@ -49,20 +51,23 @@ export const replyRouter = router({
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
-      const client = await getTableClient(AzureTable.MessagesMetadata);
-      const replies = await getTopNEntities(client, 1, MessageReplyMetadataEntity, {
+      const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+      const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
         filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.Reply} and messageRowKey eq ${input.messageRowKey} and messageReplyRowKey eq ${input.messageReplyRowKey}`,
       });
       if (replies.length > 0) return null;
 
-      const newReply: MessageReplyMetadataEntity = {
+      const createdAt = new Date();
+      const newReply = new MessageReplyMetadataEntity({
         partitionKey: input.partitionKey,
         rowKey: now(),
         messageRowKey: input.messageRowKey,
         type: MessageMetadataType.Reply,
         messageReplyRowKey: input.messageReplyRowKey,
-      };
-      await createEntity<MessageReplyMetadataEntity>(client, newReply);
+        createdAt,
+        updatedAt: createdAt,
+      });
+      await createEntity(messagesMetadataClient, newReply);
       replyEventEmitter.emit("onCreateReply", newReply);
       return newReply;
     }),

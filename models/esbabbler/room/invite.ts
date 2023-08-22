@@ -3,10 +3,10 @@ import { roomSchema } from "@/models/esbabbler/room";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
 
-export class InviteCodeEntity extends AzureEntity {
+export class InviteEntity extends AzureEntity {
   roomId!: string;
 
-  constructor(init: Partial<InviteCodeEntity> & CompositeKeyEntity) {
+  constructor(init: Partial<InviteEntity> & CompositeKeyEntity) {
     super();
     Object.assign(this, init);
   }
@@ -18,4 +18,4 @@ export const inviteCodeSchema = itemMetadataSchema.merge(
     rowKey: z.string(),
     roomId: roomSchema.shape.id,
   }),
-) satisfies z.ZodType<InviteCodeEntity>;
+) satisfies z.ZodType<InviteEntity>;

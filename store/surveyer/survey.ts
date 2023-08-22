@@ -30,7 +30,6 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
         modelVersion: 1,
         createdAt,
         updatedAt: createdAt,
-        deletedAt: null,
       });
       surveyList.value.push(newSurvey);
       unauthedSave();

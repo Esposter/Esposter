@@ -1,5 +1,5 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
-import type { AzureTable, CustomTableClient } from "@/models/azure/table";
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
 import { now } from "@/utils/time";
 import type { SkipFirst } from "@/utils/types";
 import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
@@ -7,15 +7,15 @@ import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
 import dayjs from "dayjs";
 
-export const getTableClient = async <TEntity extends CompositeKey>(
-  tableName: AzureTable,
-): Promise<CustomTableClient<TEntity>> => {
+export const getTableClient = async <TAzureTable extends AzureTable>(
+  tableName: TAzureTable,
+): Promise<CustomTableClient<AzureTableEntityMap[TAzureTable]>> => {
   const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
   try {
     await tableClient.createTable();
-    return tableClient as CustomTableClient<TEntity>;
+    return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
   } catch {
-    return tableClient as CustomTableClient<TEntity>;
+    return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
   }
 };
 

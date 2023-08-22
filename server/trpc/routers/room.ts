@@ -1,6 +1,5 @@
 import { AzureTable } from "@/models/azure/table";
 import { roomSchema } from "@/models/esbabbler/room";
-import { InviteCodeEntity, inviteCodeSchema } from "@/models/esbabbler/room/inviteCode";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
@@ -11,6 +10,7 @@ import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
 import { User } from "@prisma/client";
+import { InviteEntity, inviteCodeSchema } from "models/esbabbler/room/invite";
 import { z } from "zod";
 
 const readRoomInputSchema = roomSchema.shape.id.optional();
@@ -93,8 +93,8 @@ export const roomRouter = router({
     return count === 1;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
-    const tableClient = await getTableClient(AzureTable.Invites);
-    const invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+    const inviteClient = await getTableClient(AzureTable.Invites);
+    const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
       filter: odata`PartitionKey eq ${INVITES_PARTITION_KEY} and RowKey eq ${input}`,
     });
     if (invites.length === 0) return false;
@@ -125,37 +125,36 @@ export const roomRouter = router({
   generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)
     .mutation(async ({ input: { roomId } }) => {
-      const tableClient = await getTableClient(AzureTable.Invites);
+      const inviteClient = await getTableClient(AzureTable.Invites);
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
-      let invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
         filter: odata`PartitionKey eq ${INVITES_PARTITION_KEY} and roomId eq ${roomId}`,
       });
       if (invites.length > 0) return invites[0].rowKey;
 
       // Generate non-colliding invite code
       let inviteCode = generateCode(8);
-      invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+      invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
         filter: odata`PartitionKey eq ${INVITES_PARTITION_KEY} and RowKey eq ${inviteCode}`,
       });
 
       while (invites.length > 0) {
         inviteCode = generateCode(8);
-        invites = await getTopNEntities(tableClient, 1, InviteCodeEntity, {
+        invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
           filter: odata`PartitionKey eq ${INVITES_PARTITION_KEY} and RowKey eq ${inviteCode}`,
         });
       }
 
       const createdAt = new Date();
-      const newInviteCode = new InviteCodeEntity({
+      const newInvite = new InviteEntity({
         partitionKey: INVITES_PARTITION_KEY,
         rowKey: inviteCode,
         roomId,
         createdAt,
         updatedAt: createdAt,
-        deletedAt: null,
       });
-      await createEntity<InviteCodeEntity>(tableClient, newInviteCode);
+      await createEntity(inviteClient, newInvite);
       return inviteCode;
     }),
 });
