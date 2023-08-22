@@ -1,4 +1,4 @@
-import { ItemMetadata } from "@/models/shared/ItemMetadata";
+import { ApplyItemMetadataMixin } from "@/models/shared/ItemMetadata";
 import type { TableEntity } from "@azure/data-tables";
 import type { OmitIndexSignature } from "type-fest";
 
@@ -9,15 +9,7 @@ export class CompositeKeyEntity implements CompositeKey {
   rowKey!: string;
 }
 
-export class AzureEntity extends CompositeKeyEntity implements ItemMetadata {
-  createdAt = new Date();
-  updatedAt = new Date();
-  deletedAt: Date | null = null;
-
-  constructor(init: Partial<AzureEntity> & CompositeKeyEntity) {
-    super();
-    Object.assign(this, init);
-  }
-}
+export type AzureEntity = typeof AzureEntity.prototype;
+export const AzureEntity = ApplyItemMetadataMixin(CompositeKeyEntity);
 
 export type AzureUpdateEntity<T> = CompositeKey & Partial<T>;

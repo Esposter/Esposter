@@ -1,4 +1,4 @@
-import { AzureEntity } from "@/models/azure";
+import { AzureEntity, CompositeKeyEntity } from "@/models/azure";
 import type { FileEntity } from "@/models/esbabbler/message/file";
 import { fileSchema } from "@/models/esbabbler/message/file";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
@@ -12,6 +12,11 @@ export class MessageEntity extends AzureEntity {
   message!: string;
 
   files!: FileEntity[];
+
+  constructor(init: Partial<MessageEntity> & CompositeKeyEntity) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const messageSchema = itemMetadataSchema.merge(

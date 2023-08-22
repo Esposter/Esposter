@@ -71,7 +71,7 @@ export const messageRouter = router({
     .input(createMessageInputSchema)
     .mutation(async ({ input, ctx }) => {
       const createdAt = new Date();
-      const newMessage: MessageEntity = {
+      const newMessage = new MessageEntity({
         partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
         rowKey: getReverseTickedTimestamp(),
         creatorId: ctx.session.user.id,
@@ -80,7 +80,7 @@ export const messageRouter = router({
         createdAt,
         updatedAt: createdAt,
         deletedAt: null,
-      };
+      });
       const messageClient = await getTableClient(AzureTable.Messages);
       await createEntity<MessageEntity>(messageClient, newMessage);
       messageEventEmitter.emit("onCreateMessage", newMessage);

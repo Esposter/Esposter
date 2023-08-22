@@ -7,7 +7,7 @@ export class InviteCodeEntity extends AzureEntity {
   roomId!: string;
 
   constructor(init: Partial<InviteCodeEntity> & CompositeKeyEntity) {
-    super(init);
+    super();
     Object.assign(this, init);
   }
 }
