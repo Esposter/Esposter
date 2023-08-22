@@ -1,3 +1,4 @@
+import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
@@ -9,20 +10,19 @@ import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/vali
 import type { Post } from "@prisma/client";
 import { z } from "zod";
 
-export const postSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
-  description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
-  noLikes: z.number().int().nonnegative(),
-  noComments: z.number().int().nonnegative(),
-  ranking: z.number(),
-  creatorId: userSchema.shape.id,
-  depth: z.number().int(),
-  parentId: z.string().uuid().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
-}) satisfies z.ZodType<Post>;
+export const postSchema = itemMetadataSchema.merge(
+  z.object({
+    id: z.string().uuid(),
+    title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
+    description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
+    noLikes: z.number().int().nonnegative(),
+    noComments: z.number().int().nonnegative(),
+    ranking: z.number(),
+    creatorId: userSchema.shape.id,
+    depth: z.number().int(),
+    parentId: z.string().uuid().nullable(),
+  }),
+) satisfies z.ZodType<Post>;
 
 const readPostInputSchema = postSchema.shape.id.optional();
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

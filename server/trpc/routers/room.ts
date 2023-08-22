@@ -146,14 +146,16 @@ export const roomRouter = router({
         });
       }
 
-      const now = new Date();
-      await createEntity<InviteCodeEntity>(tableClient, {
+      const createdAt = new Date();
+      const newInviteCode = new InviteCodeEntity({
         partitionKey: INVITES_PARTITION_KEY,
         rowKey: inviteCode,
         roomId,
-        createdAt: now,
+        createdAt,
+        updatedAt: createdAt,
+        deletedAt: null,
       });
-
+      await createEntity<InviteCodeEntity>(tableClient, newInviteCode);
       return inviteCode;
     }),
 });

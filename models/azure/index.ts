@@ -13,6 +13,11 @@ export class AzureEntity extends CompositeKeyEntity implements ItemMetadata {
   createdAt = new Date();
   updatedAt = new Date();
   deletedAt: Date | null = null;
+
+  constructor(init: Partial<AzureEntity> & CompositeKeyEntity) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export type AzureUpdateEntity<T> = CompositeKey & Partial<T>;

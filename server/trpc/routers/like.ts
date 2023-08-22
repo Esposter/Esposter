@@ -1,3 +1,4 @@
+import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -7,18 +8,17 @@ import { ranking } from "@/services/post/ranking";
 import type { Like, Prisma } from "@prisma/client";
 import { z } from "zod";
 
-export const likeSchema = z.object({
-  userId: userSchema.shape.id,
-  postId: postSchema.shape.id,
-  value: z
-    .number()
-    .int()
-    .refine((value) => value === 1 || value === -1)
-    .innerType(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
-}) satisfies z.ZodType<Like>;
+export const likeSchema = itemMetadataSchema.merge(
+  z.object({
+    userId: userSchema.shape.id,
+    postId: postSchema.shape.id,
+    value: z
+      .number()
+      .int()
+      .refine((value) => value === 1 || value === -1)
+      .innerType(),
+  }),
+) satisfies z.ZodType<Like>;
 
 const createLikeInputSchema = likeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;

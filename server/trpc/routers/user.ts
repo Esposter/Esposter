@@ -1,3 +1,4 @@
+import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -5,16 +6,15 @@ import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
 import type { User } from "@prisma/client";
 import { z } from "zod";
 
-export const userSchema = z.object({
-  id: z.string().cuid(),
-  name: z.string().max(USER_NAME_MAX_LENGTH).nullable(),
-  email: z.string().nullable(),
-  emailVerified: z.date().nullable(),
-  image: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  deletedAt: z.date().nullable(),
-}) satisfies z.ZodType<User>;
+export const userSchema = itemMetadataSchema.merge(
+  z.object({
+    id: z.string().cuid(),
+    name: z.string().max(USER_NAME_MAX_LENGTH).nullable(),
+    email: z.string().nullable(),
+    emailVerified: z.date().nullable(),
+    image: z.string().nullable(),
+  }),
+) satisfies z.ZodType<User>;
 
 const readUserInputSchema = userSchema.shape.id.optional();
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;
