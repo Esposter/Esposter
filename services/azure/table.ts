@@ -1,25 +1,27 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
-import type { AzureTable } from "@/models/azure/table";
+import type { AzureTable, CustomTableClient } from "@/models/azure/table";
 import { now } from "@/utils/time";
 import type { SkipFirst } from "@/utils/types";
-import { TableClient, TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
+import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
 import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
 import dayjs from "dayjs";
 
-export const getTableClient = async (tableName: AzureTable) => {
+export const getTableClient = async <TEntity extends CompositeKey>(
+  tableName: AzureTable,
+): Promise<CustomTableClient<TEntity>> => {
   const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
   try {
     await tableClient.createTable();
-    return tableClient;
+    return tableClient as CustomTableClient<TEntity>;
   } catch {
-    return tableClient;
+    return tableClient as CustomTableClient<TEntity>;
   }
 };
 
-export const createEntity = <Entity extends CompositeKey>(
-  tableClient: TableClient,
-  ...args: [Entity, ...SkipFirst<Parameters<TableClient["createEntity"]>, 1>]
+export const createEntity = <TEntity extends CompositeKey>(
+  tableClient: CustomTableClient<TEntity>,
+  ...args: [TEntity, ...SkipFirst<Parameters<CustomTableClient<TEntity>["createEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(
@@ -31,9 +33,9 @@ export const createEntity = <Entity extends CompositeKey>(
   return tableClient.createEntity(serializedEntity, ...rest);
 };
 
-export const updateEntity = <Entity extends CompositeKey>(
-  tableClient: TableClient,
-  ...args: [AzureUpdateEntity<Entity>, ...SkipFirst<Parameters<TableClient["updateEntity"]>, 1>]
+export const updateEntity = <TEntity extends CompositeKey>(
+  tableClient: CustomTableClient<TEntity>,
+  ...args: [AzureUpdateEntity<TEntity>, ...SkipFirst<Parameters<CustomTableClient<TEntity>["updateEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(
@@ -45,34 +47,37 @@ export const updateEntity = <Entity extends CompositeKey>(
   return tableClient.updateEntity(serializedEntity, ...rest);
 };
 
-export const deleteEntity = (tableClient: TableClient, ...args: Parameters<TableClient["deleteEntity"]>) => {
+export const deleteEntity = <TEntity extends CompositeKey>(
+  tableClient: CustomTableClient<TEntity>,
+  ...args: Parameters<CustomTableClient<TEntity>["deleteEntity"]>
+) => {
   return tableClient.deleteEntity(...args);
 };
 
-export const getEntity = async <Entity extends CompositeKey>(
-  tableClient: TableClient,
-  cls: ClassConstructor<Entity>,
-  ...args: Parameters<TableClient["getEntity"]>
-): Promise<Entity | null> => {
+export const getEntity = async <TEntity extends CompositeKey>(
+  tableClient: CustomTableClient<TEntity>,
+  cls: ClassConstructor<TEntity>,
+  ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
+): Promise<TEntity | null> => {
   try {
-    const result = await tableClient.getEntity<Entity>(...args);
+    const result = await tableClient.getEntity<TEntity>(...args);
     return plainToInstance(cls, result);
   } catch {
     return null;
   }
 };
 
-export const getTopNEntities = async <Entity extends CompositeKey>(
-  tableClient: TableClient,
+export const getTopNEntities = async <TEntity extends CompositeKey>(
+  tableClient: CustomTableClient<TEntity>,
   topN: number,
-  cls: ClassConstructor<Entity>,
+  cls: ClassConstructor<TEntity>,
   queryOptions?: TableEntityQueryOptions,
-): Promise<Entity[]> => {
-  const listResults = tableClient.listEntities<Entity>({ queryOptions });
+): Promise<TEntity[]> => {
+  const listResults = tableClient.listEntities<TEntity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  const firstPage = (await iterator.next()).value as (Entity | string)[];
+  const firstPage = (await iterator.next()).value as (TEntity | string)[];
   if (!firstPage) return [];
   // Filter out metadata like continuation token
   // before deserializing the json to handle transforming Date objects

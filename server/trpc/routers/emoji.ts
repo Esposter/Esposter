@@ -82,14 +82,14 @@ export const emojiRouter = router({
       });
       if (foundEmojis.length > 0) return null;
 
-      const newEmoji: MessageEmojiMetadataEntity = {
+      const newEmoji = new MessageEmojiMetadataEntity({
         partitionKey: input.partitionKey,
         rowKey: now(),
         messageRowKey: input.messageRowKey,
         type: MessageMetadataType.EmojiTag,
         emojiTag: input.emojiTag,
         userIds: [ctx.session.user.id],
-      };
+      });
       await createEntity<MessageEmojiMetadataEntity>(client, newEmoji);
       emojiEventEmitter.emit("onCreateEmoji", newEmoji);
       return newEmoji;

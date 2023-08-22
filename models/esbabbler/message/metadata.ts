@@ -1,5 +1,6 @@
-import { CompositeKeyEntity } from "@/models/azure";
+import { AzureEntity } from "@/models/azure";
 import { messageSchema } from "@/models/esbabbler/message";
+import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
 
 export enum MessageMetadataType {
@@ -7,15 +8,17 @@ export enum MessageMetadataType {
   Reply = "Reply",
 }
 
-export class MessageMetadataEntity extends CompositeKeyEntity {
+export class MessageMetadataEntity extends AzureEntity {
   messageRowKey!: string;
 
   type!: MessageMetadataType;
 }
 
-export const messageMetadataSchema = z.object({
-  partitionKey: messageSchema.shape.partitionKey,
-  rowKey: z.string(),
-  messageRowKey: messageSchema.shape.rowKey,
-  type: z.nativeEnum(MessageMetadataType),
-}) satisfies z.ZodType<MessageMetadataEntity>;
+export const messageMetadataSchema = itemMetadataSchema.merge(
+  z.object({
+    partitionKey: messageSchema.shape.partitionKey,
+    rowKey: z.string(),
+    messageRowKey: messageSchema.shape.rowKey,
+    type: z.nativeEnum(MessageMetadataType),
+  }),
+) satisfies z.ZodType<MessageMetadataEntity>;
