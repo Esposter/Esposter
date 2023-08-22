@@ -3,15 +3,12 @@ import { z } from "zod";
 
 export class PublishedSurveyEntity extends SurveyEntity {
   publishVersion = 0;
-
-  constructor(init: PublishedSurveyEntity) {
-    super(init);
-    this.publishVersion = init.publishVersion;
-  }
+  publishedAt = new Date();
 }
 
 export const publishedSurveySchema = surveySchema.merge(
   z.object({
     publishVersion: z.number().int().nonnegative(),
+    publishedAt: z.date(),
   }),
 ) satisfies z.ZodType<PublishedSurveyEntity>;
