@@ -44,7 +44,7 @@
     "next-auth": "4.22.5",
     "nuxt": "^3.6.5",
     "prettier": "^3.0.2",
-    "prisma": "^5.1.1",
+    "prisma": "^5.2.0",
     "sass": "^1.66.1",
     "type-fest": "^4.2.0",
     "vue-tsc": "^1.8.8"
@@ -60,7 +60,7 @@
     "@mdi/font": "^7.2.96",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@pinia/nuxt": "^0.4.11",
-    "@prisma/client": "^5.1.1",
+    "@prisma/client": "^5.2.0",
     "@tiptap/extension-character-count": "^2.1.6",
     "@tiptap/extension-mention": "^2.1.6",
     "@tiptap/extension-placeholder": "^2.1.6",
