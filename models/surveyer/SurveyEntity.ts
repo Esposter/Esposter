@@ -9,6 +9,8 @@ export class SurveyEntity extends AzureEntity {
   group: string | null = null;
   model = "";
   modelVersion = 0;
+  publishVersion = 0;
+  publishedAt: Date | null = null;
 
   constructor(init: Partial<SurveyEntity> & CompositeKeyEntity) {
     super();
@@ -24,5 +26,7 @@ export const surveySchema = itemMetadataSchema.merge(
     group: z.string().nullable(),
     model: z.string(),
     modelVersion: z.number().int().nonnegative(),
+    publishVersion: z.number().int().nonnegative(),
+    publishedAt: z.date().nullable(),
   }),
 ) satisfies z.ZodType<SurveyEntity>;

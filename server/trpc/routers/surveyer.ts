@@ -1,5 +1,4 @@
 import { AzureTable } from "@/models/azure/table";
-import { PublishedSurveyEntity, publishedSurveySchema } from "@/models/surveyer/PublishedSurveyEntity";
 import { SurveyEntity, surveySchema } from "@/models/surveyer/SurveyEntity";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -28,7 +27,7 @@ export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;
 const deleteSurveyInputSchema = surveySchema.pick({ rowKey: true });
 export type DeleteSurveyInput = z.infer<typeof deleteSurveyInputSchema>;
 
-const publishSurveyInputSchema = publishedSurveySchema.pick({ rowKey: true, publishVersion: true });
+const publishSurveyInputSchema = surveySchema.pick({ rowKey: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
 export const surveyerRouter = router({
@@ -61,7 +60,7 @@ export const surveyerRouter = router({
     if (input.model !== survey.model) {
       input.modelVersion++;
       if (input.modelVersion <= survey.modelVersion)
-        throw new Error("Cannot not update survey model with old model version");
+        throw new Error("Cannot update survey model with old model version");
     }
 
     await updateEntity(surveyClient, {
@@ -76,26 +75,15 @@ export const surveyerRouter = router({
     await deleteEntity(surveyClient, ctx.session.user.id, input.rowKey);
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ input, ctx }) => {
-    const [surveyClient, publishedSurveyClient] = await Promise.all([
-      getTableClient(AzureTable.Surveys),
-      getTableClient(AzureTable.PublishedSurveys),
-    ]);
-    const [survey, publishedSurvey] = await Promise.all([
-      getEntity(surveyClient, SurveyEntity, ctx.session.user.id, input.rowKey),
-      getEntity(publishedSurveyClient, PublishedSurveyEntity, ctx.session.user.id, input.rowKey),
-    ]);
+    const surveyClient = await getTableClient(AzureTable.Surveys);
+    const survey = await getEntity(surveyClient, SurveyEntity, ctx.session.user.id, input.rowKey);
     if (!survey) throw new Error("Cannot find survey");
-    if (!publishedSurvey) {
-      const newPublishedSurvey = new PublishedSurveyEntity(survey);
-      await createEntity(publishedSurveyClient, newPublishedSurvey);
-      return;
-    }
 
     input.publishVersion++;
-    if (input.publishVersion <= publishedSurvey.publishVersion)
-      throw new Error("Cannot not update survey publish with old publish version");
+    if (input.publishVersion <= survey.publishVersion)
+      throw new Error("Cannot update survey publish with old publish version");
 
-    await updateEntity(publishedSurveyClient, {
+    await updateEntity(surveyClient, {
       ...input,
       partitionKey: ctx.session.user.id,
       publishedAt: new Date(),
