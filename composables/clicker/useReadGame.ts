@@ -1,3 +1,4 @@
+import { Game } from "@/models/clicker/Game";
 import { CLICKER_STORE } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 
@@ -8,12 +9,12 @@ export const useReadGame = async () => {
   const { game } = storeToRefs(gameStore);
 
   if (status.value === "authenticated") {
-    game.value = await $client.clicker.readGame.query();
+    game.value = new Game(await $client.clicker.readGame.query());
     return;
   }
 
   onMounted(() => {
     const clickerStoreJson = localStorage.getItem(CLICKER_STORE);
-    if (clickerStoreJson) game.value = jsonDateParse(clickerStoreJson);
+    if (clickerStoreJson) game.value = new Game(jsonDateParse(clickerStoreJson));
   });
 };

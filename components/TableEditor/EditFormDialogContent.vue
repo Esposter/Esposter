@@ -9,21 +9,21 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
 </script>
 
 <template>
-  <StyledCard>
-    <v-toolbar flex="none" color="surface" :title="`Configuration - ${displayType}`">
-      <v-spacer />
-      <TableEditorEditFormErrorIcon />
-      <TableEditorSaveButton />
-      <TableEditorConfirmDeleteDialogButton />
-      <v-divider mx="2!" thickness="2" inset vertical />
-      <TableEditorToggleFullScreenDialogButton />
-      <TableEditorConfirmCloseDialogButton />
-    </v-toolbar>
-    <v-divider thickness="2" />
-    <v-form ref="editFormRef">
+  <v-form ref="editFormRef">
+    <StyledCard>
+      <v-toolbar flex="none" color="surface" :title="`Configuration - ${displayType}`">
+        <v-spacer />
+        <TableEditorEditFormErrorIcon />
+        <TableEditorSaveButton />
+        <TableEditorConfirmDeleteDialogButton />
+        <v-divider mx="2!" thickness="2" inset vertical />
+        <TableEditorToggleFullScreenDialogButton />
+        <TableEditorConfirmCloseDialogButton />
+      </v-toolbar>
+      <v-divider thickness="2" />
       <slot />
-    </v-form>
-  </StyledCard>
+    </StyledCard>
+  </v-form>
 </template>
 
 <style scoped lang="scss">

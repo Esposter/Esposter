@@ -80,7 +80,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
 
         if (status.value === "authenticated")
           await $client.tableEditor.saveTableEditor.mutate(this.tableEditorConfiguration);
-        else localStorage.setItem(TABLE_EDITOR_STORE, JSON.stringify(this.tableEditorConfiguration));
+        else localStorage.setItem(TABLE_EDITOR_STORE, this.tableEditorConfiguration.toJSON());
         this.editFormDialog = false;
       },
       resetItem() {
