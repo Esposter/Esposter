@@ -1,5 +1,6 @@
 import { AzureTable } from "@/models/azure/table";
 import { roomSchema } from "@/models/esbabbler/room";
+import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
@@ -10,7 +11,6 @@ import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
 import { User } from "@prisma/client";
-import { InviteEntity, inviteCodeSchema } from "models/esbabbler/room/invite";
 import { z } from "zod";
 
 const readRoomInputSchema = roomSchema.shape.id.optional();
