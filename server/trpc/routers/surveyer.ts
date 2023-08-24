@@ -10,6 +10,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { getPublishedSurveyRowKey } from "@/services/surveyer/table";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
@@ -75,7 +76,10 @@ export const surveyerRouter = router({
     await deleteEntity(surveyClient, ctx.session.user.id, input.rowKey);
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ input, ctx }) => {
-    const surveyClient = await getTableClient(AzureTable.Surveys);
+    const [surveyClient, publishedSurveyClient] = await Promise.all([
+      getTableClient(AzureTable.Surveys),
+      getTableClient(AzureTable.PublishedSurveys),
+    ]);
     const survey = await getEntity(surveyClient, SurveyEntity, ctx.session.user.id, input.rowKey);
     if (!survey) throw new Error("Cannot find survey");
 
@@ -83,10 +87,18 @@ export const surveyerRouter = router({
     if (input.publishVersion <= survey.publishVersion)
       throw new Error("Cannot update survey publish with old publish version");
 
-    await updateEntity(surveyClient, {
-      ...input,
-      partitionKey: ctx.session.user.id,
-      publishedAt: new Date(),
-    });
+    const publishedSurveyRowKey = getPublishedSurveyRowKey(input.rowKey, input.publishVersion);
+    const publishedSurvey = await getEntity(
+      publishedSurveyClient,
+      SurveyEntity,
+      ctx.session.user.id,
+      publishedSurveyRowKey,
+    );
+    if (publishedSurvey) throw new Error("Found existing survey publish with current publish version");
+
+    const publishedAt = new Date();
+    await createEntity(publishedSurveyClient, { ...survey, rowKey: publishedSurveyRowKey, publishedAt });
+    await updateEntity(surveyClient, { ...survey, publishedAt });
+    return input;
   }),
 });

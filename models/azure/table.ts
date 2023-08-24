@@ -10,6 +10,7 @@ export enum AzureTable {
   Messages = "Messages",
   MessagesMetadata = "MessagesMetadata",
   Surveys = "Surveys",
+  PublishedSurveys = "PublishedSurveys",
 }
 
 export type AzureTableEntityMap = {
@@ -17,6 +18,7 @@ export type AzureTableEntityMap = {
   [AzureTable.Messages]: MessageEntity;
   [AzureTable.MessagesMetadata]: MessageMetadataEntity;
   [AzureTable.Surveys]: SurveyEntity;
+  [AzureTable.PublishedSurveys]: SurveyEntity;
 };
 
 // We add a fake property to preserve the entity type when running getTableClient
