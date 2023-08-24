@@ -9,7 +9,7 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
 </script>
 
 <template>
-  <v-form ref="editFormRef">
+  <v-form ref="editFormRef" @submit="(e) => e.preventDefault()">
     <StyledCard>
       <v-toolbar flex="none" color="surface" :title="`Configuration - ${displayType}`">
         <v-spacer />

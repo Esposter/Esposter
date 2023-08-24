@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { PostUpsertFormProps } from "@/components/Post/UpsertForm.vue";
 import { RoutePath } from "@/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
-import { SubmitEventPromise } from "vuetify";
 
 definePageMeta({ middleware: "auth" });
 
@@ -23,8 +21,7 @@ const { updatePost } = usePostStore();
           v-if="post"
           :initial-values="{ title: post.title, description: post.description }"
           @submit="
-            async (e: SubmitEventPromise, values: NonNullable<PostUpsertFormProps['initialValues']>) => {
-              e.preventDefault();
+            async (_, values) => {
               if (post) {
                 const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
                 updatePost(updatedPost);

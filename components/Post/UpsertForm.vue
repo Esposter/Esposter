@@ -17,7 +17,14 @@ const description = ref(initialValues.description);
 
 <template>
   <StyledCard>
-    <v-form @submit="(e) => emit('submit', e, { title, description })">
+    <v-form
+      @submit="
+        (e) => {
+          e.preventDefault();
+          emit('submit', e, { title, description });
+        }
+      "
+    >
       <v-container>
         <v-row>
           <v-col>

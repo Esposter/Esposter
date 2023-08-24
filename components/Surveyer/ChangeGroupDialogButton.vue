@@ -39,7 +39,7 @@ const group = ref(survey.group);
         </template>
       </v-tooltip>
     </template>
-    <v-form v-model="valid">
+    <v-form v-model="valid" @submit="(e) => e.preventDefault()">
       <v-container fluid>
         <v-row>
           <v-col cols="12">

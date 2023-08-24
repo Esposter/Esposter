@@ -46,7 +46,7 @@ const resetSurvey = () => {
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form v-model="valid">
+    <v-form v-model="valid" @submit="(e) => e.preventDefault()">
       <v-container fluid>
         <v-row>
           <v-col cols="12">
