@@ -10,7 +10,7 @@ import { INVITES_PARTITION_KEY } from "@/services/room/table";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { z } from "zod";
 
 const readRoomInputSchema = roomSchema.shape.id.optional();
