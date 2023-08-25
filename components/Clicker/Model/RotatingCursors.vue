@@ -32,6 +32,8 @@ const animateCursors = (amount: number) => {
   }
 };
 
+onMounted(() => animateCursors(amount.value));
+
 watch(
   () => amount.value,
   (newValue) => {
