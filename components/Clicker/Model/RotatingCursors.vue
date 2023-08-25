@@ -10,7 +10,7 @@ const amount = computed(() => {
   const cursorBuilding = game.value.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const rotatingDivIds = ref(Array.from({ length: amount.value }, uuidv4));
+const rotatingDivIds = ref(Array.from({ length: amount.value }, () => uuidv4()));
 
 const icon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
@@ -35,7 +35,7 @@ const animateCursors = (amount: number) => {
 watch(
   () => amount.value,
   (newValue) => {
-    rotatingDivIds.value = Array.from({ length: newValue }, uuidv4);
+    rotatingDivIds.value = Array.from({ length: newValue }, () => uuidv4());
   },
 );
 
