@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
+import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import dayjs from "dayjs";
-import type { SurveyEntity } from "models/surveyer/SurveyEntity";
 
 type SurveyItem = { raw: SurveyEntity };
 

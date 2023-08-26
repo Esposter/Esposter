@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import type { SurveyEntity } from "models/surveyer/SurveyEntity";
 
 interface SurveyerChangeGroupDialogButtonProps {
   survey: SurveyEntity;

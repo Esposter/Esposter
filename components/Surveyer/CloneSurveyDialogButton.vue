@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SurveyEntity } from "models/surveyer/SurveyEntity";
+import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 
 interface CloneSurveyDialogButton {
   name: SurveyEntity["name"];
