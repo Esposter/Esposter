@@ -14,7 +14,7 @@ const { copy, copied } = useClipboard({ source });
     </template>
   </v-tooltip>
   <v-snackbar v-model="copied" color="primary">
-    <div display="flex" justify="center" items="center">
+    <div display="flex" flex="wrap" justify="center" items="center">
       Copied <v-code mx="2">{{ source }}</v-code> successfully!
     </div>
   </v-snackbar>
