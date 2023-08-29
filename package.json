@@ -43,7 +43,7 @@
     "gen-env-types": "^1.3.4",
     "next-auth": "4.22.5",
     "nuxt": "^3.7.0",
-    "prettier": "^3.0.2",
+    "prettier": "^3.0.3",
     "prisma": "^5.2.0",
     "sass": "^1.66.1",
     "type-fest": "^4.3.1",
