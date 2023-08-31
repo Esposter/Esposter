@@ -88,7 +88,7 @@
     "rate-limiter-flexible": "^3.0.0",
     "superjson": "^1.13.1",
     "survey-creator-knockout": "^1.9.105",
-    "three": "^0.155.0",
+    "three": "^0.156.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.12",
     "uuid": "^9.0.0",
