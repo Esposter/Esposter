@@ -4,6 +4,7 @@ import * as rooms from "@/db/schema/rooms";
 import * as sessions from "@/db/schema/sessions";
 import * as users from "@/db/schema/users";
 import * as verificationTokens from "@/db/schema/verificationTokens";
+import { isProduction } from "@/utils/environment";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -18,6 +19,7 @@ export const db = drizzle(client, {
     ...users,
     ...verificationTokens,
   },
+  logger: !isProduction,
 });
 
 await migrate(db, { migrationsFolder: "db/migrations" });
