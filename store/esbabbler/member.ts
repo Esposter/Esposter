@@ -1,5 +1,5 @@
+import type { User } from "@/db/schema/users";
 import { useRoomStore } from "@/store/esbabbler/room";
-import type { User } from "@prisma/client";
 
 export const useMemberStore = defineStore("esbabbler/member", () => {
   const roomStore = useRoomStore();

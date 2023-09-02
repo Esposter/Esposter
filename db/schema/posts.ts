@@ -7,7 +7,9 @@ import { z } from "zod";
 
 export const posts = pgTable("Post", {
   id: uuid("userId").primaryKey(),
-  creatorId: text("creatorId").references(() => users.id),
+  creatorId: text("creatorId")
+    .notNull()
+    .references(() => users.id),
   title: text("title").notNull().default(""),
   description: text("description").notNull().default(""),
   noLikes: integer("noLikes").notNull().default(0),

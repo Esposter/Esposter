@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { User } from "@/db/schema/users";
 import type { MessageEntity } from "@/models/esbabbler/message";
 import { refreshMentions } from "@/services/esbabbler/mention";
-import type { User } from "@prisma/client";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 

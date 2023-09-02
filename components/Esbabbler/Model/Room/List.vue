@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VWaypoint from "@/components/VWaypoint.vue";
-import type { Room } from "@prisma/client";
+import type { Room } from "@/db/schema/rooms";
 
 interface RoomListProps {
   rooms: Room[];

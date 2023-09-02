@@ -1,5 +1,5 @@
+import type { Room } from "@/db/schema/rooms";
 import { useRoomStore } from "@/store/esbabbler/room";
-import type { Room } from "@prisma/client";
 
 export const useReadRooms = async () => {
   const { $client } = useNuxtApp();

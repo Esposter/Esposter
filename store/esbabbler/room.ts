@@ -1,4 +1,4 @@
-import type { Room } from "@prisma/client";
+import type { Room } from "@/db/schema/rooms";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const currentRoomId = ref<string | null>(null);

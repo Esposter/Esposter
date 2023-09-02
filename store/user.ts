@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { User } from "@/db/schema/users";
 
 export const useUserStore = defineStore("user", () => {
   const userList = ref<User[]>([]);

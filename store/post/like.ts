@@ -1,5 +1,6 @@
+import { Like } from "@/db/schema/users";
 import { usePostStore } from "@/store/post";
-import type { Like, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const useLikeStore = defineStore("post/like", () => {
   const postStore = usePostStore();

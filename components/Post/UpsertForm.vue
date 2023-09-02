@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Post } from "@/db/schema/posts";
 import { formRules } from "@/services/vuetify/formRules";
-import type { Post } from "@prisma/client";
 import type { SubmitEventPromise } from "vuetify";
 
 export interface PostUpsertFormProps {
