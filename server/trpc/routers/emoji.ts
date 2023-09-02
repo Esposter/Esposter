@@ -1,8 +1,8 @@
+import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
 import { MessageEmojiMetadataEntity, messageEmojiMetadataSchema } from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
-import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
@@ -20,7 +20,7 @@ import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
 const createEmojiInputSchema = messageEmojiMetadataSchema.pick({
@@ -30,7 +30,7 @@ const createEmojiInputSchema = messageEmojiMetadataSchema.pick({
 });
 export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
 const updateEmojiInputSchema = messageEmojiMetadataSchema.pick({
@@ -41,7 +41,7 @@ const updateEmojiInputSchema = messageEmojiMetadataSchema.pick({
 });
 export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 const deleteEmojiInputSchema = messageEmojiMetadataSchema.pick({

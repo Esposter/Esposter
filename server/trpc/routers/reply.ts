@@ -1,8 +1,8 @@
+import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { replyEventEmitter } from "@/models/esbabbler/events/reply";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/esbabbler/message/reply";
-import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
@@ -13,7 +13,7 @@ import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-const onCreateReplyInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
 
 const createReplyInputSchema = messageReplyMetadataSchema.pick({

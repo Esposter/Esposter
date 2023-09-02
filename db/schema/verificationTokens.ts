@@ -2,7 +2,7 @@ import { pgTable } from "@/db/shared/pgTable";
 import { primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
 export const verificationTokens = pgTable(
-  "verificationToken",
+  "VerificationToken",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull().unique(),

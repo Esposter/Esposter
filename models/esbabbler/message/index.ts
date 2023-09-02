@@ -1,8 +1,9 @@
-import { AzureEntity, CompositeKeyEntity } from "@/models/azure";
+import { selectUserSchema } from "@/db/schema/users";
+import type { CompositeKeyEntity } from "@/models/azure";
+import { AzureEntity } from "@/models/azure";
 import type { FileEntity } from "@/models/esbabbler/message/file";
 import { fileSchema } from "@/models/esbabbler/message/file";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import { userSchema } from "@/server/trpc/routers/user";
 import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
 import { z } from "zod";
 
@@ -25,7 +26,7 @@ export const messageSchema = itemMetadataSchema.merge(
     partitionKey: z.string(),
     // reverse-ticked timestamp
     rowKey: z.string(),
-    creatorId: userSchema.shape.id,
+    creatorId: selectUserSchema.shape.id,
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     files: z.array(fileSchema),
   }),

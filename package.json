@@ -16,8 +16,13 @@
     "prisma-migrate:dev": "prisma migrate dev",
     "prisma-migrate:deploy": "prisma migrate deploy",
     "prisma-generate": "prisma generate",
-    "drizzle-migrate": "drizzle-kit generate:pg",
+    "db:run": "tsx --tsconfig ./.nuxt/tsconfig.json node_modules/drizzle-kit/index.cjs",
+    "db:gen": "npm run db:run generate:pg",
+    "db:studio": "npm run db:run studio",
     "gen-env": "gen-env-types .env -o env.d.ts -e ."
+  },
+  "scriptsComments": {
+    "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
@@ -48,6 +53,7 @@
     "prettier": "^3.0.3",
     "prisma": "^5.2.0",
     "sass": "^1.66.1",
+    "tsx": "^3.12.8",
     "type-fest": "^4.3.1",
     "vue-tsc": "^1.8.8"
   },
@@ -81,6 +87,7 @@
     "deep-equal": "^2.2.2",
     "dompurify": "^3.0.5",
     "drizzle-orm": "^0.28.5",
+    "drizzle-zod": "^0.5.1",
     "emoji-mart-vue-fast": "^15.0.0",
     "eventemitter3": "^5.0.1",
     "gsap": "^3.12.2",

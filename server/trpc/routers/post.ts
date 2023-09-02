@@ -1,30 +1,13 @@
-import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { selectPostSchema } from "@/db/schema/posts";
 import { prisma } from "@/prisma";
 import { PostRelationsIncludeDefault } from "@/prisma/types";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
-import { userSchema } from "@/server/trpc/routers/user";
 import { ranking } from "@/services/post/ranking";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
-import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
-import type { Post } from "@prisma/client";
 import { z } from "zod";
 
-export const postSchema = itemMetadataSchema.merge(
-  z.object({
-    id: z.string().uuid(),
-    title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
-    description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
-    noLikes: z.number().int().nonnegative(),
-    noComments: z.number().int().nonnegative(),
-    ranking: z.number(),
-    creatorId: userSchema.shape.id,
-    depth: z.number().int(),
-    parentId: z.string().uuid().nullable(),
-  }),
-) satisfies z.ZodType<Post>;
-
-const readPostInputSchema = postSchema.shape.id.optional();
+const readPostInputSchema = selectPostSchema.shape.id.optional();
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
 const readPostsInputSchema = z.object({
@@ -32,15 +15,17 @@ const readPostsInputSchema = z.object({
 });
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
-const createPostInputSchema = postSchema.pick({ title: true }).merge(postSchema.partial().pick({ description: true }));
+const createPostInputSchema = selectPostSchema
+  .pick({ title: true })
+  .merge(selectPostSchema.partial().pick({ description: true }));
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
 
-const updatePostInputSchema = postSchema
+const updatePostInputSchema = selectPostSchema
   .pick({ id: true })
-  .merge(postSchema.partial().pick({ title: true, description: true }));
+  .merge(selectPostSchema.partial().pick({ title: true, description: true }));
 export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
 
-const deletePostInputSchema = postSchema.shape.id;
+const deletePostInputSchema = selectPostSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
 export const postRouter = router({

@@ -1,53 +1,56 @@
+import { db } from "@/db";
+import { selectRoomSchema } from "@/db/schema/rooms";
+import { selectUserSchema } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { roomSchema } from "@/models/esbabbler/room";
 import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
-import { userSchema } from "@/server/trpc/routers/user";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { INVITES_PARTITION_KEY } from "@/services/room/table";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
-import type { User } from "@prisma/client";
+import { ilike } from "drizzle-orm";
 import { z } from "zod";
 
-const readRoomInputSchema = roomSchema.shape.id.optional();
+const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z.object({ cursor: z.string().nullable() });
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const createRoomInputSchema = roomSchema.pick({ name: true });
+const createRoomInputSchema = selectRoomSchema.pick({ name: true });
 export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
 
-const updateRoomInputSchema = roomSchema.pick({ id: true }).merge(roomSchema.partial().pick({ name: true }));
+const updateRoomInputSchema = selectRoomSchema
+  .pick({ id: true })
+  .merge(selectRoomSchema.partial().pick({ name: true }));
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 
-const deleteRoomInputSchema = roomSchema.shape.id;
+const deleteRoomInputSchema = selectRoomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
 const joinRoomInputSchema = inviteCodeSchema.shape.rowKey;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 
-const leaveRoomInputSchema = roomSchema.shape.id;
+const leaveRoomInputSchema = selectRoomSchema.shape.id;
 export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
-  roomId: roomSchema.shape.id,
-  filter: userSchema.pick({ name: true }).optional(),
+  roomId: selectRoomSchema.shape.id,
+  filter: selectUserSchema.pick({ name: true }).optional(),
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
-  roomId: roomSchema.shape.id,
-  userIds: z.array(userSchema.shape.id).min(1),
+  roomId: selectRoomSchema.shape.id,
+  userIds: z.array(selectUserSchema.shape.id).min(1),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
 const generateInviteCodeInputSchema = z.object({
-  roomId: roomSchema.shape.id,
+  roomId: selectRoomSchema.shape.id,
 });
 export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSchema>;
 
@@ -109,13 +112,16 @@ export const roomRouter = router({
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
-    .query<User[]>(async ({ input: { roomId, filter } }) => {
-      const name = filter?.name ?? undefined;
-      const members = await prisma.user.findMany({
-        where: { name: { contains: name, mode: "insensitive" }, rooms: { some: { roomId } } },
-      });
-      return members;
-    }),
+    .query(({ input: { roomId, filter } }) =>
+      db.query.users.findMany({
+        where: (users) => ilike(users.name, `%${filter?.name ?? ""}%`),
+        with: {
+          rooms: {
+            where: (rooms, { eq }) => eq(rooms.id, roomId),
+          },
+        },
+      }),
+    ),
   createMembers: getRoomUserProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation(async ({ input: { roomId, userIds } }) => {

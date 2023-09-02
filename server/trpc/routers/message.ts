@@ -1,8 +1,8 @@
+import { selectRoomSchema } from "@/db/schema/rooms";
 import type { CompositeKey } from "@/models/azure";
 import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/esbabbler/events/message";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
-import { roomSchema } from "@/models/esbabbler/room";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import {
@@ -19,27 +19,29 @@ import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  roomId: z.string().uuid(),
+  roomId: selectRoomSchema.shape.id,
   messages: z.array(messageSchema.pick({ rowKey: true })).min(1),
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
-const readMessagesInputSchema = z.object({ roomId: z.string(), cursor: z.string().nullable() });
+const readMessagesInputSchema = z.object({ roomId: selectRoomSchema.shape.id, cursor: z.string().nullable() });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
-const createMessageInputSchema = z.object({ roomId: z.string() }).merge(messageSchema.pick({ message: true }));
+const createMessageInputSchema = z
+  .object({ roomId: selectRoomSchema.shape.id })
+  .merge(messageSchema.pick({ message: true }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
-const onUpdateMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
 const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
 
-const onDeleteMessageInputSchema = z.object({ roomId: roomSchema.shape.id });
+const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });

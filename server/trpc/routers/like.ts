@@ -1,32 +1,18 @@
-import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { selectLikeSchema } from "@/db/schema/users";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
-import { postSchema } from "@/server/trpc/routers/post";
-import { userSchema } from "@/server/trpc/routers/user";
 import { ranking } from "@/services/post/ranking";
-import type { Like, Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-export const likeSchema = itemMetadataSchema.merge(
-  z.object({
-    userId: userSchema.shape.id,
-    postId: postSchema.shape.id,
-    value: z
-      .number()
-      .int()
-      .refine((value) => value === 1 || value === -1)
-      .innerType(),
-  }),
-) satisfies z.ZodType<Like>;
-
-const createLikeInputSchema = likeSchema.pick({ postId: true, value: true });
+const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;
 
-const updateLikeInputSchema = likeSchema.pick({ postId: true, value: true });
+const updateLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
 export type UpdateLikeInput = z.infer<typeof updateLikeInputSchema>;
 
-const deleteLikeInputSchema = likeSchema.pick({ postId: true });
+const deleteLikeInputSchema = selectLikeSchema.pick({ postId: true });
 export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({

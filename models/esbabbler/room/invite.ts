@@ -1,5 +1,5 @@
+import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureEntity, CompositeKeyEntity } from "@/models/azure";
-import { roomSchema } from "@/models/esbabbler/room";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
 
@@ -16,6 +16,6 @@ export const inviteCodeSchema = itemMetadataSchema.merge(
   z.object({
     partitionKey: z.string(),
     rowKey: z.string(),
-    roomId: roomSchema.shape.id,
+    roomId: selectRoomSchema.shape.id,
   }),
 ) satisfies z.ZodType<InviteEntity>;
