@@ -1,4 +1,3 @@
-import { existsExtension } from "@/prisma/extensions";
 import { PrismaClient } from "@prisma/client";
 
 export const prisma = new PrismaClient({
@@ -21,4 +20,4 @@ export const prisma = new PrismaClient({
       level: "info",
     },
   ],
-}).$extends(existsExtension);
+});

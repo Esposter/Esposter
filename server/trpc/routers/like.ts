@@ -1,4 +1,5 @@
-import { selectLikeSchema } from "@/db/schema/users";
+import { db } from "@/db";
+import { likes, selectLikeSchema } from "@/db/schema/users";
 import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -17,15 +18,23 @@ export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
   createLike: authedProcedure.input(createLikeInputSchema).mutation(({ input, ctx }) =>
-    prisma.$transaction(async (prisma) => {
-      const newLike = await prisma.like.create({
-        data: { ...input, userId: ctx.session.user.id },
-        include: { post: true },
-      });
-      const noLikesNew = newLike.post.noLikes + newLike.value;
+    db.transaction(async (tx) => {
+      const newLike = (
+        await tx
+          .insert(likes)
+          .values({ ...input, userId: ctx.session.user.id })
+          .returning()
+      )[0];
+      const post = await tx.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, newLike.postId) });
+      if (!post) {
+        tx.rollback();
+        return null;
+      }
+
+      const noLikesNew = post.noLikes + newLike.value;
       await prisma.post.update({
-        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, newLike.post.createdAt) },
-        where: { id: newLike.post.id },
+        data: { noLikes: noLikesNew, ranking: ranking(noLikesNew, post.createdAt) },
+        where: { id: post.id },
       });
       return newLike;
     }),

@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma";
+import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
 import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
@@ -20,7 +20,10 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schem
     const roomId = value.match(UUID_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isMember = await prisma.roomsOnUsers.exists({ userId: ctx.session.user.id, roomId });
+    const isMember = await db.query.usersToRooms.findFirst({
+      where: (usersToRooms, { and, eq }) =>
+        and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
+    });
     if (!isMember) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });
@@ -39,7 +42,9 @@ export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
     const roomId = value.match(UUID_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isOwner = await prisma.room.exists({ id: roomId, creatorId: ctx.session.user.id });
+    const isOwner = await db.query.rooms.findFirst({
+      where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.creatorId, ctx.session.user.id)),
+    });
     if (!isOwner) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });
