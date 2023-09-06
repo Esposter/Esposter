@@ -3,6 +3,13 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify", "trpc-nuxt"],
   },
+  nitro: {
+    esbuild: {
+      options: {
+        target: "esnext",
+      },
+    },
+  },
   vite: {
     css: {
       preprocessorOptions: {
