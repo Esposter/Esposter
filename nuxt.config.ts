@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   nitro: {
     esbuild: {
       options: {
+        // Used for top-level await for drizzle migrations
         target: "esnext",
       },
     },
