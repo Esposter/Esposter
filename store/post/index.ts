@@ -1,4 +1,4 @@
-import type { PostWithRelations } from "@/prisma/types";
+import type { PostWithRelations } from "@/db/schema/posts";
 
 export const usePostStore = defineStore("post", () => {
   const postList = ref<PostWithRelations[]>([]);

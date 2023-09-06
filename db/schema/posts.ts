@@ -1,3 +1,4 @@
+import type { Like, User } from "@/db/schema/users";
 import { users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { relations } from "drizzle-orm";
@@ -18,6 +19,8 @@ export const posts = pgTable("Post", {
 });
 
 export type Post = typeof posts.$inferSelect;
+// @NOTE: https://github.com/drizzle-team/drizzle-orm/issues/695
+export type PostWithRelations = Post & { creator: User; likes: Like[] };
 
 export const selectPostSchema = createSelectSchema(posts, {
   title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),

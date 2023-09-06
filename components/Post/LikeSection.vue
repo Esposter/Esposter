@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PostWithRelations } from "@/prisma/types";
+import type { PostWithRelations } from "@/db/schema/posts";
 import { useLikeStore } from "@/store/post/like";
 
 interface PostLikeSectionProps {
@@ -15,7 +15,7 @@ const liked = computed(() => post.likes.some((l) => l.userId === data.value?.use
 const unliked = computed(() => post.likes.some((l) => l.userId === data.value?.user.id && l.value === -1));
 const onCreateLike = async (value: 1 | -1) => {
   const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
-  createLike(newLike);
+  if (newLike) createLike(newLike);
 };
 const onUpdateLike = async (value: 1 | -1) => {
   const updatedLike = await $client.like.updateLike.mutate({ postId: post.id, value });

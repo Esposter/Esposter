@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@/prisma/types";
+import type { PostWithRelations } from "@/db/schema/posts";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 
