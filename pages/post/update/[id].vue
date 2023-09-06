@@ -24,7 +24,7 @@ const { updatePost } = usePostStore();
             async (_, values) => {
               if (post) {
                 const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
-                updatePost(updatedPost);
+                if (updatedPost) updatePost(updatedPost);
                 await navigateTo(RoutePath.Index);
               }
             }

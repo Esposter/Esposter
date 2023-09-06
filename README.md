@@ -113,14 +113,14 @@
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://prisma.io">
-          <img src="./.github/assets/prisma/logo.svg" />
+        <a href="https://orm.drizzle.team">
+          <img src="./.github/assets/drizzle/logo.svg" />
         </a>
       </td>
       <td valign="top">
-        <h3>Prisma</h3>
+        <h3>Drizzle ORM</h3>
         <p>
-          Next-generation ORM for Node.js & TypeScript | PostgreSQL. We highly recommend you take a look at <a href="https://prisma.io">the Prisma documentation</a> to level up.
+          TypeScript ORM that feels like writing SQL. We highly recommend you take a look at <a href="https://orm.drizzle.team">the Drizzle ORM documentation</a> to level up.
         </p>
       </td>
     </tr>

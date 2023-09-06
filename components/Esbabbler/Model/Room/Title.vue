@@ -17,7 +17,7 @@ const onUpdateRoom = async () => {
       id: currentRoomId.value,
       name: currentRoomName.value,
     });
-    if (updatedRoom) updateRoom(updatedRoom);
+    updateRoom(updatedRoom);
   } finally {
     isUpdateMode.value = false;
     currentRoomName.value = roomName.value;

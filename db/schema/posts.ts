@@ -1,5 +1,5 @@
 import type { Like, User } from "@/db/schema/users";
-import { users } from "@/db/schema/users";
+import { likes, users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { relations } from "drizzle-orm";
 import { doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
@@ -7,7 +7,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable("Post", {
-  id: uuid("userId").primaryKey(),
+  id: uuid("userId").primaryKey().defaultRandom(),
   creatorId: text("creatorId")
     .notNull()
     .references(() => users.id),
@@ -20,6 +20,10 @@ export const posts = pgTable("Post", {
 
 export type Post = typeof posts.$inferSelect;
 // @NOTE: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const PostRelations = {
+  creator: true,
+  likes: true,
+} as const;
 export type PostWithRelations = Post & { creator: User; likes: Like[] };
 
 export const selectPostSchema = createSelectSchema(posts, {
@@ -29,9 +33,10 @@ export const selectPostSchema = createSelectSchema(posts, {
   noComments: z.number().int().nonnegative(),
 });
 
-export const postsRelations = relations(posts, ({ one }) => ({
+export const postsRelations = relations(posts, ({ one, many }) => ({
   creator: one(users, {
     fields: [posts.creatorId],
     references: [users.id],
   }),
+  likes: many(likes),
 }));

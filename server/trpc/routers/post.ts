@@ -1,13 +1,13 @@
-import { selectPostSchema } from "@/db/schema/posts";
-import { prisma } from "@/prisma";
-import { PostRelationsIncludeDefault } from "@/prisma/types";
+import { db } from "@/db";
+import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
+import { eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
-const readPostInputSchema = selectPostSchema.shape.id.optional();
+const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
 const readPostsInputSchema = z.object({
@@ -31,33 +31,44 @@ export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
-    .query(({ input }) =>
-      input
-        ? prisma.post.findUnique({ where: { id: input } })
-        : prisma.post.findFirst({ orderBy: { ranking: "desc" } }),
-    ),
+    .query(({ input }) => db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) })),
   readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
-    const posts = await prisma.post.findMany({
-      take: READ_LIMIT + 1,
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy: { ranking: "desc" },
-      include: PostRelationsIncludeDefault,
+    const posts = await db.query.posts.findMany({
+      where: cursor ? (posts) => gt(posts.id, cursor) : undefined,
+      orderBy: (posts, { desc }) => desc(posts.ranking),
+      limit: READ_LIMIT + 1,
+      with: PostRelations,
     });
     return { posts, nextCursor: getNextCursor(posts, "id", READ_LIMIT) };
   }),
-  createPost: authedProcedure.input(createPostInputSchema).mutation(({ input, ctx }) => {
+  createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const now = new Date();
-    return prisma.post.create({
-      data: { ...input, creatorId: ctx.session.user.id, createdAt: now, ranking: ranking(0, now) },
-      include: PostRelationsIncludeDefault,
+    const newPost = (
+      await db
+        .insert(posts)
+        .values({
+          ...input,
+          creatorId: ctx.session.user.id,
+          createdAt: now,
+          ranking: ranking(0, now),
+        })
+        .returning({ id: posts.id })
+    )[0];
+    const newPostWithRelations = await db.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, newPost.id),
+      with: PostRelations,
     });
+    return newPostWithRelations ?? null;
   }),
-  updatePost: authedProcedure
-    .input(updatePostInputSchema)
-    .mutation(({ input: { id, ...rest } }) =>
-      prisma.post.update({ data: rest, where: { id }, include: PostRelationsIncludeDefault }),
-    ),
+  updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest } }) => {
+    const updatedPost = (await db.update(posts).set(rest).returning({ id: posts.id }))[0];
+    const updatedPostWithRelations = await db.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, updatedPost.id),
+      with: PostRelations,
+    });
+    return updatedPostWithRelations ?? null;
+  }),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
-    await prisma.post.delete({ where: { id: input } });
+    await db.delete(posts).where(eq(posts.id, input));
   }),
 });

@@ -1,9 +1,8 @@
 import { db } from "@/db";
-import { selectRoomSchema } from "@/db/schema/rooms";
-import { selectUserSchema } from "@/db/schema/users";
+import { rooms, selectRoomSchema } from "@/db/schema/rooms";
+import { selectUserSchema, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
-import { prisma } from "@/prisma";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
@@ -11,7 +10,7 @@ import { INVITES_PARTITION_KEY } from "@/services/room/table";
 import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { generateCode } from "@/utils/random";
 import { odata } from "@azure/data-tables";
-import { ilike } from "drizzle-orm";
+import { and, eq, gt, ilike } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -59,41 +58,66 @@ export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSche
 export const roomRouter = router({
   readRoom: authedProcedure.input(readRoomInputSchema).query(({ input, ctx }) =>
     input
-      ? prisma.room.findFirst({ where: { id: input, users: { some: { userId: ctx.session.user.id } } } })
-      : prisma.room.findFirst({
-          where: { users: { some: { userId: ctx.session.user.id } } },
-          orderBy: { updatedAt: "desc" },
+      ? db.query.rooms.findFirst({
+          where: (rooms, { eq }) => eq(rooms.id, input),
+          with: {
+            users: {
+              where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+            },
+          },
+        })
+      : db.query.rooms.findFirst({
+          orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
+          with: {
+            users: {
+              where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+            },
+          },
         }),
   ),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
-    const rooms = await prisma.room.findMany({
-      take: READ_LIMIT + 1,
-      where: { users: { some: { userId: ctx.session.user.id } } },
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy: { updatedAt: "desc" },
+    const rooms = await db.query.rooms.findMany({
+      where: cursor ? (rooms) => gt(rooms.id, cursor) : undefined,
+      orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
+      limit: READ_LIMIT + 1,
+      with: {
+        users: {
+          where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+        },
+      },
     });
     return { rooms, nextCursor: getNextCursor(rooms, "id", READ_LIMIT) };
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
-    prisma.room.create({
-      data: { ...input, creatorId: ctx.session.user.id, users: { create: { userId: ctx.session.user.id } } },
+    db.transaction(async (tx) => {
+      const newRoom = (
+        await tx
+          .insert(rooms)
+          .values({
+            ...input,
+            creatorId: ctx.session.user.id,
+          })
+          .returning()
+      )[0];
+      await tx.insert(usersToRooms).values({
+        userId: ctx.session.user.id,
+        roomId: newRoom.id,
+      });
+      return newRoom;
     }),
   ),
   updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
-    // @NOTE: We should be able to return records we updated on updateMany in the future
-    // https://github.com/prisma/prisma/issues/5019
-    const { count } = await prisma.room.updateMany({ data: rest, where: { id, creatorId: ctx.session.user.id } });
-    return count === 1 ? prisma.room.findUnique({ where: { id } }) : null;
+    const updatedRoom = (
+      await db
+        .update(rooms)
+        .set(rest)
+        .where(and(eq(rooms.id, id), eq(rooms.creatorId, ctx.session.user.id)))
+        .returning()
+    )[0];
+    return updatedRoom;
   }),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {
-    const count = await prisma.$transaction(async (prisma) => {
-      await prisma.roomsOnUsers.deleteMany({ where: { roomId: input } });
-      const { count } = await prisma.room.deleteMany({
-        where: { id: input, creatorId: ctx.session.user.id },
-      });
-      return count;
-    });
-    return count === 1;
+    await db.delete(rooms).where(and(eq(rooms.id, input), eq(rooms.creatorId, ctx.session.user.id)));
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
     const inviteClient = await getTableClient(AzureTable.Invites);
@@ -103,12 +127,13 @@ export const roomRouter = router({
     if (invites.length === 0) return false;
 
     const invite = invites[0];
-    await prisma.roomsOnUsers.create({ data: { userId: ctx.session.user.id, roomId: invite.roomId } });
+    await db.insert(usersToRooms).values({ userId: ctx.session.user.id, roomId: invite.roomId });
     return true;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ input, ctx }) => {
-    await prisma.roomsOnUsers.delete({ where: { userId_roomId: { userId: ctx.session.user.id, roomId: input } } });
-    return true;
+    await db
+      .delete(usersToRooms)
+      .where(and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)));
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
@@ -125,8 +150,9 @@ export const roomRouter = router({
   createMembers: getRoomUserProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation(async ({ input: { roomId, userIds } }) => {
-      const payload = await prisma.roomsOnUsers.createMany({ data: userIds.map((userId) => ({ roomId, userId })) });
-      return payload.count;
+      await db.transaction((tx) =>
+        Promise.all([userIds.map((userId) => tx.insert(usersToRooms).values({ userId, roomId }).returning())]),
+      );
     }),
   generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)

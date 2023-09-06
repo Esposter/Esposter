@@ -16,7 +16,7 @@ const { createPost } = usePostStore();
           @submit="
             async (_, values) => {
               const newPost = await $client.post.createPost.mutate(values);
-              createPost(newPost);
+              if (newPost) createPost(newPost);
               await navigateTo(RoutePath.Index);
             }
           "

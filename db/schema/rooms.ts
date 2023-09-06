@@ -6,7 +6,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const rooms = pgTable("Room", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   creatorId: text("creatorId")
     .notNull()
     .references(() => users.id),
