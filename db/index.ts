@@ -1,3 +1,4 @@
+import { DrizzleLogger } from "@/db/logger";
 import * as accounts from "@/db/schema/accounts";
 import * as posts from "@/db/schema/posts";
 import * as rooms from "@/db/schema/rooms";
@@ -19,7 +20,7 @@ export const db = drizzle(client, {
     ...users,
     ...verificationTokens,
   },
-  logger: !isProduction,
+  logger: !isProduction ? new DrizzleLogger() : undefined,
 });
 
 await migrate(db, { migrationsFolder: "db/migrations" });
