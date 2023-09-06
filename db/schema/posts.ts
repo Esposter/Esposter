@@ -1,6 +1,7 @@
 import type { Like, User } from "@/db/schema/users";
 import { likes, users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
+import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/utils/validation";
 import { relations } from "drizzle-orm";
 import { doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
