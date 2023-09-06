@@ -8,7 +8,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable("Post", {
-  id: uuid("userId").primaryKey().defaultRandom(),
+  id: uuid("id").primaryKey().defaultRandom(),
   creatorId: text("creatorId")
     .notNull()
     .references(() => users.id),

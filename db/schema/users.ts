@@ -31,7 +31,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const usersToRooms = pgTable(
   "UserToRoom",
   {
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id),
     roomId: uuid("roomId")
@@ -57,12 +57,12 @@ export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
 export const likes = pgTable(
   "Like",
   {
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id),
     postId: uuid("postId")
       .notNull()
-      .references(() => rooms.id),
+      .references(() => posts.id),
     // @NOTE: Check constraint of values 1 or -1 when drizzle implements this
     // and remove all options from createSelectSchema as db should be our source of truth
     value: integer("value").notNull(),

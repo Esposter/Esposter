@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "Post" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"deletedAt" timestamp,
-	"userId" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"creatorId" text NOT NULL,
 	"title" text DEFAULT '' NOT NULL,
 	"description" text DEFAULT '' NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "Like" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"deletedAt" timestamp,
-	"userId" uuid NOT NULL,
+	"userId" text NOT NULL,
 	"postId" uuid NOT NULL,
 	"value" integer NOT NULL,
 	CONSTRAINT Like_userId_postId PRIMARY KEY("userId","postId")
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS "UserToRoom" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"deletedAt" timestamp,
-	"userId" uuid NOT NULL,
+	"userId" text NOT NULL,
 	"roomId" uuid NOT NULL,
 	CONSTRAINT UserToRoom_userId_roomId PRIMARY KEY("userId","roomId")
 );
@@ -91,48 +91,57 @@ CREATE TABLE IF NOT EXISTS "VerificationToken" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "Account" DROP CONSTRAINT "Account_userId_fkey";
  ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "Post" DROP CONSTRAINT "Post_creatorId_fkey";
  ALTER TABLE "Post" ADD CONSTRAINT "Post_creatorId_User_id_fk" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "Room" DROP CONSTRAINT "Room_creatorId_fkey";
  ALTER TABLE "Room" ADD CONSTRAINT "Room_creatorId_User_id_fk" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "Session" DROP CONSTRAINT "Session_userId_fkey";
  ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "Like" DROP CONSTRAINT "Like_userId_fkey";
  ALTER TABLE "Like" ADD CONSTRAINT "Like_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "Like" ADD CONSTRAINT "Like_postId_Room_id_fk" FOREIGN KEY ("postId") REFERENCES "Room"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "Like" DROP CONSTRAINT "Like_postId_fkey";
+ ALTER TABLE "Like" ADD CONSTRAINT "Like_postId_Post_id_fk" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "RoomsOnUsers" DROP CONSTRAINT "RoomsOnUsers_userId_fkey";
  ALTER TABLE "UserToRoom" ADD CONSTRAINT "UserToRoom_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "RoomsOnUsers" DROP CONSTRAINT "RoomsOnUsers_roomId_fkey";
+ ALTER TABLE "Room" ALTER COLUMN id TYPE uuid USING id::uuid;
  ALTER TABLE "UserToRoom" ADD CONSTRAINT "UserToRoom_roomId_Room_id_fk" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
