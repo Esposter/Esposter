@@ -1,6 +1,5 @@
 import { Like } from "@/db/schema/users";
 import { usePostStore } from "@/store/post";
-import { Prisma } from "@prisma/client";
 
 export const useLikeStore = defineStore("post/like", () => {
   const postStore = usePostStore();
@@ -23,7 +22,7 @@ export const useLikeStore = defineStore("post/like", () => {
       post.noLikes += 2 * updatedLike.value;
     }
   };
-  const deleteLike = (id: Prisma.LikeUserIdPostIdCompoundUniqueInput) => {
+  const deleteLike = (id: Pick<Like, "userId" | "postId">) => {
     const post = postList.value.find((p) => p.id === id.postId);
     if (!post) return;
 
