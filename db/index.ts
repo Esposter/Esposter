@@ -23,4 +23,4 @@ export const db = drizzle(client, {
   logger: !isProduction ? new DrizzleLogger() : undefined,
 });
 
-await migrate(db, { migrationsFolder: "db/migrations" });
+await migrate(db, { migrationsFolder: "public/db/migrations" });
