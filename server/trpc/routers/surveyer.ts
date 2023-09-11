@@ -11,6 +11,7 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getPublishedSurveyRowKey } from "@/services/surveyer/table";
+import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
 import { z } from "zod";
 
 const readSurveysInputSchema = z.object({ cursor: z.string().nullable() });
