@@ -105,6 +105,9 @@
   "overrides": {
     "vue": "latest"
   },
+  "engines": {
+    "node": "18"
+  },
   "cssnano": {
     "preset": [
       "default",
