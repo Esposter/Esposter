@@ -1,11 +1,13 @@
-DROP TABLE "Account";
-DROP TABLE "Like";
-DROP TABLE "Post";
-DROP TABLE "UserToRoom";
-DROP TABLE "Room";
-DROP TABLE "Session";
-DROP TABLE "VerificationToken";
-DROP TABLE "User";
+DROP TABLE IF EXISTS "_prisma_migrations";
+DROP TABLE IF EXISTS "Account";
+DROP TABLE IF EXISTS "Like";
+DROP TABLE IF EXISTS "Post";
+DROP TABLE IF EXISTS "RoomsOnUsers";
+DROP TABLE IF EXISTS "UserToRoom";
+DROP TABLE IF EXISTS "Room";
+DROP TABLE IF EXISTS "Session";
+DROP TABLE IF EXISTS"VerificationToken";
+DROP TABLE IF EXISTS "User";
 
 CREATE TABLE IF NOT EXISTS "Account" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
