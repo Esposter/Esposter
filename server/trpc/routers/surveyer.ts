@@ -11,7 +11,6 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getPublishedSurveyRowKey } from "@/services/surveyer/table";
-import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 const readSurveysInputSchema = z.object({ cursor: z.string().nullable() });
@@ -44,7 +43,7 @@ export const surveyerRouter = router({
     const newSurvey = new SurveyEntity({
       ...input,
       partitionKey: ctx.session.user.id,
-      rowKey: uuidv4(),
+      rowKey: crypto.randomUUID(),
       modelVersion: 1,
       createdAt,
       updatedAt: createdAt,

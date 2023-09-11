@@ -2,7 +2,6 @@
 import { Target } from "@/models/clicker/Target";
 import { useGameStore } from "@/store/clicker/game";
 import { filename } from "pathe/utils";
-import { v4 as uuidv4 } from "uuid";
 
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
@@ -10,7 +9,7 @@ const amount = computed(() => {
   const cursorBuilding = game.value.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const rotatingDivIds = ref(Array.from({ length: amount.value }, () => uuidv4()));
+const rotatingDivIds = ref(Array.from({ length: amount.value }, () => crypto.randomUUID()));
 
 const icon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
@@ -37,7 +36,7 @@ onMounted(() => animateCursors(amount.value));
 watch(
   () => amount.value,
   (newValue) => {
-    rotatingDivIds.value = Array.from({ length: newValue }, () => uuidv4());
+    rotatingDivIds.value = Array.from({ length: newValue }, () => crypto.randomUUID());
   },
 );
 

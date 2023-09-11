@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
 import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
-import { UUID_REGEX } from "@/utils/uuid";
+import { UUIDV4_REGEX } from "@/utils/uuid";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schem
     const value = result.data[key];
     if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const roomId = value.match(UUID_REGEX)?.[0];
+    const roomId = value.match(UUIDV4_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
     const isMember = await db.query.usersToRooms.findFirst({
@@ -39,7 +39,7 @@ export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
     const value = result.data[key];
     if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const roomId = value.match(UUID_REGEX)?.[0];
+    const roomId = value.match(UUIDV4_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
     const isOwner = await db.query.rooms.findFirst({

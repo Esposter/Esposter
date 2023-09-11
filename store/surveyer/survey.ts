@@ -1,7 +1,8 @@
 import { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/surveyer";
+import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
-import { NIL, v4 as uuidv4 } from "uuid";
+import { NIL } from "@/utils/uuid";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
@@ -25,8 +26,8 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
       const createdAt = new Date();
       const newSurvey = new SurveyEntity({
         ...input,
-        partitionKey: NIL,
-        rowKey: uuidv4(),
+        partitionKey: DEFAULT_PARTITION_KEY,
+        rowKey: crypto.randomUUID(),
         modelVersion: 1,
         createdAt,
         updatedAt: createdAt,
