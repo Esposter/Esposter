@@ -5,7 +5,7 @@ import { NIL, v4 as uuidv4 } from "uuid";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
-  const { status, data } = useAuth();
+  const { session, status } = useAuth();
   const surveyList = ref<SurveyEntity[]>([]);
   const pushSurveyList = (surveys: SurveyEntity[]) => surveyList.value.push(...surveys);
 
@@ -40,7 +40,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
       const updatedSurvey = await $client.surveyer.updateSurvey.mutate(input);
 
       const index = surveyList.value.findIndex(
-        (r) => r.partitionKey === data.value?.user.id && r.rowKey === updatedSurvey.rowKey,
+        (r) => r.partitionKey === session.value?.user.id && r.rowKey === updatedSurvey.rowKey,
       );
       if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...updatedSurvey };
     } else {
@@ -53,7 +53,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     if (status.value === "authenticated") {
       await $client.surveyer.deleteSurvey.mutate(input);
       surveyList.value = surveyList.value.filter(
-        (s) => !(s.partitionKey === data.value?.user.id && s.rowKey === input.rowKey),
+        (s) => !(s.partitionKey === session.value?.user.id && s.rowKey === input.rowKey),
       );
     } else {
       surveyList.value = surveyList.value.filter((s) => !(s.partitionKey === NIL && s.rowKey === input.rowKey));

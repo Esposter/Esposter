@@ -9,7 +9,7 @@ interface MessageEmojiListProps {
 
 const { messageRowKey } = defineProps<MessageEmojiListProps>();
 const { $client } = useNuxtApp();
-const { data } = useAuth();
+const { session } = useAuth();
 const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
@@ -20,7 +20,7 @@ const emojis = computed(() =>
     emojiTag: e.emojiTag,
     userIds: e.userIds,
     emoji: emojify(e.emojiTag),
-    isReacted: Boolean(data.value && e.userIds.includes(data.value.user.id)),
+    isReacted: Boolean(session.value && e.userIds.includes(session.value.user.id)),
   })),
 );
 const hasEmojis = computed(() => emojis.value.length > 0);

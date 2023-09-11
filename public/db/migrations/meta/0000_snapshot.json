@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "3f60d4c2-9a85-4d92-a4ea-6795b8f7b4d9",
+  "id": "7e94ca69-d709-43c5-af29-8cdfd4526da9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Account": {
@@ -30,7 +30,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -52,6 +52,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "refresh_token": {
           "name": "refresh_token",
           "type": "text",
@@ -64,9 +70,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "integer",
+        "scope": {
+          "name": "scope",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -76,21 +82,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "scope": {
-          "name": "scope",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "id_token": {
-          "name": "id_token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "session_state": {
           "name": "session_state",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -146,8 +146,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "userId": {
-          "name": "userId",
+        "id": {
+          "name": "id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
@@ -155,7 +155,7 @@
         },
         "creatorId": {
           "name": "creatorId",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -246,7 +246,7 @@
         },
         "creatorId": {
           "name": "creatorId",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -314,7 +314,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -402,10 +402,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "Like_postId_Room_id_fk": {
-          "name": "Like_postId_Room_id_fk",
+        "Like_postId_Post_id_fk": {
+          "name": "Like_postId_Post_id_fk",
           "tableFrom": "Like",
-          "tableTo": "Room",
+          "tableTo": "Post",
           "columnsFrom": [
             "postId"
           ],
@@ -453,9 +453,10 @@
         },
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",

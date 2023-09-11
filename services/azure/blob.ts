@@ -1,8 +1,10 @@
 import type { AzureContainer } from "@/models/azure/blob";
 import { BlobServiceClient, ContainerClient, HttpRequestBody } from "@azure/storage-blob";
 
+const runtimeConfig = useRuntimeConfig();
+
 export const getContainerClient = async (containerName: AzureContainer) => {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
+  const blobServiceClient = BlobServiceClient.fromConnectionString(runtimeConfig.azure.storageAccountConnectionString);
   const containerClient = blobServiceClient.getContainerClient(containerName);
   await containerClient.createIfNotExists();
   return containerClient;

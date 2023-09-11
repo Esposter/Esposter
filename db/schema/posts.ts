@@ -9,7 +9,7 @@ import { z } from "zod";
 
 export const posts = pgTable("Post", {
   id: uuid("id").primaryKey().defaultRandom(),
-  creatorId: text("creatorId")
+  creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id),
   title: text("title").notNull().default(""),

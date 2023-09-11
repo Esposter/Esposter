@@ -12,8 +12,8 @@ defineSlots<{
 }>();
 const { roomId, creatorId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { $client } = useNuxtApp();
-const { data } = useAuth();
-const isCreator = computed(() => data.value?.user.id === creatorId);
+const { session } = useAuth();
+const isCreator = computed(() => session.value?.user.id === creatorId);
 const roomStore = useRoomStore();
 const { deleteRoom } = roomStore;
 </script>

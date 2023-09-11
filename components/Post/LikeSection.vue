@@ -8,11 +8,11 @@ interface PostLikeSectionProps {
 
 const { post } = defineProps<PostLikeSectionProps>();
 const { $client } = useNuxtApp();
-const { data } = useAuth();
+const { session } = useAuth();
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
-const liked = computed(() => post.likes.some((l) => l.userId === data.value?.user.id && l.value === 1));
-const unliked = computed(() => post.likes.some((l) => l.userId === data.value?.user.id && l.value === -1));
+const liked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === 1));
+const unliked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === -1));
 const onCreateLike = async (value: 1 | -1) => {
   const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
   if (newLike) createLike(newLike);
@@ -22,10 +22,10 @@ const onUpdateLike = async (value: 1 | -1) => {
   if (updatedLike) updateLike(updatedLike);
 };
 const onDeleteLike = async () => {
-  if (!data.value) return;
+  if (!session.value) return;
 
   await $client.like.deleteLike.mutate({ postId: post.id });
-  deleteLike({ userId: data.value.user.id, postId: post.id });
+  deleteLike({ userId: session.value.user.id, postId: post.id });
 };
 </script>
 

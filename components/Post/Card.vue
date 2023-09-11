@@ -8,11 +8,11 @@ interface PostCardProps {
 }
 
 const { post } = defineProps<PostCardProps>();
-const { data } = useAuth();
+const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());
 const sanitizedDescriptionHtml = computed(() => DOMPurify.sanitize(post.description));
-const isOwner = computed(() => data.value?.user.id === post.creatorId);
+const isOwner = computed(() => session.value?.user.id === post.creatorId);
 </script>
 
 <template>

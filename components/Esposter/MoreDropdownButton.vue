@@ -3,7 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
 import { mergeProps } from "vue";
 
-const { status, data, signOut } = useAuth();
+const { session, status, signOut } = useAuth();
 
 const items = computed<ListItem[]>(() =>
   status.value === "unauthenticated"
@@ -65,14 +65,14 @@ const menu = ref(false);
 <template>
   <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-tooltip v-if="status === 'authenticated' && data" location="bottom" text="Account">
+      <v-tooltip v-if="status === 'authenticated' && session" location="bottom" text="Account">
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
             <v-btn h="full!" :="mergeProps(menuProps, tooltipProps)">
-              <v-avatar v-if="data.user.image">
-                <v-img :src="data.user.image" />
+              <v-avatar v-if="session.user.image">
+                <v-img :src="session.user.image" />
               </v-avatar>
-              <DefaultAvatar v-else :name="data.user.name ?? ''" />
+              <DefaultAvatar v-else :name="session.user.name ?? ''" />
             </v-btn>
           </v-avatar>
         </template>

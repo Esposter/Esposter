@@ -8,7 +8,7 @@ import { z } from "zod";
 
 export const rooms = pgTable("Room", {
   id: uuid("id").primaryKey().defaultRandom(),
-  creatorId: text("creatorId")
+  creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id),
   name: text("name").notNull(),

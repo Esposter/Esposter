@@ -1,5 +1,7 @@
+import { accounts } from "@/db/schema/accounts";
 import { posts } from "@/db/schema/posts";
 import { rooms } from "@/db/schema/rooms";
+import { sessions } from "@/db/schema/sessions";
 import { pgTable } from "@/db/shared/pgTable";
 import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
 import { relations } from "drizzle-orm";
@@ -8,7 +10,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("User", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name"),
   email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
@@ -23,15 +25,17 @@ export const selectUserSchema = createSelectSchema(users, {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  rooms: many(rooms),
-  posts: many(posts),
+  accounts: many(accounts),
+  sessions: many(sessions),
   likes: many(likes),
+  posts: many(posts),
+  rooms: many(rooms),
 }));
 
 export const usersToRooms = pgTable(
   "UserToRoom",
   {
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id),
     roomId: uuid("roomId")
@@ -57,7 +61,7 @@ export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
 export const likes = pgTable(
   "Like",
   {
-    userId: text("userId")
+    userId: uuid("userId")
       .notNull()
       .references(() => users.id),
     postId: uuid("postId")

@@ -4,14 +4,14 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 const roomStore = useRoomStore();
 const { currentRoomId, roomName } = storeToRefs(roomStore);
-const config = useRuntimeConfig();
+const runtimeConfig = useRuntimeConfig();
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const inviteCode = ref(
   currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : "",
 );
 const inviteLink = computed(() =>
-  inviteCode.value ? `${config.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
+  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
 </script>
 

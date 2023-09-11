@@ -7,10 +7,12 @@ import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
 import dayjs from "dayjs";
 
+const runtimeConfig = useRuntimeConfig();
+
 export const getTableClient = async <TAzureTable extends AzureTable>(
   tableName: TAzureTable,
 ): Promise<CustomTableClient<AzureTableEntityMap[TAzureTable]>> => {
-  const tableClient = TableClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
+  const tableClient = TableClient.fromConnectionString(runtimeConfig.azure.storageAccountConnectionString, tableName);
   try {
     await tableClient.createTable();
     return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;

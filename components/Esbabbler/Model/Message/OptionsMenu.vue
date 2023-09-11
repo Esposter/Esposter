@@ -25,11 +25,11 @@ const emit = defineEmits<{
   "update:delete-mode": [value: true];
 }>();
 const { $client } = useNuxtApp();
-const { data } = useAuth();
+const { session } = useAuth();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
 const emojis = computed(() => getEmojiList(message.rowKey));
-const isCreator = computed(() => data.value?.user.id === message.creatorId);
+const isCreator = computed(() => session.value?.user.id === message.creatorId);
 const items = computed(() => {
   if (!isCreator.value) return [];
 
@@ -45,7 +45,7 @@ const items = computed(() => {
 });
 
 const onSelect = async (emoji: string) => {
-  if (!data.value) return;
+  if (!session.value) return;
 
   const emojiTag = unemojify(emoji);
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
@@ -58,7 +58,7 @@ const onSelect = async (emoji: string) => {
     return;
   }
 
-  if (foundEmoji.userIds.includes(data.value.user.id)) {
+  if (foundEmoji.userIds.includes(session.value.user.id)) {
     if (foundEmoji.userIds.length === 1)
       await onDeleteEmoji({
         partitionKey: foundEmoji.partitionKey,
@@ -70,7 +70,7 @@ const onSelect = async (emoji: string) => {
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
         messageRowKey: foundEmoji.messageRowKey,
-        userIds: foundEmoji.userIds.filter((userId) => userId !== data.value?.user.id),
+        userIds: foundEmoji.userIds.filter((userId) => userId !== session.value?.user.id),
       });
     return;
   }
@@ -79,7 +79,7 @@ const onSelect = async (emoji: string) => {
     partitionKey: foundEmoji.partitionKey,
     rowKey: foundEmoji.rowKey,
     messageRowKey: foundEmoji.messageRowKey,
-    userIds: [...foundEmoji.userIds, data.value.user.id],
+    userIds: [...foundEmoji.userIds, session.value.user.id],
   });
 };
 const onCreateEmoji = async (input: CreateEmojiInput) => {

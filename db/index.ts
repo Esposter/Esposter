@@ -10,7 +10,9 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
-const client = postgres(process.env.DATABASE_URL);
+const runtimeConfig = useRuntimeConfig();
+
+const client = postgres(runtimeConfig.database.url);
 export const db = drizzle(client, {
   schema: {
     ...accounts,

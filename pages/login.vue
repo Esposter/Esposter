@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
 import { SITE_NAME } from "@/services/esposter/constants";
-import type { BuiltInProviderType } from "next-auth/providers";
+import type { BuiltInProviderType } from "@auth/core/providers";
 import type { Component, CSSProperties } from "vue";
 
 interface ProviderProps {
@@ -12,13 +11,7 @@ interface ProviderProps {
   buttonStyle?: CSSProperties;
 }
 
-definePageMeta({
-  middleware: "auth",
-  auth: {
-    unauthenticatedOnly: true,
-    navigateAuthenticatedTo: RoutePath.Index,
-  },
-});
+definePageMeta({ middleware: "guest-only" });
 
 const { signIn } = useAuth();
 const providerProps = ref<ProviderProps[]>([

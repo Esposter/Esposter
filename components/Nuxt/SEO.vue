@@ -4,15 +4,15 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@/services/esposter/constants";
 defineSlots<{ default: (props: {}) => unknown }>();
 
 const { primary } = useColors();
-const config = useRuntimeConfig();
+const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
 useServerSeoMeta({
   description: SITE_DESCRIPTION,
-  fbAppId: config.public.facebookClientId,
+  fbAppId: runtimeConfig.public.facebook.clientId,
   ogTitle: SITE_NAME,
   ogDescription: SITE_DESCRIPTION,
-  ogUrl: config.public.baseUrl,
+  ogUrl: runtimeConfig.public.baseUrl,
   ogType: "website",
   ogImage: logoImageUrl,
   ogImageAlt: SITE_NAME,
@@ -20,7 +20,7 @@ useServerSeoMeta({
   ogImageHeight: 200,
   ogSiteName: SITE_NAME,
   twitterCard: "summary_large_image",
-  twitterSite: config.public.baseUrl,
+  twitterSite: runtimeConfig.public.baseUrl,
   applicationName: SITE_NAME,
   themeColor: primary,
   appleMobileWebAppCapable: "yes",
@@ -37,7 +37,7 @@ useHead({
   link: [
     {
       rel: "canonical",
-      href: config.public.baseUrl,
+      href: runtimeConfig.public.baseUrl,
     },
     {
       rel: "icon",
