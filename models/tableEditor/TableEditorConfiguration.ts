@@ -1,13 +1,12 @@
-import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
+import { AItemEntity } from "@/models/shared/AItemEntity";
 import { Item } from "@/models/tableEditor/Item";
-import { ItemEntityType, createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
+import { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import { TodoListItemType, todoListItemTypeSchema } from "@/models/tableEditor/todoList/TodoListItemType";
-import {
-  VuetifyComponentItemType,
-  vuetifyComponentItemTypeSchema,
-} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
+import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
+import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
+import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
@@ -33,10 +32,6 @@ export class TableEditorConfiguration implements TableEditorTypes {
 RegisterSuperJSON(TableEditorConfiguration);
 
 export const tableEditorConfigurationSchema = z.object({
-  [TableEditorType.TodoList]: createTableEditorSchema(
-    aItemEntitySchema.merge(createItemEntityTypeSchema(todoListItemTypeSchema)),
-  ),
-  [TableEditorType.VuetifyComponent]: createTableEditorSchema(
-    aItemEntitySchema.merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema)),
-  ),
+  [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
+  [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
 }) satisfies z.ZodType<Omit<TableEditorConfiguration, "toJSON">>;
