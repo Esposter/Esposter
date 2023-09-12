@@ -9,7 +9,7 @@ export const useReadGame = async () => {
   const { game } = storeToRefs(gameStore);
 
   if (status.value === "authenticated") {
-    game.value = new Game(await $client.clicker.readGame.query());
+    game.value = await $client.clicker.readGame.query();
     return;
   }
 

@@ -9,7 +9,7 @@ export const useReadTableEditor = async () => {
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
 
   if (status.value === "authenticated") {
-    tableEditorConfiguration.value = new TableEditorConfiguration(await $client.tableEditor.readTableEditor.query());
+    tableEditorConfiguration.value = await $client.tableEditor.readTableEditor.query();
     return;
   }
 
