@@ -6,5 +6,3 @@ export class TodoListItem extends AItemEntity implements ItemEntityType<TodoList
   type = TodoListItemType.Todo;
   notes = "";
 }
-
-export const todoListItemSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(todoListItemTypeSchema));

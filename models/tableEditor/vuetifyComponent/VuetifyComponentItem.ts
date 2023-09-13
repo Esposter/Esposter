@@ -12,7 +12,3 @@ export class VuetifyComponentItem extends AItemEntity implements ItemEntityType<
   component: VuetifyComponentType[keyof VuetifyComponentType] = VuetifyComponentType["v-alert"];
   props: Record<string, unknown> = {};
 }
-
-export const vuetifyComponentItemSchema = aItemEntitySchema.merge(
-  createItemEntityTypeSchema(vuetifyComponentItemTypeSchema),
-);
