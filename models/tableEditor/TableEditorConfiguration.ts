@@ -7,7 +7,6 @@ import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
 import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
 import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
 type TableEditorTypes = {
@@ -26,10 +25,6 @@ export class TableEditorConfiguration implements TableEditorTypes {
     return JSON.stringify({ ...this });
   }
 }
-
-// Change this to use class decorators when it is supported
-// https://github.com/nuxt/nuxt/issues/14126
-RegisterSuperJSON(TableEditorConfiguration);
 
 export const tableEditorConfigurationSchema = z.object({
   [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),

@@ -2,7 +2,6 @@ import { BuildingWithStats, buildingWithStatsSchema } from "@/models/clicker/Bui
 import { Upgrade, createUpgradeSchema } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { ApplyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
 export type Game = typeof Game.prototype;
@@ -21,10 +20,6 @@ export const Game = ApplyItemMetadataMixin(
     }
   },
 );
-
-// Change this to use class decorators when it is supported
-// https://github.com/nuxt/nuxt/issues/14126
-RegisterSuperJSON(Game);
 
 export const gameSchema = itemMetadataSchema.merge(
   z.object({
