@@ -16,6 +16,7 @@ type TableEditorTypes = {
 export class TableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<AItemEntity & ItemEntityType<TodoListItemType>>();
   [TableEditorType.VuetifyComponent] = new TableEditor<AItemEntity & ItemEntityType<VuetifyComponentItemType>>();
+
   constructor(init?: Partial<TableEditorConfiguration>) {
     Object.assign(this, init);
   }
