@@ -1,7 +1,6 @@
 import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
-import chalk from "chalk";
 import type { Server } from "node:http";
 import { WebSocketServer } from "ws";
 
@@ -24,6 +23,6 @@ export default defineEventHandler((event) => {
     wss.close();
   });
 
-  console.log(chalk.yellow("WebSocket Server is listening"));
+  console.log("WebSocket Server is listening");
   global.websocketServer = wss;
 });
