@@ -84,7 +84,7 @@
     "gsap": "^3.12.2",
     "marked": "^9.0.0",
     "node-emoji": "^2.1.0",
-    "node-html-parser": "^6.1.9",
+    "node-html-parser": "^6.1.10",
     "pathe": "^1.1.1",
     "pinia": "^2.1.6",
     "postgres": "^3.3.5",
