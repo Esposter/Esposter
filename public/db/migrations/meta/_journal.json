@@ -8,6 +8,27 @@
       "when": 1694403703185,
       "tag": "0000_huge_exodus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1694941687340,
+      "tag": "0001_lame_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1694941829270,
+      "tag": "0002_normal_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1694941898859,
+      "tag": "0003_milky_the_call",
+      "breakpoints": true
     }
   ]
 }

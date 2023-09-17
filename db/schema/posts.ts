@@ -11,7 +11,7 @@ export const posts = pgTable("Post", {
   id: uuid("id").primaryKey().defaultRandom(),
   creatorId: uuid("creatorId")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull().default(""),
   description: text("description").notNull().default(""),
   noLikes: integer("noLikes").notNull().default(0),

@@ -29,7 +29,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   likes: many(likes),
   posts: many(posts),
-  rooms: many(rooms),
+  usersToRooms: many(usersToRooms),
 }));
 
 export const usersToRooms = pgTable(
@@ -37,10 +37,10 @@ export const usersToRooms = pgTable(
   {
     userId: uuid("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     roomId: uuid("roomId")
       .notNull()
-      .references(() => rooms.id),
+      .references(() => rooms.id, { onDelete: "cascade" }),
   },
   (userToRoom) => ({
     compoundKey: primaryKey(userToRoom.userId, userToRoom.roomId),
@@ -63,10 +63,10 @@ export const likes = pgTable(
   {
     userId: uuid("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     postId: uuid("postId")
       .notNull()
-      .references(() => posts.id),
+      .references(() => posts.id, { onDelete: "cascade" }),
     // @NOTE: Check constraint of values 1 or -1 when drizzle implements this
     // and remove all options from createSelectSchema as db should be our source of truth
     value: integer("value").notNull(),

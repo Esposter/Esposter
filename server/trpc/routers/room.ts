@@ -61,16 +61,17 @@ export const roomRouter = router({
       ? db.query.rooms.findFirst({
           where: (rooms, { eq }) => eq(rooms.id, input),
           with: {
-            users: {
-              where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+            usersToRooms: {
+              where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
             },
           },
         })
-      : db.query.rooms.findFirst({
+      : // By default, we will return the latest updated room
+        db.query.rooms.findFirst({
           orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
           with: {
-            users: {
-              where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+            usersToRooms: {
+              where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
             },
           },
         }),
@@ -81,8 +82,8 @@ export const roomRouter = router({
       orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
       limit: READ_LIMIT + 1,
       with: {
-        users: {
-          where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+        usersToRooms: {
+          where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
         },
       },
     });
@@ -141,8 +142,8 @@ export const roomRouter = router({
       db.query.users.findMany({
         where: (users) => ilike(users.name, `%${filter?.name ?? ""}%`),
         with: {
-          rooms: {
-            where: (rooms, { eq }) => eq(rooms.id, roomId),
+          usersToRooms: {
+            where: (usersToRooms, { eq }) => eq(usersToRooms.roomId, roomId),
           },
         },
       }),
