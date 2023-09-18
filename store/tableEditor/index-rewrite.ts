@@ -8,7 +8,7 @@ import { toDeepRaw } from "@/util/reactivity";
 import equal from "deep-equal";
 import { UnwrapRef } from "vue";
 
-// @NOTE: This doesn't actually work yet
+// @TODO: This doesn't actually work yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
 // https://github.com/vuejs/core/issues/6766
 export const useTableEditorStore = <TItem extends Item = Item>() =>
@@ -47,7 +47,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       const item = tableEditor.value.items.find((item) => item.id === id);
       if (!item) return;
 
-      // @NOTE: Type bug here so we cast it for now
+      // @TODO: Type bug here so we cast it for now
       editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
       editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
       router.replace({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });

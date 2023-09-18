@@ -67,7 +67,7 @@ export const likes = pgTable(
     postId: uuid("postId")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    // @NOTE: Check constraint of values 1 or -1 when drizzle implements this
+    // @TODO: Check constraint of values 1 or -1 when drizzle implements this
     // and remove all options from createSelectSchema as db should be our source of truth
     value: integer("value").notNull(),
   },

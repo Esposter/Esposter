@@ -6,7 +6,7 @@ import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/Vuet
 import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import SuperJSON from "superjson";
 
-// @NOTE: Change this to use class decorators when it is supported
+// @TODO: Change this to use class decorators when it is supported
 // https://github.com/nuxt/nuxt/issues/14126
 RegisterSuperJSON(Game);
 RegisterSuperJSON(TableEditorConfiguration);

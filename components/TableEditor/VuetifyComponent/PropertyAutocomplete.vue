@@ -12,7 +12,7 @@ const properties = computed(() => Object.keys(propertyRendererMap.value));
 const selectedProperty = ref<string>();
 const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["value"]>["component"]) => {
   const result: Record<string, Component> = {};
-  // @NOTE: Remove this cast once vuetify/components import is fixed
+  // @TODO: Remove this cast once vuetify/components import is fixed
   const props = VuetifyComponentMap[component as keyof typeof VuetifyComponentMap].props as Record<
     string,
     { type?: Constructor<unknown> | Constructor<unknown>[] }

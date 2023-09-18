@@ -20,7 +20,7 @@ export const posts = pgTable("Post", {
 });
 
 export type Post = typeof posts.$inferSelect;
-// @NOTE: https://github.com/drizzle-team/drizzle-orm/issues/695
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const PostRelations = {
   creator: true,
   likes: true,

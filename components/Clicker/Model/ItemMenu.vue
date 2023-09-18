@@ -99,7 +99,7 @@ const upgradeIcon = computed(() => {
   </v-menu>
 </template>
 
-<!-- @NOTE: This doesn't actually work yet -->
+<!-- @TODO: This doesn't actually work yet -->
 <!-- https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
 .not-affordable {

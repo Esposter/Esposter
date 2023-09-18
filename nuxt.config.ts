@@ -3,7 +3,7 @@ import { RoutePath } from "./models/router/RoutePath";
 
 export default defineNuxtConfig({
   alias: {
-    // @NOTE: https://github.com/Hebilicious/authjs-nuxt/issues/2
+    // @TODO: https://github.com/Hebilicious/authjs-nuxt/issues/2
     cookie: path.resolve(__dirname, "node_modules/cookie"),
   },
   css: ["vuetify/lib/styles/main.sass", "@mdi/font/css/materialdesignicons.min.css"],
@@ -70,7 +70,7 @@ export default defineNuxtConfig({
       },
     },
   },
-  // @NOTE: "@vueuse/sound/nuxt"
+  // @TODO: "@vueuse/sound/nuxt"
   modules: ["@hebilicious/authjs-nuxt", "@nuxtjs/google-fonts", "@pinia/nuxt", "@unocss/nuxt", "@vueuse/nuxt"],
   authJs: {
     baseUrl: process.env.BASE_URL,

@@ -2,7 +2,7 @@ import deepEqual from "deep-equal";
 import type { ArrayElement } from "type-fest/source/internal";
 import type { VValidation } from "vuetify/components";
 
-// @NOTE: Remove this type when vuetify team exposes it
+// @TODO: Remove this type when vuetify team exposes it
 // https://github.com/vuetifyjs/vuetify/issues/16680
 type ValidationRule = ArrayElement<NonNullable<VValidation["$props"]["rules"]>>;
 

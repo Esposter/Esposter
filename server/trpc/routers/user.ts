@@ -25,7 +25,7 @@ export const userRouter = router({
           updatedAt: true,
           deletedAt: true,
         },
-        // @NOTE: https://github.com/drizzle-team/drizzle-orm/issues/1163
+        // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/1163
       }) as Promise<User | undefined>,
   ),
 });

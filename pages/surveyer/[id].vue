@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// @NOTE: nuxt cannot build survey-creator-core atm
+// @TODO: nuxt cannot build survey-creator-core atm
 // import { useSurveyStore } from "@/store/surveyer/survey";
 // import "survey-core/defaultV2.min.css";
 // import "survey-creator-core/survey-creator-core.min.css";

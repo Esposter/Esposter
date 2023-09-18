@@ -9,7 +9,7 @@ import { z } from "zod";
 
 export class VuetifyComponentItem extends AItemEntity implements ItemEntityType<VuetifyComponentItemType> {
   type = VuetifyComponentItemType.VuetifyComponent;
-  // @NOTE: We actually can't use this type because nuxt cannot load css in the server properly
+  // @TODO: We actually can't use this type because nuxt cannot load css in the server properly
   // VuetifyComponentType[keyof VuetifyComponentType] = VuetifyComponentType["v-alert"]
   component = "v-alert";
   props: Record<string, unknown> = {};
