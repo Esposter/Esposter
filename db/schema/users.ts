@@ -3,7 +3,7 @@ import { posts } from "@/db/schema/posts";
 import { rooms } from "@/db/schema/rooms";
 import { sessions } from "@/db/schema/sessions";
 import { pgTable } from "@/db/shared/pgTable";
-import { USER_NAME_MAX_LENGTH } from "@/utils/validation";
+import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { relations } from "drizzle-orm";
 import { integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

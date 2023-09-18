@@ -4,7 +4,7 @@ import { AzureEntity } from "@/models/azure";
 import type { FileEntity } from "@/models/esbabbler/message/file";
 import { fileSchema } from "@/models/esbabbler/message/file";
 import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import { MESSAGE_MAX_LENGTH } from "@/utils/validation";
+import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/esbabbler/message";
+import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension, refreshMentions } from "@/services/esbabbler/mention";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";

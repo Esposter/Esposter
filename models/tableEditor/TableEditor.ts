@@ -1,5 +1,5 @@
 import type { Item } from "@/models/tableEditor/Item";
-import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "@/utils/validation";
+import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "@/services/tableEditor/constants";
 import { z } from "zod";
 
 export class TableEditor<T extends Item> {

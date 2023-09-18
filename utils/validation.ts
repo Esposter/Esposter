@@ -1,6 +1,0 @@
-export const USER_NAME_MAX_LENGTH = 100;
-export const ROOM_NAME_MAX_LENGTH = 100;
-export const MESSAGE_MAX_LENGTH = 10000;
-export const POST_TITLE_MAX_LENGTH = 300;
-export const POST_DESCRIPTION_MAX_LENGTH = 1000;
-export const TABLE_EDITOR_ITEMS_MAX_LENGTH = 1000;
