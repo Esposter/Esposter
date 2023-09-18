@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
+import { uuidValidateV4 } from "@/util/uuid";
 
 definePageMeta({ middleware: "auth" });
 

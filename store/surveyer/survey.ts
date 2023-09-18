@@ -2,7 +2,7 @@ import { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/surveyer";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
-import { NIL } from "@/utils/uuid";
+import { NIL } from "@/util/uuid";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();

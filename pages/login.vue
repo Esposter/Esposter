@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SITE_NAME } from "@/services/esposter/constants";
+import { toTitleCase } from "@/util/text";
 import type { BuiltInProviderType } from "@auth/core/providers";
 import type { Component, CSSProperties } from "vue";
 

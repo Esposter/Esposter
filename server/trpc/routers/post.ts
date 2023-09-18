@@ -3,7 +3,7 @@ import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
-import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
+import { READ_LIMIT, getNextCursor } from "@/util/pagination";
 import { eq, gt } from "drizzle-orm";
 import { z } from "zod";
 

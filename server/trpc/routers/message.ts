@@ -14,7 +14,7 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { READ_LIMIT, getNextCursor } from "@/utils/pagination";
+import { READ_LIMIT, getNextCursor } from "@/util/pagination";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

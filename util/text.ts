@@ -37,6 +37,7 @@ export const toKebabCase = (string: string) =>
     ?.map((x) => x.toLowerCase())
     .join("-") ?? "";
 
+// Puts space between capital and non-capital letters for variable names
 export const prettifyName = (string: string) => string.replace(/([A-Z])/g, " $1").trim();
 
 export const EMPTY_TEXT_REGEX = /^\s*$/;

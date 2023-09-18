@@ -4,6 +4,7 @@ import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension, refreshMentions } from "@/services/esbabbler/mention";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { EMPTY_TEXT_REGEX } from "@/util/text";
 import { Editor } from "@tiptap/core";
 import { Extension } from "@tiptap/vue-3";
 

@@ -8,7 +8,8 @@ import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
-import { streamToText } from "@/utils/text";
+import { jsonDateParse } from "@/util/json";
+import { streamToText } from "@/util/text";
 
 export const clickerRouter = router({
   readUpgrades: rateLimitedProcedure.query<Upgrade[]>(() => [...cursorUpgrades, ...grandmaUpgrades] as Upgrade[]),

@@ -1,5 +1,5 @@
 import { metadataSchema } from "@/db/shared/metadataSchema";
-import type { SkipFirst } from "@/utils/types";
+import type { SkipFirst } from "@/util/types";
 import type { PgColumnBuilderBase } from "drizzle-orm/pg-core";
 import { pgTable as drizzlePgTable } from "drizzle-orm/pg-core";
 

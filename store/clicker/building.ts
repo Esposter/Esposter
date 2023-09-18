@@ -5,6 +5,7 @@ import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker/upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
+import { getInitials } from "@/util/text";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();

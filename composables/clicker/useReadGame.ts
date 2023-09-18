@@ -1,6 +1,7 @@
 import { Game } from "@/models/clicker/Game";
 import { CLICKER_STORE } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
+import { jsonDateParse } from "@/util/json";
 
 export const useReadGame = async () => {
   const { $client } = useNuxtApp();

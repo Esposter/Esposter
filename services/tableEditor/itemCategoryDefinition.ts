@@ -3,6 +3,7 @@ import type { Item } from "@/models/tableEditor/Item";
 import type { BaseItemCategoryDefinition, ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import { prettifyName } from "@/util/text";
 
 class NullItem extends AItemEntity implements ItemEntityType<string> {
   type = "None";

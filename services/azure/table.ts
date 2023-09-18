@@ -1,7 +1,7 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
-import { now } from "@/utils/time";
-import type { SkipFirst } from "@/utils/types";
+import { now } from "@/util/time";
+import type { SkipFirst } from "@/util/types";
 import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
 import type { ClassConstructor } from "class-transformer";
 import { plainToInstance } from "class-transformer";
