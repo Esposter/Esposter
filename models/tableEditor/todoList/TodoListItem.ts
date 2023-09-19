@@ -8,11 +8,12 @@ import { z } from "zod";
 export class TodoListItem extends AItemEntity implements ItemEntityType<TodoListItemType> {
   type = TodoListItemType.Todo;
   notes = "";
-  dueAt?: Date;
+  dueAt: Date | null = null;
 }
 
 export const todoListItemSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(todoListItemTypeSchema)).merge(
   z.object({
     notes: z.string().max(NOTES_MAX_LENGTH),
+    dueAt: z.date().nullable(),
   }),
 ) satisfies z.ZodType<TodoListItem>;

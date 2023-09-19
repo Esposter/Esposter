@@ -16,6 +16,16 @@ const { editedItem } = storeToRefs(tableEditorStore);
       <v-col cols="12">
         <v-textarea v-model="editedItem.notes" label="Notes" />
       </v-col>
+      <v-col cols="12">
+        <!-- @vue-ignore @TODO: The type here should be fixed by vuetify team -->
+        <v-date-picker
+          v-model="editedItem.dueAt"
+          title="Due Date"
+          cancel-text="Clear"
+          ok-text="Confirm"
+          @click:cancel="editedItem.dueAt = null"
+        />
+      </v-col>
     </v-row>
   </v-container>
 </template>

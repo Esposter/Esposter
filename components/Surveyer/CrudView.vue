@@ -3,7 +3,6 @@ import { RoutePath } from "@/models/router/RoutePath";
 import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import dayjs from "dayjs";
 
 type SurveyItem = { raw: SurveyEntity };
 
@@ -27,12 +26,6 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
     >
       <template #top>
         <SurveyerCrudViewHeader />
-      </template>
-      <template #[`item.createdAt`]="{ item }">
-        {{ dayjs((item as SurveyItem).raw.createdAt).format("ddd, MMM D, YYYY h:mm A") }}
-      </template>
-      <template #[`item.updatedAt`]="{ item }">
-        {{ dayjs((item as SurveyItem).raw.updatedAt).format("ddd, MMM D, YYYY h:mm A") }}
       </template>
       <template #[`item.actions`]="{ item }">
         <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
