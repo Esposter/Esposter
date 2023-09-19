@@ -106,7 +106,7 @@
     "vue": "latest"
   },
   "engines": {
-    "node": ">=v18.17.1"
+    "node": ">=v18.18.0"
   },
   "cssnano": {
     "preset": [
