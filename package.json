@@ -25,7 +25,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@types/dedent": "^0.7.0",
-    "@types/deep-equal": "^1.0.1",
+    "@types/deep-equal": "^1.0.2",
     "@types/dompurify": "^3.0.2",
     "@types/marked": "^5.0.1",
     "@types/node-emoji": "^1.8.2",
