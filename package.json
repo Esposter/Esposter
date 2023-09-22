@@ -59,7 +59,7 @@
     "@codemirror/language-data": "^6.3.1",
     "@codemirror/state": "^6.2.1",
     "@codemirror/view": "^6.20.1",
-    "@hebilicious/authjs-nuxt": "^0.3.0",
+    "@hebilicious/authjs-nuxt": "^0.3.4",
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
     "@tiptap/extension-character-count": "^2.1.11",
