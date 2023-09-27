@@ -8,6 +8,6 @@ export const todoListHeaders: DataTableHeader[] = [
   {
     title: "Due Date",
     key: "dueAt",
-    value: (item) => dayjs(item.dueAt).format("ddd, MMM D, YYYY h:mm A"),
+    value: (item) => item.dueAt ? dayjs(item.dueAt).format("ddd, MMM D, YYYY h:mm A") : null,
   },
 ];
