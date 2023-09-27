@@ -13,10 +13,7 @@ const props = computed(() => propsMap[tableEditorType.value]);
 const itemTypeKey = computed(() => props.value.headers[0].key);
 
 const getItemCategoryDefinitionByItem = (item: unknown) =>
-  getItemCategoryDefinition(
-    props.value.itemCategoryDefinitions as unknown as ItemCategoryDefinition[],
-    (item as { raw: Item }).raw,
-  );
+  getItemCategoryDefinition(props.value.itemCategoryDefinitions as unknown as ItemCategoryDefinition[], item as Item);
 </script>
 
 <template>
@@ -29,7 +26,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       :items="tableEditor?.items"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
-      @click:row="(_, { item }) => editItem(item.raw.id)"
+      @click:row="(_, { item }) => editItem(item.id)"
     >
       <template #top>
         <TableEditorCrudViewHeader />

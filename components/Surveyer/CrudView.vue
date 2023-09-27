@@ -4,8 +4,6 @@ import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
-type SurveyItem = { raw: SurveyEntity };
-
 const readMoreSurveys = await useReadSurveys();
 const surveyerStore = useSurveyStore();
 const { surveyList, searchQuery } = storeToRefs(surveyerStore);
@@ -22,19 +20,19 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       :group-by="[{ key: 'group', order: 'asc' }]"
-      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.raw.rowKey))"
+      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.rowKey))"
     >
       <template #top>
         <SurveyerCrudViewHeader />
       </template>
       <template #[`item.actions`]="{ item }">
-        <SurveyerChangeGroupDialogButton :survey="(item as SurveyItem).raw" />
+        <SurveyerChangeGroupDialogButton :survey="item as SurveyEntity" />
         <SurveyerCloneSurveyDialogButton
-          :name="(item as SurveyItem).raw.name"
-          :group="(item as SurveyItem).raw.group"
-          :model="(item as SurveyItem).raw.model"
+          :name="(item as SurveyEntity).name"
+          :group="(item as SurveyEntity).group"
+          :model="(item as SurveyEntity).model"
         />
-        <SurveyerDeleteSurveyDialogButton :row-key="(item as SurveyItem).raw.rowKey" />
+        <SurveyerDeleteSurveyDialogButton :row-key="(item as SurveyEntity).rowKey" />
       </template>
     </StyledDataTable>
   </v-container>
