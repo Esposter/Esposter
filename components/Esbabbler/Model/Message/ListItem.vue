@@ -58,10 +58,10 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <v-list-item-subtitle v-else op="100!" v-html="sanitizedMessageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
-      <div position="relative" z="1">
+      <div relative z="1">
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
-          position="absolute"
+          absolute
           top="-6"
           right="0"
           @mouseenter="isOptionsActive = true"

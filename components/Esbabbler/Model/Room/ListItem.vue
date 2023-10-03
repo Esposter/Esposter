@@ -15,7 +15,7 @@ const active = computed(() => room.id === currentRoomId.value);
 </script>
 
 <template>
-  <div position="relative" @mouseover="isHovering = true" @mouseleave="isHovering = false">
+  <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
@@ -32,7 +32,7 @@ const active = computed(() => room.id === currentRoomId.value);
       <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
           v-show="isHovering"
-          position="absolute"
+          absolute
           top="1/2"
           right="0"
           translate-y="-1/2"

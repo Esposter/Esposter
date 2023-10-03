@@ -17,9 +17,7 @@ const durationMs = computed(() => `${duration}ms`);
 </script>
 
 <template>
-  <div class="text-h5 popup" position="absolute" font-bold select="none" pointer-events="none">
-    +{{ displayPoints }}
-  </div>
+  <div class="text-h5 popup" absolute font-bold select="none" pointer-events="none">+{{ displayPoints }}</div>
 </template>
 
 <style scoped lang="scss">

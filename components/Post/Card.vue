@@ -17,7 +17,7 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
 
 <template>
   <StyledCard class="card">
-    <PostLikeSection position="absolute" left="2" top="2" :post="post" />
+    <PostLikeSection absolute left="2" top="2" :post="post" />
     <v-card px="2!" pt="2!">
       <v-avatar>
         <v-img v-if="post.creator.image" :src="post.creator.image" />

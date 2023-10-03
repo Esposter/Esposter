@@ -6,15 +6,9 @@ const { onClick } = popupStore;
 </script>
 
 <template>
-  <div mt="12" position="relative">
+  <div mt="12" relative>
     <ClickerModelRotatingCursors />
-    <ClickerModelPinaColada
-      position="relative"
-      width="256"
-      height="256"
-      :g-attrs="{ class: 'clickable', cursor: 'pointer' }"
-      @click="onClick"
-    />
+    <ClickerModelPinaColada relative w-64 h-64 :g-attrs="{ class: 'clickable', cursor: 'pointer' }" @click="onClick" />
   </div>
 </template>
 

@@ -50,7 +50,7 @@ const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 <template>
   <div w-full flex flex-wrap>
     <template v-for="(item, index) in items" :key="index">
-      <v-divider v-if="isDivider(item)" thickness="2" vertical h="8!" self="center!" />
+      <v-divider v-if="isDivider(item)" h-8="!" self-center="!" thickness="2" vertical />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd="0!" :="mergeProps(item, tooltipProps)" />

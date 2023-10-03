@@ -63,7 +63,7 @@ const providerProps = ref<ProviderProps[]>([
               mb="3"
               pl="2"
               w-full
-              h="12"
+              h-12
               flex
               items-center
               rd
