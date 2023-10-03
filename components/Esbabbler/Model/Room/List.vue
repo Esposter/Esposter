@@ -13,7 +13,7 @@ const { rooms, hasMore, readMoreRooms } = defineProps<RoomListProps>();
 </script>
 
 <template>
-  <v-list overflow-y="auto!">
+  <v-list overflow-y-auto="!">
     <slot name="prepend" />
     <EsbabblerModelRoomListItem v-for="room in rooms" :key="room.id" :room="room" />
     <VWaypoint :active="hasMore" @change="readMoreRooms" />

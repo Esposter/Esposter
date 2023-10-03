@@ -26,7 +26,7 @@ initialiseBuildingList(buildings);
 </script>
 
 <template>
-  <v-list overflow-y="auto!">
+  <v-list overflow-y-auto="!">
     <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" />
     <ClickerModelBuildingListGroup :buildings="buildingList" />
   </v-list>
