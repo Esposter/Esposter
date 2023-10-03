@@ -11,7 +11,7 @@ import { SITE_NAME } from "@/services/esposter/constants";
       </NuxtLink>
     </template>
     <template #append>
-      <div flex gap-x="2">
+      <div flex gap-x-2>
         <EsposterMenuButton />
         <EsposterToggleThemeButton />
         <EsposterGithubButton />

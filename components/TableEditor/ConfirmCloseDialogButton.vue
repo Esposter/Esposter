@@ -32,7 +32,7 @@ const dialog = ref(false);
       :text="`You have modified this ${displayItemType}. You can save your changes, discard your changes, or cancel to continue
           editing.`"
     >
-      <v-card-actions flex-wrap gap-y="2">
+      <v-card-actions flex-wrap gap-y-2>
         <v-spacer />
         <v-btn variant="outlined" @click="dialog = false">Cancel</v-btn>
         <v-btn
