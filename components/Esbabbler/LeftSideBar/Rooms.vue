@@ -10,7 +10,7 @@ const readMoreRooms = await useReadRooms();
 <template>
   <EsbabblerModelRoomList :rooms="rooms" :has-more="hasMore" :read-more-rooms="readMoreRooms">
     <template #prepend>
-      <v-list-item font="bold">
+      <v-list-item font-bold>
         Rooms
         <template #append>
           <EsbabblerModelRoomCreateButton />

@@ -48,7 +48,7 @@ const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
 
 <template>
-  <div w="full" display="flex" flex="wrap">
+  <div w-full flex flex-wrap>
     <template v-for="(item, index) in items" :key="index">
       <v-divider v-if="isDivider(item)" thickness="2" vertical h="8!" self="center!" />
       <v-tooltip v-else :text="item.title">

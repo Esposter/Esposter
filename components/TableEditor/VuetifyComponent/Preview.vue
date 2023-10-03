@@ -10,7 +10,7 @@ const { editedItem } = storeToRefs(tableEditorStore);
 <template>
   <v-col v-if="editedItem" cols="12">
     Preview
-    <div class="preview" w="full" aspect="video" display="flex" justify="center" items="center" rd>
+    <div class="preview" w-full aspect="video" flex justify-center items-center rd>
       <component :is="editedItem.component" :="editedItem.props" />
     </div>
   </v-col>

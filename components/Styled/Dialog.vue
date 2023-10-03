@@ -29,9 +29,9 @@ const isOpen = ref(false);
       <slot />
       <v-card-actions>
         <v-spacer />
-        <v-btn un-text="3" variant="outlined" @click="isOpen = false">Cancel</v-btn>
+        <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
         <v-btn
-          un-text="3"
+          text-3
           color="error"
           variant="outlined"
           :="confirmButtonProps"

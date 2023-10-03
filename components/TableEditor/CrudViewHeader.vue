@@ -12,7 +12,7 @@ const component = computed(() => (editedItem.value ? getEditFormComponent(edited
   <v-toolbar pt="4" pr="4" color="surface">
     <v-toolbar-title>
       <TableEditorTypeSelect />
-      <div pt="4" display="flex" items="center">
+      <div pt="4" flex items-center>
         <TableEditorSearchBar />
         <v-divider mx="4!" thickness="2" inset vertical />
         <TableEditorCreateItemButton />

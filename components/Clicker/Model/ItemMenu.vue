@@ -62,14 +62,14 @@ const upgradeIcon = computed(() => {
           <ClickerModelPinaColada width="16" height="16" />
         </v-list-item-subtitle>
         <template v-if="amount" #append>
-          <span font="bold">
+          <span font-bold>
             {{ amount }}
           </span>
         </template>
       </v-list-item>
     </template>
     <StyledCard>
-      <v-card-title display="flex!" font="bold!">
+      <v-card-title flex="!" font-bold>
         <div>
           <v-img width="2rem" height="2rem" :src="type === ItemType.Building ? menuIcon : upgradeIcon" :alt="name" />
         </div>
@@ -77,10 +77,10 @@ const upgradeIcon = computed(() => {
       </v-card-title>
       <v-card-text>
         <div v-if="description" pb="4" v-html="descriptionHtml" />
-        <div pb="4" display="flex" justify="end" font="italic">
+        <div pb="4" flex justify="end" font="italic">
           <span text="right" v-html="flavorDescriptionHtml" />
         </div>
-        <div :class="{ 'not-affordable': !isAffordable }" display="flex">
+        <div :class="{ 'not-affordable': !isAffordable }" flex>
           <v-spacer />
           {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
         </div>

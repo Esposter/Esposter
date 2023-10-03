@@ -17,11 +17,12 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
 </script>
 
 <template>
-  <v-container h="full" display="flex" flex="col" fluid>
+  <v-container h-full flex flex-col fluid>
     <StyledDataTable
-      display="flex"
-      flex="1 col"
-      height="100%"
+      h-full
+      flex
+      flex-1
+      flex-col
       :headers="props.headers"
       :items="tableEditor?.items"
       :search="searchQuery"

@@ -7,9 +7,9 @@ const user = await $client.user.readUser.query();
 </script>
 
 <template>
-  <StyledCard v-if="user" p="6!" display="flex!">
-    <div flex="1" display="grid">
-      <div v-if="user.name" class="text-h5" font="bold">{{ user.name }}</div>
+  <StyledCard v-if="user" p-6="!" flex="!">
+    <div grid flex-1>
+      <div v-if="user.name" class="text-h5" font-bold>{{ user.name }}</div>
       <div>
         {{ user.email }}
       </div>

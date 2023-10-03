@@ -35,7 +35,7 @@ onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <template>
-  <StyledCard w="full">
+  <StyledCard w-full>
     <RichTextEditorMenuBar :editor="editor" />
     <v-divider thickness="2" />
     <ClientOnly>

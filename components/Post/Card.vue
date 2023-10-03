@@ -22,7 +22,7 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
       <v-avatar>
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
-      Posted by <span font="bold">{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+      Posted by <span font-bold>{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
       <v-card-title class="text-h6" px="0!" font="bold!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>

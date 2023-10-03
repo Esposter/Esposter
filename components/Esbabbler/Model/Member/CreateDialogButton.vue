@@ -26,7 +26,7 @@ const inviteLink = computed(() =>
     </template>
     <StyledCard px="4!">
       <v-card-title px="0!">
-        Invite friends to <span font="bold">{{ roomName }}</span>
+        Invite friends to <span font-bold>{{ roomName }}</span>
       </v-card-title>
       <v-card-text px="0!">
         <div mb="2">Send a room invite link to a friend</div>

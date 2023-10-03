@@ -200,7 +200,7 @@ watch(
 </script>
 
 <template>
-  <div display="grid" grid="cols-2" flex="1">
+  <div grid grid-cols-2 flex-1>
     <div
       v-for="(card, index) in cards"
       :key="index"

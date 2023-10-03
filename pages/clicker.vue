@@ -20,8 +20,8 @@ useTimers();
       <ClickerModelStoreHeader pt="4" />
       <ClickerModelStoreList />
     </template>
-    <v-container h="full" display="flex" justify="center" items="center" flex="col">
-      <ClickerHeader w="full" />
+    <v-container h-full flex justify-center items-center flex-col>
+      <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />
     </v-container>

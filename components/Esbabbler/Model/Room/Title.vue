@@ -33,8 +33,8 @@ onClickOutside(titleRef, async () => {
   <div
     ref="titleRef"
     px="1"
-    display="flex"
-    items="center"
+    flex
+    items-center
     :w="isUpdateMode ? 'full' : ''"
     :b="!isUpdateMode && titleHovered ? '1 solid rd' : '1 solid transparent rd'"
     @mouseenter="titleHovered = true"
@@ -43,7 +43,7 @@ onClickOutside(titleRef, async () => {
     <v-text-field
       v-if="isUpdateMode"
       v-model="currentRoomName"
-      font="bold"
+      font-bold
       text="xl"
       density="compact"
       hide-details

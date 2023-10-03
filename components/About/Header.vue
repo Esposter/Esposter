@@ -6,7 +6,7 @@ const { smAndDown } = useDisplay();
 </script>
 
 <template>
-  <div text="center">
+  <div text-center>
     <div font="900" leading="tight" :class="{ accent: isDark }" :text="smAndDown ? '5xl' : '7xl'">
       The
       <span :class="{ accent: !isDark }">Progressive</span>

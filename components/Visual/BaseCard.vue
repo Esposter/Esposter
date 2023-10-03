@@ -13,14 +13,15 @@ const { xs, sm } = useDisplay();
 <template>
   <StyledCard
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
-    p="4"
+    p-4
     min-height="200"
-    display="flex!"
-    justify="center"
-    items="center"
-    un-text="center"
-    font="Montserrat! bold"
-    break="word"
+    flex="!"
+    justify-center
+    items-center
+    text-center
+    font="Montserrat!"
+    font-bold
+    break-word
   >
     {{ card.text }}
   </StyledCard>

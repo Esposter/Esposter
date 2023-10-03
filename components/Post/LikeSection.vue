@@ -30,7 +30,7 @@ const onDeleteLike = async () => {
 </script>
 
 <template>
-  <div display="flex" flex="col" items="center">
+  <div flex flex-col items-center>
     <v-btn
       p="0!"
       rd="1!"

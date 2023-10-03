@@ -15,8 +15,8 @@ const realActive = computed(() => !loading.value && active);
 <template>
   <ClientOnly>
     <Waypoint
-      display="flex"
-      justify="center"
+      flex
+      justify-center
       :active="realActive"
       @change="
         (waypointState: WaypointState) => {

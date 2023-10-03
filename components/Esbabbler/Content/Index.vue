@@ -1,5 +1,5 @@
 <template>
-  <div display="flex" flex="col" h="full">
+  <div h-full flex flex-col>
     <EsbabblerContentHeader />
     <EsbabblerContentMessages />
   </div>

@@ -8,7 +8,7 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
 </script>
 
 <template>
-  <v-toolbar flex="none" color="surface" :title="`Configuration - ${displayType}`">
+  <v-toolbar flex-none color="surface" :title="`Configuration - ${displayType}`">
     <v-spacer />
     <TableEditorEditFormErrorIcon />
     <TableEditorSaveButton />

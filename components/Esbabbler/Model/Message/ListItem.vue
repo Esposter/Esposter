@@ -42,7 +42,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <DefaultAvatar v-else :name="creator.name" />
         </template>
         <v-list-item-title>
-          <span font="bold">
+          <span font-bold>
             {{ creator.name }}
           </span>
           <span class="text-subtitle-2" pl="2" op="60">

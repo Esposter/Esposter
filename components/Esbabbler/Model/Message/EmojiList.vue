@@ -39,15 +39,15 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 </script>
 
 <template>
-  <div v-if="hasEmojis" mt="2" display="flex" flex="wrap" gap="1">
+  <div v-if="hasEmojis" mt-2 flex flex-wrap gap-1>
     <div
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } in emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       w="fit"
       px="2"
-      display="flex"
-      items="center"
+      flex
+      items-center
       rd="full!"
       shadow="md"
       cursor="pointer"

@@ -8,7 +8,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
   <NuxtLayout>
     <v-container>
       <v-row>
-        <v-col display="flex" justify="center">
+        <v-col flex justify-center>
           <VisualGem />
         </v-col>
       </v-row>
@@ -23,7 +23,7 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
         </v-col>
       </v-row>
       <v-row pt="12">
-        <v-col class="text-h5" display="flex" justify="center" text="center" font="Montserrat!">
+        <v-col class="text-h5" flex justify-center text-center font="Montserrat!">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
       </v-row>
