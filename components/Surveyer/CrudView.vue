@@ -12,10 +12,10 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
 <template>
   <v-container flex flex-col fluid>
     <StyledDataTable
-      h-full
       flex
       flex-1
       flex-col
+      height="100%"
       :headers="surveyerHeaders"
       :items="surveyList"
       :search="searchQuery"

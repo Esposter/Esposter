@@ -19,10 +19,10 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
 <template>
   <v-container h-full flex flex-col fluid>
     <StyledDataTable
-      h-full
       flex
       flex-1
       flex-col
+      height="100%"
       :headers="props.headers"
       :items="tableEditor?.items"
       :search="searchQuery"
