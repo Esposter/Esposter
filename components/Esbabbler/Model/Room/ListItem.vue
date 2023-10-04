@@ -19,7 +19,7 @@ const active = computed(() => room.id === currentRoomId.value);
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
-          <v-badge m="r-4" color="green" location="bottom end" dot>
+          <v-badge mr-4 color="green" location="bottom end" dot>
             <v-avatar v-if="room.image">
               <v-img :src="room.image" :alt="room.name" />
             </v-avatar>
@@ -34,9 +34,9 @@ const active = computed(() => room.id === currentRoomId.value);
           v-show="isHovering"
           absolute
           top="1/2"
-          right="0"
+          right-0
           translate-y="-1/2"
-          bg="transparent!"
+          bg-transparent="!"
           icon="mdi-close"
           variant="plain"
           size="small"

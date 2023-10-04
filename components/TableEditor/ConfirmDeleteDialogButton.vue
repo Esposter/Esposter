@@ -34,11 +34,11 @@ const isDeletable = computed(() => itemNameTyped.value === displayItemName.value
     <StyledCard>
       <v-card-title flex="!" flex-wrap items-center whitespace="normal!">
         Confirm Deletion of {{ displayItemType }}:
-        <v-code mx="2">{{ displayItemName }}</v-code>
+        <v-code mx-2>{{ displayItemName }}</v-code>
         <StyledClipboardIconButton :source="displayItemName" />
       </v-card-title>
       <v-card-text>
-        <div pb="4">
+        <div pb-4>
           To confirm the delete action please enter the name of the
           <span font-bold>{{ displayItemType }}</span> exactly as it occurs.
         </div>

@@ -32,9 +32,9 @@ const onDeleteLike = async () => {
 <template>
   <div flex flex-col items-center>
     <v-btn
-      p="0!"
-      rd="1!"
-      bg="transparent!"
+      p-0="!"
+      rd-1="!"
+      bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"
@@ -49,9 +49,9 @@ const onDeleteLike = async () => {
     </v-btn>
     {{ post.noLikes }}
     <v-btn
-      p="0!"
-      rd="1!"
-      bg="transparent!"
+      p-0="!"
+      rd-1="!"
+      bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"

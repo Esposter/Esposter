@@ -47,10 +47,10 @@ const upgradeIcon = computed(() => {
 <template>
   <v-menu :close-on-content-click="false" :="menuProps">
     <template #activator="{ props: activatorProps }">
-      <v-list-item :title="name" select="none" :="activatorProps">
+      <v-list-item :title="name" select-none :="activatorProps">
         <template #prepend>
           <v-img
-            mr="1"
+            mr-1
             width="2rem"
             height="2rem"
             :src="type === ItemType.Building ? buildingIcon : upgradeIcon"
@@ -76,13 +76,13 @@ const upgradeIcon = computed(() => {
         {{ name }}
       </v-card-title>
       <v-card-text>
-        <div v-if="description" pb="4" v-html="descriptionHtml" />
-        <div pb="4" flex justify="end" font="italic">
-          <span text="right" v-html="flavorDescriptionHtml" />
+        <div v-if="description" pb-4 v-html="descriptionHtml" />
+        <div pb-4 flex justify-end font-italic>
+          <span text-right v-html="flavorDescriptionHtml" />
         </div>
         <div :class="{ 'not-affordable': !isAffordable }" flex>
           <v-spacer />
-          {{ displayPrice }} <ClickerModelPinaColada width="16" height="16" />
+          {{ displayPrice }} <ClickerModelPinaColada w-4 h-4 />
         </div>
       </v-card-text>
       <template v-if="slots['append-text']">

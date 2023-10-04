@@ -44,14 +44,14 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } in emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
-      w="fit"
-      px="2"
+      w-fit
+      px-2
       flex
       items-center
-      rd="full!"
-      shadow="md"
-      cursor="pointer"
-      z="1"
+      rd-full="!"
+      shadow-md
+      cursor-pointer
+      z-1
       @click="
         isReacted
           ? onDeleteEmoji({ partitionKey, rowKey, messageRowKey })
@@ -61,7 +61,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
       "
     >
       {{ emoji }}
-      <span class="text-subtitle-2" pl="1">{{ userIds.length }}</span>
+      <span class="text-subtitle-2" pl-1>{{ userIds.length }}</span>
     </div>
   </div>
 </template>

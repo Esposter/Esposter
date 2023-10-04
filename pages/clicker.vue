@@ -17,7 +17,7 @@ useTimers();
       <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
     </Head>
     <template #left>
-      <ClickerModelStoreHeader pt="4" />
+      <ClickerModelStoreHeader pt-4 />
       <ClickerModelStoreList />
     </template>
     <v-container h-full flex justify-center items-center flex-col>
@@ -27,7 +27,7 @@ useTimers();
     </v-container>
     <ClickerModelPointsPopups />
     <template #right>
-      <ClickerModelInventoryHeader pt="4" />
+      <ClickerModelInventoryHeader pt-4 />
       <ClickerModelInventoryList />
     </template>
   </NuxtLayout>

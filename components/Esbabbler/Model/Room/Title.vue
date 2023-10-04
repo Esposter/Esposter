@@ -32,7 +32,7 @@ onClickOutside(titleRef, async () => {
 <template>
   <div
     ref="titleRef"
-    px="1"
+    px-1
     flex
     items-center
     :w="isUpdateMode ? 'full' : ''"
@@ -44,12 +44,12 @@ onClickOutside(titleRef, async () => {
       v-if="isUpdateMode"
       v-model="currentRoomName"
       font-bold
-      text="xl"
+      text-xl
       density="compact"
       hide-details
       autofocus
       @keydown.enter="onUpdateRoom"
     />
-    <v-toolbar-title v-else font="bold!" select="all" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
+    <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
   </div>
 </template>

@@ -17,17 +17,17 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
 
 <template>
   <StyledCard class="card">
-    <PostLikeSection absolute left="2" top="2" :post="post" />
-    <v-card px="2!" pt="2!">
+    <PostLikeSection absolute top-2 left-2 :post="post" />
+    <v-card px-2="!" pt-2="!">
       <v-avatar>
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
       Posted by <span font-bold>{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
-      <v-card-title class="text-h6" px="0!" font="bold!" whitespace="normal!">
+      <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>
-      <v-card-text class="text-subtitle-1 card-content" px="0!" pb="0!" v-html="sanitizedDescriptionHtml" />
-      <v-card-actions p="0!">
+      <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="sanitizedDescriptionHtml" />
+      <v-card-actions p-0="!">
         <PostUpdateButton v-if="isOwner" :post-id="post.id" />
         <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
       </v-card-actions>

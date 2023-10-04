@@ -98,7 +98,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 
 <template>
   <StyledCard :elevation="isHovering ? 12 : 2" :="hoverProps">
-    <v-card-actions p="0!" min-h="auto!">
+    <v-card-actions p-0="!" min-h="auto!">
       <EmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
@@ -110,8 +110,8 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         <template #activator="{ props: tooltipProps }">
           <v-btn
             v-if="isCreator"
-            m="0!"
-            rd="0!"
+            m-0="!"
+            rd-0="!"
             icon="mdi-pencil"
             size="small"
             :="tooltipProps"
@@ -123,7 +123,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         <template #activator="{ props: menuProps }">
           <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">
-              <v-btn m="0!" rd="0!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+              <v-btn m-0="!" rd-0="!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
             </template>
           </v-tooltip>
         </template>

@@ -6,7 +6,7 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 </script>
 
 <template>
-  <v-toolbar bg="transparent!">
+  <v-toolbar bg-transparent="!">
     <template v-if="!leftDrawerOpenAuto" #prepend>
       <v-btn icon="mdi-store" @click="leftDrawerOpen = true" />
     </template>

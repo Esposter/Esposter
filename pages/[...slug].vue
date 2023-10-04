@@ -24,13 +24,13 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <div class="image" h-full flex flex-col justify-center items-center>
-      <div mt="25" flex flex-col items-center z="1">
-        <div class="text-#ddd" text="center 5xl">Lost in space?</div>
-        <NuxtInvisibleLink pt="4" :to="RoutePath.Index">
+      <div mt-25 flex flex-col items-center z-1>
+        <div class="text-#ddd" text-center text-5xl>Lost in space?</div>
+        <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
           <StyledButton>Go back home</StyledButton>
         </NuxtInvisibleLink>
       </div>
-      <div class="hover" mt="-25">
+      <div class="hover" mt--25>
         <VisualFloatingAstronaut />
       </div>
     </div>

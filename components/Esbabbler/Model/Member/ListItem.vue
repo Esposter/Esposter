@@ -11,7 +11,7 @@ const { member } = defineProps<MemberListItemProps>();
 <template>
   <v-list-item v-if="member.name" :title="member.name" :value="member.name">
     <template #prepend>
-      <v-badge m="r-4" color="green" location="bottom end" dot>
+      <v-badge mr-4 color="green" location="bottom end" dot>
         <v-avatar v-if="member.image">
           <v-img :src="member.image" :alt="member.name" />
         </v-avatar>

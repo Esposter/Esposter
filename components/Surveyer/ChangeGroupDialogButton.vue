@@ -29,8 +29,8 @@ const group = ref(survey.group);
       <v-tooltip text="Change Group">
         <template #activator="{ props: tooltipProps }">
           <v-btn
-            m="0!"
-            rd="0!"
+            m-0="!"
+            rd-0="!"
             icon="mdi-folder-arrow-left-right"
             size="small"
             :="tooltipProps"

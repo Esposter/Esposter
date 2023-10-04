@@ -41,7 +41,7 @@ const { deleteMessage } = useMessageStore();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div py="2" mx="4" b="1 solid" rd="2" shadow="md">
+    <div py-2 mx-4 b-1 b-solid rd-2 shadow-md>
       <slot name="messagePreview" />
     </div>
   </StyledDeleteDialog>

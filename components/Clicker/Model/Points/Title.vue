@@ -13,6 +13,6 @@ const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower
 </script>
 
 <template>
-  <div class="text-h3" text-center font-bold select="none"><span v-html="displayNoPointsHtml" /> {{ ITEM_NAME }}s</div>
-  <div class="text-h5" text-center font-bold select="none">per second: {{ displayAllBuildingPower }}</div>
+  <div class="text-h3" text-center font-bold select-none><span v-html="displayNoPointsHtml" /> {{ ITEM_NAME }}s</div>
+  <div class="text-h5" text-center font-bold select-none>per second: {{ displayAllBuildingPower }}</div>
 </template>

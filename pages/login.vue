@@ -50,18 +50,18 @@ const providerProps = ref<ProviderProps[]>([
     <v-container h-full flex justify-center items-center>
       <StyledCard width="100%" max-width="500">
         <v-container>
-          <div class="text-h5" mb="1" text-center>Sign in to</div>
-          <div mb="2" flex justify-center items-center>
+          <div class="text-h5" mb-1 text-center>Sign in to</div>
+          <div mb-2 flex justify-center items-center>
             <EsposterLogo />
-            <span class="text-h6" ml="2">{{ SITE_NAME }}</span>
+            <span class="text-h6" ml-2>{{ SITE_NAME }}</span>
           </div>
-          <div mb="2" text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
+          <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
           <template v-for="{ provider, logo, logoStyle, logoAttrs, buttonStyle } in providerProps" :key="provider">
             <button
               class="button"
               :style="{ ...buttonStyle }"
-              mb="3"
-              pl="2"
+              mb-3
+              pl-2
               w-full
               h-12
               flex
@@ -69,8 +69,8 @@ const providerProps = ref<ProviderProps[]>([
               rd
               @click="signIn(provider)"
             >
-              <component :is="logo" :style="{ ...logoStyle }" w="8" :="{ ...logoAttrs }" />
-              <span class="text-#fff" mx="auto" font-bold>{{ toTitleCase(provider) }}</span>
+              <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
+              <span class="text-#fff" mx-auto font-bold>{{ toTitleCase(provider) }}</span>
             </button>
           </template>
         </v-container>

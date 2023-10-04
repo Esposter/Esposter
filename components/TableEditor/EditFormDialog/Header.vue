@@ -13,7 +13,7 @@ const displayType = computed(() => (editedItem.value ? prettifyName(editedItem.v
     <TableEditorEditFormErrorIcon />
     <TableEditorSaveButton />
     <TableEditorConfirmDeleteDialogButton />
-    <v-divider mx="2!" thickness="2" inset vertical />
+    <v-divider mx-2="!" thickness="2" inset vertical />
     <TableEditorToggleFullScreenDialogButton />
     <TableEditorConfirmCloseDialogButton />
   </v-toolbar>

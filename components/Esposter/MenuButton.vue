@@ -53,7 +53,7 @@ const menu = ref(false);
               <v-icon :icon="item.icon" />
             </v-avatar>
           </template>
-          <v-list-item-title font="bold!">{{ item.title }}</v-list-item-title>
+          <v-list-item-title font-bold="!">{{ item.title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

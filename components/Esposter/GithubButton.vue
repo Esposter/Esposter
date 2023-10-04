@@ -8,7 +8,7 @@ import { RoutePath } from "@/models/router/RoutePath";
       <NuxtInvisibleLink :to="RoutePath.Github">
         <v-avatar color="background">
           <v-btn h-full="!" :="props">
-            <VisualLogoGithub w="6" fill="currentColor" />
+            <VisualLogoGithub w-6 fill="currentColor" />
           </v-btn>
         </v-avatar>
       </NuxtInvisibleLink>

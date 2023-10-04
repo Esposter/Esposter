@@ -53,7 +53,7 @@ const description = ref(initialValues.description);
           </v-col>
         </v-row>
         <v-row>
-          <v-col flex justify="end">
+          <v-col flex justify-end>
             <StyledButton type="submit">Post</StyledButton>
           </v-col>
         </v-row>

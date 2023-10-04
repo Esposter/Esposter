@@ -45,7 +45,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span class="text-subtitle-2" pl="2" op="60">
+          <span class="text-subtitle-2" pl-2 op="60">
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
@@ -58,12 +58,12 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <v-list-item-subtitle v-else op="100!" v-html="sanitizedMessageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
-      <div relative z="1">
+      <div relative z-1>
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
-          top="-6"
-          right="0"
+          top--6
+          right-0
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
@@ -88,7 +88,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           </v-avatar>
           <DefaultAvatar v-else :name="creator.name" />
         </template>
-        <v-list-item-title font="bold!">
+        <v-list-item-title font-bold="!">
           {{ creator.name }}
         </v-list-item-title>
         <v-list-item-subtitle op="100!" v-html="sanitizedMessageHtml" />

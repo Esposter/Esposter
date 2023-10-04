@@ -24,12 +24,12 @@ const inviteLink = computed(() =>
         </template>
       </v-tooltip>
     </template>
-    <StyledCard px="4!">
-      <v-card-title px="0!">
+    <StyledCard px-4="!">
+      <v-card-title px-0="!">
         Invite friends to <span font-bold>{{ roomName }}</span>
       </v-card-title>
-      <v-card-text px="0!">
-        <div mb="2">Send a room invite link to a friend</div>
+      <v-card-text px-0="!">
+        <div mb-2>Send a room invite link to a friend</div>
         <v-text-field v-model="inviteLink" variant="filled" readonly hide-details>
           <template #append-inner>
             <StyledClipboardButton :source="inviteLink" />
