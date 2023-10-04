@@ -89,7 +89,7 @@
     "pinia": "^2.1.6",
     "postgres": "^3.3.5",
     "rate-limiter-flexible": "^3.0.0",
-    "sql-highlight": "^4.3.3",
+    "sql-highlight": "^4.4.0",
     "superjson": "^1.13.3",
     "survey-creator-knockout": "^1.9.111",
     "three": "^0.157.0",
