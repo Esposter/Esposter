@@ -22,11 +22,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  // Disable sourcemap to remove terminal warnings
-  sourcemap: {
-    client: false,
-    server: false,
-  },
   typescript: {
     shim: false,
   },
