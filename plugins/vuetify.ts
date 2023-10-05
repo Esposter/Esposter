@@ -93,6 +93,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         },
       },
       VDialog: { width: 500, maxWidth: "100%" },
+      VSelect: { variant: "outlined" },
       VTextarea: { variant: "outlined" },
       VTextField: { variant: "outlined" },
       VTooltip: { location: "top" },

@@ -14,7 +14,7 @@ const { editedItem } = storeToRefs(tableEditorStore);
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
       </v-col>
       <v-col cols="12">
-        <v-textarea v-model="editedItem.notes" label="Notes" />
+        <v-textarea v-model="editedItem.notes" label="Notes" auto-grow />
       </v-col>
       <v-col cols="12">
         <!-- @vue-ignore @TODO: The type here should be fixed by vuetify team -->

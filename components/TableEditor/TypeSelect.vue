@@ -7,5 +7,5 @@ const { tableEditorType } = storeToRefs(tableEditorStore);
 </script>
 
 <template>
-  <v-select v-model="tableEditorType" :items="tableEditorItemCategoryDefinitions" variant="outlined" hide-details />
+  <v-select v-model="tableEditorType" :items="tableEditorItemCategoryDefinitions" hide-details />
 </template>
