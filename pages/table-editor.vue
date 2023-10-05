@@ -4,12 +4,11 @@ import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList
 import { useTableEditorStore } from "@/store/tableEditor";
 import { uuidValidateV4 } from "@/util/uuid";
 
-await useReadTableEditor();
+useReadTableEditor();
+useConfirmBeforeNavigation();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-
-useConfirmBeforeNavigation();
 
 onMounted(() => {
   const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];

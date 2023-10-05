@@ -1,8 +1,6 @@
-import { createVuetify, ThemeDefinition, VuetifyOptions } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
+import type { VuetifyOptions } from "vuetify";
+import { createVuetify, ThemeDefinition } from "vuetify";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { VDatePicker } from "vuetify/labs/VDatePicker";
 
 export enum ThemeMode {
   light = "light",
@@ -48,6 +46,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
   };
 };
 
+// @TODO: Fix this type when vuetify team exposes it
 const theme: VuetifyOptions["theme"] = {
   variations: {
     colors: ["primary"],
@@ -72,32 +71,32 @@ const theme: VuetifyOptions["theme"] = {
   },
 };
 
+const defaults: VuetifyOptions["defaults"] = {
+  VAutocomplete: { variant: "outlined" },
+  VBtn: { style: { backgroundColor: "transparent" }, flat: true },
+  VDataTable: {
+    style: {
+      borderRadius: ".25rem",
+    },
+    VToolbar: {
+      style: {
+        borderRadius: ".25rem",
+      },
+    },
+  },
+  VDialog: { width: 500, maxWidth: "100%" },
+  VSelect: { variant: "outlined" },
+  VTextarea: { variant: "outlined" },
+  VTextField: { variant: "outlined" },
+  VTooltip: { location: "top" },
+};
+
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
-    components: { ...components, VDatePicker, VDataTable },
-    directives,
-    theme,
     ssr: true,
-    defaults: {
-      VAutocomplete: { variant: "outlined" },
-      VBtn: { style: { backgroundColor: "transparent" }, flat: true },
-      VCombobox: { variant: "outlined" },
-      VDataTable: {
-        style: {
-          borderRadius: ".25rem",
-        },
-        VToolbar: {
-          style: {
-            borderRadius: ".25rem",
-          },
-        },
-      },
-      VDialog: { width: 500, maxWidth: "100%" },
-      VSelect: { variant: "outlined" },
-      VTextarea: { variant: "outlined" },
-      VTextField: { variant: "outlined" },
-      VTooltip: { location: "top" },
-    },
+    components: { VDataTable },
+    theme,
+    defaults,
   });
   nuxtApp.vueApp.use(vuetify);
 });

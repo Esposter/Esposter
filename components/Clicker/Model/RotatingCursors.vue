@@ -31,8 +31,6 @@ const animateCursors = (amount: number) => {
   }
 };
 
-onMounted(() => animateCursors(amount.value));
-
 watch(
   () => amount.value,
   (newValue) => {
@@ -40,11 +38,13 @@ watch(
   },
 );
 
-watch(
+const { trigger } = watchTriggerable(
   () => amount.value,
   (newValue) => animateCursors(newValue),
   { flush: "post" },
 );
+
+onMounted(trigger);
 </script>
 
 <template>

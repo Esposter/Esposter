@@ -14,6 +14,6 @@ const slots = defineSlots<Record<keyof VBtn["$slots"], Function>>();
 
 <style scoped lang="scss">
 .button {
-  background-image: $midnightBloom !important;
+  background-image: $midnight-bloom !important;
 }
 </style>

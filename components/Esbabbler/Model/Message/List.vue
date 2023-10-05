@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import VWaypoint from "@/components/VWaypoint.vue";
+import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 import type { MessageEntity } from "@/models/esbabbler/message";
 
 interface MessageListProps {
   messages: MessageEntity[];
   hasMore: boolean;
-  readMoreMessages: NonNullable<InstanceType<typeof VWaypoint>["$props"]["onChange"]>;
+  readMoreMessages: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
 }
 
 const { messages, hasMore, readMoreMessages } = defineProps<MessageListProps>();
@@ -19,6 +19,6 @@ const { messages, hasMore, readMoreMessages } = defineProps<MessageListProps>();
       :current-message="message"
       :next-message="messages[index + 1]"
     />
-    <VWaypoint :active="hasMore" @change="readMoreMessages" />
+    <StyledWaypoint :active="hasMore" @change="readMoreMessages" />
   </v-list>
 </template>

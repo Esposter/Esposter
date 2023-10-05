@@ -10,7 +10,7 @@ const { editor, tooltip } = defineProps<CustomEmojiPickerButtonProps>();
 </script>
 
 <template>
-  <EmojiPicker
+  <StyledEmojiPicker
     :tooltip-props="{ text: tooltip }"
     :button-props="{ size: 'small' }"
     @select="(emoji) => editor?.chain().focus().insertContent(emoji).run()"

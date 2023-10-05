@@ -21,7 +21,7 @@ const { smAndDown } = useDisplay();
 <style scoped lang="scss">
 .accent {
   color: transparent;
-  background-image: $vueGradient;
+  background-image: $vue-gradient;
   background-clip: text;
 }
 </style>

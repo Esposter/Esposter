@@ -14,7 +14,7 @@ const { onClick } = popupStore;
 
 <style scoped lang="scss">
 :deep(.clickable:active) {
-  transform: $clickShrink;
+  transform: $click-shrink;
   transform-origin: center;
 }
 </style>

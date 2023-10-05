@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import "emoji-mart-vue-fast/css/emoji-mart.css";
 import data from "emoji-mart-vue-fast/data/all.json";
+// @ts-expect-error
+import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
 import type { VBtn, VTooltip } from "vuetify/components";
 
-interface EmojiPickerProps {
+interface StyledEmojiPickerProps {
   tooltipProps: VTooltip["$props"];
   buttonProps?: VBtn["$props"];
   buttonAttrs?: VBtn["$attrs"];
 }
 
-const { tooltipProps, buttonProps, buttonAttrs } = defineProps<EmojiPickerProps>();
+const { tooltipProps, buttonProps, buttonAttrs } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{
   "update:menu": [value: boolean];
   select: [emoji: string];
@@ -48,6 +51,6 @@ const onEmojiSelect = (emoji: { native: string }) => {
         </template>
       </v-tooltip>
     </template>
-    <v-emoji-picker :data="emojiIndex" @select="onEmojiSelect" />
+    <Picker :data="emojiIndex" @select="onEmojiSelect" />
   </v-menu>
 </template>

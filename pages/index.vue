@@ -18,7 +18,7 @@ const hasMore = computed(() => Boolean(postListNextCursor.value));
           <PostCard :post="post" />
         </v-col>
       </v-row>
-      <VWaypoint :active="hasMore" @change="readMorePosts" />
+      <StyledWaypoint :active="hasMore" @change="readMorePosts" />
     </v-container>
   </NuxtLayout>
 </template>

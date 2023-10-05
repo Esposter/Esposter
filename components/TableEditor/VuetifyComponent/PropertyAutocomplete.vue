@@ -31,12 +31,7 @@ const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["v
   propertyRendererMap.value = result;
 };
 
-onMounted(() => {
-  if (!editedItem.value) return;
-  updatePropertyRendererMap(editedItem.value.component);
-});
-
-watch(
+const { trigger } = watchTriggerable(
   () => editedItem.value?.component,
   (newValue) => {
     if (!newValue) return;
@@ -44,6 +39,8 @@ watch(
     selectedProperty.value = undefined;
   },
 );
+
+onMounted(trigger);
 </script>
 
 <template>

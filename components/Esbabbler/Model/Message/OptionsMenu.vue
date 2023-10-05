@@ -99,7 +99,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 <template>
   <StyledCard :elevation="isHovering ? 12 : 2" :="hoverProps">
     <v-card-actions p-0="!" min-h="auto!">
-      <EmojiPicker
+      <StyledEmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
         :button-attrs="{ rd: '0!' }"

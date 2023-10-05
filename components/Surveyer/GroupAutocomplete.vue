@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useSurveyStore } from "@/store/surveyer/survey";
-import type { VCombobox } from "vuetify/components";
+import type { VAutocomplete } from "vuetify/components";
 
 interface GroupAutocompleteProps {
-  autocompleteProps?: VCombobox["$props"];
+  autocompleteProps?: VAutocomplete["$props"];
 }
 
 const modelValue = defineModel<string | null>();
@@ -18,5 +18,5 @@ const groups = computed(() => {
 </script>
 
 <template>
-  <v-combobox v-model="modelValue" label="Group" :items="groups" :="autocompleteProps" />
+  <v-autocomplete v-model="modelValue" label="Group" :items="groups" :="autocompleteProps" />
 </template>

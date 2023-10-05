@@ -72,7 +72,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
   border: 1px solid v-bind(info);
 
   &:active {
-    transform: $clickShrink;
+    transform: $click-shrink;
   }
 }
 
@@ -86,7 +86,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
   }
 
   &:active {
-    transform: $clickShrink;
+    transform: $click-shrink;
   }
 }
 </style>

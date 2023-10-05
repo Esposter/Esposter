@@ -2,11 +2,11 @@
 import type { WaypointState } from "vue-waypoint";
 import { Going, Waypoint } from "vue-waypoint";
 
-interface VWaypointProps {
+interface StyledWaypointProps {
   active: boolean;
 }
 
-const { active } = defineProps<VWaypointProps>();
+const { active } = defineProps<StyledWaypointProps>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const loading = ref(false);
 const realActive = computed(() => !loading.value && active);
