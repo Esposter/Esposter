@@ -22,6 +22,7 @@ watch(editFormDialog, (newValue) => {
     :fullscreen="isFullScreenDialog"
     :width="isFullScreenDialog ? '100%' : 800"
     persistent
+    no-click-animation
   >
     <TableEditorEditFormDialogContent>
       <slot />
