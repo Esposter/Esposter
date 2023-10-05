@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { getInitials } from "@/util/text";
 
-interface DefaultAvatarProps {
+interface StyledDefaultAvatarProps {
   name: string;
 }
 
-const { name } = defineProps<DefaultAvatarProps>();
+const { name } = defineProps<StyledDefaultAvatarProps>();
 </script>
 
 <template>

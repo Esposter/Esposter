@@ -23,7 +23,7 @@ const active = computed(() => room.id === currentRoomId.value);
             <v-avatar v-if="room.image">
               <v-img :src="room.image" :alt="room.name" />
             </v-avatar>
-            <DefaultAvatar v-else :name="room.name" />
+            <StyledDefaultAvatar v-else :name="room.name" />
           </v-badge>
         </template>
       </v-list-item>

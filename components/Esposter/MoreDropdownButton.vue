@@ -72,7 +72,7 @@ const menu = ref(false);
               <v-avatar v-if="session.user.image">
                 <v-img :src="session.user.image" />
               </v-avatar>
-              <DefaultAvatar v-else :name="session.user.name ?? ''" />
+              <StyledDefaultAvatar v-else :name="session.user.name ?? ''" />
             </v-btn>
           </v-avatar>
         </template>

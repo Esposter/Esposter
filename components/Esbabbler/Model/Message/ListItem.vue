@@ -39,7 +39,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <v-avatar v-if="creator.image">
             <v-img :src="creator.image" :alt="creator.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="creator.name" />
+          <StyledDefaultAvatar v-else :name="creator.name" />
         </template>
         <v-list-item-title>
           <span font-bold>
@@ -86,7 +86,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <v-avatar v-if="creator.image">
             <v-img :src="creator.image" :alt="creator.name" />
           </v-avatar>
-          <DefaultAvatar v-else :name="creator.name" />
+          <StyledDefaultAvatar v-else :name="creator.name" />
         </template>
         <v-list-item-title font-bold="!">
           {{ creator.name }}
