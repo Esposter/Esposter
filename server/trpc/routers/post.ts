@@ -61,7 +61,7 @@ export const postRouter = router({
     return newPostWithRelations ?? null;
   }),
   updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest } }) => {
-    const updatedPost = (await db.update(posts).set(rest).returning({ id: posts.id }))[0];
+    const updatedPost = (await db.update(posts).set(rest).where(eq(posts.id, id)).returning({ id: posts.id }))[0];
     const updatedPostWithRelations = await db.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, updatedPost.id),
       with: PostRelations,
