@@ -8,7 +8,7 @@ const { editFormRef } = storeToRefs(tableEditorStore);
 </script>
 
 <template>
-  <v-form ref="editFormRef" overflow-y="auto" @submit="(e) => e.preventDefault()">
+  <v-form ref="editFormRef" contents @submit="(e) => e.preventDefault()">
     <StyledCard>
       <TableEditorEditFormDialogHeader />
       <v-divider thickness="2" />
