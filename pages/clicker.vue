@@ -3,7 +3,7 @@ import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";
 
-useReadGame();
+await useReadGame();
 useTimers();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);

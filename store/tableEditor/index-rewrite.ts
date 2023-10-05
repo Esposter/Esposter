@@ -50,7 +50,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       // @TODO: Type bug here so we cast it for now
       editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
       editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
-      router.replace({ ...router.currentRoute.value, query: { [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
+      router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
       editFormDialog.value = true;
     };
     const save = async (isDeleteAction?: true) => {
@@ -68,7 +68,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const resetItem = () => {
       editedItem.value = null;
       editedIndex.value = -1;
-      router.replace({ query: undefined });
+      router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
     };
 
     return {

@@ -1,6 +1,5 @@
-export const useReadData = (unauthedReader: () => void, authedReader: () => Promise<void>) => {
+export const useReadData = async (unauthedReader: () => void, authedReader: () => Promise<void>) => {
   const { status } = useAuth();
-
   const { trigger } = watchTriggerable(status, async (newValue) => {
     if (newValue === "authenticated") {
       await authedReader();
@@ -12,5 +11,12 @@ export const useReadData = (unauthedReader: () => void, authedReader: () => Prom
     }
   });
 
-  onMounted(trigger);
+  if (status.value === "authenticated") {
+    await authedReader();
+    return;
+  }
+
+  if (status.value === "unauthenticated") {
+    onMounted(trigger);
+  }
 };

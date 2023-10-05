@@ -3,12 +3,12 @@ import { TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { jsonDateParse } from "@/util/json";
 
-export const useReadTableEditor = () => {
+export const useReadTableEditor = async () => {
   const { $client } = useNuxtApp();
   const tableEditorStore = useTableEditorStore()();
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
 
-  useReadData(
+  await useReadData(
     () => {
       const tableEditorStoreJson = localStorage.getItem(TABLE_EDITOR_STORE);
       if (tableEditorStoreJson)
