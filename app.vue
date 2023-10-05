@@ -19,6 +19,12 @@ const { "primary-lighten-1": primaryLighten1 } = useColors();
 html {
   overflow-y: auto;
 }
+
+// Maintain height for line breaks as tiptap editor inserts empty <p> tag for newlines
+p:empty::before {
+  content: "";
+  display: inline-block;
+}
 </style>
 
 <style scoped lang="scss">
