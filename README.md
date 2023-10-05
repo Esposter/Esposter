@@ -124,6 +124,20 @@
         </p>
       </td>
     </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://www.postgresql.org">
+          <img src="./.github/assets/postgreSQL/logo.png" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>PostgreSQL</h3>
+        <p>
+          PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. We highly recommend you take a look at <a href="https://www.postgresql.org/docs">the PostgreSQL documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -170,7 +184,7 @@
 
 ## Setup
 
-Make sure to install the dependencies:
+1. Install the js dependencies:
 
 ```bash
 # yarn
@@ -182,6 +196,10 @@ npm install
 # pnpm
 pnpm install --shamefully-hoist
 ```
+
+2. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
+
+3. Add `.env` file according to `.env.example`
 
 ## Development Server
 
