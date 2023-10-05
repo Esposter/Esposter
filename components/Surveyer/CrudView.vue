@@ -10,7 +10,7 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
 </script>
 
 <template>
-  <v-container flex flex-col fluid>
+  <v-container h-full flex flex-col fluid>
     <StyledDataTable
       flex
       flex-1
