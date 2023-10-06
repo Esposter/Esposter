@@ -5,7 +5,7 @@ defineSlots<{ default: (props: {}) => unknown }>();
 
 const tableEditorStore = useTableEditorStore()();
 const { resetItem } = tableEditorStore;
-const { editFormDialog, isFullScreenDialog } = storeToRefs(tableEditorStore);
+const { editFormRef, editFormDialog, isFullScreenDialog } = storeToRefs(tableEditorStore);
 
 watch(editFormDialog, (newValue) => {
   // Hack resetting the item so the dialog content doesn't change
@@ -24,8 +24,12 @@ watch(editFormDialog, (newValue) => {
     persistent
     no-click-animation
   >
-    <TableEditorEditFormDialogContent>
-      <slot />
-    </TableEditorEditFormDialogContent>
+    <v-form ref="editFormRef" contents @submit="(e) => e.preventDefault()">
+      <StyledCard>
+        <Header />
+        <v-divider thickness="2" />
+        <slot />
+      </StyledCard>
+    </v-form>
   </v-dialog>
 </template>
