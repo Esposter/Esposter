@@ -9,6 +9,7 @@ interface StyledCalendarProps {
 }
 
 const { calendarOptions } = defineProps<StyledCalendarProps>();
+const { info } = useColors();
 </script>
 
 <template>
@@ -24,10 +25,31 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
         right: 'dayGridMonth,timeGridWeek,timeGridDay',
       },
     }"
-  />
+  >
+    <template #eventContent="{ event, timeText }">
+      <v-tooltip location="top">
+        <template #activator="{ props }">
+          <div class="tooltip text-white" w-full text-center rd-1 :="props">
+            {{ timeText }}
+            {{ event.title }}
+          </div>
+        </template>
+        <div text-center font-bold>
+          {{ event.title }}
+        </div>
+        <div v-if="event.extendedProps.description" pt-2>
+          {{ event.extendedProps.description }}
+        </div>
+      </v-tooltip>
+    </template>
+  </FullCalendar>
 </template>
 
 <style scoped lang="scss">
+.tooltip {
+  background-color: v-bind(info);
+}
+
 :deep(.fc-icon) {
   display: flex;
 }
