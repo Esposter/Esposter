@@ -23,6 +23,10 @@ const { editedItem } = storeToRefs(tableEditorStore);
           @cleared="editedItem.dueAt = null"
         />
       </v-col>
+      <v-col cols="12">
+        <div text-3xl text-center font-bold>Timetable</div>
+        <StyledCalendar pt-4 />
+      </v-col>
     </v-row>
   </v-container>
 </template>
