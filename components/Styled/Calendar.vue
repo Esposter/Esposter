@@ -31,4 +31,11 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
 :deep(.fc-icon) {
   display: flex;
 }
+
+:deep(.fc-col-header),
+:deep(.fc-daygrid-body),
+:deep(.fc-scrollgrid-sync-table) {
+  width: 100% !important;
+  height: 100% !important;
+}
 </style>
