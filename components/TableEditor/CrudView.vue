@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import CalendarButton from "@/components/TableEditor/TodoList/CalendarButton.vue";
 import type { Item } from "@/models/tableEditor/Item";
 import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import { propsMap } from "@/services/tableEditor/propsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -30,7 +32,13 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       @click:row="(_, { item }) => editItem(item.id)"
     >
       <template #top>
-        <TableEditorCrudViewHeader />
+        <TableEditorCrudViewHeader>
+          <template v-if="tableEditorType === TableEditorType.TodoList" #append-header>
+            <div pl-4>
+              <CalendarButton />
+            </div>
+          </template>
+        </TableEditorCrudViewHeader>
       </template>
       <template #[`item.${itemTypeKey}`]="{ item }">
         <v-chip label>

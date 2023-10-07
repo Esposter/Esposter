@@ -53,7 +53,7 @@ const providerProps = ref<ProviderProps[]>([
           <div class="text-h5" mb-1 text-center>Sign in to</div>
           <div mb-2 flex justify-center items-center>
             <EsposterLogo />
-            <span class="text-h6" ml-2>{{ SITE_NAME }}</span>
+            <span class="text-h6" pl-2>{{ SITE_NAME }}</span>
           </div>
           <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
           <template v-for="{ provider, logo, logoStyle, logoAttrs, buttonStyle } in providerProps" :key="provider">

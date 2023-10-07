@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Calendar from "@/components/TableEditor/TodoList/Calendar.vue";
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -23,10 +22,6 @@ const { editedItem } = storeToRefs(tableEditorStore);
           :date-picker-props="{ placeholder: 'Due Date', sixWeeks: 'append' }"
           @cleared="editedItem.dueAt = null"
         />
-      </v-col>
-      <v-col cols="12">
-        <div text-3xl text-center font-bold>Timetable</div>
-        <Calendar pt-4 />
       </v-col>
     </v-row>
   </v-container>

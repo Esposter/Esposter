@@ -1,5 +1,6 @@
 export const RoutePath = {
   About: "/about",
+  Calendar: "/calendar",
   Clicker: "/clicker",
   Github: "https://github.com/Esposter/Esposter",
   Index: "/",

@@ -3,6 +3,7 @@ import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 import type { EventSourceInput } from "@fullcalendar/core";
 
+await useReadTableEditor();
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { tableEditor, editedItem } = storeToRefs(tableEditorStore);
 const events = computed<EventSourceInput>(() => {
@@ -30,5 +31,18 @@ const events = computed<EventSourceInput>(() => {
 </script>
 
 <template>
-  <StyledCalendar :calendar-options="{ events }" />
+  <NuxtLayout>
+    <v-container fluid>
+      <StyledCard h-full p-4="!">
+        <StyledCalendar h-full :calendar-options="{ events }" />
+      </StyledCard>
+    </v-container>
+  </NuxtLayout>
 </template>
+
+<style scoped lang="scss">
+.v-container {
+  /* Esposter App Bar 56px */
+  height: calc(100dvh - 56px);
+}
+</style>

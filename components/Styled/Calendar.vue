@@ -26,7 +26,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     }"
   >
     <template #eventContent="{ event, timeText }">
-      <v-tooltip location="top">
+      <v-tooltip>
         <template #activator="{ props }">
           <div flex items-center overflow-hidden :="props">
             <div class="fc-daygrid-event-dot" />
@@ -48,12 +48,5 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
 <style scoped lang="scss">
 :deep(.fc-icon) {
   display: flex;
-}
-
-:deep(.fc-col-header),
-:deep(.fc-daygrid-body),
-:deep(.fc-scrollgrid-sync-table) {
-  width: 100% !important;
-  height: 100% !important;
 }
 </style>

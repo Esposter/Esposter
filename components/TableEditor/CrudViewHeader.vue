@@ -3,6 +3,10 @@ import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { getEditFormComponent } from "@/services/tableEditor/editFormMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
+defineSlots<{
+  "append-header": (props: {}) => unknown;
+}>();
+
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? getEditFormComponent(editedItem.value.type) : null));
@@ -16,6 +20,7 @@ const component = computed(() => (editedItem.value ? getEditFormComponent(edited
         <TableEditorSearchBar />
         <v-divider mx-4="!" thickness="2" inset vertical />
         <TableEditorCreateItemButton />
+        <slot name="append-header" />
       </div>
     </v-toolbar-title>
     <TableEditorEditFormDialog>

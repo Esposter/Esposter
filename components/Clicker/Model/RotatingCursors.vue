@@ -9,7 +9,7 @@ const amount = computed(() => {
   const cursorBuilding = game.value.boughtBuildings.find((b) => b.name === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
-const rotatingDivIds = ref(Array.from({ length: amount.value }, () => crypto.randomUUID()));
+const rotatingDivIds = computed(() => Array.from({ length: amount.value }, () => crypto.randomUUID()));
 
 const icon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
@@ -23,7 +23,9 @@ const animateCursors = (amount: number) => {
   for (let i = 0; i < amount; i++) {
     const rotationOffset = initialRotationOffsets[i];
     const rotatingDivId = rotatingDivIds.value[i];
-    const rotatingDiv = document.getElementById(rotatingDivId) as HTMLDivElement;
+    const rotatingDiv = document.getElementById(rotatingDivId);
+    if (!rotatingDiv) continue;
+
     rotatingDiv.animate(
       [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
       { duration: 60 * 1000, iterations: Infinity },
@@ -31,19 +33,8 @@ const animateCursors = (amount: number) => {
   }
 };
 
-watch(
-  () => amount.value,
-  (newValue) => {
-    rotatingDivIds.value = Array.from({ length: newValue }, () => crypto.randomUUID());
-  },
-);
-
-const { trigger } = watchTriggerable(
-  () => amount.value,
-  (newValue) => animateCursors(newValue),
-  { flush: "post" },
-);
-
+// Animate after vue has updated the DOM with new cursors
+const { trigger } = watchTriggerable(amount, (newValue) => animateCursors(newValue), { flush: "post" });
 onMounted(trigger);
 </script>
 
