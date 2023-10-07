@@ -38,7 +38,7 @@
     "@vueuse/nuxt": "^10.4.1",
     "@vueuse/sound": "^2.0.1",
     "drizzle-kit": "^0.19.13",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.17.0",
@@ -47,8 +47,8 @@
     "prettier": "^3.0.3",
     "sass": "^1.69.0",
     "tsx": "^3.12.10",
-    "type-fest": "^4.3.3",
-    "vue-tsc": "^1.8.15"
+    "type-fest": "^4.4.0",
+    "vue-tsc": "^1.8.16"
   },
   "dependencies": {
     "@auth/core": "^0.14.0",
@@ -72,8 +72,8 @@
     "@tiptap/starter-kit": "^2.1.11",
     "@tiptap/suggestion": "^2.1.11",
     "@tiptap/vue-3": "^2.1.11",
-    "@trpc/client": "^10.38.5",
-    "@trpc/server": "^10.38.5",
+    "@trpc/client": "^10.40.0",
+    "@trpc/server": "^10.40.0",
     "@vuepic/vue-datepicker": "^7.0.0",
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
