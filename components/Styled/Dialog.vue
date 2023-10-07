@@ -3,7 +3,7 @@ import type { VBtn, VCard } from "vuetify/components";
 
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];
-  confirmButtonProps?: VBtn["$props"] & Required<Pick<VBtn["$props"], "text">>;
+  confirmButtonProps?: VBtn["$props"];
 }
 
 export interface StyledDialogActivatorSlotProps {
