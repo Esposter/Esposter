@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Header from "@/components/TableEditor/EditFormDialog/Header.vue";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{ default: (props: {}) => unknown }>();

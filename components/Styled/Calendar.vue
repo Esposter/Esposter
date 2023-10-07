@@ -9,7 +9,6 @@ interface StyledCalendarProps {
 }
 
 const { calendarOptions } = defineProps<StyledCalendarProps>();
-const { info } = useColors();
 </script>
 
 <template>
@@ -29,9 +28,10 @@ const { info } = useColors();
     <template #eventContent="{ event, timeText }">
       <v-tooltip location="top">
         <template #activator="{ props }">
-          <div class="tooltip text-white" w-full text-center rd-1 :="props">
-            {{ timeText }}
-            {{ event.title }}
+          <div flex items-center overflow-hidden :="props">
+            <div class="fc-daygrid-event-dot" />
+            <div class="fc-event-time">{{ timeText }}</div>
+            <div class="fc-event-title">{{ event.title }}</div>
           </div>
         </template>
         <div text-center font-bold>
@@ -46,10 +46,6 @@ const { info } = useColors();
 </template>
 
 <style scoped lang="scss">
-.tooltip {
-  background-color: v-bind(info);
-}
-
 :deep(.fc-icon) {
   display: flex;
 }

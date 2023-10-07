@@ -1,31 +1,11 @@
 <script setup lang="ts">
+import Calendar from "@/components/TableEditor/TodoList/Calendar.vue";
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
-import type { EventSourceInput } from "@fullcalendar/core";
 
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
-const { tableEditor, editedItem } = storeToRefs(tableEditorStore);
-const events = computed<EventSourceInput>(() => {
-  const results: EventSourceInput = [];
-
-  if (!editedItem.value) return results;
-
-  for (const item of tableEditor.value.items) {
-    if (!item.dueAt) continue;
-
-    results.push({ id: item.id, title: item.name, description: item.notes, date: item.dueAt });
-  }
-
-  if (editedItem.value.dueAt)
-    results.push({
-      id: editedItem.value.id,
-      title: editedItem.value.name,
-      description: editedItem.value.notes,
-      date: editedItem.value.dueAt,
-    });
-  return results.concat();
-});
+const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 
 <template>
@@ -46,7 +26,7 @@ const events = computed<EventSourceInput>(() => {
       </v-col>
       <v-col cols="12">
         <div text-3xl text-center font-bold>Timetable</div>
-        <StyledCalendar pt-4 :calendar-options="{ events }" />
+        <Calendar pt-4 />
       </v-col>
     </v-row>
   </v-container>
