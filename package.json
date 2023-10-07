@@ -64,7 +64,7 @@
     "@fullcalendar/timegrid": "^6.1.9",
     "@fullcalendar/vue3": "^6.1.9",
     "@hebilicious/authjs-nuxt": "^0.3.4",
-    "@mdi/font": "^7.2.96",
+    "@mdi/font": "^7.3.67",
     "@pinia/nuxt": "^0.4.11",
     "@tiptap/extension-character-count": "^2.1.11",
     "@tiptap/extension-mention": "^2.1.11",
