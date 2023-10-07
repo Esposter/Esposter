@@ -34,6 +34,7 @@ const isOpen = ref(false);
           text-3
           color="error"
           variant="outlined"
+          text="Confirm"
           :="confirmButtonProps"
           @click="
             emit('confirm', () => {
