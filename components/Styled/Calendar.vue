@@ -28,7 +28,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">
-          <div flex items-center overflow-hidden :="props">
+          <div w-full flex items-center overflow-hidden :="props">
             <div class="fc-daygrid-event-dot" />
             <div class="fc-event-time">{{ timeText }}</div>
             <div class="fc-event-title">{{ event.title }}</div>
