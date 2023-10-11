@@ -92,7 +92,7 @@
     "node-html-parser": "^6.1.10",
     "pathe": "^1.1.1",
     "pinia": "^2.1.6",
-    "postgres": "^3.3.5",
+    "postgres": "^3.4.0",
     "rate-limiter-flexible": "^3.0.0",
     "sql-highlight": "^4.4.0",
     "superjson": "^1.13.3",
