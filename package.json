@@ -91,7 +91,7 @@
     "node-emoji": "^2.1.0",
     "node-html-parser": "^6.1.10",
     "pathe": "^1.1.1",
-    "pinia": "^2.1.6",
+    "pinia": "^2.1.7",
     "postgres": "^3.4.0",
     "rate-limiter-flexible": "^3.0.0",
     "sql-highlight": "^4.4.0",
