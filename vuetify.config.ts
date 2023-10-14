@@ -2,28 +2,34 @@ import type { ThemeDefinition, VuetifyOptions } from "vuetify";
 import type { ExternalVuetifyOptions } from "vuetify-nuxt-module";
 import { ThemeMode } from "./models/vuetify/ThemeMode";
 
+// @TODO: Internal vuetify types
 type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
+type Theme = VuetifyOptions["theme"];
+type Defaults = VuetifyOptions["defaults"];
 
-const baseColorsCommon = {
+const BaseColorsCommon = {
   primary: "#42b883",
   border: "#ccc",
   info: "#2d88ff",
 } satisfies ThemeColors;
 
-const baseColors = {
+const BaseColorsMap = {
   [ThemeMode.light]: {
-    ...baseColorsCommon,
+    ...BaseColorsCommon,
     background: "#dae0e6",
     surface: "#fff",
   },
   [ThemeMode.dark]: {
-    ...baseColorsCommon,
+    ...BaseColorsCommon,
     background: "#18191a",
     surface: "#36393f",
   },
 } satisfies Record<ThemeMode, ThemeColors>;
 
-type BaseColors = (typeof baseColors)[ThemeMode];
+type BaseColors = (typeof BaseColorsMap)[ThemeMode];
+export type Colors = {
+  [Property in keyof BaseColors]: ComputedRef<BaseColors[Property]>;
+};
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
@@ -41,8 +47,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
   };
 };
 
-// @TODO: Fix this type when vuetify team exposes it
-const theme: VuetifyOptions["theme"] = {
+const theme: Theme = {
   variations: {
     colors: ["primary"],
     lighten: 1,
@@ -52,21 +57,21 @@ const theme: VuetifyOptions["theme"] = {
     [ThemeMode.light]: {
       dark: false,
       colors: {
-        ...baseColors[ThemeMode.light],
-        ...getBaseColorsExtension(baseColors[ThemeMode.light]),
+        ...BaseColorsMap[ThemeMode.light],
+        ...getBaseColorsExtension(BaseColorsMap[ThemeMode.light]),
       },
     },
     [ThemeMode.dark]: {
       dark: true,
       colors: {
-        ...baseColors[ThemeMode.dark],
-        ...getBaseColorsExtension(baseColors[ThemeMode.dark]),
+        ...BaseColorsMap[ThemeMode.dark],
+        ...getBaseColorsExtension(BaseColorsMap[ThemeMode.dark]),
       },
     },
   },
 };
 
-const defaults: VuetifyOptions["defaults"] = {
+const defaults: Defaults = {
   VAutocomplete: { variant: "outlined" },
   VBtn: { style: { backgroundColor: "transparent" }, flat: true },
   VDataTable: {
