@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   },
   imports: {
     dirs: ["composables/**"],
+    presets: [{ from: "pinia", imports: ["storeToRefs"] }],
   },
   nitro: {
     esbuild: {
@@ -94,9 +95,6 @@ export default defineNuxtConfig({
     families: {
       Montserrat: true,
     },
-  },
-  pinia: {
-    autoImports: ["defineStore", "storeToRefs"],
   },
   unocss: {
     attributify: true,
