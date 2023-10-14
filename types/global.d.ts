@@ -1,5 +1,6 @@
 import type { WebSocketServer } from "ws";
 
 declare global {
-  var websocketServer: WebSocketServer | undefined;  
+  // eslint-disable-next-line no-var
+  var websocketServer: WebSocketServer | undefined;
 }

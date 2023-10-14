@@ -11,5 +11,5 @@ else await navigateTo(RoutePath.Messages("t"), { replace: true });
 </script>
 
 <template>
-  <slot />
+  <NuxtLayout />
 </template>

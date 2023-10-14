@@ -1,17 +1,10 @@
 {
-  "extends": ["@nuxtjs/typescript", "plugin:prettier/recommended"],
+  "root": true,
+  "extends": ["@nuxt", "plugin:prettier/recommended"],
   "rules": {
-    "no-console": "off",
-    "import/order": "off",
-    "import/no-named-as-default": "off",
-    "import/no-named-as-default-member": "off",
-    "vue/no-setup-props-destructure": "off",
     "vue/no-unused-vars": "off",
-    "vue/no-multiple-template-root": "off",
-    "vue/multi-word-component-names": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unused-vars": "off"
   }
 }
