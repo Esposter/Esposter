@@ -1,5 +1,10 @@
-import type { Colors } from "@/vuetify.config";
 import { useTheme } from "vuetify";
+
+// @TODO: Internal vuetify types
+type BaseColors = ReturnType<typeof useTheme>["global"]["current"]["value"]["colors"];
+type Colors = {
+  [Property in keyof BaseColors]: ComputedRef<BaseColors[Property]>;
+};
 
 export const useColors = () => {
   const theme = useTheme();

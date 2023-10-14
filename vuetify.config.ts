@@ -27,9 +27,6 @@ const BaseColorsMap = {
 } satisfies Record<ThemeMode, ThemeColors>;
 
 type BaseColors = (typeof BaseColorsMap)[ThemeMode];
-export type Colors = {
-  [Property in keyof BaseColors]: ComputedRef<BaseColors[Property]>;
-};
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
