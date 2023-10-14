@@ -45,7 +45,8 @@
     "sass": "^1.69.3",
     "tsx": "^3.13.0",
     "type-fest": "^4.4.0",
-    "vue-tsc": "^1.8.19"
+    "vue-tsc": "^1.8.19",
+    "vuetify-nuxt-module": "^0.5.15"
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.2",
@@ -96,7 +97,6 @@
     "three": "^0.157.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.12",
-    "vite-plugin-vuetify": "^1.0.2",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.3.21",

@@ -1,11 +1,6 @@
-import type { VuetifyOptions } from "vuetify";
-import { createVuetify, ThemeDefinition } from "vuetify";
-import { VDataTable } from "vuetify/labs/VDataTable";
-
-export enum ThemeMode {
-  light = "light",
-  dark = "dark",
-}
+import type { ThemeDefinition, VuetifyOptions } from "vuetify";
+import type { ExternalVuetifyOptions } from "vuetify-nuxt-module";
+import { ThemeMode } from "./models/vuetify/ThemeMode";
 
 type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
 
@@ -91,12 +86,8 @@ const defaults: VuetifyOptions["defaults"] = {
   VTooltip: { location: "top" },
 };
 
-export default defineNuxtPlugin((nuxtApp) => {
-  const vuetify = createVuetify({
-    ssr: true,
-    components: { VDataTable },
-    theme,
-    defaults,
-  });
-  nuxtApp.vueApp.use(vuetify);
-});
+export default {
+  theme,
+  defaults,
+  labComponents: ["VDataTable"],
+} satisfies ExternalVuetifyOptions;

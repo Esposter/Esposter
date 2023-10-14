@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ThemeMode } from "@/plugins/vuetify";
+import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { THEME_COOKIE_NAME } from "@/services/vuetify/constants";
 
 defineSlots<{ default: (props: {}) => unknown }>();

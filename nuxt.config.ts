@@ -1,5 +1,4 @@
 import path from "pathe";
-import vuetify from "vite-plugin-vuetify";
 import { RoutePath } from "./models/router/RoutePath";
 
 export default defineNuxtConfig({
@@ -8,9 +7,8 @@ export default defineNuxtConfig({
     cookie: path.resolve(__dirname, "node_modules/cookie"),
   },
   build: {
-    transpile: ["@vuepic/vue-datepicker", "trpc-nuxt", "vuetify"],
+    transpile: ["@vuepic/vue-datepicker", "trpc-nuxt"],
   },
-  css: ["vuetify/lib/styles/main.sass", "@mdi/font/css/materialdesignicons.min.css"],
   imports: {
     dirs: ["composables/**"],
   },
@@ -29,7 +27,10 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@import "@/assets/styles/variables.scss";',
+          additionalData: `
+          @import "vuetify/settings";
+          @import "@/assets/styles/variables.scss";
+          `,
         },
       },
     },
@@ -82,12 +83,7 @@ export default defineNuxtConfig({
     "@unocss/nuxt",
     // @TODO: @vueuse/sound/nuxt gives error
     "@vueuse/nuxt",
-    (_, nuxt) => {
-      nuxt.hooks.hook("vite:extendConfig", (config) =>
-        // @ts-expect-error
-        config.plugins.push(vuetify()),
-      );
-    },
+    "vuetify-nuxt-module",
   ],
   authJs: {
     baseUrl: process.env.BASE_URL,
