@@ -109,7 +109,7 @@
     "vue": "latest"
   },
   "engines": {
-    "node": ">=18.18.1"
+    "node": ">=18.18.2"
   },
   "cssnano": {
     "preset": [
