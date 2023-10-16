@@ -62,7 +62,7 @@
     "@fullcalendar/vue3": "^6.1.9",
     "@hebilicious/authjs-nuxt": "^0.3.4",
     "@mdi/font": "^7.3.67",
-    "@pinia/nuxt": "^0.5.0",
+    "@pinia/nuxt": "^0.5.1",
     "@tiptap/extension-character-count": "^2.1.12",
     "@tiptap/extension-mention": "^2.1.12",
     "@tiptap/extension-placeholder": "^2.1.12",
