@@ -60,7 +60,7 @@
     "@fullcalendar/daygrid": "^6.1.9",
     "@fullcalendar/timegrid": "^6.1.9",
     "@fullcalendar/vue3": "^6.1.9",
-    "@hebilicious/authjs-nuxt": "^0.3.4",
+    "@hebilicious/authjs-nuxt": "^0.3.5",
     "@mdi/font": "^7.3.67",
     "@pinia/nuxt": "^0.5.1",
     "@tiptap/extension-character-count": "^2.1.12",
