@@ -54,7 +54,7 @@
     "@codemirror/lang-vue": "^0.1.2",
     "@codemirror/language": "^6.9.1",
     "@codemirror/language-data": "^6.3.1",
-    "@codemirror/state": "^6.3.0",
+    "@codemirror/state": "^6.3.1",
     "@codemirror/view": "^6.21.3",
     "@fullcalendar/core": "^6.1.9",
     "@fullcalendar/daygrid": "^6.1.9",
