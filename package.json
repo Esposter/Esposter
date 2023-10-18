@@ -31,7 +31,7 @@
     "@types/marked": "^5.0.2",
     "@types/node-emoji": "^1.8.2",
     "@types/three": "^0.157.2",
-    "@types/ws": "^8.5.7",
+    "@types/ws": "^8.5.8",
     "@unocss/nuxt": "^0.56.5",
     "@vueuse/core": "^10.5.0",
     "@vueuse/nuxt": "^10.5.0",
