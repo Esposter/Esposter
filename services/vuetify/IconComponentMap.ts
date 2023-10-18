@@ -7,7 +7,7 @@ const ComponentMap: Record<string, Component> = {
 
 export const IconComponentMap = Object.entries(ComponentMap).reduce<Record<string, Component>>(
   (acc, [name, component]) => {
-    acc[toKebabCase(name).toLowerCase()] = component;
+    acc[toKebabCase(name)] = component;
     return acc;
   },
   {},
