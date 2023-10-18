@@ -27,7 +27,7 @@
     "@types/dedent": "^0.7.1",
     "@types/deep-equal": "^1.0.3",
     "@types/dompurify": "^3.0.4",
-    "@types/howler": "^2.2.9",
+    "@types/howler": "^2.2.10",
     "@types/marked": "^5.0.2",
     "@types/node-emoji": "^1.8.2",
     "@types/three": "^0.157.0",
