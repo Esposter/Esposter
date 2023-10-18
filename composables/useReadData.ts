@@ -6,9 +6,7 @@ export const useReadData = async (unauthedReader: () => void, authedReader: () =
       return;
     }
 
-    if (newValue === "unauthenticated") {
-      unauthedReader();
-    }
+    if (newValue === "unauthenticated") unauthedReader();
   });
 
   if (status.value === "authenticated") {
@@ -16,7 +14,5 @@ export const useReadData = async (unauthedReader: () => void, authedReader: () =
     return;
   }
 
-  if (status.value === "unauthenticated") {
-    onMounted(trigger);
-  }
+  if (status.value === "unauthenticated") onMounted(trigger);
 };

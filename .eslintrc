@@ -5,6 +5,7 @@
     "vue/no-unused-vars": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
-    "@typescript-eslint/no-unused-vars": "off"
+    "@typescript-eslint/no-unused-vars": "off",
+    "curly": ["error", "multi"]
   }
 }

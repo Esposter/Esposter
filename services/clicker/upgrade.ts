@@ -65,14 +65,13 @@ const applyBuildingAdditiveEffects = (
   let resultPower = basePower;
 
   const buildingAdditiveEffects = effects.filter((e) => e.configuration.type === EffectType.BuildingAdditive);
-  for (const buildingAdditiveEffect of buildingAdditiveEffects) {
+  for (const buildingAdditiveEffect of buildingAdditiveEffects)
     for (const target of buildingAdditiveEffect.configuration.targets ?? []) {
       const foundBuilding = boughtBuildings.find((b) => b.name === target);
       if (!foundBuilding) break;
 
       resultPower += buildingAdditiveEffect.value * foundBuilding.amount;
     }
-  }
 
   return resultPower;
 };
@@ -88,10 +87,9 @@ const applyBuildingAdditiveNorEffects = (
   for (const buildingAdditiveNorEffect of buildingAdditiveNorEffects) {
     const targets = buildingAdditiveNorEffect.configuration.targets ?? [];
 
-    for (const boughtBuilding of boughtBuildings) {
+    for (const boughtBuilding of boughtBuildings)
       if (!targets.includes(boughtBuilding.name))
         resultPower += buildingAdditiveNorEffect.value * boughtBuilding.amount;
-    }
   }
 
   return resultPower;
