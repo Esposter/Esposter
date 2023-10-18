@@ -1,7 +1,7 @@
-import { Howl, HowlOptions } from "howler";
-import { onMounted, ref, unref, watch } from "vue-demi";
+import type { HowlOptions } from "howler";
+import { Howl } from "howler";
 
-export function useSound(
+export const useSound = (
   url: MaybeRef<string>,
   {
     volume = 1,
@@ -12,7 +12,7 @@ export function useSound(
     onload,
     ...rest
   }: ComposableOptions = {},
-) {
+) => {
   const sound = ref<Howl | null>(null);
   const duration = ref<number | null>(null);
   const isPlaying = ref<boolean>(false);
@@ -36,10 +36,10 @@ export function useSound(
   });
 
   watch(
-    () => [url],
-    () => {
+    () => unref(url),
+    ([newUrl]) => {
       sound.value = new Howl({
-        src: unref(url),
+        src: newUrl,
         volume: unref(volume),
         rate: unref(playbackRate),
         onload: handleLoad,
@@ -50,11 +50,11 @@ export function useSound(
 
   watch(
     () => [unref(volume), unref(playbackRate)],
-    () => {
-      if (sound.value) {
-        sound.value.volume(unref(volume) as number);
-        sound.value.rate(unref(playbackRate) as number);
-      }
+    ([newVolume, newPlaybackRate]) => {
+      if (!sound.value) return;
+
+      sound.value.volume(newVolume);
+      sound.value.rate(newPlaybackRate);
     },
   );
 
@@ -68,9 +68,7 @@ export function useSound(
     sound.value.play(options.id);
 
     sound.value.once("end", () => {
-      if (sound.value && sound.value && !sound.value.playing()) {
-        isPlaying.value = false;
-      }
+      if (sound.value && !sound.value.playing()) isPlaying.value = false;
     });
 
     isPlaying.value = true;
@@ -100,7 +98,7 @@ export function useSound(
     pause,
     stop,
   };
-}
+};
 
 interface PlayOptions {
   id?: number;
