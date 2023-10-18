@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
-
 const isDark = useIsDark();
 const { smAndDown } = useDisplay();
 </script>

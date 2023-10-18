@@ -1,4 +1,4 @@
-import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/constants";
+import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 
 export type VuetifyComponentType = { [Property in keyof VuetifyComponentMap]: Property };
 export const VuetifyComponentType = Object.keys(VuetifyComponentMap).reduce<Record<string, string>>((acc, curr) => {

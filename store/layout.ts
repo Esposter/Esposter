@@ -1,5 +1,4 @@
 import { skipHydrate } from "pinia";
-import { useDisplay } from "vuetify";
 
 export const useLayoutStore = defineStore("layout", () => {
   const { mobile } = useDisplay();

@@ -44,8 +44,7 @@ const onDeleteLike = async () => {
         size="x-large"
         :color="liked ? 'primary' : undefined"
         :icon="liked ? 'mdi-arrow-up-bold' : 'mdi-arrow-up-bold-outline'"
-      >
-      </v-icon>
+      />
     </v-btn>
     {{ post.noLikes }}
     <v-btn
@@ -61,8 +60,7 @@ const onDeleteLike = async () => {
         size="x-large"
         :color="unliked ? 'error' : undefined"
         :icon="unliked ? 'mdi-arrow-down-bold' : 'mdi-arrow-down-bold-outline'"
-      >
-      </v-icon>
+      />
     </v-btn>
   </div>
 </template>

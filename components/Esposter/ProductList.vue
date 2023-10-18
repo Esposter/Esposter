@@ -24,6 +24,11 @@ const items: ListItem[] = [
     href: RoutePath.Surveyer,
     icon: "mdi-text-box-edit",
   },
+  {
+    title: "Dungeons",
+    href: RoutePath.Dungeons,
+    icon: "custom:dungeon-gate",
+  },
 ];
 </script>
 

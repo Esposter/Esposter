@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useLayoutStore } from "@/store/layout";
 import type { CSSProperties } from "vue";
-import { useDisplay } from "vuetify";
 
 interface DefaultLayoutProps {
   mainStyle?: CSSProperties;
