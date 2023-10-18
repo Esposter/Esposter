@@ -1,7 +1,7 @@
 import { IconComponentMap } from "@/services/vuetify/IconComponentMap";
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook("vuetify:before-create", ({ vuetifyOptions }) => {
+  nuxtApp.hook("vuetify:configuration", ({ vuetifyOptions }) => {
     vuetifyOptions.icons = {
       sets: {
         custom: {
