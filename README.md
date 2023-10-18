@@ -1,8 +1,6 @@
 # [Esposter](https://esposter.com)
 
-## Technology
-
-### Frontend
+## Frontend
 
 <table>
   <thead>
@@ -72,7 +70,7 @@
   </tbody>
 </table>
 
-### Backend
+## Backend
 
 <table>
   <thead>
@@ -141,7 +139,7 @@
   </tbody>
 </table>
 
-### Hosting & Domain Providers
+## Hosting & Domain Providers
 
 <table>
   <thead>
