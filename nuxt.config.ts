@@ -35,7 +35,7 @@ export default defineNuxtConfig({
       },
     },
     optimizeDeps: {
-      // From @vueuse/sound
+      // From VueUse
       exclude: ["vue-demi"],
     },
     vue: {
@@ -81,7 +81,6 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@pinia/nuxt",
     "@unocss/nuxt",
-    // @TODO: @vueuse/sound/nuxt gives error
     "@vueuse/nuxt",
     "vuetify-nuxt-module",
   ],
