@@ -10,7 +10,7 @@ import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/
 import { READ_LIMIT, getNextCursor } from "@/util/pagination";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
-import { and, eq, gt, ilike } from "drizzle-orm";
+import { and, desc, eq, gt, ilike } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -53,29 +53,28 @@ const generateInviteCodeInputSchema = z.object({
 });
 export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSchema>;
 
-// For room-related queries/mutations we don't need to grab the room user procedure
-// as the SQL WHERE clause inherently contains logic to check if the user is a member/creator of the room
 export const roomRouter = router({
-  readRoom: authedProcedure.input(readRoomInputSchema).query(({ input, ctx }) =>
-    input
-      ? db.query.rooms.findFirst({
-          where: (rooms, { eq }) => eq(rooms.id, input),
-          with: {
-            usersToRooms: {
-              where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
-            },
-          },
-        })
-      : // By default, we will return the latest updated room
-        db.query.rooms.findFirst({
-          orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
-          with: {
-            usersToRooms: {
-              where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
-            },
-          },
-        }),
-  ),
+  readRoom: authedProcedure.input(readRoomInputSchema).query(async ({ input, ctx }) => {
+    if (input) {
+      const joinedRoom = (
+        await db
+          .select()
+          .from(rooms)
+          .innerJoin(usersToRooms, and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
+      )[0];
+      return joinedRoom ? joinedRoom.Room : null;
+    }
+
+    // By default, we will return the latest updated room
+    const joinedRoom = (
+      await db
+        .select()
+        .from(rooms)
+        .innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id))
+        .orderBy(desc(rooms.updatedAt))
+    )[0];
+    return joinedRoom ? joinedRoom.Room : null;
+  }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
     const rooms = await db.query.rooms.findMany({
       where: cursor ? (rooms) => gt(rooms.id, cursor) : undefined,
