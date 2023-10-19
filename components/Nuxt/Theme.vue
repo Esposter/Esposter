@@ -32,9 +32,7 @@ const themeTransition = async () => {
   await nextTick(() => {
     el.classList.add("app-transition");
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        el.style.setProperty("--clip-size", `${Math.hypot(window.innerWidth, window.innerHeight)}px`);
-      });
+      el.style.setProperty("--clip-size", `${Math.hypot(window.innerWidth, window.innerHeight)}px`);
     });
   });
 

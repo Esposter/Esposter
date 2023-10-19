@@ -90,7 +90,7 @@ onMounted(() => {
     if (gem) gem.rotation.y = 1.1 * elapsedTime;
     controls.update();
     renderer.render(scene, camera);
-    window.requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
   };
   tick();
 });
