@@ -44,7 +44,7 @@
     "prettier": "^3.0.3",
     "sass": "^1.69.4",
     "tsx": "^3.14.0",
-    "type-fest": "^4.4.0",
+    "type-fest": "^4.5.0",
     "vue-tsc": "^1.8.19",
     "vuetify-nuxt-module": "^0.5.15"
   },
