@@ -8,20 +8,12 @@ const theme = useGlobalTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME);
 theme.name.value = themeCookie.value ?? ThemeMode.light;
 
-const themeTransition = () => {
+const themeTransition = async () => {
   const x = performance.now();
   for (let i = 0; i++ < 1e7; (i << 9) & ((9 % 9) * 9 + 9));
   if (performance.now() - x > 10) return;
 
   const el = document.getElementById("__nuxt") as HTMLElement;
-  const children = el.querySelectorAll("*") as NodeListOf<HTMLElement>;
-
-  for (const el of children) {
-    if (!hasScrollbar(el)) continue;
-    el.dataset.scrollX = String(el.scrollLeft);
-    el.dataset.scrollY = String(el.scrollTop);
-  }
-
   const copy = el.cloneNode(true) as HTMLElement;
   copy.classList.add("app-copy");
   const rect = el.getBoundingClientRect();
@@ -37,7 +29,7 @@ const themeTransition = () => {
   el.style.setProperty("--clip-pos", `${left}px ${top}px`);
   el.style.removeProperty("--clip-size");
 
-  nextTick(() => {
+  await nextTick(() => {
     el.classList.add("app-transition");
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -47,12 +39,6 @@ const themeTransition = () => {
   });
 
   document.body.append(copy);
-
-  for (const el of copy.querySelectorAll("[data-scroll-x], [data-scroll-y]") as NodeListOf<HTMLElement>) {
-    console.log(el);
-    el.scrollLeft = parseInt(el.dataset.scrollX as string);
-    el.scrollTop = parseInt(el.dataset.scrollY as string);
-  }
 
   const onTransitionEnd = (e: TransitionEvent) => {
     if (e.target !== e.currentTarget) return;
@@ -66,13 +52,6 @@ const themeTransition = () => {
   };
   el.addEventListener("transitionend", onTransitionEnd);
   el.addEventListener("transitioncancel", onTransitionEnd);
-};
-
-const hasScrollbar = (el: HTMLElement) => {
-  if (el.nodeType !== Node.ELEMENT_NODE) return false;
-
-  const style = window.getComputedStyle(el);
-  return style.overflowY === "scroll" || (style.overflowY === "auto" && el.scrollHeight > el.clientHeight);
 };
 
 watch(theme.name, themeTransition);
