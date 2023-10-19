@@ -31,8 +31,7 @@ const active = computed(() => room.id === currentRoomId.value);
     <EsbabblerModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.creatorId">
       <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
-          v-show="isHovering"
-          absolute
+          absolute="!"
           top="1/2"
           right-0
           translate-y="-1/2"
