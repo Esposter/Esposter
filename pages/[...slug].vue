@@ -4,7 +4,6 @@ import { NOT_FOUND_BACKGROUND } from "@/services/esposter/constants";
 import { gsap } from "gsap";
 
 const event = useRequestEvent();
-const backgroundImageUrl = `url(${NOT_FOUND_BACKGROUND})`;
 
 setResponseStatus(event, 404);
 
@@ -23,7 +22,17 @@ onMounted(() => {
 
 <template>
   <NuxtLayout>
-    <div class="image" h-full flex flex-col justify-center items-center>
+    <div
+      :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND})` }"
+      h-full
+      flex
+      flex-col
+      justify-center
+      items-center
+      bg="#000"
+      bg-center
+      bg-cover
+    >
       <div mt-25 flex flex-col items-center z-1>
         <div class="text-#ddd" text-center text-5xl>Lost in space?</div>
         <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
@@ -36,12 +45,3 @@ onMounted(() => {
     </div>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-.image {
-  background-image: v-bind(backgroundImageUrl);
-  background-color: #000;
-  background-position: center;
-  background-size: cover;
-}
-</style>
