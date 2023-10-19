@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
-import { selectUserSchema, usersToRooms } from "@/db/schema/users";
+import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { router } from "@/server/trpc";
@@ -53,6 +53,8 @@ const generateInviteCodeInputSchema = z.object({
 });
 export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSchema>;
 
+// For room-related queries/mutations we don't need to grab the room user procedure
+// as the SQL clauses inherently contains logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
   readRoom: authedProcedure.input(readRoomInputSchema).query(async ({ input, ctx }) => {
     if (input) {
@@ -76,33 +78,22 @@ export const roomRouter = router({
     return joinedRoom ? joinedRoom.Room : null;
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
-    const rooms = await db.query.rooms.findMany({
-      where: cursor ? (rooms) => gt(rooms.id, cursor) : undefined,
-      orderBy: (rooms, { desc }) => desc(rooms.updatedAt),
-      limit: READ_LIMIT + 1,
-      with: {
-        usersToRooms: {
-          where: (usersToRooms, { eq }) => eq(usersToRooms.userId, ctx.session.user.id),
-        },
-      },
-    });
-    return { rooms, nextCursor: getNextCursor(rooms, "id", READ_LIMIT) };
+    const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
+    if (cursor) query.where(gt(rooms.id, cursor));
+
+    const joinedRooms = await query.orderBy(desc(rooms.updatedAt)).limit(READ_LIMIT + 1);
+    const resultRooms = joinedRooms.map((jr) => jr.Room);
+    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", READ_LIMIT) };
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {
       const newRoom = (
         await tx
           .insert(rooms)
-          .values({
-            ...input,
-            creatorId: ctx.session.user.id,
-          })
+          .values({ ...input, creatorId: ctx.session.user.id })
           .returning()
       )[0];
-      await tx.insert(usersToRooms).values({
-        userId: ctx.session.user.id,
-        roomId: newRoom.id,
-      });
+      await tx.insert(usersToRooms).values({ userId: ctx.session.user.id, roomId: newRoom.id });
       return newRoom;
     }),
   ),
@@ -137,16 +128,14 @@ export const roomRouter = router({
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
-    .query(({ input: { roomId, filter } }) =>
-      db.query.users.findMany({
-        where: (users) => ilike(users.name, `%${filter?.name ?? ""}%`),
-        with: {
-          usersToRooms: {
-            where: (usersToRooms, { eq }) => eq(usersToRooms.roomId, roomId),
-          },
-        },
-      }),
-    ),
+    .query(async ({ input: { roomId, filter } }) => {
+      const joinedUsers = await db
+        .select()
+        .from(users)
+        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id), eq(usersToRooms.roomId, roomId)))
+        .where(ilike(users.name, `%${filter?.name ?? ""}%`));
+      return joinedUsers.map((ju) => ju.User);
+    }),
   createMembers: getRoomUserProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation(async ({ input: { roomId, userIds } }) => {
