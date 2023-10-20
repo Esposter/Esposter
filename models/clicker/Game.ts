@@ -1,5 +1,7 @@
-import { BuildingWithStats, buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
-import { Upgrade, createUpgradeSchema } from "@/models/clicker/Upgrade";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/Upgrade";
+import { createUpgradeSchema } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { ApplyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";

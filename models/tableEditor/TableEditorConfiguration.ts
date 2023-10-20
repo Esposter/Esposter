@@ -1,4 +1,4 @@
-import { Item } from "@/models/tableEditor/Item";
+import type { Item } from "@/models/tableEditor/Item";
 import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { TodoListItem, todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
@@ -9,6 +9,7 @@ import { z } from "zod";
 type TableEditorTypes = {
   [Property in keyof typeof TableEditorType]: TableEditor<Item>;
 };
+
 export class TableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();

@@ -1,5 +1,7 @@
-import { Effect, effectSchema } from "@/models/clicker/Effect";
-import { UnlockCondition, unlockConditionSchema } from "@/models/clicker/UnlockCondition";
+import type { Effect } from "@/models/clicker/Effect";
+import { effectSchema } from "@/models/clicker/Effect";
+import type { UnlockCondition } from "@/models/clicker/UnlockCondition";
+import { unlockConditionSchema } from "@/models/clicker/UnlockCondition";
 import type { UpgradeName } from "@/models/clicker/UpgradeName";
 import { z } from "zod";
 

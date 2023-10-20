@@ -1,5 +1,6 @@
 import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
-import { ItemEntityType, createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
+import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
+import { createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
 import { z } from "zod";
 
 // This is not directly used when creating new classes

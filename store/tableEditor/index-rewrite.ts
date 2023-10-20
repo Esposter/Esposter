@@ -6,7 +6,7 @@ import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEdi
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity";
 import equal from "deep-equal";
-import { UnwrapRef } from "vue";
+import type { UnwrapRef } from "vue";
 
 // @TODO: This doesn't actually work yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap

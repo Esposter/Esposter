@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CalendarButton from "@/components/TableEditor/TodoList/CalendarButton.vue";
 import type { Item } from "@/models/tableEditor/Item";
-import { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import { propsMap } from "@/services/tableEditor/propsMap";

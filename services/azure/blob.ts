@@ -1,5 +1,6 @@
 import type { AzureContainer } from "@/models/azure/blob";
-import { BlobServiceClient, ContainerClient, HttpRequestBody } from "@azure/storage-blob";
+import type { HttpRequestBody } from "@azure/storage-blob";
+import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
 
 const runtimeConfig = useRuntimeConfig();
 
