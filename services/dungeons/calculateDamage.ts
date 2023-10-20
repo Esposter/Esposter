@@ -1,8 +1,4 @@
-export const calculateDamage = (attack: number, armor: number): number => {
-  const realAttack = attack - armor;
-  if (realAttack <= 0) return 0;
+import { randomNumber } from "@/services/math/randomNumber";
 
-  let damage = 0;
-  for (let i = 0; i < realAttack; i++) if (Math.random() < 0.5) damage++;
-  return damage;
-};
+export const calculateDamage = (attack: number, armor: number) =>
+  Math.ceil(randomNumber(0.85, 1.01) * (attack - armor));
