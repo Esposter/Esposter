@@ -40,6 +40,6 @@ onMounted(trigger);
 
 <template>
   <div v-for="rotatingDivId in rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" w-64 h-64 absolute top-0>
-    <v-img absolute width="2rem" height="2rem" rotate-135 :src="icon" :alt="Target.Cursor" />
+    <v-img absolute rotate-135 width="2rem" height="2rem" :src="icon" :alt="Target.Cursor" />
   </div>
 </template>
