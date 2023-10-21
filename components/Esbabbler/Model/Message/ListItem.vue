@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { User } from "@/db/schema/users";
 import type { MessageEntity } from "@/models/esbabbler/message";
-import { refreshMentions } from "@/services/esbabbler/mention";
 import dayjs from "dayjs";
 import DOMPurify from "dompurify";
 
@@ -12,7 +11,7 @@ interface MessageListItemProps {
 
 const { message } = defineProps<MessageListItemProps>();
 const sanitizedMessageHtml = computed(() => {
-  const newMessage = refreshMentions(message.message);
+  const newMessage = useRefreshMentions(message.message);
   return DOMPurify.sanitize(newMessage);
 });
 const displayCreatedAt = computed(() => dayjs(message.createdAt).format("h:mm A"));

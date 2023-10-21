@@ -42,8 +42,7 @@ const getItemCategoryDefinitionByItem = (item: unknown) =>
       </template>
       <template #[`item.${itemTypeKey}`]="{ item }">
         <v-chip label>
-          <v-icon :icon="getItemCategoryDefinitionByItem(item).icon" />
-          &nbsp;
+          <v-icon pr-2 :icon="getItemCategoryDefinitionByItem(item).icon" />
           {{ getItemCategoryDefinitionByItem(item).title }}
         </v-chip>
       </template>

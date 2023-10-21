@@ -6,7 +6,7 @@ import { z } from "zod";
 class BaseGame {
   id = crypto.randomUUID() as string;
   round = 0;
-  state = State.Battle;
+  state = State.Start;
   player = new Player();
 
   constructor(init?: Partial<BaseGame>) {

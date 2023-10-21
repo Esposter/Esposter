@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { getEditFormComponent } from "@/services/tableEditor/editFormMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{
@@ -9,7 +8,7 @@ defineSlots<{
 
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
-const component = computed(() => (editedItem.value ? getEditFormComponent(editedItem.value.type) : null));
+const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : null));
 </script>
 
 <template>

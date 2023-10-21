@@ -1,11 +1,7 @@
-import { suggestion } from "@/services/esbabbler/suggestion";
 import { useMemberStore } from "@/store/esbabbler/member";
-import Mention from "@tiptap/extension-mention";
 import { parse } from "node-html-parser";
 
-export const mentionExtension = Mention.configure({ HTMLAttributes: { class: "mention" }, suggestion });
-
-export const refreshMentions = (message: string) => {
+export const useRefreshMentions = (message: string) => {
   const memberStore = useMemberStore();
   const { memberList } = storeToRefs(memberStore);
   const messageHtml = parse(message);

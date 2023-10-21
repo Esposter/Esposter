@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/esbabbler/message";
 import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
-import { mentionExtension, refreshMentions } from "@/services/esbabbler/mention";
+import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text";
@@ -17,7 +17,7 @@ const emit = defineEmits<{
   "update:update-mode": [value: false];
   "update:delete-mode": [value: true];
 }>();
-const editedMessageHtml = ref(refreshMentions(message.message));
+const editedMessageHtml = ref(useRefreshMentions(message.message));
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();

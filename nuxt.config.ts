@@ -91,7 +91,9 @@ export default defineNuxtConfig({
   },
   googleFonts: {
     families: {
+      Frijole: true,
       Montserrat: true,
+      Oswald: true,
     },
   },
   unocss: {

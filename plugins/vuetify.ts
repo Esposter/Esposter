@@ -1,4 +1,4 @@
-import { IconComponentMap } from "@/services/vuetify/IconComponentMap";
+import { IconComponentMap } from "@/services/dungeons/IconComponentMap";
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("vuetify:configuration", ({ vuetifyOptions }) => {

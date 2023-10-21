@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
-import { mentionExtension } from "@/services/esbabbler/mention";
+import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { Extension } from "@tiptap/vue-3";
