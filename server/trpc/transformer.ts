@@ -1,4 +1,5 @@
-import { Game } from "@/models/clicker/Game";
+import { Game as ClickerGame } from "@/models/clicker/Game";
+import { Game as DungeonsGame } from "@/models/dungeons/Game";
 import { TableEditor } from "@/models/tableEditor/TableEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
@@ -8,7 +9,8 @@ import SuperJSON from "superjson";
 
 // @TODO: Change this to use class decorators when it is supported
 // https://github.com/nuxt/nuxt/issues/14126
-RegisterSuperJSON(Game);
+RegisterSuperJSON(ClickerGame);
+RegisterSuperJSON(DungeonsGame);
 RegisterSuperJSON(TableEditorConfiguration);
 RegisterSuperJSON(TableEditor);
 RegisterSuperJSON(TodoListItem);

@@ -3,7 +3,7 @@ import { CLICKER_STORE } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 import { jsonDateParse } from "@/util/json";
 
-export const useReadGame = async () => {
+export const useReadClickerGame = async () => {
   const { $client } = useNuxtApp();
   const gameStore = useGameStore();
   const { game } = storeToRefs(gameStore);

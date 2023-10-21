@@ -1,10 +1,14 @@
-import { Game } from "@/models/clicker/Game";
+import { Game as ClickerGame } from "@/models/clicker/Game";
+import { Game as DungeonsGame } from "@/models/dungeons/Game";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { jsonDateParse } from "@/util/json";
 
 export default definePayloadPlugin(() => {
-  definePayloadReducer("Game", (data) => data instanceof Game && data.toJSON());
-  definePayloadReviver("Game", (data) => new Game(jsonDateParse(data)));
+  definePayloadReducer("ClickerGame", (data) => data instanceof ClickerGame && data.toJSON());
+  definePayloadReviver("ClickerGame", (data) => new ClickerGame(jsonDateParse(data)));
+
+  definePayloadReducer("DungeonsGame", (data) => data instanceof DungeonsGame && data.toJSON());
+  definePayloadReviver("DungeonsGame", (data) => new DungeonsGame(jsonDateParse(data)));
 
   definePayloadReducer("TableEditorConfiguration", (data) => data instanceof TableEditorConfiguration && data.toJSON());
   definePayloadReviver("TableEditorConfiguration", (data) => new TableEditorConfiguration(jsonDateParse(data)));

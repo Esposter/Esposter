@@ -22,7 +22,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     if (status.value === "authenticated") {
       const newSurvey = await $client.surveyer.createSurvey.mutate(input);
       surveyList.value.push(newSurvey);
-    } else {
+    } else if (status.value === "unauthenticated") {
       const createdAt = new Date();
       const newSurvey = new SurveyEntity({
         ...input,
@@ -44,7 +44,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
         (r) => r.partitionKey === session.value?.user.id && r.rowKey === updatedSurvey.rowKey,
       );
       if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...updatedSurvey };
-    } else {
+    } else if (status.value === "unauthenticated") {
       const index = surveyList.value.findIndex((r) => r.partitionKey === NIL && r.rowKey === input.rowKey);
       if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...input };
       unauthedSave();
@@ -56,7 +56,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
       surveyList.value = surveyList.value.filter(
         (s) => !(s.partitionKey === session.value?.user.id && s.rowKey === input.rowKey),
       );
-    } else {
+    } else if (status.value === "unauthenticated") {
       surveyList.value = surveyList.value.filter((s) => !(s.partitionKey === NIL && s.rowKey === input.rowKey));
       unauthedSave();
     }

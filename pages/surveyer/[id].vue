@@ -36,7 +36,7 @@
 //       } catch {
 //         callback(saveNo, false);
 //       }
-//     } else callback(saveNo, unauthedSave(survey));
+//     } else if (status.value === "unauthenticated") callback(saveNo, unauthedSave(survey));
 //   };
 //   creator.render(surveyCreatorId);
 // });
