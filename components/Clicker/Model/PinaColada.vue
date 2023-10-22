@@ -6,9 +6,7 @@ interface PinaColadaProps {
 }
 
 const { gAttrs } = defineProps<PinaColadaProps>();
-const emit = defineEmits<{
-  click: [value: MouseEvent];
-}>();
+const emit = defineEmits<{ click: [value: MouseEvent] }>();
 </script>
 
 <template>

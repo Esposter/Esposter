@@ -74,9 +74,4 @@ router.beforeEach(() => {
   display: flex;
   flex-direction: column;
 }
-// Don't use transition for flexed backgrounds as that will reveal
-// the underlying default background color, not the surface background color of the chat
-.v-main {
-  transition: none;
-}
 </style>

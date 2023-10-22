@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export enum State {
   Start = "Start",
+  Load = "Load",
   Battle = "Battle",
   ShopPicker = "ShopPicker",
   Shop = "Shop",

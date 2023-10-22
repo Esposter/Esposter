@@ -10,9 +10,7 @@ const stateComponent = computed(() => getStateComponent(game.value.state));
 
 <template>
   <NuxtLayout :main-style="{ backgroundColor: surface }">
-    <transition name="fade" mode="out-in">
-      <component :is="stateComponent" />
-    </transition>
+    <component :is="stateComponent" />
   </NuxtLayout>
 </template>
 
