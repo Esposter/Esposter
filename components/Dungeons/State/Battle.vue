@@ -7,7 +7,7 @@
     </v-row>
     <v-row>
       <v-col flex flex-col items-center>
-        <DungeonsButton icon="custom:load" text="Battle" />
+        <DungeonsButton icon="custom:crossed-swords" text="Battle" />
       </v-col>
     </v-row>
   </v-container>

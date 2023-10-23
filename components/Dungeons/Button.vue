@@ -10,8 +10,10 @@ const emit = defineEmits<{ click: [value: MouseEvent] }>();
 
 <template>
   <v-btn class="button" variant="outlined" @click="(e: MouseEvent) => emit('click', e)">
-    <v-icon :icon="icon" />
-    <span class="paragraph" pl-2 text-2xl>{{ text }}</span>
+    <span class="paragraph" text-2xl>{{ text }}</span>
+    <template #prepend>
+      <v-icon :icon="icon" size="x-large" />
+    </template>
   </v-btn>
 </template>
 
