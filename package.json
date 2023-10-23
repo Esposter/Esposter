@@ -93,7 +93,7 @@
     "postgres": "^3.4.0",
     "rate-limiter-flexible": "^3.0.2",
     "sql-highlight": "^4.4.0",
-    "superjson": "^2.0.0",
+    "superjson": "^2.1.0",
     "survey-creator-knockout": "^1.9.113",
     "three": "^0.157.0",
     "tippy.js": "^6.3.7",
