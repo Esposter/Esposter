@@ -45,7 +45,7 @@
     "sass": "^1.69.4",
     "tsx": "^3.14.0",
     "type-fest": "^4.5.0",
-    "vue-tsc": "^1.8.19",
+    "vue-tsc": "^1.8.20",
     "vuetify-nuxt-module": "^0.5.16"
   },
   "dependencies": {
@@ -90,7 +90,7 @@
     "node-html-parser": "^6.1.10",
     "pathe": "^1.1.1",
     "pinia": "^2.1.7",
-    "postgres": "^3.4.0",
+    "postgres": "^3.4.1",
     "rate-limiter-flexible": "^3.0.2",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.1.0",
