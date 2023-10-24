@@ -49,6 +49,7 @@
     "vuetify-nuxt-module": "^0.5.16"
   },
   "dependencies": {
+    "@auth/core": "^0.18.0",
     "@azure/data-tables": "^13.2.2",
     "@azure/storage-blob": "^12.16.0",
     "@codemirror/lang-vue": "^0.1.2",
@@ -100,16 +101,14 @@
     "three": "^0.157.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.12",
+    "vue": "^3.3.6",
     "vue-codemirror": "^6.1.1",
+    "vue-router": "^4.2.5",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.3.22",
     "worker-timers": "^7.0.77",
     "ws": "^8.14.2",
     "zod": "^3.22.4"
-  },
-  "overrides": {
-    "@auth/core": "latest",
-    "vue": "latest"
   },
   "engines": {
     "node": ">=20.8.1"
