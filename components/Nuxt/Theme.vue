@@ -8,7 +8,7 @@ const theme = useGlobalTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME);
 theme.name.value = themeCookie.value ?? ThemeMode.light;
 
-const themeTransition = async () => {
+watch(theme.name, async () => {
   const x = performance.now();
   for (let i = 0; i++ < 1e7; (i << 9) & ((9 % 9) * 9 + 9));
   if (performance.now() - x > 10) return;
@@ -50,9 +50,7 @@ const themeTransition = async () => {
   };
   el.addEventListener("transitionend", onTransitionEnd);
   el.addEventListener("transitioncancel", onTransitionEnd);
-};
-
-watch(theme.name, themeTransition);
+});
 </script>
 
 <template>
