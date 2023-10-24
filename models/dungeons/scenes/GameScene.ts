@@ -1,5 +1,5 @@
 import characters from "@/assets/dungeons/characters.png";
-import cloudCity from "@/assets/dungeons/tilemaps/cloud-city.json";
+import cloudCity from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudTileset from "@/assets/dungeons/tilesets/cloud_tileset.png";
 import { Direction, GridEngine } from "grid-engine";
 import * as Phaser from "phaser";
