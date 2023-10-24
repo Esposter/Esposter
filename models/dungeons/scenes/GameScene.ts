@@ -2,7 +2,6 @@ import characters from "@/assets/dungeons/characters.png";
 import cloudCity from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudTileset from "@/assets/dungeons/tilesets/cloud_tileset.png";
 import { Direction, GridEngine } from "grid-engine";
-import * as Phaser from "phaser";
 
 export class GameScene extends Phaser.Scene {
   static readonly TILE_SIZE = 48;
