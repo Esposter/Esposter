@@ -19,7 +19,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const ready = ref(false);
-const opacity = computed(() => (ready.value ? 1 : 0));
 
 onMounted(() => {
   // Canvas
@@ -97,14 +96,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <canvas class="webgl" />
+  <Transition name="fade">
+    <canvas v-show="ready" class="webgl" />
+  </Transition>
 </template>
 
 <style scoped lang="scss">
 .webgl {
   width: 200px;
   height: 200px;
-  opacity: v-bind(opacity);
-  transition: opacity 1s ease;
 }
 </style>
