@@ -3,9 +3,9 @@ import cloudCity from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudTileset from "@/assets/dungeons/tilesets/cloud_tileset.png";
 import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
 import { Direction, GridEngine } from "grid-engine";
-import Phaser from "phaser";
+import { Scene } from "phaser";
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends Scene {
   static readonly TILE_SIZE = 48;
   static readonly TILESET_KEY = "tiles";
   static readonly MAP_KEY = "cloud-city-map";

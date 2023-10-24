@@ -1,7 +1,7 @@
 import { GameScene } from "@/models/dungeons/scenes/GameScene";
 import { useGameStore } from "@/store/dungeons/game";
 import { GridEngine } from "grid-engine";
-import Phaser from "phaser";
+import { AUTO, Game, Scale } from "phaser";
 
 export const useLaunchGame = (containerId: string) => {
   const { surface } = useColors();
@@ -9,12 +9,12 @@ export const useLaunchGame = (containerId: string) => {
   const { phaserGame } = storeToRefs(gameStore);
 
   onMounted(() => {
-    phaserGame.value = new Phaser.Game({
+    phaserGame.value = new Game({
       title: "Dungeons",
-      type: Phaser.AUTO,
+      type: AUTO,
       parent: containerId,
-      mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
+      mode: Scale.FIT,
+      autoCenter: Scale.CENTER_BOTH,
       backgroundColor: surface.value,
       scene: GameScene,
       plugins: {
