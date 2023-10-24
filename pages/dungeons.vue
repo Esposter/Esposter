@@ -20,9 +20,4 @@ useLaunchGame(containerId);
 :deep(.paragraph) {
   font-family: $paragraph-font;
 }
-
-#game-container {
-  width: 100%;
-  height: calc(100dvh - $app-bar-height);
-}
 </style>

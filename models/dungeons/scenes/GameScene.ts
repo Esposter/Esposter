@@ -2,10 +2,12 @@ import characters from "@/assets/dungeons/characters.png";
 import cloudCity from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudTileset from "@/assets/dungeons/tilesets/cloud_tileset.png";
 import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
+import { APP_BAR_HEIGHT } from "@/services/esposter/constants";
 import { Direction, GridEngine } from "grid-engine";
 import { Scene } from "phaser";
 
 export class GameScene extends Scene {
+  static readonly CANVAS_ASPECT_RATIO = 4 / 3;
   static readonly TILE_SIZE = 48;
   static readonly TILESET_KEY = "tiles";
   static readonly MAP_KEY = "cloud-city-map";
@@ -30,8 +32,19 @@ export class GameScene extends Scene {
 
     const playerSprite = this.add.sprite(0, 0, GameScene.PLAYER_SPRITESHEET_KEY);
     playerSprite.scale = 1.5;
+
+    const canvasWidth = GameScene.getCanvasWidth();
+    const canvasHeight = GameScene.getCanvasHeight();
+    this.game.scale.resize(canvasWidth, canvasHeight);
     this.cameras.main.startFollow(playerSprite, true);
     this.cameras.main.setFollowOffset(-playerSprite.width, -playerSprite.height);
+
+    window.addEventListener("resize", () => {
+      const canvasWidth = GameScene.getCanvasWidth();
+      const canvasHeight = GameScene.getCanvasHeight();
+      this.game.scale.resize(canvasWidth, canvasHeight);
+      this.cameras.main.centerOn(playerSprite.x, playerSprite.y);
+    });
     phaserEventEmitter.on("onUpdateBackgroundColor", (color) => this.cameras.main.setBackgroundColor(color));
 
     this.gridEngine.create(cloudCityTilemap, {
@@ -55,4 +68,7 @@ export class GameScene extends Scene {
     else if (cursors.up.isDown) this.gridEngine.move("player", Direction.UP);
     else if (cursors.down.isDown) this.gridEngine.move("player", Direction.DOWN);
   }
+
+  static getCanvasWidth = () => GameScene.getCanvasHeight() * GameScene.CANVAS_ASPECT_RATIO;
+  static getCanvasHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 }
