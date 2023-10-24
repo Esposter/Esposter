@@ -1,6 +1,7 @@
 import { GameScene } from "@/models/dungeons/scenes/GameScene";
 import { useGameStore } from "@/store/dungeons/game";
 import { GridEngine } from "grid-engine";
+import Phaser from "phaser";
 
 export const useLaunchGame = (containerId: string) => {
   const { surface } = useColors();

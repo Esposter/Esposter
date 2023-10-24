@@ -1,7 +1,9 @@
 import characters from "@/assets/dungeons/characters.png";
 import cloudCity from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudTileset from "@/assets/dungeons/tilesets/cloud_tileset.png";
+import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
 import { Direction, GridEngine } from "grid-engine";
+import Phaser from "phaser";
 
 export class GameScene extends Phaser.Scene {
   static readonly TILE_SIZE = 48;
@@ -30,6 +32,8 @@ export class GameScene extends Phaser.Scene {
     playerSprite.scale = 1.5;
     this.cameras.main.startFollow(playerSprite, true);
     this.cameras.main.setFollowOffset(-playerSprite.width, -playerSprite.height);
+    phaserEventEmitter.on("onUpdateBackgroundColor", (color) => this.cameras.main.setBackgroundColor(color));
+
     this.gridEngine.create(cloudCityTilemap, {
       characters: [
         {
