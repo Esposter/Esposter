@@ -20,6 +20,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  routeRules: {
+    [RoutePath.Dungeons]: { ssr: false },
+  },
   typescript: {
     shim: false,
   },

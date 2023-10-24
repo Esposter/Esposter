@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { getStateComponent } from "@/services/dungeons/getStateComponent";
-import { useGameStore } from "@/store/dungeons/game";
-
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
-const { surface } = useColors();
-const stateComponent = computed(() => getStateComponent(game.value.state));
+const containerId = "game-container";
+useLaunchGame(containerId);
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ backgroundColor: surface }">
-    <component :is="stateComponent" />
+  <NuxtLayout>
+    <div :id="containerId" />
   </NuxtLayout>
 </template>
 
@@ -23,5 +18,10 @@ const stateComponent = computed(() => getStateComponent(game.value.state));
 
 :deep(.paragraph) {
   font-family: $paragraph-font;
+}
+
+#game-container {
+  height: calc(100dvh - $app-bar-height);
+  width: 100%;
 }
 </style>

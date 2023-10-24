@@ -25,11 +25,17 @@ p:empty::before {
   content: "";
   display: inline-block;
 }
+
+// Canvas by default is an inline element and can cause vertical scrollbar to appear
+// https://stackoverflow.com/questions/37765215/canvas-dimensions-cause-a-vertical-scroll-bar-to-appear
+canvas {
+  display: block;
+}
 </style>
 
 <style scoped lang="scss">
 .progress {
-  top: 56px !important;
+  top: $app-bar-height !important;
   box-shadow: 0 0 5px v-bind(primaryLighten1);
   // Put progress bar just above appbar which has z index of 1000
   // but below menus which have z index of 2000

@@ -11,7 +11,7 @@
 // const surveyerStore = useSurveyStore();
 // const { updateSurvey, unauthedSave } = surveyerStore;
 // const { surveyList } = storeToRefs(surveyerStore);
-// const surveyCreatorId = "surveyCreator";
+// const surveyCreatorId = "survey-creator";
 
 // onMounted(() => {
 //   if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
@@ -50,9 +50,8 @@ throw createError({ statusCode: 404 });
 </template>
 
 <style scoped lang="scss">
-#surveyCreator {
-  /* Esposter App Bar 56px */
-  height: calc(100dvh - 56px);
+#survey-creator {
+  height: calc(100dvh - $app-bar-height);
   width: 100%;
 }
 </style>

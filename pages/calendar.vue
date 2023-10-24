@@ -42,7 +42,6 @@ const events = computed<EventSourceInput>(() => {
 
 <style scoped lang="scss">
 .v-container {
-  /* Esposter App Bar 56px */
-  height: calc(100dvh - 56px);
+  height: calc(100dvh - $app-bar-height);
 }
 </style>
