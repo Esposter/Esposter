@@ -13,13 +13,13 @@ jobs:
           node-version: "20.x"
 
       - name: Install Node Modules
-        run: npm ci
+        run: pnpm i
 
       - name: Build Nuxt 3
-        run: npm run build
+        run: pnpm run build
 
       - name: Run ESLint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Run Typechecking
         run: npm run typecheck
