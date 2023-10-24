@@ -50,6 +50,9 @@ dependencies:
   '@pinia/nuxt':
     specifier: ^0.5.1
     version: 0.5.1(typescript@5.2.2)(vue@3.3.6)
+  '@tiptap/core':
+    specifier: ^2.1.12
+    version: 2.1.12(@tiptap/pm@2.1.12)
   '@tiptap/extension-character-count':
     specifier: ^2.1.12
     version: 2.1.12(@tiptap/core@2.1.12)(@tiptap/pm@2.1.12)
@@ -241,6 +244,9 @@ devDependencies:
   gen-env-types:
     specifier: ^1.3.4
     version: 1.3.4
+  h3:
+    specifier: ^1.8.2
+    version: 1.8.2
   nuxt:
     specifier: ^3.8.0
     version: 3.8.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.16.0)(eslint@8.52.0)(sass@1.69.4)(typescript@5.2.2)(vite@4.5.0)(vue-tsc@1.8.20)
@@ -256,6 +262,9 @@ devDependencies:
   type-fest:
     specifier: ^4.5.0
     version: 4.5.0
+  vite:
+    specifier: ^4.5.0
+    version: 4.5.0(sass@1.69.4)
   vue-tsc:
     specifier: ^1.8.20
     version: 1.8.20(typescript@5.2.2)

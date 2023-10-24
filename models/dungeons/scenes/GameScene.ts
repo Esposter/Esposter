@@ -33,6 +33,7 @@ export class GameScene extends Scene {
     this.cameras.main.startFollow(playerSprite, true);
     this.cameras.main.setFollowOffset(-playerSprite.width, -playerSprite.height);
     phaserEventEmitter.on("onUpdateBackgroundColor", (color) => this.cameras.main.setBackgroundColor(color));
+    window.addEventListener("resize", () => this.game.scale.resize(window.innerWidth, window.innerHeight));
 
     this.gridEngine.create(cloudCityTilemap, {
       characters: [

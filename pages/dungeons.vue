@@ -10,7 +10,7 @@ useLaunchGame(containerId);
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "@/assets/dungeons/styles/variables.scss";
 
 :deep(.header) {
@@ -22,7 +22,7 @@ useLaunchGame(containerId);
 }
 
 #game-container {
-  height: calc(100dvh - $app-bar-height);
   width: 100%;
+  height: calc(100dvh - $app-bar-height);
 }
 </style>

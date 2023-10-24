@@ -28,9 +28,9 @@ export const useLaunchGame = (containerId: string) => {
       },
       callbacks: {
         postBoot: (game) => {
+          if (!game.canvas.parentElement) return;
           // From v3.15 onwards, you have to override Phaser's default styles
-          game.canvas.style.width = "100%";
-          game.canvas.style.height = "100%";
+          game.canvas.parentElement.style.paddingTop = `-${game.canvas.style.marginTop}`;
         },
       },
     });

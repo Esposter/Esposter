@@ -51,7 +51,7 @@ throw createError({ statusCode: 404 });
 
 <style scoped lang="scss">
 #survey-creator {
-  height: calc(100dvh - $app-bar-height);
   width: 100%;
+  height: calc(100dvh - $app-bar-height);
 }
 </style>
