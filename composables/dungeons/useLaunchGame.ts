@@ -1,3 +1,4 @@
+import { GameScene } from "@/models/dungeons/scenes/GameScene";
 import { useGameStore } from "@/store/dungeons/game";
 import { GridEngine } from "grid-engine";
 import Phaser from "phaser";
@@ -15,6 +16,7 @@ export const useLaunchGame = (containerId: string) => {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
       backgroundColor: surface.value,
+      scene: GameScene,
       plugins: {
         scene: [
           {
