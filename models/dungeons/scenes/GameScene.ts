@@ -56,6 +56,7 @@ export class GameScene extends Scene {
           startPosition: { x: 8, y: 8 },
         },
       ],
+      numberOfDirections: 8,
     });
   }
 
@@ -63,7 +64,11 @@ export class GameScene extends Scene {
     if (!this.input.keyboard) return;
 
     const cursors = this.input.keyboard.createCursorKeys();
-    if (cursors.left.isDown) this.gridEngine.move("player", Direction.LEFT);
+    if (cursors.left.isDown && cursors.up.isDown) this.gridEngine.move("player", Direction.UP_LEFT);
+    else if (cursors.left.isDown && cursors.down.isDown) this.gridEngine.move("player", Direction.DOWN_LEFT);
+    else if (cursors.right.isDown && cursors.up.isDown) this.gridEngine.move("player", Direction.UP_RIGHT);
+    else if (cursors.right.isDown && cursors.down.isDown) this.gridEngine.move("player", Direction.DOWN_RIGHT);
+    else if (cursors.left.isDown) this.gridEngine.move("player", Direction.LEFT);
     else if (cursors.right.isDown) this.gridEngine.move("player", Direction.RIGHT);
     else if (cursors.up.isDown) this.gridEngine.move("player", Direction.UP);
     else if (cursors.down.isDown) this.gridEngine.move("player", Direction.DOWN);
