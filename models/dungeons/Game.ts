@@ -23,7 +23,6 @@ export const Game = ApplyItemMetadataMixin(BaseGame);
 export const gameSchema = itemMetadataSchema.merge(
   z.object({
     id: z.string().uuid(),
-    round: z.number().int().nonnegative(),
     state: stateSchema,
     player: playerSchema,
   }),
