@@ -9,15 +9,3 @@ useLaunchGame(containerId);
     <div :id="containerId" />
   </NuxtLayout>
 </template>
-
-<style lang="scss">
-@import "@/assets/dungeons/styles/variables.scss";
-
-:deep(.header) {
-  font-family: $header-font;
-}
-
-:deep(.paragraph) {
-  font-family: $paragraph-font;
-}
-</style>

@@ -96,7 +96,6 @@ export default defineNuxtConfig({
     families: {
       Frijole: true,
       Montserrat: true,
-      Oswald: true,
     },
   },
   unocss: {
