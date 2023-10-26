@@ -12,6 +12,7 @@ export const getPhaserGame = (containerId: string) =>
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
     scene: [PreloaderScene, GameScene],
+    transparent: true,
     input: {
       keyboard: true,
       touch: true,
