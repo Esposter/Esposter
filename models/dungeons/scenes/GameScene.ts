@@ -32,9 +32,13 @@ export class GameScene extends Scene {
   create() {
     this.scaleManager = new ScaleManager(this.game.scale);
     this.movementManager = new MovementManager(this.gridEngine);
-    if (isMobile()) this.joystickManager = new JoystickManager(addJoystick(this, this.rexVirtualJoystick));
     this.addPlayerSprite();
     this.addMap();
+
+    if (isMobile()) {
+      const joystick = addJoystick(this, this.rexVirtualJoystick);
+      this.joystickManager = new JoystickManager(joystick);
+    }
 
     this.cameras.main.startFollow(this.playerSprite, true);
     this.cameras.main.setFollowOffset(-this.playerSprite.width, -this.playerSprite.height);
