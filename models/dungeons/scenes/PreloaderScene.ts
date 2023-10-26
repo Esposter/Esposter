@@ -34,19 +34,11 @@ export class PreloaderScene extends Scene {
     const progressBoxHeight = 50;
     progressBox.fillRect(-progressBoxWidth / 2, -progressBoxHeight / 2, progressBoxWidth, progressBoxHeight);
 
-    const loadingText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 50,
-      text: "Loading...",
-      style: { font: "24px Frijole" },
-      origin: 0.5,
-    });
-
     const percentText = this.make.text({
       x: width / 2,
       y: height / 2,
       text: "0%",
-      style: { font: "24px Frijole" },
+      style: { font: "1.5rem Frijole" },
       origin: 0.5,
     });
 
@@ -54,7 +46,7 @@ export class PreloaderScene extends Scene {
       x: width / 2,
       y: height / 2 + 50,
       text: "",
-      style: { font: "24px Frijole" },
+      style: { font: "1.5rem Frijole" },
       origin: 0.5,
     });
 
@@ -75,14 +67,14 @@ export class PreloaderScene extends Scene {
       assetText.setText(`Loading asset: ${file.key}`);
     });
 
-    this.load.on("complete", () => {
-      progressBar.destroy();
-      progressBox.destroy();
-      loadingText.destroy();
-      percentText.destroy();
-      assetText.destroy();
-      this.ready();
-    });
+    // this.load.on("complete", () => {
+    //   progressBar.destroy();
+    //   progressBox.destroy();
+    //   loadingText.destroy();
+    //   percentText.destroy();
+    //   assetText.destroy();
+    //   this.ready();
+    // });
 
     this.load.image(TilesetKey.CloudCity, cloudCityTileset);
     this.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
