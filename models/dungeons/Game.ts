@@ -5,7 +5,6 @@ import { z } from "zod";
 
 class BaseGame {
   id = crypto.randomUUID() as string;
-  round = 0;
   state = State.Start;
   player = new Player();
 
