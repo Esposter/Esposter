@@ -1,6 +1,8 @@
 import type { HowlOptions } from "howler";
 import { Howl } from "howler";
 
+const cache: Record<string, Howl | null> = {};
+
 export const useSound = (
   url: MaybeRef<string>,
   {
@@ -26,25 +28,40 @@ export const useSound = (
   }
 
   onMounted(async () => {
-    sound.value = new Howl({
-      src: unref(url),
+    const src = unref(url);
+    let howl = cache[src];
+    if (howl) {
+      sound.value = howl;
+      return;
+    }
+
+    howl = new Howl({
+      src,
       volume: unref(volume),
       rate: unref(playbackRate),
       onload: handleLoad,
       ...rest,
     });
+    cache[src] = sound.value = howl;
   });
 
   watch(
     () => unref(url),
-    ([newUrl]) => {
-      sound.value = new Howl({
-        src: newUrl,
+    ([src]) => {
+      let howl = cache[src];
+      if (howl) {
+        sound.value = howl;
+        return;
+      }
+
+      howl = new Howl({
+        src,
         volume: unref(volume),
         rate: unref(playbackRate),
         onload: handleLoad,
         ...rest,
       });
+      cache[src] = sound.value = howl;
     },
   );
 
