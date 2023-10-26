@@ -31,7 +31,7 @@ watch(theme.name, async () => {
 
   await nextTick(() => {
     el.classList.add("app-transition");
-    requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
       el.style.setProperty("--clip-size", `${Math.hypot(window.innerWidth, window.innerHeight)}px`);
     });
   });
