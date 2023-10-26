@@ -15,6 +15,6 @@ export class ScaleManager {
     const gameWidth = getGameWidth();
     const gameHeight = getGameHeight();
     this.instance.setGameSize(gameWidth, gameHeight);
-    phaserEventEmitter.emit("onResize");
+    phaserEventEmitter.emit("resize");
   }
 }

@@ -65,8 +65,8 @@ export const messageRouter = router({
         const onCreateMessage = (data: MessageEntity) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        messageEventEmitter.on("onCreateMessage", onCreateMessage);
-        return () => messageEventEmitter.off("onCreateMessage", onCreateMessage);
+        messageEventEmitter.on("createMessage", onCreateMessage);
+        return () => messageEventEmitter.off("createMessage", onCreateMessage);
       }),
     ),
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
@@ -84,7 +84,7 @@ export const messageRouter = router({
       });
       const messageClient = await getTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
-      messageEventEmitter.emit("onCreateMessage", newMessage);
+      messageEventEmitter.emit("createMessage", newMessage);
       return newMessage;
     }),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
@@ -94,8 +94,8 @@ export const messageRouter = router({
         const onUpdateMessage = (data: UpdateMessageInput) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        messageEventEmitter.on("onUpdateMessage", onUpdateMessage);
-        return () => messageEventEmitter.off("onUpdateMessage", onUpdateMessage);
+        messageEventEmitter.on("updateMessage", onUpdateMessage);
+        return () => messageEventEmitter.off("updateMessage", onUpdateMessage);
       }),
     ),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
@@ -103,7 +103,7 @@ export const messageRouter = router({
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
       await updateEntity(messageClient, { ...input, updatedAt: new Date() });
-      messageEventEmitter.emit("onUpdateMessage", input);
+      messageEventEmitter.emit("updateMessage", input);
       return input;
     }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
@@ -113,8 +113,8 @@ export const messageRouter = router({
         const onDeleteMessage = (data: CompositeKey) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        messageEventEmitter.on("onDeleteMessage", onDeleteMessage);
-        return () => messageEventEmitter.off("onDeleteMessage", onDeleteMessage);
+        messageEventEmitter.on("deleteMessage", onDeleteMessage);
+        return () => messageEventEmitter.off("deleteMessage", onDeleteMessage);
       }),
     ),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
@@ -122,6 +122,6 @@ export const messageRouter = router({
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
-      messageEventEmitter.emit("onDeleteMessage", input);
+      messageEventEmitter.emit("deleteMessage", input);
     }),
 });

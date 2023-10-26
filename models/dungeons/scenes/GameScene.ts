@@ -42,7 +42,7 @@ export class GameScene extends Scene {
 
     this.cameras.main.startFollow(this.playerSprite, true);
     this.cameras.main.setFollowOffset(-this.playerSprite.width, -this.playerSprite.height);
-    phaserEventEmitter.on("onUpdateBackgroundColor", (color) => this.cameras.main.setBackgroundColor(color));
+    phaserEventEmitter.on("updateBackgroundColor", (color) => this.cameras.main.setBackgroundColor(color));
   }
 
   update() {

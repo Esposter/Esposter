@@ -2,7 +2,7 @@ import type { MessageReplyMetadataEntity } from "@/models/esbabbler/message/repl
 import EventEmitter from "eventemitter3";
 
 interface ReplyEvents {
-  onCreateReply: (data: MessageReplyMetadataEntity) => void;
+  createReply: (data: MessageReplyMetadataEntity) => void;
 }
 
 export const replyEventEmitter = new EventEmitter<ReplyEvents>();

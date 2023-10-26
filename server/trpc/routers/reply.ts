@@ -45,8 +45,8 @@ export const replyRouter = router({
         const onCreateReply = (data: MessageReplyMetadataEntity) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        replyEventEmitter.on("onCreateReply", onCreateReply);
-        return () => replyEventEmitter.off("onCreateReply", onCreateReply);
+        replyEventEmitter.on("createReply", onCreateReply);
+        return () => replyEventEmitter.off("createReply", onCreateReply);
       }),
     ),
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
@@ -69,7 +69,7 @@ export const replyRouter = router({
         updatedAt: createdAt,
       });
       await createEntity(messagesMetadataClient, newReply);
-      replyEventEmitter.emit("onCreateReply", newReply);
+      replyEventEmitter.emit("createReply", newReply);
       return newReply;
     }),
 });

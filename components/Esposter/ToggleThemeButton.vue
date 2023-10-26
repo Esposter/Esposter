@@ -8,7 +8,7 @@ const { surface } = useColors();
 const toggleTheme = () => {
   const newThemeValue = theme.current.value.dark ? "light" : "dark";
   themeCookie.value = theme.name.value = newThemeValue;
-  phaserEventEmitter.emit("onUpdateBackgroundColor", surface.value);
+  phaserEventEmitter.emit("updateBackgroundColor", surface.value);
 };
 </script>
 

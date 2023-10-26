@@ -3,9 +3,9 @@ import type { DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/e
 import EventEmitter from "eventemitter3";
 
 interface EmojiEvents {
-  onCreateEmoji: (data: MessageEmojiMetadataEntity) => void;
-  onUpdateEmoji: (data: UpdateEmojiInput) => void;
-  onDeleteEmoji: (data: DeleteEmojiInput) => void;
+  createEmoji: (data: MessageEmojiMetadataEntity) => void;
+  updateEmoji: (data: UpdateEmojiInput) => void;
+  deleteEmoji: (data: DeleteEmojiInput) => void;
 }
 
 export const emojiEventEmitter = new EventEmitter<EmojiEvents>();

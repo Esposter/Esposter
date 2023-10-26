@@ -72,8 +72,8 @@ export const emojiRouter = router({
         const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        emojiEventEmitter.on("onCreateEmoji", onCreateEmoji);
-        return () => emojiEventEmitter.off("onCreateEmoji", onCreateEmoji);
+        emojiEventEmitter.on("createEmoji", onCreateEmoji);
+        return () => emojiEventEmitter.off("createEmoji", onCreateEmoji);
       }),
     ),
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
@@ -94,7 +94,7 @@ export const emojiRouter = router({
         userIds: [ctx.session.user.id],
       });
       await createEntity(messagesMetadataClient, newEmoji);
-      emojiEventEmitter.emit("onCreateEmoji", newEmoji);
+      emojiEventEmitter.emit("createEmoji", newEmoji);
       return newEmoji;
     }),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
@@ -104,8 +104,8 @@ export const emojiRouter = router({
         const onUpdateEmoji = (data: UpdateEmojiInput) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        emojiEventEmitter.on("onUpdateEmoji", onUpdateEmoji);
-        return () => emojiEventEmitter.off("onUpdateEmoji", onUpdateEmoji);
+        emojiEventEmitter.on("updateEmoji", onUpdateEmoji);
+        return () => emojiEventEmitter.off("updateEmoji", onUpdateEmoji);
       }),
     ),
   // An update is adding the user to the user id list for the already existing emoji
@@ -118,7 +118,7 @@ export const emojiRouter = router({
       };
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
       await updateEntity(messagesMetadataClient, updatedEmoji);
-      emojiEventEmitter.emit("onUpdateEmoji", input);
+      emojiEventEmitter.emit("updateEmoji", input);
       return input;
     }),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
@@ -128,8 +128,8 @@ export const emojiRouter = router({
         const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
           if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
         };
-        emojiEventEmitter.on("onDeleteEmoji", onDeleteEmoji);
-        return () => emojiEventEmitter.off("onDeleteEmoji", onDeleteEmoji);
+        emojiEventEmitter.on("deleteEmoji", onDeleteEmoji);
+        return () => emojiEventEmitter.off("deleteEmoji", onDeleteEmoji);
       }),
     ),
   deleteEmoji: getRoomUserProcedure(deleteEmojiInputSchema, "partitionKey")
@@ -137,6 +137,6 @@ export const emojiRouter = router({
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
       await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-      emojiEventEmitter.emit("onDeleteEmoji", input);
+      emojiEventEmitter.emit("deleteEmoji", input);
     }),
 });
