@@ -9,6 +9,7 @@ export class ScaleManager {
     this.instance = instance;
     this.resize();
     window.addEventListener("resize", () => this.resize());
+    screen.orientation.addEventListener("change", () => this.resize());
   }
 
   resize() {
