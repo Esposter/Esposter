@@ -67,14 +67,13 @@ export class PreloaderScene extends Scene {
       assetText.setText(`Loading asset: ${file.key}`);
     });
 
-    // this.load.on("complete", () => {
-    //   progressBar.destroy();
-    //   progressBox.destroy();
-    //   loadingText.destroy();
-    //   percentText.destroy();
-    //   assetText.destroy();
-    //   this.ready();
-    // });
+    this.load.on("complete", () => {
+      progressBar.destroy();
+      progressBox.destroy();
+      percentText.destroy();
+      assetText.destroy();
+      this.ready();
+    });
 
     this.load.image(TilesetKey.CloudCity, cloudCityTileset);
     this.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
