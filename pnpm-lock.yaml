@@ -162,8 +162,8 @@ dependencies:
     specifier: ^1.9.114
     version: 1.9.114
   three:
-    specifier: ^0.157.0
-    version: 0.157.0
+    specifier: ^0.158.0
+    version: 0.158.0
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -8723,8 +8723,8 @@ packages:
   /text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
 
-  /three@0.157.0:
-    resolution: {integrity: sha512-CeAwQrf4x3z0/e+MC4F+nXLW5t0gh3pw+L6CCBqpHvOq3bGYIgRYub7Pv0j/9wR+d++OiEglyZzWyuSYbwWGOA==}
+  /three@0.158.0:
+    resolution: {integrity: sha512-TALj4EOpdDPF1henk2Q+s17K61uEAAWQ7TJB68nr7FKxqwyDr3msOt5IWdbGm4TaWKjrtWS8DJJWe9JnvsWOhQ==}
     dev: false
 
   /throttle-debounce@3.0.1:
