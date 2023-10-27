@@ -10,7 +10,7 @@ export const useLaunchGame = (containerId: string) => {
     phaserGame.value = getPhaserGame(containerId);
     resizeGame(phaserGame.value.scale);
     window.addEventListener("resize", () => phaserGame.value && resizeGame(phaserGame.value.scale));
-    phaserGame.value.scale.on("orientationchange", () => phaserGame.value && resizeGame(phaserGame.value.scale));
+    window.addEventListener("orientationchange", () => phaserGame.value && resizeGame(phaserGame.value.scale));
   });
 
   onUnmounted(() => {
