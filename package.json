@@ -30,7 +30,7 @@
     "@types/howler": "^2.2.10",
     "@types/marked": "^5.0.2",
     "@types/node-emoji": "^1.8.2",
-    "@types/three": "^0.157.2",
+    "@types/three": "^0.158.0",
     "@types/ws": "^8.5.8",
     "@unocss/nuxt": "^0.57.1",
     "@vueuse/core": "^10.5.0",
