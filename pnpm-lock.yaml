@@ -150,8 +150,8 @@ dependencies:
     specifier: ^3.4.2
     version: 3.4.2
   rate-limiter-flexible:
-    specifier: ^3.0.2
-    version: 3.0.2
+    specifier: ^3.0.3
+    version: 3.0.3
   sql-highlight:
     specifier: ^4.4.0
     version: 4.4.0
@@ -2163,6 +2163,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -6644,6 +6645,9 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -7913,8 +7917,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  /rate-limiter-flexible@3.0.2:
-    resolution: {integrity: sha512-5kQnZBfQ025dBL7cjqLxrCk0ud8DWEMZJH06VJyhch+Es0gQ/lny9yiIRf6mcbBj8aMTSCn2Xp9KDDao3Raq6g==}
+  /rate-limiter-flexible@3.0.3:
+    resolution: {integrity: sha512-Wn9STZy2bKaWin9U54opnHvX14NNAlfLD+eiOTNNQnsIOd2A7Rnmt9msHWbUBloSEz2Nk1YTQ4CBa30TdlAgag==}
     dev: false
 
   /rc9@2.1.1:
