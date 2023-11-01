@@ -102,7 +102,7 @@
     "rate-limiter-flexible": "^3.0.3",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.2.0",
-    "survey-creator-knockout": "^1.9.114",
+    "survey-creator-knockout": "^1.9.115",
     "three": "^0.158.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.12",

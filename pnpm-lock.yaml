@@ -159,8 +159,8 @@ dependencies:
     specifier: ^2.2.0
     version: 2.2.0
   survey-creator-knockout:
-    specifier: ^1.9.114
-    version: 1.9.114
+    specifier: ^1.9.115
+    version: 1.9.115
   three:
     specifier: ^0.158.0
     version: 0.158.0
@@ -8471,12 +8471,12 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /survey-core@1.9.114:
-    resolution: {integrity: sha512-Kqx8rIob8IXEACdCkp5idLT31bcZg9CWtD2cXUdVhV9YsQtND+Cl7YnW4rWnM3ElK7Ckfrl/tJc80fMqMrmVGQ==}
+  /survey-core@1.9.115:
+    resolution: {integrity: sha512-2gThD7QcbqUjiu/O58PKDors9H6RkXbN2+ec0HVo2eOPwxkVvT+HMvvwwlZS+Bc4z7rG4ak2PwnOFZYTqWuITg==}
     dev: false
 
-  /survey-creator-core@1.9.114:
-    resolution: {integrity: sha512-bxjuY3qS1eHqEJObt9Tzr8ieBwWf4YVUnL7Ppz9GtbnocmYOFqUZolWtdZvzCkdTFrYipT3yF9Pa7PpsWNfTHg==}
+  /survey-creator-core@1.9.115:
+    resolution: {integrity: sha512-wG2qCzHNInWLAIsKTE0p0kjRCfgUKnuQcUbdx3sIkBQimUpiv6+v8kuyCjUQA3r72fA8XXR8fRCxzLJ40OPJZw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -8484,11 +8484,11 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.114
+      survey-core: 1.9.115
     dev: false
 
-  /survey-creator-knockout@1.9.114:
-    resolution: {integrity: sha512-z8+EknEzMpKI1odOpPUq6NR2IGXZwxehYILs2QWyFlI2YIDAScQt1RAElCGD5zdx0CANPC/NQXf8Cbc8wk3oUw==}
+  /survey-creator-knockout@1.9.115:
+    resolution: {integrity: sha512-CwZmVFrTPcPlAUuFnniUORV8ys/nOyIHgtg+xA1/Qe5iSwSepSPDkOa9dS8YX5FfkF9XUvNEe4+qlsI/JE90Pw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -8497,16 +8497,16 @@ packages:
         optional: true
     dependencies:
       knockout: 3.5.1
-      survey-core: 1.9.114
-      survey-creator-core: 1.9.114
-      survey-knockout-ui: 1.9.114
+      survey-core: 1.9.115
+      survey-creator-core: 1.9.115
+      survey-knockout-ui: 1.9.115
     dev: false
 
-  /survey-knockout-ui@1.9.114:
-    resolution: {integrity: sha512-ZqqBt8r+QsklPBLCyyA8lMmMJP7rGbEzyqBXavbiHCz5noH8KJUoI3lqh8cmT08+kB3I5K54+sZoTvP2wUzZww==}
+  /survey-knockout-ui@1.9.115:
+    resolution: {integrity: sha512-ow5cxhlV2afiSuvzgHjwSRb+PPUlnW7SVXIXfep2wguOxw/j5XPzxQfYpQnXoXNxVfHGbouvHUFE7uRYkn03dA==}
     dependencies:
       knockout: 3.5.1
-      survey-core: 1.9.114
+      survey-core: 1.9.115
     dev: false
 
   /svg-tags@1.0.0:
