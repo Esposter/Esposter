@@ -78,8 +78,8 @@ dependencies:
     specifier: ^10.43.1
     version: 10.43.1
   '@vuepic/vue-datepicker':
-    specifier: ^7.2.0
-    version: 7.2.0(vue@3.3.7)
+    specifier: ^7.2.1
+    version: 7.2.1(vue@3.3.7)
   class-transformer:
     specifier: ^0.5.1
     version: 0.5.1
@@ -3507,14 +3507,14 @@ packages:
   /@vue/shared@3.3.7:
     resolution: {integrity: sha512-N/tbkINRUDExgcPTBvxNkvHGu504k8lzlNQRITVnm6YjOjwa4r0nnbd4Jb01sNpur5hAllyRJzSK5PvB9PPwRg==}
 
-  /@vuepic/vue-datepicker@7.2.0(vue@3.3.7):
-    resolution: {integrity: sha512-rJgQq/DpTr66zfwlkGtqGK7IZIKi3bAxMpik15qRHY8af1b4nWlZfRKyMV3Wmmaz7GsoVt4oJH+DBd9so1JhLg==}
-    engines: {node: '>=14'}
+  /@vuepic/vue-datepicker@7.2.1(vue@3.3.7):
+    resolution: {integrity: sha512-K/+HSmyPvtpjbgUQm9ebnYky9fP4j/3cNKo4DfDBnsq6I2IK3N1OAtTW+YK7TTfu+Xww204CWPpr9hNqfrAHWw==}
+    engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
     dependencies:
       date-fns: 2.30.0
-      date-fns-tz: 1.3.8(date-fns@2.30.0)
+      date-fns-tz: 2.0.0(date-fns@2.30.0)
       vue: 3.3.7(typescript@5.2.2)
     dev: false
 
@@ -4426,8 +4426,8 @@ packages:
     resolution: {integrity: sha512-4FbVrHDwfOASx7uQVxeiCTo7ggSdYZbqs8lH+WU6ViypPlDbe9y6IP5VVUDQBv9DcnyaiPT5XT0UWHgJ64zLeQ==}
     dev: false
 
-  /date-fns-tz@1.3.8(date-fns@2.30.0):
-    resolution: {integrity: sha512-qwNXUFtMHTTU6CFSFjoJ80W8Fzzp24LntbjFFBgL/faqds4e5mo9mftoRLgr3Vi1trISsg4awSpYVsOQCRnapQ==}
+  /date-fns-tz@2.0.0(date-fns@2.30.0):
+    resolution: {integrity: sha512-OAtcLdB9vxSXTWHdT8b398ARImVwQMyjfYGkKD2zaGpHseG2UPHbHjXELReErZFxWdSLph3c2zOaaTyHfOhERQ==}
     peerDependencies:
       date-fns: '>=2.0.0'
     dependencies:
