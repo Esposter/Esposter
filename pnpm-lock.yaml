@@ -114,8 +114,8 @@ dependencies:
     specifier: ^5.0.1
     version: 5.0.1
   grid-engine:
-    specifier: ^2.40.0
-    version: 2.40.0(phaser@3.60.0)
+    specifier: ^2.41.0
+    version: 2.41.0(phaser@3.60.0)
   gsap:
     specifier: ^3.12.2
     version: 3.12.2
@@ -5563,8 +5563,8 @@ packages:
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  /grid-engine@2.40.0(phaser@3.60.0):
-    resolution: {integrity: sha512-56UrZJo4EmSNUw7IKvlzY8okL/4XOd8buchnUJ2QXMm/GAYQFmzcpPz5Vu7iLtoY+u7+/7KC+FmhVDBt93g4AQ==}
+  /grid-engine@2.41.0(phaser@3.60.0):
+    resolution: {integrity: sha512-HMyKbQtrBRcguJc33FxrZbc2xEjZ0P2MgbemfYl013hva4HmZpsZyxBoHx2zXQehMPPpASbn1eInCc85upAYmQ==}
     peerDependencies:
       phaser: ~3.60.0
     dependencies:
