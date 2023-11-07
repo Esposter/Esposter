@@ -203,8 +203,8 @@ devDependencies:
     specifier: ^3.0.2
     version: 3.0.2
   '@types/dedent':
-    specifier: ^0.7.1
-    version: 0.7.1
+    specifier: ^0.7.2
+    version: 0.7.2
   '@types/deep-equal':
     specifier: ^1.0.3
     version: 1.0.3
@@ -2812,8 +2812,8 @@ packages:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 9.0.3
 
-  /@types/dedent@0.7.1:
-    resolution: {integrity: sha512-NKo033xLkoVCgUobq+FS1S3J6kwWeOcyqEBc2r2oi9J/dKncY11J9VgS0Giv7T4rxVt/MajUVcFppT2TPJA2Cg==}
+  /@types/dedent@0.7.2:
+    resolution: {integrity: sha512-kRiitIeUg1mPV9yH4VUJ/1uk2XjyANfeL8/7rH1tsjvHeO9PJLBHJIYsFWmAvmGj5u8rj+1TZx7PZzW2qLw3Lw==}
     dev: true
 
   /@types/deep-equal@1.0.3:
