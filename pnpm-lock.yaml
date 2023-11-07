@@ -224,8 +224,8 @@ devDependencies:
     specifier: ^0.158.2
     version: 0.158.2
   '@types/ws':
-    specifier: ^8.5.8
-    version: 8.5.8
+    specifier: ^8.5.9
+    version: 8.5.9
   '@unocss/nuxt':
     specifier: ^0.57.2
     version: 0.57.2(postcss@8.4.31)(vite@4.5.0)(webpack@5.89.0)
@@ -2928,8 +2928,8 @@ packages:
     resolution: {integrity: sha512-Rcgs5c2eNFnHp53YOjgtKfl/zWX1Y+uFGUwlSXrWcZWu3yhANRezmph4MninmqybUYT6g9ZE0aQ9QIdPkLR3Kg==}
     dev: true
 
-  /@types/ws@8.5.8:
-    resolution: {integrity: sha512-flUksGIQCnJd6sZ1l5dqCEG/ksaoAg/eUwiLAGTJQcfgvZJKF++Ta4bJA6A5aPSJmsr+xlseHn4KLgVlNnvPTg==}
+  /@types/ws@8.5.9:
+    resolution: {integrity: sha512-jbdrY0a8lxfdTp/+r7Z4CkycbOFN8WX+IOchLJr3juT/xzbJ8URyTVSJ/hvNdadTgM1mnedb47n+Y31GsFnQlg==}
     dependencies:
       '@types/node': 20.8.10
     dev: true
