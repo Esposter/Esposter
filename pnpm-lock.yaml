@@ -212,8 +212,8 @@ devDependencies:
     specifier: ^3.0.5
     version: 3.0.5
   '@types/howler':
-    specifier: ^2.2.10
-    version: 2.2.10
+    specifier: ^2.2.11
+    version: 2.2.11
   '@types/marked':
     specifier: ^5.0.2
     version: 5.0.2
@@ -2843,8 +2843,8 @@ packages:
   /@types/estree@1.0.4:
     resolution: {integrity: sha512-2JwWnHK9H+wUZNorf2Zr6ves96WHoWDJIftkcxPKsS7Djta6Zu519LarhRNljPXkpsZR2ZMwNCPeW7omW07BJw==}
 
-  /@types/howler@2.2.10:
-    resolution: {integrity: sha512-MnDUQZBaDhIFTQATeO4tzOCBobtPjo2MmR0co70tMyk+HNUJB0loojn+PRkky7SrKzfvU90SqufIlQlCrtjr+A==}
+  /@types/howler@2.2.11:
+    resolution: {integrity: sha512-7aBoUL6RbSIrqKnpEgfa1wSNUBK06mn08siP2QI0zYk7MXfEJAaORc4tohamQYqCqVESoDyRWSdQn2BOKWj2Qw==}
     dev: true
 
   /@types/http-proxy@1.17.13:
