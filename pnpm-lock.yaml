@@ -183,7 +183,7 @@ dependencies:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.3.8)
   vuetify:
-    specifier: ^3.3.23
+    specifier: 3.3.23
     version: 3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
   worker-timers:
     specifier: ^7.0.77
