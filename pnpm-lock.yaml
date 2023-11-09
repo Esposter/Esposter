@@ -96,8 +96,8 @@ dependencies:
     specifier: ^1.5.1
     version: 1.5.1
   deep-equal:
-    specifier: ^2.2.2
-    version: 2.2.2
+    specifier: ^2.2.3
+    version: 2.2.3
   dompurify:
     specifier: ^3.0.6
     version: 3.0.6
@@ -4539,8 +4539,9 @@ packages:
         optional: true
     dev: false
 
-  /deep-equal@2.2.2:
-    resolution: {integrity: sha512-xjVyBf0w5vH0I42jdAZzOKVldmPgSulmiyPRywoyq7HXC9qdgo17kxJE+rdnif5Tz6+pIrpJI8dCpMNLIGkUiA==}
+  /deep-equal@2.2.3:
+    resolution: {integrity: sha512-ZIwpnevOurS8bpT4192sqAowWM76JDKSHYzMLty3BZGSswgq6pBaH3DhCSW5xVAZICZyKdOBPjwww5wfgT/6PA==}
+    engines: {node: '>= 0.4'}
     dependencies:
       array-buffer-byte-length: 1.0.0
       call-bind: 1.0.5
