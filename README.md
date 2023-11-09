@@ -205,7 +205,6 @@
 1. Install the js dependencies:
 
 ```bash
-# pnpm
 pnpm install
 ```
 
