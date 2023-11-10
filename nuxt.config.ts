@@ -1,10 +1,9 @@
-import path from "pathe";
 import { RoutePath } from "./models/router/RoutePath";
 
 export default defineNuxtConfig({
   alias: {
     // @TODO: https://github.com/Hebilicious/authjs-nuxt/issues/2
-    cookie: path.resolve(__dirname, "node_modules/cookie"),
+    cookie: "cookie",
   },
   build: {
     transpile: ["@vuepic/vue-datepicker", "trpc-nuxt"],
