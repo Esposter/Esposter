@@ -94,5 +94,4 @@ const defaults: Defaults = {
 export default {
   theme,
   defaults,
-  labComponents: ["VDataTable"],
 } satisfies ExternalVuetifyOptions;

@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth/core':
-    specifier: ^0.18.0
-    version: 0.18.0
+    specifier: ^0.18.1
+    version: 0.18.1
   '@azure/data-tables':
     specifier: ^13.2.2
     version: 13.2.2
@@ -43,7 +43,7 @@ dependencies:
     version: 6.1.9(@fullcalendar/core@6.1.9)(vue@3.3.8)
   '@hebilicious/authjs-nuxt':
     specifier: ^0.3.5
-    version: 0.3.5(@auth/core@0.18.0)(nuxt@3.8.1)
+    version: 0.3.5(@auth/core@0.18.1)(nuxt@3.8.1)
   '@mdi/font':
     specifier: ^7.3.67
     version: 7.3.67
@@ -112,7 +112,7 @@ dependencies:
     version: 5.0.1
   grid-engine:
     specifier: ^2.41.0
-    version: 2.41.0(phaser@3.60.0)
+    version: 2.41.0(phaser@3.70.0)
   gsap:
     specifier: ^3.12.2
     version: 3.12.2
@@ -135,8 +135,8 @@ dependencies:
     specifier: ^1.1.1
     version: 1.1.1
   phaser:
-    specifier: ^3.60.0
-    version: 3.60.0
+    specifier: ^3.70.0
+    version: 3.70.0
   phaser3-rex-plugins:
     specifier: ^1.60.7
     version: 1.60.7
@@ -180,8 +180,8 @@ dependencies:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.3.8)
   vuetify:
-    specifier: 3.3.23
-    version: 3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
+    specifier: ^3.4.0
+    version: 3.4.0(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
   worker-timers:
     specifier: ^7.0.77
     version: 7.0.77
@@ -272,8 +272,8 @@ devDependencies:
     specifier: ^1.8.22
     version: 1.8.22(typescript@5.2.2)
   vuetify-nuxt-module:
-    specifier: 0.6.4
-    version: 0.6.4(typescript@5.2.2)(vite@4.5.0)(vue@3.3.8)
+    specifier: ^0.6.6
+    version: 0.6.6(typescript@5.2.2)(vite@4.5.0)(vue@3.3.8)
 
 packages:
 
@@ -298,8 +298,8 @@ packages:
   /@antfu/utils@0.7.6:
     resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==}
 
-  /@auth/core@0.18.0:
-    resolution: {integrity: sha512-Xb41H3FIv4PlTZmwoFvntaNlVTwIqFxIg7i0/ieHOOxf/7H8EJpGTWoNrqKhwMyZEPU6fHp+VcUiqdX3vFrWSg==}
+  /@auth/core@0.18.1:
+    resolution: {integrity: sha512-L4MehYt/A7e5djsEid3jTSkRZ8sysxbirhmCXqSCPimGoFUtMCwTZrpzTALTSRwXGw/mps5fYlHROo3UQk9B3w==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -308,7 +308,7 @@ packages:
     dependencies:
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
-      jose: 4.15.4
+      jose: 5.1.0
       oauth4webapi: 2.3.0
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
@@ -1750,13 +1750,13 @@ packages:
       vue: 3.3.8(typescript@5.2.2)
     dev: false
 
-  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.18.0)(nuxt@3.8.1):
+  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.18.1)(nuxt@3.8.1):
     resolution: {integrity: sha512-8w4FJ+gVx41w+Oax0HFQdQ+poqYx1xxDU6F/NZOp3reIhYJEWmTqJm9Qd0u4uBOonhksZ+vVGQbjP3ZTKERONA==}
     peerDependencies:
       '@auth/core': ^0.17.0
       nuxt: ^3.7.4
     dependencies:
-      '@auth/core': 0.18.0
+      '@auth/core': 0.18.1
       '@nuxt/kit': 3.8.0
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
@@ -3848,7 +3848,7 @@ packages:
       vue: 3.3.8(typescript@5.2.2)
     dev: false
 
-  /@vuetify/loader-shared@1.7.1(vue@3.3.8)(vuetify@3.3.23):
+  /@vuetify/loader-shared@1.7.1(vue@3.3.8)(vuetify@3.4.0):
     resolution: {integrity: sha512-kLUvuAed6RCvkeeTNJzuy14pqnkur8lTuner7v7pNE/kVhPR97TuyXwBSBMR1cJeiLiOfu6SF5XlCYbXByEx1g==}
     peerDependencies:
       vue: ^3.0.0
@@ -3857,7 +3857,7 @@ packages:
       find-cache-dir: 3.3.2
       upath: 2.0.1
       vue: 3.3.8(typescript@5.2.2)
-      vuetify: 3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
+      vuetify: 3.4.0(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
 
   /@vueuse/core@10.6.0(vue@3.3.8):
     resolution: {integrity: sha512-+Yee+g9+9BEbvkyGdn4Bf4yZx9EfocAytpV2ZlrlP7xcz+qznLmZIDqDroTvc5vtMkWZicisgEv8dt3+jL+HQg==}
@@ -5978,13 +5978,13 @@ packages:
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  /grid-engine@2.41.0(phaser@3.60.0):
+  /grid-engine@2.41.0(phaser@3.70.0):
     resolution: {integrity: sha512-HMyKbQtrBRcguJc33FxrZbc2xEjZ0P2MgbemfYl013hva4HmZpsZyxBoHx2zXQehMPPpASbn1eInCc85upAYmQ==}
     peerDependencies:
       phaser: ~3.60.0
     dependencies:
       mnemonist: 0.39.5
-      phaser: 3.60.0
+      phaser: 3.70.0
       rxjs: 7.8.1
       tiled-property-flattener: 1.1.1
     dev: false
@@ -6556,6 +6556,10 @@ packages:
 
   /jose@4.15.4:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
+    dev: false
+
+  /jose@5.1.0:
+    resolution: {integrity: sha512-H+RVqxA6apaJ0rcQYupKYhos7uosAiF42gUcWZiwhICWMphDULFj/CRr1R0tV/JCv9DEeJaSyYYpc9luHHNT4g==}
     dev: false
 
   /js-tokens@4.0.0:
@@ -7754,8 +7758,8 @@ packages:
       - encoding
     dev: false
 
-  /phaser@3.60.0:
-    resolution: {integrity: sha512-IKUy35EnoEVcl2EmJ8WOyK4X8OoxHYdlhZLgRGpNrvD1fEagYffhVmwHcapE/tGiLgyrnezmXIo5RrH2NcrTHw==}
+  /phaser@3.70.0:
+    resolution: {integrity: sha512-2g+gh+Jp9f/Ho9FOXOYbIJMGf3UZXyMbW2iLScFaLQw11e/LqVyxj/YmaBauWbHabeTnZjiWkPklDnxhesMH0g==}
     dependencies:
       eventemitter3: 5.0.1
     dev: false
@@ -9622,18 +9626,18 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /vite-plugin-vuetify@1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.3.23):
+  /vite-plugin-vuetify@1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.4.0):
     resolution: {integrity: sha512-MubIcKD33O8wtgQXlbEXE7ccTEpHZ8nPpe77y9Wy3my2MWw/PgehP9VqTp92BLqr0R1dSL970Lynvisx3UxBFw==}
     engines: {node: '>=12'}
     peerDependencies:
       vite: ^2.7.0 || ^3.0.0 || ^4.0.0
       vuetify: ^3.0.0-beta.4
     dependencies:
-      '@vuetify/loader-shared': 1.7.1(vue@3.3.8)(vuetify@3.3.23)
+      '@vuetify/loader-shared': 1.7.1(vue@3.3.8)(vuetify@3.4.0)
       debug: 4.3.4
       upath: 2.0.1
       vite: 4.5.0(sass@1.69.5)
-      vuetify: 3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
+      vuetify: 3.4.0(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
     transitivePeerDependencies:
       - supports-color
       - vue
@@ -9808,15 +9812,19 @@ packages:
       '@vue/shared': 3.3.8
       typescript: 5.2.2
 
-  /vuetify-nuxt-module@0.6.4(typescript@5.2.2)(vite@4.5.0)(vue@3.3.8):
-    resolution: {integrity: sha512-Oe1qqgR7DFkrrky3R0WeP+wbYI2TPzOGBLHL8xXuDl4Fczns2IdnoOjSgz9tdH30BKb9iI1LGDH9Qadd7xsR0w==}
+  /vuetify-nuxt-module@0.6.6(typescript@5.2.2)(vite@4.5.0)(vue@3.3.8):
+    resolution: {integrity: sha512-TEZZhWqff1XgwomxxposujgNwvWqwvVkqHz+Fw1uQM4n65yIk+tWg5ONkkDiviHRHOWzQbqgdAwGWIylXoHKJA==}
     dependencies:
       '@nuxt/kit': 3.8.1
       defu: 6.1.3
+      destr: 2.0.2
+      local-pkg: 0.5.0
+      pathe: 1.1.1
       perfect-debounce: 1.0.0
+      ufo: 1.3.1
       unconfig: 0.3.11
-      vite-plugin-vuetify: 1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.3.23)
-      vuetify: 3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
+      vite-plugin-vuetify: 1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.4.0)
+      vuetify: 3.4.0(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -9827,13 +9835,13 @@ packages:
       - webpack-plugin-vuetify
     dev: true
 
-  /vuetify@3.3.23(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8):
-    resolution: {integrity: sha512-EVEFvDyKr/HK2+hQJyhQSjIDULDaBi9vfgAAB0ekm+2Tvc8AkaDwb7VK44R2eilGFGpju6iN52FV7Uasj8SmIg==}
+  /vuetify@3.4.0(typescript@5.2.2)(vite-plugin-vuetify@1.0.2)(vue@3.3.8):
+    resolution: {integrity: sha512-aW3bJGCUN3fhl62yvsb+Hv6TtMWDqiadN0PTbEB8jd9z46/X1ddzQ/fhMjkqBX69sMFtZvENl3YFGU5c88/8qw==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: ^1.0.0-alpha.12
-      vue: ^3.2.0
+      vue: ^3.3.0
       vue-i18n: ^9.0.0
       webpack-plugin-vuetify: ^2.0.0-alpha.11
     peerDependenciesMeta:
@@ -9847,7 +9855,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.2.2
-      vite-plugin-vuetify: 1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.3.23)
+      vite-plugin-vuetify: 1.0.2(vite@4.5.0)(vue@3.3.8)(vuetify@3.4.0)
       vue: 3.3.8(typescript@5.2.2)
 
   /w3c-keyname@2.2.8:
