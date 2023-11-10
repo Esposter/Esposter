@@ -98,7 +98,7 @@
     "phaser3-rex-plugins": "^1.60.7",
     "pinia": "^2.1.7",
     "postgres": "^3.4.3",
-    "rate-limiter-flexible": "^3.0.3",
+    "rate-limiter-flexible": "^3.0.4",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.2.1",
     "survey-creator-knockout": "^1.9.116",
