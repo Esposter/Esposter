@@ -43,7 +43,7 @@ export const usersToRooms = pgTable(
       .references(() => rooms.id, { onDelete: "cascade" }),
   },
   (userToRoom) => ({
-    compoundKey: primaryKey(userToRoom.userId, userToRoom.roomId),
+    compoundKey: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
   }),
 );
 
@@ -72,7 +72,7 @@ export const likes = pgTable(
     value: integer("value").notNull(),
   },
   (like) => ({
-    compoundKey: primaryKey(like.userId, like.postId),
+    compoundKey: primaryKey({ columns: [like.userId, like.postId] }),
   }),
 );
 

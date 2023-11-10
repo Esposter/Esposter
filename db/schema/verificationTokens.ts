@@ -9,6 +9,6 @@ export const verificationTokens = pgTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (verificationToken) => ({
-    compoundKey: primaryKey(verificationToken.identifier, verificationToken.token),
+    compoundKey: primaryKey({ columns: [verificationToken.identifier, verificationToken.token] }),
   }),
 );

@@ -22,7 +22,7 @@ export const accounts = pgTable(
     expiresAt: integer("expires_at"),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({ columns: [account.provider, account.providerAccountId] }),
   }),
 );
 
