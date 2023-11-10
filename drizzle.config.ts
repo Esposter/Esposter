@@ -1,6 +1,6 @@
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
-export default {
+export default defineConfig({
   schema: "db/schema",
   // We need the migrations folder in the production build
   // for drizzle to access when running migrations
@@ -9,4 +9,4 @@ export default {
   dbCredentials: {
     connectionString: process.env.DATABASE_URL,
   },
-} satisfies Config;
+});
