@@ -4,10 +4,7 @@
   "vue.updateImportsOnFileMove.enabled": true,
   "[javascript][typescript][vue]": {
     "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true,
-      "source.fixAll.eslint": true
-    }
+    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"]
   },
   "[scss]": {
     "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
