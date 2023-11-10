@@ -1,5 +1,6 @@
 import { GameScene } from "@/models/dungeons/scenes/GameScene";
 import { PreloaderScene } from "@/models/dungeons/scenes/PreloaderScene";
+import { SURFACE_DARK } from "@/services/vuetify/constants";
 import { GridEngine } from "grid-engine";
 import { AUTO, Game, Scale } from "phaser";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin.js";
@@ -12,7 +13,7 @@ export const getPhaserGame = (containerId: string) =>
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
     scene: [PreloaderScene, GameScene],
-    backgroundColor: "#36393f",
+    backgroundColor: SURFACE_DARK,
     input: {
       keyboard: true,
       touch: true,

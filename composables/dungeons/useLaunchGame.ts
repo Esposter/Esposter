@@ -14,7 +14,9 @@ export const useLaunchGame = (containerId: string) => {
   });
 
   onUnmounted(() => {
-    phaserGame.value?.destroy(false);
+    if (!phaserGame.value) return;
+
+    phaserGame.value.destroy(false);
     phaserGame.value = null;
   });
 };
