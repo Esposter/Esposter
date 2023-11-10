@@ -13,7 +13,7 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.ts,.vue --cache --ignore-path .gitignore --fix .",
-    "db:run": "tsx --tsconfig ./.nuxt/tsconfig.json node_modules/drizzle-kit/index.mjs",
+    "db:run": "tsx --tsconfig ./.nuxt/tsconfig.json node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm run db:run generate:pg",
     "db:studio": "pnpm run db:run studio",
     "gen-env": "gen-env-types .env -o env.d.ts -e ."
