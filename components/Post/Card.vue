@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/db/schema/posts";
 import dayjs from "dayjs";
-import DOMPurify from "dompurify";
 
 interface PostCardProps {
   post: PostWithRelations;
@@ -11,7 +10,6 @@ const { post } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());
-const sanitizedDescriptionHtml = computed(() => DOMPurify.sanitize(post.description));
 const isOwner = computed(() => session.value?.user.id === post.creatorId);
 </script>
 
@@ -26,7 +24,7 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
       <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>
-      <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="sanitizedDescriptionHtml" />
+      <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="post.description" />
       <v-card-actions p-0="!">
         <PostUpdateButton v-if="isOwner" :post-id="post.id" />
         <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
