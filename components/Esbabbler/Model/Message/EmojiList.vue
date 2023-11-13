@@ -56,8 +56,8 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
         isReacted
           ? onDeleteEmoji({ partitionKey, rowKey, messageRowKey })
           : userIds.length > 0
-          ? onUpdateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
-          : onCreateEmoji({ partitionKey, messageRowKey, emojiTag })
+            ? onUpdateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
+            : onCreateEmoji({ partitionKey, messageRowKey, emojiTag })
       "
     >
       {{ emoji }}

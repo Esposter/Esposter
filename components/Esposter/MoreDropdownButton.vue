@@ -30,34 +30,34 @@ const items = computed<ListItem[]>(() =>
         },
       ]
     : status.value === "authenticated"
-    ? [
-        {
-          title: "Settings",
-          href: RoutePath.UserSettings,
-          icon: "mdi-cog",
-        },
-        {
-          title: "About",
-          href: RoutePath.About,
-          icon: "mdi-information",
-        },
-        {
-          title: "Privacy Policy",
-          href: RoutePath.PrivacyPolicy,
-          icon: "mdi-lock",
-        },
-        {
-          title: "Terms & Conditions",
-          href: RoutePath.TermsAndConditions,
-          icon: "mdi-shield-lock",
-        },
-        {
-          title: "Logout",
-          icon: "mdi-logout",
-          onClick: signOut,
-        },
-      ]
-    : [],
+      ? [
+          {
+            title: "Settings",
+            href: RoutePath.UserSettings,
+            icon: "mdi-cog",
+          },
+          {
+            title: "About",
+            href: RoutePath.About,
+            icon: "mdi-information",
+          },
+          {
+            title: "Privacy Policy",
+            href: RoutePath.PrivacyPolicy,
+            icon: "mdi-lock",
+          },
+          {
+            title: "Terms & Conditions",
+            href: RoutePath.TermsAndConditions,
+            icon: "mdi-shield-lock",
+          },
+          {
+            title: "Logout",
+            icon: "mdi-logout",
+            onClick: signOut,
+          },
+        ]
+      : [],
 );
 const menu = ref(false);
 </script>

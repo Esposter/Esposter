@@ -208,8 +208,8 @@ watch(
         index === activeCardId
           ? 'active-card'
           : index === inactiveCardId
-          ? 'inactive-card'
-          : classes[cardIds.indexOf(index)]
+            ? 'inactive-card'
+            : classes[cardIds.indexOf(index)]
       "
       row="start-1"
       col="start-2"

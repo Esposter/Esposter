@@ -2,14 +2,14 @@
 type TupleSplitHead<T extends unknown[], N extends number> = T["length"] extends N
   ? T
   : T extends [...infer R, unknown]
-  ? TupleSplitHead<R, N>
-  : never;
+    ? TupleSplitHead<R, N>
+    : never;
 
 type TupleSplitTail<T, N extends number, O extends unknown[] = []> = O["length"] extends N
   ? T
   : T extends [infer F, ...infer R]
-  ? TupleSplitTail<[...R], N, [...O, F]>
-  : never;
+    ? TupleSplitTail<[...R], N, [...O, F]>
+    : never;
 
 type TupleSplit<T extends unknown[], N extends number> = [TupleSplitHead<T, N>, TupleSplitTail<T, N>];
 
