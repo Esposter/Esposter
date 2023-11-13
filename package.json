@@ -33,7 +33,7 @@
     "@types/three": "^0.158.2",
     "@types/ws": "^8.5.9",
     "@unocss/nuxt": "^0.57.3",
-    "@vueuse/core": "^10.6.0",
+    "@vueuse/core": "^10.6.1",
     "@vueuse/nuxt": "^10.6.0",
     "drizzle-kit": "^0.20.2",
     "eslint": "^8.53.0",
