@@ -35,6 +35,7 @@
     "@unocss/nuxt": "^0.57.4",
     "@vueuse/core": "^10.6.1",
     "@vueuse/nuxt": "^10.6.1",
+    "cross-env": "^7.0.3",
     "drizzle-kit": "^0.20.2",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
