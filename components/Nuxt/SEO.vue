@@ -3,7 +3,7 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@/services/esposter/constants";
 
 defineSlots<{ default: (props: {}) => unknown }>();
 
-const { primary } = useColors();
+const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
@@ -22,14 +22,14 @@ useServerSeoMeta({
   twitterCard: "summary_large_image",
   twitterSite: runtimeConfig.public.baseUrl,
   applicationName: SITE_NAME,
-  themeColor: primary,
+  themeColor: surface,
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
   appleMobileWebAppTitle: SITE_NAME,
   formatDetection: "telephone=no",
   mobileWebAppCapable: "yes",
   msapplicationConfig: "/browserconfig.xml",
-  msapplicationTileColor: primary,
+  msapplicationTileColor: surface,
 });
 
 useHead({
