@@ -72,11 +72,11 @@ dependencies:
     specifier: ^2.1.12
     version: 2.1.12(@tiptap/core@2.1.12)(@tiptap/pm@2.1.12)(vue@3.3.8)
   '@trpc/client':
-    specifier: ^10.43.3
-    version: 10.43.3(@trpc/server@10.43.3)
+    specifier: ^10.43.4
+    version: 10.43.4(@trpc/server@10.43.4)
   '@trpc/server':
-    specifier: ^10.43.3
-    version: 10.43.3
+    specifier: ^10.43.4
+    version: 10.43.4
   '@vuepic/vue-datepicker':
     specifier: ^7.2.2
     version: 7.2.2(vue@3.3.8)
@@ -163,7 +163,7 @@ dependencies:
     version: 6.3.7
   trpc-nuxt:
     specifier: ^0.10.12
-    version: 0.10.12(@trpc/client@10.43.3)(@trpc/server@10.43.3)
+    version: 0.10.12(@trpc/client@10.43.4)(@trpc/server@10.43.4)
   vue:
     specifier: ^3.3.8
     version: 3.3.8(typescript@5.2.2)
@@ -4075,16 +4075,16 @@ packages:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
 
-  /@trpc/client@10.43.3(@trpc/server@10.43.3):
-    resolution: {integrity: sha512-r/aE1l2iybJMlXCf+KWqSQpIloOqw/3jQhZD8F4VpvczWPI5fEQCmZZuPHAz2L/PiGE5K/ZwXQrJsT207ZQ2AQ==}
+  /@trpc/client@10.43.4(@trpc/server@10.43.4):
+    resolution: {integrity: sha512-no9B4OLoNhWz31alVpBzmbluoo67saTaegPyKZvNzsi15oVXIHnaUfy6OI5croM7+URC/SSpbWzknGAEr04iEw==}
     peerDependencies:
-      '@trpc/server': 10.43.3
+      '@trpc/server': 10.43.4
     dependencies:
-      '@trpc/server': 10.43.3
+      '@trpc/server': 10.43.4
     dev: false
 
-  /@trpc/server@10.43.3:
-    resolution: {integrity: sha512-U7HsNtgjupNvPzH6ho4rPlIXZ2t5PctOH6pmFX4jv4YJi98RjGuOhHUNhiiVb8KUw6Kuh5EHTAv7cUV+igbMuQ==}
+  /@trpc/server@10.43.4:
+    resolution: {integrity: sha512-PySqtDKf3pVXBnPLiL7Q3CNXYFV3S6VrZRTFctnsrLEcQ3wOCLZSfKMwx2uHleZV/bwzSOtUJTZYolqY5JTDmQ==}
     engines: {node: '>=18.0.0'}
     dev: false
 
@@ -10552,14 +10552,14 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /trpc-nuxt@0.10.12(@trpc/client@10.43.3)(@trpc/server@10.43.3):
+  /trpc-nuxt@0.10.12(@trpc/client@10.43.4)(@trpc/server@10.43.4):
     resolution: {integrity: sha512-dLkdM8F8d5SYzEyJ4rF3F0GXbGzV5xAbfajZGxyxElaf5AW6K7WVizf/Fyb+L6J4kIGcuYqA2PFmB6BxZJ86uA==}
     peerDependencies:
       '@trpc/client': ^10.26.0
       '@trpc/server': ^10.26.0
     dependencies:
-      '@trpc/client': 10.43.3(@trpc/server@10.43.3)
-      '@trpc/server': 10.43.3
+      '@trpc/client': 10.43.4(@trpc/server@10.43.4)
+      '@trpc/server': 10.43.4
       h3: 1.8.2
       ofetch: 1.3.3
       ohash: 1.1.3
