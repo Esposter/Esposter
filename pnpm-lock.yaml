@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth/core':
-    specifier: ^0.18.1
-    version: 0.18.1
+    specifier: ^0.18.2
+    version: 0.18.2
   '@azure/data-tables':
     specifier: ^13.2.2
     version: 13.2.2
@@ -43,7 +43,7 @@ dependencies:
     version: 6.1.9(@fullcalendar/core@6.1.9)(vue@3.3.8)
   '@hebilicious/authjs-nuxt':
     specifier: ^0.3.5
-    version: 0.3.5(@auth/core@0.18.1)(nuxt@3.8.1)(rollup@2.79.1)
+    version: 0.3.5(@auth/core@0.18.2)(nuxt@3.8.1)(rollup@2.79.1)
   '@mdi/font':
     specifier: ^7.3.67
     version: 7.3.67
@@ -313,8 +313,8 @@ packages:
       leven: 3.1.0
     dev: true
 
-  /@auth/core@0.18.1:
-    resolution: {integrity: sha512-L4MehYt/A7e5djsEid3jTSkRZ8sysxbirhmCXqSCPimGoFUtMCwTZrpzTALTSRwXGw/mps5fYlHROo3UQk9B3w==}
+  /@auth/core@0.18.2:
+    resolution: {integrity: sha512-pjTS0ReNNgZgUJPuuAwlp9wA+wu5ko0fX1KTTCgbuYioo9OVvUz6L3LV9+1hS4BtFw6yBtv6fVCLwCDu68/dQw==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -2663,13 +2663,13 @@ packages:
       vue: 3.3.8(typescript@5.2.2)
     dev: false
 
-  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.18.1)(nuxt@3.8.1)(rollup@2.79.1):
+  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.18.2)(nuxt@3.8.1)(rollup@2.79.1):
     resolution: {integrity: sha512-8w4FJ+gVx41w+Oax0HFQdQ+poqYx1xxDU6F/NZOp3reIhYJEWmTqJm9Qd0u4uBOonhksZ+vVGQbjP3ZTKERONA==}
     peerDependencies:
       '@auth/core': ^0.17.0
       nuxt: ^3.7.4
     dependencies:
-      '@auth/core': 0.18.1
+      '@auth/core': 0.18.2
       '@nuxt/kit': 3.8.1(rollup@2.79.1)
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
@@ -3337,6 +3337,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -8347,6 +8348,9 @@ packages:
     resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
+
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
