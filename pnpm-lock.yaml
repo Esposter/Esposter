@@ -164,15 +164,9 @@ dependencies:
   trpc-nuxt:
     specifier: ^0.10.12
     version: 0.10.12(@trpc/client@10.43.6)(@trpc/server@10.43.6)
-  vue:
-    specifier: ^3.3.8
-    version: 3.3.8(typescript@5.2.2)
   vue-codemirror:
     specifier: ^6.1.1
     version: 6.1.1(codemirror@6.0.1)(vue@3.3.8)
-  vue-router:
-    specifier: ^4.2.5
-    version: 4.2.5(vue@3.3.8)
   vue-waypoint:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.3.8)
