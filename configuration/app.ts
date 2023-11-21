@@ -20,10 +20,6 @@ export const app: NuxtConfig["app"] = {
         href: "/icons/favicon-16x16.png",
       },
       {
-        rel: "manifest",
-        href: "/manifest.json",
-      },
-      {
         rel: "mask-icon",
         type: "image/x-icon",
         href: "/favicon.ico",
