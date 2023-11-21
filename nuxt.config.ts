@@ -6,9 +6,7 @@ export default defineNuxtConfig({
     cookie: "cookie",
   },
   build: {
-    // @TODO: @auth/core v0.18.2 introduced unsupported directory imports in esm
-    // so we transpile that to cjs for now
-    transpile: ["@auth/core", "@vuepic/vue-datepicker", "trpc-nuxt"],
+    transpile: ["@vuepic/vue-datepicker", "trpc-nuxt"],
   },
   imports: {
     dirs: ["composables/**"],
