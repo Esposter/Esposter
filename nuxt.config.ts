@@ -38,10 +38,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    optimizeDeps: {
-      // From VueUse
-      exclude: ["vue-demi"],
-    },
     vue: {
       script: {
         defineModel: true,
