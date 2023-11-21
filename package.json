@@ -1,5 +1,6 @@
 {
   "name": "esposter",
+  "description": "A nice and casual place for posting random things.",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -24,7 +25,6 @@
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",
-    "@nuxt/test-utils": "^3.8.1",
     "@nuxtjs/google-fonts": "^3.0.2",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
@@ -51,7 +51,6 @@
     "tsx": "^4.1.4",
     "type-fest": "^4.8.1",
     "vite": "^5.0.0",
-    "vitest": "^0.34.6",
     "vue-tsc": "^1.8.22",
     "vuetify-nuxt-module": "^0.6.7"
   },
