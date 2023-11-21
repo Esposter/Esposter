@@ -49,6 +49,7 @@
     "sass": "^1.69.5",
     "tsx": "^4.1.4",
     "type-fest": "^4.8.1",
+    "vite": "^5.0.0",
     "vue-tsc": "^1.8.22",
     "vuetify-nuxt-module": "^0.6.7"
   },
@@ -106,6 +107,7 @@
     "three": "^0.158.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.12",
+    "vue": "^3.3.8",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.4.2",

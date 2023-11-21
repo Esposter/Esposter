@@ -1,5 +1,3 @@
-import { isReactive, toRaw } from "vue";
-
 export const isObject = (value: unknown): boolean =>
   value !== null && !Array.isArray(value) && typeof value === "object";
 
