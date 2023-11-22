@@ -10,6 +10,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@vuepic/vue-datepicker", "trpc-nuxt"],
   },
+  experimental: {
+    inlineRouteRules: true,
+  },
   imports: {
     dirs: ["composables/**"],
   },
@@ -20,9 +23,6 @@ export default defineNuxtConfig({
         target: "esnext",
       },
     },
-  },
-  routeRules: {
-    [RoutePath.Dungeons]: { ssr: false },
   },
   typescript: {
     shim: false,
