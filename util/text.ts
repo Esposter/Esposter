@@ -1,18 +1,3 @@
-export const insertText = (string: string, index: number, item: string) => {
-  return `${string.slice(0, index)}${item}${string.slice(index)}`;
-};
-
-const STANDARD_PUNCTUATION_REGEX = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/;
-
-export const sanitiseText = (string: string) => {
-  const result = string.trim();
-  for (let i = result.length - 1; i >= 0; i--) {
-    if (result[i].match(STANDARD_PUNCTUATION_REGEX)) return result;
-    if (result[i] !== "\n") return insertText(result, i + 1, ".");
-  }
-  return result;
-};
-
 export const streamToText = async (readable: NodeJS.ReadableStream) => {
   readable.setEncoding("utf8");
   let data = "";
