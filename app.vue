@@ -11,7 +11,6 @@ const { "primary-lighten-1": primaryLighten1 } = useColors();
         <NuxtPage />
       </NuxtSEO>
     </NuxtTheme>
-    <EsposterDeployRefreshModal />
     <VitePwaManifest />
   </v-app>
 </template>
