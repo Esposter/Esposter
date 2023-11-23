@@ -191,8 +191,8 @@ devDependencies:
     specifier: ^0.2.0
     version: 0.2.0(eslint@8.54.0)
   '@nuxtjs/google-fonts':
-    specifier: ^3.0.2
-    version: 3.0.2(rollup@2.79.1)
+    specifier: ^3.1.0
+    version: 3.1.0(rollup@2.79.1)
   '@types/dedent':
     specifier: ^0.7.2
     version: 0.7.2
@@ -3289,11 +3289,11 @@ packages:
       - vti
       - vue-tsc
 
-  /@nuxtjs/google-fonts@3.0.2(rollup@2.79.1):
-    resolution: {integrity: sha512-9DY0NcBnx/I6+3Lr7NeB64k5A7GbqCN1pqVgU9ld00NEXSpDUht2+lG8mcC5UnmpTi8KCdCJckDbD/bqW3ncYg==}
+  /@nuxtjs/google-fonts@3.1.0(rollup@2.79.1):
+    resolution: {integrity: sha512-4e6FacoTXefYNUzQkRqUBlB/uH/JTLYX2vDoOB6saUS4I81k2DNn8qQfUgiv5xc9nZyTOjYGqOHBJm8U4Ec4pQ==}
     dependencies:
-      '@nuxt/kit': 3.8.1(rollup@2.79.1)
-      google-fonts-helper: 3.3.1
+      '@nuxt/kit': 3.8.2(rollup@2.79.1)
+      google-fonts-helper: 3.4.0
       pathe: 1.1.1
     transitivePeerDependencies:
       - rollup
@@ -7243,8 +7243,8 @@ packages:
       slash: 5.1.0
       unicorn-magic: 0.1.0
 
-  /google-fonts-helper@3.3.1:
-    resolution: {integrity: sha512-zMycq4nUUaplGe7pzCOGBC52LB3VpwxS9temmCx1EucEaBdBEpG5MeQlJhtRu63gKI1hb/l+yHkasQtee59sFA==}
+  /google-fonts-helper@3.4.0:
+    resolution: {integrity: sha512-WlSzFb7AnsTo1dSUL/A070fiQFbr89bw82u4FOyuQeigyfBaPLP4KP8qGfOMRWcb+IRowQtEwIwS4sEA2BzGFw==}
     dependencies:
       deepmerge: 4.3.1
       hookable: 5.5.3
