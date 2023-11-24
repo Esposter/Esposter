@@ -83,6 +83,7 @@ export default defineNuxtConfig({
     "@unocss/nuxt",
     "@vite-pwa/nuxt",
     "@vueuse/nuxt",
+    "nuxt-vitest",
     "vuetify-nuxt-module",
   ],
   authJs: {
