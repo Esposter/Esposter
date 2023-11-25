@@ -221,8 +221,8 @@ devDependencies:
     specifier: ^0.57.7
     version: 0.57.7(postcss@8.4.31)(rollup@2.79.1)(vite@5.0.2)(webpack@5.89.0)
   '@vite-pwa/nuxt':
-    specifier: ^0.3.0
-    version: 0.3.0(rollup@2.79.1)(vite@5.0.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+    specifier: ^0.3.1
+    version: 0.3.1(rollup@2.79.1)(vite@5.0.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
   '@vueuse/core':
     specifier: ^10.6.1
     version: 10.6.1(vue@3.3.9)
@@ -4792,8 +4792,8 @@ packages:
       - encoding
       - supports-color
 
-  /@vite-pwa/nuxt@0.3.0(rollup@2.79.1)(vite@5.0.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
-    resolution: {integrity: sha512-2e0PgU5kzR/ogKLpHZaYPjeLsOEUHV0IBVyIeFBcAHdgGNSGhRzXSN6hypEO8nmIsgCKcGpuSBS/rK+Fpr9lwg==}
+  /@vite-pwa/nuxt@0.3.1(rollup@2.79.1)(vite@5.0.2)(workbox-build@7.0.0)(workbox-window@7.0.0):
+    resolution: {integrity: sha512-OomQ7jbvC0LoCBEvyQJj5taEVO3PXBYe813NEJLgRvdBuEs70yMJpeKMYE1aYgAo3Z2GDdFZIqDE6fqGiEG4zA==}
     dependencies:
       '@nuxt/kit': 3.8.2(rollup@2.79.1)
       pathe: 1.1.1
