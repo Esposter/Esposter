@@ -35,7 +35,7 @@
     "@types/three": "^0.158.3",
     "@types/ws": "^8.5.10",
     "@unocss/nuxt": "^0.57.7",
-    "@vite-pwa/nuxt": "^0.3.1",
+    "@vite-pwa/nuxt": "^0.3.2",
     "@vueuse/core": "^10.6.1",
     "@vueuse/nuxt": "^10.6.1",
     "cross-env": "^7.0.3",
