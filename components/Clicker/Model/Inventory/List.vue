@@ -3,7 +3,7 @@ import { useGameStore } from "@/store/clicker/game";
 
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
-const inventoryUpgrades = computed(() => game.value.boughtUpgrades.sort((a, b) => a.price - b.price));
+const inventoryUpgrades = computed(() => game.value.boughtUpgrades.toSorted((a, b) => a.price - b.price));
 </script>
 
 <template>

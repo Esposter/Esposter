@@ -4,7 +4,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const currentRoomId = ref<string | null>(null);
   const roomList = ref<Room[]>([]);
   const pushRoomList = (rooms: Room[]) => roomList.value.push(...rooms);
-  const rooms = computed(() => roomList.value.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
+  const rooms = computed(() => roomList.value.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
 
   const roomListNextCursor = ref<string | null>(null);
   const updateRoomListNextCursor = (nextCursor: string | null) => {
@@ -35,7 +35,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     roomSearchQuery.value
       ? roomList.value
           .filter((r) => r.name.toLowerCase().includes(roomSearchQuery.value.toLowerCase()))
-          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+          .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
       : [],
   );
 
