@@ -102,7 +102,7 @@
     "gsap": "^3.12.2",
     "howler": "^2.2.4",
     "is-mobile": "^4.0.0",
-    "marked": "^10.0.0",
+    "marked": "^11.0.0",
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.11",
     "pathe": "^1.1.1",
