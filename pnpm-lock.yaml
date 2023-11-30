@@ -162,8 +162,8 @@ dependencies:
     specifier: ^6.3.7
     version: 6.3.7
   trpc-nuxt:
-    specifier: ^0.10.12
-    version: 0.10.12(@trpc/client@10.44.1)(@trpc/server@10.44.1)
+    specifier: ^0.10.13
+    version: 0.10.13(@trpc/client@10.44.1)(@trpc/server@10.44.1)
   vue:
     specifier: ^3.3.9
     version: 3.3.9(typescript@5.3.2)
@@ -11009,11 +11009,11 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /trpc-nuxt@0.10.12(@trpc/client@10.44.1)(@trpc/server@10.44.1):
-    resolution: {integrity: sha512-dLkdM8F8d5SYzEyJ4rF3F0GXbGzV5xAbfajZGxyxElaf5AW6K7WVizf/Fyb+L6J4kIGcuYqA2PFmB6BxZJ86uA==}
+  /trpc-nuxt@0.10.13(@trpc/client@10.44.1)(@trpc/server@10.44.1):
+    resolution: {integrity: sha512-jcXyzywQYktBZi6S24Uowg7nUN3k50cKMUBoo1LFpPMsM6K67jeibjMfcY+DTEDA98lBqNOq+R/ueuLf0LitcA==}
     peerDependencies:
-      '@trpc/client': ^10.26.0
-      '@trpc/server': ^10.26.0
+      '@trpc/client': ^10.38.1
+      '@trpc/server': ^10.38.1
     dependencies:
       '@trpc/client': 10.44.1(@trpc/server@10.44.1)
       '@trpc/server': 10.44.1

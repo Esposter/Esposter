@@ -117,7 +117,7 @@
     "survey-creator-knockout": "^1.9.119",
     "three": "^0.158.0",
     "tippy.js": "^6.3.7",
-    "trpc-nuxt": "^0.10.12",
+    "trpc-nuxt": "^0.10.13",
     "vue": "^3.3.9",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
