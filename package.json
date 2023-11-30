@@ -22,6 +22,7 @@
     "gen-env": "gen-env-types .env -o env.d.ts -e ."
   },
   "scriptsComments": {
+    "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
   },
   "devDependencies": {
