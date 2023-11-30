@@ -108,7 +108,7 @@
     "node-html-parser": "^6.1.11",
     "pathe": "^1.1.1",
     "phaser": "^3.70.0",
-    "phaser3-rex-plugins": "^1.60.7",
+    "phaser3-rex-plugins": "^1.60.8",
     "pinia": "^2.1.7",
     "postgres": "^3.4.3",
     "rate-limiter-flexible": "^3.0.4",
