@@ -12,6 +12,7 @@ export const useReadDungeonsGame = async () => {
     () => {
       const dungeonsStoreJson = localStorage.getItem(DUNGEONS_STORE);
       if (dungeonsStoreJson) game.value = new Game(jsonDateParse(dungeonsStoreJson));
+      else game.value = new Game();
     },
     async () => {
       game.value = await $client.dungeons.readGame.query();

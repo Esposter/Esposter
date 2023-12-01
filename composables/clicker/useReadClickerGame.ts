@@ -12,6 +12,7 @@ export const useReadClickerGame = async () => {
     () => {
       const clickerStoreJson = localStorage.getItem(CLICKER_STORE);
       if (clickerStoreJson) game.value = new Game(jsonDateParse(clickerStoreJson));
+      else game.value = new Game();
     },
     async () => {
       game.value = await $client.clicker.readGame.query();

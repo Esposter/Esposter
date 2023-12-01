@@ -13,6 +13,7 @@ export const useReadTableEditor = async () => {
       const tableEditorStoreJson = localStorage.getItem(TABLE_EDITOR_STORE);
       if (tableEditorStoreJson)
         tableEditorConfiguration.value = new TableEditorConfiguration(jsonDateParse(tableEditorStoreJson));
+      else tableEditorConfiguration.value = new TableEditorConfiguration();
     },
     async () => {
       tableEditorConfiguration.value = await $client.tableEditor.readTableEditor.query();

@@ -13,6 +13,7 @@ export const useReadSurveys = async () => {
     () => {
       const surveyerStoreJson = localStorage.getItem(SURVEYER_STORE);
       if (surveyerStoreJson) initialiseSurveyList(jsonDateParse(surveyerStoreJson));
+      else initialiseSurveyList([]);
     },
     async () => {
       const { surveys, nextCursor } = await $client.surveyer.readSurveys.query({ cursor: null });
