@@ -1,111 +1,32 @@
+import { alias } from "./configuration/alias";
 import { app } from "./configuration/app";
+import { authJs } from "./configuration/authJs";
+import { build } from "./configuration/build";
+import { experimental } from "./configuration/experimental";
+import { googleFonts } from "./configuration/googleFonts";
+import { imports } from "./configuration/imports";
+import { modules } from "./configuration/modules";
+import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
-import { RoutePath } from "./models/router/RoutePath";
+import { runtimeConfig } from "./configuration/runtimeConfig";
+import { typescript } from "./configuration/typescript";
+import { unocss } from "./configuration/unocss";
+import { vite } from "./configuration/vite";
 
 export default defineNuxtConfig({
-  alias: {
-    // @TODO: https://github.com/Hebilicious/authjs-nuxt/issues/2
-    cookie: "cookie",
-  },
-  build: {
-    transpile: ["@vuepic/vue-datepicker", "trpc-nuxt"],
-  },
-  experimental: {
-    inlineRouteRules: true,
-  },
-  imports: {
-    dirs: ["composables/**"],
-  },
-  nitro: {
-    esbuild: {
-      options: {
-        // Required for top-level await for drizzle migrations
-        target: "esnext",
-      },
-    },
-  },
-  typescript: {
-    shim: false,
-  },
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `
-          @import "vuetify/settings";
-          @import "@/assets/styles/variables.scss";
-          `,
-        },
-      },
-    },
-    vue: {
-      script: {
-        defineModel: true,
-        propsDestructure: true,
-      },
-    },
-  },
-  runtimeConfig: {
-    auth: {
-      secret: process.env.AUTH_SECRET,
-    },
-    azure: {
-      storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
-    },
-    database: {
-      url: process.env.DATABASE_URL,
-    },
-    facebook: {
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    },
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    },
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    },
-    public: {
-      azure: {
-        blobUrl: process.env.AZURE_BLOB_URL,
-      },
-      baseUrl: process.env.BASE_URL,
-      facebook: {
-        clientId: process.env.FACEBOOK_CLIENT_ID,
-      },
-    },
-  },
-  modules: [
-    "@hebilicious/authjs-nuxt",
-    "@nuxtjs/google-fonts",
-    "@pinia/nuxt",
-    "@unocss/nuxt",
-    "@vite-pwa/nuxt",
-    "@vueuse/nuxt",
-    "nuxt-vitest",
-    "vuetify-nuxt-module",
-  ],
-  authJs: {
-    baseUrl: process.env.BASE_URL,
-    guestRedirectTo: RoutePath.Login,
-    authenticatedRedirectTo: RoutePath.Index,
-  },
-  googleFonts: {
-    families: {
-      Frijole: true,
-      Montserrat: true,
-    },
-  },
-  pwa,
-  unocss: {
-    attributify: true,
-    theme: {
-      fontFamily: {
-        Montserrat: ["Montserrat"],
-      },
-    },
-    rules: [["break-word", { "word-break": "break-word" }]],
-  },
+  alias,
   app,
+  build,
+  experimental,
+  imports,
+  nitro,
+  runtimeConfig,
+  typescript,
+  vite,
+
+  modules,
+  authJs,
+  googleFonts,
+  pwa,
+  unocss,
 });
