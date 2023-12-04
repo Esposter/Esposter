@@ -182,23 +182,18 @@
 
 ## VSCode Extensions
 
-[Vue Language Features (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-[](vscode:extension/Vue.volar)
-
-[TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
-[](vscode:extension/Vue.vscode-typescript-vue-plugin)
-
-[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-[](vscode:extension/dbaeumer.vscode-eslint)
-
-[Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-[](vscode:extension/esbenp.prettier-vscode)
-
-[GitLens — Git supercharged](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
-[](vscode:extension/eamodio.gitlens)
-
-[Import Cost](https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost)
-[](vscode:extension/wix.vscode-import-cost)
+|   Name   |   Url   |
+| ---- | ---- |
+|   Vue Language Features (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.volar   |
+|   TypeScript Vue Plugin (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin   |
+|   ESLint   |   https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint   |
+|   Prettier - Code formatter   |   https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode   |
+|   GitLens — Git supercharged   |   https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens   |
+|   Powershell   |   https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell   |
+|   Material Icon Theme   |   https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme   |
+|   Import Cost   |   https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost   |
+|   Better Comments   |   https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments   |
+|   Dark++ Italic   |   https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic   |
 
 ## Setup
 
