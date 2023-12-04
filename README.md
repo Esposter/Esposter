@@ -182,23 +182,14 @@
 
 ## VSCode Extensions
 
-[Vue Language Features (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-[](vscode:extension/Vue.volar)
-
-[TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
-[](vscode:extension/Vue.vscode-typescript-vue-plugin)
-
-[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-[](vscode:extension/dbaeumer.vscode-eslint)
-
-[Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-[](vscode:extension/esbenp.prettier-vscode)
-
-[GitLens — Git supercharged](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
-[](vscode:extension/eamodio.gitlens)
-
-[Import Cost](https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost)
-[](vscode:extension/wix.vscode-import-cost)
+|   Name   |   Url   |
+| ---- | ---- |
+|   Vue Language Features (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.volar   |
+|   TypeScript Vue Plugin (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin   |
+|   ESLint   |   https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint   |
+|   Prettier - Code formatter   |   https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode   |
+|   GitLens — Git supercharged   |   https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens   |
+|   Import Cost   |   https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost   |
 
 ## Setup
 
