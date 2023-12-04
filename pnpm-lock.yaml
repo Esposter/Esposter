@@ -224,8 +224,8 @@ devDependencies:
     specifier: ^0.3.3
     version: 0.3.3(rollup@2.79.1)(vite@5.0.5)(workbox-build@7.0.0)(workbox-window@7.0.0)
   '@vitest/coverage-v8':
-    specifier: ^0.34.6
-    version: 0.34.6(vitest@0.33.0)
+    specifier: ^1.0.1
+    version: 1.0.1(vitest@0.33.0)
   '@vueuse/core':
     specifier: ^10.6.1
     version: 10.6.1(vue@3.3.10)
@@ -4826,18 +4826,20 @@ packages:
       vue: 3.3.10(typescript@5.3.2)
     dev: true
 
-  /@vitest/coverage-v8@0.34.6(vitest@0.33.0):
-    resolution: {integrity: sha512-fivy/OK2d/EsJFoEoxHFEnNGTg+MmdZBAVK9Ka4qhXR2K3J0DS08vcGVwzDtXSuUMabLv4KtPcpSKkcMXFDViw==}
+  /@vitest/coverage-v8@1.0.1(vitest@0.33.0):
+    resolution: {integrity: sha512-Z4a7ig4VjUCT/P+LRB3IZrBRXb9xWRUM8rSBH9cKgfrU1Oe01/K2WJKtGshOnQwXZoSfQtwCGpbnHmB/qJwjcw==}
     peerDependencies:
-      vitest: '>=0.32.0 <1'
+      vitest: ^1.0.0
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@bcoe/v8-coverage': 0.2.3
+      debug: 4.3.4
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 4.0.1
       istanbul-reports: 3.1.6
       magic-string: 0.30.5
+      magicast: 0.3.2
       picocolors: 1.0.0
       std-env: 3.6.0
       test-exclude: 6.0.0
