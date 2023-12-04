@@ -118,7 +118,7 @@
     "three": "^0.159.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.13",
-    "vue": "^3.3.9",
+    "vue": "^3.3.10",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.4.4",
