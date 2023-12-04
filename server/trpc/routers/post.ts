@@ -1,10 +1,10 @@
 import { db } from "@/db";
 import { PostRelations, posts, selectPostSchema, type PostWithRelations } from "@/db/schema/posts";
 import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
-import { SortOrder } from "@/models/shared/pagination/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
+import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { eq, gt } from "drizzle-orm";
 import { z } from "zod";
@@ -12,7 +12,7 @@ import { z } from "zod";
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = createPaginationSchema(selectPostSchema.keyof()).optional().default({});
+const readPostsInputSchema = createPaginationSchema(selectPostSchema.keyof()).default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 const createPostInputSchema = selectPostSchema
@@ -35,10 +35,8 @@ export const postRouter = router({
   readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor, limit, sortBy } }) => {
     const posts: PostWithRelations[] = await db.query.posts.findMany({
       where: cursor ? (posts) => gt(posts.id, cursor) : undefined,
-      orderBy: (posts, { asc, desc }) =>
-        sortBy.length > 0
-          ? sortBy.map((sb) => (sb.order === SortOrder.Asc ? asc(posts[sb.key]) : desc(posts[sb.key])))
-          : desc(posts.ranking),
+      orderBy: (posts, { desc }) =>
+        sortBy.length > 0 ? convertColumnsMapSortByToSql(posts, sortBy) : desc(posts.ranking),
       limit: limit + 1,
       with: PostRelations,
     });

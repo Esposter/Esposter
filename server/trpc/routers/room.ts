@@ -3,11 +3,12 @@ import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
+import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
-import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
+import { convertTableSortByToSql } from "@/services/shared/pagination/convertTableSortByToSql";
 import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
@@ -17,7 +18,7 @@ import { z } from "zod";
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = z.object({ cursor: z.string().nullable() });
+const readRoomsInputSchema = createPaginationSchema(selectRoomSchema.keyof()).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const createRoomInputSchema = selectRoomSchema.pick({ name: true });
@@ -78,13 +79,17 @@ export const roomRouter = router({
     )[0];
     return joinedRoom ? joinedRoom.Room : null;
   }),
-  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor }, ctx }) => {
+  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
+
     if (cursor) query.where(gt(rooms.id, cursor));
 
-    const joinedRooms = await query.orderBy(desc(rooms.updatedAt)).limit(DEFAULT_READ_LIMIT + 1);
+    if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(rooms, sortBy));
+    else query.orderBy(desc(rooms.updatedAt));
+
+    const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
-    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", DEFAULT_READ_LIMIT) };
+    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", limit) };
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {
