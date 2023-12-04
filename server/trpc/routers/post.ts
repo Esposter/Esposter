@@ -1,18 +1,18 @@
 import { db } from "@/db";
-import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
+import { PostRelations, posts, selectPostSchema, type PostWithRelations } from "@/db/schema/posts";
+import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
+import { SortOrder } from "@/models/shared/pagination/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
-import { READ_LIMIT, getNextCursor } from "@/util/pagination";
+import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = z.object({
-  cursor: z.string().nullable(),
-});
+const readPostsInputSchema = createPaginationSchema(selectPostSchema.keyof()).optional().default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 const createPostInputSchema = selectPostSchema
@@ -32,14 +32,17 @@ export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ input }) => db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) })),
-  readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor } }) => {
-    const posts = await db.query.posts.findMany({
+  readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor, limit, sortBy } }) => {
+    const posts: PostWithRelations[] = await db.query.posts.findMany({
       where: cursor ? (posts) => gt(posts.id, cursor) : undefined,
-      orderBy: (posts, { desc }) => desc(posts.ranking),
-      limit: READ_LIMIT + 1,
+      orderBy: (posts, { asc, desc }) =>
+        sortBy.length > 0
+          ? sortBy.map((sb) => (sb.order === SortOrder.Asc ? asc(posts[sb.key]) : desc(posts[sb.key])))
+          : desc(posts.ranking),
+      limit: limit + 1,
       with: PostRelations,
     });
-    return { posts, nextCursor: getNextCursor(posts, "id", READ_LIMIT) };
+    return { posts, nextCursor: getNextCursor(posts, "id", limit) };
   }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const now = new Date();

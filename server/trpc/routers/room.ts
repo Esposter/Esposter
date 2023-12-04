@@ -7,7 +7,8 @@ import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
-import { READ_LIMIT, getNextCursor } from "@/util/pagination";
+import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
+import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
 import { and, desc, eq, gt, ilike } from "drizzle-orm";
@@ -81,9 +82,9 @@ export const roomRouter = router({
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
     if (cursor) query.where(gt(rooms.id, cursor));
 
-    const joinedRooms = await query.orderBy(desc(rooms.updatedAt)).limit(READ_LIMIT + 1);
+    const joinedRooms = await query.orderBy(desc(rooms.updatedAt)).limit(DEFAULT_READ_LIMIT + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
-    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", READ_LIMIT) };
+    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", DEFAULT_READ_LIMIT) };
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {

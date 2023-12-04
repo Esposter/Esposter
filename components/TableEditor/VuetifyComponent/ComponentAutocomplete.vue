@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { READ_LIMIT } from "@/util/pagination";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once
 const vuetifyComponents = computed(() => Object.keys(VuetifyComponentMap));
-const vuetifyComponentsCursor = ref(Math.min(READ_LIMIT, vuetifyComponents.value.length));
+const vuetifyComponentsCursor = ref(Math.min(DEFAULT_READ_LIMIT, vuetifyComponents.value.length));
 const displayVuetifyComponents = computed(() => vuetifyComponents.value.slice(0, vuetifyComponentsCursor.value));
 const onIntersect = (isIntersecting: boolean) => {
   if (isIntersecting)
     vuetifyComponentsCursor.value = Math.min(
-      vuetifyComponentsCursor.value + READ_LIMIT,
+      vuetifyComponentsCursor.value + DEFAULT_READ_LIMIT,
       vuetifyComponents.value.length,
     );
 };
@@ -30,7 +30,7 @@ const onIntersect = (isIntersecting: boolean) => {
       :rules="[formRules.required]"
       @update:menu="
         (value) => {
-          if (!value) vuetifyComponentsCursor = Math.min(READ_LIMIT, vuetifyComponents.length);
+          if (!value) vuetifyComponentsCursor = Math.min(DEFAULT_READ_LIMIT, vuetifyComponents.length);
         }
       "
     >

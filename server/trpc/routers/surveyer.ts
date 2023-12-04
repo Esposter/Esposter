@@ -10,8 +10,9 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
+import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { getPublishedSurveyRowKey } from "@/services/surveyer/table";
-import { READ_LIMIT, getNextCursor } from "@/util/pagination";
 import { z } from "zod";
 
 const readSurveysInputSchema = z.object({ cursor: z.string().nullable() });
@@ -36,8 +37,8 @@ export const surveyerRouter = router({
     let filter = `PartitionKey eq '${ctx.session.user.id}'`;
     if (cursor) filter += ` and RowKey gt '${cursor}'`;
     const surveyClient = await getTableClient(AzureTable.Surveys);
-    const surveys = await getTopNEntities(surveyClient, READ_LIMIT + 1, SurveyEntity, { filter });
-    return { surveys, nextCursor: getNextCursor(surveys, "rowKey", READ_LIMIT) };
+    const surveys = await getTopNEntities(surveyClient, DEFAULT_READ_LIMIT + 1, SurveyEntity, { filter });
+    return { surveys, nextCursor: getNextCursor(surveys, "rowKey", DEFAULT_READ_LIMIT) };
   }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

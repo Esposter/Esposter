@@ -20,7 +20,7 @@ export const users = pgTable("User", {
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  id: z.string().cuid(),
+  id: z.string().uuid(),
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
 

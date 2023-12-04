@@ -14,7 +14,8 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { READ_LIMIT, getNextCursor } from "@/util/pagination";
+import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
+import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
@@ -55,8 +56,8 @@ export const messageRouter = router({
         ? `${getMessagesPartitionKeyFilter(roomId)} and RowKey gt '${cursor}'`
         : getMessagesPartitionKeyFilter(roomId);
       const messageClient = await getTableClient(AzureTable.Messages);
-      const messages = await getTopNEntities(messageClient, READ_LIMIT + 1, MessageEntity, { filter });
-      return { messages, nextCursor: getNextCursor(messages, "rowKey", READ_LIMIT) };
+      const messages = await getTopNEntities(messageClient, DEFAULT_READ_LIMIT + 1, MessageEntity, { filter });
+      return { messages, nextCursor: getNextCursor(messages, "rowKey", DEFAULT_READ_LIMIT) };
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)

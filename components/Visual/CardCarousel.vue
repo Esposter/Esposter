@@ -114,7 +114,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
 });
 
 const activeCardStyle = computed<CardStyleVariables>(() => ({
-  oldMarginRight: normalCardStyles.value.length ? normalCardStyles.value[0].marginRight : "0",
+  oldMarginRight: normalCardStyles.value.length > 0 ? normalCardStyles.value[0].marginRight : "0",
 }));
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
@@ -161,8 +161,8 @@ const moveCardsTimer = ref<number>();
 // This marks the first card as active (which is the top card on the right)
 // then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
-  if (!cards.length) return;
-  if (cards.length === 1) {
+  if (cards.length === 0) return;
+  else if (cards.length === 1) {
     moveOneCard();
     return;
   }
