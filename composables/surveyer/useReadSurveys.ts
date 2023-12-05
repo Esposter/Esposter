@@ -5,28 +5,32 @@ import { jsonDateParse } from "@/util/json";
 export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { pushSurveyList, updateSurveyListNextCursor, initialiseSurveyList } = surveyStore;
-  const { surveyListNextCursor } = storeToRefs(surveyStore);
+  const { initialisePaginationData, pushSurveys } = surveyStore;
+  const { nextCursor, hasMore } = storeToRefs(surveyStore);
   const readMoreSurveys = ref<(onComplete: () => void) => Promise<void>>();
 
   await useReadData(
     () => {
       const surveyerStoreJson = localStorage.getItem(SURVEYER_STORE);
-      if (surveyerStoreJson) initialiseSurveyList(jsonDateParse(surveyerStoreJson));
-      else initialiseSurveyList([]);
+      if (surveyerStoreJson)
+        initialisePaginationData({
+          items: jsonDateParse(surveyerStoreJson),
+          nextCursor: null,
+          hasMore: false,
+        });
+      else initialisePaginationData();
     },
     async () => {
-      const { surveys, nextCursor } = await $client.surveyer.readSurveys.query({ cursor: null });
-      initialiseSurveyList(surveys);
-      updateSurveyListNextCursor(nextCursor);
+      initialisePaginationData(await $client.surveyer.readSurveys.query());
 
       readMoreSurveys.value = async (onComplete) => {
         try {
-          const { surveys, nextCursor } = await $client.surveyer.readSurveys.query({
-            cursor: surveyListNextCursor.value,
+          const response = await $client.surveyer.readSurveys.query({
+            cursor: nextCursor.value,
           });
-          pushSurveyList(surveys);
-          updateSurveyListNextCursor(nextCursor);
+          pushSurveys(response.items);
+          nextCursor.value = response.nextCursor;
+          hasMore.value = response.hasMore;
         } finally {
           onComplete();
         }

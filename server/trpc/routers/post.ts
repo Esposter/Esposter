@@ -5,7 +5,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
+import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
 import { eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
@@ -40,7 +40,7 @@ export const postRouter = router({
       limit: limit + 1,
       with: PostRelations,
     });
-    return { posts, nextCursor: getNextCursor(posts, "id", limit) };
+    return getPaginationData(posts, "id", limit);
   }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const now = new Date();

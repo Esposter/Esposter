@@ -3,8 +3,7 @@ import { usePostStore } from "@/store/post";
 
 const readMorePosts = await useReadPosts();
 const postStore = usePostStore();
-const { postList, postListNextCursor } = storeToRefs(postStore);
-const hasMore = computed(() => Boolean(postListNextCursor.value));
+const { postList, hasMore } = storeToRefs(postStore);
 </script>
 
 <template>

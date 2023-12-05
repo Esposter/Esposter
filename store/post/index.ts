@@ -1,16 +1,36 @@
 import type { PostWithRelations } from "@/db/schema/posts";
+import type { PaginationData } from "@/models/shared/pagination/PaginationData";
 
 export const usePostStore = defineStore("post", () => {
-  const postList = ref<PostWithRelations[]>([]);
-  const pushPostList = (posts: PostWithRelations[]) => postList.value.push(...posts);
+  const paginationData = ref<PaginationData<PostWithRelations>>({
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+  });
+  const postList = computed({
+    get: () => paginationData.value.items,
+    set: (posts: PostWithRelations[]) => {
+      paginationData.value.items = posts;
+    },
+  });
+  const nextCursor = computed({
+    get: () => paginationData.value.nextCursor,
+    set: (nextCursor: string | null) => {
+      paginationData.value.nextCursor = nextCursor;
+    },
+  });
+  const hasMore = computed({
+    get: () => paginationData.value.hasMore,
+    set: (hasMore: boolean) => {
+      paginationData.value.hasMore = hasMore;
+    },
+  });
 
-  const postListNextCursor = ref<string | null>(null);
-  const updatePostListNextCursor = (nextCursor: string | null) => {
-    postListNextCursor.value = nextCursor;
+  const initialisePaginationData = (data: PaginationData<PostWithRelations>) => {
+    paginationData.value = data;
   };
-
-  const initialisePostList = (posts: PostWithRelations[]) => {
-    postList.value = posts;
+  const pushPosts = (posts: PostWithRelations[]) => {
+    postList.value.push(...posts);
   };
   const createPost = (newPost: PostWithRelations) => {
     postList.value.push(newPost);
@@ -25,10 +45,10 @@ export const usePostStore = defineStore("post", () => {
 
   return {
     postList,
-    pushPostList,
-    postListNextCursor,
-    updatePostListNextCursor,
-    initialisePostList,
+    nextCursor,
+    hasMore,
+    initialisePaginationData,
+    pushPosts,
     createPost,
     updatePost,
     deletePost,

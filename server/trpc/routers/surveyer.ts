@@ -1,4 +1,5 @@
 import { AzureTable } from "@/models/azure/table";
+import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
 import { SurveyEntity, surveySchema } from "@/models/surveyer/SurveyEntity";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -10,12 +11,12 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
-import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
-import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
+import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
 import { getPublishedSurveyRowKey } from "@/services/surveyer/table";
 import { z } from "zod";
 
-const readSurveysInputSchema = z.object({ cursor: z.string().nullable() });
+// Azure table storage does not support order by
+const readSurveysInputSchema = createPaginationSchema(surveySchema.keyof()).omit({ sortBy: true }).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
 const createSurveyInputSchema = surveySchema.pick({ name: true, group: true, model: true });
@@ -33,12 +34,12 @@ const publishSurveyInputSchema = surveySchema.pick({ rowKey: true, publishVersio
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
 export const surveyerRouter = router({
-  readSurveys: authedProcedure.input(readSurveysInputSchema).query(async ({ input: { cursor }, ctx }) => {
+  readSurveys: authedProcedure.input(readSurveysInputSchema).query(async ({ input: { cursor, limit }, ctx }) => {
     let filter = `PartitionKey eq '${ctx.session.user.id}'`;
     if (cursor) filter += ` and RowKey gt '${cursor}'`;
     const surveyClient = await getTableClient(AzureTable.Surveys);
-    const surveys = await getTopNEntities(surveyClient, DEFAULT_READ_LIMIT + 1, SurveyEntity, { filter });
-    return { surveys, nextCursor: getNextCursor(surveys, "rowKey", DEFAULT_READ_LIMIT) };
+    const surveys = await getTopNEntities(surveyClient, limit + 1, SurveyEntity, { filter });
+    return getPaginationData(surveys, "rowKey", limit);
   }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

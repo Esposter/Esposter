@@ -1,3 +1,4 @@
+import type { PaginationData } from "@/models/shared/pagination/PaginationData";
 import { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/surveyer";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
@@ -7,16 +8,41 @@ import { NIL } from "@/util/uuid";
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
   const { session, status } = useAuth();
-  const surveyList = ref<SurveyEntity[]>([]);
-  const pushSurveyList = (surveys: SurveyEntity[]) => surveyList.value.push(...surveys);
+  const paginationData = ref<PaginationData<SurveyEntity>>({
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+  });
+  const surveyList = computed({
+    get: () => paginationData.value.items,
+    set: (posts: SurveyEntity[]) => {
+      paginationData.value.items = posts;
+    },
+  });
+  const nextCursor = computed({
+    get: () => paginationData.value.nextCursor,
+    set: (nextCursor: string | null) => {
+      paginationData.value.nextCursor = nextCursor;
+    },
+  });
+  const hasMore = computed({
+    get: () => paginationData.value.hasMore,
+    set: (hasMore: boolean) => {
+      paginationData.value.hasMore = hasMore;
+    },
+  });
 
-  const surveyListNextCursor = ref<string | null>(null);
-  const updateSurveyListNextCursor = (nextCursor: string | null) => {
-    surveyListNextCursor.value = nextCursor;
+  const initialisePaginationData = (
+    data: PaginationData<SurveyEntity> = {
+      items: [],
+      nextCursor: null,
+      hasMore: false,
+    },
+  ) => {
+    paginationData.value = data;
   };
-
-  const initialiseSurveyList = (surveys: SurveyEntity[]) => {
-    surveyList.value = surveys;
+  const pushSurveys = (surveys: SurveyEntity[]) => {
+    surveyList.value.push(...surveys);
   };
   const createSurvey = async (input: CreateSurveyInput) => {
     if (status.value === "authenticated") {
@@ -72,10 +98,10 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
 
   return {
     surveyList,
-    pushSurveyList,
-    surveyListNextCursor,
-    updateSurveyListNextCursor,
-    initialiseSurveyList,
+    nextCursor,
+    hasMore,
+    initialisePaginationData,
+    pushSurveys,
     createSurvey,
     updateSurvey,
     deleteSurvey,

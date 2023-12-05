@@ -1,23 +1,43 @@
 import type { Room } from "@/db/schema/rooms";
+import type { PaginationData } from "@/models/shared/pagination/PaginationData";
+import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const currentRoomId = ref<string | null>(null);
-  const roomList = ref<Room[]>([]);
-  const pushRoomList = (rooms: Room[]) => roomList.value.push(...rooms);
-  const rooms = computed(() => roomList.value.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
-
-  const roomListNextCursor = ref<string | null>(null);
-  const updateRoomListNextCursor = (nextCursor: string | null) => {
-    roomListNextCursor.value = nextCursor;
-  };
-
-  const roomName = computed(() => {
+  const paginationData = ref<PaginationData<Room>>({
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+  });
+  const roomList = computed({
+    get: () => paginationData.value.items,
+    set: (rooms: Room[]) => {
+      paginationData.value.items = rooms;
+    },
+  });
+  const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
-  const initialiseRoomList = (rooms: Room[]) => {
-    roomList.value = rooms;
+  const nextCursor = computed({
+    get: () => paginationData.value.nextCursor,
+    set: (nextCursor: string | null) => {
+      paginationData.value.nextCursor = nextCursor;
+    },
+  });
+  const hasMore = computed({
+    get: () => paginationData.value.hasMore,
+    set: (hasMore: boolean) => {
+      paginationData.value.hasMore = hasMore;
+    },
+  });
+
+  const initialisePaginationData = (data: PaginationData<Room>) => {
+    paginationData.value = data;
+  };
+  const pushRooms = (rooms: Room[]) => {
+    roomList.value.push(...rooms);
   };
   const createRoom = (newRoom: Room) => {
     roomList.value.push(newRoom);
@@ -31,22 +51,21 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
 
   const roomSearchQuery = ref("");
-  const roomsSearched = computed(() =>
-    roomSearchQuery.value
-      ? roomList.value
-          .filter((r) => r.name.toLowerCase().includes(roomSearchQuery.value.toLowerCase()))
-          .toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-      : [],
-  );
+  const roomsSearched = computed<Room[]>(() => {
+    if (!roomSearchQuery.value) return [];
+
+    const fuse = new Fuse(roomList.value);
+    return fuse.search(roomSearchQuery.value).map((x) => x.item);
+  });
 
   return {
     currentRoomId,
-    pushRoomList,
-    rooms,
-    roomListNextCursor,
-    updateRoomListNextCursor,
-    roomName,
-    initialiseRoomList,
+    roomList,
+    currentRoomName,
+    nextCursor,
+    hasMore,
+    initialisePaginationData,
+    pushRooms,
     createRoom,
     updateRoom,
     deleteRoom,

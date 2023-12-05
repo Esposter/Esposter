@@ -4,23 +4,23 @@ import { useRoomStore } from "@/store/esbabbler/room";
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
-const { currentRoomId, roomName } = storeToRefs(roomStore);
-const currentRoomName = ref(roomName.value);
+const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const editedRoomName = ref(currentRoomName.value);
 const isUpdateMode = ref(false);
 const titleRef = ref<HTMLDivElement>();
 const titleHovered = ref(false);
 const onUpdateRoom = async () => {
   try {
-    if (!currentRoomId.value || !currentRoomName.value || currentRoomName.value === roomName.value) return;
+    if (!currentRoomId.value || !editedRoomName.value || editedRoomName.value === currentRoomName.value) return;
 
     const updatedRoom = await $client.room.updateRoom.mutate({
       id: currentRoomId.value,
-      name: currentRoomName.value,
+      name: editedRoomName.value,
     });
     updateRoom(updatedRoom);
   } finally {
     isUpdateMode.value = false;
-    currentRoomName.value = roomName.value;
+    editedRoomName.value = currentRoomName.value;
   }
 };
 
@@ -42,7 +42,7 @@ onClickOutside(titleRef, async () => {
   >
     <v-text-field
       v-if="isUpdateMode"
-      v-model="currentRoomName"
+      v-model="editedRoomName"
       font-bold
       text-xl
       density="compact"
@@ -50,6 +50,8 @@ onClickOutside(titleRef, async () => {
       autofocus
       @keydown.enter="onUpdateRoom"
     />
-    <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">{{ roomName }}</v-toolbar-title>
+    <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">
+      {{ currentRoomName }}
+    </v-toolbar-title>
   </div>
 </template>

@@ -3,7 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 const roomStore = useRoomStore();
-const { currentRoomId, roomName } = storeToRefs(roomStore);
+const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const runtimeConfig = useRuntimeConfig();
 const { $client } = useNuxtApp();
 const dialog = ref(false);
@@ -26,7 +26,7 @@ const inviteLink = computed(() =>
     </template>
     <StyledCard px-4="!">
       <v-card-title px-0="!">
-        Invite friends to <span font-bold>{{ roomName }}</span>
+        Invite friends to <span font-bold>{{ currentRoomName }}</span>
       </v-card-title>
       <v-card-text px-0="!">
         <div mb-2>Send a room invite link to a friend</div>

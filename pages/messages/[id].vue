@@ -9,8 +9,8 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 const route = useRoute();
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
-const { currentRoomId, rooms, roomName, roomSearchQuery } = storeToRefs(roomStore);
-const roomExists = computed(() => rooms.value.find((r) => r.id === currentRoomId.value));
+const { currentRoomId, roomList, currentRoomName, roomSearchQuery } = storeToRefs(roomStore);
+const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 currentRoomId.value = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
 roomSearchQuery.value = "";
 
@@ -29,7 +29,7 @@ useSubscribables();
     </template>
     <template v-if="roomExists">
       <Head>
-        <Title>{{ roomName }}</Title>
+        <Title>{{ currentRoomName }}</Title>
       </Head>
       <EsbabblerContent />
     </template>

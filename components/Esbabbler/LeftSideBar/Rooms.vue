@@ -2,13 +2,12 @@
 import { useRoomStore } from "@/store/esbabbler/room";
 
 const roomStore = useRoomStore();
-const { rooms, roomListNextCursor } = storeToRefs(roomStore);
-const hasMore = computed(() => Boolean(roomListNextCursor.value));
+const { roomList, hasMore } = storeToRefs(roomStore);
 const readMoreRooms = await useReadRooms();
 </script>
 
 <template>
-  <EsbabblerModelRoomList :rooms="rooms" :has-more="hasMore" :read-more-rooms="readMoreRooms">
+  <EsbabblerModelRoomList :rooms="roomList" :has-more="hasMore" :read-more-rooms="readMoreRooms">
     <template #prepend>
       <v-list-item font-bold>
         Rooms

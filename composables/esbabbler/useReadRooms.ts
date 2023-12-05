@@ -4,27 +4,26 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useReadRooms = async () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { pushRoomList, updateRoomListNextCursor, initialiseRoomList } = roomStore;
-  const { currentRoomId, roomListNextCursor } = storeToRefs(roomStore);
+  const { initialisePaginationData, pushRooms } = roomStore;
+  const { currentRoomId, nextCursor, hasMore } = storeToRefs(roomStore);
   const readMoreRooms = async (onComplete: () => void) => {
     try {
-      const { rooms, nextCursor } = await $client.room.readRooms.query({ cursor: roomListNextCursor.value });
-      pushRoomList(rooms);
-      updateRoomListNextCursor(nextCursor);
+      const response = await $client.room.readRooms.query({ cursor: nextCursor.value });
+      pushRooms(response.items);
+      nextCursor.value = response.nextCursor;
+      hasMore.value = response.hasMore;
     } finally {
       onComplete();
     }
   };
 
-  const [roomData, { rooms: roomsData, nextCursor }] = await Promise.all([
+  const [item, response] = await Promise.all([
     currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : null,
-    $client.room.readRooms.query({ cursor: null }),
+    $client.room.readRooms.query(),
   ]);
   const initialRooms: Room[] = [];
-  if (roomData && !roomsData.some((r) => r.id === roomData.id)) initialRooms.push(roomData);
-  initialRooms.push(...roomsData);
-  updateRoomListNextCursor(nextCursor);
-  initialiseRoomList(initialRooms);
-
+  if (item && !response.items.some((r) => r.id === item.id)) initialRooms.push(item);
+  initialRooms.push(...response.items);
+  initialisePaginationData({ ...response, items: initialRooms });
   return readMoreRooms;
 };

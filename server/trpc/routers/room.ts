@@ -9,7 +9,7 @@ import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { convertTableSortByToSql } from "@/services/shared/pagination/convertTableSortByToSql";
-import { getNextCursor } from "@/services/shared/pagination/getNextCursor";
+import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
 import { and, desc, eq, gt, ilike } from "drizzle-orm";
@@ -81,15 +81,12 @@ export const roomRouter = router({
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
-
     if (cursor) query.where(gt(rooms.id, cursor));
-
     if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(rooms, sortBy));
     else query.orderBy(desc(rooms.updatedAt));
-
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
-    return { rooms: resultRooms, nextCursor: getNextCursor(resultRooms, "id", limit) };
+    return getPaginationData(resultRooms, "id", limit);
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {
