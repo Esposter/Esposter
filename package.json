@@ -37,7 +37,7 @@
     "@types/three": "^0.159.0",
     "@types/ws": "^8.5.10",
     "@unocss/nuxt": "^0.58.0",
-    "@vite-pwa/nuxt": "^0.3.3",
+    "@vite-pwa/nuxt": "^0.3.4",
     "@vitest/coverage-v8": "^1.0.1",
     "@vueuse/core": "^10.7.0",
     "@vueuse/nuxt": "^10.7.0",
@@ -59,7 +59,7 @@
     "vitest": "0.33.0",
     "vitest-environment-nuxt": "^0.11.5",
     "vue-tsc": "^1.8.25",
-    "vuetify-nuxt-module": "^0.7.1"
+    "vuetify-nuxt-module": "^0.7.2"
   },
   "devDependenciesComments": {
     "vitest": "https://github.com/danielroe/nuxt-vitest/issues/289"
@@ -122,8 +122,8 @@
     "vue": "^3.3.10",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
-    "vuetify": "^3.4.4",
-    "worker-timers": "^7.0.78",
+    "vuetify": "^3.4.5",
+    "worker-timers": "^7.0.79",
     "ws": "^8.14.2",
     "zod": "^3.22.4"
   },
