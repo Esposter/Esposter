@@ -7,7 +7,7 @@ export const useReadSurveys = async () => {
   const surveyStore = useSurveyStore();
   const { initialisePaginationData, pushSurveys } = surveyStore;
   const { nextCursor, hasMore } = storeToRefs(surveyStore);
-  const readMoreSurveys = ref<(onComplete: () => void) => Promise<void>>();
+  const readMoreSurveys = ref<({ itemsPerPage }: { itemsPerPage: number }) => Promise<void>>();
 
   await useReadData(
     () => {
@@ -23,17 +23,14 @@ export const useReadSurveys = async () => {
     async () => {
       initialisePaginationData(await $client.surveyer.readSurveys.query());
 
-      readMoreSurveys.value = async (onComplete) => {
-        try {
-          const response = await $client.surveyer.readSurveys.query({
-            cursor: nextCursor.value,
-          });
-          pushSurveys(response.items);
-          nextCursor.value = response.nextCursor;
-          hasMore.value = response.hasMore;
-        } finally {
-          onComplete();
-        }
+      readMoreSurveys.value = async ({ itemsPerPage }) => {
+        const response = await $client.surveyer.readSurveys.query({
+          cursor: nextCursor.value,
+          limit: itemsPerPage,
+        });
+        pushSurveys(response.items);
+        nextCursor.value = response.nextCursor;
+        hasMore.value = response.hasMore;
       };
     },
   );

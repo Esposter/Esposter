@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
-import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
 import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
-// @TODO: Implement server side table pagination for auth
+const { status } = useAuth();
 const readMoreSurveys = await useReadSurveys();
 const surveyerStore = useSurveyStore();
 const { surveyList, searchQuery } = storeToRefs(surveyerStore);
@@ -12,7 +11,30 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
 
 <template>
   <v-container h-full flex flex-col fluid>
+    <StyledDataTableServer
+      v-if="status === 'authenticated'"
+      flex
+      flex-1
+      flex-col
+      height="100%"
+      :headers="surveyerHeaders"
+      :items="surveyList"
+      :items-length="surveyList.length"
+      :search="searchQuery"
+      :sort-by="[{ key: 'name', order: 'asc' }]"
+      :group-by="[{ key: 'group', order: 'asc' }]"
+      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.rowKey))"
+      @update:options="readMoreSurveys"
+    >
+      <template #top>
+        <SurveyerCrudViewHeader />
+      </template>
+      <template #[`item.actions`]="{ item }">
+        <SurveyerCrudViewActionSlot :item="item" />
+      </template>
+    </StyledDataTableServer>
     <StyledDataTable
+      v-else-if="status === 'unauthenticated'"
       flex
       flex-1
       flex-col
@@ -28,13 +50,7 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
         <SurveyerCrudViewHeader />
       </template>
       <template #[`item.actions`]="{ item }">
-        <SurveyerChangeGroupDialogButton :survey="item as SurveyEntity" />
-        <SurveyerCloneSurveyDialogButton
-          :name="(item as SurveyEntity).name"
-          :group="(item as SurveyEntity).group"
-          :model="(item as SurveyEntity).model"
-        />
-        <SurveyerDeleteSurveyDialogButton :row-key="(item as SurveyEntity).rowKey" />
+        <SurveyerCrudViewActionSlot :item="item" />
       </template>
     </StyledDataTable>
   </v-container>
