@@ -1,41 +1,15 @@
 import type { Room } from "@/db/schema/rooms";
-import type { PaginationData } from "@/models/shared/pagination/PaginationData";
+import { createPaginationData } from "@/services/shared/pagination/createPaginationData";
 import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const currentRoomId = ref<string | null>(null);
-  const paginationData = ref<PaginationData<Room>>({
-    items: [],
-    nextCursor: null,
-    hasMore: false,
-  });
-  const roomList = computed({
-    get: () => paginationData.value.items,
-    set: (rooms: Room[]) => {
-      paginationData.value.items = rooms;
-    },
-  });
+  const { items: roomList, ...rest } = createPaginationData<Room>();
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
-  const nextCursor = computed({
-    get: () => paginationData.value.nextCursor,
-    set: (nextCursor: string | null) => {
-      paginationData.value.nextCursor = nextCursor;
-    },
-  });
-  const hasMore = computed({
-    get: () => paginationData.value.hasMore,
-    set: (hasMore: boolean) => {
-      paginationData.value.hasMore = hasMore;
-    },
-  });
-
-  const initialisePaginationData = (data: PaginationData<Room>) => {
-    paginationData.value = data;
-  };
   const pushRooms = (rooms: Room[]) => {
     roomList.value.push(...rooms);
   };
@@ -61,10 +35,8 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   return {
     currentRoomId,
     roomList,
+    ...rest,
     currentRoomName,
-    nextCursor,
-    hasMore,
-    initialisePaginationData,
     pushRooms,
     createRoom,
     updateRoom,

@@ -8,7 +8,7 @@ import { toDeepRaw } from "@/util/reactivity";
 import equal from "deep-equal";
 import type { UnwrapRef } from "vue";
 
-// @TODO: This doesn't actually work yet
+// @TODO: Vue cannot unwrap generic refs yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
 // https://github.com/vuejs/core/issues/6766
 export const useTableEditorStore = <TItem extends Item = Item>() =>

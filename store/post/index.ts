@@ -1,34 +1,8 @@
 import type { PostWithRelations } from "@/db/schema/posts";
-import type { PaginationData } from "@/models/shared/pagination/PaginationData";
+import { createPaginationData } from "@/services/shared/pagination/createPaginationData";
 
 export const usePostStore = defineStore("post", () => {
-  const paginationData = ref<PaginationData<PostWithRelations>>({
-    items: [],
-    nextCursor: null,
-    hasMore: false,
-  });
-  const postList = computed({
-    get: () => paginationData.value.items,
-    set: (posts: PostWithRelations[]) => {
-      paginationData.value.items = posts;
-    },
-  });
-  const nextCursor = computed({
-    get: () => paginationData.value.nextCursor,
-    set: (nextCursor: string | null) => {
-      paginationData.value.nextCursor = nextCursor;
-    },
-  });
-  const hasMore = computed({
-    get: () => paginationData.value.hasMore,
-    set: (hasMore: boolean) => {
-      paginationData.value.hasMore = hasMore;
-    },
-  });
-
-  const initialisePaginationData = (data: PaginationData<PostWithRelations>) => {
-    paginationData.value = data;
-  };
+  const { items: postList, ...rest } = createPaginationData<PostWithRelations>();
   const pushPosts = (posts: PostWithRelations[]) => {
     postList.value.push(...posts);
   };
@@ -45,9 +19,7 @@ export const usePostStore = defineStore("post", () => {
 
   return {
     postList,
-    nextCursor,
-    hasMore,
-    initialisePaginationData,
+    ...rest,
     pushPosts,
     createPost,
     updatePost,
