@@ -1,5 +1,5 @@
 import type { ThemeDefinition, VuetifyOptions } from "vuetify";
-import type { ExternalVuetifyOptions } from "vuetify-nuxt-module";
+import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 import { ThemeMode } from "./models/vuetify/ThemeMode";
 import { SURFACE_DARK } from "./services/vuetify/constants";
 
@@ -91,7 +91,8 @@ const defaults: Defaults = {
   VTooltip: { location: "top" },
 };
 
-export default {
+export default defineVuetifyConfiguration({
+  directives: true,
   theme,
   defaults,
-} satisfies ExternalVuetifyOptions;
+});
