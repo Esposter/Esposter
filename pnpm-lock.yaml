@@ -173,6 +173,9 @@ dependencies:
   vue-codemirror:
     specifier: ^6.1.1
     version: 6.1.1(codemirror@6.0.1)(vue@3.3.10)
+  vue-router:
+    specifier: '*'
+    version: 4.2.5(vue@3.3.10)
   vue-waypoint:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.3.10)
