@@ -5,7 +5,7 @@ import { jsonDateParse } from "@/util/json";
 export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initialisePaginationData, pushSurveys } = surveyStore;
+  const { initialisePaginationData, resetPaginationData, pushSurveys } = surveyStore;
   const { nextCursor, hasMore } = storeToRefs(surveyStore);
   const readMoreSurveys = ref<({ itemsPerPage }: { itemsPerPage: number }) => Promise<void>>();
 
@@ -18,7 +18,7 @@ export const useReadSurveys = async () => {
           nextCursor: null,
           hasMore: false,
         });
-      else initialisePaginationData();
+      else resetPaginationData();
     },
     async () => {
       initialisePaginationData(await $client.surveyer.readSurveys.query());
