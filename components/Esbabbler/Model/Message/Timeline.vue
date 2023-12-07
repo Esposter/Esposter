@@ -25,7 +25,7 @@ const displayDate = computed(() => {
       <v-col flex-1>
         <v-divider />
       </v-col>
-      <div class="text-subtitle-2 border" px-4 py-2 rd-full text-center>
+      <div class="text-subtitle-2 custom-border" px-4 py-2 rd-full text-center>
         {{ displayDate }}
       </div>
       <v-col flex-1>
@@ -36,7 +36,7 @@ const displayDate = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px solid v-bind(border);
 }
 </style>

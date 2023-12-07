@@ -6,7 +6,7 @@ const { border, backgroundOpacity40 } = useColors();
 </script>
 
 <template>
-  <v-data-table class="border">
+  <v-data-table class="custom-border">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />
     </template>
@@ -14,7 +14,7 @@ const { border, backgroundOpacity40 } = useColors();
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px solid v-bind(border) !important;
 }
 

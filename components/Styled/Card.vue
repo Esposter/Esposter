@@ -6,7 +6,7 @@ const { border } = useColors();
 </script>
 
 <template>
-  <v-card class="border">
+  <v-card class="custom-border">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />
     </template>
@@ -14,7 +14,7 @@ const { border } = useColors();
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px solid v-bind(border) !important;
 }
 </style>

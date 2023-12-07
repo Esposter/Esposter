@@ -8,7 +8,7 @@ const { border, backgroundOpacity40 } = useColors();
 <template>
   <!-- @TODO: Vue doesn't support defineProps<VDataTableServer["$props"]> yet -->
   <!-- @vue-expect-error -->
-  <v-data-table-server class="border">
+  <v-data-table-server class="custom-border">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />
     </template>
@@ -16,7 +16,7 @@ const { border, backgroundOpacity40 } = useColors();
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px solid v-bind(border) !important;
 }
 

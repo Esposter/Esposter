@@ -2,22 +2,24 @@
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const { background } = useColors();
+const { border } = useColors();
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 
 <template>
-  <v-col v-if="editedItem" cols="12">
-    Preview
-    <div class="preview" w-full aspect="video" flex justify-center items-center rd>
-      <component :is="editedItem.component" :="editedItem.props" />
-    </div>
-  </v-col>
+  <template v-if="editedItem">
+    <v-col cols="12">Preview</v-col>
+    <v-col cols="12">
+      <div class="custom-border elevation--1" w-full aspect="video" flex justify-center items-center rd>
+        <component :is="editedItem.component" :="editedItem.props" />
+      </div>
+    </v-col>
+  </template>
 </template>
 
 <style scoped lang="scss">
-.preview {
-  background: v-bind(background);
+.custom-border {
+  border: 1px solid v-bind(border);
 }
 </style>

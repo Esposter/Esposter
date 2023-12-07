@@ -6,6 +6,7 @@ export const vite: NuxtConfig["vite"] = {
       scss: {
         additionalData: `
         @import "vuetify/settings";
+        @import "@/assets/styles/classes.scss";
         @import "@/assets/styles/variables.scss";
         `,
       },
