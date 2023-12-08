@@ -155,9 +155,18 @@ dependencies:
   superjson:
     specifier: ^2.2.1
     version: 2.2.1
-  survey-creator-knockout:
+  survey-core:
     specifier: ^1.9.120
     version: 1.9.120
+  survey-creator-core:
+    specifier: ^1.9.120
+    version: 1.9.120
+  survey-creator-vue:
+    specifier: ^1.9.120
+    version: 1.9.120(vue@3.3.10)
+  survey-vue3-ui:
+    specifier: ^1.9.120
+    version: 1.9.120(vue@3.3.10)
   three:
     specifier: ^0.159.0
     version: 0.159.0
@@ -8193,10 +8202,6 @@ packages:
   /knitwork@1.0.0:
     resolution: {integrity: sha512-dWl0Dbjm6Xm+kDxhPQJsCBTxrJzuGl0aP9rhr+TG8D3l+GL90N8O8lYUi7dTSAN2uuDqCtNgb6aEuQH5wsiV8Q==}
 
-  /knockout@3.5.1:
-    resolution: {integrity: sha512-wRJ9I4az0QcsH7A4v4l0enUpkS++MBx0BnL/68KaLzJg7x1qmbjSlwEoCNol7KTYZ+pmtI7Eh2J0Nu6/2Z5J/Q==}
-    dev: false
-
   /kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
 
@@ -10775,26 +10780,26 @@ packages:
       survey-core: 1.9.120
     dev: false
 
-  /survey-creator-knockout@1.9.120:
-    resolution: {integrity: sha512-3GsJR9bQQuqdQovp1r7tiQltROuPuarDVQs3QUP8ir8V9xO5BztxOdlxWylLirwldsbkuNZIZWN00zGNSQ4GzQ==}
-    engines: {node: '>=0.10.0'}
+  /survey-creator-vue@1.9.120(vue@3.3.10):
+    resolution: {integrity: sha512-VGhCtVHlJTLiDE25n4GciSYdb0jCTq8N8JEwFPKhrPHXHwMLKtRF5glPVOEe+47+y+FDGxvLsZqSNM/Vu3T93g==}
     peerDependencies:
-      ace-builds: ^1.4.12
-    peerDependenciesMeta:
-      ace-builds:
-        optional: true
+      vue: ^3.2.41
     dependencies:
-      knockout: 3.5.1
       survey-core: 1.9.120
       survey-creator-core: 1.9.120
-      survey-knockout-ui: 1.9.120
+      survey-vue3-ui: 1.9.120(vue@3.3.10)
+      vue: 3.3.10(typescript@5.3.2)
+    transitivePeerDependencies:
+      - ace-builds
     dev: false
 
-  /survey-knockout-ui@1.9.120:
-    resolution: {integrity: sha512-3vAbpqnHgJJba6OW1IDBC++NGtOqkA2PwDkPe5lAWXdL29IaER3r0PdCZ46nwtFgC650clZSOtmS5Xw5IirtTw==}
+  /survey-vue3-ui@1.9.120(vue@3.3.10):
+    resolution: {integrity: sha512-lFe+s7DsLBV0AsHm3viTgD1aFsq2XSYDVfvT8edRgdc3xX43RJ2ww+YGUm+7/WC8BtjW9HPTR/ELN9W0abbfRw==}
+    peerDependencies:
+      vue: ^3.2.41
     dependencies:
-      knockout: 3.5.1
       survey-core: 1.9.120
+      vue: 3.3.10(typescript@5.3.2)
     dev: false
 
   /svg-tags@1.0.0:

@@ -33,6 +33,7 @@ export const useReadSurveys = async () => {
         hasMore.value = response.hasMore;
       };
     },
+    true,
   );
 
   return readMoreSurveys;

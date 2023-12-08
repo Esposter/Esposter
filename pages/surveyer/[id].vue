@@ -1,56 +1,55 @@
 <script setup lang="ts">
-// @TODO: nuxt cannot build survey-creator-core atm
-// import { useSurveyStore } from "@/store/surveyer/survey";
-// import "survey-core/defaultV2.min.css";
-// import "survey-creator-core/survey-creator-core.min.css";
-// import { SurveyCreator } from "survey-creator-knockout";
+import { useSurveyStore } from "@/store/surveyer/survey";
+import { uuidValidateV4 } from "@/util/uuid";
+import "survey-core/defaultV2.min.css";
+import "survey-core/survey.i18n.js";
+import { SurveyCreatorModel } from "survey-creator-core";
+import "survey-creator-core/survey-creator-core.i18n.js";
+import "survey-creator-core/survey-creator-core.min.css";
 
-// await useReadSurveys();
-// const { status } = useAuth();
-// const route = useRoute();
-// const surveyerStore = useSurveyStore();
-// const { updateSurvey, unauthedSave } = surveyerStore;
-// const { surveyList } = storeToRefs(surveyerStore);
-// const surveyCreatorId = "survey-creator";
+defineRouteRules({ ssr: false });
 
-// onMounted(() => {
-//   if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
-//     throw createError({ statusCode: 404, statusMessage: "Survey id is invalid" });
+await useReadSurveys();
+const { status } = useAuth();
+const route = useRoute();
+const surveyerStore = useSurveyStore();
+const { updateSurvey, unauthedSave } = surveyerStore;
+const { surveyList } = storeToRefs(surveyerStore);
 
-//   const creator = new SurveyCreator({
-//     showLogicTab: true,
-//     isAutoSave: true,
-//   });
-//   const survey = surveyList.value.find((s) => s.rowKey === route.params.id);
-//   if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
+if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
+  throw createError({ statusCode: 404, statusMessage: "Survey id is invalid" });
 
-//   creator.text = survey.model;
-//   creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
-//     survey.model = creator.text;
-//     survey.updatedAt = new Date();
+const creator = new SurveyCreatorModel({
+  showLogicTab: true,
+  isAutoSave: true,
+});
+const survey = surveyList.value.find((s) => s.rowKey === route.params.id);
+if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
-//     if (status.value === "authenticated") {
-//       try {
-//         await updateSurvey(survey);
-//         callback(saveNo, true);
-//       } catch {
-//         callback(saveNo, false);
-//       }
-//     } else if (status.value === "unauthenticated") callback(saveNo, unauthedSave(survey));
-//   };
-//   creator.render(surveyCreatorId);
-// });
-throw createError({ statusCode: 404 });
+creator.text = survey.model;
+creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
+  survey.model = creator.text;
+  survey.updatedAt = new Date();
+
+  if (status.value === "authenticated")
+    try {
+      await updateSurvey(survey);
+      callback(saveNo, true);
+    } catch {
+      callback(saveNo, false);
+    }
+  else if (status.value === "unauthenticated") callback(saveNo, unauthedSave(survey));
+};
 </script>
 
 <template>
   <NuxtLayout>
-    <!-- <div :id="surveyCreatorId" /> -->
+    <SurveyCreatorComponent :model="creator" />
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
-#survey-creator {
+<style lang="scss">
+.svc-creator {
   width: 100%;
   height: calc(100dvh - $app-bar-height);
 }
