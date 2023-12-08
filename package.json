@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",
-    "@nuxtjs/google-fonts": "^3.1.0",
+    "@nuxtjs/google-fonts": "^3.1.1",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
     "@types/dompurify": "^3.0.5",
