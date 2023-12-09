@@ -147,8 +147,8 @@ dependencies:
     specifier: ^3.4.3
     version: 3.4.3
   rate-limiter-flexible:
-    specifier: ^3.0.4
-    version: 3.0.4
+    specifier: ^3.0.6
+    version: 3.0.6
   sql-highlight:
     specifier: ^4.4.0
     version: 4.4.0
@@ -10022,8 +10022,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  /rate-limiter-flexible@3.0.4:
-    resolution: {integrity: sha512-LFrdT9Pl/TRxG143frHBPyESXHvS2tstLfAUM6shBbJ3M6YssT2cIUWFwAWVAU9Vl4Z2gUN7ZE7tSdQh/0aqcA==}
+  /rate-limiter-flexible@3.0.6:
+    resolution: {integrity: sha512-tlvbee6lyse/XTWmsuBDS4MT8N65FyM151bPmQlFyfhv9+RIHs7d3rSTXoz0j35H910dM01mH0yTIeWYo8+aAw==}
     dev: false
 
   /rc9@2.1.1:
