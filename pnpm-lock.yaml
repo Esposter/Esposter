@@ -239,8 +239,8 @@ devDependencies:
     specifier: ^0.3.5
     version: 0.3.5(rollup@2.79.1)(vite@4.5.1)(workbox-build@7.0.0)(workbox-window@7.0.0)
   '@vitest/coverage-v8':
-    specifier: ^1.0.2
-    version: 1.0.2(vitest@0.33.0)
+    specifier: ^1.0.3
+    version: 1.0.3(vitest@0.33.0)
   '@vueuse/core':
     specifier: ^10.7.0
     version: 10.7.0(vue@3.3.11)
@@ -4814,8 +4814,8 @@ packages:
       vite: 4.5.1(@types/node@20.10.3)(sass@1.69.5)
       vue: 3.3.11(typescript@5.3.2)
 
-  /@vitest/coverage-v8@1.0.2(vitest@0.33.0):
-    resolution: {integrity: sha512-WCTbfnvFPqH8TGVPNnPXcLBK/tbMX5GGZ/Lc9EuYvVX4xbO0ULKLzWDbVU37C2Y2YIlNu/VP1kp7QKUZolUDgA==}
+  /@vitest/coverage-v8@1.0.3(vitest@0.33.0):
+    resolution: {integrity: sha512-46nPjxlGKwqBi0prWifkmWFXlrIAb133eruG4TGwPuviYL151lUfvoPz2G3MeKdEQBHQ/n9QJiB0ctYA2KraQw==}
     peerDependencies:
       vitest: ^1.0.0
     dependencies:
