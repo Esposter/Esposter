@@ -123,8 +123,8 @@ dependencies:
     specifier: ^4.0.0
     version: 4.0.0
   marked:
-    specifier: ^11.0.1
-    version: 11.0.1
+    specifier: ^11.1.0
+    version: 11.1.0
   node-emoji:
     specifier: ^2.1.3
     version: 2.1.3
@@ -1663,13 +1663,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
+    dev: false
 
   /@babel/runtime@7.23.6:
     resolution: {integrity: sha512-zHd0eUrf5GZoOWVCXp6koAKQTfZV07eit6bGPmJgnZdnSAvvZee6zniW2XMF7Cmc4ISOOnPy3QaSiIJGJkVEDQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
-    dev: false
 
   /@babel/standalone@7.23.5:
     resolution: {integrity: sha512-4bqgawmyDPu+9gQhZOKh1ftCUa6BAT0KztElMcWAJgOgQJRNhmGVA0M0McedEqvGi7SbfiBBvlH13Jc47P919A==}
@@ -8461,8 +8461,8 @@ packages:
       uc.micro: 1.0.6
     dev: false
 
-  /marked@11.0.1:
-    resolution: {integrity: sha512-P4kDhFEMlvLePBPRwOcMOv6+lYUbhfbSxJFs3Jb4Qx7v6K7l+k8Dxh9CEGfRvK71tL+qIFz5y7Pe4uzt4+/A3A==}
+  /marked@11.1.0:
+    resolution: {integrity: sha512-fvKJWAPEafVj1dwGwcPI5mBB/0pvViL6NlCbNDG1HOIRwwAU/jeMoFxfbRLuirO1wRH7m4yPvBqD/O1wyWvayw==}
     engines: {node: '>= 18'}
     hasBin: true
     dev: false
@@ -10106,7 +10106,7 @@ packages:
   /regenerator-transform@0.15.2:
     resolution: {integrity: sha512-hfMp2BoF0qOk3uc5V20ALGDS2ddjQaLrdl7xrGXvAIow7qeWRM2VA2HuCHkUKk9slq3VwEwLNK3DFBqDfPGYtg==}
     dependencies:
-      '@babel/runtime': 7.23.5
+      '@babel/runtime': 7.23.6
     dev: true
 
   /regexp.prototype.flags@1.5.1:
@@ -12238,7 +12238,7 @@ packages:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.12.0)
       '@babel/core': 7.23.5
       '@babel/preset-env': 7.23.5(@babel/core@7.23.5)
-      '@babel/runtime': 7.23.5
+      '@babel/runtime': 7.23.6
       '@rollup/plugin-babel': 5.3.1(@babel/core@7.23.5)(rollup@2.79.1)
       '@rollup/plugin-node-resolve': 11.2.1(rollup@2.79.1)
       '@rollup/plugin-replace': 2.4.2(rollup@2.79.1)
