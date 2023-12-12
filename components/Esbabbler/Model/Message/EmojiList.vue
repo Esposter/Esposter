@@ -69,7 +69,7 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 <style scoped lang="scss">
 .reacted {
   background-color: v-bind(infoOpacity10);
-  border: 1px solid v-bind(info);
+  border: 1px $border-style-root v-bind(info);
 
   &:active {
     transform: $click-shrink;
@@ -78,11 +78,11 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
 
 .not-reacted {
   background-color: v-bind(backgroundOpacity80);
-  border: 1px solid transparent;
+  border: 1px $border-style-root transparent;
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);
-    border: 1px solid v-bind(border);
+    border: 1px $border-style-root v-bind(border);
   }
 
   &:active {

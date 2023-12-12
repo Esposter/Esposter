@@ -43,6 +43,6 @@ useSubscribables();
 :deep(.mention) {
   color: v-bind(info);
   background-color: v-bind(infoOpacity10);
-  border-radius: 0.25rem;
+  border-radius: $border-radius-root;
 }
 </style>

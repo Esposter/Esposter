@@ -12,7 +12,7 @@ const { datePickerProps } = defineProps<StyledDatePickerProps>();
 defineEmits<{ (e: EmitEvents): void }>();
 const slots = defineSlots<Record<keyof InstanceType<typeof VueDatePicker>["$slots"], Function>>();
 const isDark = useIsDark();
-const { surface } = useColors();
+const { border, surface } = useColors();
 </script>
 
 <template>
@@ -26,6 +26,6 @@ const { surface } = useColors();
 <style scoped lang="scss">
 :deep(.dp__input) {
   background-color: v-bind(surface);
-  border: 1px solid;
+  border: 1px $border-style-root v-bind(border);
 }
 </style>
