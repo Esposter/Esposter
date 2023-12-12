@@ -1,10 +1,13 @@
 import { db } from "@/db";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
+import { AzureContainer } from "@/models/azure/blob";
 import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
+import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
+import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
@@ -82,18 +85,8 @@ export const surveyRouter = router({
 
     await db.update(surveys).set(rest).where(eq(surveys.id, id));
 
-    // @TODO: Publish the survey
-    // const publishedSurveyClient = await getTableClient(AzureTable.PublishedSurveys);
-    // const publishedSurveyRowKey = getPublishedSurveyRowKey(rest.rowKey, input.publishVersion);
-    // const publishedSurvey = await getEntity(
-    //   publishedSurveyClient,
-    //   SurveyEntity,
-    //   ctx.session.user.id,
-    //   publishedSurveyRowKey,
-    // );
-    // if (publishedSurvey) throw new Error("Found existing survey publish with current publish version");
-
-    // const publishedAt = new Date();
-    // await createEntity(publishedSurveyClient, { ...survey, rowKey: publishedSurveyRowKey, publishedAt });
+    const client = await getContainerClient(AzureContainer.SurveyerAssets);
+    const blobName = getPublishPath(id, rest.publishVersion, "json");
+    await uploadBlockBlob(client, blobName, survey.model);
   }),
 });
