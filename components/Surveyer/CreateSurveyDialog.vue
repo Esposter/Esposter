@@ -53,7 +53,7 @@ const resetSurvey = () => {
             <v-text-field v-model="name" label="Name" :rules="[formRules.required]" />
           </v-col>
           <v-col cols="12">
-            <SurveyerGroupAutocomplete v-model="group" />
+            <SurveyerGroupCombobox v-model="group" />
           </v-col>
         </v-row>
       </v-container>

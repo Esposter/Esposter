@@ -43,7 +43,7 @@ const group = ref(survey.group);
       <v-container fluid>
         <v-row>
           <v-col cols="12">
-            <SurveyerGroupAutocomplete v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
+            <SurveyerGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
           </v-col>
         </v-row>
       </v-container>
