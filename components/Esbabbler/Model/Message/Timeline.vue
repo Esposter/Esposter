@@ -7,7 +7,6 @@ interface MessageTimelineProps {
 }
 
 const { currentMessageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
-const { border } = useColors();
 const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate));
 const areDifferentDays = computed(
   () => !nextMessageDate || !currentMessageDateDayjs.value.isSame(nextMessageDate, "day"),
@@ -25,7 +24,7 @@ const displayDate = computed(() => {
       <v-col flex-1>
         <v-divider />
       </v-col>
-      <div class="text-subtitle-2 custom-border" px-4 py-2 rd-full text-center>
+      <div class="text-subtitle-2 border-sm" px-4 py-2 rd-full text-center>
         {{ displayDate }}
       </div>
       <v-col flex-1>
@@ -34,9 +33,3 @@ const displayDate = computed(() => {
     </v-row>
   </v-container>
 </template>
-
-<style scoped lang="scss">
-.custom-border {
-  border: 1px solid v-bind(border);
-}
-</style>

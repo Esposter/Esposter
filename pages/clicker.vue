@@ -33,7 +33,7 @@ const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints));
 </template>
 
 <style lang="scss">
-// Disable selecting text for better UX for clicking
+// Disable selecting text for better UX when clicking
 .v-main {
   user-select: none;
 }
