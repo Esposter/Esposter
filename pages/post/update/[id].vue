@@ -19,15 +19,11 @@ const { updatePost } = usePostStore();
     <NuxtLayout>
       <v-container>
         <PostUpsertForm
-          v-if="post"
           :initial-values="{ title: post.title, description: post.description }"
           @submit="
             async (_, values) => {
-              if (post) {
-                const updatedPost = await $client.post.updatePost.mutate({ id: post.id, ...values });
-                if (updatedPost) updatePost(updatedPost);
-                await navigateTo(RoutePath.Index);
-              }
+              await updatePost({ id: post.id, ...values });
+              await navigateTo(RoutePath.Index);
             }
           "
         />

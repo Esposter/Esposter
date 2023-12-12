@@ -6,7 +6,6 @@ interface PostConfirmDeleteDialogButtonProps {
 }
 
 const { postId } = defineProps<PostConfirmDeleteDialogButtonProps>();
-const { $client } = useNuxtApp();
 const { deletePost } = usePostStore();
 </script>
 
@@ -19,8 +18,7 @@ const { deletePost } = usePostStore();
     @delete="
       async (onComplete) => {
         try {
-          await $client.post.deletePost.mutate(postId);
-          deletePost(postId);
+          await deletePost(postId);
         } finally {
           onComplete();
         }

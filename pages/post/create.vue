@@ -4,7 +4,6 @@ import { usePostStore } from "@/store/post";
 
 definePageMeta({ middleware: "auth" });
 
-const { $client } = useNuxtApp();
 const { createPost } = usePostStore();
 </script>
 
@@ -15,8 +14,7 @@ const { createPost } = usePostStore();
         <PostUpsertForm
           @submit="
             async (_, values) => {
-              const newPost = await $client.post.createPost.mutate(values);
-              if (newPost) createPost(newPost);
+              await createPost(values);
               await navigateTo(RoutePath.Index);
             }
           "
