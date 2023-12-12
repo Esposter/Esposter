@@ -21,10 +21,10 @@ export const useReadSurveys = async () => {
       else resetPaginationData();
     },
     async () => {
-      initialisePaginationData(await $client.surveyer.readSurveys.query());
+      initialisePaginationData(await $client.survey.readSurveys.query());
 
       readMoreSurveys.value = async ({ itemsPerPage }) => {
-        const response = await $client.surveyer.readSurveys.query({
+        const response = await $client.survey.readSurveys.query({
           cursor: nextCursor.value,
           limit: itemsPerPage,
         });

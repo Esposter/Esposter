@@ -6,7 +6,7 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
-import { eq, gt } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -43,15 +43,15 @@ export const postRouter = router({
     return getPaginationData(posts, "id", limit);
   }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
-    const now = new Date();
+    const createdAt = new Date();
     const newPost = (
       await db
         .insert(posts)
         .values({
           ...input,
           creatorId: ctx.session.user.id,
-          createdAt: now,
-          ranking: ranking(0, now),
+          createdAt,
+          ranking: ranking(0, createdAt),
         })
         .returning({ id: posts.id })
     )[0];
@@ -61,15 +61,21 @@ export const postRouter = router({
     });
     return newPostWithRelations ?? null;
   }),
-  updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest } }) => {
-    const updatedPost = (await db.update(posts).set(rest).where(eq(posts.id, id)).returning({ id: posts.id }))[0];
+  updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
+    const updatedPost = (
+      await db
+        .update(posts)
+        .set(rest)
+        .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+        .returning({ id: posts.id })
+    )[0];
     const updatedPostWithRelations = await db.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, updatedPost.id),
       with: PostRelations,
     });
     return updatedPostWithRelations ?? null;
   }),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input }) => {
-    await db.delete(posts).where(eq(posts.id, input));
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input, ctx }) => {
+    await db.delete(posts).where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id)));
   }),
 });

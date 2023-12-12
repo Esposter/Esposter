@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
+import type { Survey } from "@/db/schema/surveys";
 import { DEFAULT_NAME } from "@/services/shared/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import type { VCard } from "vuetify/components";
 
 interface CreateSurveyDialogProps {
-  initialValue?: Pick<SurveyEntity, "name" | "group" | "model">;
+  initialValue?: Pick<Survey, "name" | "group" | "model">;
   cardProps?: VCard["$props"];
 }
 

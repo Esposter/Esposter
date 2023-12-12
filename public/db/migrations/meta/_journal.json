@@ -8,6 +8,13 @@
       "when": 1696510600723,
       "tag": "0000_old_silver_surfer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1702344861813,
+      "tag": "0001_material_daredevil",
+      "breakpoints": true
     }
   ]
 }

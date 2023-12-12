@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
+import type { Survey } from "@/db/schema/surveys";
 
 interface SurveyerCrudViewActionSlotProps {
-  item: SurveyEntity;
+  item: Survey;
 }
 
 const { item } = defineProps<SurveyerCrudViewActionSlotProps>();
@@ -11,5 +11,5 @@ const { item } = defineProps<SurveyerCrudViewActionSlotProps>();
 <template>
   <SurveyerChangeGroupDialogButton :survey="item" />
   <SurveyerCloneSurveyDialogButton :name="item.name" :group="item.group" :model="item.model" />
-  <SurveyerDeleteSurveyDialogButton :row-key="item.rowKey" />
+  <SurveyerDeleteSurveyDialogButton :id="item.id" />
 </template>

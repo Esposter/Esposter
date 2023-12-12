@@ -3,6 +3,7 @@ import * as accounts from "@/db/schema/accounts";
 import * as posts from "@/db/schema/posts";
 import * as rooms from "@/db/schema/rooms";
 import * as sessions from "@/db/schema/sessions";
+import * as surveys from "@/db/schema/surveys";
 import * as users from "@/db/schema/users";
 import * as verificationTokens from "@/db/schema/verificationTokens";
 import { isProduction } from "@/util/environment";
@@ -19,6 +20,7 @@ export const db = drizzle(client, {
     ...posts,
     ...rooms,
     ...sessions,
+    ...surveys,
     ...users,
     ...verificationTokens,
   },

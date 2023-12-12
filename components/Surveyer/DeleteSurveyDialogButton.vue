@@ -2,10 +2,10 @@
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 interface DeleteSurveyButtonDialogProps {
-  rowKey: string;
+  id: string;
 }
 
-const { rowKey } = defineProps<DeleteSurveyButtonDialogProps>();
+const { id } = defineProps<DeleteSurveyButtonDialogProps>();
 const surveyerStore = useSurveyStore();
 const { deleteSurvey } = surveyerStore;
 </script>
@@ -18,7 +18,7 @@ const { deleteSurvey } = surveyerStore;
     }"
     @delete="
       async (onComplete) => {
-        await deleteSurvey({ rowKey });
+        await deleteSurvey(id);
         onComplete();
       }
     "

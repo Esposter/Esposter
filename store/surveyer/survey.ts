@@ -1,62 +1,52 @@
-import { SurveyEntity } from "@/models/surveyer/SurveyEntity";
-import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/surveyer";
-import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
+import type { Survey } from "@/db/schema/surveys";
+import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
 import { createPaginationData } from "@/services/shared/pagination/createPaginationData";
 import { SURVEYER_STORE } from "@/services/surveyer/constants";
 import { NIL } from "@/util/uuid";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
-  const { session, status } = useAuth();
-  const { items: surveyList, ...rest } = createPaginationData<SurveyEntity>();
-  const pushSurveys = (surveys: SurveyEntity[]) => {
+  const { status } = useAuth();
+  const { items: surveyList, ...rest } = createPaginationData<Survey>();
+  const pushSurveys = (surveys: Survey[]) => {
     surveyList.value.push(...surveys);
   };
   const createSurvey = async (input: CreateSurveyInput) => {
     if (status.value === "authenticated") {
-      const newSurvey = await $client.surveyer.createSurvey.mutate(input);
+      const newSurvey = await $client.survey.createSurvey.mutate(input);
       surveyList.value.push(newSurvey);
     } else if (status.value === "unauthenticated") {
       const createdAt = new Date();
-      const newSurvey = new SurveyEntity({
+      const newSurvey: Survey = {
         ...input,
-        partitionKey: DEFAULT_PARTITION_KEY,
-        rowKey: crypto.randomUUID(),
-        modelVersion: 1,
+        id: crypto.randomUUID(),
+        creatorId: NIL,
+        modelVersion: 0,
         createdAt,
         updatedAt: createdAt,
-      });
+        deletedAt: null,
+        publishVersion: 0,
+        publishedAt: null,
+      };
       surveyList.value.push(newSurvey);
       unauthedSave();
     }
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
-    if (status.value === "authenticated") {
-      const updatedSurvey = await $client.surveyer.updateSurvey.mutate(input);
+    const index = surveyList.value.findIndex((s) => s.id === input.id);
+    if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...input };
 
-      const index = surveyList.value.findIndex(
-        (r) => r.partitionKey === session.value?.user.id && r.rowKey === updatedSurvey.rowKey,
-      );
-      if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...updatedSurvey };
-    } else if (status.value === "unauthenticated") {
-      const index = surveyList.value.findIndex((r) => r.partitionKey === NIL && r.rowKey === input.rowKey);
-      if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...input };
-      unauthedSave();
-    }
+    if (status.value === "authenticated") await $client.survey.updateSurvey.mutate(input);
+    else if (status.value === "unauthenticated") unauthedSave();
   };
-  const deleteSurvey = async (input: DeleteSurveyInput) => {
-    if (status.value === "authenticated") {
-      await $client.surveyer.deleteSurvey.mutate(input);
-      surveyList.value = surveyList.value.filter(
-        (s) => !(s.partitionKey === session.value?.user.id && s.rowKey === input.rowKey),
-      );
-    } else if (status.value === "unauthenticated") {
-      surveyList.value = surveyList.value.filter((s) => !(s.partitionKey === NIL && s.rowKey === input.rowKey));
-      unauthedSave();
-    }
+  const deleteSurvey = async (id: DeleteSurveyInput) => {
+    surveyList.value = surveyList.value.filter((s) => s.id !== id);
+
+    if (status.value === "authenticated") await $client.survey.deleteSurvey.mutate(id);
+    else if (status.value === "unauthenticated") unauthedSave();
   };
   // Survey argument is only used for autosaving from survey creator
-  const unauthedSave = (survey?: SurveyEntity) => {
+  const unauthedSave = (survey?: Survey) => {
     if (survey) survey.modelVersion++;
     localStorage.setItem(SURVEYER_STORE, JSON.stringify(surveyList.value));
     return true;

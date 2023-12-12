@@ -6,7 +6,7 @@ import { likeRouter } from "@/server/trpc/routers/like";
 import { messageRouter } from "@/server/trpc/routers/message";
 import { postRouter } from "@/server/trpc/routers/post";
 import { roomRouter } from "@/server/trpc/routers/room";
-import { surveyerRouter } from "@/server/trpc/routers/surveyer";
+import { surveyRouter } from "@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@/server/trpc/routers/tableEditor";
 import { userRouter } from "@/server/trpc/routers/user";
 
@@ -18,7 +18,7 @@ export const appRouter = router({
   message: messageRouter,
   post: postRouter,
   room: roomRouter,
-  surveyer: surveyerRouter,
+  survey: surveyRouter,
   tableEditor: tableEditorRouter,
   user: userRouter,
 });

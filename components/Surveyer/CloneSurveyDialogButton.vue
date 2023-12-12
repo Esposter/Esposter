@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
+import type { Survey } from "@/db/schema/surveys";
 
 interface CloneSurveyDialogButton {
-  name: SurveyEntity["name"];
-  group: SurveyEntity["group"];
-  model: SurveyEntity["model"];
+  name: Survey["name"];
+  group: Survey["group"];
+  model: Survey["model"];
 }
 
 const { name, group, model } = defineProps<CloneSurveyDialogButton>();

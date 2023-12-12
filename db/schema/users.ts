@@ -2,6 +2,7 @@ import { accounts } from "@/db/schema/accounts";
 import { posts } from "@/db/schema/posts";
 import { rooms } from "@/db/schema/rooms";
 import { sessions } from "@/db/schema/sessions";
+import { surveys } from "@/db/schema/surveys";
 import { pgTable } from "@/db/shared/pgTable";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { relations } from "drizzle-orm";
@@ -29,6 +30,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   likes: many(likes),
   posts: many(posts),
+  surveys: many(surveys),
   usersToRooms: many(usersToRooms),
 }));
 

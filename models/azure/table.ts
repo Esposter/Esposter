@@ -9,7 +9,6 @@ export enum AzureTable {
   Invites = "Invites",
   Messages = "Messages",
   MessagesMetadata = "MessagesMetadata",
-  Surveys = "Surveys",
   PublishedSurveys = "PublishedSurveys",
 }
 
@@ -17,7 +16,6 @@ export type AzureTableEntityMap = {
   [AzureTable.Invites]: InviteEntity;
   [AzureTable.Messages]: MessageEntity;
   [AzureTable.MessagesMetadata]: MessageMetadataEntity;
-  [AzureTable.Surveys]: SurveyEntity;
   [AzureTable.PublishedSurveys]: SurveyEntity;
 };
 

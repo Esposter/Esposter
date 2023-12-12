@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { SurveyEntity } from "@/models/surveyer/SurveyEntity";
+import type { Survey } from "@/db/schema/surveys";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 interface SurveyerChangeGroupDialogButtonProps {
-  survey: SurveyEntity;
+  survey: Survey;
 }
 
 const { survey } = defineProps<SurveyerChangeGroupDialogButtonProps>();
