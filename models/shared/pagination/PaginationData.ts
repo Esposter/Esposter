@@ -1,5 +1,5 @@
-export interface PaginationData<TItem extends object> {
+export interface PaginationData<TItem extends object, TItemKey extends keyof TItem> {
   items: TItem[];
-  nextCursor: string | null;
+  nextCursor: TItem[TItemKey] | null;
   hasMore: boolean;
 }

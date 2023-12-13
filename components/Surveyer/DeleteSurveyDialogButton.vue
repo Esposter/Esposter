@@ -2,7 +2,7 @@
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 interface DeleteSurveyButtonDialogProps {
-  id: string;
+  id: number;
 }
 
 const { id } = defineProps<DeleteSurveyButtonDialogProps>();

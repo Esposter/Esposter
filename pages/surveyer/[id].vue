@@ -9,12 +9,13 @@
 // import "survey-creator-core/survey-creator-core.min.css";
 
 // defineRouteRules({ ssr: false });
+definePageMeta({ middleware: "auth" });
 
 // await useReadSurveys();
 // const { status } = useAuth();
 // const route = useRoute();
 // const surveyerStore = useSurveyStore();
-// const { updateSurvey, unauthedSave } = surveyerStore;
+// const { updateSurvey, autoSave } = surveyerStore;
 // const { surveyList } = storeToRefs(surveyerStore);
 
 // if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
@@ -39,7 +40,7 @@
 //     } catch {
 //       callback(saveNo, false);
 //     }
-//   else if (status.value === "unauthenticated") callback(saveNo, unauthedSave(survey));
+//   else if (status.value === "unauthenticated") callback(saveNo, autoSave(survey));
 // };
 
 throw createError({ statusCode: 404, statusMessage: "Not implemented" });

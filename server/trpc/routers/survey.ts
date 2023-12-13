@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
+import { CursorType } from "@/models/shared/pagination/CursorType";
 import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -12,7 +13,7 @@ import { and, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
 // Azure table storage does not support order by
-const readSurveysInputSchema = createPaginationSchema(selectSurveySchema.keyof()).default({});
+const readSurveysInputSchema = createPaginationSchema(selectSurveySchema.keyof(), CursorType.Number).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
 const createSurveyInputSchema = selectSurveySchema.pick({ name: true, group: true, model: true });
