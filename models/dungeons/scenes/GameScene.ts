@@ -1,4 +1,3 @@
-import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpriteKey } from "@/models/dungeons/keys/SpriteKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
