@@ -6,7 +6,7 @@ export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
   const { initialisePaginationData, pushSurveys } = surveyStore;
-  const { nextCursor, hasMore } = storeToRefs(surveyStore);
+  const { totalItemsLength, nextCursor, hasMore } = storeToRefs(surveyStore);
   const readMoreSurveys = async ({
     page,
     itemsPerPage,
@@ -27,5 +27,6 @@ export const useReadSurveys = async () => {
   };
 
   initialisePaginationData(await $client.survey.readSurveys.query());
+  totalItemsLength.value = await $client.survey.count.query();
   return readMoreSurveys;
 };
