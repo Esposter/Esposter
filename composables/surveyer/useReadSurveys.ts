@@ -8,6 +8,7 @@ export const useReadSurveys = async () => {
   const { initialisePaginationData, pushSurveys } = surveyStore;
   const { totalItemsLength, nextCursor, hasMore } = storeToRefs(surveyStore);
   const readMoreSurveys = async ({
+    // @TODO: Implement offset pagination
     page,
     itemsPerPage,
     sortBy,
