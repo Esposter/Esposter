@@ -18,7 +18,6 @@ const { initialValue = { name: DEFAULT_NAME, group: null, model: "" }, cardProps
   defineProps<CreateSurveyDialogProps>();
 const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;
-const valid = ref(false);
 const name = ref(initialValue.name);
 const group = ref(initialValue.group);
 const resetSurvey = () => {
@@ -34,7 +33,6 @@ const resetSurvey = () => {
 <template>
   <StyledCreateDialog
     :card-props="cardProps"
-    :confirm-button-props="{ disabled: !valid }"
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });
@@ -46,17 +44,15 @@ const resetSurvey = () => {
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form v-model="valid" @submit="(e) => e.preventDefault()">
-      <v-container fluid>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field v-model="name" label="Name" :rules="[formRules.required]" />
-          </v-col>
-          <v-col cols="12">
-            <SurveyerGroupCombobox v-model="group" />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+    <v-container fluid>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field v-model="name" label="Name" :rules="[formRules.required]" />
+        </v-col>
+        <v-col cols="12">
+          <SurveyerGroupCombobox v-model="group" />
+        </v-col>
+      </v-row>
+    </v-container>
   </StyledCreateDialog>
 </template>

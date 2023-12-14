@@ -10,14 +10,14 @@ interface SurveyerChangeGroupDialogButtonProps {
 const { survey } = defineProps<SurveyerChangeGroupDialogButtonProps>();
 const surveyerStore = useSurveyStore();
 const { updateSurvey } = surveyerStore;
-const valid = ref(false);
 const group = ref(survey.group);
 </script>
 
 <template>
   <StyledDialog
     :card-props="{ title: 'Change Group' }"
-    :confirm-button-props="{ color: 'primary', text: 'Change', disabled: !valid }"
+    :confirm-button-props="{ color: 'primary', text: 'Change' }"
+    :confirm-button-attrs="{ type: 'submit' }"
     @confirm="
       async (onComplete) => {
         await updateSurvey({ ...survey, group });
@@ -39,14 +39,12 @@ const group = ref(survey.group);
         </template>
       </v-tooltip>
     </template>
-    <v-form v-model="valid" @submit="(e) => e.preventDefault()">
-      <v-container fluid>
-        <v-row>
-          <v-col cols="12">
-            <SurveyerGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+    <v-container fluid>
+      <v-row>
+        <v-col cols="12">
+          <SurveyerGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
+        </v-col>
+      </v-row>
+    </v-container>
   </StyledDialog>
 </template>

@@ -19,6 +19,7 @@ const emit = defineEmits<{ create: [onComplete: () => void] }>();
   <StyledDialog
     :card-props="cardProps"
     :confirm-button-props="{ color: 'primary', text: 'Create', ...confirmButtonProps }"
+    :confirm-button-attrs="{ type: 'submit' }"
     @confirm="(onComplete) => emit('create', onComplete)"
   >
     <template #activator="activatorProps">

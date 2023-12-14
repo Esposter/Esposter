@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export enum SortOrder {
-  Asc = "Asc",
-  Desc = "Desc",
+  Asc = "asc",
+  Desc = "desc",
 }
 
 export const sortOrderSchema = z.nativeEnum(SortOrder) satisfies z.ZodType<SortOrder>;

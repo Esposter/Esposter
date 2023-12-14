@@ -4,7 +4,7 @@
       <div pt-4 flex items-center>
         <SurveyerSearchBar />
         <v-divider mx-4="!" thickness="2" inset vertical />
-        <SurveyerCreateSurveyDialogButton :button-props="{ variant: 'elevated', flat: false }" />
+        <SurveyerCreateSurveyDialogButton />
       </div>
     </v-toolbar-title>
   </v-toolbar>

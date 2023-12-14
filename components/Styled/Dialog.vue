@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { mergeProps } from "vue";
 import type { VBtn, VCard } from "vuetify/components";
 
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonProps?: VBtn["$props"];
+  confirmButtonAttrs?: VBtn["$attrs"];
 }
 
 export interface StyledDialogActivatorSlotProps {
@@ -15,9 +17,10 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: {}) => unknown;
 }>();
-const { cardProps, confirmButtonProps } = defineProps<StyledDialogProps>();
+const { cardProps, confirmButtonProps, confirmButtonAttrs } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isOpen = ref(false);
+const isValid = ref(false);
 </script>
 
 <template>
@@ -25,24 +28,27 @@ const isOpen = ref(false);
     <template #activator>
       <slot name="activator" :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
     </template>
-    <StyledCard :="cardProps">
-      <slot />
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
-        <v-btn
-          text-3
-          color="error"
-          variant="outlined"
-          text="Confirm"
-          :="confirmButtonProps"
-          @click="
-            emit('confirm', () => {
-              isOpen = false;
-            })
-          "
-        />
-      </v-card-actions>
-    </StyledCard>
+    <v-form v-model="isValid" @submit="(e) => e.preventDefault()">
+      <StyledCard :="cardProps">
+        <slot />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
+          <v-btn
+            text-3
+            color="error"
+            variant="outlined"
+            text="Confirm"
+            :disabled="!isValid"
+            :="mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs ?? {})"
+            @click="
+              emit('confirm', () => {
+                isOpen = false;
+              })
+            "
+          />
+        </v-card-actions>
+      </StyledCard>
+    </v-form>
   </v-dialog>
 </template>
