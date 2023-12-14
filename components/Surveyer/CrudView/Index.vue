@@ -3,7 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { surveyerHeaders } from "@/services/surveyer/headers";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
-const readMoreSurveys = await useReadSurveys();
+const { isLoading, readMoreSurveys } = await useReadSurveys();
 const surveyerStore = useSurveyStore();
 const { surveyList, totalItemsLength, searchQuery } = storeToRefs(surveyerStore);
 </script>
@@ -21,6 +21,7 @@ const { surveyList, totalItemsLength, searchQuery } = storeToRefs(surveyerStore)
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       :group-by="[{ key: 'group', order: 'asc' }]"
+      :loading="isLoading"
       @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.rowKey))"
       @update:options="readMoreSurveys"
     >

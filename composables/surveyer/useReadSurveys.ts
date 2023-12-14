@@ -7,6 +7,7 @@ export const useReadSurveys = async () => {
   const surveyStore = useSurveyStore();
   const { initialiseOffsetPaginationData } = surveyStore;
   const { surveyList, hasMore, totalItemsLength } = storeToRefs(surveyStore);
+  const isLoading = ref(false);
   const readMoreSurveys = async ({
     page,
     itemsPerPage,
@@ -16,16 +17,21 @@ export const useReadSurveys = async () => {
     itemsPerPage: number;
     sortBy: SortItem<keyof Survey>[];
   }) => {
-    const response = await $client.survey.readSurveys.query({
-      offset: (page - 1) * itemsPerPage,
-      limit: itemsPerPage,
-      sortBy,
-    });
-    surveyList.value = response.items;
-    hasMore.value = response.hasMore;
+    isLoading.value = true;
+    try {
+      const response = await $client.survey.readSurveys.query({
+        offset: (page - 1) * itemsPerPage,
+        limit: itemsPerPage,
+        sortBy,
+      });
+      surveyList.value = response.items;
+      hasMore.value = response.hasMore;
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   initialiseOffsetPaginationData(await $client.survey.readSurveys.query());
   totalItemsLength.value = await $client.survey.count.query();
-  return readMoreSurveys;
+  return { isLoading, readMoreSurveys };
 };
