@@ -9,10 +9,9 @@ import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
-import { and, eq, gt } from "drizzle-orm";
+import { and, count, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
-// Azure table storage does not support order by
 const readSurveysInputSchema = createPaginationSchema(selectSurveySchema.keyof(), CursorType.Number).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
@@ -31,15 +30,24 @@ const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVers
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
 export const surveyRouter = router({
-  readSurveys: authedProcedure.input(readSurveysInputSchema).query(async ({ input: { cursor, limit, sortBy } }) => {
-    const surveys = await db.query.surveys.findMany({
-      where: cursor ? (surveys) => gt(surveys.id, cursor) : undefined,
-      orderBy: (surveys, { desc }) =>
-        sortBy.length > 0 ? convertColumnsMapSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-      limit: limit + 1,
-    });
-    return getPaginationData(surveys, "id", limit);
-  }),
+  count: authedProcedure.query(
+    async ({ ctx }) =>
+      (await db.select({ count: count() }).from(surveys).where(eq(surveys.creatorId, ctx.session.user.id)))[0].count,
+  ),
+  readSurveys: authedProcedure
+    .input(readSurveysInputSchema)
+    .query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
+      const surveys = await db.query.surveys.findMany({
+        where: (surveys) =>
+          cursor
+            ? and(gt(surveys.id, cursor), eq(surveys.creatorId, ctx.session.user.id))
+            : eq(surveys.creatorId, ctx.session.user.id),
+        orderBy: (surveys, { desc }) =>
+          sortBy.length > 0 ? convertColumnsMapSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
+        limit: limit + 1,
+      });
+      return getPaginationData(surveys, "id", limit);
+    }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();
     const newSurvey = (

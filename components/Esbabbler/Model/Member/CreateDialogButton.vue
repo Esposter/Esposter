@@ -2,10 +2,10 @@
 import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
+const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const runtimeConfig = useRuntimeConfig();
-const { $client } = useNuxtApp();
 const dialog = ref(false);
 const inviteCode = ref(
   currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : "",

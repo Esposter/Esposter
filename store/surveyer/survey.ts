@@ -5,12 +5,15 @@ import { createPaginationData } from "@/services/shared/pagination/createPaginat
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
   const { items: surveyList, ...rest } = createPaginationData<Survey>();
+  const totalItemsLength = ref(0);
+
   const pushSurveys = (surveys: Survey[]) => {
     surveyList.value.push(...surveys);
   };
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $client.survey.createSurvey.mutate(input);
     surveyList.value.push(newSurvey);
+    totalItemsLength.value++;
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
     await $client.survey.updateSurvey.mutate(input);
@@ -31,6 +34,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   return {
     surveyList,
     ...rest,
+    totalItemsLength,
     pushSurveys,
     createSurvey,
     updateSurvey,

@@ -5,7 +5,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 
 const readMoreSurveys = await useReadSurveys();
 const surveyerStore = useSurveyStore();
-const { surveyList, searchQuery } = storeToRefs(surveyerStore);
+const { surveyList, totalItemsLength, searchQuery } = storeToRefs(surveyerStore);
 </script>
 
 <template>
@@ -17,7 +17,7 @@ const { surveyList, searchQuery } = storeToRefs(surveyerStore);
       height="100%"
       :headers="surveyerHeaders"
       :items="surveyList"
-      :items-length="surveyList.length"
+      :items-length="totalItemsLength"
       :search="searchQuery"
       :sort-by="[{ key: 'name', order: 'asc' }]"
       :group-by="[{ key: 'group', order: 'asc' }]"
