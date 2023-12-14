@@ -20,7 +20,7 @@ defineSlots<{
 const { cardProps, confirmButtonProps, confirmButtonAttrs } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isOpen = ref(false);
-const isValid = ref(false);
+const isValid = ref(true);
 </script>
 
 <template>
