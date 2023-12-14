@@ -295,6 +295,9 @@ devDependencies:
   vitest-environment-nuxt:
     specifier: ^1.0.0-alpha.1
     version: 1.0.0-alpha.1(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.8)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.11)
+  vue-router:
+    specifier: ^4.2.5
+    version: 4.2.5(vue@3.3.11)
   vue-tsc:
     specifier: ^1.8.25
     version: 1.8.25(typescript@5.3.3)

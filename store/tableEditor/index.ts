@@ -55,17 +55,18 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       },
     },
     actions: {
-      editItem(id: string) {
+      async editItem(id: string) {
         if (!this.tableEditor) return;
 
         const item = this.tableEditor.items.find((item) => item.id === id);
         if (!item) return;
 
-        const router = useRouter();
         this.editedItem = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
         this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
-        router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
         this.editFormDialog = true;
+
+        const router = useRouter();
+        await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
       },
       async save(isDeleteAction?: true) {
         if (!this.tableEditorConfiguration || !this.editedItem) return;
@@ -85,11 +86,11 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
           localStorage.setItem(TABLE_EDITOR_STORE, this.tableEditorConfiguration.toJSON());
         this.editFormDialog = false;
       },
-      resetItem() {
+      async resetItem() {
         const router = useRouter();
         this.editedItem = null;
         this.editedIndex = -1;
-        router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
+        await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
       },
     },
   });

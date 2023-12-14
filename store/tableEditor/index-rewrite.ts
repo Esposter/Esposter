@@ -43,15 +43,15 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     // 2. or that it is savable
     const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
-    const editItem = (id: string) => {
+    const editItem = async (id: string) => {
       const item = tableEditor.value.items.find((item) => item.id === id);
       if (!item) return;
 
       // @TODO: Type bug here so we cast it for now
       editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
       editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
-      router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
       editFormDialog.value = true;
+      await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
     };
     const save = async (isDeleteAction?: true) => {
       if (!editedItem.value) return;
@@ -66,10 +66,10 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         localStorage.setItem(TABLE_EDITOR_STORE, tableEditorConfiguration.value.toJSON());
       editFormDialog.value = false;
     };
-    const resetItem = () => {
+    const resetItem = async () => {
       editedItem.value = null;
       editedIndex.value = -1;
-      router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
+      await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
     };
 
     return {
