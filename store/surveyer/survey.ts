@@ -1,10 +1,10 @@
 import type { Survey } from "@/db/schema/surveys";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
-import { createPaginationData } from "@/services/shared/pagination/createPaginationData";
+import { createOffsetPaginationData } from "@/services/shared/pagination/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
-  const { items: surveyList, ...rest } = createPaginationData<Survey>();
+  const { items: surveyList, ...rest } = createOffsetPaginationData<Survey>();
   const totalItemsLength = ref(0);
 
   const pushSurveys = (surveys: Survey[]) => {

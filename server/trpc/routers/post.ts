@@ -1,18 +1,18 @@
 import { db } from "@/db";
 import { PostRelations, posts, selectPostSchema, type PostWithRelations } from "@/db/schema/posts";
-import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
+import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
+import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
 import { and, eq, gt } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = createPaginationSchema(selectPostSchema.keyof()).default({});
+const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof()).default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 const createPostInputSchema = selectPostSchema
@@ -40,7 +40,7 @@ export const postRouter = router({
       limit: limit + 1,
       with: PostRelations,
     });
-    return getPaginationData(posts, "id", limit);
+    return getCursorPaginationData(posts, "id", limit);
   }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

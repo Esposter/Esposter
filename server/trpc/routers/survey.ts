@@ -1,18 +1,17 @@
 import { db } from "@/db";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
-import { CursorType } from "@/models/shared/pagination/CursorType";
-import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
+import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/OffsetPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
+import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
-import { and, count, eq, gt } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readSurveysInputSchema = createPaginationSchema(selectSurveySchema.keyof(), CursorType.Number).default({});
+const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
 const createSurveyInputSchema = selectSurveySchema.pick({ name: true, group: true, model: true });
@@ -36,17 +35,15 @@ export const surveyRouter = router({
   ),
   readSurveys: authedProcedure
     .input(readSurveysInputSchema)
-    .query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
+    .query(async ({ input: { offset, limit, sortBy }, ctx }) => {
       const surveys = await db.query.surveys.findMany({
-        where: (surveys) =>
-          cursor
-            ? and(gt(surveys.id, cursor), eq(surveys.creatorId, ctx.session.user.id))
-            : eq(surveys.creatorId, ctx.session.user.id),
+        where: (surveys) => eq(surveys.creatorId, ctx.session.user.id),
         orderBy: (surveys, { desc }) =>
           sortBy.length > 0 ? convertColumnsMapSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
+        offset,
         limit: limit + 1,
       });
-      return getPaginationData(surveys, "id", limit);
+      return getCursorPaginationData(surveys, "id", limit);
     }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

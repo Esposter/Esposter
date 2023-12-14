@@ -4,7 +4,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useReadRooms = async () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { initialisePaginationData, pushRooms } = roomStore;
+  const { initialiseCursorPaginationData, pushRooms } = roomStore;
   const { currentRoomId, nextCursor, hasMore } = storeToRefs(roomStore);
   const readMoreRooms = async (onComplete: () => void) => {
     try {
@@ -24,6 +24,6 @@ export const useReadRooms = async () => {
   const initialRooms: Room[] = [];
   if (item && !response.items.some((r) => r.id === item.id)) initialRooms.push(item);
   initialRooms.push(...response.items);
-  initialisePaginationData({ ...response, items: initialRooms });
+  initialiseCursorPaginationData({ ...response, items: initialRooms });
   return readMoreRooms;
 };

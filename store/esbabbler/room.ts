@@ -1,10 +1,10 @@
 import type { Room } from "@/db/schema/rooms";
-import { createPaginationData } from "@/services/shared/pagination/createPaginationData";
+import { createCursorPaginationData } from "@/services/shared/pagination/createCursorPaginationData";
 import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const currentRoomId = ref<string | null>(null);
-  const { items: roomList, ...rest } = createPaginationData<Room>();
+  const { items: roomList, ...rest } = createCursorPaginationData<Room>();
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);

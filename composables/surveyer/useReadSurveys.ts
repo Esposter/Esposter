@@ -5,10 +5,9 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initialisePaginationData, pushSurveys } = surveyStore;
-  const { totalItemsLength, nextCursor, hasMore } = storeToRefs(surveyStore);
+  const { initialiseOffsetPaginationData } = surveyStore;
+  const { surveyList, hasMore, totalItemsLength } = storeToRefs(surveyStore);
   const readMoreSurveys = async ({
-    // @TODO: Implement offset pagination
     page,
     itemsPerPage,
     sortBy,
@@ -18,16 +17,15 @@ export const useReadSurveys = async () => {
     sortBy: SortItem<keyof Survey>[];
   }) => {
     const response = await $client.survey.readSurveys.query({
-      cursor: nextCursor.value,
+      offset: (page - 1) * itemsPerPage,
       limit: itemsPerPage,
       sortBy,
     });
-    pushSurveys(response.items);
-    nextCursor.value = response.nextCursor;
+    surveyList.value = response.items;
     hasMore.value = response.hasMore;
   };
 
-  initialisePaginationData(await $client.survey.readSurveys.query());
+  initialiseOffsetPaginationData(await $client.survey.readSurveys.query());
   totalItemsLength.value = await $client.survey.count.query();
   return readMoreSurveys;
 };

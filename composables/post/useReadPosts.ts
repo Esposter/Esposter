@@ -3,7 +3,7 @@ import { usePostStore } from "@/store/post";
 export const useReadPosts = async () => {
   const { $client } = useNuxtApp();
   const postStore = usePostStore();
-  const { initialisePaginationData, pushPosts } = postStore;
+  const { initialiseCursorPaginationData, pushPosts } = postStore;
   const { nextCursor, hasMore } = storeToRefs(postStore);
   const readMorePosts = async (onComplete: () => void) => {
     try {
@@ -16,6 +16,6 @@ export const useReadPosts = async () => {
     }
   };
 
-  initialisePaginationData(await $client.post.readPosts.query());
+  initialiseCursorPaginationData(await $client.post.readPosts.query());
   return readMorePosts;
 };

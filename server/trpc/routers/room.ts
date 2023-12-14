@@ -3,13 +3,13 @@ import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
-import { createPaginationSchema } from "@/models/shared/pagination/Pagination";
+import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { convertTableSortByToSql } from "@/services/shared/pagination/convertTableSortByToSql";
-import { getPaginationData } from "@/services/shared/pagination/getPaginationData";
+import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
 import { and, desc, eq, gt, ilike } from "drizzle-orm";
@@ -18,7 +18,7 @@ import { z } from "zod";
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = createPaginationSchema(selectRoomSchema.keyof()).default({});
+const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof()).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const createRoomInputSchema = selectRoomSchema.pick({ name: true });
@@ -86,7 +86,7 @@ export const roomRouter = router({
     else query.orderBy(desc(rooms.updatedAt));
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
-    return getPaginationData(resultRooms, "id", limit);
+    return getCursorPaginationData(resultRooms, "id", limit);
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {
