@@ -6,7 +6,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
+import { getOffsetPaginationData } from "@/services/shared/pagination/getOffsetPaginationData";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -43,7 +43,7 @@ export const surveyRouter = router({
         offset,
         limit: limit + 1,
       });
-      return getCursorPaginationData(surveys, "id", limit);
+      return getOffsetPaginationData(surveys, limit);
     }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();
