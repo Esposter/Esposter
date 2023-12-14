@@ -200,7 +200,7 @@
 1. Install the js dependencies:
 
 ```bash
-pnpm install
+pnpm i
 ```
 
 2. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
@@ -212,7 +212,7 @@ pnpm install
 Start the development server on <http://localhost:3000>
 
 ```bash
-pnpm run dev
+pnpm dev
 ```
 
 ## Production
@@ -220,13 +220,13 @@ pnpm run dev
 Build the application for production:
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
 Locally preview production build:
 
 ```bash
-pnpm run preview
+pnpm preview
 ```
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
