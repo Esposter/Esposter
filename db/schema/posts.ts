@@ -29,7 +29,7 @@ export const PostRelations = {
 export type PostWithRelations = Post & { creator: User; likes: Like[] };
 
 export const selectPostSchema = createSelectSchema(posts, {
-  title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
+  title: z.string().max(POST_TITLE_MAX_LENGTH),
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
 });
 

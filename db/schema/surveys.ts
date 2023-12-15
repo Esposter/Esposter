@@ -1,15 +1,17 @@
 import { users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
+import { SURVEY_NAME_MAX_LENGTH } from "@/services/surveyer/constants";
 import { relations } from "drizzle-orm";
 import { integer, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const surveys = pgTable("Survey", {
   id: serial("id").primaryKey(),
   creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  name: text("name").notNull().default(""),
+  name: text("name").notNull(),
   group: text("group"),
   model: text("model").notNull().default(""),
   modelVersion: integer("modelVersion").notNull().default(0),
@@ -19,7 +21,9 @@ export const surveys = pgTable("Survey", {
 
 export type Survey = typeof surveys.$inferSelect;
 
-export const selectSurveySchema = createSelectSchema(surveys);
+export const selectSurveySchema = createSelectSchema(surveys, {
+  name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
+});
 
 export const surveysRelations = relations(surveys, ({ one }) => ({
   creator: one(users, {
