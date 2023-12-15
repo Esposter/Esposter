@@ -12,10 +12,10 @@ import { z } from "zod";
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = selectPostSchema
-  .pick({ parentId: true })
+const readPostsInputSchema = z
+  .object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.default(null) })
   .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof()))
-  .default({ parentId: null });
+  .default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 const createPostInputSchema = selectPostSchema
