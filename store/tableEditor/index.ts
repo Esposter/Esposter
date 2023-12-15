@@ -87,9 +87,10 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         this.editFormDialog = false;
       },
       async resetItem() {
-        const router = useRouter();
         this.editedItem = null;
         this.editedIndex = -1;
+
+        const router = useRouter();
         await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
       },
     },
