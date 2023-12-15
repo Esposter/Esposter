@@ -56,6 +56,8 @@ describe("Table Editor Store", () => {
 
     expect(editedItem.value).toStrictEqual(null);
     expect(editedIndex.value).toStrictEqual(-1);
+    // Closing the dialog will be the trigger for calling reset item
+    // so this should not need to reset the edit form dialog value
     expect(editFormDialog.value).toStrictEqual(true);
     expect(router.currentRoute.value.query).toStrictEqual({});
   });
