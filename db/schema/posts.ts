@@ -1,5 +1,4 @@
-import type { Like, User } from "@/db/schema/users";
-import { likes, users } from "@/db/schema/users";
+import { likes, users, type Like, type User } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
 import { relations } from "drizzle-orm";
@@ -9,6 +8,7 @@ import { z } from "zod";
 
 export const posts = pgTable("Post", {
   id: uuid("id").primaryKey().defaultRandom(),
+  parentId: uuid("parentId"),
   creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -16,6 +16,7 @@ export const posts = pgTable("Post", {
   description: text("description").notNull().default(""),
   noLikes: integer("noLikes").notNull().default(0),
   noComments: integer("noComments").notNull().default(0),
+  depth: integer("noLikes").notNull().default(0),
   ranking: doublePrecision("ranking").notNull(),
 });
 
@@ -30,11 +31,13 @@ export type PostWithRelations = Post & { creator: User; likes: Like[] };
 export const selectPostSchema = createSelectSchema(posts, {
   title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
-  noLikes: z.number().int().nonnegative(),
-  noComments: z.number().int().nonnegative(),
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
+  parent: one(posts, {
+    fields: [posts.parentId],
+    references: [posts.id],
+  }),
   creator: one(users, {
     fields: [posts.creatorId],
     references: [users.id],

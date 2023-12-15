@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
+import { VBtn } from "vuetify/components";
 
 const slots = defineSlots<Record<keyof VBtn["$slots"], Function>>();
 </script>

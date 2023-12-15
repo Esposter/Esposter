@@ -1,4 +1,4 @@
-import { Target, targetSchema } from "@/models/clicker/Target";
+import { type Target, targetSchema } from "@/models/clicker/Target";
 import { z } from "zod";
 
 export interface UnlockCondition {

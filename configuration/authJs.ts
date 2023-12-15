@@ -1,4 +1,4 @@
-import type { NuxtConfig } from "nuxt/schema";
+import { type NuxtConfig } from "nuxt/schema";
 import { RoutePath } from "../models/router/RoutePath";
 
 export const authJs: NuxtConfig["authJs"] = {

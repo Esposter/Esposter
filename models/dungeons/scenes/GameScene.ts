@@ -7,10 +7,10 @@ import { TilesetName } from "@/models/dungeons/keys/TilesetName";
 import { JoystickManager } from "@/models/dungeons/managers/JoystickManager";
 import { MovementManager } from "@/models/dungeons/managers/MovementManager";
 import { addJoystick } from "@/services/dungeons/joystick";
-import { GridEngine } from "grid-engine";
+import { type GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
-import { GameObjects, Scene } from "phaser";
-import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import { Scene, type GameObjects } from "phaser";
+import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
 export class GameScene extends Scene {
   movementManager!: MovementManager;

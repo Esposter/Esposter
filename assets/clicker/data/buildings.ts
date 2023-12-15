@@ -1,4 +1,4 @@
-import type { Building } from "@/models/clicker/Building";
+import { type Building } from "@/models/clicker/Building";
 import { BuildingName } from "@/models/clicker/BuildingName";
 import { ITEM_NAME } from "@/services/clicker/constants";
 

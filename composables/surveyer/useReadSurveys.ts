@@ -1,5 +1,5 @@
-import type { Survey } from "@/db/schema/surveys";
-import type { SortItem } from "@/models/shared/pagination/SortItem";
+import { type Survey } from "@/db/schema/surveys";
+import { type SortItem } from "@/models/shared/pagination/SortItem";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 export const useReadSurveys = async () => {

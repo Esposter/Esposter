@@ -1,7 +1,5 @@
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
-import type { Upgrade } from "@/models/clicker/Upgrade";
-import { createUpgradeSchema } from "@/models/clicker/Upgrade";
+import { buildingWithStatsSchema, type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { createUpgradeSchema, type Upgrade } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { ApplyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
@@ -24,11 +22,11 @@ class BaseGame {
 export type Game = typeof Game.prototype;
 export const Game = ApplyItemMetadataMixin(BaseGame);
 
-export const gameSchema = itemMetadataSchema.merge(
-  z.object({
+export const gameSchema = z
+  .object({
     id: z.string().uuid(),
     noPoints: z.number(),
     boughtUpgrades: z.array(createUpgradeSchema(upgradeNameSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),
-  }),
-) satisfies z.ZodType<Omit<Game, "toJSON">>;
+  })
+  .merge(itemMetadataSchema) satisfies z.ZodType<Omit<Game, "toJSON">>;

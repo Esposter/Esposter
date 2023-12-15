@@ -1,4 +1,4 @@
-import type { Item } from "@/models/tableEditor/Item";
+import { type Item } from "@/models/tableEditor/Item";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useItemStore = defineStore("tableEditor/item", () => {

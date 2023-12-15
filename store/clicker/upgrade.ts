@@ -1,4 +1,4 @@
-import type { Upgrade } from "@/models/clicker/Upgrade";
+import { type Upgrade } from "@/models/clicker/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 

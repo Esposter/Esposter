@@ -6,19 +6,27 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof()).default({});
+const readPostsInputSchema = selectPostSchema
+  .pick({ parentId: true })
+  .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof()))
+  .default({ parentId: null });
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 const createPostInputSchema = selectPostSchema
   .pick({ title: true })
   .merge(selectPostSchema.partial().pick({ description: true }));
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
+
+const createCommentInputSchema = selectPostSchema
+  .pick({ description: true })
+  .merge(z.object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.unwrap() }));
+export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
 
 const updatePostInputSchema = selectPostSchema
   .pick({ id: true })
@@ -32,16 +40,22 @@ export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ input }) => db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) })),
-  readPosts: rateLimitedProcedure.input(readPostsInputSchema).query(async ({ input: { cursor, limit, sortBy } }) => {
-    const posts: PostWithRelations[] = await db.query.posts.findMany({
-      where: cursor ? (posts) => gt(posts.id, cursor) : undefined,
-      orderBy: (posts, { desc }) =>
-        sortBy.length > 0 ? convertColumnsMapSortByToSql(posts, sortBy) : desc(posts.ranking),
-      limit: limit + 1,
-      with: PostRelations,
-    });
-    return getCursorPaginationData(posts, "id", limit);
-  }),
+  readPosts: rateLimitedProcedure
+    .input(readPostsInputSchema)
+    .query(async ({ input: { parentId, cursor, limit, sortBy } }) => {
+      const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
+      const cursorWhere = cursor ? gt(posts.id, cursor) : undefined;
+      const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
+
+      const resultPosts: PostWithRelations[] = await db.query.posts.findMany({
+        where,
+        orderBy: (posts, { desc }) =>
+          sortBy.length > 0 ? convertColumnsMapSortByToSql(posts, sortBy) : desc(posts.ranking),
+        limit: limit + 1,
+        with: PostRelations,
+      });
+      return getCursorPaginationData(resultPosts, "id", limit);
+    }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();
     const newPost = (
@@ -60,6 +74,29 @@ export const postRouter = router({
       with: PostRelations,
     });
     return newPostWithRelations ?? null;
+  }),
+  createComment: authedProcedure.input(createCommentInputSchema).mutation(async ({ input, ctx }) => {
+    const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
+    if (!parentPost) throw Error("Cannot find parent post");
+
+    const createdAt = new Date();
+    const newComment = (
+      await db
+        .insert(posts)
+        .values({
+          ...input,
+          creatorId: ctx.session.user.id,
+          createdAt,
+          depth: parentPost.depth + 1,
+          ranking: ranking(0, createdAt),
+        })
+        .returning({ id: posts.id })
+    )[0];
+    const newCommentWithRelations = await db.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, newComment.id),
+      with: PostRelations,
+    });
+    return newCommentWithRelations ?? null;
   }),
   updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
     const updatedPost = (

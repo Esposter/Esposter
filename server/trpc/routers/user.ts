@@ -1,9 +1,8 @@
 import { db } from "@/db";
-import type { User } from "@/db/schema/users";
-import { selectUserSchema } from "@/db/schema/users";
+import { selectUserSchema, type User } from "@/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
-import { z } from "zod";
+import { type z } from "zod";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;

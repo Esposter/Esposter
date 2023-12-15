@@ -1,5 +1,5 @@
 import dedent from "dedent";
-import type { Logger } from "drizzle-orm/logger";
+import { type Logger } from "drizzle-orm/logger";
 import { highlight } from "sql-highlight";
 
 export class DrizzleLogger implements Logger {

@@ -1,9 +1,13 @@
-import type { MessageEntity } from "@/models/esbabbler/message";
-import type { CreateMessageInput, DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
+import { type MessageEntity } from "@/models/esbabbler/message";
+import {
+  type CreateMessageInput,
+  type DeleteMessageInput,
+  type UpdateMessageInput,
+} from "@/server/trpc/routers/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text";
-import type { Editor } from "@tiptap/core";
+import { type Editor } from "@tiptap/core";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
   const { $client } = useNuxtApp();

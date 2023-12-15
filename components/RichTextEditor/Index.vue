@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import {
+  type FooterBarAppendSlotProps,
+  type FooterBarPrependSlotProps,
+} from "@/components/RichTextEditor/FooterBar.vue";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
-import type { AnyExtension } from "@tiptap/vue-3";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { EditorContent, useEditor, type AnyExtension } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
   placeholder: string;

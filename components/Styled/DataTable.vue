@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VDataTable } from "vuetify/components/VDataTable";
+import { VDataTable } from "vuetify/components/VDataTable";
 
 const slots = defineSlots<Record<keyof VDataTable["$slots"], Function>>();
 const { backgroundOpacity40 } = useColors();

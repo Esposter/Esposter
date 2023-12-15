@@ -1,7 +1,7 @@
-import type { SortItem } from "@/models/shared/pagination/SortItem";
+import { type SortItem } from "@/models/shared/pagination/SortItem";
 import { SortOrder } from "@/models/shared/pagination/SortOrder";
 import { asc, desc } from "drizzle-orm";
-import type { PgColumn } from "drizzle-orm/pg-core";
+import { type PgColumn } from "drizzle-orm/pg-core";
 
 export const convertColumnsMapSortByToSql = <TColumnsMap extends Record<string, PgColumn>>(
   columnsMap: TColumnsMap,

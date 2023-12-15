@@ -1,6 +1,5 @@
-import type { EffectConfiguration } from "@/models/clicker/EffectConfiguration";
-import { effectConfigurationSchema } from "@/models/clicker/EffectConfiguration";
-import { Target, targetSchema } from "@/models/clicker/Target";
+import { effectConfigurationSchema, type EffectConfiguration } from "@/models/clicker/EffectConfiguration";
+import { targetSchema, type Target } from "@/models/clicker/Target";
 import { z } from "zod";
 
 export interface Effect {

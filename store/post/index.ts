@@ -1,5 +1,5 @@
-import type { PostWithRelations } from "@/db/schema/posts";
-import type { CreatePostInput, DeletePostInput, UpdatePostInput } from "@/server/trpc/routers/post";
+import { type PostWithRelations } from "@/db/schema/posts";
+import { type CreatePostInput, type DeletePostInput, type UpdatePostInput } from "@/server/trpc/routers/post";
 import { createCursorPaginationData } from "@/services/shared/pagination/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {

@@ -1,6 +1,6 @@
 import { Game } from "@/models/dungeons/Game";
 import { DUNGEONS_STORE } from "@/services/dungeons/constants";
-import type { Game as PhaserGame } from "phaser";
+import { type Game as PhaserGame } from "phaser";
 
 export const useGameStore = defineStore("dungeons/game", () => {
   const { $client } = useNuxtApp();

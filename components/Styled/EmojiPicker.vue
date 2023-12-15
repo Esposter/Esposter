@@ -6,7 +6,7 @@ import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
-import type { VBtn, VTooltip } from "vuetify/components";
+import { VBtn, VTooltip } from "vuetify/components";
 
 interface StyledEmojiPickerProps {
   tooltipProps: VTooltip["$props"];

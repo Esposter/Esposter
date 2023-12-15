@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { MessageEntity } from "@/models/esbabbler/message";
-import type { DeleteMessageInput } from "@/server/trpc/routers/message";
+import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import { type MessageEntity } from "@/models/esbabbler/message";
+import { type DeleteMessageInput } from "@/server/trpc/routers/message";
 import { useMessageStore } from "@/store/esbabbler/message";
 
 interface ConfirmDeleteMessageDialogProps {

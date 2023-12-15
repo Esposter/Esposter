@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
-import type { Room } from "@/db/schema/rooms";
+import { type Room } from "@/db/schema/rooms";
 
 interface RoomListProps {
   rooms: Room[];

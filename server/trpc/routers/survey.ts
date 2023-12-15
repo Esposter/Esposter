@@ -9,7 +9,7 @@ import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/conve
 import { getOffsetPaginationData } from "@/services/shared/pagination/getOffsetPaginationData";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, eq } from "drizzle-orm";
-import { z } from "zod";
+import { type z } from "zod";
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;

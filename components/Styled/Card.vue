@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VCard } from "vuetify/components";
+import { VCard } from "vuetify/components";
 
 const slots = defineSlots<Record<keyof VCard["$slots"], Function>>();
 </script>

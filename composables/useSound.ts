@@ -1,5 +1,4 @@
-import type { HowlOptions } from "howler";
-import { Howl } from "howler";
+import { Howl, type HowlOptions } from "howler";
 
 const cache: Record<string, Howl | null> = {};
 

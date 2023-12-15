@@ -1,4 +1,4 @@
-import type { Stats } from "@/models/dungeons/Stats";
+import { type Stats } from "@/models/dungeons/Stats";
 import { AItemEntity } from "@/models/shared/AItemEntity";
 
 export class Monster extends AItemEntity implements Stats {

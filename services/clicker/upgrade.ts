@@ -1,8 +1,8 @@
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import type { Effect } from "@/models/clicker/Effect";
+import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { type Effect } from "@/models/clicker/Effect";
 import { EffectType } from "@/models/clicker/EffectType";
 import { Target } from "@/models/clicker/Target";
-import type { Upgrade } from "@/models/clicker/Upgrade";
+import { type Upgrade } from "@/models/clicker/Upgrade";
 
 export const applyBuildingUpgrades = (
   basePower: number,

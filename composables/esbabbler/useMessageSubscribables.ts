@@ -1,6 +1,6 @@
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
-import type { Unsubscribable } from "@trpc/server/observable";
+import { type Unsubscribable } from "@trpc/server/observable";
 
 export const useMessageSubscribables = () => {
   const { $client } = useNuxtApp();

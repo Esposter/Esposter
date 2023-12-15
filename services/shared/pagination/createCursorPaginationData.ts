@@ -1,5 +1,5 @@
-import type { Item } from "@/models/shared/Item";
-import type { CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
+import { type Item } from "@/models/shared/Item";
+import { type CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
 
 export const createCursorPaginationData = <TItem extends Item, TItemKey extends keyof TItem = "id">() => {
   const defaultCursorPaginationData: CursorPaginationData<TItem, TItemKey> = {

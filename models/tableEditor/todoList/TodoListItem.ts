@@ -1,6 +1,5 @@
 import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
-import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
-import { createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
+import { type ItemEntityType, createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
 import { TodoListItemType, todoListItemTypeSchema } from "@/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
 import { z } from "zod";

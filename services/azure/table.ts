@@ -1,11 +1,9 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
-import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
+import { type AzureUpdateEntity, type CompositeKey } from "@/models/azure";
+import { type AzureTable, type AzureTableEntityMap, type CustomTableClient } from "@/models/azure/table";
 import { now } from "@/util/time";
-import type { SkipFirst } from "@/util/types";
-import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
-import { TableClient } from "@azure/data-tables";
-import type { ClassConstructor } from "class-transformer";
-import { plainToInstance } from "class-transformer";
+import { type SkipFirst } from "@/util/types";
+import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
+import { type ClassConstructor, plainToInstance } from "class-transformer";
 import dayjs from "dayjs";
 
 const runtimeConfig = useRuntimeConfig();

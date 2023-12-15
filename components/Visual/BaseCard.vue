@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Card } from "@/models/visual/Card";
+import { type Card } from "@/models/visual/Card";
 
 interface BaseCardProps {
   card: Card;

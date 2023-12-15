@@ -3,7 +3,7 @@ import { accounts } from "@/db/schema/accounts";
 import { sessions } from "@/db/schema/sessions";
 import { users } from "@/db/schema/users";
 import { verificationTokens } from "@/db/schema/verificationTokens";
-import type { Adapter } from "@auth/core/adapters";
+import { type Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
 
 export const DrizzleAdapter: Adapter = {

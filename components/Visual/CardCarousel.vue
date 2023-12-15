@@ -2,8 +2,8 @@
 
 <script setup lang="ts">
 import BaseCard from "@/components/Visual/BaseCard.vue";
-import type { Card } from "@/models/visual/Card";
-import type { Component } from "vue";
+import { type Card } from "@/models/visual/Card";
+import { type Component } from "vue";
 
 const {
   cards,

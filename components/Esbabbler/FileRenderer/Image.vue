@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+import { type FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
 const { url, mimetype } = defineProps<FileRendererProps>();
 </script>

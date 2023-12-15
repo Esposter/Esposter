@@ -1,4 +1,4 @@
-import type { Like } from "@/db/schema/users";
+import { type Like } from "@/db/schema/users";
 import { usePostStore } from "@/store/post";
 
 export const useLikeStore = defineStore("post/like", () => {

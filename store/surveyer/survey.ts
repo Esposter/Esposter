@@ -1,5 +1,5 @@
-import type { Survey } from "@/db/schema/surveys";
-import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
+import { type Survey } from "@/db/schema/surveys";
+import { type CreateSurveyInput, type DeleteSurveyInput, type UpdateSurveyInput } from "@/server/trpc/routers/survey";
 import { createOffsetPaginationData } from "@/services/shared/pagination/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {

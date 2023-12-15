@@ -1,7 +1,7 @@
 import { NuxtAuthHandler } from "#auth";
 import { RoutePath } from "@/models/router/RoutePath";
 import { DrizzleAdapter } from "@/server/auth/DrizzleAdapter";
-import type { AuthConfig } from "@auth/core";
+import { type AuthConfig } from "@auth/core";
 import FacebookProvider from "@auth/core/providers/facebook";
 import GithubProvider from "@auth/core/providers/github";
 import GoogleProvider from "@auth/core/providers/google";

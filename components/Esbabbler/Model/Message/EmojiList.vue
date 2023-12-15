@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/emoji";
+import { type CreateEmojiInput, type DeleteEmojiInput, type UpdateEmojiInput } from "@/server/trpc/routers/emoji";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { emojify } from "node-emoji";
 

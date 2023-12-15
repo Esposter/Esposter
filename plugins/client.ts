@@ -1,10 +1,9 @@
-import type { AppRouter } from "@/server/trpc/routers";
+import { type AppRouter } from "@/server/trpc/routers";
 import { transformer } from "@/server/trpc/transformer";
 import { errorLink } from "@/services/trpc/errorLink";
 import { isDevelopment } from "@/util/environment";
 import { isServer } from "@/util/isServer";
-import type { TRPCLink } from "@trpc/client";
-import { createWSClient, loggerLink, splitLink, wsLink } from "@trpc/client";
+import { createWSClient, loggerLink, splitLink, wsLink, type TRPCLink } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {

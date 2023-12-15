@@ -1,5 +1,4 @@
-import type { Building } from "@/models/clicker/Building";
-import { buildingSchema } from "@/models/clicker/Building";
+import { buildingSchema, type Building } from "@/models/clicker/Building";
 import { z } from "zod";
 
 export interface BuildingWithStats extends Building {

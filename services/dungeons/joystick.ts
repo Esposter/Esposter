@@ -1,7 +1,7 @@
 import { JOYSTICK_RADIUS } from "@/services/dungeons/constants";
 import { getGameHeight } from "@/services/dungeons/gameDimensions";
-import type { Scene } from "phaser";
-import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import { type Scene } from "phaser";
+import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
 export const addJoystick = (scene: Scene, rexVirtualJoystick: VirtualJoystickPlugin) =>
   rexVirtualJoystick.add(scene, {

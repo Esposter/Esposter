@@ -1,6 +1,6 @@
-import { SpriteKey } from "@/models/dungeons/keys/SpriteKey";
-import { Direction, GridEngine } from "grid-engine";
-import { Input } from "phaser";
+import { type SpriteKey } from "@/models/dungeons/keys/SpriteKey";
+import { Direction, type GridEngine } from "grid-engine";
+import { type Input } from "phaser";
 
 export class MovementManager {
   gridEngine: GridEngine;

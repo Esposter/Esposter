@@ -1,7 +1,7 @@
 import { createContext } from "@/server/trpc/context";
 import { appRouter } from "@/server/trpc/routers";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
-import type { Server } from "node:http";
+import { type Server } from "node:http";
 import { WebSocketServer } from "ws";
 
 export default defineEventHandler((event) => {

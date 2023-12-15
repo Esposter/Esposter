@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CalendarOptions } from "@fullcalendar/core";
+import { type CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";

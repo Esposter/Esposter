@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mergeProps } from "vue";
-import type { VBtn, VCard } from "vuetify/components";
+import { VBtn, type VCard } from "vuetify/components";
 
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];

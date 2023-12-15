@@ -1,9 +1,11 @@
-import type { Item } from "@/models/tableEditor/Item";
+import { type Item } from "@/models/tableEditor/Item";
 import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import { TodoListItem, todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
-import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { todoListItemSchema, type TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import {
+  vuetifyComponentItemSchema,
+  type VuetifyComponentItem,
+} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
 
 type TableEditorTypes = {

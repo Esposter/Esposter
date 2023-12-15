@@ -1,4 +1,4 @@
-import type { Context } from "@/server/trpc/context";
+import { type Context } from "@/server/trpc/context";
 import { transformer } from "@/server/trpc/transformer";
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";

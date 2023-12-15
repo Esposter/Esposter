@@ -14,11 +14,11 @@ export class MessageMetadataEntity extends AzureEntity {
   type!: MessageMetadataType;
 }
 
-export const messageMetadataSchema = itemMetadataSchema.merge(
-  z.object({
+export const messageMetadataSchema = z
+  .object({
     partitionKey: messageSchema.shape.partitionKey,
     rowKey: z.string(),
     messageRowKey: messageSchema.shape.rowKey,
     type: z.nativeEnum(MessageMetadataType),
-  }),
-) satisfies z.ZodType<MessageMetadataEntity>;
+  })
+  .merge(itemMetadataSchema) satisfies z.ZodType<MessageMetadataEntity>;

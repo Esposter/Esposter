@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { VBtn, VCard } from "vuetify/components";
+import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import { type VBtn, type VCard } from "vuetify/components";
 
 export interface StyledCreateDialogProps {
   cardProps?: VCard["$props"];

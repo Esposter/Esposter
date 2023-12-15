@@ -1,4 +1,4 @@
-import type { Component } from "vue";
+import { type Component } from "vue";
 
 export const TypeRendererMap: Record<string, Component> = {
   image: defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Image.vue")),

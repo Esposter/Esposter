@@ -1,4 +1,4 @@
-import type { Item } from "@/models/shared/Item";
+import { type Item } from "@/models/shared/Item";
 
 export const getNextCursor = <TItem extends Item, TItemKey extends keyof TItem>(
   items: TItem[],

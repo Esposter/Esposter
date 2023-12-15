@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ItemType } from "@/models/clicker/ItemType";
-import type { Upgrade } from "@/models/clicker/Upgrade";
+import { type Upgrade } from "@/models/clicker/Upgrade";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
-import type { VMenu } from "vuetify/components";
+import { VMenu } from "vuetify/components";
 
 type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["$props"] } & Pick<
   Upgrade | BuildingWithStats,

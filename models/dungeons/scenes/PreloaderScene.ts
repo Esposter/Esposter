@@ -5,7 +5,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { Loader, Scene } from "phaser";
+import { type Loader, Scene } from "phaser";
 
 export class PreloaderScene extends Scene {
   constructor() {

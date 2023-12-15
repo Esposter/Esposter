@@ -1,4 +1,4 @@
-import type { User } from "@/db/schema/users";
+import { type User } from "@/db/schema/users";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMemberStore = defineStore("esbabbler/member", () => {

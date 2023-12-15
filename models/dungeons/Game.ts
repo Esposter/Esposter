@@ -18,9 +18,9 @@ class BaseGame {
 export type Game = typeof Game.prototype;
 export const Game = ApplyItemMetadataMixin(BaseGame);
 
-export const gameSchema = itemMetadataSchema.merge(
-  z.object({
+export const gameSchema = z
+  .object({
     id: z.string().uuid(),
     player: playerSchema,
-  }),
-) satisfies z.ZodType<Omit<Game, "toJSON">>;
+  })
+  .merge(itemMetadataSchema) satisfies z.ZodType<Omit<Game, "toJSON">>;

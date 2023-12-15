@@ -1,5 +1,5 @@
 import { selectUserSchema } from "@/db/schema/users";
-import { CompositeKeyEntity } from "@/models/azure";
+import { type CompositeKeyEntity } from "@/models/azure";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/models/esbabbler/message/metadata";
 import { z } from "zod";
 

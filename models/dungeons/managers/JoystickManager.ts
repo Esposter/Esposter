@@ -1,6 +1,6 @@
 import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
 import { getJoystickY } from "@/services/dungeons/joystick";
-import VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
+import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
 export class JoystickManager {
   virtualJoystick: VirtualJoystick;

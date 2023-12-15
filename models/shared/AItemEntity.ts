@@ -10,9 +10,9 @@ export const AItemEntity = ApplyItemMetadataMixin(
   },
 );
 
-export const aItemEntitySchema = itemMetadataSchema.merge(
-  z.object({
+export const aItemEntitySchema = z
+  .object({
     id: z.string().uuid(),
     name: z.string().min(1),
-  }),
-) satisfies z.ZodType<AItemEntity>;
+  })
+  .merge(itemMetadataSchema) satisfies z.ZodType<AItemEntity>;

@@ -1,4 +1,4 @@
-import type { Room } from "@/db/schema/rooms";
+import { type Room } from "@/db/schema/rooms";
 import { createCursorPaginationData } from "@/services/shared/pagination/createCursorPaginationData";
 import Fuse from "fuse.js";
 

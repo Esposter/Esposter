@@ -1,6 +1,6 @@
 import { statsSchema, type Stats } from "@/models/dungeons/Stats";
 import { AItemEntity, aItemEntitySchema } from "@/models/shared/AItemEntity";
-import { z } from "zod";
+import { type z } from "zod";
 
 export class Player extends AItemEntity implements Stats {
   health = 10;

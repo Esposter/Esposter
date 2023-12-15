@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { type VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { getComponent } from "@/services/tableEditor/vuetifyComponent/getComponent";
 import { useTableEditorStore } from "@/store/tableEditor";
-import type { Constructor } from "type-fest";
+import { type Constructor } from "type-fest";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);

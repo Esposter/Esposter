@@ -1,5 +1,5 @@
-import type { Building } from "@/models/clicker/Building";
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { type Building } from "@/models/clicker/Building";
+import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker/upgrade";

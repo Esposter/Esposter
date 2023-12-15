@@ -1,4 +1,4 @@
-import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import { type DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
 import dayjs from "dayjs";
 

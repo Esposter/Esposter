@@ -1,4 +1,4 @@
-import type { ThemeDefinition, VuetifyOptions } from "vuetify";
+import { type ThemeDefinition, type VuetifyOptions } from "vuetify";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 import { ThemeMode } from "./models/vuetify/ThemeMode";
 import { SURFACE_DARK } from "./services/vuetify/constants";

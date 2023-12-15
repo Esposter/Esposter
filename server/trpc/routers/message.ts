@@ -1,5 +1,5 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
-import type { CompositeKey } from "@/models/azure";
+import { type CompositeKey } from "@/models/azure";
 import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/esbabbler/events/message";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";

@@ -1,8 +1,8 @@
-import type { CompositeKey } from "@/models/azure";
-import type { MessageEntity } from "@/models/esbabbler/message";
-import type { MessageMetadataEntity } from "@/models/esbabbler/message/metadata";
-import type { InviteEntity } from "@/models/esbabbler/room/invite";
-import type { TableClient } from "@azure/data-tables";
+import { type CompositeKey } from "@/models/azure";
+import { type MessageEntity } from "@/models/esbabbler/message";
+import { type MessageMetadataEntity } from "@/models/esbabbler/message/metadata";
+import { type InviteEntity } from "@/models/esbabbler/room/invite";
+import { type TableClient } from "@azure/data-tables";
 
 export enum AzureTable {
   Invites = "Invites",

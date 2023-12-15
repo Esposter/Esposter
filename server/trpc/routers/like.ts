@@ -5,7 +5,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
+import { type z } from "zod";
 
 const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;
