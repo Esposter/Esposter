@@ -1,7 +1,11 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
-import { MessageEmojiMetadataEntity, messageEmojiMetadataSchema } from "@/models/esbabbler/message/emoji";
+import {
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityProperties,
+  messageEmojiMetadataSchema,
+} from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
@@ -58,10 +62,11 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
+      const { type, messageRowKey } = MessageEmojiMetadataEntityProperties;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and type eq '${MessageMetadataType.EmojiTag}' and (${messages
-          .map((m) => `messageRowKey eq '${m.rowKey}'`)
-          .join(" or ")})`,
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
+          MessageMetadataType.EmojiTag
+        }' and (${messages.map((m) => `${messageRowKey} eq '${m.rowKey}'`).join(" or ")})`,
       });
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
@@ -79,8 +84,9 @@ export const emojiRouter = router({
     .input(createEmojiInputSchema)
     .mutation(async ({ input, ctx }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+      const { type, messageRowKey, emojiTag } = MessageEmojiMetadataEntityProperties;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.EmojiTag} and messageRowKey eq ${input.messageRowKey} and emojiTag eq ${input.emojiTag}`,
+        filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.EmojiTag} and ${messageRowKey} eq ${input.messageRowKey} and ${emojiTag} eq ${input.emojiTag}`,
       });
       if (foundEmojis.length > 0) return null;
 

@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { InviteEntity, inviteCodeSchema } from "@/models/esbabbler/room/invite";
+import { InviteEntity, InviteEntityProperties, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
@@ -84,6 +84,7 @@ export const roomRouter = router({
     if (cursor) query.where(gt(rooms.id, cursor));
     if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(rooms, sortBy));
     else query.orderBy(desc(rooms.updatedAt));
+
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
     return getCursorPaginationData(resultRooms, "id", limit);
@@ -139,7 +140,7 @@ export const roomRouter = router({
         .where(ilike(users.name, `%${filter?.name ?? ""}%`));
       return joinedUsers.map((ju) => ju.User);
     }),
-  createMembers: getRoomUserProcedure(createMembersInputSchema, "roomId")
+  createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation(async ({ input: { roomId, userIds } }) => {
       await db.transaction((tx) =>
@@ -153,7 +154,7 @@ export const roomRouter = router({
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
       let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and roomId eq ${roomId}`,
+        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and ${InviteEntityProperties.roomId} eq ${roomId}`,
       });
       if (invites.length > 0) return invites[0].rowKey;
 

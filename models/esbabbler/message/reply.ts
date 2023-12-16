@@ -1,6 +1,7 @@
 import { type CompositeKeyEntity } from "@/models/azure";
 import { messageSchema } from "@/models/esbabbler/message";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/models/esbabbler/message/metadata";
+import { getProperties } from "@/services/shared/getProperties";
 import { z } from "zod";
 
 export class MessageReplyMetadataEntity extends MessageMetadataEntity {
@@ -11,6 +12,8 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity {
     Object.assign(this, init);
   }
 }
+
+export const MessageReplyMetadataEntityProperties = getProperties<MessageReplyMetadataEntity>();
 
 export const messageReplyMetadataSchema = messageMetadataSchema.merge(
   z.object({ messageReplyRowKey: messageSchema.shape.rowKey }),

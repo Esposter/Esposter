@@ -2,7 +2,11 @@ import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { replyEventEmitter } from "@/models/esbabbler/events/reply";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
-import { MessageReplyMetadataEntity, messageReplyMetadataSchema } from "@/models/esbabbler/message/reply";
+import {
+  MessageReplyMetadataEntity,
+  MessageReplyMetadataEntityProperties,
+  messageReplyMetadataSchema,
+} from "@/models/esbabbler/message/reply";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
@@ -31,9 +35,10 @@ export const replyRouter = router({
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageReplyMetadataEntity>;
+      const { type, messageRowKey } = MessageReplyMetadataEntityProperties;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and type eq '${MessageMetadataType.Reply}' and (${messages
-          .map((m) => `messageRowKey eq '${m.rowKey}'`)
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${MessageMetadataType.Reply}' and (${messages
+          .map((m) => `${messageRowKey} eq '${m.rowKey}'`)
           .join(" or ")})`,
       });
     }),
@@ -52,8 +57,9 @@ export const replyRouter = router({
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+      const { type, messageRowKey, messageReplyRowKey } = MessageReplyMetadataEntityProperties;
       const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
-        filter: odata`PartitionKey eq ${input.partitionKey} and type eq ${MessageMetadataType.Reply} and messageRowKey eq ${input.messageRowKey} and messageReplyRowKey eq ${input.messageReplyRowKey}`,
+        filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.Reply} and ${messageRowKey} eq ${input.messageRowKey} and ${messageReplyRowKey} eq ${input.messageReplyRowKey}`,
       });
       if (replies.length > 0) return null;
 

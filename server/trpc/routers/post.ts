@@ -33,6 +33,9 @@ const updatePostInputSchema = selectPostSchema
   .merge(selectPostSchema.partial().pick({ title: true, description: true }));
 export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
 
+const updateCommentInputSchema = selectPostSchema.pick({ id: true, description: true });
+export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
+
 const deletePostInputSchema = selectPostSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 
@@ -79,19 +82,26 @@ export const postRouter = router({
     const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
     if (!parentPost) throw Error("Cannot find parent post");
 
-    const createdAt = new Date();
-    const newComment = (
-      await db
-        .insert(posts)
-        .values({
-          ...input,
-          creatorId: ctx.session.user.id,
-          createdAt,
-          depth: parentPost.depth + 1,
-          ranking: ranking(0, createdAt),
-        })
-        .returning({ id: posts.id })
-    )[0];
+    const newComment = await db.transaction(async (tx) => {
+      const createdAt = new Date();
+      const newComment = (
+        await tx
+          .insert(posts)
+          .values({
+            ...input,
+            creatorId: ctx.session.user.id,
+            createdAt,
+            depth: parentPost.depth + 1,
+            ranking: ranking(0, createdAt),
+          })
+          .returning({ id: posts.id })
+      )[0];
+      await tx
+        .update(posts)
+        .set({ noComments: parentPost.noComments + 1 })
+        .where(eq(posts.id, parentPost.id));
+      return newComment;
+    });
     const newCommentWithRelations = await db.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, newComment.id),
       with: PostRelations,
@@ -99,6 +109,11 @@ export const postRouter = router({
     return newCommentWithRelations ?? null;
   }),
   updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
+    const post = await db.query.posts.findFirst({
+      where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
+    });
+    if (!post) throw Error("Cannot find post, you might be trying to update a comment");
+
     const updatedPost = (
       await db
         .update(posts)
@@ -107,10 +122,24 @@ export const postRouter = router({
         .returning({ id: posts.id })
     )[0];
     const updatedPostWithRelations = await db.query.posts.findFirst({
-      where: (posts, { eq }) => eq(posts.id, updatedPost.id),
+      where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.creatorId, ctx.session.user.id)),
       with: PostRelations,
     });
     return updatedPostWithRelations ?? null;
+  }),
+  updateComment: authedProcedure.input(updateCommentInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
+    const updatedComment = (
+      await db
+        .update(posts)
+        .set(rest)
+        .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+        .returning({ id: posts.id })
+    )[0];
+    const updatedCommentWithRelations = await db.query.posts.findFirst({
+      where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.creatorId, ctx.session.user.id)),
+      with: PostRelations,
+    });
+    return updatedCommentWithRelations ?? null;
   }),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input, ctx }) => {
     await db.delete(posts).where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id)));
