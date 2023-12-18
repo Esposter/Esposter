@@ -44,7 +44,7 @@
     "@vueuse/core": "^10.7.0",
     "@vueuse/nuxt": "^10.7.0",
     "cross-env": "^7.0.3",
-    "drizzle-kit": "^0.20.6",
+    "drizzle-kit": "^0.20.7",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
