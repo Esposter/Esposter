@@ -8,7 +8,7 @@
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "dev": "nuxt dev",
     "start": "node .output/server/index.mjs",
-    "test": "vitest",
+    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
