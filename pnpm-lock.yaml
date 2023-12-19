@@ -296,8 +296,8 @@ devDependencies:
     specifier: ^1.0.4
     version: 1.0.4(happy-dom@12.10.3)(sass@1.69.5)
   vitest-environment-nuxt:
-    specifier: ^1.0.0-alpha.1
-    version: 1.0.0-alpha.1(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13)
+    specifier: ^1.0.0
+    version: 1.0.0(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13)
   vue-router:
     specifier: ^4.2.5
     version: 4.2.5(vue@3.3.13)
@@ -11954,27 +11954,6 @@ packages:
 
   /vitest-environment-nuxt@1.0.0(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13):
     resolution: {integrity: sha512-AWMO9h4HdbaFdPWZw34gALFI8gbBiOpvfbyeZwHIPfh4kWg/TwElYHvYMQ61WPUlCGaS5LebfHkaI0WPyb//Iw==}
-    dependencies:
-      '@nuxt/test-utils': 3.9.0(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13)
-    transitivePeerDependencies:
-      - '@jest/globals'
-      - '@testing-library/vue'
-      - '@vitest/ui'
-      - '@vue/test-utils'
-      - h3
-      - happy-dom
-      - jsdom
-      - playwright-core
-      - rollup
-      - supports-color
-      - vite
-      - vitest
-      - vue
-      - vue-router
-    dev: true
-
-  /vitest-environment-nuxt@1.0.0-alpha.1(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13):
-    resolution: {integrity: sha512-0/gfNcZNNqFRjocmGZN/R4PlZ0p4MlmmsTkplKf9FwgBadGxN4eYtxOqk1ubhz+qf8ZvPRER3toydmOASovMcg==}
     dependencies:
       '@nuxt/test-utils': 3.9.0(h3@1.9.0)(happy-dom@12.10.3)(rollup@2.79.1)(vite@5.0.10)(vitest@1.0.4)(vue-router@4.2.5)(vue@3.3.13)
     transitivePeerDependencies:
