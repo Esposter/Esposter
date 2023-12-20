@@ -159,8 +159,8 @@ dependencies:
     specifier: ^1.9.121
     version: 1.9.121
   survey-creator-core:
-    specifier: ^1.9.121
-    version: 1.9.121
+    specifier: ^1.9.122
+    version: 1.9.122
   survey-creator-vue:
     specifier: ^1.9.121
     version: 1.9.121(vue@3.3.13)
@@ -3475,6 +3475,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -8827,6 +8828,9 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -10930,8 +10934,12 @@ packages:
     resolution: {integrity: sha512-CCZMA7j+WGf2WBOOl7WUNTTrNmyP8CbhPdCZWKxvgJnKXSdalFmOD67/VuCeE1paa/XI0USlZtAjxxtMupya4w==}
     dev: false
 
-  /survey-creator-core@1.9.121:
-    resolution: {integrity: sha512-/GuvwZg6kBdoDPlxHONunfxM9h+5bdULOfM0BByf+rruOrHgFPCb7yGRK8vUhadRbKDnZA4po0hsLteGIwN7fQ==}
+  /survey-core@1.9.122:
+    resolution: {integrity: sha512-1SSxEZwhD+GdhfVKDDNhX/EGGyvcG1OT0XPF/jQCIZL0w72YSc0Tw1zzClYwDXEA/x25jnNYhKE4i5HKRZ16+A==}
+    dev: false
+
+  /survey-creator-core@1.9.122:
+    resolution: {integrity: sha512-MEcdwwPKtzsoSmPkSL1bCWUcknQqNbsLaooq3IGp7jgVoKowjRBdL+MCFg7W6UPzLnhk/gVs8Igi81zxsOsxmQ==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -10939,7 +10947,7 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.121
+      survey-core: 1.9.122
     dev: false
 
   /survey-creator-vue@1.9.121(vue@3.3.13):
@@ -10948,7 +10956,7 @@ packages:
       vue: ^3.2.41
     dependencies:
       survey-core: 1.9.121
-      survey-creator-core: 1.9.121
+      survey-creator-core: 1.9.122
       survey-vue3-ui: 1.9.121(vue@3.3.13)
       vue: 3.3.13(typescript@5.3.3)
     transitivePeerDependencies:
