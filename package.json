@@ -59,6 +59,7 @@
     "type-fest": "^4.8.3",
     "vite": "^5.0.10",
     "vitest": "^1.1.0",
+    "vue": "^3.3.13",
     "vue-router": "^4.2.5",
     "vue-tsc": "^1.8.26",
     "vuetify-nuxt-module": "^0.7.3"
@@ -121,7 +122,6 @@
     "three": "^0.160.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.15",
-    "vue": "^3.3.13",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.4.8",

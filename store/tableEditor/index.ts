@@ -6,7 +6,6 @@ import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEdi
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity";
 import equal from "deep-equal";
-import { type UnwrapRef } from "vue";
 
 interface TableEditorState<TItem extends Item = Item> {
   tableEditorConfiguration: TableEditorConfiguration;
@@ -60,8 +59,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
 
         const item = this.tableEditor.items.find((item) => item.id === id);
         if (!item) return;
-
-        this.editedItem = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
+        // @TODO: Vue cannot unwrap generic refs yet
+        this.editedItem = structuredClone(toDeepRaw(item)) as typeof this.editedItem;
         this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
         this.editFormDialog = true;
 

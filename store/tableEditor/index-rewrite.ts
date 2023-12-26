@@ -47,7 +47,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       const item = tableEditor.value.items.find((item) => item.id === id);
       if (!item) return;
 
-      // @TODO: Type bug here so we cast it for now
+      // @TODO: Vue cannot unwrap generic refs yet
       editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
       editedIndex.value = tableEditor.value.items.findIndex((item) => item.id === id);
       editFormDialog.value = true;
