@@ -126,7 +126,7 @@
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.4.8",
     "worker-timers": "^7.0.80",
-    "ws": "^8.15.1",
+    "ws": "^8.16.0",
     "zod": "^3.22.4"
   },
   "dependenciesComments": {
