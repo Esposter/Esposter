@@ -1,9 +1,9 @@
 import { router } from "@/server/trpc";
 import { clickerRouter } from "@/server/trpc/routers/clicker";
 import { dungeonsRouter } from "@/server/trpc/routers/dungeons";
-import { emojiRouter } from "@/server/trpc/routers/emoji";
 import { likeRouter } from "@/server/trpc/routers/like";
 import { messageRouter } from "@/server/trpc/routers/message";
+import { emojiRouter } from "@/server/trpc/routers/message/emoji";
 import { postRouter } from "@/server/trpc/routers/post";
 import { roomRouter } from "@/server/trpc/routers/room";
 import { surveyRouter } from "@/server/trpc/routers/survey";

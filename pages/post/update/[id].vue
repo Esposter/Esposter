@@ -7,7 +7,8 @@ definePageMeta({ middleware: "auth" });
 
 const { $client } = useNuxtApp();
 const route = useRoute();
-const postId = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
+const routeParamsId = route.params.id;
+const postId = typeof routeParamsId === "string" && uuidValidateV4(routeParamsId) ? routeParamsId : null;
 const post = postId ? await $client.post.readPost.query(postId) : null;
 if (!post) throw createError({ statusCode: 404, statusMessage: "Post could not be found" });
 

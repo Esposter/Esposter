@@ -1,5 +1,5 @@
 import { type MessageEmojiMetadataEntity } from "@/models/esbabbler/message/emoji";
-import { type DeleteEmojiInput, type UpdateEmojiInput } from "@/server/trpc/routers/emoji";
+import { type DeleteEmojiInput, type UpdateEmojiInput } from "@/server/trpc/routers/message/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {

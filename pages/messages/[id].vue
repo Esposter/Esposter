@@ -6,12 +6,13 @@ definePageMeta({ middleware: "auth" });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
-const route = useRoute();
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, roomList, currentRoomName, roomSearchQuery } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
-currentRoomId.value = typeof route.params.id === "string" && uuidValidateV4(route.params.id) ? route.params.id : null;
+const route = useRoute();
+const routeParamsId = route.params.id;
+currentRoomId.value = typeof routeParamsId === "string" && uuidValidateV4(routeParamsId) ? routeParamsId : null;
 roomSearchQuery.value = "";
 
 useSubscribables();

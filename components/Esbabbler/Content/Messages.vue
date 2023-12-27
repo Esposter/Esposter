@@ -3,8 +3,7 @@ import { useMessageStore } from "@/store/esbabbler/message";
 
 const readMoreMessages = await useReadMessages();
 const messageStore = useMessageStore();
-const { messageList, messageListNextCursor } = storeToRefs(messageStore);
-const hasMore = computed(() => Boolean(messageListNextCursor.value));
+const { messageList, hasMore } = storeToRefs(messageStore);
 </script>
 
 <template>

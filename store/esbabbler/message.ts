@@ -4,6 +4,7 @@ import {
   type DeleteMessageInput,
   type UpdateMessageInput,
 } from "@/server/trpc/routers/message";
+import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text";
@@ -15,39 +16,9 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const messageInputStore = useMessageInputStore();
   const { messageInput } = storeToRefs(messageInputStore);
-
-  const messagesMap = ref<Record<string, MessageEntity[]>>({});
-  const messageList = computed({
-    get: () => {
-      if (!currentRoomId.value || !messagesMap.value[currentRoomId.value]) return [];
-      return messagesMap.value[currentRoomId.value];
-    },
-    set: (newMessageList) => {
-      if (!currentRoomId.value) return;
-      messagesMap.value[currentRoomId.value] = newMessageList;
-    },
-  });
-  const pushMessageList = (messages: MessageEntity[]) => {
+  const { items: messageList, ...rest } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
+  const pushMessages = (messages: MessageEntity[]) => {
     messageList.value.push(...messages);
-  };
-
-  const messageListNextCursorMap = ref<Record<string, string | null>>({});
-  const messageListNextCursor = computed({
-    get: () => {
-      if (!currentRoomId.value || !messageListNextCursorMap.value[currentRoomId.value]) return null;
-      return messageListNextCursorMap.value[currentRoomId.value];
-    },
-    set: (newMessageListNextCursor) => {
-      if (!currentRoomId.value) return;
-      messageListNextCursorMap.value[currentRoomId.value] = newMessageListNextCursor;
-    },
-  });
-  const updateMessageListNextCursor = (updatedMessageListNextCursor: string | null) => {
-    messageListNextCursor.value = updatedMessageListNextCursor;
-  };
-
-  const initialiseMessageList = (messages: MessageEntity[]) => {
-    messageList.value = messages;
   };
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
@@ -74,10 +45,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
   return {
     messageList,
-    pushMessageList,
-    messageListNextCursor,
-    updateMessageListNextCursor,
-    initialiseMessageList,
+    ...rest,
+    pushMessages,
     createMessage,
     sendMessage,
     updateMessage,

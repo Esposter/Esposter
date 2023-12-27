@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { type MessageEntity } from "@/models/esbabbler/message";
-import { type CreateEmojiInput, type DeleteEmojiInput, type UpdateEmojiInput } from "@/server/trpc/routers/emoji";
+import {
+  type CreateEmojiInput,
+  type DeleteEmojiInput,
+  type UpdateEmojiInput,
+} from "@/server/trpc/routers/message/emoji";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";

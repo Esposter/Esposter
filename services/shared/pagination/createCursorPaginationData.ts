@@ -1,16 +1,8 @@
 import { type Item } from "@/models/shared/Item";
-import { type CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
+import { CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
 
 export const createCursorPaginationData = <TItem extends Item, TItemKey extends keyof TItem = "id">() => {
-  const defaultCursorPaginationData: CursorPaginationData<TItem, TItemKey> = {
-    items: [],
-    nextCursor: null,
-    hasMore: false,
-  };
-  // @TODO: Vue cannot unwrap generic refs yet
-  // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
-  // https://github.com/vuejs/core/issues/6766
-  const cursorPaginationData = ref(defaultCursorPaginationData) as Ref<CursorPaginationData<TItem, TItemKey>>;
+  const cursorPaginationData = ref(new CursorPaginationData<TItem, TItemKey>());
   const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
@@ -29,11 +21,14 @@ export const createCursorPaginationData = <TItem extends Item, TItemKey extends 
       cursorPaginationData.value.hasMore = hasMore;
     },
   });
-  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem, TItemKey>) => {
+  // @TODO: Vue cannot unwrap generic refs yet
+  // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
+  // https://github.com/vuejs/core/issues/6766
+  const initialiseCursorPaginationData = (data: typeof cursorPaginationData.value) => {
     cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
-    cursorPaginationData.value = defaultCursorPaginationData;
+    cursorPaginationData.value = new CursorPaginationData<TItem, TItemKey>() as typeof cursorPaginationData.value;
   };
   return {
     items,
