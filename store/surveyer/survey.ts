@@ -4,12 +4,10 @@ import { createOffsetPaginationData } from "@/services/shared/pagination/createO
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
-  const { items: surveyList, ...rest } = createOffsetPaginationData<Survey>();
+  const { itemList: surveyList, pushItemList: pushSurveyList, ...rest } = createOffsetPaginationData<Survey>();
+  const searchQuery = ref("");
   const totalItemsLength = ref(0);
 
-  const pushSurveys = (surveys: Survey[]) => {
-    surveyList.value.push(...surveys);
-  };
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $client.survey.createSurvey.mutate(input);
     surveyList.value.push(newSurvey);
@@ -29,17 +27,15 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     await $client.survey.updateSurvey.mutate(survey);
   };
 
-  const searchQuery = ref("");
-
   return {
     surveyList,
+    pushSurveyList,
     ...rest,
+    searchQuery,
     totalItemsLength,
-    pushSurveys,
     createSurvey,
     updateSurvey,
     deleteSurvey,
-    searchQuery,
     autoSave,
   };
 });

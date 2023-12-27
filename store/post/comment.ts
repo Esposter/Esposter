@@ -10,10 +10,11 @@ export const useCommentStore = defineStore("comment/comment", () => {
     const routeParamsId = router.currentRoute.value.params.id;
     return typeof routeParamsId === "string" && uuidValidateV4(routeParamsId) ? routeParamsId : null;
   });
-  const { items: commentList, ...rest } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
-  const pushComments = (comments: PostWithRelations[]) => {
-    commentList.value.push(...comments);
-  };
+  const {
+    itemList: commentList,
+    pushItemList: pushCommentList,
+    ...rest
+  } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const createComment = async (input: CreateCommentInput) => {
     const newComment = await $client.post.createComment.mutate(input);
     if (newComment) commentList.value.push(newComment);
@@ -33,8 +34,8 @@ export const useCommentStore = defineStore("comment/comment", () => {
 
   return {
     commentList,
+    pushCommentList,
     ...rest,
-    pushComments,
     createComment,
     updateComment,
     deleteComment,

@@ -1,4 +1,4 @@
 import { type Item } from "@/models/shared/Item";
-import { type CommonPaginationData } from "@/models/shared/pagination/CommonPaginationData";
+import { CommonPaginationData } from "@/models/shared/pagination/CommonPaginationData";
 
-export interface OffsetPaginationData<TItem extends Item> extends CommonPaginationData<TItem> {}
+export class OffsetPaginationData<TItem extends Item> extends CommonPaginationData<TItem> {}

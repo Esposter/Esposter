@@ -16,10 +16,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const messageInputStore = useMessageInputStore();
   const { messageInput } = storeToRefs(messageInputStore);
-  const { items: messageList, ...rest } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
-  const pushMessages = (messages: MessageEntity[]) => {
-    messageList.value.push(...messages);
-  };
+  const {
+    itemList: messageList,
+    pushItemList: pushMessageList,
+    ...rest
+  } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };
@@ -45,8 +46,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
   return {
     messageList,
+    pushMessageList,
     ...rest,
-    pushMessages,
     createMessage,
     sendMessage,
     updateMessage,

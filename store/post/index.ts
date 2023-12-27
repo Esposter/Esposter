@@ -4,10 +4,7 @@ import { createCursorPaginationData } from "@/services/shared/pagination/createC
 
 export const usePostStore = defineStore("post", () => {
   const { $client } = useNuxtApp();
-  const { items: postList, ...rest } = createCursorPaginationData<PostWithRelations>();
-  const pushPosts = (posts: PostWithRelations[]) => {
-    postList.value.push(...posts);
-  };
+  const { itemList: postList, pushItemList: pushPostList, ...rest } = createCursorPaginationData<PostWithRelations>();
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $client.post.createPost.mutate(input);
     if (newPost) postList.value.push(newPost);
@@ -26,8 +23,8 @@ export const usePostStore = defineStore("post", () => {
 
   return {
     postList,
+    pushPostList,
     ...rest,
-    pushPosts,
     createPost,
     updatePost,
     deletePost,

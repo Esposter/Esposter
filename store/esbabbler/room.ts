@@ -3,16 +3,13 @@ import { createCursorPaginationData } from "@/services/shared/pagination/createC
 import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
+  const { itemList: roomList, pushItemList: pushRoomList, ...rest } = createCursorPaginationData<Room>();
   const currentRoomId = ref<string | null>(null);
-  const { items: roomList, ...rest } = createCursorPaginationData<Room>();
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
-  const pushRooms = (rooms: Room[]) => {
-    roomList.value.push(...rooms);
-  };
   const createRoom = (newRoom: Room) => {
     roomList.value.push(newRoom);
   };
@@ -33,11 +30,11 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   });
 
   return {
-    currentRoomId,
     roomList,
+    pushRoomList,
     ...rest,
+    currentRoomId,
     currentRoomName,
-    pushRooms,
     createRoom,
     updateRoom,
     deleteRoom,

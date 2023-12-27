@@ -17,12 +17,16 @@ export const createCursorPaginationDataMap = <TItem extends Item, TItemKey exten
       else cursorPaginationDataMap.value[currentId.value] = newCursorPaginationData;
     },
   });
-  const items = computed({
+  const itemList = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
       cursorPaginationData.value.items = items;
     },
   });
+  const pushItemList = (items: TItem[]) => {
+    itemList.value.push(...items);
+  };
+
   const nextCursor = computed({
     get: () => cursorPaginationData.value.nextCursor,
     set: (nextCursor) => {
@@ -35,17 +39,16 @@ export const createCursorPaginationDataMap = <TItem extends Item, TItemKey exten
       cursorPaginationData.value.hasMore = hasMore;
     },
   });
-  // @TODO: Vue cannot unwrap generic refs yet
-  // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
-  // https://github.com/vuejs/core/issues/6766
-  const initialiseCursorPaginationData = (data: typeof cursorPaginationData.value) => {
+
+  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem, TItemKey>) => {
     cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
-    cursorPaginationData.value = new CursorPaginationData<TItem, TItemKey>() as typeof cursorPaginationData.value;
+    cursorPaginationData.value = new CursorPaginationData<TItem, TItemKey>();
   };
   return {
-    items,
+    itemList,
+    pushItemList,
     nextCursor,
     hasMore,
     initialiseCursorPaginationData,

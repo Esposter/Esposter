@@ -6,7 +6,7 @@ export const useReadMessages = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { initialiseCursorPaginationData, pushMessages } = messageStore;
+  const { initialiseCursorPaginationData, pushMessageList } = messageStore;
   const { nextCursor, hasMore } = storeToRefs(messageStore);
   const readEmojis = useReadEmojis();
   const readMoreMessages = async (onComplete: () => void) => {
@@ -17,7 +17,7 @@ export const useReadMessages = async () => {
         roomId: currentRoomId.value,
         cursor: nextCursor.value,
       });
-      pushMessages(response.items);
+      pushMessageList(response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
       await readEmojis(response.items.map((m) => m.rowKey));
