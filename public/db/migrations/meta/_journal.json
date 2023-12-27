@@ -36,6 +36,13 @@
       "when": 1702616915143,
       "tag": "0004_tidy_riptide",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1703682112807,
+      "tag": "0005_brave_joshua_kane",
+      "breakpoints": true
     }
   ]
 }

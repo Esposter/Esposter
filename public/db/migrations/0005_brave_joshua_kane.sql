@@ -1,0 +1,1 @@
+ALTER TABLE "Post" ADD COLUMN "depth" integer DEFAULT 0 NOT NULL;

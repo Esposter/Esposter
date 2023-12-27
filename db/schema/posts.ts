@@ -16,7 +16,7 @@ export const posts = pgTable("Post", {
   description: text("description").notNull().default(""),
   noLikes: integer("noLikes").notNull().default(0),
   noComments: integer("noComments").notNull().default(0),
-  depth: integer("noLikes").notNull().default(0),
+  depth: integer("depth").notNull().default(0),
   ranking: doublePrecision("ranking").notNull(),
 });
 
