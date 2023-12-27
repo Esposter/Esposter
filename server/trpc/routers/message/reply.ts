@@ -31,15 +31,15 @@ export type CreateReplyInput = z.infer<typeof createReplyInputSchema>;
 export const replyRouter = router({
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)
-    .query(async ({ input: { roomId, messages } }) => {
+    .query(async ({ input: { roomId, messageRowKeys } }) => {
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageReplyMetadataEntity>;
       const { type, messageRowKey } = MessageReplyMetadataEntityProperties;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${MessageMetadataType.Reply}' and (${messages
-          .map((m) => `${messageRowKey} eq '${m.rowKey}'`)
-          .join(" or ")})`,
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
+          MessageMetadataType.Reply
+        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
       });
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")

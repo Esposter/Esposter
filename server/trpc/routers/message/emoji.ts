@@ -58,7 +58,7 @@ export type DeleteEmojiInput = z.infer<typeof deleteEmojiInputSchema>;
 export const emojiRouter = router({
   readEmojis: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)
-    .query(async ({ input: { roomId, messages } }) => {
+    .query(async ({ input: { roomId, messageRowKeys } }) => {
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
@@ -66,7 +66,7 @@ export const emojiRouter = router({
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
           MessageMetadataType.EmojiTag
-        }' and (${messages.map((m) => `${messageRowKey} eq '${m.rowKey}'`).join(" or ")})`,
+        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
       });
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")

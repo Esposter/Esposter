@@ -21,7 +21,7 @@ import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  messages: z.array(messageSchema.pick({ rowKey: true })).min(1),
+  messageRowKeys: z.array(messageSchema.shape.rowKey).min(1),
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
