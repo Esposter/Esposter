@@ -1,6 +1,6 @@
 import { type Item } from "@/models/shared/Item";
 import { CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
-// We want to handle the case where we have a Record<string, CursorPaginationData> scenario
+// We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
 export const createCursorPaginationDataMap = <TItem extends Item, TItemKey extends keyof TItem = "id">(
   currentId: Ref<string | null>,
