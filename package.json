@@ -124,7 +124,7 @@
     "trpc-nuxt": "^0.10.15",
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
-    "vuetify": "^3.4.8",
+    "vuetify": "^3.4.9",
     "worker-timers": "^7.0.80",
     "ws": "^8.16.0",
     "zod": "^3.22.4"
