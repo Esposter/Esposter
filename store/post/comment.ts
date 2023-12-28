@@ -15,6 +15,7 @@ export const useCommentStore = defineStore("comment/comment", () => {
     pushItemList: pushCommentList,
     ...rest
   } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
+
   const createComment = async (input: CreateCommentInput) => {
     const newComment = await $client.post.createComment.mutate(input);
     if (newComment) commentList.value.push(newComment);

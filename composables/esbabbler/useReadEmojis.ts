@@ -6,11 +6,15 @@ export const useReadEmojis = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
-  const { pushEmojiMap } = emojiStore;
+  const { setEmojiList } = emojiStore;
   return async (messageRowKeys: string[]) => {
     if (!currentRoomId.value) return;
 
     const emojis = await $client.emoji.readEmojis.query({ roomId: currentRoomId.value, messageRowKeys });
-    pushEmojiMap(messageRowKeys, emojis);
+    for (const messageRowKey of messageRowKeys)
+      setEmojiList(
+        messageRowKey,
+        emojis.filter((e) => e.messageRowKey === messageRowKey),
+      );
   };
 };

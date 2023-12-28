@@ -21,6 +21,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     pushItemList: pushMessageList,
     ...rest
   } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
+
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };

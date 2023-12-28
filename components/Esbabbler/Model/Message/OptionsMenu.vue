@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import { type MessageEntity } from "@/models/esbabbler/message";
-import {
-  type CreateEmojiInput,
-  type DeleteEmojiInput,
-  type UpdateEmojiInput,
-} from "@/server/trpc/routers/message/emoji";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
@@ -28,7 +23,6 @@ const emit = defineEmits<{
   "update:update-mode": [value: true];
   "update:delete-mode": [value: true];
 }>();
-const { $client } = useNuxtApp();
 const { session } = useAuth();
 const emojiStore = useEmojiStore();
 const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
@@ -54,7 +48,7 @@ const onSelect = async (emoji: string) => {
   const emojiTag = unemojify(emoji);
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
-    await onCreateEmoji({
+    await createEmoji({
       partitionKey: message.partitionKey,
       messageRowKey: message.rowKey,
       emojiTag,
@@ -64,13 +58,13 @@ const onSelect = async (emoji: string) => {
 
   if (foundEmoji.userIds.includes(session.value.user.id)) {
     if (foundEmoji.userIds.length === 1)
-      await onDeleteEmoji({
+      await deleteEmoji({
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
         messageRowKey: foundEmoji.messageRowKey,
       });
     else
-      await onUpdateEmoji({
+      await updateEmoji({
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
         messageRowKey: foundEmoji.messageRowKey,
@@ -79,24 +73,12 @@ const onSelect = async (emoji: string) => {
     return;
   }
 
-  await onUpdateEmoji({
+  await updateEmoji({
     partitionKey: foundEmoji.partitionKey,
     rowKey: foundEmoji.rowKey,
     messageRowKey: foundEmoji.messageRowKey,
     userIds: [...foundEmoji.userIds, session.value.user.id],
   });
-};
-const onCreateEmoji = async (input: CreateEmojiInput) => {
-  const newEmoji = await $client.emoji.createEmoji.mutate(input);
-  if (newEmoji) createEmoji(newEmoji);
-};
-const onUpdateEmoji = async (input: UpdateEmojiInput) => {
-  const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
-  if (updatedEmoji) updateEmoji(updatedEmoji);
-};
-const onDeleteEmoji = async (input: DeleteEmojiInput) => {
-  await $client.emoji.deleteEmoji.mutate(input);
-  deleteEmoji(input);
 };
 </script>
 

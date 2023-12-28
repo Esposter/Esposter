@@ -10,6 +10,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
+
   const createRoom = (newRoom: Room) => {
     roomList.value.push(newRoom);
   };

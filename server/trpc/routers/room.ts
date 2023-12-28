@@ -38,10 +38,12 @@ export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 const leaveRoomInputSchema = selectRoomSchema.shape.id;
 export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;
 
-const readMembersInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  filter: selectUserSchema.pick({ name: true }).optional(),
-});
+const readMembersInputSchema = z
+  .object({
+    roomId: selectRoomSchema.shape.id,
+    filter: selectUserSchema.pick({ name: true }).optional(),
+  })
+  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof()));
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
@@ -132,13 +134,21 @@ export const roomRouter = router({
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
-    .query(async ({ input: { roomId, filter } }) => {
-      const joinedUsers = await db
+    .query(async ({ input: { roomId, filter, cursor, limit, sortBy } }) => {
+      const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
+      const cursorWhere = cursor ? gt(users.id, cursor) : undefined;
+      const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
+
+      const query = db
         .select()
         .from(users)
         .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id), eq(usersToRooms.roomId, roomId)))
-        .where(ilike(users.name, `%${filter?.name ?? ""}%`));
-      return joinedUsers.map((ju) => ju.User);
+        .where(where);
+      if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(users, sortBy));
+
+      const joinedUsers = await query.limit(limit + 1);
+      const resultUsers = joinedUsers.map((ju) => ju.User);
+      return getCursorPaginationData(resultUsers, "id", limit);
     }),
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)

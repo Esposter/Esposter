@@ -13,7 +13,7 @@ export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;
 const updateLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
 export type UpdateLikeInput = z.infer<typeof updateLikeInputSchema>;
 
-const deleteLikeInputSchema = selectLikeSchema.pick({ postId: true });
+const deleteLikeInputSchema = selectLikeSchema.shape.postId;
 export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
@@ -68,15 +68,15 @@ export const likeRouter = router({
       return updatedLike;
     });
   }),
-  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation(async ({ input: { postId }, ctx }) => {
-    const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
+  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation(async ({ input, ctx }) => {
+    const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) });
     if (!post) return null;
 
     await db.transaction(async (tx) => {
       const deletedLike = (
         await tx
           .delete(likes)
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
+          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
           .returning()
       )[0];
       const noLikesNew = post.noLikes - deletedLike.value;
@@ -86,7 +86,7 @@ export const likeRouter = router({
           noLikes: noLikesNew,
           ranking: ranking(noLikesNew, post.createdAt),
         })
-        .where(eq(posts.id, postId));
+        .where(eq(posts.id, input));
     });
   }),
 });

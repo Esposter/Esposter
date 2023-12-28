@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import {
-  type CreateEmojiInput,
-  type DeleteEmojiInput,
-  type UpdateEmojiInput,
-} from "@/server/trpc/routers/message/emoji";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { emojify } from "node-emoji";
 
@@ -12,7 +7,6 @@ interface MessageEmojiListProps {
 }
 
 const { messageRowKey } = defineProps<MessageEmojiListProps>();
-const { $client } = useNuxtApp();
 const { session } = useAuth();
 const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
 const emojiStore = useEmojiStore();
@@ -28,18 +22,6 @@ const emojis = computed(() =>
   })),
 );
 const hasEmojis = computed(() => emojis.value.length > 0);
-const onCreateEmoji = async (input: CreateEmojiInput) => {
-  const newEmoji = await $client.emoji.createEmoji.mutate(input);
-  if (newEmoji) createEmoji(newEmoji);
-};
-const onUpdateEmoji = async (input: UpdateEmojiInput) => {
-  const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
-  if (updatedEmoji) updateEmoji(updatedEmoji);
-};
-const onDeleteEmoji = async (input: DeleteEmojiInput) => {
-  await $client.emoji.deleteEmoji.mutate(input);
-  deleteEmoji(input);
-};
 </script>
 
 <template>
@@ -58,10 +40,10 @@ const onDeleteEmoji = async (input: DeleteEmojiInput) => {
       z-1
       @click="
         isReacted
-          ? onDeleteEmoji({ partitionKey, rowKey, messageRowKey })
+          ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
           : userIds.length > 0
-            ? onUpdateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
-            : onCreateEmoji({ partitionKey, messageRowKey, emojiTag })
+            ? updateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
+            : createEmoji({ partitionKey, messageRowKey, emojiTag })
       "
     >
       {{ emoji }}

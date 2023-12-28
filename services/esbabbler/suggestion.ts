@@ -1,5 +1,4 @@
 import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
-import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { type MentionOptions } from "@tiptap/extension-mention";
 import { VueRenderer } from "@tiptap/vue-3";
@@ -12,8 +11,8 @@ export const suggestion: MentionOptions["suggestion"] = {
     if (!currentRoomId.value) return [];
 
     const { $client } = useNuxtApp();
-    const members = await $client.room.readMembers.query({ roomId: currentRoomId.value, filter: { name: query } });
-    return members.filter((m) => m.name).slice(0, DEFAULT_READ_LIMIT);
+    const { items } = await $client.room.readMembers.query({ roomId: currentRoomId.value, filter: { name: query } });
+    return items.filter((m) => m.name);
   },
 
   render: () => {

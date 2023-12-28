@@ -1,46 +1,39 @@
 import { type MessageEmojiMetadataEntity } from "@/models/esbabbler/message/emoji";
-import { type DeleteEmojiInput, type UpdateEmojiInput } from "@/server/trpc/routers/message/emoji";
-import { useRoomStore } from "@/store/esbabbler/room";
+import {
+  type CreateEmojiInput,
+  type DeleteEmojiInput,
+  type UpdateEmojiInput,
+} from "@/server/trpc/routers/message/emoji";
+import { createMessageMetadataMap } from "@/services/esbabbler/createMessageMetadataMap";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
-  const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
-  // Record<partitionKey, Record<messageRowKey, MessageEmojiMetadataEntity[]>>
-  const emojiMap = ref<Record<string, Record<string, MessageEmojiMetadataEntity[]>>>({});
-  const getEmojiList = (messageRowKey: string) => {
-    if (!currentRoomId.value || !emojiMap.value[currentRoomId.value]?.[messageRowKey]) return [];
-    return emojiMap.value[currentRoomId.value][messageRowKey];
-  };
-  const setEmojiList = (messageRowKey: string, emojiList: MessageEmojiMetadataEntity[]) => {
-    if (!currentRoomId.value) return;
-    emojiMap.value[currentRoomId.value] = {
-      ...emojiMap.value[currentRoomId.value],
-      [messageRowKey]: emojiList,
-    };
-  };
-  const pushEmojiMap = (messageRowKeys: string[], emojis: MessageEmojiMetadataEntity[]) => {
-    for (const messageRowKey of messageRowKeys)
-      setEmojiList(
-        messageRowKey,
-        emojis.filter((e) => e.messageRowKey === messageRowKey),
-      );
-  };
+  const { $client } = useNuxtApp();
+  const { getMetadataList: getEmojiList, setMetadataList: setEmojiList } =
+    createMessageMetadataMap<MessageEmojiMetadataEntity>();
+  const createEmoji = async (input: CreateEmojiInput) => {
+    const newEmoji = await $client.emoji.createEmoji.mutate(input);
+    if (!newEmoji) return;
 
-  const createEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
     const emojiList = getEmojiList(newEmoji.messageRowKey);
     emojiList.push(newEmoji);
   };
-  const updateEmoji = (input: UpdateEmojiInput) => {
-    const emojiList = getEmojiList(input.messageRowKey);
-    const index = emojiList.findIndex((e) => e.partitionKey === input.partitionKey && e.rowKey === input.rowKey);
+  const updateEmoji = async (input: UpdateEmojiInput) => {
+    const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
+    if (!updatedEmoji) return;
+
+    const emojiList = getEmojiList(updatedEmoji.messageRowKey);
+    const index = emojiList.findIndex(
+      (e) => e.partitionKey === updatedEmoji.partitionKey && e.rowKey === updatedEmoji.rowKey,
+    );
     if (index > -1)
       emojiList[index] = {
         ...emojiList[index],
-        ...input,
-        userIds: [...emojiList[index].userIds, ...input.userIds],
+        ...updatedEmoji,
+        userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
       };
   };
-  const deleteEmoji = (input: DeleteEmojiInput) => {
+  const deleteEmoji = async (input: DeleteEmojiInput) => {
+    await $client.emoji.deleteEmoji.mutate(input);
     const emojiList = getEmojiList(input.messageRowKey);
     setEmojiList(
       input.messageRowKey,
@@ -50,7 +43,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
 
   return {
     getEmojiList,
-    pushEmojiMap,
+    setEmojiList,
     createEmoji,
     updateEmoji,
     deleteEmoji,

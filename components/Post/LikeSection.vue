@@ -7,26 +7,11 @@ interface PostLikeSectionProps {
 }
 
 const { post } = defineProps<PostLikeSectionProps>();
-const { $client } = useNuxtApp();
 const { session } = useAuth();
 const likeStore = useLikeStore();
 const { createLike, updateLike, deleteLike } = likeStore;
 const liked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === 1));
 const unliked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === -1));
-const onCreateLike = async (value: 1 | -1) => {
-  const newLike = await $client.like.createLike.mutate({ postId: post.id, value });
-  if (newLike) createLike(newLike);
-};
-const onUpdateLike = async (value: 1 | -1) => {
-  const updatedLike = await $client.like.updateLike.mutate({ postId: post.id, value });
-  if (updatedLike) updateLike(updatedLike);
-};
-const onDeleteLike = async () => {
-  if (!session.value) return;
-
-  await $client.like.deleteLike.mutate({ postId: post.id });
-  deleteLike({ userId: session.value.user.id, postId: post.id });
-};
 </script>
 
 <template>
@@ -38,7 +23,13 @@ const onDeleteLike = async () => {
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"
-      @click="liked ? onDeleteLike() : unliked ? onUpdateLike(1) : onCreateLike(1)"
+      @click="
+        liked
+          ? deleteLike(post.id)
+          : unliked
+            ? updateLike({ postId: post.id, value: 1 })
+            : createLike({ postId: post.id, value: 1 })
+      "
     >
       <v-icon
         size="x-large"
@@ -54,7 +45,13 @@ const onDeleteLike = async () => {
       width="1.5rem"
       min-width="1.5rem"
       height="1.5rem"
-      @click="unliked ? onDeleteLike() : liked ? onUpdateLike(-1) : onCreateLike(-1)"
+      @click="
+        unliked
+          ? deleteLike(post.id)
+          : liked
+            ? updateLike({ postId: post.id, value: -1 })
+            : createLike({ postId: post.id, value: -1 })
+      "
     >
       <v-icon
         size="x-large"

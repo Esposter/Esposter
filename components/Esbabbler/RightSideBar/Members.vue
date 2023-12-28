@@ -6,13 +6,11 @@ const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const memberStore = useMemberStore();
-const { initialiseMembersList } = memberStore;
+const { initialiseCursorPaginationData } = memberStore;
 const { memberList } = storeToRefs(memberStore);
 
-if (currentRoomId.value) {
-  const members = await $client.room.readMembers.query({ roomId: currentRoomId.value });
-  initialiseMembersList(members);
-}
+if (currentRoomId.value)
+  initialiseCursorPaginationData(await $client.room.readMembers.query({ roomId: currentRoomId.value }));
 </script>
 
 <template>
