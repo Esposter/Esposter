@@ -27,7 +27,8 @@ export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
 const readMessagesInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })
-  .merge(createCursorPaginationParamsSchema(messageSchema.keyof()));
+  // Azure table storage doesn't support sorting
+  .merge(createCursorPaginationParamsSchema(messageSchema.keyof()).omit({ sortBy: true }));
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });

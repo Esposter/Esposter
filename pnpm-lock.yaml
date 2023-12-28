@@ -156,17 +156,17 @@ dependencies:
     specifier: ^2.2.1
     version: 2.2.1
   survey-core:
-    specifier: ^1.9.122
-    version: 1.9.122
+    specifier: ^1.9.123
+    version: 1.9.123
   survey-creator-core:
-    specifier: ^1.9.122
-    version: 1.9.122
+    specifier: ^1.9.123
+    version: 1.9.123
   survey-creator-vue:
-    specifier: ^1.9.122
-    version: 1.9.122(vue@3.3.13)
+    specifier: ^1.9.123
+    version: 1.9.123(vue@3.3.13)
   survey-vue3-ui:
-    specifier: ^1.9.122
-    version: 1.9.122(vue@3.3.13)
+    specifier: ^1.9.123
+    version: 1.9.123(vue@3.3.13)
   three:
     specifier: ^0.160.0
     version: 0.160.0
@@ -284,8 +284,8 @@ devDependencies:
     specifier: ^4.7.0
     version: 4.7.0
   type-fest:
-    specifier: ^4.8.3
-    version: 4.8.3
+    specifier: ^4.9.0
+    version: 4.9.0
   vite:
     specifier: ^5.0.10
     version: 5.0.10(sass@1.69.5)
@@ -3729,6 +3729,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -10050,6 +10051,9 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -12487,12 +12491,12 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /survey-core@1.9.122:
-    resolution: {integrity: sha512-1SSxEZwhD+GdhfVKDDNhX/EGGyvcG1OT0XPF/jQCIZL0w72YSc0Tw1zzClYwDXEA/x25jnNYhKE4i5HKRZ16+A==}
+  /survey-core@1.9.123:
+    resolution: {integrity: sha512-EaGAOHBLAdJ1Vu7d638WDDFw4BdG7xEKpWMwu6QfWMXSWJ9cYU6/1AYLN2YCF1bdXaOkQdrfu7+zV3d7vRFpAA==}
     dev: false
 
-  /survey-creator-core@1.9.122:
-    resolution: {integrity: sha512-MEcdwwPKtzsoSmPkSL1bCWUcknQqNbsLaooq3IGp7jgVoKowjRBdL+MCFg7W6UPzLnhk/gVs8Igi81zxsOsxmQ==}
+  /survey-creator-core@1.9.123:
+    resolution: {integrity: sha512-hKL19ZlDV1/Hkp8uRcIaVdlT5INZi40fCcS49yz8N8MJy2h7RFGv9LGwmzxRiMyFGFg1BO+snEMWL6dyQz8//Q==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -12500,28 +12504,28 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.122
+      survey-core: 1.9.123
     dev: false
 
-  /survey-creator-vue@1.9.122(vue@3.3.13):
-    resolution: {integrity: sha512-iYLAQgpBeovLPbg3d0rELS+e+wVwpqq9bOj6tP8E0HQVTEEOcWOzDT3Ns4YNQE3q3OZeBO1XvHFNf6xlVC4Mgg==}
+  /survey-creator-vue@1.9.123(vue@3.3.13):
+    resolution: {integrity: sha512-MGhsnU+8cM2O/eR5YHW5iIjCnZMBa1UcGGwpLSlNkZ4DDHjil9Vptp/LAbkUuHlrpQzDmpuL63BBl91E4S7o/w==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.122
-      survey-creator-core: 1.9.122
-      survey-vue3-ui: 1.9.122(vue@3.3.13)
+      survey-core: 1.9.123
+      survey-creator-core: 1.9.123
+      survey-vue3-ui: 1.9.123(vue@3.3.13)
       vue: 3.3.13(typescript@5.3.3)
     transitivePeerDependencies:
       - ace-builds
     dev: false
 
-  /survey-vue3-ui@1.9.122(vue@3.3.13):
-    resolution: {integrity: sha512-rycxvLGgEjvp3f9LuwLYcV+tnDcTAIhnk4POcgdoREdUKqhvJpuM8dctZ3qG8fV8VCH5SiHgXzDvCtAMYc/aHQ==}
+  /survey-vue3-ui@1.9.123(vue@3.3.13):
+    resolution: {integrity: sha512-dzfMyTpD6PGh4c11+sexunpUhkWnKClY9QCg9V43ZLMSa77XhYcDRdAAujJObsZLY6s1ugSfxjvbPsXf3TBqjA==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.122
+      survey-core: 1.9.123
       vue: 3.3.13(typescript@5.3.3)
     dev: false
 
@@ -12881,8 +12885,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  /type-fest@4.8.3:
-    resolution: {integrity: sha512-//BaTm14Q/gHBn09xlnKNqfI8t6bmdzx2DXYfPBNofN0WUybCEUDcbCWcTa0oF09lzLjZgPphXAsvRiMK0V6Bw==}
+  /type-fest@4.9.0:
+    resolution: {integrity: sha512-KS/6lh/ynPGiHD/LnAobrEFq3Ad4pBzOlJ1wAnJx9N4EYoqFhMfLIBjUT2UEx4wg5ZE+cC1ob6DCSpppVo+rtg==}
     engines: {node: '>=16'}
     dev: true
 
