@@ -18,14 +18,15 @@ definePageMeta({ middleware: "auth" });
 // const { updateSurvey, autoSave } = surveyerStore;
 // const { surveyList } = storeToRefs(surveyerStore);
 
-// if (!(typeof route.params.id === "string" && uuidValidateV4(route.params.id)))
+// const routeParamsId = route.params.id;
+// if (!(typeof routeParamsId === "string" && uuidValidateV4(routeParamsId)))
 //   throw createError({ statusCode: 404, statusMessage: "Survey id is invalid" });
 
 // const creator = new SurveyCreatorModel({
 //   showLogicTab: true,
 //   isAutoSave: true,
 // });
-// const survey = surveyList.value.find((s) => s.rowKey === route.params.id);
+// const survey = surveyList.value.find((s) => s.rowKey === routeParamsId);
 // if (!survey) throw createError({ statusCode: 404, statusMessage: "Survey could not be found" });
 
 // creator.text = survey.model;
