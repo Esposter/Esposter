@@ -12,10 +12,7 @@ export const useReadMembers = async () => {
     try {
       if (!currentRoomId.value) return;
 
-      const response = await $client.room.readMembers.query({
-        roomId: currentRoomId.value,
-        cursor: nextCursor.value,
-      });
+      const response = await $client.room.readMembers.query({ roomId: currentRoomId.value, cursor: nextCursor.value });
       pushMemberList(response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
