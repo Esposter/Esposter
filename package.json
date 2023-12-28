@@ -131,14 +131,5 @@
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released"
-  },
-  "cssnano": {
-    "preset": [
-      "default",
-      {
-        "calc": false
-      }
-    ]
-  },
-  "cssnanoComments": "https://github.com/surveyjs/survey-library/issues/6270"
+  }
 }
