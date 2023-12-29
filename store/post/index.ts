@@ -17,9 +17,9 @@ export const usePostStore = defineStore("post", () => {
       if (index > -1) postList.value[index] = { ...postList.value[index], ...updatedPost };
     }
   };
-  const deletePost = async (id: DeletePostInput) => {
-    await $client.post.deletePost.mutate(id);
-    postList.value = postList.value.filter((r) => r.id !== id);
+  const deletePost = async (postId: DeletePostInput) => {
+    await $client.post.deletePost.mutate(postId);
+    postList.value = postList.value.filter((r) => r.id !== postId);
   };
 
   return {

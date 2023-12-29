@@ -18,13 +18,14 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     const index = surveyList.value.findIndex((s) => s.id === input.id);
     if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...input };
   };
-  const deleteSurvey = async (id: DeleteSurveyInput) => {
-    await $client.survey.deleteSurvey.mutate(id);
-    surveyList.value = surveyList.value.filter((s) => s.id !== id);
+  const deleteSurvey = async (surveyId: DeleteSurveyInput) => {
+    await $client.survey.deleteSurvey.mutate(surveyId);
+    surveyList.value = surveyList.value.filter((s) => s.id !== surveyId);
   };
   const autoSave = async (survey: Survey) => {
     survey.modelVersion++;
-    await $client.survey.updateSurvey.mutate(survey);
+    // Surveyjs needs to know whether the save was successful with a boolean
+    return Boolean(await $client.survey.updateSurvey.mutate(survey));
   };
 
   return {

@@ -13,8 +13,19 @@ const description = ref("");
 
 <template>
   <PostDescriptionRichTextEditor v-model="description" height="4rem" placeholder="Add a comment">
-    <template #append-footer>
-      <StyledButton @click="description.length > 0 && createComment({ parentId: postId, description })">
+    <template #append-footer="{ editor }">
+      <StyledButton
+        v-if="editor"
+        @click="
+          async () => {
+            if (description.length > 0) {
+              const savedDescription = description;
+              editor.commands.clearContent(true);
+              await createComment({ parentId: postId, description: savedDescription });
+            }
+          }
+        "
+      >
         Comment
       </StyledButton>
     </template>

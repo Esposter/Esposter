@@ -10,6 +10,7 @@ export const useCommentStore = defineStore("comment/comment", () => {
     const postId = router.currentRoute.value.params.id;
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : null;
   });
+  const currentPost = ref<PostWithRelations | null>();
   const {
     itemList: commentList,
     pushItemList: pushCommentList,
@@ -27,13 +28,14 @@ export const useCommentStore = defineStore("comment/comment", () => {
       if (index > -1) commentList.value[index] = { ...commentList.value[index], ...updatedComment };
     }
   };
-  const deleteComment = async (id: DeletePostInput) => {
+  const deleteComment = async (commentId: DeletePostInput) => {
     // Remember that posts and comments are the same in terms of data
-    await $client.post.deletePost.mutate(id);
-    commentList.value = commentList.value.filter((r) => r.id !== id);
+    await $client.post.deletePost.mutate(commentId);
+    commentList.value = commentList.value.filter((r) => r.id !== commentId);
   };
 
   return {
+    currentPost,
     commentList,
     pushCommentList,
     ...rest,

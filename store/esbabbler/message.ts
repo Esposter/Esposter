@@ -21,13 +21,15 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     pushItemList: pushMessageList,
     ...rest
   } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
-
+  // Unfortunately we cannot keep the consistency here of calling trpc in our store crud functions
+  // since it's also used in subscriptions to receive messages created by other people :C
   const createMessage = (newMessage: MessageEntity) => {
     messageList.value.unshift(newMessage);
   };
   const sendMessage = async (editor: Editor) => {
     if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;
-
+    // We store the message first before clearing the content as we want to optimistically
+    // clear the message content before the api call for good UX
     const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInput.value };
     editor.commands.clearContent(true);
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
@@ -39,10 +41,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     );
     if (index > -1) messageList.value[index] = { ...messageList.value[index], ...input };
   };
-  const deleteMessage = (input: DeleteMessageInput) => {
-    messageList.value = messageList.value.filter(
-      (m) => !(m.partitionKey === input.partitionKey && m.rowKey === input.rowKey),
-    );
+  const deleteMessage = ({ partitionKey, rowKey }: DeleteMessageInput) => {
+    messageList.value = messageList.value.filter((m) => !(m.partitionKey === partitionKey && m.rowKey === rowKey));
   };
 
   return {

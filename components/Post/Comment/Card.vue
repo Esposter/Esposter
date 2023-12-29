@@ -15,14 +15,14 @@ const isOwner = computed(() => session.value?.user.id === comment.creatorId);
 <template>
   <div flex>
     <PostLikeSection :post="comment" />
-    <v-card px-2="!" pt-2="!" shadow-none!>
+    <v-card px-2="!" pt-2="!" shadow-none="!">
       <v-avatar>
         <v-img v-if="comment.creator.image" :src="comment.creator.image" />
       </v-avatar>
       Posted by <span font-bold>{{ comment.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
       <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
       <v-card-actions p-0="!">
-        <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="comment.id" is-comment />
+        <PostCommentConfirmDeleteDialogButton v-if="isOwner" :comment-id="comment.id" is-comment />
       </v-card-actions>
     </v-card>
   </div>
