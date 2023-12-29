@@ -3,17 +3,18 @@ import { usePostStore } from "@/store/post";
 
 interface PostConfirmDeleteDialogButtonProps {
   postId: string;
+  isComment?: true;
 }
 
-const { postId } = defineProps<PostConfirmDeleteDialogButtonProps>();
+const { postId, isComment } = defineProps<PostConfirmDeleteDialogButtonProps>();
 const { deletePost } = usePostStore();
 </script>
 
 <template>
   <StyledConfirmDeleteDialogButton
     :card-props="{
-      title: 'Delete Post',
-      text: 'Are you sure you want to delete this post?',
+      title: `Delete ${isComment ? 'Comment' : 'Post'}`,
+      text: `Are you sure you want to delete this ${isComment ? 'comment' : 'post'}?`,
     }"
     @delete="
       async (onComplete) => {

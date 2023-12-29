@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Post } from "@/db/schema/posts";
-import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
+import { POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { type SubmitEventPromise } from "vuetify";
 
@@ -41,15 +41,7 @@ const description = ref(initialValues.description);
         </v-row>
         <v-row>
           <v-col>
-            <RichTextEditor
-              v-model="description"
-              placeholder="Text (optional)"
-              :max-length="POST_DESCRIPTION_MAX_LENGTH"
-            >
-              <template #prepend-footer="{ editor }">
-                <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Choose an emoji" />
-              </template>
-            </RichTextEditor>
+            <PostDescriptionRichTextEditor v-model="description" />
           </v-col>
         </v-row>
         <v-row>

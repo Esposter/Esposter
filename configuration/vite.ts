@@ -12,10 +12,9 @@ export const vite: NuxtConfig["vite"] = {
       },
     },
   },
-  // @TODO: Remove this in vue 3.4
+  // @TODO: Remove this in vue 3.5
   vue: {
     script: {
-      defineModel: true,
       propsDestructure: true,
     },
   },

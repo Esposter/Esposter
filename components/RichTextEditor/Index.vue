@@ -9,13 +9,14 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type AnyExtension } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
+  height?: string;
   placeholder: string;
   maxLength: number;
   extensions?: AnyExtension[];
 }
 
-const { placeholder, maxLength, extensions } = defineProps<RichTextEditorProps>();
 const modelValue = defineModel<string>({ required: true });
+const { height = "15rem", placeholder, maxLength, extensions } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
@@ -57,7 +58,7 @@ onBeforeUnmount(() => editor.value?.destroy());
 <style scoped lang="scss">
 :deep(.ProseMirror) {
   padding: 1rem;
-  height: 15rem;
+  height: v-bind(height);
   overflow-y: auto;
   outline: none;
 

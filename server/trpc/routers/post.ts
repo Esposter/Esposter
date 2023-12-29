@@ -25,6 +25,8 @@ export type CreatePostInput = z.infer<typeof createPostInputSchema>;
 
 const createCommentInputSchema = selectPostSchema
   .pick({ description: true })
+  // @TODO: https://github.com/colinhacks/zod/issues/2891
+  .extend({ description: z.string().min(1) })
   .merge(z.object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.unwrap() }));
 export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
 
@@ -33,7 +35,10 @@ const updatePostInputSchema = selectPostSchema
   .merge(selectPostSchema.partial().pick({ title: true, description: true }));
 export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
 
-const updateCommentInputSchema = selectPostSchema.pick({ id: true, description: true });
+const updateCommentInputSchema = selectPostSchema
+  .pick({ id: true, description: true })
+  // @TODO: https://github.com/colinhacks/zod/issues/2891
+  .extend({ description: z.string().min(1) });
 export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
 
 const deletePostInputSchema = selectPostSchema.shape.id;

@@ -9,18 +9,22 @@ const { commentList, hasMore } = storeToRefs(commentStore);
 
 <template>
   <NuxtLayout>
-    <template #left>
-      <EsposterProductList />
-    </template>
-    <v-container>
-      <v-row>
+    <v-container h-full flex flex-1 flex-col>
+      <v-row flex-none!>
         <v-col>
           <PostCard :post="post" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col v-for="comment in commentList" :key="comment.id" cols="12">
-          <PostCard :post="comment" is-comment />
+      <v-row flex-1 flex-col>
+        <v-col flex flex-1 flex-col>
+          <StyledCard flex-1>
+            <v-container>
+              <PostAddCommentRichTextEditor :post-id="post.id" />
+            </v-container>
+            <v-container>
+              <PostCommentCard v-for="comment in commentList" :key="comment.id" :comment="comment" />
+            </v-container>
+          </StyledCard>
         </v-col>
       </v-row>
       <StyledWaypoint :active="hasMore" @change="readMoreComments" />

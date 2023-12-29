@@ -13,5 +13,11 @@ export const useReadPostFromRoute = async () => {
   const post = await $client.post.readPost.query(postId);
   if (!post) throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(ErrorEntity.Post) });
 
+  if (post.parentId)
+    throw createError({
+      statusCode: 404,
+      statusMessage: `${getEntityNotFoundStatusMessage(ErrorEntity.Post)}, you might be trying to find a comment`,
+    });
+
   return post;
 };
