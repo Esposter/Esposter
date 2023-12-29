@@ -4,9 +4,10 @@ import dayjs from "dayjs";
 
 interface PostCardProps {
   post: PostWithRelations;
+  isComment?: true;
 }
 
-const { post } = defineProps<PostCardProps>();
+const { post, isComment } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());
@@ -21,7 +22,7 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
         <v-img v-if="post.creator.image" :src="post.creator.image" />
       </v-avatar>
       Posted by <span font-bold>{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
-      <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
+      <v-card-title v-if="!isComment" class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
         {{ post.title }}
       </v-card-title>
       <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="post.description" />

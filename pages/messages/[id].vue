@@ -11,8 +11,8 @@ const roomStore = useRoomStore();
 const { currentRoomId, roomList, currentRoomName, roomSearchQuery } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 const route = useRoute();
-const routeParamsId = route.params.id;
-currentRoomId.value = typeof routeParamsId === "string" && uuidValidateV4(routeParamsId) ? routeParamsId : null;
+const roomId = route.params.id;
+currentRoomId.value = typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
 roomSearchQuery.value = "";
 
 useSubscribables();

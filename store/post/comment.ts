@@ -7,8 +7,8 @@ export const useCommentStore = defineStore("comment/comment", () => {
   const { $client } = useNuxtApp();
   const router = useRouter();
   const currentPostId = computed(() => {
-    const routeParamsId = router.currentRoute.value.params.id;
-    return typeof routeParamsId === "string" && uuidValidateV4(routeParamsId) ? routeParamsId : null;
+    const postId = router.currentRoute.value.params.id;
+    return typeof postId === "string" && uuidValidateV4(postId) ? postId : null;
   });
   const {
     itemList: commentList,

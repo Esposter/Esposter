@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
-import { NOT_FOUND_BACKGROUND } from "@/services/esposter/constants";
+import { NOT_FOUND_BACKGROUND_PATH } from "@/services/esposter/constants";
 import { gsap } from "gsap";
 
 const event = useRequestEvent();
@@ -23,7 +23,7 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <div
-      :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND})` }"
+      :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND_PATH})` }"
       h-full
       flex
       flex-col

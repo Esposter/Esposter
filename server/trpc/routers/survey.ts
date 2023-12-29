@@ -11,6 +11,9 @@ import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, eq } from "drizzle-orm";
 import { type z } from "zod";
 
+const readSurveyInputSchema = selectSurveySchema.shape.id;
+export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
+
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
@@ -33,6 +36,9 @@ export const surveyRouter = router({
     async ({ ctx }) =>
       (await db.select({ count: count() }).from(surveys).where(eq(surveys.creatorId, ctx.session.user.id)))[0].count,
   ),
+  readSurvey: authedProcedure
+    .input(readSurveyInputSchema)
+    .query(({ input }) => db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) })),
   readSurveys: authedProcedure
     .input(readSurveysInputSchema)
     .query(async ({ input: { offset, limit, sortBy }, ctx }) => {

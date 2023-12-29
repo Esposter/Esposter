@@ -42,7 +42,9 @@ export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
 export const postRouter = router({
   readPost: rateLimitedProcedure
     .input(readPostInputSchema)
-    .query(({ input }) => db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) })),
+    .query(({ input }) =>
+      db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
+    ),
   readPosts: rateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ input: { parentId, cursor, limit, sortBy } }) => {
