@@ -14,7 +14,7 @@ const isOwner = computed(() => session.value?.user.id === comment.creatorId);
 
 <template>
   <div flex>
-    <PostLikeSection :post="comment" />
+    <PostLikeSection :post="comment" is-comment-store />
     <v-card px-2="!" pt-2="!" shadow-none="!">
       <v-avatar>
         <v-img v-if="comment.creator.image" :src="comment.creator.image" />

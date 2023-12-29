@@ -36,7 +36,9 @@ const onUpdateMessage = async (editor: Editor) => {
       rowKey: message.rowKey,
       message: editedMessageHtml.value,
     });
-    if (updatedMessage) updateMessage(updatedMessage);
+    if (!updatedMessage) return;
+
+    updateMessage(updatedMessage);
   } finally {
     emit("update:update-mode", false);
     editedMessageHtml.value = message.message;

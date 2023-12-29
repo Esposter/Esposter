@@ -4,9 +4,12 @@ import dayjs from "dayjs";
 
 interface PostCardProps {
   post: PostWithRelations;
+  // This is only used for the post card in the comments page to direct it
+  // into looking for post data in the comment store instead
+  isCommentStore?: true;
 }
 
-const { post } = defineProps<PostCardProps>();
+const { post, isCommentStore } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());
@@ -15,7 +18,7 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
 
 <template>
   <StyledCard class="card">
-    <PostLikeSection absolute top-2 left-2 :post="post" />
+    <PostLikeSection absolute top-2 left-2 :post="post" :is-comment-store="isCommentStore" />
     <v-card px-2="!" pt-2="!">
       <v-avatar>
         <v-img v-if="post.creator.image" :src="post.creator.image" />

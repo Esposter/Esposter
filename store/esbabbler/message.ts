@@ -33,7 +33,9 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInput.value };
     editor.commands.clearContent(true);
     const newMessage = await $client.message.createMessage.mutate(createMessageInput);
-    if (newMessage) createMessage(newMessage);
+    if (!newMessage) return;
+
+    createMessage(newMessage);
   };
   const updateMessage = (input: UpdateMessageInput) => {
     const index = messageList.value.findIndex(

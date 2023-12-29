@@ -8,18 +8,22 @@ export const usePostStore = defineStore("post", () => {
 
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $client.post.createPost.mutate(input);
-    if (newPost) postList.value.push(newPost);
+    if (!newPost) return;
+
+    postList.value.push(newPost);
   };
   const updatePost = async (input: UpdatePostInput) => {
     const updatedPost = await $client.post.updatePost.mutate(input);
-    if (updatedPost) {
-      const index = postList.value.findIndex((r) => r.id === updatedPost.id);
-      if (index > -1) postList.value[index] = { ...postList.value[index], ...updatedPost };
-    }
+    if (!updatedPost) return;
+
+    const index = postList.value.findIndex((r) => r.id === updatedPost.id);
+    if (index > -1) postList.value[index] = { ...postList.value[index], ...updatedPost };
   };
   const deletePost = async (postId: DeletePostInput) => {
-    await $client.post.deletePost.mutate(postId);
-    postList.value = postList.value.filter((r) => r.id !== postId);
+    const deletedPost = await $client.post.deletePost.mutate(postId);
+    if (!deletedPost) return;
+
+    postList.value = postList.value.filter((r) => r.id !== deletedPost.id);
   };
 
   return {

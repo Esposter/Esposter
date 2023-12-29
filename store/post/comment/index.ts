@@ -1,9 +1,9 @@
 import { type PostWithRelations } from "@/db/schema/posts";
-import { type CreateCommentInput, type DeletePostInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
+import { type CreateCommentInput, type DeleteCommentInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
 import { uuidValidateV4 } from "@/util/uuid";
 
-export const useCommentStore = defineStore("comment/comment", () => {
+export const useCommentStore = defineStore("post/comment", () => {
   const { $client } = useNuxtApp();
   const router = useRouter();
   const currentPostId = computed(() => {
@@ -18,20 +18,29 @@ export const useCommentStore = defineStore("comment/comment", () => {
   } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
 
   const createComment = async (input: CreateCommentInput) => {
+    if (!currentPost.value) return;
+
     const newComment = await $client.post.createComment.mutate(input);
-    if (newComment) commentList.value.push(newComment);
+    if (!newComment) return;
+
+    commentList.value.push(newComment);
+    currentPost.value.noComments += 1;
   };
   const updateComment = async (input: UpdateCommentInput) => {
     const updatedComment = await $client.post.updateComment.mutate(input);
-    if (updatedComment) {
-      const index = commentList.value.findIndex((r) => r.id === updatedComment.id);
-      if (index > -1) commentList.value[index] = { ...commentList.value[index], ...updatedComment };
-    }
+    if (!updatedComment) return;
+
+    const index = commentList.value.findIndex((r) => r.id === updatedComment.id);
+    if (index > -1) commentList.value[index] = { ...commentList.value[index], ...updatedComment };
   };
-  const deleteComment = async (commentId: DeletePostInput) => {
-    // Remember that posts and comments are the same in terms of data
-    await $client.post.deletePost.mutate(commentId);
-    commentList.value = commentList.value.filter((r) => r.id !== commentId);
+  const deleteComment = async (commentId: DeleteCommentInput) => {
+    if (!currentPost.value) return;
+
+    const deletedComment = await $client.post.deleteComment.mutate(commentId);
+    if (!deletedComment) return;
+
+    commentList.value = commentList.value.filter((r) => r.id !== deletedComment.id);
+    currentPost.value.noComments -= 1;
   };
 
   return {

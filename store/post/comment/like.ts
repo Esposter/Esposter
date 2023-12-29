@@ -1,17 +1,23 @@
 import { type CreateLikeInput, type DeleteLikeInput, type UpdateLikeInput } from "@/server/trpc/routers/like";
-import { usePostStore } from "@/store/post";
+import { useCommentStore } from "@/store/post/comment";
 
-export const useLikeStore = defineStore("post/like", () => {
+export const useCommentLikeStore = defineStore("post/comment/like", () => {
   const { $client } = useNuxtApp();
   const { session } = useAuth();
-  const postStore = usePostStore();
-  const { postList } = storeToRefs(postStore);
+  const commentStore = useCommentStore();
+  const { currentPost, commentList } = storeToRefs(commentStore);
+
+  const findPost = (postId: string) => {
+    // We need to track all posts/comments to avoid missing out on updating them on the UI
+    const allPosts = currentPost.value ? [currentPost.value, ...commentList.value] : commentList.value;
+    return allPosts.find((p) => p.id === postId);
+  };
 
   const createLike = async (input: CreateLikeInput) => {
     const newLike = await $client.like.createLike.mutate(input);
     if (!newLike) return;
 
-    const post = postList.value.find((p) => p.id === newLike.postId);
+    const post = findPost(newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
@@ -21,7 +27,7 @@ export const useLikeStore = defineStore("post/like", () => {
     const updatedLike = await $client.like.updateLike.mutate(input);
     if (!updatedLike) return;
 
-    const post = postList.value.find((p) => p.id === updatedLike.postId);
+    const post = findPost(updatedLike.postId);
     if (!post) return;
 
     const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
@@ -36,7 +42,7 @@ export const useLikeStore = defineStore("post/like", () => {
 
     await $client.like.deleteLike.mutate(postId);
 
-    const post = postList.value.find((p) => p.id === postId);
+    const post = findPost(postId);
     if (!post) return;
 
     const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);

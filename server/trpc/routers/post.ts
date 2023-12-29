@@ -6,7 +6,7 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
 import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -43,6 +43,9 @@ export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
 
 const deletePostInputSchema = selectPostSchema.shape.id;
 export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
+
+const deleteCommentInputSchema = selectPostSchema.shape.id;
+export type DeleteCommentInput = z.infer<typeof deleteCommentInputSchema>;
 
 export const postRouter = router({
   readPost: rateLimitedProcedure
@@ -148,7 +151,41 @@ export const postRouter = router({
     });
     return updatedCommentWithRelations ?? null;
   }),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation(async ({ input, ctx }) => {
-    await db.delete(posts).where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id)));
-  }),
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation(
+    async ({ input, ctx }) =>
+      await db.transaction(async (tx) => {
+        const deletedPost = (
+          await tx
+            .delete(posts)
+            .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNull(posts.parentId)))
+            .returning()
+        )[0];
+        if (!deletedPost) return null;
+        // Delete comments
+        await tx.delete(posts).where(eq(posts.parentId, deletedPost.id));
+        return deletedPost;
+      }),
+  ),
+  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation(
+    async ({ input, ctx }) =>
+      await db.transaction(async (tx) => {
+        const deletedComment = (
+          await tx
+            .delete(posts)
+            .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNotNull(posts.parentId)))
+            .returning()
+        )[0];
+        const postId = deletedComment?.parentId;
+        if (!postId) return null;
+        // Update number of comments
+        const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
+        if (!post) return deletedComment;
+
+        await tx
+          .update(posts)
+          .set({ noComments: post.noComments - 1 })
+          .where(eq(posts.id, post.id));
+        return deletedComment;
+      }),
+  ),
 });
