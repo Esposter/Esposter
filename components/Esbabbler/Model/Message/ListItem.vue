@@ -43,7 +43,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span class="text-subtitle-2" pl-2 op="60">
+          <span class="text-subtitle-2 text-grey" pl-2>
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>

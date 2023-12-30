@@ -23,6 +23,9 @@ currentPost.value = post;
             <v-container v-if="status === 'authenticated'">
               <PostCommentCreateRichTextEditor :post-id="currentPost.id" />
             </v-container>
+            <v-container v-if="currentPost.noComments === 0">
+              <PostCommentEmptyBanner />
+            </v-container>
             <v-container>
               <PostCommentCard v-for="comment in commentList" :key="comment.id" :comment="comment" />
             </v-container>
