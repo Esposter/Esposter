@@ -21,29 +21,46 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     pushItemList: pushMessageList,
     ...rest
   } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
-  // Unfortunately we cannot keep the consistency here of calling trpc in our store crud functions
-  // since it's also used in subscriptions to receive messages created by other people :C
-  const createMessage = (newMessage: MessageEntity) => {
-    messageList.value.unshift(newMessage);
-  };
+
   const sendMessage = async (editor: Editor) => {
     if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;
-    // We store the message first before clearing the content as we want to optimistically
-    // clear the message content before the api call for good UX
-    const createMessageInput: CreateMessageInput = { roomId: currentRoomId.value, message: messageInput.value };
+
+    const savedMessageInput = messageInput.value;
     editor.commands.clearContent(true);
-    const newMessage = await $client.message.createMessage.mutate(createMessageInput);
+    await createMessage({ roomId: currentRoomId.value, message: savedMessageInput });
+  };
+
+  const createMessage = async (input: CreateMessageInput) => {
+    const newMessage = await $client.message.createMessage.mutate(input);
     if (!newMessage) return;
 
-    createMessage(newMessage);
+    storeCreateMessage(newMessage);
   };
-  const updateMessage = (input: UpdateMessageInput) => {
+  const updateMessage = async (input: UpdateMessageInput) => {
+    const updatedMessage = await $client.message.updateMessage.mutate(input);
+    if (!updatedMessage) return;
+
+    storeUpdateMessage(updatedMessage);
+  };
+  const deleteMessage = async (input: DeleteMessageInput) => {
+    const deletedMessage = await $client.message.deleteMessage.mutate(input);
+    if (!deletedMessage) return;
+
+    storeDeleteMessage(deletedMessage);
+  };
+
+  // We need to expose the internal store crud message functions
+  // since it's also used in subscriptions to receive messages created by other people
+  const storeCreateMessage = (newMessage: MessageEntity) => {
+    messageList.value.unshift(newMessage);
+  };
+  const storeUpdateMessage = (input: UpdateMessageInput) => {
     const index = messageList.value.findIndex(
       (m) => m.partitionKey === input.partitionKey && m.rowKey === input.rowKey,
     );
     if (index > -1) messageList.value[index] = { ...messageList.value[index], ...input };
   };
-  const deleteMessage = ({ partitionKey, rowKey }: DeleteMessageInput) => {
+  const storeDeleteMessage = ({ partitionKey, rowKey }: DeleteMessageInput) => {
     messageList.value = messageList.value.filter((m) => !(m.partitionKey === partitionKey && m.rowKey === rowKey));
   };
 
@@ -51,9 +68,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     messageList,
     pushMessageList,
     ...rest,
-    createMessage,
     sendMessage,
     updateMessage,
     deleteMessage,
+    storeCreateMessage,
+    storeUpdateMessage,
+    storeDeleteMessage,
   };
 });

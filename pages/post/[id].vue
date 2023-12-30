@@ -3,6 +3,7 @@ import { useCommentStore } from "@/store/post/comment";
 
 const post = await useReadPostFromRoute();
 const readMoreComments = await useReadComments(post.id);
+const { status } = useAuth();
 const commentStore = useCommentStore();
 const { currentPost, commentList, hasMore } = storeToRefs(commentStore);
 currentPost.value = post;
@@ -19,7 +20,7 @@ currentPost.value = post;
       <v-row flex-1 flex-col>
         <v-col flex flex-1 flex-col>
           <StyledCard flex-1>
-            <v-container>
+            <v-container v-if="status === 'authenticated'">
               <PostCommentAddRichTextEditor :post-id="currentPost.id" />
             </v-container>
             <v-container>

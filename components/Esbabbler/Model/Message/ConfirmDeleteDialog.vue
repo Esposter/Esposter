@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import { type MessageEntity } from "@/models/esbabbler/message";
-import { type DeleteMessageInput } from "@/server/trpc/routers/message";
 import { useMessageStore } from "@/store/esbabbler/message";
 
 interface ConfirmDeleteMessageDialogProps {
@@ -13,7 +12,6 @@ defineSlots<{
   messagePreview: (props: {}) => unknown;
 }>();
 const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
-const { $client } = useNuxtApp();
 const { deleteMessage } = useMessageStore();
 </script>
 
@@ -26,12 +24,7 @@ const { deleteMessage } = useMessageStore();
     @delete="
       async (onComplete) => {
         try {
-          const deleteMessageInput: DeleteMessageInput = {
-            partitionKey: message.partitionKey,
-            rowKey: message.rowKey,
-          };
-          await $client.message.deleteMessage.mutate(deleteMessageInput);
-          deleteMessage(deleteMessageInput);
+          await deleteMessage({ partitionKey: message.partitionKey, rowKey: message.rowKey });
         } finally {
           onComplete();
         }

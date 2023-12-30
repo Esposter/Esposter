@@ -17,12 +17,10 @@ const emit = defineEmits<{
   "update:update-mode": [value: false];
   "update:delete-mode": [value: true];
 }>();
-const editedMessageHtml = ref(useRefreshMentions(message.message));
-
-const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const { updateMessage } = useMessageStore();
+const editedMessageHtml = ref(useRefreshMentions(message.message));
 const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
@@ -31,14 +29,11 @@ const onUpdateMessage = async (editor: Editor) => {
       return;
     }
 
-    const updatedMessage = await $client.message.updateMessage.mutate({
+    await updateMessage({
       partitionKey: message.partitionKey,
       rowKey: message.rowKey,
       message: editedMessageHtml.value,
     });
-    if (!updatedMessage) return;
-
-    updateMessage(updatedMessage);
   } finally {
     emit("update:update-mode", false);
     editedMessageHtml.value = message.message;

@@ -127,5 +127,6 @@ export const messageRouter = router({
       const messageClient = await getTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
+      return input;
     }),
 });
