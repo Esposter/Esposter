@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { useCommentStore } from "@/store/post/comment";
-
-const post = await useReadPostFromRoute();
-const readMoreComments = await useReadComments(post.id);
-const { status } = useAuth();
-const commentStore = useCommentStore();
-const { currentPost, commentList, hasMore } = storeToRefs(commentStore);
-currentPost.value = post;
-</script>
-
 <template>
   <div flex flex-col>
     <div class="text-h6" font-bold>Be the first to comment</div>
