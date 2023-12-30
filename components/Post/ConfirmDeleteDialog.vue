@@ -1,29 +1,31 @@
 <script setup lang="ts">
 import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import { useCommentStore } from "@/store/post/comment";
+import { RoutePath } from "@/models/router/RoutePath";
+import { usePostStore } from "@/store/post";
 
-interface PostCommentConfirmDeleteDialogProps {
-  commentId: string;
+interface PostConfirmDeleteDialogProps {
+  postId: string;
 }
 
 defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
-  commentPreview: (props: {}) => unknown;
+  postPreview: (props: {}) => unknown;
 }>();
-const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
-const { deleteComment } = useCommentStore();
+const { postId } = defineProps<PostConfirmDeleteDialogProps>();
+const { deletePost } = usePostStore();
 </script>
 
 <template>
   <StyledDeleteDialog
     :card-props="{
-      title: 'Delete Comment',
-      text: 'Are you sure you want to delete this comment?',
+      title: 'Delete Post',
+      text: 'Are you sure you want to delete this post?',
     }"
     @delete="
       async (onComplete) => {
         try {
-          await deleteComment(commentId);
+          await deletePost(postId);
+          await navigateTo(RoutePath.Index);
         } finally {
           onComplete();
         }
@@ -34,7 +36,7 @@ const { deleteComment } = useCommentStore();
       <slot :="activatorProps" />
     </template>
     <div py-2 mx-4 b-1 b-solid rd-2 shadow-md>
-      <slot name="commentPreview" />
+      <slot name="postPreview" />
     </div>
   </StyledDeleteDialog>
 </template>
