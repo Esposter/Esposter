@@ -1,6 +1,7 @@
 import { type PostWithRelations } from "@/db/schema/posts";
 import { type CreateCommentInput, type DeleteCommentInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
+import { EMPTY_TEXT_REGEX } from "@/util/text";
 import { uuidValidateV4 } from "@/util/uuid";
 
 export const useCommentStore = defineStore("post/comment", () => {
@@ -18,7 +19,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
 
   const createComment = async (input: CreateCommentInput) => {
-    if (!currentPost.value) return;
+    if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
     const newComment = await $client.post.createComment.mutate(input);
     if (!newComment) return;

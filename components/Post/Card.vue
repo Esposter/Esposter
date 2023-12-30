@@ -13,7 +13,7 @@ const { post, isCommentStore } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());
-const isOwner = computed(() => session.value?.user.id === post.creatorId);
+const isCreator = computed(() => session.value?.user.id === post.creatorId);
 </script>
 
 <template>
@@ -30,8 +30,8 @@ const isOwner = computed(() => session.value?.user.id === post.creatorId);
       <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="post.description" />
       <v-card-actions p-0="!">
         <PostCommentsButton :post="post" />
-        <PostUpdateButton v-if="isOwner" :post-id="post.id" />
-        <PostConfirmDeleteDialogButton v-if="isOwner" :post-id="post.id" />
+        <PostUpdateButton v-if="isCreator" :post-id="post.id" />
+        <PostConfirmDeleteDialogButton v-if="isCreator" :post-id="post.id" />
       </v-card-actions>
     </v-card>
   </StyledCard>

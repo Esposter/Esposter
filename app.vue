@@ -43,6 +43,10 @@ canvas {
 .fade-leave-to {
   opacity: 0;
 }
+// Button text don't need to be capitalised
+.v-btn {
+  text-transform: none;
+}
 </style>
 
 <style scoped lang="scss">

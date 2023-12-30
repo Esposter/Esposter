@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useCommentStore } from "@/store/post/comment";
+import { EMPTY_TEXT_REGEX } from "@/util/text";
 
-interface PostAddCommentRichTextEditorProps {
+interface PostCreateCommentRichTextEditorProps {
   postId: string;
 }
 
-const { postId } = defineProps<PostAddCommentRichTextEditorProps>();
+const { postId } = defineProps<PostCreateCommentRichTextEditorProps>();
 const commentStore = useCommentStore();
 const { createComment } = commentStore;
 const description = ref("");
+const isEmpty = computed(() => EMPTY_TEXT_REGEX.test(description.value));
 </script>
 
 <template>
@@ -16,13 +18,12 @@ const description = ref("");
     <template #append-footer="{ editor }">
       <StyledButton
         v-if="editor"
+        :disabled="isEmpty"
         @click="
           async () => {
-            if (description.length > 0) {
-              const savedDescription = description;
-              editor.commands.clearContent(true);
-              await createComment({ parentId: postId, description: savedDescription });
-            }
+            const savedDescription = description;
+            editor.commands.clearContent(true);
+            await createComment({ parentId: postId, description: savedDescription });
           }
         "
       >

@@ -21,7 +21,7 @@ currentPost.value = post;
         <v-col flex flex-1 flex-col>
           <StyledCard flex-1>
             <v-container v-if="status === 'authenticated'">
-              <PostCommentAddRichTextEditor :post-id="currentPost.id" />
+              <PostCommentCreateRichTextEditor :post-id="currentPost.id" />
             </v-container>
             <v-container>
               <PostCommentCard v-for="comment in commentList" :key="comment.id" :comment="comment" />
