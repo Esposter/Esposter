@@ -114,7 +114,7 @@ li {
 
 @for $i from 1 through $card-length {
   li:nth-of-type(#{$i}) {
-    --index: #{floor(($i - 1) / 2)};
+    --index: #{floor(calc(($i - 1) / 2))};
   }
 }
 
