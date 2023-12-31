@@ -26,6 +26,11 @@ const cardType = ref(CardType.Marquee);
         </v-col>
       </v-row>
       <v-row pt-12>
+        <v-col flex justify-center>
+          <VisualGlobe />
+        </v-col>
+      </v-row>
+      <v-row pt-12>
         <v-col class="text-h5" flex justify-center text-center font="Montserrat!">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>

@@ -47,9 +47,11 @@ onMounted(() => {
 
   const ambientLight = new AmbientLight(0xffffff, 4);
   scene.add(ambientLight);
+
   const directionalLight = new DirectionalLight(0xffffff, 6);
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
+
   const directionalLight2 = new DirectionalLight(0xffffff, 6);
   directionalLight2.position.set(-1, -1, -1);
   scene.add(directionalLight2);
@@ -74,14 +76,14 @@ onMounted(() => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const clock = new Clock();
-  const tick = () => {
+  const animate = () => {
     const elapsedTime = clock.getElapsedTime();
     if (gem) gem.rotation.y = 1.1 * elapsedTime;
     controls.update();
     renderer.render(scene, camera);
-    window.requestAnimationFrame(tick);
+    window.requestAnimationFrame(animate);
   };
-  tick();
+  animate();
 });
 </script>
 
