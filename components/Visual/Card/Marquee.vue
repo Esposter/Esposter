@@ -44,8 +44,7 @@ const { surface, "on-surface": onSurface } = useColors();
 
 <style scoped lang="scss">
 // @NOTE: Make sure to manually change this when the total number of cards are changed
-// Unfortunately we have to do this manually because we cannot use vue props as an index
-// for sass loops :C
+// Unfortunately we have to do this manually because we cannot use vue props as an index for sass loops :C
 $card-length: 5;
 
 .window {
