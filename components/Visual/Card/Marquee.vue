@@ -13,7 +13,7 @@ const { surface, "on-surface": onSurface } = useColors();
   <StyledCard
     :style="{
       '--one-card-col-rows': Math.ceil(cards.length / 2),
-      '--speed': '10s',
+      '--duration': '10s',
       '--transition': '.15s',
       '--active': 0,
     }"
@@ -61,8 +61,7 @@ $card-length: 3;
 }
 
 .grid {
-  --cols: 2;
-  --rows: var(--one-card-col-rows) * var(--cols);
+  --rows: #{ceil($card-length / 2)};
   // Controls the grid animation offset on entry/exit
   --inset: 0;
   --outset: 3;
@@ -81,7 +80,14 @@ $card-length: 3;
 }
 
 li {
+  --delay: calc((var(--duration) / var(--rows)) * (var(--index) - 8));
+  translate: 0% calc((var(--rows) - var(--index) + var(--inset)) * 100%);
+  animation: slide var(--duration) var(--delay) infinite linear;
   transform-style: preserve-3d;
+
+  &:hover {
+    --active: 1;
+  }
 
   &::before {
     content: "";
@@ -106,6 +112,18 @@ li {
   }
 }
 
+@keyframes slide {
+  100% {
+    translate: 0% calc(calc((var(--index) + var(--outset)) * -100%));
+  }
+}
+
+@for $i from 1 through $card-length {
+  li:nth-of-type(#{$i}) {
+    --index: #{floor(($i - 1) / 2)};
+  }
+}
+
 .item {
   background-color: v-bind(surface);
   transition:
@@ -119,31 +137,9 @@ li {
   transform: translate3d(0, 0, calc(var(--active) * 24px));
 }
 
-@for $i from 1 through $card-length {
-  li:nth-of-type(#{$i}) {
-    --index: (#{$i} - 1) / 2;
-  }
-}
-
-li {
-  --delay: calc((var(--speed) / var(--rows)) * (var(--index) - 8));
-  translate: 0% calc(((var(--rows) - var(--index)) + var(--inset)) * 100%);
-  animation: slide var(--speed) var(--delay) infinite linear;
-
-  &:hover {
-    --active: 1;
-  }
-}
-
-@keyframes slide {
-  100% {
-    translate: 0% calc(calc((var(--index) + var(--outset)) * -100%));
-  }
-}
-
 @container (width < 400px) {
   .grid {
-    --cols: 1;
+    --rows: #{$card-length};
     grid-template-columns: 1fr;
   }
 

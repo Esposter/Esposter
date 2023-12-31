@@ -13,7 +13,7 @@ const modelSwitch = computed<boolean>({
 </script>
 
 <template>
-  <v-switch v-model="modelSwitch">
+  <v-switch v-model="modelSwitch" hide-details>
     <template #prepend>
       {{ CardType.Marquee }}
     </template>
