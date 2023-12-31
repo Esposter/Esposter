@@ -12,7 +12,6 @@ const { surface, "on-surface": onSurface } = useColors();
 <template>
   <StyledCard
     :style="{
-      '--one-card-col-rows': Math.ceil(cards.length / 2),
       '--duration': '10s',
       '--transition': '.15s',
       '--active': 0,
@@ -20,12 +19,13 @@ const { surface, "on-surface": onSurface } = useColors();
     class="window"
     p-4="!"
   >
-    <div class="scene">
-      <ul class="grid" px-4>
+    <div class="scene" h-64>
+      <ul class="grid" px-4 h-full>
         <li v-for="(card, index) in cards" :key="index">
           <div
             class="item border-sm"
             p-4
+            h-full
             flex
             justify-center
             items-center
@@ -62,9 +62,8 @@ $card-length: 3;
 
 .grid {
   --rows: #{ceil($card-length / 2)};
-  // Controls the grid animation offset on entry/exit
-  --inset: 0;
-  --outset: 3;
+  --inset: var(--rows);
+  --outset: var(--rows);
   list-style-type: none;
   position: relative;
   display: grid;
@@ -80,7 +79,10 @@ $card-length: 3;
 }
 
 li {
-  --delay: calc((var(--duration) / var(--rows)) * (var(--index) - 8));
+  // We want the total distance travelled to be the size of 4 containers (or var(--rows))
+  // Starting at 2 from the beginning and finishing at 2 to the end
+  --distance: calc(var(--rows) * 4);
+  --delay: calc(var(--duration) * var(--index) / var(--distance));
   translate: 0% calc((var(--rows) - var(--index) + var(--inset)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
   transform-style: preserve-3d;
@@ -97,7 +99,7 @@ li {
     background-color: v-bind(onSurface);
     opacity: 0.1;
     scale: 1 calc(1 + (var(--active) * 0.05));
-    filter: blur(calc(var(--active) * 8px));
+    filter: blur(calc(var(--active) * 0.5rem));
     transition:
       scale var(--transition),
       opacity var(--transition),
@@ -114,7 +116,7 @@ li {
 
 @keyframes slide {
   100% {
-    translate: 0% calc(calc((var(--index) + var(--outset)) * -100%));
+    translate: 0% calc((var(--rows) + var(--index) + var(--outset)) * -100%);
   }
 }
 
@@ -145,7 +147,7 @@ li {
 
   @for $i from 1 through $card-length {
     li:nth-of-type(#{$i}) {
-      --index: #{$i} - 1;
+      --index: #{$i - 1};
     }
   }
 }
