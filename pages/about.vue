@@ -32,21 +32,7 @@ const cardType = ref(CardType.Marquee);
       <v-row>
         <v-col cols="12" flex justify-end>
           <div>
-            <v-switch
-              @click="
-                () => {
-                  if (cardType === CardType.Marquee) cardType = CardType.Carousel;
-                  else cardType = CardType.Marquee;
-                }
-              "
-            >
-              <template #prepend>
-                {{ CardType.Marquee }}
-              </template>
-              <template #append>
-                {{ CardType.Carousel }}
-              </template>
-            </v-switch>
+            <VisualCardSwitch v-model="cardType" />
           </div>
         </v-col>
         <v-col cols="12">

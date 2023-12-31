@@ -19,7 +19,6 @@ const { surface, "on-surface": onSurface } = useColors();
     }"
     class="window"
     p-4="!"
-    h-64
   >
     <div class="scene">
       <ul class="grid" px-4>
@@ -27,7 +26,6 @@ const { surface, "on-surface": onSurface } = useColors();
           <div
             class="item border-sm"
             p-4
-            min-h-32
             flex
             justify-center
             items-center
@@ -63,7 +61,7 @@ $card-length: 3;
 }
 
 .grid {
-  --cols: 1;
+  --cols: 2;
   --rows: var(--one-card-col-rows) * var(--cols);
   // Controls the grid animation offset on entry/exit
   --inset: 0;
@@ -128,10 +126,9 @@ li {
 }
 
 li {
-  --duration: calc(var(--speed) * var(--cols));
-  --delay: calc((var(--duration) / var(--rows)) * (var(--index) - 8));
+  --delay: calc((var(--speed) / var(--rows)) * (var(--index) - 8));
   translate: 0% calc(((var(--rows) - var(--index)) + var(--inset)) * 100%);
-  animation: slide var(--duration) var(--delay) infinite linear;
+  animation: slide var(--speed) var(--delay) infinite linear;
 
   &:hover {
     --active: 1;
@@ -146,7 +143,7 @@ li {
 
 @container (width < 400px) {
   .grid {
-    --cols: 2;
+    --cols: 1;
     grid-template-columns: 1fr;
   }
 
