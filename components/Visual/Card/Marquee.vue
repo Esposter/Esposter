@@ -60,7 +60,7 @@ $card-length: 5;
 }
 
 .grid {
-  --rows: #{ceil($card-length / 2)};
+  --rows: #{ceil(calc($card-length / 2))};
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
