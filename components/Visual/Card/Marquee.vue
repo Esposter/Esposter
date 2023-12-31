@@ -11,7 +11,12 @@ const { surface } = useColors();
 
 <template>
   <StyledCard
-    :style="{ '--card-length': cards.length, '--speed': '10s', '--transition': '.15s', '--active': 0 }"
+    :style="{
+      '--one-card-col-rows': Math.ceil(cards.length / 2),
+      '--speed': '10s',
+      '--transition': '.15s',
+      '--active': 0,
+    }"
     class="window"
     p-4="!"
     h-64
@@ -31,7 +36,7 @@ const { surface } = useColors();
 </template>
 
 <style scoped lang="scss">
-$card-length: 3;
+$card-length: 10;
 
 .window {
   container-type: inline-size;
@@ -46,7 +51,8 @@ $card-length: 3;
 }
 
 .grid {
-  --count: var(--card-length);
+  --cols: 1;
+  --rows: var(--one-card-col-rows) * var(--cols);
   // Controls the grid animation offset on entry/exit
   --inset: 0;
   --outset: 2.5;
@@ -100,7 +106,6 @@ li {
   border-radius: 6px;
   cursor: pointer;
   display: flex;
-  gap: 1rem;
   height: 100%;
   justify-content: start;
   overflow: hidden;
@@ -118,116 +123,46 @@ li {
   transform: translate3d(0, 0, calc(var(--active, 0) * 24px));
 }
 
-li:nth-of-type(1) {
-  --index: 0;
-}
-li:nth-of-type(2) {
-  --index: 0;
-}
-li:nth-of-type(3) {
-  --index: 1;
-}
-li:nth-of-type(4) {
-  --index: 1;
-}
-li:nth-of-type(5) {
-  --index: 2;
-}
-li:nth-of-type(6) {
-  --index: 2;
-}
-li:nth-of-type(7) {
-  --index: 3;
-}
-li:nth-of-type(8) {
-  --index: 3;
-}
-li:nth-of-type(9) {
-  --index: 4;
-}
-li:nth-of-type(10) {
-  --index: 4;
-}
-li:nth-of-type(11) {
-  --index: 5;
-}
-li:nth-of-type(12) {
-  --index: 5;
-}
-
-@container (width < 400px) {
-  .grid {
-    --count: 12;
-    --inset: 0;
-    --outset: 3;
-    grid-template-columns: 1fr;
+@for $i from 1 through $card-length {
+  li:nth-of-type(#{$i}) {
+    --index: (#{$i} - 1) / 2;
   }
-
-  li:nth-of-type(1) {
-    --index: 0;
-  }
-  li:nth-of-type(2) {
-    --index: 1;
-  }
-  li:nth-of-type(3) {
-    --index: 2;
-  }
-  li:nth-of-type(4) {
-    --index: 3;
-  }
-  li:nth-of-type(5) {
-    --index: 4;
-  }
-  li:nth-of-type(6) {
-    --index: 5;
-  }
-  li:nth-of-type(7) {
-    --index: 6;
-  }
-  li:nth-of-type(8) {
-    --index: 7;
-  }
-  li:nth-of-type(9) {
-    --index: 8;
-  }
-  li:nth-of-type(10) {
-    --index: 9;
-  }
-  li:nth-of-type(11) {
-    --index: 10;
-  }
-  li:nth-of-type(12) {
-    --index: 11;
-  }
-
-  li {
-    --duration: calc(var(--speed) * 2);
-    --delay: calc((var(--duration) / var(--count)) * (var(--index, 0) - 8));
-  }
-}
-
-.grid {
-  gap: 0 2rem;
 }
 
 li {
   --duration: calc(var(--speed) * 1);
-  --delay: calc((var(--duration) / var(--count)) * (var(--index, 0) - 8));
+  --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
+  translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
-  translate: 0% calc(((var(--count) - var(--index)) + var(--inset, 0)) * 100%);
+
+  &:hover {
+    --active: 1;
+  }
 }
-li:hover {
-  --active: 1;
-}
+
 @keyframes slide {
   100% {
     translate: 0% calc(calc((var(--index) + var(--outset, 0)) * -100%));
   }
 }
+
 @container (width < 400px) {
+  .grid {
+    --cols: 2;
+    --inset: 0;
+    --outset: 3;
+    grid-template-columns: 1fr;
+  }
+
+  @for $i from 1 through $card-length {
+    li:nth-of-type(#{$i}) {
+      --index: #{$i} - 1;
+    }
+  }
+
   li {
     --duration: calc(var(--speed) * 2);
-    --delay: calc((var(--duration) / var(--count)) * (var(--index, 0) - 8));
+    --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
   }
 }
 </style>
