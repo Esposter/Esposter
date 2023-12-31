@@ -95,22 +95,25 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   const numberOfCards = Math.min(maxShownCards, cards.length - 1);
   const items: CardStyleVariables[] = [];
 
-  // Start at right most and move to the left
-  // We'll reverse at the end
+  // Start from the right most card and calculate recursively by moving left
+  // so we are able to use the right-neighbour card's marginRight and scaleY
+  // for the current card's oldMarginRight and oldScaleY
+  // Remember that our animation flows from right (old) to left (new)
+  // We'll reverse the items at the end so it still maintains LTR chronological order
   for (let i = 0; i < numberOfCards; i++)
     items.push({
       // Normal cards talk about how they move from their position to the next one
-      oldMarginRight: i > 0 ? items[items.length - 1].marginRight : inactiveCardStyle.value.marginRight,
+      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : items[items.length - 1].marginRight,
       marginRight: `${i * scale.value}rem`,
-      oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`, // we lose 10% for each shift
+      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : items[items.length - 1].scaleY,
+      // We lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,
     });
 
-  // This is for the SFC style bindings that need this to exist
   items.reverse();
 
   // We just need items for the rest so that we don't try to do operations on undefined
-  for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
+  for (let i = numberOfCards; i < maxShownCards; i++) items.push({});
   return items;
 });
 
@@ -119,7 +122,7 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
 }));
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
-  // don't care about size if we just have 1 card
+  // Don't care about size if we just have 1 card
   if (cards.length === 1) return { scaleY: "1" };
   return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
 });
@@ -233,7 +236,7 @@ watch(
 }
 
 @keyframes active-card {
-  // we start on the right side
+  // We start on the right side
   0% {
     // active cards don't have any scale/translate
     transform: translateX(0%) scaleY(1);
