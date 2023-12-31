@@ -36,7 +36,10 @@ const { surface } = useColors();
 </template>
 
 <style scoped lang="scss">
-$card-length: 10;
+// @NOTE: Make sure to manually change this when the total number of cards are changed
+// Unforunately we have to do this manually because we cannot use vue props as an index
+// for sass loops :C
+$card-length: 3;
 
 .window {
   container-type: inline-size;
@@ -55,7 +58,7 @@ $card-length: 10;
   --rows: var(--one-card-col-rows) * var(--cols);
   // Controls the grid animation offset on entry/exit
   --inset: 0;
-  --outset: 2.5;
+  --outset: 3;
   list-style-type: none;
   position: relative;
   display: grid;
@@ -71,19 +74,17 @@ $card-length: 10;
 }
 
 li {
-  min-height: 60px;
   transform-style: preserve-3d;
-  z-index: calc(1 + var(--active));
 
   &::before {
     content: "";
     position: absolute;
     inset: 4px 4px -2px -2px;
-    border-radius: 6px;
-    background: hsl(0 0% 0% / 0.1);
-    scale: 1 calc(1 + (var(--active, 0) * 0.05));
-    filter: blur(calc(var(--active, 0) * 8px));
-    z-index: -1;
+    border-radius: 4px;
+    background-color: black;
+    opacity: 0.1;
+    scale: 1 calc(1 + (var(--active) * 0.05));
+    filter: blur(calc(var(--active) * 8px));
     transition:
       scale var(--transition),
       opacity var(--transition),
@@ -119,8 +120,8 @@ li {
     color 0.25s,
     border 0.25s,
     box-shadow 0.25s;
-  scale: calc(1 + (var(--active, 0) * 0.05));
-  transform: translate3d(0, 0, calc(var(--active, 0) * 24px));
+  scale: calc(1 + (var(--active) * 0.05));
+  transform: translate3d(0, 0, calc(var(--active) * 24px));
 }
 
 @for $i from 1 through $card-length {
@@ -130,9 +131,9 @@ li {
 }
 
 li {
-  --duration: calc(var(--speed) * 1);
-  --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
-  translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
+  --duration: calc(var(--speed) * var(--cols));
+  --delay: calc((var(--duration) / var(--rows)) * (var(--index) - 8));
+  translate: 0% calc(((var(--rows) - var(--index)) + var(--inset)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
 
   &:hover {
@@ -142,15 +143,13 @@ li {
 
 @keyframes slide {
   100% {
-    translate: 0% calc(calc((var(--index) + var(--outset, 0)) * -100%));
+    translate: 0% calc(calc((var(--index) + var(--outset)) * -100%));
   }
 }
 
 @container (width < 400px) {
   .grid {
     --cols: 2;
-    --inset: 0;
-    --outset: 3;
     grid-template-columns: 1fr;
   }
 
@@ -158,11 +157,6 @@ li {
     li:nth-of-type(#{$i}) {
       --index: #{$i} - 1;
     }
-  }
-
-  li {
-    --duration: calc(var(--speed) * 2);
-    --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
   }
 }
 </style>
