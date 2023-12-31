@@ -16,8 +16,8 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 const id = "globe";
-const width = 500;
-const height = 500;
+const width = 1000;
+const height = 1000;
 
 onMounted(async () => {
   const canvas = document.querySelector(`#${id}`) as HTMLCanvasElement;
@@ -53,8 +53,8 @@ onMounted(async () => {
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.enablePan = false;
-  controls.minDistance = 200;
-  controls.maxDistance = 500;
+  controls.minDistance = width / 3;
+  controls.maxDistance = width / 1.5;
   controls.rotateSpeed = 0.8;
   controls.zoomSpeed = 1;
   controls.autoRotate = false;
@@ -120,5 +120,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <canvas :id :style="{ width, height }" />
+  <canvas :id />
 </template>

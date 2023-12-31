@@ -91,26 +91,25 @@ const scale = computed<number>(() => {
 });
 
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
-  // determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
+  // Determine how many cards we have to care about, ignoring 1 card (since it's our moving card)
   const numberOfCards = Math.min(maxShownCards, cards.length - 1);
-  // start at right most and move to the left
-  // we just need items for the rest so that we don't try to do operations on undefined
   const items: CardStyleVariables[] = [];
 
-  // we'll reverse at the end
-  for (let i = 0; i < numberOfCards - 1; i++)
+  // Start at right most and move to the left
+  // We'll reverse at the end
+  for (let i = 0; i < numberOfCards; i++)
     items.push({
-      // normal cards talk about how they move from their position to the next one
-      oldMarginRight: `${i * scale.value}rem`,
-      marginRight: `${(i + 1) * scale.value}rem`,
+      // Normal cards talk about how they move from their position to the next one
+      oldMarginRight: i > 0 ? items[items.length - 1].marginRight : inactiveCardStyle.value.marginRight,
+      marginRight: `${i * scale.value}rem`,
       oldScaleY: i > 0 ? items[items.length - 1].scaleY : inactiveCardStyle.value.scaleY, // we lose 10% for each shift
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 2 - i))}`, // we lose 10% for each shift
+      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`, // we lose 10% for each shift
     });
 
-  // this is for the SFC style bindings that need this to exist
+  // This is for the SFC style bindings that need this to exist
   items.reverse();
 
-  // we just need items for the rest so that we don't try to do operations on undefined
+  // We just need items for the rest so that we don't try to do operations on undefined
   for (let i = numberOfCards - 1; i < maxShownCards; i++) items.push({});
   return items;
 });
@@ -138,13 +137,13 @@ const classes = computed<string[]>(() => {
 // There are 4 types of cards to generate
 // Active, this is the card moving from right -> left -> right
 // Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
-// InActive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
+// Inactive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
 // 'Normal', this is just one of the normal cards on the right that make their way to become active.
 const getClass = (cardId: number): string => {
   const offset = cardIds.value.indexOf(cardId);
 
   if (inactiveCardId === null) {
-    // set initial positions for everything, in these cases the 'activeCard' is the first card
+    // Set initial positions for everything, in these cases the 'activeCard' is the first card
     if (cardId === activeCardId.value) return "initial-active-card";
     if (offset === Math.min(maxShownCards + 1, cards.length) - 2) return "last-card";
     if (offset > maxShownCards - 2) return "overflow-card";
@@ -354,25 +353,25 @@ watch(
   }
 }
 
-// Sadly vue runs it's SFC code to pickup bindings *before* SASS runs
+// Sadly vue runs its SFC code to pickup bindings *before* SASS runs
 // this sadly means that we need to list all variables here.
 // This is quite ugly, but does solve having to list out each class manually...
 .force-vue-to-pickup-bindings {
   left: v-bind("normalCardStyles[0].marginRight");
   left: v-bind("normalCardStyles[0].oldMarginRight");
-  left: v-bind("normalCardStyles[0].oldScaleY");
   left: v-bind("normalCardStyles[0].scaleY");
+  left: v-bind("normalCardStyles[0].oldScaleY");
   left: v-bind("normalCardStyles[1].marginRight");
   left: v-bind("normalCardStyles[1].oldMarginRight");
-  left: v-bind("normalCardStyles[1].oldScaleY");
   left: v-bind("normalCardStyles[1].scaleY");
+  left: v-bind("normalCardStyles[1].oldScaleY");
   left: v-bind("normalCardStyles[2].marginRight");
   left: v-bind("normalCardStyles[2].oldMarginRight");
   left: v-bind("normalCardStyles[2].scaleY");
   left: v-bind("normalCardStyles[2].oldScaleY");
   left: v-bind("normalCardStyles[3].marginRight");
   left: v-bind("normalCardStyles[3].oldMarginRight");
-  left: v-bind("normalCardStyles[3].oldScaleY");
   left: v-bind("normalCardStyles[3].scaleY");
+  left: v-bind("normalCardStyles[3].oldScaleY");
 }
 </style>

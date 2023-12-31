@@ -26,16 +26,9 @@ const cardType = ref(CardType.Marquee);
         </v-col>
       </v-row>
       <v-row pt-12>
-        <v-col flex justify-center>
-          <VisualGlobe />
-        </v-col>
-      </v-row>
-      <v-row pt-12>
-        <v-col class="text-h5" flex justify-center text-center font="Montserrat!">
+        <v-col class="text-h5" flex justify-center text-center font="Montserrat!" cols="12">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" flex justify-end>
           <div>
             <VisualCardSwitch v-model="cardType" />
@@ -44,6 +37,14 @@ const cardType = ref(CardType.Marquee);
         <v-col cols="12">
           <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards="cards" />
           <VisualCardCarousel v-else :cards="cards" />
+        </v-col>
+      </v-row>
+      <v-row pt-12>
+        <v-col class="text-h5" flex justify-center text-center font="Montserrat!" cols="12">
+          Here's a globe for you to play around if you are bored 🙂
+        </v-col>
+        <v-col flex justify-center>
+          <VisualGlobe />
         </v-col>
       </v-row>
     </v-container>
