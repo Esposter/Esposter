@@ -81,13 +81,13 @@ const providerProps = ref<ProviderProps[]>([
 
 <style scoped lang="scss">
 .button {
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 4px 0 rgba(black, 0.25);
   transition:
     box-shadow 0.2s,
     transform 0.2s;
 
   &:hover {
-    box-shadow: 0 2px 10px 2px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 2px 10px 2px rgba(black, 0.35);
     transform: translateY(-3px);
   }
 }

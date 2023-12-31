@@ -6,7 +6,7 @@ interface VisualCardMarqueeProps {
 }
 
 const { cards } = defineProps<VisualCardMarqueeProps>();
-const { surface } = useColors();
+const { surface, "on-surface": onSurface } = useColors();
 </script>
 
 <template>
@@ -21,13 +21,22 @@ const { surface } = useColors();
     p-4="!"
     h-64
   >
-    <div class="scene" w-full h-full>
-      <ul class="grid" px-4 w-full h-full>
+    <div class="scene">
+      <ul class="grid" px-4>
         <li v-for="(card, index) in cards" :key="index">
-          <div class="item">
-            <div class="item-text" min-h-16>
-              {{ card.text }}
-            </div>
+          <div
+            class="item border-sm"
+            p-4
+            min-h-32
+            flex
+            justify-center
+            items-center
+            text-center
+            rd-1
+            cursor-pointer
+            font-Montserrat
+          >
+            {{ card.text }}
           </div>
         </li>
       </ul>
@@ -48,8 +57,8 @@ $card-length: 3;
 
 .scene {
   --buff: 3rem;
-  mask: linear-gradient(transparent, white var(--buff) calc(100% - var(--buff)), transparent),
-    linear-gradient(90deg, transparent, white var(--buff) calc(100% - var(--buff)), transparent);
+  mask: linear-gradient(transparent, v-bind(surface) var(--buff) calc(100% - var(--buff)), transparent),
+    linear-gradient(90deg, transparent, v-bind(surface) var(--buff) calc(100% - var(--buff)), transparent);
   mask-composite: intersect;
 }
 
@@ -80,8 +89,8 @@ li {
     content: "";
     position: absolute;
     inset: 4px 4px -2px -2px;
-    border-radius: 4px;
-    background-color: black;
+    border-radius: 0.25rem;
+    background-color: v-bind(onSurface);
     opacity: 0.1;
     scale: 1 calc(1 + (var(--active) * 0.05));
     filter: blur(calc(var(--active) * 8px));
@@ -92,27 +101,15 @@ li {
       filter var(--transition);
     transform-origin: 50% 0;
     box-shadow:
-      0 0 #0000,
-      0 0 #0000,
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+      0 0 black,
+      0 0 black,
+      0 4px 6px -1px rgba(black, 0.1),
+      0 2px 4px -2px rgba(black, 0.1);
   }
 }
 
 .item {
-  align-items: center;
-  background: hsl(0 0% 100%);
-  border: 1px solid hsl(0 0% 90%);
-  color: hsl(0 0% 10%);
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  height: 100%;
-  justify-content: start;
-  overflow: hidden;
-  padding: 1.25rem;
-  text-align: center;
-  width: 100%;
+  background-color: v-bind(surface);
   transition:
     transform var(--transition),
     scale var(--transition),
