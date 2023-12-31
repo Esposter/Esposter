@@ -20,7 +20,7 @@ const { surface, "on-surface": onSurface } = useColors();
     p-4="!"
   >
     <div class="scene" h-64>
-      <ul class="grid" px-4 h-full>
+      <ul class="grid" px-4 h-full grid gap-x-4 list-none>
         <li v-for="(card, index) in cards" :key="index">
           <div
             class="item border-sm"
@@ -46,7 +46,7 @@ const { surface, "on-surface": onSurface } = useColors();
 // @NOTE: Make sure to manually change this when the total number of cards are changed
 // Unforunately we have to do this manually because we cannot use vue props as an index
 // for sass loops :C
-$card-length: 3;
+$card-length: 5;
 
 .window {
   container-type: inline-size;
@@ -62,13 +62,9 @@ $card-length: 3;
 
 .grid {
   --rows: #{ceil($card-length / 2)};
-  --inset: var(--rows);
-  --outset: var(--rows);
-  list-style-type: none;
-  position: relative;
-  display: grid;
+  --inset: 0;
+  --outset: 1;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
   transition: transform 0.5s;
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
@@ -79,11 +75,8 @@ $card-length: 3;
 }
 
 li {
-  // We want the total distance travelled to be the size of 4 containers (or var(--rows))
-  // Starting at 2 from the beginning and finishing at 2 to the end
-  --distance: calc(var(--rows) * 4);
-  --delay: calc(var(--duration) * var(--index) / var(--distance));
-  translate: 0% calc((var(--rows) - var(--index) + var(--inset)) * 100%);
+  --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
+  translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
   transform-style: preserve-3d;
 
@@ -116,7 +109,7 @@ li {
 
 @keyframes slide {
   100% {
-    translate: 0% calc((var(--rows) + var(--index) + var(--outset)) * -100%);
+    translate: 0% calc(calc((var(--index) + var(--outset, 0)) * -100%));
   }
 }
 

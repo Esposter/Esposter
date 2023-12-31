@@ -2,7 +2,8 @@
 import { type Card } from "@/models/visual/Card";
 import { CardType } from "@/models/visual/CardType";
 
-const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { text: "Arsentiy Zakharchenko" }];
+const supporters = ["Braedon Wooding", "Ryan Fallah", "Arsentiy Zakharchenko", "Bill Do", "Leila Yuan"];
+const cards: Card[] = supporters.map((s) => ({ text: s }));
 const cardType = ref(CardType.Marquee);
 </script>
 
