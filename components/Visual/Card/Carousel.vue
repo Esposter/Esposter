@@ -5,6 +5,14 @@ import BaseCard from "@/components/Visual/BaseCard.vue";
 import { type Card } from "@/models/visual/Card";
 import { type Component } from "vue";
 
+interface VisualCardCarouselProps {
+  cards: Card[];
+  duration?: number;
+  maxShownCards?: number;
+  cardScaleYRatioLoss?: number;
+  cardTemplate?: Component;
+}
+
 const {
   cards,
   // Duration before cards move
@@ -13,13 +21,7 @@ const {
   // Ratio of how much shorter the next card is
   cardScaleYRatioLoss = 0.05,
   cardTemplate = BaseCard,
-} = defineProps<{
-  cards: Card[];
-  duration?: number;
-  maxShownCards?: number;
-  cardScaleYRatioLoss?: number;
-  cardTemplate?: Component;
-}>();
+} = defineProps<VisualCardCarouselProps>();
 
 /**
  * === Generation of styling for css cards ===
@@ -311,11 +313,11 @@ watch(
 }
 
 // We can't rely on vue's SFC v-bind pickup code, since it runs too early
-// we can rely on it's variable rewriting code since that runs *after* postcss
+// we can rely on its variable rewriting code since that runs *after* postcss
 // thus we can generate v-binds like this, but the code that picks them up
 // runs precss (before sass) meaning we can't use sass variables.
 @function sassVariableRename($char, $other) {
-  @return ("v-bind" + "('normalCardStyles[#{$char}].#{$other}')");
+  @return "v-bind" + "('normalCardStyles[#{$char}].#{$other}')";
 }
 
 @for $i from 0 through 3 {

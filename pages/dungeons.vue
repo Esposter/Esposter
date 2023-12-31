@@ -3,12 +3,12 @@ import { SURFACE_DARK } from "@/services/vuetify/constants";
 
 defineRouteRules({ ssr: false });
 
-const containerId = "game-container";
-useLaunchGame(containerId);
+const id = "game-container";
+useLaunchGame(id);
 </script>
 
 <template>
   <NuxtLayout :main-style="{ backgroundColor: SURFACE_DARK }">
-    <div :id="containerId" />
+    <div :id />
   </NuxtLayout>
 </template>

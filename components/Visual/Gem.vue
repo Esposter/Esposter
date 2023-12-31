@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
-
 import {
   AmbientLight,
   Clock,
@@ -20,15 +19,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const ready = ref(false);
+const id = "gem";
+const width = 200;
+const height = 200;
 
 onMounted(() => {
-  // Canvas
-  const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
-
-  // Scene
+  const canvas = document.querySelector(`#${id}`) as HTMLCanvasElement;
   const scene = new Scene();
-
-  // Models
   let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
   let light: Light;
 
@@ -48,7 +45,6 @@ onMounted(() => {
     ready.value = true;
   });
 
-  // Lighting
   const ambientLight = new AmbientLight(0xffffff, 4);
   scene.add(ambientLight);
   const directionalLight = new DirectionalLight(0xffffff, 6);
@@ -58,15 +54,10 @@ onMounted(() => {
   directionalLight2.position.set(-1, -1, -1);
   scene.add(directionalLight2);
 
-  // Settings
-  const sizes = { width: 200, height: 200 };
-
-  // Camera
-  const camera = new PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+  const camera = new PerspectiveCamera(75, width / height, 0.1, 100);
   camera.position.set(2, 2, 6);
   scene.add(camera);
 
-  // Controls
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
   controls.target.set(0, 0.75, 0);
@@ -75,15 +66,13 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 2;
 
-  // Render
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
-  renderer.setSize(sizes.width, sizes.height);
+  renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // Animations
   const clock = new Clock();
   const tick = () => {
     const elapsedTime = clock.getElapsedTime();
@@ -98,13 +87,6 @@ onMounted(() => {
 
 <template>
   <Transition name="fade">
-    <canvas v-show="ready" class="webgl" />
+    <canvas v-show="ready" :id :style="{ width, height }" />
   </Transition>
 </template>
-
-<style scoped lang="scss">
-.webgl {
-  width: 200px;
-  height: 200px;
-}
-</style>

@@ -27,8 +27,11 @@ const cards: Card[] = [{ text: "Braedon Wooding" }, { text: "Ryan Fallah" }, { t
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
       </v-row>
-      <v-row py-8>
-        <VisualCardCarousel :cards="cards" />
+      <v-row>
+        <v-col>
+          <!-- <VisualCardCarousel :cards="cards" /> -->
+          <VisualCardMarquee :cards="cards" />
+        </v-col>
       </v-row>
     </v-container>
   </NuxtLayout>
