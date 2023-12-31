@@ -74,7 +74,7 @@ $card-length: 5;
 }
 
 li {
-  --delay: calc((var(--duration) / var(--rows)) * (var(--index, 0) - 8));
+  --delay: calc(calc(var(--duration) / var(--rows)) * (var(--index, 0) - 8));
   translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
   transform-style: preserve-3d;
