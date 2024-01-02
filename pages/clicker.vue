@@ -7,7 +7,7 @@ await useReadClickerGame();
 useTimers();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
-const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints));
+const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3));
 </script>
 
 <template>
