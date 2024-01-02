@@ -33,7 +33,7 @@ const suffixesShort = ["Dc", "V", "T", "Qa", "Qi", "Sx", "Sp", "O", "N"];
 for (const suffixShort of suffixesShort)
   for (const prefixShort of prefixesShort) formatShort.push(` ${prefixShort}${suffixShort}`);
 
-const formatEveryThirdPower = (notations: string[]) => (number: number) => {
+const formatEveryThirdPower = (notations: string[]) => (number: number, fractionDigits?: number) => {
   if (!isFinite(number)) return "Infinity";
 
   let base = -1;
@@ -47,7 +47,7 @@ const formatEveryThirdPower = (notations: string[]) => (number: number) => {
   if (base > notations.length - 1) return "Infinity";
   else if (base >= 0) notation = notations[base];
 
-  return `${Math.round(number * 1e3) / 1e3}${notation}`;
+  return `${(Math.round(number * 1e3) / 1e3).toFixed(fractionDigits)}${notation}`;
 };
 
 export const formatNumberLong = formatEveryThirdPower(formatLong);
