@@ -4,6 +4,7 @@ import {
   type FooterBarPrependSlotProps,
 } from "@/components/RichTextEditor/FooterBar.vue";
 import { CharacterCount } from "@tiptap/extension-character-count";
+import { Link } from "@tiptap/extension-link";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor, type AnyExtension } from "@tiptap/vue-3";
@@ -26,6 +27,7 @@ const editor = useEditor({
     StarterKit,
     Placeholder.configure({ placeholder }),
     CharacterCount.configure({ limit: maxLength }),
+    Link,
     ...(extensions ?? []),
   ],
   content: modelValue.value,
