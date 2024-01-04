@@ -39,7 +39,7 @@ export const useBuildingStatsTimer = () => {
     for (const buildingStatsTimer of buildingStatsTimers.value) clearInterval(buildingStatsTimer);
   });
 
-  watchEffect(() => {
+  watch([() => game.value.boughtBuildings, boughtBuildingPowers], () => {
     for (const buildingStatsTimer of buildingStatsTimers.value) clearInterval(buildingStatsTimer);
     buildingStatsTimers.value = [];
     setBuildingStatsTimers(game.value.boughtBuildings, boughtBuildingPowers.value);

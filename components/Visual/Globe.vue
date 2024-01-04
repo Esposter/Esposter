@@ -16,21 +16,23 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 const id = "globe";
-const width = 1000;
-const height = 1000;
+const { width } = useWindowSize();
+const height = computed(() => width.value);
 
 onMounted(async () => {
   const canvas = document.querySelector(`#${id}`) as HTMLCanvasElement;
 
   const renderer = new WebGLRenderer({ canvas, antialias: true });
   renderer.setClearColor(0x000000, 0);
-  renderer.setSize(width, height);
+  renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new Scene();
   scene.add(new AmbientLight(0xbbbbbb, 0.3));
 
   const camera = new PerspectiveCamera();
+  camera.aspect = width.value / height.value;
+  camera.updateProjectionMatrix();
   camera.position.z = 400;
   camera.position.x = 0;
   camera.position.y = 0;
@@ -53,8 +55,8 @@ onMounted(async () => {
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.enablePan = false;
-  controls.minDistance = width / 3;
-  controls.maxDistance = width / 1.5;
+  controls.minDistance = width.value / 3;
+  controls.maxDistance = width.value / 1.5;
   controls.rotateSpeed = 0.8;
   controls.zoomSpeed = 1;
   controls.autoRotate = false;
@@ -116,6 +118,12 @@ onMounted(async () => {
     requestAnimationFrame(animate);
   };
   animate();
+
+  window.addEventListener("resize", () => {
+    camera.aspect = width.value / height.value;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width.value, height.value);
+  });
 });
 </script>
 

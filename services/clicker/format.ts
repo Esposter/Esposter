@@ -47,7 +47,10 @@ const formatEveryThirdPower = (notations: string[]) => (number: number, fraction
   if (base > notations.length - 1) return "Infinity";
   else if (base >= 0) notation = notations[base];
 
-  return `${(Math.round(number * 1e3) / 1e3).toFixed(fractionDigits)}${notation}`;
+  let formattedNumber: number | string = Math.round(number * 1e3) / 1e3;
+  if (fractionDigits !== undefined) formattedNumber = formattedNumber.toFixed(fractionDigits);
+
+  return `${formattedNumber}${notation}`;
 };
 
 export const formatNumberLong = formatEveryThirdPower(formatLong);
