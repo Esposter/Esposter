@@ -1,3 +1,5 @@
+<!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
+<!-- eslint-disable vue/valid-v-bind -->
 <script setup lang="ts">
 import { ErrorEntity } from "@/models/shared/error/ErrorEntity";
 import { type Row } from "@/models/user/ProfileCard/Row";
@@ -58,8 +60,6 @@ const isUpdated = computed(() => isValid.value && isDiff(profileCardRowValues.va
         <v-divider mt-2 />
       </v-card-title>
       <v-container px-0="!" py-6="!">
-        <!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
-        <!-- eslint-disable-next-line vue/valid-v-bind -->
         <UserProfileCardRow
           v-for="[title, row] in Object.entries(profileCardRows)"
           :key="title"
