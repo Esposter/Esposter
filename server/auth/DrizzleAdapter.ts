@@ -56,7 +56,7 @@ export const DrizzleAdapter: Adapter = {
       refresh_token: refreshToken ?? undefined,
       access_token: accessToken ?? undefined,
       scope: scope ?? undefined,
-      token_type: tokenType ?? undefined,
+      token_type: (tokenType ?? undefined) as Lowercase<string> | undefined,
       session_state: sessionState ?? undefined,
       expires_at: expiresAt ?? undefined,
     };
