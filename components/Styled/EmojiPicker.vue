@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import "emoji-mart-vue-fast/css/emoji-mart.css";
 import data from "emoji-mart-vue-fast/data/all.json";
+// @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 // @ts-expect-error
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error
