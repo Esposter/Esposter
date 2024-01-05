@@ -1,19 +1,19 @@
-<script setup lang="ts" generic="TRow extends Row = Row">
+<script setup lang="ts">
 import { type Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { toTitleCase } from "@/util/text";
 
-export interface UserProfileCardRowProps<TRow extends Row> {
+export interface UserProfileCardRowProps {
   title: string;
-  row: TRow;
+  row: Row;
   editMode: boolean;
 }
 
 // This is the edited row value
 const modelValue = defineModel<string | null>({ required: true });
-const { title, row, editMode } = defineProps<UserProfileCardRowProps<TRow>>();
+const { title, row, editMode } = defineProps<UserProfileCardRowProps>();
 
 watch(
   () => editMode,

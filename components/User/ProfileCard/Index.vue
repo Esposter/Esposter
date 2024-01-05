@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import { type User } from "@/db/schema/users";
-import { type EditedRow } from "@/models/user/ProfileCard/EditedRow";
+import { ErrorEntity } from "@/models/shared/error/ErrorEntity";
+import { type Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
-import { type UpdateUserInput } from "@/server/trpc/routers/user";
+import { type UpdateUserInput } from "@/models/user/UpdateUserInput";
+import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
 
-interface UserProfileCardProps {
-  user: User;
-}
-
-const { user } = defineProps<UserProfileCardProps>();
 const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
 const { updateAuthUser } = userStore;
-const profileCardRows = ref<Record<keyof UpdateUserInput, EditedRow>>({
-  // @TODO: https://github.com/trpc/trpc/issues/1937
-  // avatar: {
-  //   type: RowValueType.Image,
-  //   value: user.image,
-  //   editedValue: user.image,
-  // },
-  name: {
-    type: RowValueType.Text,
-    value: user.name,
-    editedValue: user.name,
-  },
+const { authUser } = storeToRefs(userStore);
+const profileCardRows = computed<Record<keyof UpdateUserInput, Row>>(() => {
+  if (!authUser.value)
+    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(ErrorEntity.User) });
+
+  return {
+    // @TODO: https://github.com/trpc/trpc/issues/1937
+    // avatar: {
+    //   type: RowValueType.Image,
+    //   value: user.image,
+    // },
+    name: {
+      type: RowValueType.Text,
+      value: authUser.value.name,
+    },
+  };
 });
+const editedProfileCardRows = ref(
+  Object.entries(profileCardRows.value).reduce((acc, [prop, row]) => {
+    acc[prop as keyof UpdateUserInput] = row.value;
+    return acc;
+  }, {} as UpdateUserInput),
+);
 const editMode = ref(false);
 </script>
 
@@ -43,7 +49,7 @@ const editMode = ref(false);
       <UserProfileCardRow
         v-for="[title, row] in Object.entries(profileCardRows)"
         :key="title"
-        v-model="row.editedValue"
+        v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
         px-4
         :title
         :row="{
@@ -55,22 +61,17 @@ const editMode = ref(false);
     </v-container>
     <v-card-actions px-4="!">
       <template v-if="editMode">
-        <v-btn
-          variant="outlined"
+        <v-btn variant="outlined" @click="editMode = false">Cancel</v-btn>
+        <StyledButton
           @click="
             async () => {
-              const updateUserInput = Object.entries(profileCardRows).reduce((acc, [prop, row]) => {
-                acc[prop as keyof UpdateUserInput] = row.editedValue;
-                return acc;
-              }, {} as UpdateUserInput);
-              await updateAuthUser(updateUserInput);
+              await updateAuthUser(editedProfileCardRows);
               editMode = false;
             }
           "
         >
-          Cancel
-        </v-btn>
-        <StyledButton>Save</StyledButton>
+          Save
+        </StyledButton>
       </template>
       <v-btn v-else variant="elevated" color="border" @click="editMode = true">
         <span font-bold>Edit Settings</span>

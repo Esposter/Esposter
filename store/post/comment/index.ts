@@ -11,7 +11,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     const postId = router.currentRoute.value.params.id;
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : null;
   });
-  const currentPost = ref<PostWithRelations | null>();
+  const currentPost = ref<PostWithRelations>();
   const {
     itemList: commentList,
     pushItemList: pushCommentList,
