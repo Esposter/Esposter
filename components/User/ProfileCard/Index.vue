@@ -1,6 +1,6 @@
-<!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
-<!-- eslint-disable vue/valid-v-bind -->
 <script setup lang="ts">
+// @TODO: https://github.com/vuejs/language-tools/issues/3830
+/* eslint-disable vue/valid-v-bind */
 import { ErrorEntity } from "@/models/shared/error/ErrorEntity";
 import { type Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
