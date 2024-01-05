@@ -3,7 +3,7 @@ import { type VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { getComponent } from "@/services/tableEditor/vuetifyComponent/getComponent";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { type Constructor } from "type-fest";
+import { type Constructor } from "@/util/types";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);

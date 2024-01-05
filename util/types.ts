@@ -21,3 +21,7 @@ export type TupleSlice<T extends unknown[], S extends number, E extends number =
   TakeFirst<T, E>,
   S
 >;
+// For some reason, we can't directly import this from type-fest, otherwise it would raise error
+// Pre-transform error: Failed to resolve entry for package "type-fest".
+// The package may have incorrect main/module/exports specified in its package.json.
+export type Constructor<T, Arguments extends unknown[] = any[]> = new (...arguments_: Arguments) => T;
