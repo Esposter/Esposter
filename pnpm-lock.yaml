@@ -155,6 +155,9 @@ dependencies:
   rate-limiter-flexible:
     specifier: ^4.0.0
     version: 4.0.0
+  recursive-diff:
+    specifier: ^1.0.9
+    version: 1.0.9
   sql-highlight:
     specifier: ^4.4.0
     version: 4.4.0
@@ -10012,6 +10015,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /recursive-diff@1.0.9:
+    resolution: {integrity: sha512-5mqpskzvXDo5Vy29Vj8tH30a0+XBmY11aqWGoN/uB94UHRwndX2EuPvH+WtbqOYkrwAF718/lDo6U4CB1qSSqQ==}
+    dev: false
 
   /redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}

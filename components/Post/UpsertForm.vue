@@ -14,11 +14,13 @@ const emit = defineEmits<{
 }>();
 const title = ref(initialValues.title);
 const description = ref(initialValues.description);
+const isValid = ref(true);
 </script>
 
 <template>
   <StyledCard>
     <v-form
+      v-model="isValid"
       @submit="
         (e) => {
           e.preventDefault();
@@ -46,7 +48,7 @@ const description = ref(initialValues.description);
         </v-row>
         <v-row>
           <v-col flex justify-end>
-            <StyledButton type="submit">Post</StyledButton>
+            <StyledButton type="submit" :disabled="!isValid">Post</StyledButton>
           </v-col>
         </v-row>
       </v-container>
