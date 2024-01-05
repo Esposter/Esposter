@@ -1,8 +1,8 @@
 export const useReadData = async (unauthedReader: () => void, authedReader: () => Promise<void>, csr?: true) => {
   const { status } = useAuth();
-  watch(status, async (newValue) => {
-    if (newValue === "authenticated") await authedReader();
-    else if (newValue === "unauthenticated") unauthedReader();
+  watch(status, async (newStatus) => {
+    if (newStatus === "authenticated") await authedReader();
+    else if (newStatus === "unauthenticated") unauthedReader();
   });
 
   if (status.value === "authenticated") await authedReader();

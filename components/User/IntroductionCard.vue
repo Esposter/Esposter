@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { type User } from "@/db/schema/users";
 import { SITE_NAME } from "@/services/esposter/constants";
 import dayjs from "dayjs";
 
-const { $client } = useNuxtApp();
-const user = await $client.user.readUser.query();
+interface UserIntroductionCardProps {
+  user: User;
+}
+
+const { user } = defineProps<UserIntroductionCardProps>();
 </script>
 
 <template>
-  <StyledCard v-if="user" p-6="!" flex="!">
+  <StyledCard p-6="!" flex="!">
     <div grid flex-1>
       <div v-if="user.name" class="text-h5" font-bold>{{ user.name }}</div>
       <div>

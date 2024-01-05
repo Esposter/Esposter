@@ -194,8 +194,8 @@ onUnmounted(() => clearInterval(moveCardsTimer.value));
 // If cards update then we want to refresh the entire display back to the first step.
 watch(
   () => cards,
-  (newValue) => {
-    cardIds.value = newValue.map((_, index) => index);
+  (newCards) => {
+    cardIds.value = newCards.map((_, index) => index);
     inactiveCardId.value = null;
     activeCardId.value = 0;
   },

@@ -40,6 +40,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
     return acc;
   }, {}) as BaseColors;
   return {
+    backgroundOpacity20: `${sanitisedColors.background}33`,
     backgroundOpacity40: `${sanitisedColors.background}66`,
     backgroundOpacity80: `${sanitisedColors.background}cc`,
     surfaceOpacity80: `${sanitisedColors.surface}cc`,
@@ -86,6 +87,7 @@ const defaults: Defaults = {
     },
   },
   VDialog: { width: 500, maxWidth: "100%" },
+  VFileInput: { variant: "outlined" },
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },

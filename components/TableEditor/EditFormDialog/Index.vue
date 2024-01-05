@@ -8,11 +8,11 @@ const tableEditorStore = useTableEditorStore()();
 const { resetItem } = tableEditorStore;
 const { editFormRef, editFormDialog, isFullScreenDialog } = storeToRefs(tableEditorStore);
 
-watch(editFormDialog, (newValue) => {
+watch(editFormDialog, (newEditFormDialog) => {
   // Hack resetting the item so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
   window.setTimeout(async () => {
-    if (!newValue) await resetItem();
+    if (!newEditFormDialog) await resetItem();
   }, 300);
 });
 </script>
