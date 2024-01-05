@@ -15,10 +15,7 @@ const emit = defineEmits<{
 }>();
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
-// @TODO: It seems like putting the destructured prop inside a ref causes a deepEqual
-// maximum call stack size exceeded error, might be some weird magic that's erroring out
-const description = comment.description;
-const editedDescriptionHtml = ref(description);
+const editedDescriptionHtml = ref(comment.description);
 const onUpdateComment = async (editor: Editor) => {
   try {
     if (editedDescriptionHtml.value === comment.description) return;
