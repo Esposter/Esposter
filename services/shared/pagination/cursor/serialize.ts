@@ -2,7 +2,7 @@ import { type ItemMetadata } from "@/models/shared/ItemMetadata";
 import { type SortItem } from "@/models/shared/pagination/sorting/SortItem";
 
 export const serialize = <TItem extends ItemMetadata>(
-  item: TItem,
+  item: TItem | undefined,
   sortBy: SortItem<keyof TItem & string>[],
 ): string | null => {
   if (!item) return null;

@@ -12,7 +12,7 @@ export const getCursorPaginationData = <TItem extends ItemMetadata>(
   const filteredItems = hasMore ? items.slice(0, limit) : items;
   return {
     items: filteredItems,
-    nextCursor: getNextCursor(items, limit, sortBy),
+    nextCursor: getNextCursor(filteredItems, sortBy),
     hasMore,
   };
 };
