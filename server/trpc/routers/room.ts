@@ -3,22 +3,26 @@ import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, InviteEntityProperties, inviteCodeSchema } from "@/models/esbabbler/room/invite";
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
+import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
 import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
-import { convertTableSortByToSql } from "@/services/shared/pagination/convertTableSortByToSql";
-import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
+import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
+import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
 import { generateCode } from "@/util/random";
 import { odata } from "@azure/data-tables";
-import { and, desc, eq, gt, ilike } from "drizzle-orm";
+import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof()).default({});
+const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
+  { key: "updatedAt", order: SortOrder.Desc },
+]).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const createRoomInputSchema = selectRoomSchema.pick({ name: true });
@@ -43,7 +47,7 @@ const readMembersInputSchema = z
     roomId: selectRoomSchema.shape.id,
     filter: selectUserSchema.pick({ name: true }).optional(),
   })
-  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof()));
+  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]));
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
@@ -83,13 +87,12 @@ export const roomRouter = router({
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
-    if (cursor) query.where(gt(rooms.id, cursor));
-    if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(rooms, sortBy));
-    else query.orderBy(desc(rooms.updatedAt));
+    if (cursor) query.where(getCursorWhere(rooms, cursor, sortBy));
+    query.orderBy(...convertSortByToSql(rooms, sortBy));
 
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
-    return getCursorPaginationData(resultRooms, "id", limit);
+    return getCursorPaginationData(resultRooms, limit, sortBy);
   }),
   createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
     db.transaction(async (tx) => {
@@ -136,19 +139,18 @@ export const roomRouter = router({
     .input(readMembersInputSchema)
     .query(async ({ input: { roomId, filter, cursor, limit, sortBy } }) => {
       const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
-      const cursorWhere = cursor ? gt(users.id, cursor) : undefined;
+      const cursorWhere = getCursorWhere(users, cursor, sortBy);
       const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
 
-      const query = db
+      const joinedUsers = await db
         .select()
         .from(users)
         .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id), eq(usersToRooms.roomId, roomId)))
-        .where(where);
-      if (sortBy.length > 0) query.orderBy(...convertTableSortByToSql(users, sortBy));
-
-      const joinedUsers = await query.limit(limit + 1);
+        .where(where)
+        .orderBy(...convertSortByToSql(users, sortBy))
+        .limit(limit + 1);
       const resultUsers = joinedUsers.map((ju) => ju.User);
-      return getCursorPaginationData(resultUsers, "id", limit);
+      return getCursorPaginationData(resultUsers, limit, sortBy);
     }),
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)

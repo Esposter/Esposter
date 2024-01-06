@@ -1,11 +1,9 @@
-import { type Item } from "@/models/shared/Item";
-import { CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
+import { type ItemMetadata } from "@/models/shared/ItemMetadata";
+import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 
-export const createCursorPaginationData = <TItem extends Item, TItemKey extends keyof TItem = "id">() => {
+export const createCursorPaginationData = <TItem extends ItemMetadata>() => {
   // @TODO: Vue cannot unwrap generic refs yet
-  const cursorPaginationData = ref(new CursorPaginationData<TItem, TItemKey>()) as Ref<
-    CursorPaginationData<TItem, TItemKey>
-  >;
+  const cursorPaginationData = ref(new CursorPaginationData<TItem>()) as Ref<CursorPaginationData<TItem>>;
   const itemList = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
@@ -29,11 +27,11 @@ export const createCursorPaginationData = <TItem extends Item, TItemKey extends 
     },
   });
 
-  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem, TItemKey>) => {
+  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem>) => {
     cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
-    cursorPaginationData.value = new CursorPaginationData<TItem, TItemKey>();
+    cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
   return {
     itemList,

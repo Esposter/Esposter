@@ -1,15 +1,12 @@
-import { type Item } from "@/models/shared/Item";
-import { CursorPaginationData } from "@/models/shared/pagination/CursorPaginationData";
+import { type ItemMetadata } from "@/models/shared/ItemMetadata";
+import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <TItem extends Item, TItemKey extends keyof TItem = "id">(
-  currentId: Ref<string | null>,
-) => {
-  const cursorPaginationDataMap = ref<Record<string, CursorPaginationData<TItem, TItemKey>>>({});
+export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(currentId: Ref<string | null>) => {
+  const cursorPaginationDataMap = ref<Record<string, CursorPaginationData<TItem>>>({});
   const cursorPaginationData = computed({
     get: () => {
-      if (!currentId.value || !cursorPaginationDataMap.value[currentId.value])
-        return new CursorPaginationData<TItem, TItemKey>();
+      if (!currentId.value || !cursorPaginationDataMap.value[currentId.value]) return new CursorPaginationData<TItem>();
       else return cursorPaginationDataMap.value[currentId.value];
     },
     set: (newCursorPaginationData) => {
@@ -40,11 +37,11 @@ export const createCursorPaginationDataMap = <TItem extends Item, TItemKey exten
     },
   });
 
-  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem, TItemKey>) => {
+  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem>) => {
     cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
-    cursorPaginationData.value = new CursorPaginationData<TItem, TItemKey>();
+    cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
   return {
     itemList,

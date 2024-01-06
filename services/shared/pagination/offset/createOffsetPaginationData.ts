@@ -1,7 +1,7 @@
-import { type Item } from "@/models/shared/Item";
-import { OffsetPaginationData } from "@/models/shared/pagination/OffsetPaginationData";
+import { type ItemMetadata } from "@/models/shared/ItemMetadata";
+import { OffsetPaginationData } from "@/models/shared/pagination/offset/OffsetPaginationData";
 
-export const createOffsetPaginationData = <TItem extends Item>() => {
+export const createOffsetPaginationData = <TItem extends ItemMetadata>() => {
   // @TODO: Vue cannot unwrap generic refs yet
   const offsetPaginationData = ref(new OffsetPaginationData<TItem>()) as Ref<OffsetPaginationData<TItem>>;
   const itemList = computed({

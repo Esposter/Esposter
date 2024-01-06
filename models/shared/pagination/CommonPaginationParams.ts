@@ -1,4 +1,4 @@
-import { createSortItemSchema, type SortItem } from "@/models/shared/pagination/SortItem";
+import { createSortItemSchema, type SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { DEFAULT_READ_LIMIT, MAX_READ_LIMIT } from "@/services/shared/pagination/constants";
 import { z } from "zod";
 
@@ -9,8 +9,10 @@ export interface CommonPaginationParams<TSortKey extends string> {
 
 export const createCommonPaginationParamsSchema = <TSortKeySchema extends z.ZodType<string>>(
   sortKeySchema: TSortKeySchema,
+  minSortBy = 0,
+  defaultSortBy: SortItem<TSortKeySchema["_type"]>[] = [],
 ) =>
   z.object({
     limit: z.number().int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
-    sortBy: z.array(createSortItemSchema(sortKeySchema)).default([]),
+    sortBy: z.array(createSortItemSchema(sortKeySchema)).min(minSortBy).default(defaultSortBy),
   });

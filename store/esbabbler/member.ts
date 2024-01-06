@@ -1,5 +1,5 @@
 import { type User } from "@/db/schema/users";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
+import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMemberStore = defineStore("esbabbler/member", () => {

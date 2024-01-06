@@ -3,7 +3,9 @@ import { type CompositeKey } from "@/models/azure";
 import { AzureTable } from "@/models/azure/table";
 import { messageEventEmitter } from "@/models/esbabbler/events/message";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
+import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
+import { type SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import {
@@ -15,7 +17,8 @@ import {
   updateEntity,
 } from "@/services/azure/table";
 import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
+import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
+import { getCursorWhereAzureTable } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
@@ -27,8 +30,12 @@ export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
 const readMessagesInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })
-  // Azure table storage doesn't support sorting
-  .merge(createCursorPaginationParamsSchema(messageSchema.keyof()).omit({ sortBy: true }));
+  // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
+  // as we insert our messages with a reverse-ticked timestamp as our rowkey
+  // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
+  // always requires a sortBy
+  .merge(createCursorPaginationParamsSchema(messageSchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
+  .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -55,12 +62,13 @@ export const messageRouter = router({
   readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
     .input(readMessagesInputSchema)
     .query(async ({ input: { roomId, cursor, limit } }) => {
+      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
       const filter = cursor
-        ? `${getMessagesPartitionKeyFilter(roomId)} and RowKey gt '${cursor}'`
+        ? `${getMessagesPartitionKeyFilter(roomId)} and ${getCursorWhereAzureTable(cursor, sortBy)}`
         : getMessagesPartitionKeyFilter(roomId);
       const messageClient = await getTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
-      return getCursorPaginationData(messages, "rowKey", limit);
+      return getCursorPaginationData(messages, limit, sortBy);
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)

@@ -4,7 +4,7 @@ import {
   type DeleteMessageInput,
   type UpdateMessageInput,
 } from "@/server/trpc/routers/message";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
+import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text";
@@ -20,7 +20,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     itemList: messageList,
     pushItemList: pushMessageList,
     ...rest
-  } = createCursorPaginationDataMap<MessageEntity, "rowKey">(currentRoomId);
+  } = createCursorPaginationDataMap<MessageEntity>(currentRoomId);
 
   const sendMessage = async (editor: Editor) => {
     if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;

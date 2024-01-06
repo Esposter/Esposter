@@ -1,6 +1,6 @@
 import { type PostWithRelations } from "@/db/schema/posts";
 import { type CreatePostInput, type DeletePostInput, type UpdatePostInput } from "@/server/trpc/routers/post";
-import { createCursorPaginationData } from "@/services/shared/pagination/createCursorPaginationData";
+import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {
   const { $client } = useNuxtApp();

@@ -1,5 +1,5 @@
 import { type Room } from "@/db/schema/rooms";
-import { createCursorPaginationData } from "@/services/shared/pagination/createCursorPaginationData";
+import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {

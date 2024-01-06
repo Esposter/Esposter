@@ -1,4 +1,4 @@
-import { sortOrderSchema, type SortOrder } from "@/models/shared/pagination/SortOrder";
+import { sortOrderSchema, type SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { z } from "zod";
 
 export interface SortItem<T extends string> {

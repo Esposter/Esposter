@@ -12,23 +12,21 @@ const realActive = computed(() => !loading.value && active);
 </script>
 
 <template>
-  <ClientOnly>
-    <Waypoint
-      flex
-      justify-center
-      :active="realActive"
-      @change="
-        (waypointState: WaypointState) => {
-          if (waypointState.going === Going.In) {
-            loading = true;
-            emit('change', () => {
-              loading = false;
-            });
-          }
+  <Waypoint
+    flex
+    justify-center
+    :active="realActive"
+    @change="
+      (waypointState: WaypointState) => {
+        if (waypointState.going === Going.In) {
+          loading = true;
+          emit('change', () => {
+            loading = false;
+          });
         }
-      "
-    >
-      <v-progress-circular v-if="loading" size="small" indeterminate />
-    </Waypoint>
-  </ClientOnly>
+      }
+    "
+  >
+    <v-progress-circular v-if="loading" size="small" indeterminate />
+  </Waypoint>
 </template>

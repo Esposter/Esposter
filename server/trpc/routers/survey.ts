@@ -1,14 +1,14 @@
 import { db } from "@/db";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
-import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/OffsetPaginationParams";
+import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
-import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getOffsetPaginationData } from "@/services/shared/pagination/getOffsetPaginationData";
+import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
+import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { type z } from "zod";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;
@@ -42,14 +42,13 @@ export const surveyRouter = router({
   readSurveys: authedProcedure
     .input(readSurveysInputSchema)
     .query(async ({ input: { offset, limit, sortBy }, ctx }) => {
-      const surveys = await db.query.surveys.findMany({
+      const resultSurveys = await db.query.surveys.findMany({
         where: (surveys) => eq(surveys.creatorId, ctx.session.user.id),
-        orderBy: (surveys, { desc }) =>
-          sortBy.length > 0 ? convertColumnsMapSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
+        orderBy: sortBy.length > 0 ? convertSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
         offset,
         limit: limit + 1,
       });
-      return getOffsetPaginationData(surveys, limit);
+      return getOffsetPaginationData(resultSurveys, limit);
     }),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

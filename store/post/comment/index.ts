@@ -1,6 +1,6 @@
 import { type PostWithRelations } from "@/db/schema/posts";
 import { type CreateCommentInput, type DeleteCommentInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/createCursorPaginationDataMap";
+import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { EMPTY_TEXT_REGEX } from "@/util/text";
 import { uuidValidateV4 } from "@/util/uuid";
 

@@ -1,12 +1,14 @@
 import { db } from "@/db";
 import { PostRelations, posts, selectPostSchema, type PostWithRelations } from "@/db/schema/posts";
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/CursorPaginationParams";
+import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
-import { convertColumnsMapSortByToSql } from "@/services/shared/pagination/convertColumnsMapSortByToSql";
-import { getCursorPaginationData } from "@/services/shared/pagination/getCursorPaginationData";
-import { and, eq, gt, isNotNull, isNull } from "drizzle-orm";
+import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
+import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -14,7 +16,7 @@ export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
 const readPostsInputSchema = z
   .object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.default(null) })
-  .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof()))
+  .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]))
   .default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
@@ -57,17 +59,16 @@ export const postRouter = router({
     .input(readPostsInputSchema)
     .query(async ({ input: { parentId, cursor, limit, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
-      const cursorWhere = cursor ? gt(posts.id, cursor) : undefined;
+      const cursorWhere = getCursorWhere(posts, cursor, sortBy);
       const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
 
       const resultPosts: PostWithRelations[] = await db.query.posts.findMany({
         where,
-        orderBy: (posts, { desc }) =>
-          sortBy.length > 0 ? convertColumnsMapSortByToSql(posts, sortBy) : desc(posts.ranking),
+        orderBy: convertSortByToSql(posts, sortBy),
         limit: limit + 1,
         with: PostRelations,
       });
-      return getCursorPaginationData(resultPosts, "id", limit);
+      return getCursorPaginationData(resultPosts, limit, sortBy);
     }),
   createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
     const createdAt = new Date();

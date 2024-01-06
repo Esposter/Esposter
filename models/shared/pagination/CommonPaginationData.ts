@@ -1,6 +1,6 @@
-import { type Item } from "@/models/shared/Item";
+import { type ItemMetadata } from "@/models/shared/ItemMetadata";
 
-export class CommonPaginationData<TItem extends Item> {
+export class CommonPaginationData<TItem extends ItemMetadata> {
   items: TItem[] = [];
   hasMore = false;
 }
