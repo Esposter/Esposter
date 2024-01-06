@@ -43,9 +43,7 @@ onBeforeUnmount(() => editor.value?.destroy());
   <StyledCard w-full>
     <RichTextEditorMenuBar :editor="editor" />
     <v-divider thickness="2" />
-    <ClientOnly>
-      <EditorContent :editor="editor" />
-    </ClientOnly>
+    <EditorContent :editor="editor" />
     <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
       <template #prepend="editorProps">
         <slot name="prepend-footer" :="editorProps" />
