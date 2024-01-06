@@ -59,7 +59,7 @@ export const postRouter = router({
     .input(readPostsInputSchema)
     .query(async ({ input: { parentId, cursor, limit, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
-      const cursorWhere = getCursorWhere(posts, cursor, sortBy);
+      const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
 
       const resultPosts: PostWithRelations[] = await db.query.posts.findMany({

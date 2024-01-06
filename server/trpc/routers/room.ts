@@ -139,7 +139,7 @@ export const roomRouter = router({
     .input(readMembersInputSchema)
     .query(async ({ input: { roomId, filter, cursor, limit, sortBy } }) => {
       const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
-      const cursorWhere = getCursorWhere(users, cursor, sortBy);
+      const cursorWhere = cursor ? getCursorWhere(users, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
 
       const joinedUsers = await db

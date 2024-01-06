@@ -7,11 +7,9 @@ import { type PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export const getCursorWhere = <TTable extends TableConfig, TItem extends ItemMetadata>(
   table: PgTableWithColumns<TTable>,
-  serializedCursors: string | null,
+  serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
-  if (!serializedCursors) return undefined;
-
   const cursors = parse(serializedCursors);
   return and(
     ...Object.entries(cursors).map(([key, value]) => {
