@@ -6,7 +6,7 @@ import { and, gt, lt, type TableConfig } from "drizzle-orm";
 import { type PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export const getCursorWhere = <TTable extends TableConfig, TItem extends ItemMetadata>(
-  columnsMap: PgTableWithColumns<TTable>,
+  table: PgTableWithColumns<TTable>,
   serializedCursors: string | null,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
@@ -16,7 +16,7 @@ export const getCursorWhere = <TTable extends TableConfig, TItem extends ItemMet
   return and(
     ...Object.entries(cursors).map(([key, value]) => {
       const comparer = sortBy.some((s) => s.key === key && s.order === SortOrder.Asc) ? gt : lt;
-      return comparer(columnsMap[key], value);
+      return comparer(table[key], value);
     }),
   );
 };
