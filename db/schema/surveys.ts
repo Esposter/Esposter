@@ -2,12 +2,12 @@ import { users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { SURVEY_NAME_MAX_LENGTH } from "@/services/surveyer/constants";
 import { relations } from "drizzle-orm";
-import { integer, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const surveys = pgTable("Survey", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),

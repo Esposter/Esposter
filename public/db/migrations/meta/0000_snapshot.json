@@ -1,8 +1,8 @@
 {
+  "id": "3613102f-eb61-4123-b4f5-c17bc18b0782",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
-  "id": "f7d33287-85dc-46f7-a4b4-1bb156163f49",
-  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Account": {
       "name": "Account",
@@ -101,6 +101,7 @@
           "name": "Account_userId_User_id_fk",
           "tableFrom": "Account",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "userId"
           ],
@@ -112,8 +113,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "Account_provider_providerAccountId": {
-          "name": "Account_provider_providerAccountId",
+        "Account_provider_providerAccountId_pk": {
+          "name": "Account_provider_providerAccountId_pk",
           "columns": [
             "provider",
             "providerAccountId"
@@ -153,6 +154,12 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "parentId": {
+          "name": "parentId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "creatorId": {
           "name": "creatorId",
           "type": "uuid",
@@ -187,6 +194,13 @@
           "notNull": true,
           "default": 0
         },
+        "depth": {
+          "name": "depth",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
         "ranking": {
           "name": "ranking",
           "type": "double precision",
@@ -200,6 +214,7 @@
           "name": "Post_creatorId_User_id_fk",
           "tableFrom": "Post",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "creatorId"
           ],
@@ -269,6 +284,7 @@
           "name": "Room_creatorId_User_id_fk",
           "tableFrom": "Room",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "creatorId"
           ],
@@ -331,8 +347,106 @@
           "name": "Session_userId_User_id_fk",
           "tableFrom": "Session",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Survey": {
+      "name": "Survey",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deletedAt": {
+          "name": "deletedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group": {
+          "name": "group",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "modelVersion": {
+          "name": "modelVersion",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "publishVersion": {
+          "name": "publishVersion",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Survey_creatorId_User_id_fk": {
+          "name": "Survey_creatorId_User_id_fk",
+          "tableFrom": "Survey",
+          "tableTo": "User",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "creatorId"
           ],
           "columnsTo": [
             "id"
@@ -393,6 +507,7 @@
           "name": "Like_userId_User_id_fk",
           "tableFrom": "Like",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "userId"
           ],
@@ -406,6 +521,7 @@
           "name": "Like_postId_Post_id_fk",
           "tableFrom": "Like",
           "tableTo": "Post",
+          "schemaTo": "public",
           "columnsFrom": [
             "postId"
           ],
@@ -417,8 +533,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "Like_userId_postId": {
-          "name": "Like_userId_postId",
+        "Like_userId_postId_pk": {
+          "name": "Like_userId_postId_pk",
           "columns": [
             "userId",
             "postId"
@@ -539,6 +655,7 @@
           "name": "UserToRoom_userId_User_id_fk",
           "tableFrom": "UserToRoom",
           "tableTo": "User",
+          "schemaTo": "public",
           "columnsFrom": [
             "userId"
           ],
@@ -552,6 +669,7 @@
           "name": "UserToRoom_roomId_Room_id_fk",
           "tableFrom": "UserToRoom",
           "tableTo": "Room",
+          "schemaTo": "public",
           "columnsFrom": [
             "roomId"
           ],
@@ -563,8 +681,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "UserToRoom_userId_roomId": {
-          "name": "UserToRoom_userId_roomId",
+        "UserToRoom_userId_roomId_pk": {
+          "name": "UserToRoom_userId_roomId_pk",
           "columns": [
             "userId",
             "roomId"
@@ -619,8 +737,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "VerificationToken_identifier_token": {
-          "name": "VerificationToken_identifier_token",
+        "VerificationToken_identifier_token_pk": {
+          "name": "VerificationToken_identifier_token_pk",
           "columns": [
             "identifier",
             "token"
@@ -641,8 +759,8 @@
   "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }

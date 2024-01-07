@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1696510600723,
-      "tag": "0000_old_silver_surfer",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1702344861813,
-      "tag": "0001_material_daredevil",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1702453770667,
-      "tag": "0002_public_shard",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1702610428702,
-      "tag": "0003_windy_hairball",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1702616915143,
-      "tag": "0004_tidy_riptide",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1703682112807,
-      "tag": "0005_brave_joshua_kane",
+      "when": 1704604975229,
+      "tag": "0000_dusty_proteus",
       "breakpoints": true
     }
   ]
