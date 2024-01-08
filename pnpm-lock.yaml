@@ -84,8 +84,8 @@ dependencies:
     specifier: ^10.45.0
     version: 10.45.0
   '@vuepic/vue-datepicker':
-    specifier: ^7.4.0
-    version: 7.4.0(vue@3.4.5)
+    specifier: ^7.4.1
+    version: 7.4.1(vue@3.4.5)
   class-transformer:
     specifier: ^0.5.1
     version: 0.5.1
@@ -4876,8 +4876,8 @@ packages:
   /@vue/shared@3.4.5:
     resolution: {integrity: sha512-6XptuzlMvN4l4cDnDw36pdGEV+9njYkQ1ZE0Q6iZLwrKefKaOJyiFmcP3/KBDHbt72cJZGtllAc1GaHe6XGAyg==}
 
-  /@vuepic/vue-datepicker@7.4.0(vue@3.4.5):
-    resolution: {integrity: sha512-dXYzbcnRet9b+Dkh+f8rhMnjj5QXgejJTQp+ZRALgwP2oeli2c8e4VvJ0NVxoc7QTU8D5x5Et8NP51C450Pkvg==}
+  /@vuepic/vue-datepicker@7.4.1(vue@3.4.5):
+    resolution: {integrity: sha512-sFdBMdFnvf6GMD5Ghaw6IQUbLqlVU1XYzMVJmjD34DggP5k/7866gDyH4CB+4oD6/FpYFL8y3z5sYgY0S8zHig==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
