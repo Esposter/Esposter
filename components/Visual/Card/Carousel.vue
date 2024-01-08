@@ -3,6 +3,7 @@
 <script setup lang="ts">
 import BaseCard from "@/components/Visual/BaseCard.vue";
 import { type Card } from "@/models/visual/Card";
+import dayjs from "dayjs";
 import { type Component } from "vue";
 
 interface VisualCardCarouselProps {
@@ -16,7 +17,7 @@ interface VisualCardCarouselProps {
 const {
   cards,
   // Duration before cards move
-  duration = 10000,
+  duration = dayjs.duration(10, "seconds").milliseconds(),
   maxShownCards = 5,
   // Ratio of how much shorter the next card is
   cardScaleYRatioLoss = 0.05,

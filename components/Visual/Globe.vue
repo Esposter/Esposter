@@ -2,6 +2,7 @@
 import airportHistory from "@/assets/about/airport-history.json";
 import flightHistory from "@/assets/about/flight-history.json";
 import countries from "@/assets/about/globe-data-min.json";
+import dayjs from "dayjs";
 import {
   AmbientLight,
   Color,
@@ -87,8 +88,8 @@ onMounted(async () => {
       .arcStroke((e: any) => (e.status ? 0.5 : 0.3))
       .arcDashLength(0.9)
       .arcDashGap(4)
-      .arcDashAnimateTime(1000)
-      .arcsTransitionDuration(1000)
+      .arcDashAnimateTime(dayjs.duration(1, "second").milliseconds())
+      .arcsTransitionDuration(dayjs.duration(1, "second").milliseconds())
       .arcDashInitialGap((e: any) => e.order * 1)
       .labelsData(airportHistory.airports)
       .labelColor(() => "#ffcb21")
@@ -103,7 +104,7 @@ onMounted(async () => {
       .pointsMerge(true)
       .pointAltitude(0.07)
       .pointRadius(0.05);
-  }, 1000);
+  }, dayjs.duration(1, "second").milliseconds());
 
   const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
   globeMaterial.color = new Color(0x3a228a);

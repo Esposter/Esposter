@@ -3,6 +3,7 @@ import { type Target } from "@/models/clicker/Target";
 import { FPS } from "@/services/clicker/constants";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
+import dayjs from "dayjs";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingStatsTimer = () => {
@@ -24,9 +25,12 @@ export const useBuildingStatsTimer = () => {
       if (!buildingPower) return;
 
       buildingStatsTimers.value.push(
-        setInterval(() => {
-          boughtBuilding.producedValue += buildingPower.power / FPS;
-        }, 1000 / FPS),
+        setInterval(
+          () => {
+            boughtBuilding.producedValue += buildingPower.power / FPS;
+          },
+          dayjs.duration(1, "second").milliseconds() / FPS,
+        ),
       );
     }
   };

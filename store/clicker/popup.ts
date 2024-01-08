@@ -1,6 +1,7 @@
 import { type PointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
+import dayjs from "dayjs";
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
@@ -11,7 +12,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const popups = ref<({ id: string } & PointsPopupProps)[]>([]);
   const onClick = ({ pageX, pageY }: MouseEvent) => {
     const id = crypto.randomUUID();
-    const duration = 10000;
+    const duration = dayjs.duration(10, "seconds").milliseconds();
     incrementPoints(mousePower.value);
     popups.value.push({ id, points: mousePower.value, top: pageY, left: pageX, duration });
     window.setTimeout(() => {

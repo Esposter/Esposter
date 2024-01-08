@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Target } from "@/models/clicker/Target";
 import { useGameStore } from "@/store/clicker/game";
+import dayjs from "dayjs";
 import { filename } from "pathe/utils";
 
 const gameStore = useGameStore();
@@ -28,7 +29,7 @@ const animateCursors = (amount: number) => {
 
     rotatingDiv.animate(
       [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
-      { duration: 60 * 1000, iterations: Infinity },
+      { duration: dayjs.duration(60, "seconds").milliseconds(), iterations: Infinity },
     );
   }
 };

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Howl, type HowlOptions } from "howler";
 
 const cache: Record<string, Howl | null> = {};
@@ -21,7 +22,7 @@ export const useSound = (
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);
 
-    duration.value = (duration.value || sound.value?.duration() || 0) * 1000;
+    duration.value = (duration.value || sound.value?.duration() || 0) * dayjs.duration(1, "second").milliseconds();
 
     if (autoplay === true) isPlaying.value = true;
   }
