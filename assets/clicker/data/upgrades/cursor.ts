@@ -1,4 +1,5 @@
 import { EffectType } from "@/models/clicker/EffectType";
+import { ItemType } from "@/models/clicker/ItemType";
 import { Target } from "@/models/clicker/Target";
 import { type Upgrade } from "@/models/clicker/Upgrade";
 import { CursorUpgradeName } from "@/models/clicker/UpgradeName";
@@ -79,7 +80,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 5,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -95,7 +97,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 10,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -111,7 +114,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -127,7 +131,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -143,7 +148,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -159,7 +165,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -175,7 +182,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -191,7 +199,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -207,7 +216,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],
@@ -223,7 +233,8 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         value: 20,
         targets: [Target["Thousand Fingers"]],
         configuration: {
-          type: EffectType.UpgradeMultiplier,
+          type: EffectType.Multiplicative,
+          itemType: ItemType.Upgrade,
         },
       },
     ],

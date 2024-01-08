@@ -7,7 +7,6 @@ export enum EffectType {
   BuildingAdditive = "BuildingAdditive",
   // Considers all buildings except for buildings we specify
   BuildingAdditiveNor = "BuildingAdditiveNor",
-  UpgradeMultiplier = "UpgradeMultiplier",
 }
 
 export const effectTypeSchema = z.nativeEnum(EffectType) satisfies z.ZodType<EffectType>;

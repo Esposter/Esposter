@@ -2,7 +2,8 @@ import { type Building } from "@/models/clicker/Building";
 import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
-import { applyBuildingUpgrades, applyBuildingUpgradesSingle } from "@/services/clicker/upgrade";
+import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
+import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 import { getInitials } from "@/util/text";
@@ -19,10 +20,10 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const allBuildingPower = computed(() =>
-    game.value ? applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings) : 0,
+    applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings),
   );
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
-    game.value ? applyBuildingUpgradesSingle(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings) : 0;
+    applyBuildingUpgrade(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings);
   const getBoughtBuildingAmount = (building: Building) => {
     const boughtBuilding = game.value.boughtBuildings.find((b) => b.name === building.name);
     if (!boughtBuilding) return 0;
