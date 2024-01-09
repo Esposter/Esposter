@@ -1,4 +1,5 @@
 import { type Upgrade } from "@/models/clicker/Upgrade";
+import { type BuildingUnlockCondition } from "@/models/clicker/unlockCondition/BuildingUnlockCondition";
 import { decompileVariable } from "@/services/clicker/compiler/decompileVariable";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
@@ -18,7 +19,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     upgradeList.value.filter((u) =>
       u.unlockConditions.every((uc) => {
         const foundBuilding = game.value.boughtBuildings.find((bb) => bb.name === uc.target);
-        if (foundBuilding) return foundBuilding.amount >= uc.amount;
+        if (foundBuilding) return foundBuilding.amount >= (uc as BuildingUnlockCondition).amount;
 
         const foundUpgrade = game.value.boughtUpgrades.find((bu) => bu.name === uc.target);
         if (foundUpgrade) return true;
