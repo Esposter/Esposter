@@ -14,11 +14,11 @@ const { upgrade, isBought } = defineProps<UpgradeListItemProps>();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
-const { getDisplayDescription, getDisplayFlavorDescription, createBoughtUpgrade } = upgradeStore;
+const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
 const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price));
-const displayDescription = getDisplayDescription(upgrade);
-const displayFlavorDescription = getDisplayFlavorDescription(upgrade);
+const displayDescription = useDecompileString(upgrade.description);
+const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
 </script>
 
 <template>

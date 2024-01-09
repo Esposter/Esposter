@@ -1,6 +1,5 @@
 import { type Upgrade } from "@/models/clicker/Upgrade";
 import { type BuildingUnlockCondition } from "@/models/clicker/unlockCondition/BuildingUnlockCondition";
-import { decompileVariable } from "@/services/clicker/compiler/decompileVariable";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 
@@ -29,11 +28,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     ),
   );
 
-  const getDisplayDescription = (upgrade: Upgrade) =>
-    computed(() => decompileVariable(upgrade.description, clickerItemProperties.value));
-  const getDisplayFlavorDescription = (upgrade: Upgrade) =>
-    computed(() => decompileVariable(upgrade.flavorDescription, clickerItemProperties.value));
-
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
     game.value.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
@@ -43,8 +37,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     upgradeList,
     initialiseUpgradeList,
     unlockedUpgrades,
-    getDisplayDescription,
-    getDisplayFlavorDescription,
     createBoughtUpgrade,
   };
 });

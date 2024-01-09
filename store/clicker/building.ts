@@ -1,6 +1,5 @@
 import { type Building } from "@/models/clicker/Building";
 import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { decompileVariable } from "@/services/clicker/compiler/decompileVariable";
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
@@ -52,8 +51,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
     return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
   };
-  const getDisplayFlavorDescription = (building: Building) =>
-    computed(() => decompileVariable(building.flavorDescription, clickerItemProperties.value));
 
   const createBoughtBuilding = (newBuilding: Building) => {
     const newBuildingPrice = getBuildingPrice(newBuilding);
@@ -76,7 +73,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     getBoughtBuildingAmount,
     getBoughtBuildingStats,
     getBuildingPrice,
-    getDisplayFlavorDescription,
     createBoughtBuilding,
   };
 });
