@@ -14,7 +14,7 @@ export const getInitials = (fullName: string) => {
   return initials;
 };
 
-export const toTitleCase = (string: string) => string.toLowerCase().replaceAll(/\b\w/, (s) => s.toUpperCase());
+export const toTitleCase = (string: string) => string.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
 
 export const toKebabCase = (string: string) =>
   string
@@ -23,7 +23,7 @@ export const toKebabCase = (string: string) =>
     .join("-") ?? "";
 
 // Puts space between capital and non-capital letters for variable names
-export const prettifyName = (string: string) => string.replaceAll(/([A-Z])/, " $1").trim();
+export const prettifyName = (string: string) => string.replace(/([A-Z])/g, " $1").trim();
 // We want to match empty text for 2 scenarios:
 // 1. Standard white space
 // 2. <p></p> from tip tap rich text editor after typing and clearing the text
