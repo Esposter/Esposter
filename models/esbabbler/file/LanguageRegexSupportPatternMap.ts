@@ -12,7 +12,7 @@ export const extendedLanguages = languages.concat(
 
 const getLanguageRegexSupportPattern = (supportedExtensions: string) =>
   /\^/.test(supportedExtensions)
-    ? supportedExtensions.replace(/\|(\^)?/g, (_, b) => `$|${b ? "^" : "^.*\\."}$`)
+    ? supportedExtensions.replaceAll(/\|(\^)?/g, (_, b) => `$|${b ? "^" : "^.*\\."}$`)
     : `^.*\\.(${supportedExtensions})$`;
 
 export const LanguageRegexSupportPatternMap = extendedLanguages.reduce<Record<string, string>>((acc, curr) => {
