@@ -54,12 +54,12 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
   const getDisplayFlavorDescription = (building: Building) => {
     const flavorDescription = ref(decompileVariable(building.flavorDescription, clickerItemProperties.value));
-    // watch(
-    //   () => clickerItemProperties.value,
-    //   (newClickerItemProperties) => {
-    //     flavorDescription.value = decompileVariable(building.flavorDescription, newClickerItemProperties);
-    //   },
-    // );
+    watch(
+      () => clickerItemProperties.value,
+      (newClickerItemProperties) => {
+        flavorDescription.value = decompileVariable(building.flavorDescription, newClickerItemProperties);
+      },
+    );
     return flavorDescription;
   };
 

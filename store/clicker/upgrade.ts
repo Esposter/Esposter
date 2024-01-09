@@ -29,22 +29,22 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
   const getDisplayDescription = (upgrade: Upgrade) => {
     const description = ref(decompileVariable(upgrade.description, clickerItemProperties.value));
-    // watch(
-    //   () => clickerItemProperties.value,
-    //   (newClickerItemProperties) => {
-    //     description.value = decompileVariable(upgrade.description, newClickerItemProperties);
-    //   },
-    // );
+    watch(
+      () => clickerItemProperties.value,
+      (newClickerItemProperties) => {
+        description.value = decompileVariable(upgrade.description, newClickerItemProperties);
+      },
+    );
     return description;
   };
   const getDisplayFlavorDescription = (upgrade: Upgrade) => {
     const flavorDescription = ref(decompileVariable(upgrade.flavorDescription, clickerItemProperties.value));
-    // watch(
-    //   () => clickerItemProperties.value,
-    //   (newClickerItemProperties) => {
-    //     flavorDescription.value = decompileVariable(upgrade.flavorDescription, newClickerItemProperties);
-    //   },
-    // );
+    watch(
+      () => clickerItemProperties.value,
+      (newClickerItemProperties) => {
+        flavorDescription.value = decompileVariable(upgrade.flavorDescription, newClickerItemProperties);
+      },
+    );
     return flavorDescription;
   };
 

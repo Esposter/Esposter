@@ -1,8 +1,8 @@
 import { type ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+import { IconComponentMap } from "@/services/clicker/type/IconComponentMap";
 import { NameMap } from "@/services/clicker/type/NameMap";
 import { PluralNameMap } from "@/services/clicker/type/PluralNameMap";
 import { getColorMap } from "@/services/clicker/type/getColorMap";
-import { IconComponentMap } from "@/services/dungeons/IconComponentMap";
 import { useGameStore } from "@/store/clicker/game";
 
 export const useClickerItemProperties = () => {
