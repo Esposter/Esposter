@@ -1,9 +1,9 @@
 import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { type Target } from "@/models/clicker/Target";
 import { FPS } from "@/services/clicker/constants";
+import { dayjs } from "@/services/dayjs";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
-import dayjs from "dayjs";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingStatsTimer = () => {

@@ -1,7 +1,7 @@
 import { FPS } from "@/services/clicker/constants";
+import { dayjs } from "@/services/dayjs";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
-import dayjs from "dayjs";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingClickerTimer = () => {

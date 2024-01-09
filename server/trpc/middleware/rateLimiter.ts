@@ -1,6 +1,6 @@
 import { middleware } from "@/server/trpc";
+import { dayjs } from "@/services/dayjs";
 import { TRPCError } from "@trpc/server";
-import dayjs from "dayjs";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const rateLimiter = new RateLimiterMemory({ points: 5, duration: 1, blockDuration: 5 });

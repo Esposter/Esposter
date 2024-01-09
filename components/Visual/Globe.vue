@@ -2,7 +2,7 @@
 import airportHistory from "@/assets/about/airport-history.json";
 import flightHistory from "@/assets/about/flight-history.json";
 import countries from "@/assets/about/globe-data-min.json";
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 import {
   AmbientLight,
   Color,

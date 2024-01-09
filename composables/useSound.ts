@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 import { Howl, type HowlOptions } from "howler";
 
 const cache: Record<string, Howl | null> = {};

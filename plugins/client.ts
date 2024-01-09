@@ -1,5 +1,5 @@
 import { type AppRouter } from "@/server/trpc/routers";
-import { transformer } from "@/server/trpc/transformer";
+import { superjson } from "@/services/superjson";
 import { errorLink } from "@/services/trpc/errorLink";
 import { isDevelopment } from "@/util/environment";
 import { isServer } from "@/util/isServer";
@@ -26,6 +26,6 @@ export default defineNuxtPlugin(() => {
       false: httpBatchLink({ url }),
     }),
   ];
-  const client = createTRPCNuxtClient<AppRouter>({ links, transformer });
+  const client = createTRPCNuxtClient<AppRouter>({ links, transformer: superjson });
   return { provide: { client } };
 });

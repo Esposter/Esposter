@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type User } from "@/db/schema/users";
 import { type MessageEntity } from "@/models/esbabbler/message";
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 
 interface MessageListItemProps {
   message: MessageEntity;

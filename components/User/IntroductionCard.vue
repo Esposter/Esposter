@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { dayjs } from "@/services/dayjs";
 import { SITE_NAME } from "@/services/esposter/constants";
 import { useUserStore } from "@/store/user";
-import dayjs from "dayjs";
 
 const userStore = useUserStore();
 const { authUser } = storeToRefs(userStore);

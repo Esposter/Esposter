@@ -1,7 +1,7 @@
 import { type PointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
+import { dayjs } from "@/services/dayjs";
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
-import dayjs from "dayjs";
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();

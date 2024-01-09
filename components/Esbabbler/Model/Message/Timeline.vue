@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 
 interface MessageTimelineProps {
   currentMessageDate: Date;

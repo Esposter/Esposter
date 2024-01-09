@@ -1,6 +1,6 @@
 import { type DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import { dayjs } from "@/services/dayjs";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
-import dayjs from "dayjs";
 
 export const todoListHeaders: DataTableHeader[] = [
   ...tableEditorHeaders,

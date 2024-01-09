@@ -1,9 +1,8 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
-
 <script setup lang="ts">
 import BaseCard from "@/components/Visual/BaseCard.vue";
 import { type Card } from "@/models/visual/Card";
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 import { type Component } from "vue";
 
 interface VisualCardCarouselProps {

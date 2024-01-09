@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 
 export const SAVE_FILENAME = "save.json";
 export const ITEM_NAME = "Piña Colada";

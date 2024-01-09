@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type PostWithRelations } from "@/db/schema/posts";
-import dayjs from "dayjs";
+import { dayjs } from "@/services/dayjs";
 
 interface PostCommentCardProps {
   comment: PostWithRelations;
