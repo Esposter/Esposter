@@ -12,7 +12,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const popups = ref<({ id: string } & PointsPopupProps)[]>([]);
   const onClick = ({ pageX, pageY }: MouseEvent) => {
     const id = crypto.randomUUID();
-    const duration = dayjs.duration(10, "seconds").milliseconds();
+    const duration = dayjs.duration(10, "seconds").asMilliseconds();
     incrementPoints(mousePower.value);
     popups.value.push({ id, points: mousePower.value, top: pageY, left: pageX, duration });
     window.setTimeout(() => {

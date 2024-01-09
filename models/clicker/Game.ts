@@ -1,4 +1,5 @@
 import { buildingWithStatsSchema, type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { ClickerType, clickerTypeSchema } from "@/models/clicker/ClickerType";
 import { createUpgradeSchema, type Upgrade } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { ApplyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
@@ -6,6 +7,7 @@ import { z } from "zod";
 
 class BaseGame {
   id = crypto.randomUUID() as string;
+  type = ClickerType.Default;
   noPoints = 0;
   boughtUpgrades: Upgrade[] = [];
   boughtBuildings: BuildingWithStats[] = [];
@@ -25,6 +27,7 @@ export const Game = ApplyItemMetadataMixin(BaseGame);
 export const gameSchema = z
   .object({
     id: z.string().uuid(),
+    type: clickerTypeSchema,
     noPoints: z.number(),
     boughtUpgrades: z.array(createUpgradeSchema(upgradeNameSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),

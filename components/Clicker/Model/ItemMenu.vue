@@ -59,7 +59,7 @@ const upgradeIcon = computed(() => {
         </template>
         <v-list-item-subtitle op="100!">
           {{ displayPrice }}
-          <ClickerModelPinaColada width="16" height="16" />
+          <ClickerModelItem w-4 h-4 />
         </v-list-item-subtitle>
         <template v-if="amount" #append>
           <span font-bold>
@@ -82,7 +82,7 @@ const upgradeIcon = computed(() => {
         </div>
         <div :class="{ 'not-affordable': !isAffordable }" flex>
           <v-spacer />
-          {{ displayPrice }} <ClickerModelPinaColada w-4 h-4 />
+          {{ displayPrice }} <ClickerModelItem w-4 h-4 />
         </div>
       </v-card-text>
       <template v-if="slots['append-text']">

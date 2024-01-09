@@ -16,7 +16,7 @@ const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
-const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >= upgrade.price));
+const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price));
 </script>
 
 <template>

@@ -88,8 +88,8 @@ onMounted(async () => {
       .arcStroke((e: any) => (e.status ? 0.5 : 0.3))
       .arcDashLength(0.9)
       .arcDashGap(4)
-      .arcDashAnimateTime(dayjs.duration(1, "second").milliseconds())
-      .arcsTransitionDuration(dayjs.duration(1, "second").milliseconds())
+      .arcDashAnimateTime(dayjs.duration(1, "second").asMilliseconds())
+      .arcsTransitionDuration(dayjs.duration(1, "second").asMilliseconds())
       .arcDashInitialGap((e: any) => e.order * 1)
       .labelsData(airportHistory.airports)
       .labelColor(() => "#ffcb21")
@@ -104,7 +104,7 @@ onMounted(async () => {
       .pointsMerge(true)
       .pointAltitude(0.07)
       .pointRadius(0.05);
-  }, dayjs.duration(1, "second").milliseconds());
+  }, dayjs.duration(1, "second").asMilliseconds());
 
   const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
   globeMaterial.color = new Color(0x3a228a);

@@ -29,7 +29,7 @@ export const useBuildingStatsTimer = () => {
           () => {
             boughtBuilding.producedValue += buildingPower.power / FPS;
           },
-          dayjs.duration(1, "second").milliseconds() / FPS,
+          dayjs.duration(1, "second").asMilliseconds() / FPS,
         ),
       );
     }

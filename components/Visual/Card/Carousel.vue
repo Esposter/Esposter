@@ -16,7 +16,7 @@ interface VisualCardCarouselProps {
 const {
   cards,
   // Duration before cards move
-  duration = dayjs.duration(10, "seconds").milliseconds(),
+  duration = dayjs.duration(10, "seconds").asMilliseconds(),
   maxShownCards = 5,
   // Ratio of how much shorter the next card is
   cardScaleYRatioLoss = 0.05,

@@ -2,7 +2,7 @@ import { dayjs } from "@/services/dayjs";
 
 export const SAVE_FILENAME = "save.json";
 export const ITEM_NAME = "Piña Colada";
-export const AUTOSAVE_INTERVAL = dayjs.duration(60, "seconds").milliseconds();
+export const AUTOSAVE_INTERVAL = dayjs.duration(60, "seconds").asMilliseconds();
 export const FPS = 60;
 
 // local storage key

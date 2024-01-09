@@ -14,7 +14,7 @@ const { initialiseBuildingList } = buildingStore;
 const { buildingList } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
-    .filter((u) => game.value && !game.value.boughtUpgrades.some((bu) => bu.name === u.name))
+    .filter((u) => !game.value.boughtUpgrades.some((bu) => bu.name === u.name))
     .toSorted((a, b) => a.price - b.price),
 );
 

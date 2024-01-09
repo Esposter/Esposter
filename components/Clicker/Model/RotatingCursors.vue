@@ -29,7 +29,7 @@ const animateCursors = (amount: number) => {
 
     rotatingDiv.animate(
       [{ transform: `rotate(${rotationOffset}deg)` }, { transform: `rotate(${rotationOffset + 360}deg)` }],
-      { duration: dayjs.duration(60, "seconds").milliseconds(), iterations: Infinity },
+      { duration: dayjs.duration(60, "seconds").asMilliseconds(), iterations: Infinity },
     );
   }
 };

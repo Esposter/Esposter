@@ -20,7 +20,7 @@ const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
 const buildingPrice = computed(() => getBuildingPrice(building));
-const isAffordable = computed(() => Boolean(game.value && game.value.noPoints >= buildingPrice.value));
+const isAffordable = computed(() => Boolean(game.value.noPoints >= buildingPrice.value));
 </script>
 
 <template>

@@ -14,7 +14,7 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   try {
     const response = await rateLimiter.consume(`${path}|${ip}`);
     if ("setHeader" in ctx.res) {
-      ctx.res.setHeader("Retry-After", response.msBeforeNext / dayjs.duration(1, "second").milliseconds());
+      ctx.res.setHeader("Retry-After", response.msBeforeNext / dayjs.duration(1, "second").asMilliseconds());
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
       ctx.res.setHeader("X-RateLimit-Remaining", response.remainingPoints);
       ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + response.msBeforeNext).toISOString());
