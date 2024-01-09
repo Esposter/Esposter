@@ -3,11 +3,11 @@ import { ClickerIconComponentMap } from "@/services/clicker/ClickerIconComponent
 import { useGameStore } from "@/store/clicker/game";
 import { type SVGAttributes } from "vue";
 
-interface PinaColadaProps {
+interface ClickerModelItemProps {
   gAttrs?: SVGAttributes;
 }
 
-const { gAttrs } = defineProps<PinaColadaProps>();
+const { gAttrs } = defineProps<ClickerModelItemProps>();
 const emit = defineEmits<{ click: [value: MouseEvent] }>();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
