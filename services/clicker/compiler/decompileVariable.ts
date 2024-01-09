@@ -4,7 +4,7 @@ import { VARIABLE_REGEX } from "@/services/clicker/constants";
 
 export const decompileVariable = (string: string, clickerItemProperties: ClickerItemProperties) => {
   const variableMatches = string.matchAll(VARIABLE_REGEX);
-  console.log("test");
+
   let decompiledString = string;
   for (const variableMatch of variableMatches) {
     const property = variableMatch[1] as keyof ClickerItemProperties;
