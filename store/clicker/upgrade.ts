@@ -17,36 +17,21 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const unlockedUpgrades = computed<Upgrade[]>(() =>
     upgradeList.value.filter((u) =>
       u.unlockConditions.every((uc) => {
-        for (const boughtBuilding of game.value.boughtBuildings)
-          if (boughtBuilding.name === uc.target) return boughtBuilding.amount >= uc.amount;
+        const foundBuilding = game.value.boughtBuildings.find((bb) => bb.name === uc.target);
+        if (foundBuilding) return foundBuilding.amount >= uc.amount;
 
-        for (const boughtUpgrade of game.value.boughtUpgrades) if (boughtUpgrade.name === uc.target) return true;
+        const foundUpgrade = game.value.boughtUpgrades.find((bu) => bu.name === uc.target);
+        if (foundUpgrade) return true;
 
         return false;
       }),
     ),
   );
 
-  const getDisplayDescription = (upgrade: Upgrade) => {
-    const description = ref(decompileVariable(upgrade.description, clickerItemProperties.value));
-    watch(
-      () => clickerItemProperties.value,
-      (newClickerItemProperties) => {
-        description.value = decompileVariable(upgrade.description, newClickerItemProperties);
-      },
-    );
-    return description;
-  };
-  const getDisplayFlavorDescription = (upgrade: Upgrade) => {
-    const flavorDescription = ref(decompileVariable(upgrade.flavorDescription, clickerItemProperties.value));
-    watch(
-      () => clickerItemProperties.value,
-      (newClickerItemProperties) => {
-        flavorDescription.value = decompileVariable(upgrade.flavorDescription, newClickerItemProperties);
-      },
-    );
-    return flavorDescription;
-  };
+  const getDisplayDescription = (upgrade: Upgrade) =>
+    computed(() => decompileVariable(upgrade.description, clickerItemProperties.value));
+  const getDisplayFlavorDescription = (upgrade: Upgrade) =>
+    computed(() => decompileVariable(upgrade.flavorDescription, clickerItemProperties.value));
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
     game.value.boughtUpgrades.push(newUpgrade);

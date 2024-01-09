@@ -2,21 +2,21 @@ import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
 import {
-MessageEmojiMetadataEntity,
-MessageEmojiMetadataEntityPropertyNames,
-messageEmojiMetadataSchema,
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityPropertyNames,
+  messageEmojiMetadataSchema,
 } from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import {
-AZURE_MAX_PAGE_SIZE,
-createEntity,
-deleteEntity,
-getTableClient,
-getTopNEntities,
-updateEntity,
+  AZURE_MAX_PAGE_SIZE,
+  createEntity,
+  deleteEntity,
+  getTableClient,
+  getTopNEntities,
+  updateEntity,
 } from "@/services/azure/table";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/time";

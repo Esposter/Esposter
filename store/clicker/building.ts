@@ -52,16 +52,8 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
     return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
   };
-  const getDisplayFlavorDescription = (building: Building) => {
-    const flavorDescription = ref(decompileVariable(building.flavorDescription, clickerItemProperties.value));
-    watch(
-      () => clickerItemProperties.value,
-      (newClickerItemProperties) => {
-        flavorDescription.value = decompileVariable(building.flavorDescription, newClickerItemProperties);
-      },
-    );
-    return flavorDescription;
-  };
+  const getDisplayFlavorDescription = (building: Building) =>
+    computed(() => decompileVariable(building.flavorDescription, clickerItemProperties.value));
 
   const createBoughtBuilding = (newBuilding: Building) => {
     const newBuildingPrice = getBuildingPrice(newBuilding);
