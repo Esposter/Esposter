@@ -91,7 +91,7 @@ export const postRouter = router({
   }),
   createComment: authedProcedure.input(createCommentInputSchema).mutation(async ({ input, ctx }) => {
     const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
-    if (!parentPost) throw Error("Cannot find parent post");
+    if (!parentPost) throw new Error("Cannot find parent post");
 
     const newComment = await db.transaction(async (tx) => {
       const createdAt = new Date();
@@ -123,7 +123,7 @@ export const postRouter = router({
     const post = await db.query.posts.findFirst({
       where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
     });
-    if (!post) throw Error("Cannot find post, you might be trying to update a comment");
+    if (!post) throw new Error("Cannot find post, you might be trying to update a comment");
 
     const updatedPost = (
       await db

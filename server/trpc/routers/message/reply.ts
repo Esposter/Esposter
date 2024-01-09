@@ -4,7 +4,7 @@ import { replyEventEmitter } from "@/models/esbabbler/events/reply";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import {
   MessageReplyMetadataEntity,
-  MessageReplyMetadataEntityProperties,
+  MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataSchema,
 } from "@/models/esbabbler/message/reply";
 import { router } from "@/server/trpc";
@@ -35,7 +35,7 @@ export const replyRouter = router({
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageReplyMetadataEntity>;
-      const { type, messageRowKey } = MessageReplyMetadataEntityProperties;
+      const { type, messageRowKey } = MessageReplyMetadataEntityPropertyNames;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
           MessageMetadataType.Reply
@@ -57,7 +57,7 @@ export const replyRouter = router({
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
-      const { type, messageRowKey, messageReplyRowKey } = MessageReplyMetadataEntityProperties;
+      const { type, messageRowKey, messageReplyRowKey } = MessageReplyMetadataEntityPropertyNames;
       const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
         filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.Reply} and ${messageRowKey} eq ${input.messageRowKey} and ${messageReplyRowKey} eq ${input.messageReplyRowKey}`,
       });

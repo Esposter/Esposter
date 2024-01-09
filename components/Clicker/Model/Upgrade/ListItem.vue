@@ -14,9 +14,11 @@ const { upgrade, isBought } = defineProps<UpgradeListItemProps>();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
-const { createBoughtUpgrade } = upgradeStore;
+const { getDisplayDescription, getDisplayFlavorDescription, createBoughtUpgrade } = upgradeStore;
 const { play } = useSound(buySfx);
 const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price));
+const displayDescription = getDisplayDescription(upgrade);
+const displayFlavorDescription = getDisplayFlavorDescription(upgrade);
 </script>
 
 <template>
@@ -25,8 +27,8 @@ const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price
     :is-affordable="isAffordable"
     :menu-props="{ location: isBought ? 'left center' : 'right center' }"
     :name="upgrade.name"
-    :description="upgrade.description"
-    :flavor-description="upgrade.flavorDescription"
+    :description="displayDescription"
+    :flavor-description="displayFlavorDescription"
     :price="upgrade.price"
   >
     <template v-if="!isBought" #action>

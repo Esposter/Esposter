@@ -1,6 +1,6 @@
 import { type Building } from "@/models/clicker/Building";
 import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { ITEM_NAME } from "@/services/clicker/constants";
+import { decompileVariable } from "@/services/clicker/compiler/decompileVariable";
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
@@ -13,6 +13,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const { game } = storeToRefs(gameStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
+  const clickerItemProperties = useClickerItemProperties();
 
   const buildingList = ref<Building[]>([]);
   const initialiseBuildingList = (buildings: Building[]) => {
@@ -36,20 +37,30 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
 
     return [
-      `Each ${boughtBuilding.name} produces **${formatNumberLong(
-        buildingPower / boughtBuilding.amount,
-      )} ${ITEM_NAME}s** per second`,
-      `${boughtBuilding.amount} ${boughtBuilding.name}s producing **${formatNumberLong(
-        buildingPower,
-      )} ${ITEM_NAME}s** per second (**${formatNumberLong(
-        (buildingPower / allBuildingPower.value) * 100,
-      )}%** of total ${getInitials(ITEM_NAME)}pS)`,
-      `**${formatNumberLong(boughtBuilding.producedValue)}** ${ITEM_NAME}s produced so far`,
+      `Each ${boughtBuilding.name} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
+        clickerItemProperties.value.pluralName
+      }** per second`,
+      `${boughtBuilding.amount} ${boughtBuilding.name}s producing **${formatNumberLong(buildingPower)} ${
+        clickerItemProperties.value.pluralName
+      }** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(
+        clickerItemProperties.value.pluralName,
+      )}pS)`,
+      `**${formatNumberLong(boughtBuilding.producedValue)}** ${clickerItemProperties.value.pluralName} produced so far`,
     ];
   };
   const getBuildingPrice = (building: Building) => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
     return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
+  };
+  const getDisplayFlavorDescription = (building: Building) => {
+    const flavorDescription = ref(decompileVariable(building.flavorDescription, clickerItemProperties.value));
+    // watch(
+    //   () => clickerItemProperties.value,
+    //   (newClickerItemProperties) => {
+    //     flavorDescription.value = decompileVariable(building.flavorDescription, newClickerItemProperties);
+    //   },
+    // );
+    return flavorDescription;
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {
@@ -73,6 +84,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     getBoughtBuildingAmount,
     getBoughtBuildingStats,
     getBuildingPrice,
+    getDisplayFlavorDescription,
     createBoughtBuilding,
   };
 });

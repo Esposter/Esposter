@@ -14,13 +14,20 @@ const { building } = defineProps<BuildingListItemProps>();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
-const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
+const {
+  getBoughtBuildingAmount,
+  getBoughtBuildingStats,
+  getBuildingPrice,
+  getDisplayFlavorDescription,
+  createBoughtBuilding,
+} = buildingStore;
 const { play } = useSound(buySfx);
 const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
 const buildingPrice = computed(() => getBuildingPrice(building));
 const isAffordable = computed(() => Boolean(game.value.noPoints >= buildingPrice.value));
+const displayFlavorDescription = getDisplayFlavorDescription(building);
 </script>
 
 <template>
@@ -30,7 +37,7 @@ const isAffordable = computed(() => Boolean(game.value.noPoints >= buildingPrice
     :is-affordable="isAffordable"
     :menu-props="{ location: 'right center' }"
     :name="building.name"
-    :flavor-description="building.flavorDescription"
+    :flavor-description="displayFlavorDescription"
     :price="buildingPrice"
     :amount="boughtBuildingAmount"
   >

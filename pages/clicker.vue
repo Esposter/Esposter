@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ITEM_NAME } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/format";
 import { useGameStore } from "@/store/clicker/game";
 
@@ -7,13 +6,14 @@ await useReadClickerGame();
 useTimers();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
+const clickerItemProperties = useClickerItemProperties();
 const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3));
 </script>
 
 <template>
   <NuxtLayout>
     <Head>
-      <Title>{{ displayNoPoints }} {{ ITEM_NAME }}s</Title>
+      <Title>{{ displayNoPoints }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
     <template #left>
       <ClickerModelStoreHeader pt-4 />

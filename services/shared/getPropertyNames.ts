@@ -1,4 +1,4 @@
-export const getProperties = <T>() =>
+export const getPropertyNames = <T>() =>
   new Proxy(
     {},
     {

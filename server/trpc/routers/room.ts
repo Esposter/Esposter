@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { InviteEntity, InviteEntityProperties, inviteCodeSchema } from "@/models/esbabbler/room/invite";
+import { InviteEntity, InviteEntityPropertyNames, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -166,7 +166,7 @@ export const roomRouter = router({
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
       let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and ${InviteEntityProperties.roomId} eq ${roomId}`,
+        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and ${InviteEntityPropertyNames.roomId} eq ${roomId}`,
       });
       if (invites.length > 0) return invites[0].rowKey;
 

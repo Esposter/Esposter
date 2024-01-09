@@ -9,7 +9,8 @@ export interface PointsPopupProps {
 }
 
 const { points, top, left, duration } = defineProps<PointsPopupProps>();
-const { primary } = useColors();
+const clickerItemProperties = useClickerItemProperties();
+const color = computed(() => clickerItemProperties.value.color);
 const displayPoints = computed(() => formatNumberLong(points));
 const topPx = computed(() => `${top}px`);
 const leftPx = computed(() => `${left}px`);
@@ -34,7 +35,7 @@ const durationMs = computed(() => `${duration}ms`);
 .popup {
   top: v-bind(topPx);
   left: v-bind(leftPx);
-  color: v-bind(primary);
+  color: v-bind(color);
   animation: animation v-bind(durationMs) forwards;
 }
 </style>

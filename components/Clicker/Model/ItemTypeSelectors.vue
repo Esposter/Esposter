@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ClickerType } from "@/models/clicker/ClickerType";
-import { ClickerIconComponentMap } from "@/services/clicker/ClickerIconComponentMap";
+import { IconComponentMap } from "@/services/clicker/type/IconComponentMap";
 import { useGameStore } from "@/store/clicker/game";
 
 const gameStore = useGameStore();
@@ -18,7 +18,7 @@ const { surface } = useColors();
   >
     <svg w-8 h-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
       <g>
-        <component :is="ClickerIconComponentMap[clickerType]" />
+        <component :is="IconComponentMap[clickerType]" />
       </g>
     </svg>
   </v-btn>

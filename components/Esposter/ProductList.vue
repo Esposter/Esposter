@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
 import { type ListItem } from "@/models/shared/ListItem";
-import { ITEM_NAME } from "@/services/clicker/constants";
 
 const items: ListItem[] = [
   {
@@ -10,9 +9,9 @@ const items: ListItem[] = [
     icon: "mdi-message-fast",
   },
   {
-    title: `${ITEM_NAME} Clicker`,
+    title: "Clicker",
     href: RoutePath.Clicker,
-    icon: "mdi-fruit-pineapple",
+    icon: "mdi-cursor-pointer",
   },
   {
     title: "Table Editor",

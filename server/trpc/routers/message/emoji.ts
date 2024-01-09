@@ -2,21 +2,21 @@ import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
 import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
 import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityProperties,
-  messageEmojiMetadataSchema,
+MessageEmojiMetadataEntity,
+MessageEmojiMetadataEntityPropertyNames,
+messageEmojiMetadataSchema,
 } from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import {
-  AZURE_MAX_PAGE_SIZE,
-  createEntity,
-  deleteEntity,
-  getTableClient,
-  getTopNEntities,
-  updateEntity,
+AZURE_MAX_PAGE_SIZE,
+createEntity,
+deleteEntity,
+getTableClient,
+getTopNEntities,
+updateEntity,
 } from "@/services/azure/table";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/time";
@@ -62,7 +62,7 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await getTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const { type, messageRowKey } = MessageEmojiMetadataEntityProperties;
+      const { type, messageRowKey } = MessageEmojiMetadataEntityPropertyNames;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
           MessageMetadataType.EmojiTag
@@ -84,7 +84,7 @@ export const emojiRouter = router({
     .input(createEmojiInputSchema)
     .mutation(async ({ input, ctx }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
-      const { type, messageRowKey, emojiTag } = MessageEmojiMetadataEntityProperties;
+      const { type, messageRowKey, emojiTag } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
         filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.EmojiTag} and ${messageRowKey} eq ${input.messageRowKey} and ${emojiTag} eq ${input.emojiTag}`,
       });
