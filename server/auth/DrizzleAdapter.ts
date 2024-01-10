@@ -3,6 +3,7 @@ import { accounts } from "@/db/schema/accounts";
 import { sessions } from "@/db/schema/sessions";
 import { users } from "@/db/schema/users";
 import { verificationTokens } from "@/db/schema/verificationTokens";
+import { omit } from "@/util/omit";
 import { type Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
 
@@ -35,19 +36,10 @@ export const DrizzleAdapter: Adapter = {
   updateSession: async (input) =>
     (await db.update(sessions).set(input).where(eq(sessions.sessionToken, input.sessionToken)).returning())[0],
   linkAccount: async (rawAccount) => {
-    const {
-      idToken,
-      refreshToken,
-      accessToken,
-      scope,
-      tokenType,
-      sessionState,
-      expiresAt,
-      createdAt,
-      updatedAt,
-      deletedAt,
-      ...rest
-    } = (await db.insert(accounts).values(rawAccount).returning())[0];
+    const { idToken, refreshToken, accessToken, scope, tokenType, sessionState, expiresAt, ...rest } = omit(
+      (await db.insert(accounts).values(rawAccount).returning())[0],
+      ["createdAt", "updatedAt", "deletedAt"],
+    );
     // Drizzle will return `null` for fields that are not defined.
     // However, the return type is expecting `undefined`.
     return {

@@ -1,5 +1,4 @@
-export const isObject = (value: unknown): boolean =>
-  value !== null && !Array.isArray(value) && typeof value === "object";
+import { isObject } from "@vueuse/core";
 
 export const getRawData = <T>(data: T): T => (isReactive(data) ? toRaw(data) : data);
 

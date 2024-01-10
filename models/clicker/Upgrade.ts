@@ -11,6 +11,7 @@ export interface Upgrade<TName = UpgradeName> {
   effects: Effect[];
   unlockConditions: UnlockCondition[];
 }
+
 export const createUpgradeSchema = <TNameSchema extends z.ZodTypeAny = z.ZodType<UpgradeName>>(
   nameSchema: TNameSchema,
 ) =>

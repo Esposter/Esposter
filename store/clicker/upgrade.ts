@@ -8,7 +8,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const { game } = storeToRefs(gameStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
-  const clickerItemProperties = useClickerItemProperties();
 
   const upgradeList = ref<Upgrade[]>([]);
   const initialiseUpgradeList = (upgrades: Upgrade[]) => {
