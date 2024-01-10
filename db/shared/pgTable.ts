@@ -1,5 +1,5 @@
 import { metadataSchema } from "@/db/shared/metadataSchema";
-import { type SkipFirst } from "@/util/types";
+import { type SkipFirst } from "@/util/types/SkipFirst";
 import { pgTable as drizzlePgTable, type PgColumnBuilderBase } from "drizzle-orm/pg-core";
 
 export const pgTable = <TTableName extends string, TColumnsMap extends Record<string, PgColumnBuilderBase>>(
