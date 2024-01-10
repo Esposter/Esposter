@@ -12,7 +12,7 @@ import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { now } from "@/util/time";
+import { now } from "@/util/now";
 import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/esbabbler/room";
-import { uuidValidateV4 } from "@/util/uuid";
+import { uuidValidateV4 } from "@/util/uuid/uuidValidateV4";
 
 definePageMeta({ middleware: "auth" });
 

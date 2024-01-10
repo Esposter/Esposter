@@ -5,7 +5,7 @@ import ErrorIcon from "@/components/TableEditor/EditFormDialog/ErrorIcon.vue";
 import SaveButton from "@/components/TableEditor/EditFormDialog/SaveButton.vue";
 import ToggleFullScreenDialogButton from "@/components/TableEditor/EditFormDialog/ToggleFullScreenDialogButton.vue";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { prettifyName } from "@/util/text";
+import { prettifyName } from "@/util/text/prettifyName";
 
 const tableEditorStore = useTableEditorStore()();
 const { editedItem } = storeToRefs(tableEditorStore);

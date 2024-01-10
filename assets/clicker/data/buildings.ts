@@ -1,6 +1,6 @@
 import { type Building } from "@/models/clicker/Building";
 import { BuildingName } from "@/models/clicker/BuildingName";
-import { compileVariable } from "~/services/clicker/compiler/compileVariable";
+import { compileVariable } from "@/services/clicker/compiler/compileVariable";
 
 export const buildings: Building[] = [
   {

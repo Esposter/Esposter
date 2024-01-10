@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCommentStore } from "@/store/post/comment";
-import { EMPTY_TEXT_REGEX } from "@/util/text";
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCreateCommentRichTextEditorProps {
   postId: string;

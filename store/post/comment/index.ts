@@ -1,8 +1,8 @@
 import { type PostWithRelations } from "@/db/schema/posts";
 import { type CreateCommentInput, type DeleteCommentInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
-import { EMPTY_TEXT_REGEX } from "@/util/text";
-import { uuidValidateV4 } from "@/util/uuid";
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { uuidValidateV4 } from "@/util/uuid/uuidValidateV4";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $client } = useNuxtApp();

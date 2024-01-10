@@ -3,7 +3,7 @@ import { type Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { formRules } from "@/services/vuetify/formRules";
-import { toTitleCase } from "@/util/text";
+import { toTitleCase } from "@/util/text/toTitleCase";
 
 export interface UserProfileCardRowProps {
   title: string;

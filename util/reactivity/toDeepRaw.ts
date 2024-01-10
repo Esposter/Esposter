@@ -1,8 +1,7 @@
+import { getRawData } from "@/util/reactivity/getRawData";
 import { isObject } from "@vueuse/core";
 
-export const getRawData = <T>(data: T): T => (isReactive(data) ? toRaw(data) : data);
-
-export function toDeepRaw<T>(data: T): T {
+export const toDeepRaw = <T>(data: T): T => {
   const rawData = getRawData<T>(data);
 
   for (const key in rawData) {
@@ -14,4 +13,4 @@ export function toDeepRaw<T>(data: T): T {
   }
 
   return rawData;
-}
+};

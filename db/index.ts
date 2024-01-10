@@ -6,7 +6,7 @@ import * as sessions from "@/db/schema/sessions";
 import * as surveys from "@/db/schema/surveys";
 import * as users from "@/db/schema/users";
 import * as verificationTokens from "@/db/schema/verificationTokens";
-import { isProduction } from "@/util/environment";
+import { IS_PRODUCTION } from "@/util/environment/constants";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -24,7 +24,7 @@ export const db = drizzle(client, {
     ...users,
     ...verificationTokens,
   },
-  logger: !isProduction ? new DrizzleLogger() : undefined,
+  logger: !IS_PRODUCTION ? new DrizzleLogger() : undefined,
 });
 
 await migrate(db, { migrationsFolder: "public/db/migrations" });

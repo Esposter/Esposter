@@ -2,7 +2,7 @@ import { Game } from "@/models/clicker/Game";
 import { CLICKER_STORE } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 import { isDiff } from "@/util/isDiff";
-import { jsonDateParse } from "@/util/json";
+import { jsonDateParse } from "@/util/jsonDateParse";
 import { omitDeep } from "@/util/omitDeep";
 import { type RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
 

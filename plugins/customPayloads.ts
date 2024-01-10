@@ -1,7 +1,7 @@
 import { Game as ClickerGame } from "@/models/clicker/Game";
 import { Game as DungeonsGame } from "@/models/dungeons/Game";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
-import { jsonDateParse } from "@/util/json";
+import { jsonDateParse } from "@/util/jsonDateParse";
 
 export default definePayloadPlugin(() => {
   definePayloadReducer("ClickerGame", (data) => data instanceof ClickerGame && data.toJSON());
