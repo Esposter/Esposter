@@ -1,5 +1,5 @@
 import { metadataSchema } from "@/db/shared/metadataSchema";
-import { type SkipFirst } from "@/util/types/SkipFirst";
+import { type TupleSlice } from "@/util/types/TupleSlice";
 import { pgTable as drizzlePgTable, type PgColumnBuilderBase } from "drizzle-orm/pg-core";
 
 export const pgTable = <TTableName extends string, TColumnsMap extends Record<string, PgColumnBuilderBase>>(
@@ -11,7 +11,7 @@ export const pgTable = <TTableName extends string, TColumnsMap extends Record<st
       ...metadataSchema,
       ...args[1],
     },
-    ...(args.slice(2) as SkipFirst<
+    ...(args.slice(2) as TupleSlice<
       Parameters<typeof drizzlePgTable<TTableName, TColumnsMap & typeof metadataSchema>>,
       2
     >),

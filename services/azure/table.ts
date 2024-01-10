@@ -2,7 +2,7 @@ import { type AzureUpdateEntity, type CompositeKey } from "@/models/azure";
 import { type AzureTable, type AzureTableEntityMap, type CustomTableClient } from "@/models/azure/table";
 import { dayjs } from "@/services/dayjs";
 import { now } from "@/util/time";
-import { type SkipFirst } from "@/util/types/SkipFirst";
+import { type TupleSlice } from "@/util/types/TupleSlice";
 import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
 import { plainToInstance, type ClassConstructor } from "class-transformer";
 
@@ -22,7 +22,7 @@ export const getTableClient = async <TAzureTable extends AzureTable>(
 
 export const createEntity = <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
-  ...args: [TEntity, ...SkipFirst<Parameters<CustomTableClient<TEntity>["createEntity"]>, 1>]
+  ...args: [TEntity, ...TupleSlice<Parameters<CustomTableClient<TEntity>["createEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(
@@ -36,7 +36,7 @@ export const createEntity = <TEntity extends CompositeKey>(
 
 export const updateEntity = <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
-  ...args: [AzureUpdateEntity<TEntity>, ...SkipFirst<Parameters<CustomTableClient<TEntity>["updateEntity"]>, 1>]
+  ...args: [AzureUpdateEntity<TEntity>, ...TupleSlice<Parameters<CustomTableClient<TEntity>["updateEntity"]>, 1>]
 ) => {
   const [entity, ...rest] = args;
   const serializedEntity = Object.fromEntries(

@@ -3,6 +3,8 @@ import { CLICKER_STORE } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 import { isDiff } from "@/util/isDiff";
 import { jsonDateParse } from "@/util/json";
+import { omitDeep } from "@/util/omitDeep";
+import { type RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
 
 export const useReadClickerGame = async () => {
   const { $client } = useNuxtApp();
@@ -10,11 +12,11 @@ export const useReadClickerGame = async () => {
   const { saveGame } = gameStore;
   const { game } = storeToRefs(gameStore);
   // This is used for tracking when we should save the game
-  // i.e. every time we update the game state aside from noPoints
-  // @TODO: Track boughtBuildings without producedValue after implementing omitDeep
-  const gameTracker = computed<Omit<Game, "noPoints">>((oldGameTracker) => {
-    const { noPoints, ...rest } = game.value;
-    return !oldGameTracker || isDiff(oldGameTracker, rest) ? rest : oldGameTracker;
+  // i.e. every time the user manually updates the game state
+  // which is everything excluding automatic updates like noPoints
+  const gameTracker = computed<RecursiveDeepOmit<Game, ["noPoints", "producedValue"]>>((oldGameTracker) => {
+    const newGameTracker = omitDeep(game.value, "noPoints", "producedValue");
+    return !oldGameTracker || isDiff(oldGameTracker, newGameTracker) ? newGameTracker : oldGameTracker;
   });
 
   await useReadData(
@@ -28,5 +30,5 @@ export const useReadClickerGame = async () => {
     },
   );
 
-  watch(gameTracker, saveGame);
+  watch(gameTracker, saveGame, { deep: true });
 };
