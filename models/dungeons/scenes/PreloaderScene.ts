@@ -1,11 +1,17 @@
+import barHorizontalGreenLeft from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenLeft.png";
+import barHorizontalGreenMid from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenMid.png";
+import barHorizontalGreenRight from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenRight.png";
+import customUI from "@/assets/dungeons/UISpaceExpansion/customUI.png";
+import forestBackground from "@/assets/dungeons/battleBackgrounds/forestBackground.png";
 import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { type Loader, Scene } from "phaser";
+import { Scene, type Loader } from "phaser";
 
 export class PreloaderScene extends Scene {
   constructor() {
@@ -75,12 +81,21 @@ export class PreloaderScene extends Scene {
       this.ready();
     });
 
+    this.load.image(TextureManagerKey.ForestBackground, forestBackground);
+    this.load.image(TextureManagerKey.HealthBarBackground, customUI);
+    this.load.image(TextureManagerKey.HealthBarLeftCap, barHorizontalGreenLeft);
+    this.load.image(TextureManagerKey.HealthBarMiddle, barHorizontalGreenMid);
+    this.load.image(TextureManagerKey.HealthBarRightCap, barHorizontalGreenRight);
     this.load.image(TilesetKey.CloudCity, cloudCityTileset);
     this.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
     this.load.spritesheet(SpritesheetKey.Characters, characters, { frameWidth: 52, frameHeight: 72 });
   }
 
+  create() {
+    this.add.image(0, 0, TextureManagerKey.ForestBackground).setOrigin(0);
+  }
+
   ready() {
-    this.scene.start(SceneKey.Game);
+    // this.scene.start(SceneKey.Game);
   }
 }

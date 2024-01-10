@@ -1,7 +1,7 @@
 import { type AzureUpdateEntity, type CompositeKey } from "@/models/azure";
 import { type AzureTable, type AzureTableEntityMap, type CustomTableClient } from "@/models/azure/table";
 import { dayjs } from "@/services/dayjs";
-import { now } from "@/util/time";
+import { now } from "@/util/now";
 import { type TupleSlice } from "@/util/types/TupleSlice";
 import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
 import { plainToInstance, type ClassConstructor } from "class-transformer";

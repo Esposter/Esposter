@@ -1,7 +1,7 @@
 import { type ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-import { prettifyName } from "@/util/text";
+import { prettifyName } from "@/util/text/prettifyName";
 
 export const vuetifyComponentItemCategoryDefinitions: ItemCategoryDefinition<VuetifyComponentItem>[] = [
   {

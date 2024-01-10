@@ -1,7 +1,7 @@
 import { Game } from "@/models/dungeons/Game";
 import { DUNGEONS_STORE } from "@/services/dungeons/constants";
 import { useGameStore } from "@/store/dungeons/game";
-import { jsonDateParse } from "@/util/json";
+import { jsonDateParse } from "@/util/jsonDateParse";
 
 export const useReadDungeonsGame = async () => {
   const { $client } = useNuxtApp();

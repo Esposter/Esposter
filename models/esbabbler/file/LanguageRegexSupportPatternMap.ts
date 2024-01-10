@@ -1,4 +1,4 @@
-import { escapeRegExp } from "@/util/regex";
+import { escapeRegExp } from "@/util/escapeRegExp";
 import { LanguageDescription } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
 

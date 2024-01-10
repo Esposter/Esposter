@@ -4,7 +4,7 @@ import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { type VFormRef } from "@/models/vuetify/VFormRef";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
-import { toDeepRaw } from "@/util/reactivity";
+import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import equal from "deep-equal";
 
 interface TableEditorState<TItem extends Item = Item> {

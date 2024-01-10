@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type PostWithRelations } from "@/db/schema/posts";
 import { dayjs } from "@/services/dayjs";
-import { EMPTY_TEXT_REGEX } from "@/util/text";
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
   post: PostWithRelations;

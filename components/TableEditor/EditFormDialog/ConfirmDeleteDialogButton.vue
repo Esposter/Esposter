@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
-import { prettifyName } from "@/util/text";
+import { prettifyName } from "@/util/text/prettifyName";
 
 const tableEditorStore = useTableEditorStore()();
 const { save } = tableEditorStore;
