@@ -197,13 +197,7 @@ watch(
       v-for="(card, index) in cards"
       :key="index"
       :style="{ zIndex: cardIds.length - cardIds.indexOf(index) }"
-      :class="
-        index === activeCardId
-          ? 'active-card'
-          : index === inactiveCardId
-            ? 'inactive-card'
-            : classes[cardIds.indexOf(index)]
-      "
+      :class="classes[cardIds.indexOf(index)]"
       row="start-1"
       col="start-2"
     >
