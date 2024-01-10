@@ -71,6 +71,51 @@ const cardIds = ref<number[]>(cards.map((_, index) => index));
 const activeCardId = ref<number | null>(null);
 const inactiveCardId = ref<number | null>(null);
 
+const classes = computed<string[]>(() => {
+  const newClasses = [];
+  for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
+  return newClasses;
+});
+
+// There are 4 types of cards to generate
+// Active, this is the card moving from right -> left -> right
+// Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
+// Inactive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
+// 'Normal', this is just one of the normal cards on the right that make their way to become active.
+const getClass = (cardId: number): string => {
+  const offset = cardIds.value.indexOf(cardId);
+  if (cardId === activeCardId.value) return "active-card";
+  // If we're in the initial state, we can just set the last card as inactive
+  if ((inactiveCardId.value === null && cardId === maxShownCards) || cardId === inactiveCardId.value)
+    return "inactive-card";
+  else if (offset > maxShownCards - 2) return "overflow-card";
+  return `normal-card-${offset}`;
+};
+
+// This is the main timer that drives the movement of cards
+const moveCardsTimer = ref<number>();
+
+// This marks the first card as active (which is the top card on the right)
+// then moves it to the end of the array, and after a timeout unmarks it as active.
+const moveCards = () => {
+  if (cards.length === 0) return;
+  else if (cards.length === 1) {
+    moveOneCard();
+    return;
+  }
+
+  inactiveCardId.value = activeCardId.value;
+  activeCardId.value = cardIds.value[0];
+  // "Rotate" the cards
+  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
+};
+
+const moveOneCard = () => {
+  inactiveCardId.value = activeCardId.value;
+  if (activeCardId.value === null) activeCardId.value = cardIds.value[0];
+  else activeCardId.value = null;
+};
+
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
 const { width, thresholds } = useDisplay();
 
@@ -127,62 +172,6 @@ const inactiveCardStyle = computed<CardStyleVariables>(() => {
   return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
 });
 
-const secondLastCardStyle = computed<CardStyleVariables>(
-  () => normalCardStyles.value[normalCardStyles.value.length - 2],
-);
-
-const classes = computed<string[]>(() => {
-  const newClasses = [];
-  for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
-  return newClasses;
-});
-
-// There are 4 types of cards to generate
-// Active, this is the card moving from right -> left -> right
-// Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
-// Inactive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
-// 'Normal', this is just one of the normal cards on the right that make their way to become active.
-const getClass = (cardId: number): string => {
-  const offset = cardIds.value.indexOf(cardId);
-
-  if (inactiveCardId === null) {
-    // Set initial positions for everything, in these cases the 'activeCard' is the first card
-    if (cardId === activeCardId.value) return "initial-active-card";
-    if (offset === Math.min(maxShownCards + 1, cards.length) - 2) return "last-card";
-    if (offset > maxShownCards - 2) return "overflow-card";
-    return `initial-normal-card-${offset}`;
-  }
-
-  if (cardId === activeCardId.value) return "active-card";
-  if (cardId === inactiveCardId.value) return "inactive-card";
-  if (offset > maxShownCards - 2) return "overflow-card";
-  return `normal-card-${offset}`;
-};
-
-// This is the main timer that drives the movement of cards
-const moveCardsTimer = ref<number>();
-
-// This marks the first card as active (which is the top card on the right)
-// then moves it to the end of the array, and after a timeout unmarks it as active.
-const moveCards = () => {
-  if (cards.length === 0) return;
-  else if (cards.length === 1) {
-    moveOneCard();
-    return;
-  }
-
-  inactiveCardId.value = activeCardId.value;
-  activeCardId.value = cardIds.value[0];
-  // "Rotate" the cards
-  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
-};
-
-const moveOneCard = () => {
-  inactiveCardId.value = activeCardId.value;
-  if (activeCardId.value === null) activeCardId.value = cardIds.value[0];
-  else activeCardId.value = null;
-};
-
 onMounted(() => {
   // When debugging animations it's often easier to comment out this line so that they don't move on you every so often.
   if (duration > 0) moveCardsTimer.value = window.setInterval(moveCards, duration);
@@ -226,7 +215,8 @@ watch(
 </template>
 
 <style scoped lang="scss">
-// === Simple styles ===
+// The rough idea of the code below is pretty simple
+// - The JS code will handle breakpoints/variables for each card
 .active-card {
   // active cards always show at the very top
   z-index: 100 !important;
@@ -261,7 +251,7 @@ watch(
   // we start on the right side
   0% {
     // active cards don't have any scale/translate
-    transform: translateX(-100%) scaleY(1);
+    transform: translateX(-100%) scale(1);
     margin-right: 0;
     padding-right: v-bind(gap);
   }
@@ -288,30 +278,10 @@ watch(
 }
 
 .overflow-card {
-  // in future we could optimise them by not showing them
-  // (it's a bit more complicated then just a display none,
+  // In the future we could optimise them by not showing them
+  // (it's a bit more complicated than just a display none,
   // since we need to handle having the top card become normal)
-
-  // just display as a second last card
-  transform: scale(v-bind("secondLastCardStyle.scaleY"));
-  margin-right: v-bind("secondLastCardStyle.marginRight");
-}
-
-// The rough idea of the code below is pretty simple
-// - The JS code will handle breakpoints/variables for each card
-.initial-active-card {
-  transform: translateX(-100%) scaleY(1);
-  margin-right: 0;
-  padding-right: v-bind(gap);
-}
-
-.last-card {
-  margin-right: 0;
-  transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
-}
-
-.last-card-full {
-  margin-right: 0;
+  display: none;
 }
 
 // We can't rely on vue's SFC v-bind pickup code, since it runs too early
@@ -325,11 +295,6 @@ watch(
 @for $i from 0 through 3 {
   .normal-card-#{$i} {
     animation: normal-card-#{$i} 2.5s ease both;
-    margin-right: #{sassVariableRename($i, "marginRight")};
-    transform: scaleY(#{sassVariableRename($i, "scaleY")});
-  }
-
-  .initial-normal-card-#{$i} {
     margin-right: #{sassVariableRename($i, "marginRight")};
     transform: scaleY(#{sassVariableRename($i, "scaleY")});
   }
