@@ -57,9 +57,9 @@ const upgradeIcon = computed(() => {
             :alt="name"
           />
         </template>
-        <v-list-item-subtitle op="100!">
+        <v-list-item-subtitle op="100!" flex="!" items-center>
           {{ displayPrice }}
-          <ClickerModelItem w-4 h-4 />
+          <ClickerModelItem w-4 h-4 self-center />
         </v-list-item-subtitle>
         <template v-if="amount" #append>
           <span font-bold>
