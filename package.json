@@ -137,6 +137,6 @@
     "class-transformer": "Remove this when es decorators are released"
   },
   "engines": {
-    "node": "^20.10.0"
+    "node": "^20.11.0"
   }
 }
