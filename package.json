@@ -129,7 +129,7 @@
     "vue-codemirror": "^6.1.1",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.4.10",
-    "worker-timers": "^7.0.80",
+    "worker-timers": "^7.1.0",
     "ws": "^8.16.0",
     "zod": "^3.22.4"
   },
