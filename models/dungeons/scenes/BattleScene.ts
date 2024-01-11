@@ -1,5 +1,8 @@
+import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
+import { PlayerBattleMenuOptions } from "@/models/dungeons/PlayerBattleMenuOptions";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { Scene } from "phaser";
 
 export class BattleScene extends Scene {
@@ -20,7 +23,7 @@ export class BattleScene extends Scene {
     this.add.container(556, 318, [
       this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0),
       playerMonsterName,
-      this.createHealth(34, 34),
+      this.createHealthBar(34, 34),
       this.add.text(playerMonsterName.displayWidth + 35, 23, "L5", {
         color: "#ed474b",
         fontSize: "1.75rem",
@@ -45,7 +48,7 @@ export class BattleScene extends Scene {
     this.add.container(0, 0, [
       this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0).setScale(1, 0.8),
       enemyMonsterName,
-      this.createHealth(34, 34),
+      this.createHealthBar(34, 34),
       this.add.text(enemyMonsterName.displayWidth + 35, 23, "L5", {
         color: "#ed474b",
         fontSize: "1.75rem",
@@ -62,9 +65,26 @@ export class BattleScene extends Scene {
         })
         .setOrigin(1, 0),
     ]);
+
+    this.createMainInfoPane();
+    this.add.container(520, 448, [
+      this.createMainInfoSubPane(),
+      this.add.text(55, 22, PlayerBattleMenuOptions.Fight, battleUITextStyle),
+      this.add.text(240, 22, PlayerBattleMenuOptions.Switch, battleUITextStyle),
+      this.add.text(55, 70, PlayerBattleMenuOptions.Item, battleUITextStyle),
+      this.add.text(240, 70, PlayerBattleMenuOptions.Flee, battleUITextStyle),
+    ]);
+
+    this.add.container(0, 448, [
+      // @TODO: dynamically populate this based on monster
+      this.add.text(55, 22, "Slash", battleUITextStyle),
+      this.add.text(240, 22, "Growl", battleUITextStyle),
+      this.add.text(55, 70, BLANK_VALUE, battleUITextStyle),
+      this.add.text(240, 70, BLANK_VALUE, battleUITextStyle),
+    ]);
   }
 
-  createHealth(x: number, y: number) {
+  createHealthBar(x: number, y: number) {
     const scaleY = 0.7;
     // Set origin to the middle-left of the health caps to enable
     // grabbing the full width of the game object
@@ -79,5 +99,24 @@ export class BattleScene extends Scene {
       .setOrigin(0, 0.5)
       .setScale(1, scaleY);
     return this.add.container(x, y, [leftCap, middle, rightCap]);
+  }
+
+  createMainInfoPane() {
+    const padding = 4;
+    const height = 124;
+    this.add
+      .rectangle(padding, this.scale.height - height - padding, this.scale.width - padding * 2, height, 0xede4f3, 1)
+      .setOrigin(0)
+      .setStrokeStyle(padding * 2, 0xe4434a, 1);
+  }
+
+  createMainInfoSubPane() {
+    const padding = 4;
+    const width = 500;
+    const height = 124;
+    return this.add
+      .rectangle(0, 0, width, height, 0xede4f3, 1)
+      .setOrigin(0)
+      .setStrokeStyle(padding * 2, 0x905ac2, 1);
   }
 }
