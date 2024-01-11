@@ -18,8 +18,8 @@ type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["
 const { type, isAffordable, menuProps, name, description, flavorDescription, price, amount } =
   defineProps<ItemMenuProps>();
 const slots = defineSlots<{
-  "append-text"?: (props: {}) => unknown;
-  action?: (props: {}) => unknown;
+  "append-text"?: (props: Record<string, never>) => unknown;
+  action?: (props: Record<string, never>) => unknown;
 }>();
 const { error } = useColors();
 

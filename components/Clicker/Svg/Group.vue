@@ -5,7 +5,7 @@ export interface ClickerSvgGroupProps {
   gAttrs?: SVGAttributes;
 }
 
-defineSlots<{ default: (props: {}) => unknown }>();
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { gAttrs } = defineProps<ClickerSvgGroupProps>();
 const emit = defineEmits<{ click: [value: MouseEvent] }>();
 </script>

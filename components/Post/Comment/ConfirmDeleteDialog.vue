@@ -8,7 +8,7 @@ interface PostCommentConfirmDeleteDialogProps {
 
 defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
-  commentPreview: (props: {}) => unknown;
+  commentPreview: (props: Record<string, never>) => unknown;
 }>();
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const { deleteComment } = useCommentStore();

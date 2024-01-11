@@ -3,7 +3,7 @@ import { type TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{
-  "append-header": (props: {}) => unknown;
+  "append-header": (props: Record<string, never>) => unknown;
 }>();
 
 const tableEditorStore = useTableEditorStore<TodoListItem>()();

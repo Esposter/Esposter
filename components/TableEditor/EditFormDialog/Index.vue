@@ -2,7 +2,7 @@
 import Header from "@/components/TableEditor/EditFormDialog/Header.vue";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-defineSlots<{ default: (props: {}) => unknown }>();
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
 const tableEditorStore = useTableEditorStore()();
 const { resetItem } = tableEditorStore;

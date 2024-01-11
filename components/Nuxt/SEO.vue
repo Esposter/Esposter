@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SITE_DESCRIPTION, SITE_NAME } from "@/services/esposter/constants";
 
-defineSlots<{ default: (props: {}) => unknown }>();
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
 const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();

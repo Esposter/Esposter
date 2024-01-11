@@ -8,7 +8,7 @@ export interface StyledDeleteDialogProps {
 
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: {}) => unknown;
+  default: (props: Record<string, never>) => unknown;
 }>();
 const { cardProps } = defineProps<StyledDeleteDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();

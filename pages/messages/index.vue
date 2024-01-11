@@ -2,7 +2,7 @@
 import { RoutePath } from "@/models/router/RoutePath";
 
 definePageMeta({ middleware: "auth" });
-defineSlots<{ default: (props: {}) => unknown }>();
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
 const { $client } = useNuxtApp();
 const room = await $client.room.readRoom.query();

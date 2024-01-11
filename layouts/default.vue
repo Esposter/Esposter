@@ -8,10 +8,10 @@ interface DefaultLayoutProps {
 
 const { mainStyle } = defineProps<DefaultLayoutProps>();
 const slots = defineSlots<{
-  default?: (props: {}) => unknown;
-  left?: (props: {}) => unknown;
-  right?: (props: {}) => unknown;
-  footer?: (props: {}) => unknown;
+  default?: (props: Record<string, never>) => unknown;
+  left?: (props: Record<string, never>) => unknown;
+  right?: (props: Record<string, never>) => unknown;
+  footer?: (props: Record<string, never>) => unknown;
 }>();
 
 const { mobile } = useDisplay();

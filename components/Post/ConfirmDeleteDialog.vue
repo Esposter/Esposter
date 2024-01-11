@@ -9,7 +9,7 @@ interface PostConfirmDeleteDialogProps {
 
 defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
-  postPreview: (props: {}) => unknown;
+  postPreview: (props: Record<string, never>) => unknown;
 }>();
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
 const { deletePost } = usePostStore();

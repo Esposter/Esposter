@@ -8,7 +8,7 @@ interface RoomListProps {
   readMoreRooms: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
 }
 
-defineSlots<{ prepend: (props: {}) => unknown }>();
+defineSlots<{ prepend: (props: Record<string, never>) => unknown }>();
 const { rooms, hasMore, readMoreRooms } = defineProps<RoomListProps>();
 </script>
 

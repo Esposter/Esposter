@@ -9,7 +9,7 @@ interface ConfirmDeleteMessageDialogProps {
 
 defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
-  messagePreview: (props: {}) => unknown;
+  messagePreview: (props: Record<string, never>) => unknown;
 }>();
 const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
 const { deleteMessage } = useMessageStore();
