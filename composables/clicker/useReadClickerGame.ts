@@ -1,5 +1,5 @@
 import { Game } from "@/models/clicker/Game";
-import { CLICKER_STORE } from "@/services/clicker/constants";
+import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
 import { isDiff } from "@/util/isDiff";
 import { jsonDateParse } from "@/util/jsonDateParse";
@@ -21,7 +21,7 @@ export const useReadClickerGame = async () => {
 
   await useReadData(
     () => {
-      const clickerStoreJson = localStorage.getItem(CLICKER_STORE);
+      const clickerStoreJson = localStorage.getItem(CLICKER_LOCAL_STORAGE_KEY);
       if (clickerStoreJson) game.value = new Game(jsonDateParse(clickerStoreJson));
       else game.value = new Game();
     },

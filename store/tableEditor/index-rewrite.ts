@@ -2,7 +2,7 @@ import { type Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { type VFormRef } from "@/models/vuetify/VFormRef";
-import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_STORE } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import equal from "deep-equal";
@@ -63,7 +63,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       if (status.value === "authenticated")
         await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
       else if (status.value === "unauthenticated")
-        localStorage.setItem(TABLE_EDITOR_STORE, tableEditorConfiguration.value.toJSON());
+        localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
       editFormDialog.value = false;
     };
     const resetItem = async () => {

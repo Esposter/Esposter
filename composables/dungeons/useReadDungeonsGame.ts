@@ -1,5 +1,5 @@
 import { Game } from "@/models/dungeons/Game";
-import { DUNGEONS_STORE } from "@/services/dungeons/constants";
+import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { jsonDateParse } from "@/util/jsonDateParse";
 
@@ -10,7 +10,7 @@ export const useReadDungeonsGame = async () => {
 
   await useReadData(
     () => {
-      const dungeonsStoreJson = localStorage.getItem(DUNGEONS_STORE);
+      const dungeonsStoreJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
       if (dungeonsStoreJson) game.value = new Game(jsonDateParse(dungeonsStoreJson));
       else game.value = new Game();
     },

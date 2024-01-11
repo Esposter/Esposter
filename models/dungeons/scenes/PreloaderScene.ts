@@ -3,6 +3,8 @@ import barHorizontalGreenMid from "@/assets/dungeons/UISpaceExpansion/barHorizon
 import barHorizontalGreenRight from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenRight.png";
 import customUI from "@/assets/dungeons/UISpaceExpansion/customUI.png";
 import forestBackground from "@/assets/dungeons/battleBackgrounds/forestBackground.png";
+import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
+import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
@@ -86,16 +88,14 @@ export class PreloaderScene extends Scene {
     this.load.image(TextureManagerKey.HealthBarLeftCap, barHorizontalGreenLeft);
     this.load.image(TextureManagerKey.HealthBarMiddle, barHorizontalGreenMid);
     this.load.image(TextureManagerKey.HealthBarRightCap, barHorizontalGreenRight);
+    this.load.image(TextureManagerKey.Carnodusk, carnodusk);
+    this.load.image(TextureManagerKey.Iguanignite, iguanignite);
     this.load.image(TilesetKey.CloudCity, cloudCityTileset);
     this.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
     this.load.spritesheet(SpritesheetKey.Characters, characters, { frameWidth: 52, frameHeight: 72 });
   }
 
-  create() {
-    this.add.image(0, 0, TextureManagerKey.ForestBackground).setOrigin(0);
-  }
-
   ready() {
-    // this.scene.start(SceneKey.Game);
+    this.scene.start(SceneKey.Battle);
   }
 }
