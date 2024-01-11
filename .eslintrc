@@ -16,6 +16,7 @@
     ],
     "import/consistent-type-specifier-style": ["error", "prefer-inline"],
     "no-duplicate-imports": "error",
-    "curly": ["error", "multi"]
+    "curly": ["error", "multi"],
+    "eqeqeq": "error"
   }
 }
