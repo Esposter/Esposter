@@ -314,8 +314,8 @@ devDependencies:
     specifier: ^1.8.27
     version: 1.8.27(typescript@5.3.3)
   vuetify-nuxt-module:
-    specifier: ^0.8.0
-    version: 0.8.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.0.11)(vue@3.4.8)
+    specifier: ^0.9.0
+    version: 0.9.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.0.11)(vue@3.4.8)
 
 packages:
 
@@ -11940,8 +11940,8 @@ packages:
       '@vue/shared': 3.4.8
       typescript: 5.3.3
 
-  /vuetify-nuxt-module@0.8.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.0.11)(vue@3.4.8):
-    resolution: {integrity: sha512-VBTp0HKAVs2EiR880lmFZnhiZqPWJiDDT7Y2Fc4i1VBLb6oE5kAbfiFBNHbCHDcL0j29Xv5oR7ZVKcQRm/yRfA==}
+  /vuetify-nuxt-module@0.9.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.0.11)(vue@3.4.8):
+    resolution: {integrity: sha512-ZxJO7vYpQdaPPYwOKPwHFmOFU2+Dl6/fVquek/oEFytEIoJ4taOzTUdtoYvBNRIi/wc90sWYkmsoOebFwntdmw==}
     dependencies:
       '@nuxt/kit': 3.9.1(rollup@2.79.1)
       defu: 6.1.4
