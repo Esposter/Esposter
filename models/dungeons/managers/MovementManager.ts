@@ -1,30 +1,27 @@
+import { type BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import { type SpriteKey } from "@/models/dungeons/keys/SpriteKey";
 import { Direction, type GridEngine } from "grid-engine";
-import { type Input } from "phaser";
 
 export class MovementManager {
   gridEngine: GridEngine;
+  cursorKeys: BaseCursorKeys;
 
-  constructor(gridEngine: GridEngine) {
+  constructor(gridEngine: GridEngine, cursorKeys: BaseCursorKeys) {
     this.gridEngine = gridEngine;
+    this.cursorKeys = cursorKeys;
   }
 
-  move(
-    spriteKey: SpriteKey,
-    cursors: {
-      up: Input.Keyboard.Key;
-      down: Input.Keyboard.Key;
-      left: Input.Keyboard.Key;
-      right: Input.Keyboard.Key;
-    },
-  ) {
-    if (cursors.left.isDown && cursors.up.isDown) this.gridEngine.move(spriteKey, Direction.UP_LEFT);
-    else if (cursors.left.isDown && cursors.down.isDown) this.gridEngine.move(spriteKey, Direction.DOWN_LEFT);
-    else if (cursors.right.isDown && cursors.up.isDown) this.gridEngine.move(spriteKey, Direction.UP_RIGHT);
-    else if (cursors.right.isDown && cursors.down.isDown) this.gridEngine.move(spriteKey, Direction.DOWN_RIGHT);
-    else if (cursors.left.isDown) this.gridEngine.move(spriteKey, Direction.LEFT);
-    else if (cursors.right.isDown) this.gridEngine.move(spriteKey, Direction.RIGHT);
-    else if (cursors.up.isDown) this.gridEngine.move(spriteKey, Direction.UP);
-    else if (cursors.down.isDown) this.gridEngine.move(spriteKey, Direction.DOWN);
+  moveSprite(spriteKey: SpriteKey) {
+    if (this.cursorKeys.left.isDown && this.cursorKeys.up.isDown) this.gridEngine.move(spriteKey, Direction.UP_LEFT);
+    else if (this.cursorKeys.left.isDown && this.cursorKeys.down.isDown)
+      this.gridEngine.move(spriteKey, Direction.DOWN_LEFT);
+    else if (this.cursorKeys.right.isDown && this.cursorKeys.up.isDown)
+      this.gridEngine.move(spriteKey, Direction.UP_RIGHT);
+    else if (this.cursorKeys.right.isDown && this.cursorKeys.down.isDown)
+      this.gridEngine.move(spriteKey, Direction.DOWN_RIGHT);
+    else if (this.cursorKeys.left.isDown) this.gridEngine.move(spriteKey, Direction.LEFT);
+    else if (this.cursorKeys.right.isDown) this.gridEngine.move(spriteKey, Direction.RIGHT);
+    else if (this.cursorKeys.up.isDown) this.gridEngine.move(spriteKey, Direction.UP);
+    else if (this.cursorKeys.down.isDown) this.gridEngine.move(spriteKey, Direction.DOWN);
   }
 }

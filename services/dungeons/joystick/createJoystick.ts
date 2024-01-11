@@ -1,11 +1,11 @@
-import { JOYSTICK_RADIUS } from "@/services/dungeons/constants";
+import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { type Scene } from "phaser";
 import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
-export const addJoystick = (scene: Scene, rexVirtualJoystick: VirtualJoystickPlugin) =>
-  rexVirtualJoystick.add(scene, {
+export const createJoystick = (scene: Scene, virtualJoystickPlugin: VirtualJoystickPlugin) =>
+  virtualJoystickPlugin.add(scene, {
     x: getJoystickX(),
     y: getJoystickY(scene),
     radius: JOYSTICK_RADIUS,

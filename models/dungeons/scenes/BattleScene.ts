@@ -1,9 +1,11 @@
+import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { Scene } from "phaser";
+import { Input, type Types } from "phaser";
 
-export class BattleScene extends Scene {
+export class BattleScene extends SceneWithPlugins {
+  cursorKeys!: Types.Input.Keyboard.CursorKeys;
   battleMenu!: BattleMenu;
 
   constructor() {
@@ -66,8 +68,21 @@ export class BattleScene extends Scene {
         .setOrigin(1, 0),
     ]);
 
+    this.cursorKeys = this.input.keyboard!.createCursorKeys();
     this.battleMenu = new BattleMenu(this);
     this.battleMenu.showPlayerBattleMenu();
+  }
+
+  update() {
+    if (Input.Keyboard.JustDown(this.cursorKeys.space)) {
+      this.battleMenu.handlePlayerInput("OK");
+      return;
+    }
+
+    if (Input.Keyboard.JustDown(this.cursorKeys.shift)) {
+      this.battleMenu.handlePlayerInput("CANCEL");
+      return;
+    }
   }
 
   createHealthBar(x: number, y: number) {

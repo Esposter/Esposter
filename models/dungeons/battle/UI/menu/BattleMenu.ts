@@ -2,6 +2,7 @@ import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import { PlayerBattleMenuOptions } from "@/models/dungeons/PlayerBattleMenuOptions";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
+import { type Direction } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleMenu {
@@ -14,7 +15,7 @@ export class BattleMenu {
   constructor(scene: Scene) {
     this.scene = scene;
     this.createMainInfoPane();
-    this.battleTextGameObjectLine1 = this.scene.add.text(20, 468, "what should", battleUITextStyle);
+    this.battleTextGameObjectLine1 = this.scene.add.text(20, 468, "What should", battleUITextStyle);
     // @TODO: Dynamically populate monster name
     this.battleTextGameObjectLine2 = this.scene.add.text(
       20,
@@ -28,8 +29,18 @@ export class BattleMenu {
     this.hideMonsterBattleMenu();
   }
 
+  handlePlayerInput(input: "OK" | "CANCEL" | Direction) {
+    if (input === "CANCEL") {
+      this.hideMonsterBattleMenu();
+      this.showPlayerBattleMenu();
+      return;
+    }
+
+    this.showMonsterBattleMenu();
+    this.hidePlayerBattleMenu();
+  }
+
   showPlayerBattleMenu() {
-    this.battleTextGameObjectLine1.setText("what should");
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleTextGameObjectLine1.setVisible(true);
     this.battleTextGameObjectLine2.setVisible(true);

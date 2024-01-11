@@ -8,14 +8,15 @@ import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
+import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { Scene, type Loader } from "phaser";
+import { type Loader } from "phaser";
 
-export class PreloaderScene extends Scene {
+export class PreloaderScene extends SceneWithPlugins {
   constructor() {
     super(SceneKey.Preloader);
   }

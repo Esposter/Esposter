@@ -1,45 +1,36 @@
+import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpriteKey } from "@/models/dungeons/keys/SpriteKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { TilesetName } from "@/models/dungeons/keys/TilesetName";
-import { JoystickManager } from "@/models/dungeons/managers/JoystickManager";
-import { MovementManager } from "@/models/dungeons/managers/MovementManager";
-import { addJoystick } from "@/services/dungeons/joystick/addJoystick";
-import { type GridEngine } from "grid-engine";
+import { JoystickMovementManager } from "@/models/dungeons/managers/JoystickMovementManager";
+import { KeyboardMovementManager } from "@/models/dungeons/managers/KeyboardMovementManager";
+import { type MovementManager } from "@/models/dungeons/managers/MovementManager";
 import isMobile from "is-mobile";
-import { Scene, type GameObjects } from "phaser";
-import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import { type GameObjects } from "phaser";
 
-export class GameScene extends Scene {
+export class GameScene extends SceneWithPlugins {
   movementManager!: MovementManager;
-  joystickManager: JoystickManager | null = null;
   playerSprite!: GameObjects.Sprite;
-  gridEngine!: GridEngine;
-  rexVirtualJoystick!: VirtualJoystickPlugin;
 
   constructor() {
     super(SceneKey.Game);
   }
 
   create() {
-    this.movementManager = new MovementManager(this.gridEngine);
+    this.movementManager = isMobile()
+      ? new JoystickMovementManager(this.gridEngine, this, this.virtualJoystickPlugin)
+      : new KeyboardMovementManager(this.gridEngine, this);
     this.addPlayerSprite();
     this.addMap();
-
-    if (isMobile()) {
-      const joystick = addJoystick(this, this.rexVirtualJoystick);
-      this.joystickManager = new JoystickManager(joystick, this);
-    }
-
     this.cameras.main.startFollow(this.playerSprite, true);
     this.cameras.main.setFollowOffset(-this.playerSprite.width, -this.playerSprite.height);
   }
 
   update() {
-    if (this.joystickManager) this.movementManager.move(SpriteKey.Player, this.joystickManager.createCursorKeys());
-    else if (this.input.keyboard) this.movementManager.move(SpriteKey.Player, this.input.keyboard.createCursorKeys());
+    this.movementManager.moveSprite(SpriteKey.Player);
   }
 
   addPlayerSprite = () => {
