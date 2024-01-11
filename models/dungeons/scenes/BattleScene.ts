@@ -1,11 +1,11 @@
-import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
-import { PlayerBattleMenuOptions } from "@/models/dungeons/PlayerBattleMenuOptions";
+import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { Scene } from "phaser";
 
 export class BattleScene extends Scene {
+  battleMenu!: BattleMenu;
+
   constructor() {
     super(SceneKey.Battle);
   }
@@ -66,22 +66,8 @@ export class BattleScene extends Scene {
         .setOrigin(1, 0),
     ]);
 
-    this.createMainInfoPane();
-    this.add.container(520, 448, [
-      this.createMainInfoSubPane(),
-      this.add.text(55, 22, PlayerBattleMenuOptions.Fight, battleUITextStyle),
-      this.add.text(240, 22, PlayerBattleMenuOptions.Switch, battleUITextStyle),
-      this.add.text(55, 70, PlayerBattleMenuOptions.Item, battleUITextStyle),
-      this.add.text(240, 70, PlayerBattleMenuOptions.Flee, battleUITextStyle),
-    ]);
-
-    this.add.container(0, 448, [
-      // @TODO: dynamically populate this based on monster
-      this.add.text(55, 22, "Slash", battleUITextStyle),
-      this.add.text(240, 22, "Growl", battleUITextStyle),
-      this.add.text(55, 70, BLANK_VALUE, battleUITextStyle),
-      this.add.text(240, 70, BLANK_VALUE, battleUITextStyle),
-    ]);
+    this.battleMenu = new BattleMenu(this);
+    this.battleMenu.showPlayerBattleMenu();
   }
 
   createHealthBar(x: number, y: number) {
@@ -99,24 +85,5 @@ export class BattleScene extends Scene {
       .setOrigin(0, 0.5)
       .setScale(1, scaleY);
     return this.add.container(x, y, [leftCap, middle, rightCap]);
-  }
-
-  createMainInfoPane() {
-    const padding = 4;
-    const height = 124;
-    this.add
-      .rectangle(padding, this.scale.height - height - padding, this.scale.width - padding * 2, height, 0xede4f3, 1)
-      .setOrigin(0)
-      .setStrokeStyle(padding * 2, 0xe4434a, 1);
-  }
-
-  createMainInfoSubPane() {
-    const padding = 4;
-    const width = 500;
-    const height = 124;
-    return this.add
-      .rectangle(0, 0, width, height, 0xede4f3, 1)
-      .setOrigin(0)
-      .setStrokeStyle(padding * 2, 0x905ac2, 1);
   }
 }

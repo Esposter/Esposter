@@ -9,7 +9,7 @@ export class MovementManager {
     this.gridEngine = gridEngine;
   }
 
-  public move(
+  move(
     spriteKey: SpriteKey,
     cursors: {
       up: Input.Keyboard.Key;

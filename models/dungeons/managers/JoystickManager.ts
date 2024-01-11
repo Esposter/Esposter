@@ -11,7 +11,7 @@ export class JoystickManager {
     phaserEventEmitter.on("resize", () => (this.virtualJoystick.y = getJoystickY(scene)));
   }
 
-  public createCursorKeys() {
+  createCursorKeys() {
     return this.virtualJoystick.createCursorKeys();
   }
 }
