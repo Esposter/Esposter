@@ -1,3 +1,4 @@
+import { BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { GameScene } from "@/models/dungeons/scenes/GameScene";
 import { PreloaderScene } from "@/models/dungeons/scenes/PreloaderScene";
 import { SURFACE_DARK } from "@/services/vuetify/constants";
@@ -9,10 +10,14 @@ export const getPhaserGame = (containerId: string) =>
   new Game({
     title: "Dungeons",
     type: AUTO,
-    parent: containerId,
-    mode: Scale.FIT,
-    autoCenter: Scale.CENTER_BOTH,
-    scene: [PreloaderScene, GameScene],
+    scale: {
+      parent: containerId,
+      width: 1024,
+      height: 576,
+      mode: Scale.FIT,
+      autoCenter: Scale.CENTER_BOTH,
+    },
+    scene: [PreloaderScene, GameScene, BattleScene],
     backgroundColor: SURFACE_DARK,
     input: {
       keyboard: true,

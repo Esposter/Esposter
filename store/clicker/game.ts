@@ -1,5 +1,5 @@
 import { Game } from "@/models/clicker/Game";
-import { CLICKER_STORE } from "@/services/clicker/constants";
+import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 
 export const useGameStore = defineStore("clicker/game", () => {
   const { $client } = useNuxtApp();
@@ -7,7 +7,7 @@ export const useGameStore = defineStore("clicker/game", () => {
   const game = ref(new Game());
   const saveGame = async () => {
     if (status.value === "authenticated") await $client.clicker.saveGame.mutate(game.value);
-    else if (status.value === "unauthenticated") localStorage.setItem(CLICKER_STORE, game.value.toJSON());
+    else if (status.value === "unauthenticated") localStorage.setItem(CLICKER_LOCAL_STORAGE_KEY, game.value.toJSON());
   };
   return { game, saveGame };
 });

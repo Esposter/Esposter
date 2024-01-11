@@ -1,5 +1,3 @@
 export const SAVE_FILENAME = "save.json";
+export const DUNGEONS_LOCAL_STORAGE_KEY = "dungeons-store";
 export const JOYSTICK_RADIUS = 50;
-
-// local storage key
-export const DUNGEONS_STORE = "dungeons-store";

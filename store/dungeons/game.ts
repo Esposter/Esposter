@@ -1,5 +1,5 @@
 import { Game } from "@/models/dungeons/Game";
-import { DUNGEONS_STORE } from "@/services/dungeons/constants";
+import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { type Game as PhaserGame } from "phaser";
 
 export const useGameStore = defineStore("dungeons/game", () => {
@@ -9,7 +9,7 @@ export const useGameStore = defineStore("dungeons/game", () => {
   const game = ref(new Game());
   const saveGame = async () => {
     if (status.value === "authenticated") await $client.dungeons.saveGame.mutate(game.value);
-    else if (status.value === "unauthenticated") localStorage.setItem(DUNGEONS_STORE, game.value.toJSON());
+    else if (status.value === "unauthenticated") localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
   };
   return { phaserGame, game, saveGame };
 });
