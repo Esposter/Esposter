@@ -6,7 +6,7 @@ import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { TilesetName } from "@/models/dungeons/keys/TilesetName";
 import { JoystickManager } from "@/models/dungeons/managers/JoystickManager";
 import { MovementManager } from "@/models/dungeons/managers/MovementManager";
-import { addJoystick } from "@/services/dungeons/joystick";
+import { addJoystick } from "@/services/dungeons/joystick/addJoystick";
 import { type GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
 import { Scene, type GameObjects } from "phaser";
@@ -30,7 +30,7 @@ export class GameScene extends Scene {
 
     if (isMobile()) {
       const joystick = addJoystick(this, this.rexVirtualJoystick);
-      this.joystickManager = new JoystickManager(joystick);
+      this.joystickManager = new JoystickManager(joystick, this);
     }
 
     this.cameras.main.startFollow(this.playerSprite, true);
