@@ -1,7 +1,6 @@
 import { type ThemeDefinition, type VuetifyOptions } from "vuetify";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 import { ThemeMode } from "./models/vuetify/ThemeMode";
-import { SURFACE_DARK } from "./services/vuetify/constants";
 
 // @TODO: Internal vuetify types
 export type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
@@ -24,7 +23,7 @@ const BaseColorsMap = {
   [ThemeMode.dark]: {
     ...BaseColorsCommon,
     background: "#18191a",
-    surface: SURFACE_DARK,
+    surface: "#36393f",
     text: "#fff",
   },
 } satisfies Record<ThemeMode, ThemeColors>;
