@@ -1,8 +1,10 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import { Grid } from "@/models/dungeons/Grid";
+import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
 import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Direction } from "grid-engine";
@@ -48,10 +50,13 @@ export class BattleMenu {
       case Direction.NONE:
         return;
       default:
-        this.playerBattleMenuOptionGrid.move(input);
-        this.updateCursorPosition();
-        this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
-        this.battleSubMenu.updateCursorPosition();
+        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) {
+          this.playerBattleMenuOptionGrid.move(input);
+          this.updateCursorPosition();
+        } else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub) {
+          this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
+          this.battleSubMenu.updateCursorPosition();
+        }
     }
   }
 
@@ -75,10 +80,12 @@ export class BattleMenu {
   }
 
   showPlayerBattleMenu() {
+    BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
+    this.playerBattleMenuOptionGrid.position = [0, 0];
+    this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine1.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine2.setVisible(true);
-    this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
   }
 
   hidePlayerBattleMenu() {

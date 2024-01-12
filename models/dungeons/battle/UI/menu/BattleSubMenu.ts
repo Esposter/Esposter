@@ -1,7 +1,9 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import { Grid } from "@/models/dungeons/Grid";
+import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
 import { PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type GameObjects, type Scene } from "phaser";
@@ -60,6 +62,9 @@ export class BattleSubMenu {
   }
 
   showBattleSubMenu() {
+    BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Sub;
+    this.playerBattleSubMenuOptionGrid.position = [0, 0];
+    this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
     this.battleSubMenuPhaserContainerGameObject.setVisible(true);
   }
 
