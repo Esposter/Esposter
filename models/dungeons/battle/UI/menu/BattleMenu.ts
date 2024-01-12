@@ -3,6 +3,7 @@ import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleM
 import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
+import { SpecialPlayerInput } from "@/models/dungeons/input/SpecialPlayerInput";
 import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
 import { PlayerBattleMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionCursorPositionMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
@@ -17,7 +18,7 @@ export class BattleMenu {
 
   constructor(scene: Scene) {
     this.scene = scene;
-    this.createMainInfoPane();
+    this.createMainInfoPanel();
     this.cursor = new Cursor(this.scene, PlayerBattleMenuOptionCursorPositionMap, PlayerBattleMenuOptionGrid);
     this.playerBattleMenuPhaserContainerGameObject = this.createPlayerBattleMenu();
     this.playerBattleMenuPhaserContainerGameObject.add(this.cursor.phaserImageGameObject);
@@ -25,13 +26,21 @@ export class BattleMenu {
     this.hidePlayerBattleMenu();
   }
 
-  onPlayerInput(input: "OK" | "CANCEL" | Direction) {
+  onPlayerInput(input: SpecialPlayerInput | Direction) {
+    if (
+      this.battleSubMenu.infoPanel.isWaitingForPlayerInput &&
+      Object.values(SpecialPlayerInput).includes(input as SpecialPlayerInput)
+    ) {
+      this.battleSubMenu.infoPanel.showMessage();
+      return;
+    }
+
     switch (input) {
-      case "OK":
+      case SpecialPlayerInput.Confirm:
         this.battleSubMenu.showBattleSubMenu();
         this.hidePlayerBattleMenu();
         return;
-      case "CANCEL":
+      case SpecialPlayerInput.Cancel:
         this.battleSubMenu.hideBattleSubMenu();
         this.showPlayerBattleMenu();
         return;
@@ -58,7 +67,7 @@ export class BattleMenu {
     this.battleSubMenu.battleTextGameObjectLine2.setVisible(false);
   }
 
-  createMainInfoPane() {
+  createMainInfoPanel() {
     const padding = 4;
     const height = 124;
     return this.scene.add
@@ -74,7 +83,7 @@ export class BattleMenu {
       .setStrokeStyle(padding * 2, 0xe4434a, 1);
   }
 
-  createMainInfoSubPane() {
+  createMainInfoSubPanel() {
     const padding = 4;
     const width = 500;
     const height = 124;
@@ -86,7 +95,7 @@ export class BattleMenu {
 
   createPlayerBattleMenu() {
     return this.scene.add.container(520, 448, [
-      this.createMainInfoSubPane(),
+      this.createMainInfoSubPanel(),
       this.scene.add.text(55, 22, PlayerBattleMenuOption.Fight, battleUITextStyle),
       this.scene.add.text(240, 22, PlayerBattleMenuOption.Switch, battleUITextStyle),
       this.scene.add.text(55, 70, PlayerBattleMenuOption.Item, battleUITextStyle),
