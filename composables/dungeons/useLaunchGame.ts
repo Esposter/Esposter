@@ -1,4 +1,4 @@
-import { phaserEventEmitter } from "@/models/dungeons/events/phaser";
+import { phaserEventEmitter } from "@/services/dungeons/events/phaser";
 import { getPhaserGame } from "@/services/dungeons/getPhaserGame";
 import { useGameStore } from "@/store/dungeons/game";
 

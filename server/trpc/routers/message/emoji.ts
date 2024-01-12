@@ -1,6 +1,5 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
-import { emojiEventEmitter } from "@/models/esbabbler/events/emoji";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
@@ -18,6 +17,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { emojiEventEmitter } from "@/services/esbabbler/events/emoji";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/now";
 import { odata } from "@azure/data-tables";

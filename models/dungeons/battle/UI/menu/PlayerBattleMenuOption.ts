@@ -1,4 +1,4 @@
-export enum PlayerBattleMenuOptions {
+export enum PlayerBattleMenuOption {
   Fight = "Fight",
   Switch = "Switch",
   Item = "Item",

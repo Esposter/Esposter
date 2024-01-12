@@ -1,6 +1,5 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable, type CustomTableClient } from "@/models/azure/table";
-import { replyEventEmitter } from "@/models/esbabbler/events/reply";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import {
   MessageReplyMetadataEntity,
@@ -11,6 +10,7 @@ import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
+import { replyEventEmitter } from "@/services/esbabbler/events/reply";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/now";
 import { odata } from "@azure/data-tables";

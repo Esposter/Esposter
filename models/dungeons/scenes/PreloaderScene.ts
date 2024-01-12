@@ -1,8 +1,9 @@
-import barHorizontalGreenLeft from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenLeft.png";
-import barHorizontalGreenMid from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenMid.png";
-import barHorizontalGreenRight from "@/assets/dungeons/UISpaceExpansion/barHorizontalGreenRight.png";
-import customUI from "@/assets/dungeons/UISpaceExpansion/customUI.png";
+import cursor from "@/assets/dungeons/UI/cursor.png";
 import forestBackground from "@/assets/dungeons/battleBackgrounds/forestBackground.png";
+import barHorizontalGreenLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
+import barHorizontalGreenMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
+import barHorizontalGreenRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
+import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
 import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import characters from "@/assets/dungeons/spritesheets/characters.png";
@@ -91,6 +92,7 @@ export class PreloaderScene extends SceneWithPlugins {
     this.load.image(TextureManagerKey.HealthBarRightCap, barHorizontalGreenRight);
     this.load.image(TextureManagerKey.Carnodusk, carnodusk);
     this.load.image(TextureManagerKey.Iguanignite, iguanignite);
+    this.load.image(TextureManagerKey.Cursor, cursor);
     this.load.image(TilesetKey.CloudCity, cloudCityTileset);
     this.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
     this.load.spritesheet(SpritesheetKey.Characters, characters, { frameWidth: 52, frameHeight: 72 });

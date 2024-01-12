@@ -8,4 +8,6 @@ export enum TextureManagerKey {
   // Monsters
   Carnodusk = "Carnodusk",
   Iguanignite = "Iguanignite",
+
+  Cursor = "Cursor",
 }

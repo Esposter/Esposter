@@ -1,7 +1,6 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
 import { type CompositeKey } from "@/models/azure";
 import { AzureTable } from "@/models/azure/table";
-import { messageEventEmitter } from "@/models/esbabbler/events/message";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { type SortItem } from "@/models/shared/pagination/sorting/SortItem";
@@ -16,6 +15,7 @@ import {
   getTopNEntities,
   updateEntity,
 } from "@/services/azure/table";
+import { messageEventEmitter } from "@/services/esbabbler/events/message";
 import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@/services/shared/pagination/cursor/getCursorWhere";
