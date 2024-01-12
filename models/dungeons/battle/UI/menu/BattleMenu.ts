@@ -49,14 +49,13 @@ export class BattleMenu {
         return;
       default:
         this.playerBattleMenuOptionGrid.move(input);
-        this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
         this.updateCursorPosition();
+        this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
         this.battleSubMenu.updateCursorPosition();
     }
   }
 
   updateCursorPosition() {
-    console.log(this.playerBattleMenuOptionGrid.value);
     switch (this.playerBattleMenuOptionGrid.value) {
       case PlayerBattleMenuOption.Fight:
         this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
