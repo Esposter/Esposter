@@ -1,6 +1,11 @@
 import { type NuxtConfig } from "nuxt/schema";
 
 export const vite: NuxtConfig["vite"] = {
+  build: {
+    // Do not inline images and assets to avoid the phaser error
+    // "Local data URIs are not supported"
+    assetsInlineLimit: 0,
+  },
   css: {
     preprocessorOptions: {
       scss: {
