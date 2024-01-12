@@ -14,7 +14,7 @@ export class Cursor<TEnum extends string> {
     this.positionMap = positionMap;
     this.grid = grid;
 
-    const { x, y } = this.positionMap[this.grid.value];
+    const { x, y } = this.positionMap[this.activeOption];
     this.phaserImageGameObject = this.scene.add.image(x, y, TextureManagerKey.Cursor, 0).setOrigin(0.5).setScale(2.5);
   }
 
@@ -23,7 +23,7 @@ export class Cursor<TEnum extends string> {
   }
 
   get position() {
-    return this.positionMap[this.grid.value];
+    return this.positionMap[this.activeOption];
   }
 
   set gridPosition(value: [number, number]) {
