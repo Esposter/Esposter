@@ -5,7 +5,7 @@ import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerB
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { type Direction } from "grid-engine";
+import { Direction } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleMenu {
@@ -30,25 +30,34 @@ export class BattleMenu {
         [PlayerBattleMenuOption.Fight, PlayerBattleMenuOption.Switch],
         [PlayerBattleMenuOption.Item, PlayerBattleMenuOption.Flee],
       ],
-      [0, 0],
       2,
     );
     this.battleSubMenu = new BattleSubMenu(scene);
     this.hidePlayerBattleMenu();
   }
 
-  handlePlayerInput(input: "OK" | "CANCEL" | Direction) {
-    if (input === "CANCEL") {
-      this.battleSubMenu.hideBattleSubMenu();
-      this.showPlayerBattleMenu();
-      return;
+  onPlayerInput(input: "OK" | "CANCEL" | Direction) {
+    switch (input) {
+      case "OK":
+        this.battleSubMenu.showBattleSubMenu();
+        this.hidePlayerBattleMenu();
+        return;
+      case "CANCEL":
+        this.battleSubMenu.hideBattleSubMenu();
+        this.showPlayerBattleMenu();
+        return;
+      case Direction.NONE:
+        return;
+      default:
+        this.playerBattleMenuOptionGrid.move(input);
+        this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
+        this.updateCursorPosition();
+        this.battleSubMenu.updateCursorPosition();
     }
-
-    this.battleSubMenu.showBattleSubMenu();
-    this.hidePlayerBattleMenu();
   }
 
-  updateCursor() {
+  updateCursorPosition() {
+    console.log(this.playerBattleMenuOptionGrid.value);
     switch (this.playerBattleMenuOptionGrid.value) {
       case PlayerBattleMenuOption.Fight:
         this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);

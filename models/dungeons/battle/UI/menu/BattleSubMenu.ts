@@ -1,7 +1,9 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
+import { Grid } from "@/models/dungeons/Grid";
+import { PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { BLANK_VALUE } from "@/services/dungeons/constants";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
@@ -10,6 +12,7 @@ export class BattleSubMenu {
   battleTextGameObjectLine2: GameObjects.Text;
   cursorPhaserImageGameObject: GameObjects.Image;
   battleSubMenuPhaserContainerGameObject: GameObjects.Container;
+  playerBattleSubMenuOptionGrid: Grid<PlayerBattleSubMenuOption>;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -27,7 +30,33 @@ export class BattleSubMenu {
       .setScale(2.5);
     this.battleSubMenuPhaserContainerGameObject = this.createBattleSubMenu();
     this.battleSubMenuPhaserContainerGameObject.add(this.cursorPhaserImageGameObject);
+    this.playerBattleSubMenuOptionGrid = new Grid(
+      [
+        [PlayerBattleSubMenuOption.Move1, PlayerBattleSubMenuOption.Move2],
+        [PlayerBattleSubMenuOption.Move3, PlayerBattleSubMenuOption.Move4],
+      ],
+      2,
+    );
     this.hideBattleSubMenu();
+  }
+
+  updateCursorPosition() {
+    switch (this.playerBattleSubMenuOptionGrid.value) {
+      case PlayerBattleSubMenuOption.Move1:
+        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
+        return;
+      case PlayerBattleSubMenuOption.Move2:
+        this.cursorPhaserImageGameObject.setPosition(228, INITIAL_CURSOR_POSITION.y);
+        return;
+      case PlayerBattleSubMenuOption.Move3:
+        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, 86);
+        return;
+      case PlayerBattleSubMenuOption.Move4:
+        this.cursorPhaserImageGameObject.setPosition(228, 86);
+        return;
+      default:
+        exhaustiveGuard(this.playerBattleSubMenuOptionGrid.value);
+    }
   }
 
   showBattleSubMenu() {
@@ -41,10 +70,10 @@ export class BattleSubMenu {
   createBattleSubMenu() {
     return this.scene.add.container(0, 448, [
       // @TODO: Dynamically populate this based on monster
-      this.scene.add.text(55, 22, "Slash", battleUITextStyle),
-      this.scene.add.text(240, 22, "Growl", battleUITextStyle),
-      this.scene.add.text(55, 70, BLANK_VALUE, battleUITextStyle),
-      this.scene.add.text(240, 70, BLANK_VALUE, battleUITextStyle),
+      this.scene.add.text(55, 22, PlayerBattleSubMenuOption.Move1, battleUITextStyle),
+      this.scene.add.text(240, 22, PlayerBattleSubMenuOption.Move2, battleUITextStyle),
+      this.scene.add.text(55, 70, PlayerBattleSubMenuOption.Move3, battleUITextStyle),
+      this.scene.add.text(240, 70, PlayerBattleSubMenuOption.Move4, battleUITextStyle),
     ]);
   }
 }
