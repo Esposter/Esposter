@@ -18,11 +18,10 @@ export class BattleMenu {
   constructor(scene: Scene) {
     this.scene = scene;
     this.createMainInfoPane();
-    this.cursorPhaserImageGameObject = this.scene.add.image(
-      INITIAL_CURSOR_POSITION.x,
-      INITIAL_CURSOR_POSITION.y,
-      TextureManagerKey.Cursor,
-    );
+    this.cursorPhaserImageGameObject = this.scene.add
+      .image(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y, TextureManagerKey.Cursor)
+      .setOrigin(0.5)
+      .setScale(2.5);
     this.playerBattleMenuPhaserContainerGameObject = this.createPlayerBattleMenu();
     this.playerBattleMenuPhaserContainerGameObject.add(this.cursorPhaserImageGameObject);
     this.playerBattleMenuOptionGrid = new Grid(
