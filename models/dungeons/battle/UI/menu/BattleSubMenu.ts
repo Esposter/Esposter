@@ -1,20 +1,19 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
-import { Grid } from "@/models/dungeons/Grid";
 import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
+import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { PlayerBattleSubMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleSubMenuOptionCursorPositionMap";
+import { PlayerBattleSubMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleSubMenuOptionGrid";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
   scene: Scene;
   battleTextGameObjectLine1: GameObjects.Text;
   battleTextGameObjectLine2: GameObjects.Text;
-  cursorPhaserImageGameObject: GameObjects.Image;
   battleSubMenuPhaserContainerGameObject: GameObjects.Container;
-  playerBattleSubMenuOptionGrid: Grid<PlayerBattleSubMenuOption>;
+  cursor: Cursor<PlayerBattleSubMenuOption>;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -26,45 +25,16 @@ export class BattleSubMenu {
       `${TextureManagerKey.Iguanignite} do next?`,
       battleUITextStyle,
     );
-    this.cursorPhaserImageGameObject = this.scene.add
-      .image(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y, TextureManagerKey.Cursor, 0)
-      .setOrigin(0.5)
-      .setScale(2.5);
-    this.battleSubMenuPhaserContainerGameObject = this.createBattleSubMenu();
-    this.battleSubMenuPhaserContainerGameObject.add(this.cursorPhaserImageGameObject);
-    this.playerBattleSubMenuOptionGrid = new Grid(
-      [
-        [PlayerBattleSubMenuOption.Move1, PlayerBattleSubMenuOption.Move2],
-        [PlayerBattleSubMenuOption.Move3, PlayerBattleSubMenuOption.Move4],
-      ],
-      2,
-    );
-    this.hideBattleSubMenu();
-  }
 
-  updateCursorPosition() {
-    switch (this.playerBattleSubMenuOptionGrid.value) {
-      case PlayerBattleSubMenuOption.Move1:
-        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
-        return;
-      case PlayerBattleSubMenuOption.Move2:
-        this.cursorPhaserImageGameObject.setPosition(228, INITIAL_CURSOR_POSITION.y);
-        return;
-      case PlayerBattleSubMenuOption.Move3:
-        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, 86);
-        return;
-      case PlayerBattleSubMenuOption.Move4:
-        this.cursorPhaserImageGameObject.setPosition(228, 86);
-        return;
-      default:
-        exhaustiveGuard(this.playerBattleSubMenuOptionGrid.value);
-    }
+    this.cursor = new Cursor(this.scene, PlayerBattleSubMenuOptionCursorPositionMap, PlayerBattleSubMenuOptionGrid);
+    this.battleSubMenuPhaserContainerGameObject = this.createBattleSubMenu();
+    this.battleSubMenuPhaserContainerGameObject.add(this.cursor.phaserImageGameObject);
+    this.hideBattleSubMenu();
   }
 
   showBattleSubMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Sub;
-    this.playerBattleSubMenuOptionGrid.position = [0, 0];
-    this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
+    this.cursor.gridPosition = [0, 0];
     this.battleSubMenuPhaserContainerGameObject.setVisible(true);
   }
 

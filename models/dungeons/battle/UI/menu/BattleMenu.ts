@@ -1,38 +1,26 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
-import { Grid } from "@/models/dungeons/Grid";
 import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
 import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
+import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { PlayerBattleMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionCursorPositionMap";
+import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
 import { Direction } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleMenu {
   scene: Scene;
-  battleSubMenu: BattleSubMenu;
-  cursorPhaserImageGameObject: GameObjects.Image;
   playerBattleMenuPhaserContainerGameObject: GameObjects.Container;
-  playerBattleMenuOptionGrid: Grid<PlayerBattleMenuOption>;
+  cursor: Cursor<PlayerBattleMenuOption>;
+  battleSubMenu: BattleSubMenu;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.createMainInfoPane();
-    this.cursorPhaserImageGameObject = this.scene.add
-      .image(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y, TextureManagerKey.Cursor)
-      .setOrigin(0.5)
-      .setScale(2.5);
+    this.cursor = new Cursor(this.scene, PlayerBattleMenuOptionCursorPositionMap, PlayerBattleMenuOptionGrid);
     this.playerBattleMenuPhaserContainerGameObject = this.createPlayerBattleMenu();
-    this.playerBattleMenuPhaserContainerGameObject.add(this.cursorPhaserImageGameObject);
-    this.playerBattleMenuOptionGrid = new Grid(
-      [
-        [PlayerBattleMenuOption.Fight, PlayerBattleMenuOption.Switch],
-        [PlayerBattleMenuOption.Item, PlayerBattleMenuOption.Flee],
-      ],
-      2,
-    );
+    this.playerBattleMenuPhaserContainerGameObject.add(this.cursor.phaserImageGameObject);
     this.battleSubMenu = new BattleSubMenu(scene);
     this.hidePlayerBattleMenu();
   }
@@ -50,39 +38,15 @@ export class BattleMenu {
       case Direction.NONE:
         return;
       default:
-        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) {
-          this.playerBattleMenuOptionGrid.move(input);
-          this.updateCursorPosition();
-        } else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub) {
-          this.battleSubMenu.playerBattleSubMenuOptionGrid.move(input);
-          this.battleSubMenu.updateCursorPosition();
-        }
-    }
-  }
-
-  updateCursorPosition() {
-    switch (this.playerBattleMenuOptionGrid.value) {
-      case PlayerBattleMenuOption.Fight:
-        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
-        return;
-      case PlayerBattleMenuOption.Switch:
-        this.cursorPhaserImageGameObject.setPosition(228, INITIAL_CURSOR_POSITION.y);
-        return;
-      case PlayerBattleMenuOption.Item:
-        this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, 86);
-        return;
-      case PlayerBattleMenuOption.Flee:
-        this.cursorPhaserImageGameObject.setPosition(228, 86);
-        return;
-      default:
-        exhaustiveGuard(this.playerBattleMenuOptionGrid.value);
+        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.cursor.moveGridPosition(input);
+        else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub)
+          this.battleSubMenu.cursor.moveGridPosition(input);
     }
   }
 
   showPlayerBattleMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
-    this.playerBattleMenuOptionGrid.position = [0, 0];
-    this.cursorPhaserImageGameObject.setPosition(INITIAL_CURSOR_POSITION.x, INITIAL_CURSOR_POSITION.y);
+    this.cursor.gridPosition = [0, 0];
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine1.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine2.setVisible(true);
