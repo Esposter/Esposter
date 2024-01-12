@@ -18,7 +18,7 @@ export class Cursor<TEnum extends string> {
     this.phaserImageGameObject = this.scene.add.image(x, y, TextureManagerKey.Cursor, 0).setOrigin(0.5).setScale(2.5);
   }
 
-  get activeMenu() {
+  get activeOption() {
     return this.grid.value;
   }
 
