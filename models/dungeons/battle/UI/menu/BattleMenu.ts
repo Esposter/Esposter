@@ -17,7 +17,6 @@ export class BattleMenu {
 
   constructor(scene: Scene) {
     this.scene = scene;
-    this.battleSubMenu = new BattleSubMenu(scene);
     this.createMainInfoPane();
     this.cursorPhaserImageGameObject = this.scene.add.image(
       INITIAL_CURSOR_POSITION.x,
@@ -34,6 +33,7 @@ export class BattleMenu {
       [0, 0],
       2,
     );
+    this.battleSubMenu = new BattleSubMenu(scene);
     this.hidePlayerBattleMenu();
   }
 
