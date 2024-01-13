@@ -7,6 +7,7 @@ import { SpecialPlayerInput } from "@/models/dungeons/input/SpecialPlayerInput";
 import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
 import { PlayerBattleMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionCursorPositionMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Direction } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
@@ -37,8 +38,7 @@ export class BattleMenu {
 
     switch (input) {
       case SpecialPlayerInput.Confirm:
-        this.battleSubMenu.showBattleSubMenu();
-        this.hidePlayerBattleMenu();
+        this.onChoosePlayerBattleMenuOption();
         return;
       case SpecialPlayerInput.Cancel:
         this.battleSubMenu.hideBattleSubMenu();
@@ -53,9 +53,42 @@ export class BattleMenu {
     }
   }
 
+  onChoosePlayerBattleMenuOption() {
+    this.hidePlayerBattleMenu();
+
+    switch (this.cursor.activeOption) {
+      case PlayerBattleMenuOption.Fight:
+        this.battleSubMenu.showBattleSubMenu();
+        return;
+      case PlayerBattleMenuOption.Switch:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["Your bag is empty..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      case PlayerBattleMenuOption.Item:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["You have no other monsters in your party..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      case PlayerBattleMenuOption.Flee:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["You fail to run away..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      default:
+        exhaustiveGuard(this.cursor.activeOption);
+    }
+  }
+
+  switchToPlayerBattleMenu() {
+    this.battleSubMenu.hideBattleSubMenu();
+    this.showPlayerBattleMenu();
+  }
+
   showPlayerBattleMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
     this.cursor.gridPosition = [0, 0];
+    this.battleSubMenu.battleTextGameObjectLine1.setText("What should");
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine1.setVisible(true);
     this.battleSubMenu.battleTextGameObjectLine2.setVisible(true);
