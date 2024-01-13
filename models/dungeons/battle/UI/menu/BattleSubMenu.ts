@@ -34,6 +34,11 @@ export class BattleSubMenu {
     this.hideBattleSubMenu();
   }
 
+  onChoosePlayerBattleSubMenuOption(callback: InfoPanel["queuedCallback"]) {
+    this.hideBattleSubMenu();
+    this.infoPanel.updateAndShowMessage(["Your monster attacks the enemy"], callback);
+  }
+
   showBattleSubMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Sub;
     this.cursor.gridPosition = [0, 0];

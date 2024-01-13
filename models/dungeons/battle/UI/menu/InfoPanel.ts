@@ -4,7 +4,7 @@ export class InfoPanel {
   battleTextGameObjectLine1: GameObjects.Text;
   queuedMessages: string[] = [];
   queuedCallback?: () => void;
-  isWaitingForPlayerInput = false;
+  isWaitingForPlayerSpecialInput = false;
 
   constructor(battleTextGameObjectLine1: GameObjects.Text) {
     this.battleTextGameObjectLine1 = battleTextGameObjectLine1;
@@ -17,7 +17,7 @@ export class InfoPanel {
   }
 
   showMessage() {
-    this.isWaitingForPlayerInput = false;
+    this.isWaitingForPlayerSpecialInput = false;
     this.battleTextGameObjectLine1.setText("").setVisible(true);
 
     const displayMessage = this.queuedMessages.shift();
@@ -30,6 +30,6 @@ export class InfoPanel {
     }
 
     this.battleTextGameObjectLine1.setText(displayMessage);
-    this.isWaitingForPlayerInput = true;
+    this.isWaitingForPlayerSpecialInput = true;
   }
 }

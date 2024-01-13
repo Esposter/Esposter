@@ -4,7 +4,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { mapCursorKeysToDirection } from "@/services/dungeons/mapCursorKeysToDirection";
 import { Input, type Types } from "phaser";
-import { SpecialPlayerInput } from "../input/SpecialPlayerInput";
+import { PlayerSpecialInput } from "../input/PlayerSpecialInput";
 
 export class BattleScene extends SceneWithPlugins {
   cursorKeys!: Types.Input.Keyboard.CursorKeys;
@@ -76,8 +76,8 @@ export class BattleScene extends SceneWithPlugins {
   }
 
   update() {
-    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(SpecialPlayerInput.Confirm);
-    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(SpecialPlayerInput.Cancel);
+    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
+    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
     else this.battleMenu.onPlayerInput(mapCursorKeysToDirection(this.cursorKeys));
   }
 
