@@ -124,7 +124,7 @@
     "three-globe": "^2.30.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.15",
-    "vue": "^3.4.11",
+    "vue": "^3.4.13",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.2.5",
     "vue-waypoint": "^4.3.0",
