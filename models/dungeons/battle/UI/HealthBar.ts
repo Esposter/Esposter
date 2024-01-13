@@ -7,12 +7,12 @@ export class HealthBar {
   static FULL_WIDTH = 360;
   static SCALE_Y = 0.7;
   scene: Scene;
-  leftCapPhaserImageGameObject: GameObjects.Image;
-  middlePhaserImageGameObject: GameObjects.Image;
-  rightCapPhaserImageGameObject: GameObjects.Image;
   leftCapShadowPhaserImageGameObject: GameObjects.Image;
   middleShadowPhaserImageGameObject: GameObjects.Image;
   rightCapShadowPhaserImageGameObject: GameObjects.Image;
+  leftCapPhaserImageGameObject: GameObjects.Image;
+  middlePhaserImageGameObject: GameObjects.Image;
+  rightCapPhaserImageGameObject: GameObjects.Image;
   phaserContainerGameObject: GameObjects.Container;
 
   constructor(scene: Scene, position: Position) {
