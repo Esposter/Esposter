@@ -10,16 +10,21 @@ import { Input, type Types } from "phaser";
 
 export class BattleScene extends SceneWithPlugins {
   cursorKeys!: Types.Input.Keyboard.CursorKeys;
-  battleMenu!: BattleMenu;
   background!: Background;
+  playerHealthBar!: HealthBar;
+  enemyHealthBar!: HealthBar;
+  battleMenu!: BattleMenu;
 
   constructor() {
     super(SceneKey.Battle);
   }
 
   create() {
+    this.cursorKeys = this.input.keyboard!.createCursorKeys();
     this.background = new Background(this);
     this.background.showForest();
+    this.playerHealthBar = new HealthBar(this, { x: 34, y: 34 });
+    this.enemyHealthBar = new HealthBar(this, { x: 34, y: 34 });
     // Player and enemy monsters
     this.add.image(768, 144, TextureManagerKey.Carnodusk, 0);
     this.add.image(256, 316, TextureManagerKey.Iguanignite, 0).setFlipX(true);
@@ -31,7 +36,7 @@ export class BattleScene extends SceneWithPlugins {
     this.add.container(556, 318, [
       this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0),
       playerMonsterName,
-      new HealthBar(this, { x: 34, y: 34 }).phaserContainerGameObject,
+      this.playerHealthBar.phaserContainerGameObject,
       this.add.text(playerMonsterName.displayWidth + 35, 23, "L5", {
         color: "#ed474b",
         fontSize: "1.75rem",
@@ -56,7 +61,7 @@ export class BattleScene extends SceneWithPlugins {
     this.add.container(0, 0, [
       this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0).setScale(1, 0.8),
       enemyMonsterName,
-      new HealthBar(this, { x: 34, y: 34 }).phaserContainerGameObject,
+      this.enemyHealthBar.phaserContainerGameObject,
       this.add.text(enemyMonsterName.displayWidth + 35, 23, "L5", {
         color: "#ed474b",
         fontSize: "1.75rem",
@@ -68,7 +73,6 @@ export class BattleScene extends SceneWithPlugins {
       }),
     ]);
 
-    this.cursorKeys = this.input.keyboard!.createCursorKeys();
     this.battleMenu = new BattleMenu(this);
     this.battleMenu.showPlayerBattleMenu();
   }
