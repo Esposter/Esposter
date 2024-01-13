@@ -2,6 +2,7 @@ import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { Background } from "@/models/dungeons/battle/UI/Background";
 import { HealthBar } from "@/models/dungeons/battle/UI/HealthBar";
 import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
+import { BattleMonster } from "@/models/dungeons/battle/monsters/BattleMonster";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
@@ -12,7 +13,7 @@ export class BattleScene extends SceneWithPlugins {
   cursorKeys!: Types.Input.Keyboard.CursorKeys;
   background!: Background;
   playerHealthBar!: HealthBar;
-  enemyHealthBar!: HealthBar;
+  activeEnemyMonster!: BattleMonster;
   battleMenu!: BattleMenu;
 
   constructor() {
@@ -23,11 +24,28 @@ export class BattleScene extends SceneWithPlugins {
     this.cursorKeys = this.input.keyboard!.createCursorKeys();
     this.background = new Background(this);
     this.background.showForest();
+    this.activeEnemyMonster = new BattleMonster(
+      {
+        scene: this,
+        monster: {
+          name: TextureManagerKey.Carnodusk,
+          asset: {
+            key: TextureManagerKey.Carnodusk,
+          },
+          stats: {
+            maxHp: 25,
+            baseAttack: 5,
+          },
+          currentHp: 25,
+          attackIds: [],
+        },
+      },
+      { x: 768, y: 144 },
+    );
     this.playerHealthBar = new HealthBar(this, { x: 34, y: 34 });
-    this.enemyHealthBar = new HealthBar(this, { x: 34, y: 34 });
     // Player and enemy monsters
-    this.add.image(768, 144, TextureManagerKey.Carnodusk, 0);
-    this.add.image(256, 316, TextureManagerKey.Iguanignite, 0).setFlipX(true);
+    this.add.image(768, 144, TextureManagerKey.Carnodusk);
+    this.add.image(256, 316, TextureManagerKey.Iguanignite).setFlipX(true);
 
     const playerMonsterName = this.add.text(30, 20, TextureManagerKey.Iguanignite, {
       color: "#7e3d3f",
@@ -61,7 +79,7 @@ export class BattleScene extends SceneWithPlugins {
     this.add.container(0, 0, [
       this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0).setScale(1, 0.8),
       enemyMonsterName,
-      this.enemyHealthBar.phaserContainerGameObject,
+      this.activeEnemyMonster.healthBar.phaserContainerGameObject,
       this.add.text(enemyMonsterName.displayWidth + 35, 23, "L5", {
         color: "#ed474b",
         fontSize: "1.75rem",
