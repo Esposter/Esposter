@@ -123,7 +123,7 @@
     "three": "^0.160.0",
     "three-globe": "^2.30.0",
     "tippy.js": "^6.3.7",
-    "trpc-nuxt": "^0.10.15",
+    "trpc-nuxt": "^0.10.17",
     "vue": "^3.4.13",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.2.5",
