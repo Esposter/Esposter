@@ -6,6 +6,7 @@ export interface Monster {
   name: string;
   asset: Asset;
   stats: Stats;
+  currentLevel: number;
   currentHp: number;
   attacks: Attack[];
 }

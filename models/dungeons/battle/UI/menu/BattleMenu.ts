@@ -102,16 +102,16 @@ export class BattleMenu {
   showPlayerBattleMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
     this.cursor.gridPosition = [0, 0];
-    this.battleSubMenu.battleTextGameObjectLine1.setText("What should");
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setText("What should");
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
-    this.battleSubMenu.battleTextGameObjectLine1.setVisible(true);
-    this.battleSubMenu.battleTextGameObjectLine2.setVisible(true);
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(true);
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(true);
   }
 
   hidePlayerBattleMenu() {
     this.playerBattleMenuPhaserContainerGameObject.setVisible(false);
-    this.battleSubMenu.battleTextGameObjectLine1.setVisible(false);
-    this.battleSubMenu.battleTextGameObjectLine2.setVisible(false);
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(false);
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(false);
   }
 
   createMainInfoPanel() {
