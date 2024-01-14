@@ -1,3 +1,5 @@
+import { attacks } from "@/assets/dungeons/attacks/attacks";
+import { type Attack } from "@/models/dungeons/attack/Attack";
 import { HealthBar } from "@/models/dungeons/battle/UI/HealthBar";
 import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monsters/BattleMonsterConfiguration";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
@@ -8,6 +10,7 @@ import { type GameObjects, type Scene } from "phaser";
 export class BattleMonster {
   protected scene: Scene;
   protected monster: Monster;
+  protected monsterAttacks: Attack[];
   protected healthBar: HealthBar;
   protected healthBarContainerPhaserContainerGameObject: GameObjects.Container;
   protected monsterPhaserImageGameObject: GameObjects.Image;
@@ -15,6 +18,7 @@ export class BattleMonster {
   constructor(battleMonsterConfiguration: BattleMonsterConfiguration, position: Position) {
     this.scene = battleMonsterConfiguration.scene;
     this.monster = battleMonsterConfiguration.monster;
+    this.monsterAttacks = this.getMonsterAttacks();
     this.healthBar = new HealthBar(this.scene, { x: 34, y: 34 });
     this.healthBarContainerPhaserContainerGameObject = this.createHealthBarContainer(
       this.healthBar,
@@ -33,7 +37,7 @@ export class BattleMonster {
   }
 
   get attacks() {
-    return [...this.monster.attacks];
+    return [...this.monsterAttacks];
   }
 
   get baseAttack() {
@@ -75,5 +79,14 @@ export class BattleMonster {
       monsterLevel,
       monsterHp,
     ]);
+  }
+
+  private getMonsterAttacks(): Attack[] {
+    const foundAttacks: Attack[] = [];
+    for (const attackId of this.monster.attackIds) {
+      const foundAttack = attacks.find((a) => a.id === attackId);
+      if (foundAttack) foundAttacks.push(foundAttack);
+    }
+    return foundAttacks;
   }
 }

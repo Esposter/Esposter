@@ -1,6 +1,4 @@
-export enum PlayerBattleSubMenuOption {
-  Move1 = "Move1",
-  Move2 = "Move2",
-  Move3 = "Move3",
-  Move4 = "Move4",
-}
+import { type AttackName } from "@/models/dungeons/attack/AttackName";
+import { type BLANK_VALUE } from "@/services/dungeons/constants";
+
+export type PlayerBattleSubMenuOption = AttackName | typeof BLANK_VALUE;

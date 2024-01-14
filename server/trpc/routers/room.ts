@@ -12,7 +12,7 @@ import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
-import { generateCode } from "@/util/math/generateRandomCode";
+import { generateCode } from "@/util/math/random/generateCode";
 import { odata } from "@azure/data-tables";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";

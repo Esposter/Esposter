@@ -1,5 +1,5 @@
 import { type Asset } from "@/models/dungeons/Asset";
-import { type Attack } from "@/models/dungeons/Attack";
+import { type Attack } from "@/models/dungeons/attack/Attack";
 import { type Stats } from "@/models/dungeons/Stats";
 
 export interface Monster {
@@ -8,5 +8,5 @@ export interface Monster {
   stats: Stats;
   currentLevel: number;
   currentHp: number;
-  attacks: Attack[];
+  attackIds: Attack["id"][];
 }

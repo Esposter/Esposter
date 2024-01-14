@@ -1,3 +1,5 @@
+import { type AnimationKey } from "@/models/dungeons/keys/AnimationKey";
+
 export interface Animation {
-  name: string;
+  key: AnimationKey;
 }
