@@ -104,6 +104,7 @@ export class BattleMenu {
     BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Main;
     this.playerBattleMenuOptionCursor.gridPosition = [0, 0];
     this.battleSubMenu.battleLine1PhaserTextGameObject.setText("What should");
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setText(`${BattleSceneStore.activePlayerMonster.name} do next?`);
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(true);
     this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(true);

@@ -35,7 +35,7 @@ export class BattleSubMenu {
       `${BattleSceneStore.activePlayerMonster.name} do next?`,
       battleUITextStyle,
     );
-    this.infoPanel = new InfoPanel(this.battleLine1PhaserTextGameObject);
+    this.infoPanel = new InfoPanel(this.battleLine1PhaserTextGameObject, this.battleLine2PhaserTextGameObject);
     this.hideBattleSubMenu();
   }
 
@@ -61,7 +61,7 @@ export class BattleSubMenu {
 
   showPlayerAttack(callback: InfoPanel["queuedCallback"]) {
     this.infoPanel.updateAndShowMessage(
-      [`${BattleSceneStore.activePlayerMonster.name} used ${this.playerBattleSubMenuOptionCursor.activeOption}`],
+      [`${BattleSceneStore.activePlayerMonster.name} used ${this.playerBattleSubMenuOptionCursor.activeOption}.`],
       () => {
         this.scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
           BattleSceneStore.activeEnemyMonster.takeDamage(
@@ -77,7 +77,9 @@ export class BattleSubMenu {
 
   showEnemyAttack(callback: InfoPanel["queuedCallback"]) {
     this.infoPanel.updateAndShowMessage(
-      [`Enemy ${BattleSceneStore.activeEnemyMonster.name} used ${BattleSceneStore.activeEnemyMonster.attacks[0].name}`],
+      [
+        `Enemy ${BattleSceneStore.activeEnemyMonster.name} used ${BattleSceneStore.activeEnemyMonster.attacks[0].name}.`,
+      ],
       () => {
         this.scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
           BattleSceneStore.activePlayerMonster.takeDamage(
