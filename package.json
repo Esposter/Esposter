@@ -87,7 +87,7 @@
     "@trpc/client": "^10.45.0",
     "@trpc/server": "^10.45.0",
     "@vuepic/vue-datepicker": "^7.4.1",
-    "@vueuse/core": "^10.7.1",
+    "@vueuse/core": "^10.7.2",
     "@vueuse/nuxt": "^10.7.1",
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
