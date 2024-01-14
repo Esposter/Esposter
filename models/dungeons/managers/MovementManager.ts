@@ -1,6 +1,6 @@
 import { type BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import { type SpriteKey } from "@/models/dungeons/keys/SpriteKey";
-import { mapCursorKeysToDirection } from "@/services/dungeons/mapCursorKeysToDirection";
+import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { type GridEngine } from "grid-engine";
 
 export class MovementManager {

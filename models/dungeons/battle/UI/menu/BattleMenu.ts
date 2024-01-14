@@ -4,8 +4,8 @@ import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
-import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
-import { PlayerBattleMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionCursorPositionMap";
+import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
@@ -14,16 +14,16 @@ import { type GameObjects, type Scene } from "phaser";
 
 export class BattleMenu {
   scene: Scene;
+  playerBattleMenuOptionCursor: Cursor<PlayerBattleMenuOption>;
   playerBattleMenuPhaserContainerGameObject: GameObjects.Container;
-  cursor: Cursor<PlayerBattleMenuOption>;
   battleSubMenu: BattleSubMenu;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.createMainInfoPanel();
-    this.cursor = new Cursor(this.scene, PlayerBattleMenuOptionCursorPositionMap, PlayerBattleMenuOptionGrid);
+    this.playerBattleMenuOptionCursor = new Cursor(this.scene, CursorPositionMap, PlayerBattleMenuOptionGrid);
     this.playerBattleMenuPhaserContainerGameObject = this.createPlayerBattleMenu();
-    this.playerBattleMenuPhaserContainerGameObject.add(this.cursor.phaserImageGameObject);
+    this.playerBattleMenuPhaserContainerGameObject.add(this.playerBattleMenuOptionCursor.phaserImageGameObject);
     this.battleSubMenu = new BattleSubMenu(scene);
     this.hidePlayerBattleMenu();
   }
@@ -41,8 +41,8 @@ export class BattleMenu {
 
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.onChoosePlayerBattleMenuOption();
-        else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub)
+        if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Main) this.onChoosePlayerBattleMenuOption();
+        else if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Sub)
           this.battleSubMenu.onChoosePlayerBattleSubMenuOption(() => {
             this.showPlayerBattleMenu();
           });
@@ -61,16 +61,17 @@ export class BattleMenu {
       case Direction.NONE:
         return;
       default:
-        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.cursor.moveGridPosition(direction);
-        else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub)
-          this.battleSubMenu.cursor.moveGridPosition(direction);
+        if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Main)
+          this.playerBattleMenuOptionCursor.moveGridPosition(direction);
+        else if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Sub)
+          this.battleSubMenu.playerBattleSubMenuOptionCursor.moveGridPosition(direction);
     }
   }
 
   onChoosePlayerBattleMenuOption() {
     this.hidePlayerBattleMenu();
 
-    switch (this.cursor.activeOption) {
+    switch (this.playerBattleMenuOptionCursor.activeOption) {
       case PlayerBattleMenuOption.Fight:
         this.battleSubMenu.showBattleSubMenu();
         return;
@@ -90,7 +91,7 @@ export class BattleMenu {
         });
         return;
       default:
-        exhaustiveGuard(this.cursor.activeOption);
+        exhaustiveGuard(this.playerBattleMenuOptionCursor.activeOption);
     }
   }
 
@@ -100,9 +101,10 @@ export class BattleMenu {
   }
 
   showPlayerBattleMenu() {
-    BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
-    this.cursor.gridPosition = [0, 0];
+    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Main;
+    this.playerBattleMenuOptionCursor.gridPosition = [0, 0];
     this.battleSubMenu.battleLine1PhaserTextGameObject.setText("What should");
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setText(`${BattleSceneStore.activePlayerMonster.name} do next?`);
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
     this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(true);
     this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(true);

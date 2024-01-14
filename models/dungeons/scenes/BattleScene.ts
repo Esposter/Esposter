@@ -1,4 +1,5 @@
 import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
+import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { Background } from "@/models/dungeons/battle/UI/Background";
 import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
 import { EnemyBattleMonster } from "@/models/dungeons/battle/monsters/EnemyBattleMonster";
@@ -6,7 +7,8 @@ import { PlayerBattleMonster } from "@/models/dungeons/battle/monsters/PlayerBat
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { mapCursorKeysToDirection } from "@/services/dungeons/mapCursorKeysToDirection";
+import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Input, type Types } from "phaser";
 
 export class BattleScene extends SceneWithPlugins {
@@ -37,9 +39,10 @@ export class BattleScene extends SceneWithPlugins {
         },
         currentLevel: 5,
         currentHp: 25,
-        attacks: [],
+        attackIds: [AttackId.Slash],
       },
     });
+    BattleSceneStore.activePlayerMonster = this.activePlayerMonster;
     this.activeEnemyMonster = new EnemyBattleMonster({
       scene: this,
       monster: {
@@ -53,9 +56,10 @@ export class BattleScene extends SceneWithPlugins {
         },
         currentLevel: 5,
         currentHp: 25,
-        attacks: [],
+        attackIds: [AttackId.IceShard],
       },
     });
+    BattleSceneStore.activeEnemyMonster = this.activeEnemyMonster;
     this.battleMenu = new BattleMenu(this);
     this.battleMenu.showPlayerBattleMenu();
   }
