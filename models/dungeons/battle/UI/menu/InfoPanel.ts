@@ -1,13 +1,13 @@
 import { type GameObjects } from "phaser";
 
 export class InfoPanel {
-  battleTextGameObjectLine1: GameObjects.Text;
+  battleLine1PhaserTextGameObject: GameObjects.Text;
   queuedMessages: string[] = [];
   queuedCallback?: () => void;
-  isWaitingForPlayerInput = false;
+  isWaitingForPlayerSpecialInput = false;
 
-  constructor(battleTextGameObjectLine1: GameObjects.Text) {
-    this.battleTextGameObjectLine1 = battleTextGameObjectLine1;
+  constructor(battleLine1PhaserTextGameObject: GameObjects.Text) {
+    this.battleLine1PhaserTextGameObject = battleLine1PhaserTextGameObject;
   }
 
   updateAndShowMessage(messages: string[], callback?: () => void) {
@@ -17,8 +17,8 @@ export class InfoPanel {
   }
 
   showMessage() {
-    this.isWaitingForPlayerInput = false;
-    this.battleTextGameObjectLine1.setText("").setVisible(true);
+    this.isWaitingForPlayerSpecialInput = false;
+    this.battleLine1PhaserTextGameObject.setText("").setVisible(true);
 
     const displayMessage = this.queuedMessages.shift();
     if (!displayMessage) {
@@ -29,7 +29,7 @@ export class InfoPanel {
       return;
     }
 
-    this.battleTextGameObjectLine1.setText(displayMessage);
-    this.isWaitingForPlayerInput = true;
+    this.battleLine1PhaserTextGameObject.setText(displayMessage);
+    this.isWaitingForPlayerSpecialInput = true;
   }
 }

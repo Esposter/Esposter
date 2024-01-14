@@ -31,7 +31,7 @@ export class Cursor<TEnum extends string> {
     this.updateImagePosition();
   }
 
-  moveGridPosition(input: Direction) {
+  moveGridPosition(input: Exclude<Direction, Direction.NONE>) {
     this.grid.move(input);
     this.updateImagePosition();
   }

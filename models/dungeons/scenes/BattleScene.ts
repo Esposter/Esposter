@@ -1,13 +1,19 @@
 import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
+import { Background } from "@/models/dungeons/battle/UI/Background";
 import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
+import { EnemyBattleMonster } from "@/models/dungeons/battle/monsters/EnemyBattleMonster";
+import { PlayerBattleMonster } from "@/models/dungeons/battle/monsters/PlayerBattleMonster";
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { mapCursorKeysToDirection } from "@/services/dungeons/mapCursorKeysToDirection";
 import { Input, type Types } from "phaser";
-import { SpecialPlayerInput } from "../input/SpecialPlayerInput";
 
 export class BattleScene extends SceneWithPlugins {
   cursorKeys!: Types.Input.Keyboard.CursorKeys;
+  background!: Background;
+  activePlayerMonster!: PlayerBattleMonster;
+  activeEnemyMonster!: EnemyBattleMonster;
   battleMenu!: BattleMenu;
 
   constructor() {
@@ -15,86 +21,48 @@ export class BattleScene extends SceneWithPlugins {
   }
 
   create() {
-    this.add.image(0, 0, TextureManagerKey.ForestBackground).setOrigin(0);
-    // Player and enemy monsters
-    this.add.image(768, 144, TextureManagerKey.Carnodusk, 0);
-    this.add.image(256, 316, TextureManagerKey.Iguanignite, 0).setFlipX(true);
-
-    const playerMonsterName = this.add.text(30, 20, TextureManagerKey.Iguanignite, {
-      color: "#7e3d3f",
-      fontSize: "2rem",
-    });
-    this.add.container(556, 318, [
-      this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0),
-      playerMonsterName,
-      this.createHealthBar(34, 34),
-      this.add.text(playerMonsterName.displayWidth + 35, 23, "L5", {
-        color: "#ed474b",
-        fontSize: "1.75rem",
-      }),
-      this.add.text(30, 55, "HP", {
-        color: "#ff6505",
-        fontSize: "1.5rem",
-        fontStyle: "italic",
-      }),
-      this.add
-        .text(443, 80, "25/25", {
-          color: "#7e3d3f",
-          fontSize: "1rem",
-        })
-        .setOrigin(1, 0),
-    ]);
-
-    const enemyMonsterName = this.add.text(30, 20, TextureManagerKey.Carnodusk, {
-      color: "#7e3d3f",
-      fontSize: "2rem",
-    });
-    this.add.container(0, 0, [
-      this.add.image(0, 0, TextureManagerKey.HealthBarBackground).setOrigin(0).setScale(1, 0.8),
-      enemyMonsterName,
-      this.createHealthBar(34, 34),
-      this.add.text(enemyMonsterName.displayWidth + 35, 23, "L5", {
-        color: "#ed474b",
-        fontSize: "1.75rem",
-      }),
-      this.add.text(30, 55, "HP", {
-        color: "#ff6505",
-        fontSize: "1.5rem",
-        fontStyle: "italic",
-      }),
-      this.add
-        .text(443, 80, "25/25", {
-          color: "#7e3d3f",
-          fontSize: "1rem",
-        })
-        .setOrigin(1, 0),
-    ]);
-
     this.cursorKeys = this.input.keyboard!.createCursorKeys();
+    this.background = new Background(this);
+    this.background.showForest();
+    this.activePlayerMonster = new PlayerBattleMonster({
+      scene: this,
+      monster: {
+        name: TextureManagerKey.Iguanignite,
+        asset: {
+          key: TextureManagerKey.Iguanignite,
+        },
+        stats: {
+          maxHp: 25,
+          baseAttack: 5,
+        },
+        currentLevel: 5,
+        currentHp: 25,
+        attacks: [],
+      },
+    });
+    this.activeEnemyMonster = new EnemyBattleMonster({
+      scene: this,
+      monster: {
+        name: TextureManagerKey.Carnodusk,
+        asset: {
+          key: TextureManagerKey.Carnodusk,
+        },
+        stats: {
+          maxHp: 25,
+          baseAttack: 5,
+        },
+        currentLevel: 5,
+        currentHp: 25,
+        attacks: [],
+      },
+    });
     this.battleMenu = new BattleMenu(this);
     this.battleMenu.showPlayerBattleMenu();
   }
 
   update() {
-    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(SpecialPlayerInput.Confirm);
-    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(SpecialPlayerInput.Cancel);
+    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
+    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
     else this.battleMenu.onPlayerInput(mapCursorKeysToDirection(this.cursorKeys));
-  }
-
-  createHealthBar(x: number, y: number) {
-    const scaleY = 0.7;
-    // Set origin to the middle-left of the health caps to enable
-    // grabbing the full width of the game object
-    const leftCap = this.add.image(x, y, TextureManagerKey.HealthBarLeftCap).setOrigin(0, 0.5).setScale(1, scaleY);
-    const middle = this.add
-      .image(leftCap.x + leftCap.displayWidth, y, TextureManagerKey.HealthBarMiddle)
-      .setOrigin(0, 0.5)
-      .setScale(1, scaleY);
-    middle.displayWidth = 360;
-    const rightCap = this.add
-      .image(middle.x + middle.displayWidth, y, TextureManagerKey.HealthBarRightCap)
-      .setOrigin(0, 0.5)
-      .setScale(1, scaleY);
-    return this.add.container(x, y, [leftCap, middle, rightCap]);
   }
 }

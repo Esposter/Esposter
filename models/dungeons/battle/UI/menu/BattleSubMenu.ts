@@ -11,10 +11,10 @@ import { type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
   scene: Scene;
-  battleSubMenuPhaserContainerGameObject: GameObjects.Container;
   cursor: Cursor<PlayerBattleSubMenuOption>;
-  battleTextGameObjectLine1: GameObjects.Text;
-  battleTextGameObjectLine2: GameObjects.Text;
+  battleSubMenuPhaserContainerGameObject: GameObjects.Container;
+  battleLine1PhaserTextGameObject: GameObjects.Text;
+  battleLine2PhaserTextGameObject: GameObjects.Text;
   infoPanel: InfoPanel;
 
   constructor(scene: Scene) {
@@ -22,16 +22,21 @@ export class BattleSubMenu {
     this.cursor = new Cursor(this.scene, PlayerBattleSubMenuOptionCursorPositionMap, PlayerBattleSubMenuOptionGrid);
     this.battleSubMenuPhaserContainerGameObject = this.createBattleSubMenu();
     this.battleSubMenuPhaserContainerGameObject.add(this.cursor.phaserImageGameObject);
-    this.battleTextGameObjectLine1 = this.scene.add.text(20, 468, "What should", battleUITextStyle);
+    this.battleLine1PhaserTextGameObject = this.scene.add.text(20, 468, "What should", battleUITextStyle);
     // @TODO: Dynamically populate monster name
-    this.battleTextGameObjectLine2 = this.scene.add.text(
+    this.battleLine2PhaserTextGameObject = this.scene.add.text(
       20,
       512,
       `${TextureManagerKey.Iguanignite} do next?`,
       battleUITextStyle,
     );
-    this.infoPanel = new InfoPanel(this.battleTextGameObjectLine1);
+    this.infoPanel = new InfoPanel(this.battleLine1PhaserTextGameObject);
     this.hideBattleSubMenu();
+  }
+
+  onChoosePlayerBattleSubMenuOption(callback: InfoPanel["queuedCallback"]) {
+    this.hideBattleSubMenu();
+    this.infoPanel.updateAndShowMessage(["Your monster attacks the enemy"], callback);
   }
 
   showBattleSubMenu() {

@@ -1,4 +1,4 @@
-export enum SpecialPlayerInput {
+export enum PlayerSpecialInput {
   Confirm = "Confirm",
   Cancel = "Cancel",
 }

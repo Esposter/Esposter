@@ -3,10 +3,12 @@ import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleM
 import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
-import { SpecialPlayerInput } from "@/models/dungeons/input/SpecialPlayerInput";
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { BattleMenuStore } from "@/models/dungeons/store/BattleMenuStore";
 import { PlayerBattleMenuOptionCursorPositionMap } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionCursorPositionMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
+import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Direction } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
@@ -26,45 +28,90 @@ export class BattleMenu {
     this.hidePlayerBattleMenu();
   }
 
-  onPlayerInput(input: SpecialPlayerInput | Direction) {
-    if (
-      this.battleSubMenu.infoPanel.isWaitingForPlayerInput &&
-      Object.values(SpecialPlayerInput).includes(input as SpecialPlayerInput)
-    ) {
+  onPlayerInput(input: PlayerSpecialInput | Direction) {
+    if (isPlayerSpecialInput(input)) this.onPlayerSpecialInput(input);
+    else this.onPlayerDirectionInput(input);
+  }
+
+  onPlayerSpecialInput(playerSpecialInput: PlayerSpecialInput) {
+    if (this.battleSubMenu.infoPanel.isWaitingForPlayerSpecialInput) {
       this.battleSubMenu.infoPanel.showMessage();
       return;
     }
 
-    switch (input) {
-      case SpecialPlayerInput.Confirm:
-        this.battleSubMenu.showBattleSubMenu();
-        this.hidePlayerBattleMenu();
+    switch (playerSpecialInput) {
+      case PlayerSpecialInput.Confirm:
+        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.onChoosePlayerBattleMenuOption();
+        else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub)
+          this.battleSubMenu.onChoosePlayerBattleSubMenuOption(() => {
+            this.showPlayerBattleMenu();
+          });
         return;
-      case SpecialPlayerInput.Cancel:
+      case PlayerSpecialInput.Cancel:
         this.battleSubMenu.hideBattleSubMenu();
         this.showPlayerBattleMenu();
         return;
+      default:
+        exhaustiveGuard(playerSpecialInput);
+    }
+  }
+
+  onPlayerDirectionInput(direction: Direction) {
+    switch (direction) {
       case Direction.NONE:
         return;
       default:
-        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.cursor.moveGridPosition(input);
+        if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Main) this.cursor.moveGridPosition(direction);
         else if (BattleMenuStore.activeBattleMenu === ActiveBattleMenu.Sub)
-          this.battleSubMenu.cursor.moveGridPosition(input);
+          this.battleSubMenu.cursor.moveGridPosition(direction);
     }
+  }
+
+  onChoosePlayerBattleMenuOption() {
+    this.hidePlayerBattleMenu();
+
+    switch (this.cursor.activeOption) {
+      case PlayerBattleMenuOption.Fight:
+        this.battleSubMenu.showBattleSubMenu();
+        return;
+      case PlayerBattleMenuOption.Switch:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["Your bag is empty..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      case PlayerBattleMenuOption.Item:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["You have no other monsters in your party..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      case PlayerBattleMenuOption.Flee:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["You fail to run away..."], () => {
+          this.switchToPlayerBattleMenu();
+        });
+        return;
+      default:
+        exhaustiveGuard(this.cursor.activeOption);
+    }
+  }
+
+  switchToPlayerBattleMenu() {
+    this.battleSubMenu.hideBattleSubMenu();
+    this.showPlayerBattleMenu();
   }
 
   showPlayerBattleMenu() {
     BattleMenuStore.activeBattleMenu = ActiveBattleMenu.Main;
     this.cursor.gridPosition = [0, 0];
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setText("What should");
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
-    this.battleSubMenu.battleTextGameObjectLine1.setVisible(true);
-    this.battleSubMenu.battleTextGameObjectLine2.setVisible(true);
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(true);
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(true);
   }
 
   hidePlayerBattleMenu() {
     this.playerBattleMenuPhaserContainerGameObject.setVisible(false);
-    this.battleSubMenu.battleTextGameObjectLine1.setVisible(false);
-    this.battleSubMenu.battleTextGameObjectLine2.setVisible(false);
+    this.battleSubMenu.battleLine1PhaserTextGameObject.setVisible(false);
+    this.battleSubMenu.battleLine2PhaserTextGameObject.setVisible(false);
   }
 
   createMainInfoPanel() {

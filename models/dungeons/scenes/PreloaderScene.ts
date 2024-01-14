@@ -3,6 +3,9 @@ import forestBackground from "@/assets/dungeons/battleBackgrounds/forestBackgrou
 import barHorizontalGreenLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
 import barHorizontalGreenMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
 import barHorizontalGreenRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
+import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowLeft.png";
+import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
+import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
 import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
@@ -90,6 +93,9 @@ export class PreloaderScene extends SceneWithPlugins {
     this.load.image(TextureManagerKey.HealthBarLeftCap, barHorizontalGreenLeft);
     this.load.image(TextureManagerKey.HealthBarMiddle, barHorizontalGreenMid);
     this.load.image(TextureManagerKey.HealthBarRightCap, barHorizontalGreenRight);
+    this.load.image(TextureManagerKey.HealthBarLeftCapShadow, barHorizontalShadowLeft);
+    this.load.image(TextureManagerKey.HealthBarMiddleShadow, barHorizontalShadowMid);
+    this.load.image(TextureManagerKey.HealthBarRightCapShadow, barHorizontalShadowRight);
     this.load.image(TextureManagerKey.Carnodusk, carnodusk);
     this.load.image(TextureManagerKey.Iguanignite, iguanignite);
     this.load.image(TextureManagerKey.Cursor, cursor);
