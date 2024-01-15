@@ -3,13 +3,14 @@ import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleM
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { InfoPanel } from "@/models/dungeons/battle/UI/menu/InfoPanel";
 import { type PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { dayjs } from "@/services/dayjs";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
 import { getPlayerBattleSubMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerBattleSubMenuOptionGrid";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
-import { type GameObjects, type Scene } from "phaser";
+import { Cameras, type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
   scene: Scene;
@@ -67,12 +68,26 @@ export class BattleSubMenu {
           BattleSceneStore.activeEnemyMonster.takeDamage(
             calculateDamage(BattleSceneStore.activePlayerMonster.baseAttack),
             () => {
-              this.showEnemyAttack(callback);
+              this.activatePlayerPostBattleSequence(callback);
             },
           );
         });
       },
     );
+  }
+
+  activatePlayerPostBattleSequence(callback: InfoPanel["queuedCallback"]) {
+    if (BattleSceneStore.activeEnemyMonster.isFainted) {
+      this.infoPanel.updateAndShowMessage(
+        [`Wild ${BattleSceneStore.activeEnemyMonster.name} has fainted!`, "You have gained some experience."],
+        () => {
+          this.fadeOutToNextScene();
+        },
+      );
+      return;
+    }
+
+    this.showEnemyAttack(callback);
   }
 
   showEnemyAttack(callback: InfoPanel["queuedCallback"]) {
@@ -85,12 +100,36 @@ export class BattleSubMenu {
           BattleSceneStore.activePlayerMonster.takeDamage(
             calculateDamage(BattleSceneStore.activeEnemyMonster.baseAttack),
             () => {
-              callback?.();
+              this.activateEnemyPostBattleSequence(callback);
             },
           );
         });
       },
     );
+  }
+
+  activateEnemyPostBattleSequence(callback: InfoPanel["queuedCallback"]) {
+    if (BattleSceneStore.activePlayerMonster.isFainted) {
+      this.infoPanel.updateAndShowMessage(
+        [
+          `${BattleSceneStore.activePlayerMonster.name} has fainted!`,
+          "You have no more monsters, escaping to safety...",
+        ],
+        () => {
+          this.fadeOutToNextScene();
+        },
+      );
+      return;
+    }
+
+    callback?.();
+  }
+
+  fadeOutToNextScene() {
+    this.scene.cameras.main.fadeOut(dayjs.duration(0.6, "seconds").asMilliseconds(), 0, 0, 0);
+    this.scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      this.scene.scene.start(SceneKey.Battle);
+    });
   }
 
   showBattleSubMenu() {
