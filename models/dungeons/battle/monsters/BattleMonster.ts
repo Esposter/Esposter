@@ -1,9 +1,9 @@
-import { attacks } from "@/assets/dungeons/attacks/attacks";
 import { type Attack } from "@/models/dungeons/attack/Attack";
 import { HealthBar } from "@/models/dungeons/battle/UI/HealthBar";
 import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monsters/BattleMonsterConfiguration";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { AttackStore } from "@/models/dungeons/store/AttackStore";
 import { type Position } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
@@ -32,20 +32,20 @@ export class BattleMonster {
     return this.monster.name;
   }
 
-  get isFainted() {
-    return this.monster.currentHp <= 0;
-  }
-
-  get attacks() {
-    return [...this.monsterAttacks];
-  }
-
   get baseAttack() {
     return this.monster.stats.baseAttack;
   }
 
   get level() {
     return this.monster.currentLevel;
+  }
+
+  get attacks() {
+    return [...this.monsterAttacks];
+  }
+
+  get isFainted() {
+    return this.monster.currentHp <= 0;
   }
 
   takeDamage(damage: number, onComplete?: () => void) {
@@ -84,7 +84,7 @@ export class BattleMonster {
   private getMonsterAttacks(): Attack[] {
     const foundAttacks: Attack[] = [];
     for (const attackId of this.monster.attackIds) {
-      const foundAttack = attacks.find((a) => a.id === attackId);
+      const foundAttack = AttackStore.getAttack(attackId);
       if (foundAttack) foundAttacks.push(foundAttack);
     }
     return foundAttacks;
