@@ -213,8 +213,8 @@ dependencies:
     specifier: ^3.4.10
     version: 3.4.10(typescript@5.3.3)(vite-plugin-vuetify@2.0.1)(vue@3.4.8)
   worker-timers:
-    specifier: ^7.1.0
-    version: 7.1.0
+    specifier: ^7.1.1
+    version: 7.1.1
   ws:
     specifier: ^8.16.0
     version: 8.16.0
@@ -7100,8 +7100,8 @@ packages:
   /fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  /fast-unique-numbers@8.0.12:
-    resolution: {integrity: sha512-Z4AJueNDnuC/sLxeQqrHP4zgqcBIeQQLbQ0hEx1a7m6Wf7ERrdAyR7CkGfoEFWm9Qla7dpLt0eWPyiO18gqj0A==}
+  /fast-unique-numbers@8.0.13:
+    resolution: {integrity: sha512-7OnTFAVPefgw2eBJ1xj2PGGR9FwYzSUso9decayHgCDX4sJkHLdcsYTytTg+tYv+wKF3U8gJuSBz2jJpQV4u/g==}
     engines: {node: '>=16.1.0'}
     dependencies:
       '@babel/runtime': 7.23.8
@@ -12317,29 +12317,29 @@ packages:
       workbox-core: 7.0.0
     dev: true
 
-  /worker-timers-broker@6.1.0:
-    resolution: {integrity: sha512-h6mHyN8CjeSy24sJ2h0/qpz0mhwLrcApc2waZrQ1TsY4IMHdkgt5x9dTfUYZw0UUwwviUqP8kTsgAGkQa+zTTw==}
+  /worker-timers-broker@6.1.1:
+    resolution: {integrity: sha512-CTlDnkXAewtYvw5gOwVIc6UuIPcNHJrqWxBMhZbCWOmadvl20nPs9beAsXlaTEwW3G2KBpuKiSgkhBkhl3mxDA==}
     dependencies:
       '@babel/runtime': 7.23.8
-      fast-unique-numbers: 8.0.12
+      fast-unique-numbers: 8.0.13
       tslib: 2.6.2
-      worker-timers-worker: 7.0.64
+      worker-timers-worker: 7.0.65
     dev: false
 
-  /worker-timers-worker@7.0.64:
-    resolution: {integrity: sha512-bzBO7rVibSYFKu5NBYfjKBKHujaA/AJzJTuEEqaOGfzcTdJv15raDuGhtDoMjcNPvt3IylfLph6AK92kuifnXA==}
+  /worker-timers-worker@7.0.65:
+    resolution: {integrity: sha512-Dl4nGONr8A8Fr+vQnH7Ee+o2iB480S1fBcyJYqnMyMwGRVyQZLZU+o91vbMvU1vHqiryRQmjXzzMYlh86wx+YQ==}
     dependencies:
       '@babel/runtime': 7.23.8
       tslib: 2.6.2
     dev: false
 
-  /worker-timers@7.1.0:
-    resolution: {integrity: sha512-DaXnXVv0UjkWJB4Funq3Ze7X7ckcZYvt2EIz+qnInXJGU65INcIOBV+HR9NX75h9Pu6OUX7BkSsJ0zvT1a6WfA==}
+  /worker-timers@7.1.1:
+    resolution: {integrity: sha512-axtq83GwPqYwkQmQmei2abQ9cT7oSwmLw4lQCZ9VmMH9g4t4kuEF1Gw+tdnIJGHCiZ2QPDnr/+307bYx6tynLA==}
     dependencies:
       '@babel/runtime': 7.23.8
       tslib: 2.6.2
-      worker-timers-broker: 6.1.0
-      worker-timers-worker: 7.0.64
+      worker-timers-broker: 6.1.1
+      worker-timers-worker: 7.0.65
     dev: false
 
   /wrap-ansi@7.0.0:
