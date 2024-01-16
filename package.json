@@ -124,7 +124,7 @@
     "three-globe": "^2.30.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.17",
-    "vue": "^3.4.14",
+    "vue": "3.4.8",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.2.5",
     "vue-waypoint": "^4.3.0",
@@ -134,7 +134,8 @@
     "zod": "^3.22.4"
   },
   "dependenciesComments": {
-    "class-transformer": "Remove this when es decorators are released"
+    "class-transformer": "Remove this when es decorators are released",
+    "vue": "https://github.com/nuxt/nuxt/issues/25214"
   },
   "engines": {
     "node": "^20.11.0"
