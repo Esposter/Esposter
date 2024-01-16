@@ -41,7 +41,7 @@
     "@vite-pwa/nuxt": "^0.4.0",
     "@vitest/coverage-v8": "^1.2.0",
     "cross-env": "^7.0.3",
-    "drizzle-kit": "^0.20.12",
+    "drizzle-kit": "^0.20.13",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
