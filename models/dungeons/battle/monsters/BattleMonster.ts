@@ -59,7 +59,7 @@ export class BattleMonster {
       .image(0, 0, TextureManagerKey.HealthBarBackground)
       .setOrigin(0)
       .setScale(1, scaleY);
-    const monsterName = this.scene.add.text(30, 20, TextureManagerKey.Carnodusk, {
+    const monsterName = this.scene.add.text(30, 20, this.name, {
       color: "#7e3d3f",
       fontSize: "2rem",
     });
