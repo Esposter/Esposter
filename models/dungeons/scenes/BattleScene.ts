@@ -7,7 +7,10 @@ import { PlayerBattleMonster } from "@/models/dungeons/battle/monsters/PlayerBat
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { StateMachine } from "@/models/dungeons/state/StateMachine";
+import { StateName } from "@/models/dungeons/state/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { dayjs } from "@/services/dayjs";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Input, type Types } from "phaser";
 
@@ -17,6 +20,7 @@ export class BattleScene extends SceneWithPlugins {
   activePlayerMonster!: PlayerBattleMonster;
   activeEnemyMonster!: EnemyBattleMonster;
   battleMenu!: BattleMenu;
+  battleStateMachine!: StateMachine<this>;
 
   constructor() {
     super(SceneKey.Battle);
@@ -62,6 +66,18 @@ export class BattleScene extends SceneWithPlugins {
     BattleSceneStore.activeEnemyMonster = this.activeEnemyMonster;
     this.battleMenu = new BattleMenu(this);
     this.battleMenu.showPlayerBattleMenu();
+    this.battleStateMachine = new StateMachine(this);
+    this.battleStateMachine.addState({
+      name: StateName.Intro,
+      onEnter: () => {
+        this.time.delayedCall(dayjs.duration(1, "second").asMilliseconds(), () => {
+          this.battleStateMachine.setState(StateName.Battle);
+        });
+      },
+    });
+    this.battleStateMachine.addState({
+      name: StateName.Battle,
+    });
   }
 
   update() {
