@@ -6,6 +6,7 @@ import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingU
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 import { getInitials } from "@/util/text/getInitials";
+
 export const useBuildingStore = defineStore("clicker/building", () => {
   const gameStore = useGameStore();
   const { game } = storeToRefs(gameStore);

@@ -29,9 +29,9 @@ export const getPhaserGame = (containerId: string) =>
           mapping: "gridEngine",
         },
         {
-          key: "rexVirtualJoystick",
+          key: "virtualJoystickPlugin",
           plugin: VirtualJoystickPlugin,
-          mapping: "rexVirtualJoystick",
+          mapping: "virtualJoystickPlugin",
         },
       ],
     },
