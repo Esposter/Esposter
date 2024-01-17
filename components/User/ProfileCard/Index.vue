@@ -61,7 +61,7 @@ const isUpdated = computed(() => isValid.value && isDiff(profileCardRowValues.va
       </v-card-title>
       <v-container px-0="!" py-6="!">
         <UserProfileCardRow
-          v-for="[title, row] in Object.entries(profileCardRows)"
+          v-for="(row, title) in profileCardRows"
           :key="title"
           v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
           px-4
