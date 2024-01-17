@@ -26,7 +26,6 @@ export class StateMachine<TContext extends object, TStateName extends string> {
 
   setState(stateName: TStateName) {
     const state = this.stateMap.get(stateName);
-    console.log(stateName);
     if (!state || stateName === this.currentStateName) return;
 
     if (this.isChangingState) {
