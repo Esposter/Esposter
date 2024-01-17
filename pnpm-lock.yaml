@@ -180,8 +180,8 @@ dependencies:
     specifier: ^1.9.126
     version: 1.9.126
   survey-creator-vue:
-    specifier: ^1.9.125
-    version: 1.9.125(vue@3.4.8)
+    specifier: ^1.9.126
+    version: 1.9.126(vue@3.4.8)
   survey-vue3-ui:
     specifier: ^1.9.125
     version: 1.9.125(vue@3.4.8)
@@ -10761,12 +10761,12 @@ packages:
       survey-core: 1.9.126
     dev: false
 
-  /survey-creator-vue@1.9.125(vue@3.4.8):
-    resolution: {integrity: sha512-emlG/h8/BwShNifR+jVLB4Bin0gRSd4NojFbY4HSij3JGjfrXhPFWraOwwgZm7+j8G7MvlaY0EY4+oy9D0FAKw==}
+  /survey-creator-vue@1.9.126(vue@3.4.8):
+    resolution: {integrity: sha512-hbxXUbv3yUedjf1EdJLc1heZvK9gsVD+GYjn3A/1nA7Ct6mqRXj/u6UzWMcD7kxdttBVjEYgHj8yZ+0w3pjT8Q==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.125
+      survey-core: 1.9.126
       survey-creator-core: 1.9.126
       survey-vue3-ui: 1.9.125(vue@3.4.8)
       vue: 3.4.8(typescript@5.3.3)
