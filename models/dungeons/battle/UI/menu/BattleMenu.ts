@@ -4,6 +4,7 @@ import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
@@ -43,13 +44,10 @@ export class BattleMenu {
       case PlayerSpecialInput.Confirm:
         if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Main) this.onChoosePlayerBattleMenuOption();
         else if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Sub)
-          this.battleSubMenu.onChoosePlayerBattleSubMenuOption(() => {
-            this.showPlayerBattleMenu();
-          });
+          this.battleSubMenu.onChoosePlayerBattleSubMenuOption();
         return;
       case PlayerSpecialInput.Cancel:
-        this.battleSubMenu.hideBattleSubMenu();
-        this.showPlayerBattleMenu();
+        this.switchToPlayerBattleMenu();
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
@@ -76,19 +74,17 @@ export class BattleMenu {
         this.battleSubMenu.showBattleSubMenu();
         return;
       case PlayerBattleMenuOption.Switch:
-        this.battleSubMenu.infoPanel.updateAndShowMessage(["Your bag is empty..."], () => {
-          this.switchToPlayerBattleMenu();
-        });
-        return;
-      case PlayerBattleMenuOption.Item:
         this.battleSubMenu.infoPanel.updateAndShowMessage(["You have no other monsters in your party..."], () => {
           this.switchToPlayerBattleMenu();
         });
         return;
-      case PlayerBattleMenuOption.Flee:
-        this.battleSubMenu.infoPanel.updateAndShowMessage(["You fail to run away..."], () => {
+      case PlayerBattleMenuOption.Item:
+        this.battleSubMenu.infoPanel.updateAndShowMessage(["Your bag is empty..."], () => {
           this.switchToPlayerBattleMenu();
         });
+        return;
+      case PlayerBattleMenuOption.Flee:
+        BattleSceneStore.battleStateMachine.setState(StateName.FleeAttempt);
         return;
       default:
         exhaustiveGuard(this.playerBattleMenuOptionCursor.activeOption);

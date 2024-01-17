@@ -1,15 +1,16 @@
 import { type State } from "@/models/dungeons/state/State";
-import { StateName } from "@/models/dungeons/state/StateName";
 
-export class StateMachine<TContext extends object> {
+export class StateMachine<TContext extends object, TStateName extends string> {
   context: TContext;
-  states: Map<StateName, State> = new Map();
-  currentState: State = { name: StateName.None };
+  stateMap: Map<TStateName, State<TContext, TStateName>>;
+  currentState: State<TContext, TStateName | null> = { name: null };
   isChangingState = false;
-  changingStateNameQueue: StateName[] = [];
+  changingStateNameQueue: TStateName[] = [];
 
-  constructor(context: TContext) {
+  constructor(context: TContext, stateMap: Map<TStateName, State<TContext, TStateName>>, initialStateName: TStateName) {
     this.context = context;
+    this.stateMap = stateMap;
+    this.setState(initialStateName);
   }
 
   get currentStateName() {
@@ -23,8 +24,9 @@ export class StateMachine<TContext extends object> {
     this.setState(stateName);
   }
 
-  setState(stateName: StateName) {
-    const state = this.states.get(stateName);
+  setState(stateName: TStateName) {
+    const state = this.stateMap.get(stateName);
+    console.log(stateName);
     if (!state || stateName === this.currentStateName) return;
 
     if (this.isChangingState) {
@@ -34,14 +36,11 @@ export class StateMachine<TContext extends object> {
 
     this.isChangingState = true;
     this.currentState = state;
-    this.currentState.onEnter?.();
+    this.currentState.onEnter?.call(this.context);
     this.isChangingState = false;
   }
 
-  addState(state: State) {
-    this.states.set(state.name, {
-      name: state.name,
-      onEnter: state.onEnter?.bind(this.context),
-    });
+  addState(state: State<TContext, TStateName>) {
+    this.stateMap.set(state.name, state);
   }
 }

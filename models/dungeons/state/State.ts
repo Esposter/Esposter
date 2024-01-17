@@ -1,6 +1,4 @@
-import { type StateName } from "@/models/dungeons/state/StateName";
-
-export interface State {
-  name: StateName;
-  onEnter?: () => void;
+export interface State<TContext extends object, TStateName extends string | null> {
+  name: TStateName;
+  onEnter?: (this: TContext) => void;
 }

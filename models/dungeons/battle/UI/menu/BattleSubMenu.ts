@@ -3,14 +3,12 @@ import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleM
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { InfoPanel } from "@/models/dungeons/battle/UI/menu/InfoPanel";
 import { type PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
-import { dayjs } from "@/services/dayjs";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
 import { getPlayerBattleSubMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerBattleSubMenuOptionGrid";
-import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
-import { Cameras, type GameObjects, type Scene } from "phaser";
+import { type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
   scene: Scene;
@@ -40,96 +38,9 @@ export class BattleSubMenu {
     this.hideBattleSubMenu();
   }
 
-  onChoosePlayerBattleSubMenuOption(callback: InfoPanel["queuedCallback"]) {
+  onChoosePlayerBattleSubMenuOption() {
     this.hideBattleSubMenu();
-    this.activateBattleSequence(callback);
-  }
-
-  activateBattleSequence(callback: InfoPanel["queuedCallback"]) {
-    /**
-     * 1. Show attack used
-     * 2. Brief pause
-     * 3. Play attack animation
-     * 4. Brief pause
-     * 5. Play damage animation
-     * 6. Brief pause
-     * 7. Play health bar animation
-     * 8. Brief pause
-     * 9. Repeat the steps above for the other monster
-     */
-    this.showPlayerAttack(callback);
-  }
-
-  showPlayerAttack(callback: InfoPanel["queuedCallback"]) {
-    this.infoPanel.updateAndShowMessage(
-      [`${BattleSceneStore.activePlayerMonster.name} used ${this.playerBattleSubMenuOptionCursor.activeOption}.`],
-      () => {
-        this.scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-          BattleSceneStore.activeEnemyMonster.takeDamage(
-            calculateDamage(BattleSceneStore.activePlayerMonster.baseAttack),
-            () => {
-              this.activatePlayerPostBattleSequence(callback);
-            },
-          );
-        });
-      },
-    );
-  }
-
-  activatePlayerPostBattleSequence(callback: InfoPanel["queuedCallback"]) {
-    if (BattleSceneStore.activeEnemyMonster.isFainted) {
-      this.infoPanel.updateAndShowMessage(
-        [`Wild ${BattleSceneStore.activeEnemyMonster.name} has fainted!`, "You have gained some experience."],
-        () => {
-          this.fadeOutToNextScene();
-        },
-      );
-      return;
-    }
-
-    this.showEnemyAttack(callback);
-  }
-
-  showEnemyAttack(callback: InfoPanel["queuedCallback"]) {
-    this.infoPanel.updateAndShowMessage(
-      [
-        `Enemy ${BattleSceneStore.activeEnemyMonster.name} used ${BattleSceneStore.activeEnemyMonster.attacks[0].name}.`,
-      ],
-      () => {
-        this.scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-          BattleSceneStore.activePlayerMonster.takeDamage(
-            calculateDamage(BattleSceneStore.activeEnemyMonster.baseAttack),
-            () => {
-              this.activateEnemyPostBattleSequence(callback);
-            },
-          );
-        });
-      },
-    );
-  }
-
-  activateEnemyPostBattleSequence(callback: InfoPanel["queuedCallback"]) {
-    if (BattleSceneStore.activePlayerMonster.isFainted) {
-      this.infoPanel.updateAndShowMessage(
-        [
-          `${BattleSceneStore.activePlayerMonster.name} has fainted!`,
-          "You have no more monsters, escaping to safety...",
-        ],
-        () => {
-          this.fadeOutToNextScene();
-        },
-      );
-      return;
-    }
-
-    callback?.();
-  }
-
-  fadeOutToNextScene() {
-    this.scene.cameras.main.fadeOut(dayjs.duration(0.6, "seconds").asMilliseconds(), 0, 0, 0);
-    this.scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.scene.scene.start(SceneKey.Battle);
-    });
+    BattleSceneStore.battleStateMachine.setState(StateName.EnemyInput);
   }
 
   showBattleSubMenu() {

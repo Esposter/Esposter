@@ -8,9 +8,9 @@ import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { StateMachine } from "@/models/dungeons/state/StateMachine";
-import { StateName } from "@/models/dungeons/state/StateName";
+import { StateMap } from "@/models/dungeons/state/battle/StateMap";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
-import { dayjs } from "@/services/dayjs";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Input, type Types } from "phaser";
 
@@ -20,7 +20,6 @@ export class BattleScene extends SceneWithPlugins {
   activePlayerMonster!: PlayerBattleMonster;
   activeEnemyMonster!: EnemyBattleMonster;
   battleMenu!: BattleMenu;
-  battleStateMachine!: StateMachine<this>;
 
   constructor() {
     super(SceneKey.Battle);
@@ -30,7 +29,23 @@ export class BattleScene extends SceneWithPlugins {
     this.cursorKeys = this.input.keyboard!.createCursorKeys();
     this.background = new Background(this);
     this.background.showForest();
-    this.activePlayerMonster = new PlayerBattleMonster({
+    this.activePlayerMonster = this.createActivePlayerMonster();
+    BattleSceneStore.activePlayerMonster = this.activePlayerMonster;
+    this.activeEnemyMonster = this.createActiveEnemyMonster();
+    BattleSceneStore.activeEnemyMonster = this.activeEnemyMonster;
+    this.battleMenu = new BattleMenu(this);
+    BattleSceneStore.battleStateMachine = new StateMachine<BattleScene, StateName>(this, StateMap, StateName.Intro);
+  }
+
+  update() {
+    BattleSceneStore.battleStateMachine.update();
+    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
+    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
+    else this.battleMenu.onPlayerInput(mapCursorKeysToDirection(this.cursorKeys));
+  }
+
+  createActivePlayerMonster() {
+    return new PlayerBattleMonster({
       scene: this,
       monster: {
         name: TextureManagerKey.Iguanignite,
@@ -46,8 +61,10 @@ export class BattleScene extends SceneWithPlugins {
         attackIds: [AttackId.Slash],
       },
     });
-    BattleSceneStore.activePlayerMonster = this.activePlayerMonster;
-    this.activeEnemyMonster = new EnemyBattleMonster({
+  }
+
+  createActiveEnemyMonster() {
+    return new EnemyBattleMonster({
       scene: this,
       monster: {
         name: TextureManagerKey.Carnodusk,
@@ -63,26 +80,5 @@ export class BattleScene extends SceneWithPlugins {
         attackIds: [AttackId.IceShard],
       },
     });
-    BattleSceneStore.activeEnemyMonster = this.activeEnemyMonster;
-    this.battleMenu = new BattleMenu(this);
-    this.battleMenu.showPlayerBattleMenu();
-    this.battleStateMachine = new StateMachine(this);
-    this.battleStateMachine.addState({
-      name: StateName.Intro,
-      onEnter: () => {
-        this.time.delayedCall(dayjs.duration(1, "second").asMilliseconds(), () => {
-          this.battleStateMachine.setState(StateName.Battle);
-        });
-      },
-    });
-    this.battleStateMachine.addState({
-      name: StateName.Battle,
-    });
-  }
-
-  update() {
-    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
-    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
-    else this.battleMenu.onPlayerInput(mapCursorKeysToDirection(this.cursorKeys));
   }
 }

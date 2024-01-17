@@ -1,0 +1,14 @@
+export enum StateName {
+  Intro = "Intro",
+  PreBattleInfo = "PreBattleInfo",
+  BringOutMonster = "BringOutMonster",
+  PlayerInput = "PlayerInput",
+  EnemyInput = "EnemyInput",
+  Battle = "Battle",
+  PlayerAttack = "PlayerAttack",
+  PlayerPostAttackCheck = "PlayerPostAttackCheck",
+  EnemyAttack = "EnemyAttack",
+  EnemyPostAttackCheck = "EnemyPostAttackCheck",
+  Finished = "Finished",
+  FleeAttempt = "FleeAttempt",
+}
