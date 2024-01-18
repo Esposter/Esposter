@@ -33,28 +33,24 @@ export class BattleMenu {
     // These are all the states that use updateAndShowMessage
     const playerConfirmShowNextMessageStates: (StateName | null)[] = [
       StateName.PreBattleInfo,
+      StateName.PlayerInput,
       StateName.PlayerPostAttackCheck,
       StateName.EnemyPostAttackCheck,
       StateName.FleeAttempt,
     ];
-    if (
-      playerConfirmShowNextMessageStates.includes(BattleSceneStore.battleStateMachine.currentStateName) &&
-      input === PlayerSpecialInput.Confirm
-    ) {
-      this.onPlayerConfirmShowNextMessage();
-      return;
-    } else if (BattleSceneStore.battleStateMachine.currentStateName !== StateName.PlayerInput) return;
-    else if (isPlayerSpecialInput(input)) this.onPlayerSpecialInput(input);
+    if (!playerConfirmShowNextMessageStates.includes(BattleSceneStore.battleStateMachine.currentStateName)) return;
+    // Check if we're trying to show messages
+    if (input === PlayerSpecialInput.Confirm)
+      if (this.battleSubMenu.infoPanel.isQueuedMessagesAnimationPlaying) return;
+      else if (this.battleSubMenu.infoPanel.isWaitingForPlayerSpecialInput) {
+        this.battleSubMenu.infoPanel.showMessage();
+        return;
+      }
+    // From here on we only have the player input state to handle
+    if (BattleSceneStore.battleStateMachine.currentStateName !== StateName.PlayerInput) return;
+
+    if (isPlayerSpecialInput(input)) this.onPlayerSpecialInput(input);
     else this.onPlayerDirectionInput(input);
-  }
-
-  onPlayerConfirmShowNextMessage() {
-    if (this.battleSubMenu.infoPanel.isQueuedMessagesAnimationPlaying) return;
-
-    if (this.battleSubMenu.infoPanel.isWaitingForPlayerSpecialInput) {
-      this.battleSubMenu.infoPanel.showMessage();
-      return;
-    }
   }
 
   onPlayerSpecialInput(playerSpecialInput: PlayerSpecialInput) {

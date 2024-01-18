@@ -1,4 +1,5 @@
 import { dayjs } from "@/services/dayjs";
+import { sleep } from "@/util/sleep";
 import { type GameObjects, type Scene } from "phaser";
 
 export const animateText = (
@@ -10,14 +11,20 @@ export const animateText = (
     onComplete?: () => void;
   },
 ) => {
+  const delay = configuration?.delay ?? dayjs.duration(25, "milliseconds").asMilliseconds();
   let i = 0;
   scene.time.addEvent({
-    delay: configuration?.delay ?? dayjs.duration(25, "milliseconds").asMilliseconds(),
+    delay,
     repeat: text.length - 1,
-    callback: () => {
+    callback: async () => {
       target.text += text[i];
       i++;
-      if (i === text.length - 1) configuration?.onComplete?.();
+      if (i === text.length - 1) {
+        // We need this delay here to prevent the last character animation
+        // from being updated after we set the text back to blank
+        await sleep(delay);
+        configuration?.onComplete?.();
+      }
     },
   });
 };
