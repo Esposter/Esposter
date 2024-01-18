@@ -126,8 +126,8 @@ dependencies:
     specifier: ^2.44.0
     version: 2.44.0(phaser@3.70.0)
   gsap:
-    specifier: ^3.12.4
-    version: 3.12.4
+    specifier: ^3.12.5
+    version: 3.12.5
   howler:
     specifier: ^2.2.4
     version: 2.2.4
@@ -7482,8 +7482,8 @@ packages:
       tiled-property-flattener: 1.1.1
     dev: false
 
-  /gsap@3.12.4:
-    resolution: {integrity: sha512-1ByAq8dD0W4aBZ/JArgaQvc0gyUfkGkP8mgAQa0qZGdpOKlSOhOf+WNXjoLimKaKG3Z4Iu6DKZtnyszqQeyqWQ==}
+  /gsap@3.12.5:
+    resolution: {integrity: sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==}
     dev: false
 
   /gzip-size@6.0.0:
