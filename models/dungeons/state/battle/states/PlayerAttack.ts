@@ -8,12 +8,10 @@ import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 export const PlayerAttack: State<BattleScene, StateName> = {
   name: StateName.PlayerAttack,
   onEnter: function (this) {
-    this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-      [
-        `${BattleSceneStore.activePlayerMonster.name} used ${this.battleMenu.battleSubMenu.playerBattleSubMenuOptionCursor.activeOption}.`,
-      ],
+    this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(
+      `${BattleSceneStore.activePlayerMonster.name} used ${this.battleMenu.battleSubMenu.playerBattleSubMenuOptionCursor.activeOption}.`,
       () => {
-        this.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
+        this.time.delayedCall(dayjs.duration(1.2, "seconds").asMilliseconds(), () => {
           BattleSceneStore.activeEnemyMonster.takeDamage(
             calculateDamage(BattleSceneStore.activePlayerMonster.baseAttack),
             () => {

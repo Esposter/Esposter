@@ -1,18 +1,20 @@
 import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
+import { UserInputCursor } from "@/models/dungeons/battle/UI/menu/UserInputCursor";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
-import { PLAYER_SPECIAL_INPUT_PROMPT } from "@/services/dungeons/constants";
-import { type GameObjects } from "phaser";
+import { type GameObjects, type Scene } from "phaser";
 
 export class InfoPanel {
+  scene: Scene;
   battleLine1PhaserTextGameObject: GameObjects.Text;
-  battleLine2PhaserTextGameObject: GameObjects.Text;
+  userInputCursor: UserInputCursor;
   queuedMessages: string[] = [];
   queuedCallback?: () => void;
   isWaitingForPlayerSpecialInput = false;
 
-  constructor(battleLine1PhaserTextGameObject: GameObjects.Text, battleLine2PhaserTextGameObject: GameObjects.Text) {
+  constructor(scene: Scene, battleLine1PhaserTextGameObject: GameObjects.Text) {
+    this.scene = scene;
     this.battleLine1PhaserTextGameObject = battleLine1PhaserTextGameObject;
-    this.battleLine2PhaserTextGameObject = battleLine2PhaserTextGameObject;
+    this.userInputCursor = new UserInputCursor(this.scene, this.battleLine1PhaserTextGameObject);
   }
 
   updateAndShowMessage(messages: string[], callback?: () => void) {
@@ -25,7 +27,7 @@ export class InfoPanel {
     BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Info;
     this.isWaitingForPlayerSpecialInput = false;
     this.battleLine1PhaserTextGameObject.setText("").setVisible(true);
-    this.battleLine2PhaserTextGameObject.setText("").setVisible(true);
+    this.userInputCursor.hide();
 
     const displayMessage = this.queuedMessages.shift();
     if (!displayMessage) {
@@ -37,7 +39,14 @@ export class InfoPanel {
     }
 
     this.battleLine1PhaserTextGameObject.setText(displayMessage);
-    this.battleLine2PhaserTextGameObject.setText(PLAYER_SPECIAL_INPUT_PROMPT);
     this.isWaitingForPlayerSpecialInput = true;
+    this.userInputCursor.playAnimation();
+  }
+
+  showMessageNoInputRequired(message: string, callback?: () => void) {
+    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Info;
+    this.battleLine1PhaserTextGameObject.setText("").setVisible(true);
+    this.battleLine1PhaserTextGameObject.setText(message);
+    callback?.();
   }
 }

@@ -34,7 +34,7 @@ export class BattleSubMenu {
       `${BattleSceneStore.activePlayerMonster.name} do next?`,
       battleUITextStyle,
     );
-    this.infoPanel = new InfoPanel(this.battleLine1PhaserTextGameObject, this.battleLine2PhaserTextGameObject);
+    this.infoPanel = new InfoPanel(this.scene, this.battleLine1PhaserTextGameObject);
     this.hideBattleSubMenu();
   }
 
