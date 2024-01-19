@@ -4,6 +4,8 @@ import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monste
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { AttackStore } from "@/models/dungeons/store/AttackStore";
+import { NotImplementedError } from "@/models/error/NotImplementedError";
+import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
 import { type GameObjects, type Scene } from "phaser";
 
@@ -23,9 +25,11 @@ export class BattleMonster {
     this.healthBarContainerPhaserContainerGameObject = this.createHealthBarContainer(
       this.healthBar,
       battleMonsterConfiguration.healthBarBackgroundImageScaleY,
-    );
+    ).setVisible(false);
     const { x, y } = position;
-    this.monsterPhaserImageGameObject = this.scene.add.image(x, y, this.monster.asset.key, this.monster.asset.frame);
+    this.monsterPhaserImageGameObject = this.scene.add
+      .image(x, y, this.monster.asset.key, this.monster.asset.frame)
+      .setVisible(false);
   }
 
   get name() {
@@ -52,6 +56,36 @@ export class BattleMonster {
     this.monster.currentHp -= damage;
     if (this.monster.currentHp < 0) this.monster.currentHp = 0;
     this.healthBar.setBarPercentageAnimated((this.monster.currentHp / this.monster.stats.maxHp) * 100, { onComplete });
+  }
+
+  playTakeDamageAnimation(onComplete?: () => void) {
+    this.scene.tweens.add({
+      targets: this.monsterPhaserImageGameObject,
+      delay: 0,
+      repeat: 10,
+      duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
+      alpha: {
+        from: 1,
+        start: 1,
+        to: 0,
+      },
+      onComplete: () => {
+        this.monsterPhaserImageGameObject.setAlpha(1);
+        onComplete?.();
+      },
+    });
+  }
+
+  playMonsterAppearAnimation(onComplete?: () => void) {
+    throw new NotImplementedError("playMonsterAppearAnimation");
+  }
+
+  playHealthBarAppearAnimation(onComplete?: () => void) {
+    throw new NotImplementedError("playHealthBarAppearAnimation");
+  }
+
+  playDeathAnimation(onComplete?: () => void) {
+    throw new NotImplementedError("playDeathAnimation");
   }
 
   createHealthBarContainer(healthBar: HealthBar, scaleY = 1) {

@@ -7,12 +7,14 @@ export const PlayerPostAttackCheck: State<BattleScene, StateName> = {
   name: StateName.PlayerPostAttackCheck,
   onEnter: function (this) {
     if (BattleSceneStore.activeEnemyMonster.isFainted) {
-      this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-        [`Wild ${BattleSceneStore.activeEnemyMonster.name} has fainted!`, "You have gained some experience."],
-        () => {
-          BattleSceneStore.battleStateMachine.setState(StateName.Finished);
-        },
-      );
+      BattleSceneStore.activeEnemyMonster.playDeathAnimation(() => {
+        this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
+          [`Wild ${BattleSceneStore.activeEnemyMonster.name} has fainted!`, "You have gained some experience."],
+          () => {
+            BattleSceneStore.battleStateMachine.setState(StateName.Finished);
+          },
+        );
+      });
       return;
     }
 

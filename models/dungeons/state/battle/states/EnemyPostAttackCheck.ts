@@ -7,15 +7,17 @@ export const EnemyPostAttackCheck: State<BattleScene, StateName> = {
   name: StateName.EnemyPostAttackCheck,
   onEnter: function (this) {
     if (BattleSceneStore.activePlayerMonster.isFainted) {
-      this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-        [
-          `${BattleSceneStore.activePlayerMonster.name} has fainted!`,
-          "You have no more monsters, escaping to safety...",
-        ],
-        () => {
-          BattleSceneStore.battleStateMachine.setState(StateName.Finished);
-        },
-      );
+      BattleSceneStore.activePlayerMonster.playDeathAnimation(() => {
+        this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
+          [
+            `${BattleSceneStore.activePlayerMonster.name} has fainted!`,
+            "You have no more monsters, escaping to safety...",
+          ],
+          () => {
+            BattleSceneStore.battleStateMachine.setState(StateName.Finished);
+          },
+        );
+      });
       return;
     }
 

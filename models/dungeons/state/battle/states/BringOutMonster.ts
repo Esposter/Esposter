@@ -7,13 +7,16 @@ import { dayjs } from "@/services/dayjs";
 export const BringOutMonster: State<BattleScene, StateName> = {
   name: StateName.BringOutMonster,
   onEnter: function (this) {
-    this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(
-      `Go ${BattleSceneStore.activePlayerMonster.name}!`,
-      () => {
-        this.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () => {
-          BattleSceneStore.battleStateMachine.setState(StateName.PlayerInput);
-        });
-      },
-    );
+    BattleSceneStore.activePlayerMonster.playMonsterAppearAnimation(() => {
+      BattleSceneStore.activePlayerMonster.playHealthBarAppearAnimation();
+      this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(
+        `Go ${BattleSceneStore.activePlayerMonster.name}!`,
+        () => {
+          this.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () => {
+            BattleSceneStore.battleStateMachine.setState(StateName.PlayerInput);
+          });
+        },
+      );
+    });
   },
 };

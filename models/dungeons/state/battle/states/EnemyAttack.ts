@@ -11,7 +11,7 @@ export const EnemyAttack: State<BattleScene, StateName> = {
     this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(
       `Enemy ${BattleSceneStore.activeEnemyMonster.name} used ${BattleSceneStore.activeEnemyMonster.attacks[0].name}.`,
       () => {
-        this.time.delayedCall(dayjs.duration(1.2, "seconds").asMilliseconds(), () => {
+        this.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
           BattleSceneStore.activePlayerMonster.takeDamage(
             calculateDamage(BattleSceneStore.activeEnemyMonster.baseAttack),
             () => {
