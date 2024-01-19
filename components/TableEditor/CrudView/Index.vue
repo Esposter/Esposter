@@ -16,11 +16,13 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
       flex
       flex-1
       flex-col
-      height="100%"
-      :headers="props.headers"
-      :items="tableEditor.items"
-      :search="searchQuery"
-      :sort-by="[{ key: 'name', order: 'asc' }]"
+      :data-table-server-props="{
+        height: '100%',
+        headers: props.headers,
+        items: tableEditor.items,
+        search: searchQuery,
+        sortBy: [{ key: 'name', order: 'asc' }],
+      }"
       @click:row="(_, { item }) => editItem(item.id)"
     >
       <template #top>

@@ -29,7 +29,7 @@ export const useReadMessages = async () => {
   if (currentRoomId.value) {
     const response = await $client.message.readMessages.query({ roomId: currentRoomId.value });
     initialiseCursorPaginationData(response);
-    await readEmojis(response.items.map((m) => m.rowKey));
+    if (response.items.length > 0) await readEmojis(response.items.map((m) => m.rowKey));
   }
 
   return readMoreMessages;

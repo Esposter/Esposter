@@ -13,7 +13,6 @@ import { getCursorPaginationData } from "@/services/shared/pagination/cursor/get
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
 import { generateCode } from "@/util/math/random/generateCode";
-import { odata } from "@azure/data-tables";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 
@@ -122,7 +121,7 @@ export const roomRouter = router({
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
     const inviteClient = await getTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-      filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and RowKey eq ${input}`,
+      filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
     });
     if (invites.length === 0) return false;
 
@@ -166,20 +165,20 @@ export const roomRouter = router({
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
       let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and ${InviteEntityPropertyNames.roomId} eq ${roomId}`,
+        filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
       });
       if (invites.length > 0) return invites[0].rowKey;
 
       // Generate non-colliding invite code
       let inviteCode = generateCode(8);
       invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and RowKey eq ${inviteCode}`,
+        filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
       });
 
       while (invites.length > 0) {
         inviteCode = generateCode(8);
         invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-          filter: odata`PartitionKey eq ${DEFAULT_PARTITION_KEY} and RowKey eq ${inviteCode}`,
+          filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
         });
       }
 

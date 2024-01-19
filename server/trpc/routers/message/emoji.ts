@@ -20,7 +20,6 @@ import {
 import { emojiEventEmitter } from "@/services/esbabbler/events/emoji";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/now";
-import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
@@ -86,7 +85,7 @@ export const emojiRouter = router({
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
       const { type, messageRowKey, emojiTag } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.EmojiTag} and ${messageRowKey} eq ${input.messageRowKey} and ${emojiTag} eq ${input.emojiTag}`,
+        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.EmojiTag}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
       });
       if (foundEmojis.length > 0) return null;
 

@@ -45,7 +45,7 @@ watch(
 
 <template>
   <div>
-    <StyledCard :style="{ overflow: 'auto' }" max-height="250" width="400">
+    <StyledCard :style="{ overflow: 'auto' }" :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
         v-for="(item, index) in items"
         :key="item.id"

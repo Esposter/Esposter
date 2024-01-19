@@ -36,7 +36,16 @@ const onUpdateComment = async (editor: Editor) => {
   <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
-      <StyledButton v-if="editor" ml-2 size="small" @click="onUpdateComment(editor)">Save</StyledButton>
+      <StyledButton
+        v-if="editor"
+        ml-2
+        :button-props="{
+          size: 'small',
+        }"
+        @click="onUpdateComment(editor)"
+      >
+        Save
+      </StyledButton>
     </template>
   </PostDescriptionRichTextEditor>
 </template>

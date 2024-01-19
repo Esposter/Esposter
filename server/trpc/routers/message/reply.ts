@@ -13,7 +13,6 @@ import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } fr
 import { replyEventEmitter } from "@/services/esbabbler/events/reply";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/now";
-import { odata } from "@azure/data-tables";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
@@ -59,7 +58,7 @@ export const replyRouter = router({
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
       const { type, messageRowKey, messageReplyRowKey } = MessageReplyMetadataEntityPropertyNames;
       const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
-        filter: odata`PartitionKey eq ${input.partitionKey} and ${type} eq ${MessageMetadataType.Reply} and ${messageRowKey} eq ${input.messageRowKey} and ${messageReplyRowKey} eq ${input.messageReplyRowKey}`,
+        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Reply}' and ${messageRowKey} eq '${input.messageRowKey}' and ${messageReplyRowKey} eq '${input.messageReplyRowKey}'`,
       });
       if (replies.length > 0) return null;
 

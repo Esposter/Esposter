@@ -45,7 +45,9 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     <template #action>
       <v-spacer />
       <StyledButton
-        :disabled="!isAffordable"
+        :button-props="{
+          disabled: !isAffordable,
+        }"
         @click="
           () => {
             createBoughtBuilding(building);

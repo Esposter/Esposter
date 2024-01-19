@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { VDataTableServer } from "vuetify/components/VDataTable";
 
+interface StyledDataTableServerProps {
+  dataTableServerProps: VDataTableServer["$props"];
+}
+
+const { dataTableServerProps } = defineProps<StyledDataTableServerProps>();
 const slots = defineSlots<Record<keyof VDataTableServer["$slots"], Function>>();
 const { backgroundOpacity40 } = useColors();
 </script>
 
 <template>
-  <!-- @TODO: Vue doesn't support defineProps<VDataTableServer["$props"]> yet -->
-  <!-- @vue-expect-error -->
-  <v-data-table-server class="border-sm">
+  <v-data-table-server class="border-sm" :="dataTableServerProps">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />
     </template>

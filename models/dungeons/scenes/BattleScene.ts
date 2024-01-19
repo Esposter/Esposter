@@ -12,7 +12,7 @@ import { StateMap } from "@/models/dungeons/state/battle/StateMap";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
-import { Input, type Types } from "phaser";
+import { type Types } from "phaser";
 
 export class BattleScene extends SceneWithPlugins {
   cursorKeys!: Types.Input.Keyboard.CursorKeys;
@@ -40,8 +40,10 @@ export class BattleScene extends SceneWithPlugins {
 
   update() {
     BattleSceneStore.battleStateMachine.update();
-    if (Input.Keyboard.JustDown(this.cursorKeys.space)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
-    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
+    if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.space))
+      this.battleMenu.onPlayerInput(PlayerSpecialInput.Confirm);
+    else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.shift))
+      this.battleMenu.onPlayerInput(PlayerSpecialInput.Cancel);
     else this.battleMenu.onPlayerInput(mapCursorKeysToDirection(this.cursorKeys));
   }
 

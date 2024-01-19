@@ -76,7 +76,14 @@ const isUpdated = computed(() => isValid.value && isDiff(profileCardRowValues.va
       <v-card-actions px-4="!">
         <template v-if="editMode">
           <v-btn variant="outlined" @click="editMode = false">Cancel</v-btn>
-          <StyledButton type="submit" :disabled="!isUpdated">Save</StyledButton>
+          <StyledButton
+            type="submit"
+            :button-props="{
+              disabled: !isUpdated,
+            }"
+          >
+            Save
+          </StyledButton>
         </template>
         <v-btn v-else variant="elevated" color="border" @click="editMode = true">
           <span font-bold>Edit Settings</span>

@@ -48,7 +48,7 @@ const providerProps = ref<ProviderProps[]>([
       <EsposterProductList />
     </template>
     <v-container h-full flex justify-center items-center>
-      <StyledCard width="100%" max-width="500">
+      <StyledCard :card-props="{ width: '100%', maxWidth: '500' }">
         <v-container>
           <div class="text-h5" mb-1 text-center>Sign in to</div>
           <div mb-2 flex justify-center items-center>

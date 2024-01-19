@@ -14,14 +14,16 @@ const { surveyList, totalItemsLength, searchQuery } = storeToRefs(surveyerStore)
       flex
       flex-1
       flex-col
-      height="100%"
-      :headers="surveyerHeaders"
-      :items="surveyList"
-      :items-length="totalItemsLength"
-      :search="searchQuery"
-      :sort-by="[{ key: 'name', order: 'asc' }]"
-      :group-by="[{ key: 'group', order: 'asc' }]"
-      :loading="isLoading"
+      :data-table-server-props="{
+        height: '100%',
+        headers: surveyerHeaders,
+        items: surveyList,
+        itemsLength: totalItemsLength,
+        search: searchQuery,
+        sortBy: [{ key: 'name', order: 'asc' }],
+        groupBy: [{ key: 'group', order: 'asc' }],
+        loading: isLoading,
+      }"
       @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.rowKey))"
       @update:options="readMoreSurveys"
     >

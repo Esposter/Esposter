@@ -83,7 +83,7 @@ const onSelect = async (emoji: string) => {
 </script>
 
 <template>
-  <StyledCard :elevation="isHovering ? 12 : 2" :="hoverProps">
+  <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
     <v-card-actions p-0="!" min-h="auto!">
       <StyledEmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"

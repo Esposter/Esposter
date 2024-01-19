@@ -1,14 +1,47 @@
 <script setup lang="ts">
-defineRouteRules({ ssr: false });
+import Game from "@/lib/phaser/components/Game.vue";
+import { BattleScene } from "@/models/dungeons/scenes/BattleScene";
+import { GameScene } from "@/models/dungeons/scenes/GameScene";
+import { PreloaderScene } from "@/models/dungeons/scenes/PreloaderScene";
+import { GridEngine } from "grid-engine";
+import { AUTO, Scale } from "phaser";
+import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin.js";
 
-const id = "game-container";
-useLaunchGame(id);
+defineRouteRules({ ssr: false });
 </script>
 
 <template>
   <NuxtLayout>
-    <!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
-    <!-- eslint-disable-next-line vue/valid-v-bind -->
-    <div :id />
+    <Game
+      :configuration="{
+        title: 'Dungeons',
+        type: AUTO,
+        scale: {
+          width: 1024,
+          height: 576,
+          mode: Scale.FIT,
+          autoCenter: Scale.CENTER_BOTH,
+        },
+        scene: [PreloaderScene, GameScene, BattleScene],
+        input: {
+          keyboard: true,
+          touch: true,
+        },
+        plugins: {
+          scene: [
+            {
+              key: 'gridEngine',
+              plugin: GridEngine,
+              mapping: 'gridEngine',
+            },
+            {
+              key: 'virtualJoystickPlugin',
+              plugin: VirtualJoystickPlugin,
+              mapping: 'virtualJoystickPlugin',
+            },
+          ],
+        },
+      }"
+    />
   </NuxtLayout>
 </template>

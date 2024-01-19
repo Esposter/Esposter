@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { VDataTable } from "vuetify/components/VDataTable";
 
+interface StyledDataTableProps {
+  dataTableProps?: VDataTable["$props"];
+}
+
+const { dataTableProps } = defineProps<StyledDataTableProps>();
 const slots = defineSlots<Record<keyof VDataTable["$slots"], Function>>();
 const { backgroundOpacity40 } = useColors();
 </script>
 
 <template>
-  <v-data-table class="border-sm">
+  <v-data-table class="border-sm" :="dataTableProps">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />
     </template>

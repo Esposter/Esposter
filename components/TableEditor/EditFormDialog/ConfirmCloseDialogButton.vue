@@ -28,9 +28,11 @@ const dialog = ref(false);
       </v-tooltip>
     </template>
     <StyledCard
-      title="Confirm Changes"
-      :text="`You have modified this ${displayItemType}. You can save your changes, discard your changes, or cancel to continue
-          editing.`"
+      :card-props="{
+        title: 'Confirm Changes',
+        text: `You have modified this ${displayItemType}. You can save your changes, discard your changes, or cancel to continue
+          editing.`,
+      }"
     >
       <v-card-actions flex-wrap gap-y-2>
         <v-spacer />

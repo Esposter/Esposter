@@ -67,7 +67,15 @@ const keyboardExtension = new Extension({
     </template>
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
-      <StyledButton v-if="editor" ml-2 size="small" @click="onUpdateMessage(editor)">Save</StyledButton>
+      <StyledButton
+        v-if="editor"
+        ml-2
+        :button-props="{
+          size: 'small',
+        }"
+        @click="onUpdateMessage(editor)"
+        >Save</StyledButton
+      >
     </template>
   </RichTextEditor>
 </template>

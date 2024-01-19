@@ -18,7 +18,9 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(description.valu
     <template #append-footer="{ editor }">
       <StyledButton
         v-if="editor"
-        :disabled="isEmptyDescription"
+        :button-props="{
+          disabled: isEmptyDescription,
+        }"
         @click="
           async () => {
             const savedDescription = description;
