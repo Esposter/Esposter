@@ -7,10 +7,9 @@ export class StateMachine<TContext extends object, TStateName extends string> {
   isChangingState = false;
   changingStateNameQueue: TStateName[] = [];
 
-  constructor(context: TContext, stateMap: Map<TStateName, State<TContext, TStateName>>, initialStateName: TStateName) {
+  constructor(context: TContext, stateMap: Map<TStateName, State<TContext, TStateName>>) {
     this.context = context;
     this.stateMap = stateMap;
-    this.setState(initialStateName);
   }
 
   get currentStateName() {

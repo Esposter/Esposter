@@ -34,7 +34,8 @@ export class BattleScene extends SceneWithPlugins {
     this.activeEnemyMonster = this.createActiveEnemyMonster();
     BattleSceneStore.activeEnemyMonster = this.activeEnemyMonster;
     this.battleMenu = new BattleMenu(this);
-    BattleSceneStore.battleStateMachine = new StateMachine<BattleScene, StateName>(this, StateMap, StateName.Intro);
+    BattleSceneStore.battleStateMachine = new StateMachine<BattleScene, StateName>(this, StateMap);
+    BattleSceneStore.battleStateMachine.setState(StateName.Intro);
   }
 
   update() {
