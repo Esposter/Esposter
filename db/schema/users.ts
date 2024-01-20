@@ -70,6 +70,7 @@ export const likes = pgTable(
       .references(() => posts.id, { onDelete: "cascade" }),
     // @TODO: Check constraint of values 1 or -1 when drizzle implements this
     // and remove all options from createSelectSchema as db should be our source of truth
+    // https://github.com/drizzle-team/drizzle-orm/issues/880
     value: integer("value").notNull(),
   },
   (like) => ({
