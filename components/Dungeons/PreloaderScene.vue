@@ -14,6 +14,7 @@ import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
 import Scene from "@/lib/phaser/components/Scene.vue";
+import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
@@ -25,9 +26,15 @@ import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
+const x = ref<number>();
+const y = ref<number>();
+const percentageText = ref("0%");
+const assetText = ref("");
 
 const preload = (scene: SceneWithPlugins) => {
   const { width, height } = scene.cameras.main;
+  x.value = width / 2;
+  y.value = height / 2;
   const progressBar = scene.add.graphics({
     x: width / 2,
     y: height / 2,
@@ -48,27 +55,11 @@ const preload = (scene: SceneWithPlugins) => {
   const progressBoxHeight = 50;
   progressBox.fillRect(-progressBoxWidth / 2, -progressBoxHeight / 2, progressBoxWidth, progressBoxHeight);
 
-  const percentText = scene.make.text({
-    x: width / 2,
-    y: height / 2,
-    text: "0%",
-    style: { font: "1.5rem Frijole" },
-    origin: 0.5,
-  });
-
-  const assetText = scene.make.text({
-    x: width / 2,
-    y: height / 2 + 50,
-    text: "",
-    style: { font: "1.5rem Frijole" },
-    origin: 0.5,
-  });
-
   scene.load.on("progress", (value: number) => {
     const progressBarMaxWidth = 300;
     const progressBarWidth = progressBarMaxWidth * value;
     const progressBarHeight = 30;
-    percentText.setText(`${parseInt((value * 100).toString())}%`);
+    percentageText.value = `${parseInt((value * 100).toString())}%`;
     progressBar.fillRect(
       -progressBoxWidth / 2 + (progressBoxWidth - progressBarMaxWidth) / 2,
       -progressBarHeight / 2,
@@ -78,14 +69,12 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("fileprogress", (file: Loader.File) => {
-    assetText.setText(`Loading asset: ${file.key}`);
+    assetText.value = `Loading asset: ${file.key}`;
   });
 
   scene.load.on("complete", () => {
     progressBar.destroy();
     progressBox.destroy();
-    percentText.destroy();
-    assetText.destroy();
     sceneKey.value = SceneKey.Battle;
   });
 
@@ -107,5 +96,24 @@ const preload = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload" />
+  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload">
+    <Text
+      :configuration="{
+        x,
+        y,
+        text: percentageText,
+        style: { font: '1.5rem Frijole' },
+        origin: 0.5,
+      }"
+    />
+    <Text
+      :configuration="{
+        x,
+        y: y ? y + 50 : undefined,
+        text: assetText,
+        style: { font: '1.5rem Frijole' },
+        origin: 0.5,
+      }"
+    />
+  </Scene>
 </template>

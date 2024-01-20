@@ -20,7 +20,7 @@ const emit = defineEmits<{
 const phaserStore = usePhaserStore();
 const { game, sceneKey: sceneKeyStore } = storeToRefs(phaserStore);
 
-const isShutdown = ref(true);
+const isShutdown = ref(false);
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
     emit("init", this);
@@ -44,12 +44,12 @@ onMounted(() => {
 
   const newScene = game.value.scene.add(sceneKey, NewScene);
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
-  newScene.events.on("shutdown", () => (isShutdown.value = false));
+  newScene.events.on("shutdown", () => (isShutdown.value = true));
 
   if (autoStart) sceneKeyStore.value = sceneKey;
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (!game.value) throw new Error("Game has not been initialized");
 
   game.value.scene.remove(sceneKey);

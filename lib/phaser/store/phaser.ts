@@ -1,4 +1,4 @@
-import { type Game } from "phaser";
+import { GameObjects, type Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
   const game = ref<Game | null>(null);
@@ -9,9 +9,11 @@ export const usePhaserStore = defineStore("phaser", () => {
     if (!sceneKey.value) throw new Error("Scene key has not been initialized yet");
     return game.value.scene.getScene(sceneKey.value);
   });
+  const gameObjectCreator = computed(() => new GameObjects.GameObjectCreator(scene.value));
   return {
     game,
     sceneKey,
     scene,
+    gameObjectCreator,
   };
 });
