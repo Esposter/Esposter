@@ -1,3 +1,4 @@
+import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { GameObjects, type Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
@@ -5,8 +6,8 @@ export const usePhaserStore = defineStore("phaser", () => {
   // All our scene transitions will be handled by watching the current scene key
   const sceneKey = ref<string | null>(null);
   const scene = computed(() => {
-    if (!game.value) throw new Error("Game has not been initialized yet");
-    if (!sceneKey.value) throw new Error("Scene key has not been initialized yet");
+    if (!game.value) throw new NotInitializedError("Game");
+    if (!sceneKey.value) throw new NotInitializedError("Scene key");
     return game.value.scene.getScene(sceneKey.value);
   });
   const gameObjectCreator = computed(() => new GameObjects.GameObjectCreator(scene.value));

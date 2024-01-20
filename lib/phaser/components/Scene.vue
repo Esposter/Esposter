@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="TKey extends string, TScene extends Constructor<Scene>">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { type Constructor } from "@/util/types/Constructor";
 import { type Scene } from "phaser";
 
@@ -40,7 +41,7 @@ const NewScene = class extends cls {
 };
 
 onMounted(() => {
-  if (!game.value) throw new Error("Game has not been initialized");
+  if (!game.value) throw new NotInitializedError("Game");
 
   const newScene = game.value.scene.add(sceneKey, NewScene);
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
@@ -50,7 +51,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (!game.value) throw new Error("Game has not been initialized");
+  if (!game.value) throw new NotInitializedError("Game");
 
   game.value.scene.remove(sceneKey);
 });
