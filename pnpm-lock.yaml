@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@auth/core':
-    specifier: ^0.21.0
-    version: 0.21.0
+    specifier: ^0.22.0
+    version: 0.22.0
   '@azure/data-tables':
     specifier: ^13.2.2
     version: 13.2.2
@@ -43,7 +43,7 @@ dependencies:
     version: 6.1.10(@fullcalendar/core@6.1.10)(vue@3.4.8)
   '@hebilicious/authjs-nuxt':
     specifier: ^0.3.5
-    version: 0.3.5(@auth/core@0.21.0)(nuxt@3.9.1)(rollup@2.79.1)
+    version: 0.3.5(@auth/core@0.22.0)(nuxt@3.9.1)(rollup@2.79.1)
   '@mdi/font':
     specifier: ^7.4.47
     version: 7.4.47
@@ -352,8 +352,8 @@ packages:
       leven: 3.1.0
     dev: true
 
-  /@auth/core@0.21.0:
-    resolution: {integrity: sha512-jUWYs8gjy2GvtP9dd/4S9KcwZ660Cm/IkybiAq96/2Ooku9SKk5SUG+UTEwkyLuaQ38ZgfwggfpDOgzsXEcufA==}
+  /@auth/core@0.22.0:
+    resolution: {integrity: sha512-BwngPhtcEtJPV+sfs8pGPZ+RdKnpBeXRk2K2Os10DyMfaL/Vszj2TJU6sRaS38hXzo+xycYX+83olBElqc2Ngw==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -2471,13 +2471,13 @@ packages:
       vue: 3.4.8(typescript@5.3.3)
     dev: false
 
-  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.21.0)(nuxt@3.9.1)(rollup@2.79.1):
+  /@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.22.0)(nuxt@3.9.1)(rollup@2.79.1):
     resolution: {integrity: sha512-8w4FJ+gVx41w+Oax0HFQdQ+poqYx1xxDU6F/NZOp3reIhYJEWmTqJm9Qd0u4uBOonhksZ+vVGQbjP3ZTKERONA==}
     peerDependencies:
       '@auth/core': ^0.17.0
       nuxt: ^3.7.4
     dependencies:
-      '@auth/core': 0.21.0
+      '@auth/core': 0.22.0
       '@nuxt/kit': 3.9.1(rollup@2.79.1)
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
