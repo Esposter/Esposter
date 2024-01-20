@@ -14,6 +14,7 @@ import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
@@ -21,6 +22,9 @@ import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
 import { type Loader } from "phaser";
+
+const phaserStore = usePhaserStore();
+const { sceneKey } = storeToRefs(phaserStore);
 
 const preload = (scene: SceneWithPlugins) => {
   const { width, height } = scene.cameras.main;
@@ -82,7 +86,7 @@ const preload = (scene: SceneWithPlugins) => {
     progressBox.destroy();
     percentText.destroy();
     assetText.destroy();
-    scene.scene.start(SceneKey.Battle);
+    sceneKey.value = SceneKey.Battle;
   });
 
   scene.load.image(TextureManagerKey.ForestBackground, forestBackground);
@@ -103,5 +107,5 @@ const preload = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :name="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload" />
+  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload" />
 </template>

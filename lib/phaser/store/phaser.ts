@@ -1,11 +1,11 @@
-import { type Game, type Scene } from "phaser";
+import { type Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
   const game = ref<Game | null>(null);
-  const scene = ref<Scene | null>(null);
+  const sceneKey = ref<string | null>(null);
 
   return {
     game,
-    scene,
+    sceneKey,
   };
 });

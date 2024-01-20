@@ -1,15 +1,15 @@
-<script setup lang="ts" generic="TName extends string, TScene extends Constructor<Scene>">
+<script setup lang="ts" generic="TKey extends string, TScene extends Constructor<Scene>">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type Constructor } from "@/util/types/Constructor";
 import { type Scene } from "phaser";
 
 interface SceneProps {
-  name: TName;
+  sceneKey: TKey;
   autoStart?: true;
   cls: TScene;
 }
 
-const { name, autoStart, cls } = defineProps<SceneProps>();
+const { sceneKey, autoStart, cls } = defineProps<SceneProps>();
 const emit = defineEmits<{
   init: [InstanceType<TScene>];
   preload: [InstanceType<TScene>];
@@ -17,10 +17,10 @@ const emit = defineEmits<{
   update: [InstanceType<TScene>, ...Parameters<InstanceType<TScene>["update"]>];
 }>();
 const phaserStore = usePhaserStore();
-const { game, scene } = storeToRefs(phaserStore);
+const { game, sceneKey: sceneKeyStore } = storeToRefs(phaserStore);
 if (!game.value) throw new Error("Game has not been initialized");
 
-const isShown = ref(false);
+const isShutdown = ref(true);
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
     emit("init", this);
@@ -31,7 +31,6 @@ const NewScene = class extends cls {
   }
 
   create(this: InstanceType<TScene>) {
-    isShown.value = true;
     emit("create", this);
   }
 
@@ -39,12 +38,13 @@ const NewScene = class extends cls {
     emit("update", this, ...args);
   }
 };
-const newScene = game.value.scene.add(name, NewScene, autoStart);
-if (!newScene) throw new Error(`New scene: "${name}" could not be created`);
-newScene.events.on("shutdown", () => (isShown.value = false));
-scene.value = newScene;
+const newScene = game.value.scene.add(sceneKey, NewScene, autoStart);
+if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
+newScene.events.on("shutdown", () => (isShutdown.value = false));
+
+if (autoStart) sceneKeyStore.value = sceneKey;
 </script>
 
 <template>
-  <slot v-if="isShown" />
+  <slot v-if="sceneKey === sceneKeyStore && !isShutdown" />
 </template>
