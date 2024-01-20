@@ -8,11 +8,11 @@ export const suggestion: MentionOptions["suggestion"] = {
   items: async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);
-    if (!currentRoomId.value) return [];
+    if (!(currentRoomId.value && query)) return [];
 
     const { $client } = useNuxtApp();
     const { items } = await $client.room.readMembers.query({ roomId: currentRoomId.value, filter: { name: query } });
-    return items.filter((m) => m.name);
+    return items;
   },
 
   render: () => {

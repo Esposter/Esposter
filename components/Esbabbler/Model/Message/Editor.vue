@@ -74,8 +74,9 @@ const keyboardExtension = new Extension({
           size: 'small',
         }"
         @click="onUpdateMessage(editor)"
-        >Save</StyledButton
       >
+        Save
+      </StyledButton>
     </template>
   </RichTextEditor>
 </template>

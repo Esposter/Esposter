@@ -30,6 +30,7 @@ router.beforeEach(() => {
     <!-- Ignore parent div here, it is only for nuxt -->
     <v-navigation-drawer
       v-if="slots.left"
+      app
       :model-value="leftDrawerOpen"
       @update:model-value="
         (value) => {
@@ -43,6 +44,7 @@ router.beforeEach(() => {
 
     <v-navigation-drawer
       v-if="slots.right"
+      app
       location="right"
       :model-value="rightDrawerOpen"
       @update:model-value="
@@ -59,7 +61,7 @@ router.beforeEach(() => {
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer">
+    <v-footer v-if="slots.footer" app>
       <slot name="footer" />
     </v-footer>
   </div>
