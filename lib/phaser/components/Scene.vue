@@ -9,6 +9,7 @@ interface SceneProps {
   cls: TScene;
 }
 
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { sceneKey, autoStart, cls } = defineProps<SceneProps>();
 const emit = defineEmits<{
   init: [InstanceType<TScene>];
@@ -18,7 +19,6 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { game, sceneKey: sceneKeyStore } = storeToRefs(phaserStore);
-if (!game.value) throw new Error("Game has not been initialized");
 
 const isShutdown = ref(true);
 const NewScene = class extends cls {
@@ -38,11 +38,22 @@ const NewScene = class extends cls {
     emit("update", this, ...args);
   }
 };
-const newScene = game.value.scene.add(sceneKey, NewScene, autoStart);
-if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
-newScene.events.on("shutdown", () => (isShutdown.value = false));
 
-if (autoStart) sceneKeyStore.value = sceneKey;
+onMounted(() => {
+  if (!game.value) throw new Error("Game has not been initialized");
+
+  const newScene = game.value.scene.add(sceneKey, NewScene);
+  if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
+  newScene.events.on("shutdown", () => (isShutdown.value = false));
+
+  if (autoStart) sceneKeyStore.value = sceneKey;
+});
+
+onUnmounted(() => {
+  if (!game.value) throw new Error("Game has not been initialized");
+
+  game.value.scene.remove(sceneKey);
+});
 </script>
 
 <template>

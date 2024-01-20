@@ -7,9 +7,10 @@ interface GameProps {
   configuration: Types.Core.GameConfig;
 }
 
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
-const { game } = storeToRefs(phaserStore);
+const { game, sceneKey } = storeToRefs(phaserStore);
 const canvas = ref<HTMLDivElement>();
 const isReady = ref(false);
 const listener = () => phaserEventEmitter.emit("resize");
@@ -28,6 +29,11 @@ onUnmounted(() => {
   if (!game.value) return;
   game.value.destroy(false);
   game.value = null;
+});
+
+watch(sceneKey, (newSceneKey) => {
+  if (!(game.value && newSceneKey)) return;
+  game.value.scene.start(newSceneKey);
 });
 </script>
 
