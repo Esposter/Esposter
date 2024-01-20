@@ -2,9 +2,10 @@ import { type AzureUpdateEntity, type CompositeKey } from "@/models/azure";
 import { type AzureTable, type AzureTableEntityMap, type CustomTableClient } from "@/models/azure/table";
 import { dayjs } from "@/services/dayjs";
 import { now } from "@/util/now";
+import { type Constructor } from "@/util/types/Constructor";
 import { type TupleSlice } from "@/util/types/TupleSlice";
 import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
-import { plainToInstance, type ClassConstructor } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -57,7 +58,7 @@ export const deleteEntity = <TEntity extends CompositeKey>(
 
 export const getEntity = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
-  cls: ClassConstructor<TEntity>,
+  cls: Constructor<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
 ): Promise<TEntity | null> => {
   try {
@@ -71,7 +72,7 @@ export const getEntity = async <TEntity extends CompositeKey>(
 export const getTopNEntities = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   topN: number,
-  cls: ClassConstructor<TEntity>,
+  cls: Constructor<TEntity>,
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
   const listResults = tableClient.listEntities<TEntity>({ queryOptions });

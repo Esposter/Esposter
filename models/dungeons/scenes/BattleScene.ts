@@ -1,4 +1,3 @@
-import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { Background } from "@/models/dungeons/battle/UI/Background";
 import { BattleMenu } from "@/models/dungeons/battle/UI/menu/BattleMenu";
@@ -7,6 +6,7 @@ import { PlayerBattleMonster } from "@/models/dungeons/battle/monsters/PlayerBat
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
 import { StateMachine } from "@/models/dungeons/state/StateMachine";
 import { StateMap } from "@/models/dungeons/state/battle/StateMap";
 import { StateName } from "@/models/dungeons/state/battle/StateName";

@@ -1,4 +1,4 @@
-import { type Constructor } from "type-fest";
+import { type Constructor } from "@/util/types/Constructor";
 import { z } from "zod";
 
 export interface ItemMetadata {
@@ -13,7 +13,7 @@ export const itemMetadataSchema = z.object({
   deletedAt: z.date().nullable(),
 }) satisfies z.ZodType<ItemMetadata>;
 
-export const ApplyItemMetadataMixin = <TBase extends Constructor<{}>>(Base: TBase) =>
+export const applyItemMetadataMixin = <TBase extends Constructor<{}>>(Base: TBase) =>
   class ItemWithMetadata extends Base implements ItemMetadata {
     createdAt = new Date();
     updatedAt = new Date();

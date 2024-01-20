@@ -1,4 +1,3 @@
-import { SceneWithPlugins } from "@/models/dungeons/SceneWithPlugins";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpriteKey } from "@/models/dungeons/keys/SpriteKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
@@ -8,6 +7,7 @@ import { TilesetName } from "@/models/dungeons/keys/TilesetName";
 import { JoystickMovementManager } from "@/models/dungeons/managers/JoystickMovementManager";
 import { KeyboardMovementManager } from "@/models/dungeons/managers/KeyboardMovementManager";
 import { type MovementManager } from "@/models/dungeons/managers/MovementManager";
+import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
 import isMobile from "is-mobile";
 import { type GameObjects } from "phaser";
 

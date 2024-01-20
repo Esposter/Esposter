@@ -1,4 +1,4 @@
-import { ApplyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
 
 class BaseGame {
@@ -14,7 +14,7 @@ class BaseGame {
 }
 
 export type Game = typeof Game.prototype;
-export const Game = ApplyItemMetadataMixin(BaseGame);
+export const Game = applyItemMetadataMixin(BaseGame);
 
 export const gameSchema = z
   .object({
