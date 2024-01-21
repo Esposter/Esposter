@@ -1,32 +1,28 @@
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
-import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
+import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
-import { ComputedSizeSetterMap } from "@/lib/phaser/util/setterMap/components/ComputedSizeSetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
-import { FlipSetterMap } from "@/lib/phaser/util/setterMap/components/FlipSetterMap";
 import { MaskSetterMap } from "@/lib/phaser/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/lib/phaser/util/setterMap/components/OriginSetterMap";
 import { PipelineSetterMap } from "@/lib/phaser/util/setterMap/components/PipelineSetterMap";
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
-import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
-import { type GameObjects, type Types } from "phaser";
+import { type GameObjects } from "phaser";
 
-export const TextSetterMap: SetterMap<Types.GameObjects.Text.TextConfig, GameObjects.Text> = {
-  ...AlphaSetterMap,
+export const ShapeSetterMap = {
+  ...AlphaSingleSetterMap,
   ...BlendModeSetterMap,
-  ...ComputedSizeSetterMap,
   ...DepthSetterMap,
-  ...FlipSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
   ...PipelineSetterMap,
   ...ScrollFactorSetterMap,
-  ...TintSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
-  padding: (gameObject) => (value) => gameObject.setPadding(value),
-  style: (gameObject) => (value) => gameObject.setStyle(value),
-  text: (gameObject) => (value) => gameObject.setText(value),
-};
+  active: (gameObject) => (value) => gameObject.setActive(value),
+  displayWidth: (gameObject) => (value) => gameObject.setDisplaySize(value, gameObject.displayHeight),
+  displayHeight: (gameObject) => (value) => gameObject.setDisplaySize(gameObject.displayWidth, value),
+  fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
+  fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
+} satisfies SetterMap<GameObjects.Shape, GameObjects.Shape>;

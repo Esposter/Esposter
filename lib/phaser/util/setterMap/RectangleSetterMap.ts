@@ -1,12 +1,9 @@
-import { type RectangleConfiguration } from "@/lib/phaser/models/RectangleConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { ShapeSetterMap } from "@/lib/phaser/util/setterMap/components/ShapeSetterMap";
 import { type GameObjects } from "phaser";
 
-export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.Rectangle> = {
-  x: (gameObject) => (value) => gameObject.setX(value),
-  y: (gameObject) => (value) => gameObject.setY(value),
+export const RectangleSetterMap = {
+  ...ShapeSetterMap,
   width: (gameObject) => (value) => gameObject.setSize(value, gameObject.height),
   height: (gameObject) => (value) => gameObject.setSize(gameObject.width, value),
-  color: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
-  alpha: (gameObject) => (value) => gameObject.setAlpha(value),
-};
+} satisfies SetterMap<GameObjects.Rectangle, GameObjects.Rectangle>;

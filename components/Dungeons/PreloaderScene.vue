@@ -52,7 +52,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    sceneKey.value = SceneKey.Battle;
+    // sceneKey.value = SceneKey.Battle;
   });
 
   scene.load.image(TextureManagerKey.ForestBackground, forestBackground);
@@ -80,7 +80,7 @@ const preload = (scene: SceneWithPlugins) => {
         y,
         width: progressBarWidth,
         height: progressBarHeight,
-        color: 0xffffff,
+        fillColor: 0xffffff,
       }"
     />
     <Rectangle
@@ -89,7 +89,7 @@ const preload = (scene: SceneWithPlugins) => {
         y,
         width: progressBoxWidth,
         height: progressBoxHeight,
-        color: 0x222222,
+        fillColor: 0x222222,
         alpha: 0.8,
       }"
     />

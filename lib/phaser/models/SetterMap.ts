@@ -1,5 +1,3 @@
-import { type GameObjects } from "phaser";
-
-export type SetterMap<TConfig extends object, TGameObject extends GameObjects.GameObject> = {
+export type SetterMap<TConfig extends object, TGameObject extends object> = {
   [P in keyof TConfig]?: (gameObject: TGameObject) => (value: any) => void;
 };
