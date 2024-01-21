@@ -1,7 +1,7 @@
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
 import { type GameObjects, type Types } from "phaser";
 
-export const TextSetterMap = {
+export const TextSetterMap: SetterMap<Types.GameObjects.Text.TextConfig, GameObjects.Text> = {
   alpha: (gameObject) => (value) => gameObject.setAlpha(value),
   angle: (gameObject) => (value) => gameObject.setAngle(value),
   blendMode: (gameObject) => (value) => gameObject.setBlendMode(value),
@@ -28,4 +28,4 @@ export const TextSetterMap = {
   visible: (gameObject) => (value) => gameObject.setVisible(value),
   x: (gameObject) => (value) => gameObject.setX(value),
   y: (gameObject) => (value) => gameObject.setY(value),
-} satisfies SetterMap<Types.GameObjects.Text.TextConfig, GameObjects.Text>;
+};
