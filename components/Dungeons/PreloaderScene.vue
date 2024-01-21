@@ -52,7 +52,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    // sceneKey.value = SceneKey.Battle;
+    sceneKey.value = SceneKey.Battle;
   });
 
   scene.load.image(TextureManagerKey.ForestBackground, forestBackground);
