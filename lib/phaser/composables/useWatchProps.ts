@@ -2,14 +2,14 @@ import { type SetterMap } from "@/lib/phaser/models/SetterMap";
 import { type GameObjects } from "phaser";
 import { type WatchStopHandle } from "vue";
 
-export const useWatchProps = <TConfig extends Record<string, unknown>, TGameObject extends GameObjects.GameObject>(
+export const useWatchProps = <TConfig extends object, TGameObject extends GameObjects.GameObject>(
   gameObject: TGameObject,
   props: Ref<TConfig>,
   setterMap: SetterMap<TConfig, TGameObject>,
 ) => {
   const watchStopHandlers: WatchStopHandle[] = [];
 
-  for (const [key, value] of Object.entries(props.value)) {
+  for (const [key, value] of Object.entries(props.value) as [keyof TConfig, unknown][]) {
     const setter = setterMap[key]?.(gameObject);
     if (!setter) continue;
 

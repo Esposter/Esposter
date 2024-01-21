@@ -13,6 +13,7 @@ import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import characters from "@/assets/dungeons/spritesheets/characters.png";
 import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
 import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
+import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
@@ -30,42 +31,20 @@ const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
 const assetText = ref("");
+const progressBoxWidth = ref(320);
+const progressBoxHeight = ref(50);
+const progressBarMaxWidth = ref(300);
+const progressBarWidth = ref(0);
+const progressBarHeight = ref(30);
 
 const preload = (scene: SceneWithPlugins) => {
   const { width, height } = scene.cameras.main;
   x.value = width / 2;
   y.value = height / 2;
-  const progressBar = scene.add.graphics({
-    x: width / 2,
-    y: height / 2,
-    fillStyle: {
-      color: 0xffffff,
-      alpha: 1,
-    },
-  });
-  const progressBox = scene.add.graphics({
-    x: width / 2,
-    y: height / 2,
-    fillStyle: {
-      color: 0x222222,
-      alpha: 0.8,
-    },
-  });
-  const progressBoxWidth = 320;
-  const progressBoxHeight = 50;
-  progressBox.fillRect(-progressBoxWidth / 2, -progressBoxHeight / 2, progressBoxWidth, progressBoxHeight);
 
-  scene.load.on("progress", (value: number) => {
-    const progressBarMaxWidth = 300;
-    const progressBarWidth = progressBarMaxWidth * value;
-    const progressBarHeight = 30;
+  scene.load.on("progress", async (value: number) => {
+    progressBarWidth.value = progressBarMaxWidth.value * value;
     percentageText.value = `${parseInt((value * 100).toString())}%`;
-    progressBar.fillRect(
-      -progressBoxWidth / 2 + (progressBoxWidth - progressBarMaxWidth) / 2,
-      -progressBarHeight / 2,
-      progressBarWidth,
-      progressBarHeight,
-    );
   });
 
   scene.load.on("fileprogress", (file: Loader.File) => {
@@ -73,9 +52,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    progressBar.destroy();
-    progressBox.destroy();
-    sceneKey.value = SceneKey.Battle;
+    // sceneKey.value = SceneKey.Battle;
   });
 
   scene.load.image(TextureManagerKey.ForestBackground, forestBackground);
@@ -97,6 +74,25 @@ const preload = (scene: SceneWithPlugins) => {
 
 <template>
   <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload">
+    <Rectangle
+      :configuration="{
+        x,
+        y,
+        width: progressBarWidth,
+        height: progressBarHeight,
+        color: 0xffffff,
+      }"
+    />
+    <Rectangle
+      :configuration="{
+        x,
+        y,
+        width: progressBoxWidth,
+        height: progressBoxHeight,
+        color: 0x222222,
+        alpha: 0.8,
+      }"
+    />
     <Text
       :configuration="{
         x,
