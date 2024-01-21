@@ -12,7 +12,7 @@ export type DeepOmit<T, TKey> = T extends Primitive
         ? TP extends Primitive
           ? // Leave primitives and functions alone
             TP
-          : TP extends any[]
+          : TP extends unknown[]
             ? // Array special handling
               DeepOmitArray<TP, TKey>
             : DeepOmit<TP, TKey>

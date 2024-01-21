@@ -13,7 +13,7 @@ export const itemMetadataSchema = z.object({
   deletedAt: z.date().nullable(),
 }) satisfies z.ZodType<ItemMetadata>;
 
-export const applyItemMetadataMixin = <TBase extends Constructor<{}>>(Base: TBase) =>
+export const applyItemMetadataMixin = <TBase extends Constructor<NonNullable<unknown>>>(Base: TBase) =>
   class ItemWithMetadata extends Base implements ItemMetadata {
     createdAt = new Date();
     updatedAt = new Date();

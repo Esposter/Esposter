@@ -7,7 +7,7 @@ export interface ScenePlugins {
   virtualJoystickPlugin: VirtualJoystickPlugin;
 }
 
-export const applyScenePluginsMixin = <TBase extends Constructor<{}>>(Base: TBase) =>
+export const applyScenePluginsMixin = <TBase extends Constructor<NonNullable<unknown>>>(Base: TBase) =>
   class SceneWithMetadata extends Base implements ScenePlugins {
     gridEngine!: GridEngine;
     virtualJoystickPlugin!: VirtualJoystickPlugin;

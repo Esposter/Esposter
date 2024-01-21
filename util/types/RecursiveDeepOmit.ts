@@ -3,7 +3,7 @@ import { type DeepOmitArray } from "@/util/types/DeepOmitArray";
 
 export type RecursiveDeepOmit<T, TKeys extends string[]> = TKeys extends [infer TKey, ...infer TKeysRemaining]
   ? TKeysRemaining extends string[]
-    ? T extends any[]
+    ? T extends unknown[]
       ? RecursiveDeepOmit<DeepOmitArray<T, TKey>, TKeysRemaining>
       : RecursiveDeepOmit<DeepOmit<T, TKey>, TKeysRemaining>
     : T
