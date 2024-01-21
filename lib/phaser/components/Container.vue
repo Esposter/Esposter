@@ -11,10 +11,11 @@ interface ContainerProps {
 const props = defineProps<ContainerProps>();
 const { configuration } = toRefs(props);
 const phaserStore = usePhaserStore();
-const { gameObjectCreator } = storeToRefs(phaserStore);
-useInitializeGameObject(
+const { gameObjectCreator, parentContainer } = storeToRefs(phaserStore);
+const container = useInitializeGameObject(
   (configuration) => gameObjectCreator.value.container(configuration),
   configuration,
   ContainerSetterMap,
 );
+parentContainer.value = container.value;
 </script>
