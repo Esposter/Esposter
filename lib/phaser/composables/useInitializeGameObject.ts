@@ -1,12 +1,15 @@
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type GameObjects } from "phaser";
 import { type WatchStopHandle } from "vue";
 
-export const initializeGameObject = <TConfig extends object, TGameObject extends GameObjects.GameObject>(
+export const useInitializeGameObject = <TConfig extends object, TGameObject extends GameObjects.GameObject>(
   init: (configuration: TConfig) => TGameObject,
   configuration: Ref<TConfig>,
   setterMap: SetterMap<TConfig, TGameObject>,
 ) => {
+  const phaserStore = usePhaserStore();
+  const { parentContainer } = storeToRefs(phaserStore);
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
@@ -32,6 +35,7 @@ export const initializeGameObject = <TConfig extends object, TGameObject extends
   onMounted(() => {
     gameObject.value = init(configuration.value);
     for (const [setter, value] of settersWithValues) setter(gameObject.value)(value);
+    if (parentContainer.value) parentContainer.value.add(gameObject.value);
   });
 
   onBeforeUnmount(() => {

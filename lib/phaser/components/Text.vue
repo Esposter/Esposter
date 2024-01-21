@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { initializeGameObject } from "@/lib/phaser/util/initializeGameObject";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
 import { type Types } from "phaser";
 
@@ -12,5 +12,5 @@ const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);
 const phaserStore = usePhaserStore();
 const { gameObjectCreator } = storeToRefs(phaserStore);
-initializeGameObject((configuration) => gameObjectCreator.value.text(configuration), configuration, TextSetterMap);
+useInitializeGameObject((configuration) => gameObjectCreator.value.text(configuration), configuration, TextSetterMap);
 </script>
