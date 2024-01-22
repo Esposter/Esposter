@@ -36,11 +36,11 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     :amount="boughtBuildingAmount"
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
-      <ul px-8>
-        <li v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" mt-1 px-1 rd>
+      <div px-8>
+        <div v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" mt-1 px-1 rd>
           <div v-html="buildingStatHtml" />
-        </li>
-      </ul>
+        </div>
+      </div>
     </template>
     <template #action>
       <v-spacer />
