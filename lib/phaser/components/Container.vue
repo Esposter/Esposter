@@ -9,9 +9,11 @@ interface ContainerProps {
   configuration: ContainerConfiguration;
 }
 
+interface ContainerEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+
 const props = defineProps<ContainerProps>();
 const { configuration } = toRefs(props);
-const emit = defineEmits<GameObjectEventEmitsOptions>();
+const emit = defineEmits<ContainerEmits>();
 const phaserStore = usePhaserStore();
 const { gameObjectCreator, parentContainer } = storeToRefs(phaserStore);
 const container = useInitializeGameObject(

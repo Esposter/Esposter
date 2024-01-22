@@ -9,9 +9,11 @@ interface TextProps {
   configuration: TextConfiguration;
 }
 
+interface TextEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+
 const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);
-const emit = defineEmits<GameObjectEventEmitsOptions>();
+const emit = defineEmits<TextEmits>();
 const phaserStore = usePhaserStore();
 const { gameObjectCreator } = storeToRefs(phaserStore);
 useInitializeGameObject(

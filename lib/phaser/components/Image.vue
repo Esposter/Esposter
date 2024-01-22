@@ -9,9 +9,11 @@ interface ImageProps {
   configuration: ImageConfiguration;
 }
 
+interface ImageEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+
 const props = defineProps<ImageProps>();
 const { configuration } = toRefs(props);
-const emit = defineEmits<GameObjectEventEmitsOptions>();
+const emit = defineEmits<ImageEmits>();
 const phaserStore = usePhaserStore();
 const { gameObjectCreator } = storeToRefs(phaserStore);
 useInitializeGameObject(

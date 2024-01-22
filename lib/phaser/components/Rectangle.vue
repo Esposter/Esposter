@@ -9,9 +9,11 @@ interface RectangleProps {
   configuration: RectangleConfiguration;
 }
 
+interface RectangleEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+
 const props = defineProps<RectangleProps>();
 const { configuration } = toRefs(props);
-const emit = defineEmits<GameObjectEventEmitsOptions>();
+const emit = defineEmits<RectangleEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 useInitializeGameObject(
