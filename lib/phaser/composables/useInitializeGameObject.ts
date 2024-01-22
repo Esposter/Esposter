@@ -1,20 +1,22 @@
 import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
+import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
+import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { type GameObjects } from "phaser";
-import { type EmitsOptions, type SetupContext, type WatchStopHandle } from "vue";
+import { GameObjectEventMap } from "@/lib/phaser/util/constants";
+import { type GameObjects, type Types } from "phaser";
+import { type SetupContext, type WatchStopHandle } from "vue";
 
 export const useInitializeGameObject = <
-  TConfiguration extends object,
+  TConfiguration extends GlobalConfiguration,
   TGameObject extends GameObjects.GameObject,
-  TEmitsOptions extends EmitsOptions = EmitsOptions,
 >(
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
-  setterMap: WeakSetterMap<TConfiguration, TGameObject, TEmitsOptions>,
-  emit?: SetupContext<TEmitsOptions>["emit"],
+  emit: SetupContext<GameObjectEventEmitsOptions>["emit"],
+  setterMap: WeakSetterMap<TConfiguration, TGameObject>,
 ) => {
   const phaserStore = usePhaserStore();
-  const { parentContainer } = storeToRefs(phaserStore);
+  const { scene, parentContainer } = storeToRefs(phaserStore);
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
@@ -36,7 +38,7 @@ export const useInitializeGameObject = <
         () => configuration.value[key],
         (newValue) => {
           if (!gameObject.value) return;
-          setter(gameObject.value)(newValue);
+          setter(gameObject.value, emit)(newValue);
         },
         { deep: typeof configuration.value[key] === "object" },
       ),
@@ -46,6 +48,7 @@ export const useInitializeGameObject = <
   onMounted(() => {
     gameObject.value = init(configuration.value);
     for (const [setter, value] of settersWithValues) setter(gameObject.value, emit)(value);
+    // Set possible parent container
     if (parentContainer.value) {
       const i = parentContainer.value.list.findIndex(
         (obj) =>
@@ -56,6 +59,26 @@ export const useInitializeGameObject = <
           obj.depth > configuration.value.depth,
       );
       i === -1 ? parentContainer.value.add(gameObject.value) : parentContainer.value.addAt(gameObject.value, i);
+    }
+    // Set events
+    const events = Object.keys(GameObjectEventMap).filter(
+      (key) => key in configuration.value,
+    ) as (keyof typeof GameObjectEventMap)[];
+
+    if (events.length === 0) return;
+
+    if (!gameObject.value.input) gameObject.value.setInteractive();
+    if (events.some((key) => "drag" in GameObjectEventMap[key])) scene.value.input.setDraggable(gameObject.value);
+
+    for (const event of events) {
+      const context = GameObjectEventMap[event];
+      gameObject.value.on(event, (...args: Types.Input.EventData[]) => {
+        if ("eventIndex" in context) args[0].stopPropagation = args[context.eventIndex].stopPropagation;
+        // @ts-expect-error
+        // emit has a bunch of different overload types which doesn't match our union type
+        // but we know that our union type matches the game object events since we're just passing in the same events
+        emit(event, ...args);
+      });
     }
   });
 

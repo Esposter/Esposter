@@ -1,12 +1,9 @@
-import { type EmitsOptions, type SetupContext } from "vue";
+import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type SetupContext } from "vue";
 
-export type SetterMap<
-  TConfiguration extends object,
-  TGameObject extends object,
-  TEmitsOptions extends EmitsOptions = EmitsOptions,
-> = {
+export type SetterMap<TConfiguration extends object, TGameObject extends object> = {
   [P in keyof TConfiguration]?: (
     gameObject: TGameObject,
-    emit?: SetupContext<TEmitsOptions>["emit"],
+    emit: SetupContext<GameObjectEventEmitsOptions>["emit"],
   ) => (value: TConfiguration[P]) => void;
 };

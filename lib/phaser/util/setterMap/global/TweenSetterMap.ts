@@ -6,23 +6,23 @@ export const TweenSetterMap = {
   tween: (gameObject, emit) =>
     createTween<Tweens.Tween, Types.Tweens.TweenBuilderConfig>((configuration) => {
       const tween = gameObject.scene.add.tween({ ...configuration, targets: gameObject });
-      if (emit) tween.on("complete", () => emit("update:tween", null));
+      if (emit) tween.on("complete", () => emit("update:tween", undefined));
       return tween;
     }),
   tweenchain: (gameObject, emit) =>
     createTween<Tweens.TweenChain, Types.Tweens.TweenBuilderConfig[]>((configurations) => {
       const tweenchain = gameObject.scene.add.tweenchain(configurations);
-      if (emit) tweenchain.on("complete", () => emit("update:tweenchain", null));
+      if (emit) tweenchain.on("complete", () => emit("update:tweenchain", undefined));
       return tweenchain;
     }),
 } satisfies SetterMap<TweenConfiguration, GameObjects.GameObject>;
 
-const createTween = <TTween extends { stop: () => void }, TConfiguration extends object>(
+const createTween = <TTween extends { destroy: () => void }, TConfiguration extends object>(
   callback: (config: TConfiguration) => TTween,
 ) => {
-  let previousTween: TTween | null = null;
+  let previousTween: TTween | undefined;
   return (config?: TConfiguration) => {
-    if (previousTween) previousTween.stop();
-    previousTween = config ? callback(config) : null;
+    if (previousTween) previousTween.destroy();
+    previousTween = config ? callback(config) : undefined;
   };
 };
