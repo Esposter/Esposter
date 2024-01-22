@@ -41,7 +41,17 @@ export const useInitializeGameObject = <TConfiguration extends object, TGameObje
   onMounted(() => {
     gameObject.value = init(configuration.value);
     for (const [setter, value] of settersWithValues) setter(gameObject.value)(value);
-    if (parentContainer.value) parentContainer.value.add(gameObject.value);
+    if (parentContainer.value) {
+      const i = parentContainer.value.list.findIndex(
+        (obj) =>
+          "depth" in obj &&
+          typeof obj.depth === "number" &&
+          "depth" in configuration.value &&
+          typeof configuration.value.depth === "number" &&
+          obj.depth > configuration.value.depth,
+      );
+      i === -1 ? parentContainer.value.add(gameObject.value) : parentContainer.value.addAt(gameObject.value, i);
+    }
   });
 
   onBeforeUnmount(() => {
