@@ -1,5 +1,5 @@
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
-import { type TextureConfiguration } from "@/lib/phaser/models/configuration/components/TextureConfiguration";
+import { type TextureCropConfiguration } from "@/lib/phaser/models/configuration/components/TextureCropConfiguration";
 import { type GameObjects } from "phaser";
 
 export const TextureCropSetterMap = {
@@ -8,4 +8,4 @@ export const TextureCropSetterMap = {
     if (!value) return;
     gameObject.setTexture(value);
   },
-} satisfies SetterMap<TextureConfiguration, GameObjects.Components.TextureCrop>;
+} satisfies SetterMap<TextureCropConfiguration, GameObjects.Components.TextureCrop>;
