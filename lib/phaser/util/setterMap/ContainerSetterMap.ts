@@ -7,6 +7,7 @@ import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSett
 import { MaskSetterMap } from "@/lib/phaser/util/setterMap/components/MaskSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
+import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { type GameObjects } from "phaser";
 
 export const ContainerSetterMap: WeakSetterMap<ContainerConfiguration, GameObjects.Container> = {
@@ -17,4 +18,5 @@ export const ContainerSetterMap: WeakSetterMap<ContainerConfiguration, GameObjec
   ...MaskSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
+  ...GlobalSetterMap,
 };

@@ -13,6 +13,7 @@ import { TextureCropSetterMap } from "@/lib/phaser/util/setterMap/components/Tex
 import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
+import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { type GameObjects } from "phaser";
 
 export const ImageSetterMap: WeakSetterMap<ImageConfiguration, GameObjects.Image> = {
@@ -29,4 +30,5 @@ export const ImageSetterMap: WeakSetterMap<ImageConfiguration, GameObjects.Image
   ...TintSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
+  ...GlobalSetterMap,
 };
