@@ -1,5 +1,5 @@
-import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
 import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
+import { type WeakSetterMap } from "@/lib/phaser/models/setterMap/WeakSetterMap";
 import { ShapeSetterMap } from "@/lib/phaser/util/setterMap/components/ShapeSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { type GameObjects } from "phaser";

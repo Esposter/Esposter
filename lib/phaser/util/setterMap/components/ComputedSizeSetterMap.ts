@@ -1,4 +1,4 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
 export const ComputedSizeSetterMap = {

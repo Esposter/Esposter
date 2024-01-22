@@ -1,5 +1,5 @@
-import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
 import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
+import { type WeakSetterMap } from "@/lib/phaser/models/setterMap/WeakSetterMap";
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { ComputedSizeSetterMap } from "@/lib/phaser/util/setterMap/components/ComputedSizeSetterMap";

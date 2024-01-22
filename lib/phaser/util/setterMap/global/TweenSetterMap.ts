@@ -1,5 +1,5 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
 import { type TweenConfiguration } from "@/lib/phaser/models/configuration/global/TweenConfiguration";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects, type Tweens, type Types } from "phaser";
 
 export const TweenSetterMap = {

@@ -1,4 +1,4 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";

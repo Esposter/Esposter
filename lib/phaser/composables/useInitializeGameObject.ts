@@ -1,8 +1,8 @@
-import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
 import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type WeakSetterMap } from "@/lib/phaser/models/setterMap/WeakSetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { GameObjectEventMap } from "@/lib/phaser/util/constants";
+import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type GameObjects, type Types } from "phaser";
 import { type SetupContext, type WatchStopHandle } from "vue";
 

@@ -1,5 +1,5 @@
 import { type GlobalEventEmitsOptions } from "@/lib/phaser/models/emit/global/GlobalEventEmitsOptions";
-import { type GameObjectEventMap } from "@/lib/phaser/util/constants";
+import { type GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type Types } from "phaser";
 
 export type GameObjectEventEmitsOptions = {
