@@ -1,12 +1,17 @@
 import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type GameObjects } from "phaser";
-import { type WatchStopHandle } from "vue";
+import { type EmitsOptions, type SetupContext, type WatchStopHandle } from "vue";
 
-export const useInitializeGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(
+export const useInitializeGameObject = <
+  TConfiguration extends object,
+  TGameObject extends GameObjects.GameObject,
+  TEmitsOptions extends EmitsOptions = EmitsOptions,
+>(
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
-  setterMap: WeakSetterMap<TConfiguration, TGameObject>,
+  setterMap: WeakSetterMap<TConfiguration, TGameObject, TEmitsOptions>,
+  emit?: SetupContext<TEmitsOptions>["emit"],
 ) => {
   const phaserStore = usePhaserStore();
   const { parentContainer } = storeToRefs(phaserStore);
@@ -40,7 +45,7 @@ export const useInitializeGameObject = <TConfiguration extends object, TGameObje
 
   onMounted(() => {
     gameObject.value = init(configuration.value);
-    for (const [setter, value] of settersWithValues) setter(gameObject.value)(value);
+    for (const [setter, value] of settersWithValues) setter(gameObject.value, emit)(value);
     if (parentContainer.value) {
       const i = parentContainer.value.list.findIndex(
         (obj) =>
