@@ -16,7 +16,7 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
       flex
       flex-1
       flex-col
-      :data-table-server-props="{
+      :data-table-props="{
         height: '100%',
         headers: props.headers,
         items: tableEditor.items,
