@@ -135,7 +135,7 @@
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released",
-    "@nuxt/test-utils & nuxt & vue": "https://github.com/nuxt/nuxt/issues/25214",
+    "nuxt & vue": "https://github.com/nuxt/nuxt/issues/25214",
     "@auth/core": ""
   },
   "engines": {
