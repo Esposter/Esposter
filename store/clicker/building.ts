@@ -44,7 +44,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
       }** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(
         clickerItemProperties.value.pluralName,
       )}pS)`,
-      `**${formatNumberLong(boughtBuilding.producedValue)}** ${clickerItemProperties.value.pluralName} produced so far`,
+      `**${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerItemProperties.value.pluralName} produced so far`,
     ];
   };
   const getBuildingPrice = (building: Building) => {
