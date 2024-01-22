@@ -1,4 +1,5 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
+import { type ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
@@ -12,9 +13,9 @@ import { TextureCropSetterMap } from "@/lib/phaser/util/setterMap/components/Tex
 import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
-import { type GameObjects, type Types } from "phaser";
+import { type GameObjects } from "phaser";
 
-export const ImageSetterMap: SetterMap<Types.GameObjects.Sprite.SpriteConfig, GameObjects.Image> = {
+export const ImageSetterMap: WeakSetterMap<ImageConfiguration, GameObjects.Image> = {
   ...AlphaSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,

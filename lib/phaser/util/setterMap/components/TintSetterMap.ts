@@ -11,5 +11,4 @@ export const TintSetterMap = {
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, value, gameObject.tintBottomRight),
   tintBottomRight: (gameObject) => (value) =>
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, gameObject.tintBottomLeft, value),
-  tintFill: (gameObject) => (value) => gameObject.setTintFill(value),
 } satisfies SetterMap<GameObjects.Components.Tint, GameObjects.Components.Tint>;

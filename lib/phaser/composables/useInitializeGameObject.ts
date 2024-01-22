@@ -1,21 +1,27 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type GameObjects } from "phaser";
 import { type WatchStopHandle } from "vue";
 
-export const useInitializeGameObject = <TConfig extends object, TGameObject extends GameObjects.GameObject>(
-  init: (configuration: TConfig) => TGameObject,
-  configuration: Ref<TConfig>,
-  setterMap: SetterMap<TConfig, TGameObject>,
+export const useInitializeGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(
+  init: (configuration: TConfiguration) => TGameObject,
+  configuration: Ref<TConfiguration>,
+  setterMap: WeakSetterMap<TConfiguration, TGameObject>,
 ) => {
   const phaserStore = usePhaserStore();
   const { parentContainer } = storeToRefs(phaserStore);
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
-  const settersWithValues: [setter: NonNullable<SetterMap<TConfig, TGameObject>[keyof TConfig]>, value: unknown][] = [];
+  const settersWithValues: [
+    setter: NonNullable<WeakSetterMap<TConfiguration, TGameObject>[keyof TConfiguration]>,
+    value: TConfiguration[keyof TConfiguration],
+  ][] = [];
 
-  for (const [key, value] of Object.entries(configuration.value) as [keyof TConfig, unknown][]) {
+  for (const [key, value] of Object.entries(configuration.value) as [
+    keyof TConfiguration,
+    TConfiguration[keyof TConfiguration],
+  ][]) {
     const setter = setterMap[key];
     if (!setter) continue;
 

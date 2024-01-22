@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { type ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
-import { type Types } from "phaser";
 
 interface ImageProps {
-  configuration: Types.GameObjects.Sprite.SpriteConfig;
+  configuration: ImageConfiguration;
 }
 
 const props = defineProps<ImageProps>();

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { type ContainerConfiguration } from "@/lib/phaser/models/configuration/ContainerConfiguration";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ContainerSetterMap } from "@/lib/phaser/util/setterMap/ContainerSetterMap";
-import { type Types } from "phaser";
 
 interface ContainerProps {
-  configuration: Types.GameObjects.Container.ContainerConfig;
+  configuration: ContainerConfiguration;
 }
 
 const props = defineProps<ContainerProps>();

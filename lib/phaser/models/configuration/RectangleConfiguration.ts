@@ -1,8 +1,8 @@
-import { type OriginConfiguration } from "@/lib/phaser/models/configuration/OriginConfiguration";
-import { type ScrollFactorConfiguration } from "@/lib/phaser/models/configuration/ScrollFactorConfiguration";
-import { type RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
+import { type OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
+import { type ScrollFactorConfiguration } from "@/lib/phaser/models/configuration/components/ScrollFactorConfiguration";
 import { type GameObjects } from "phaser";
+import { type GlobalConfiguration } from "~/lib/phaser/models/configuration/global/GlobalConfiguration";
 
 export type RectangleConfiguration = Partial<
-  Pick<GameObjects.Rectangle & OriginConfiguration & ScrollFactorConfiguration, keyof typeof RectangleSetterMap>
+  GameObjects.Rectangle & OriginConfiguration & ScrollFactorConfiguration & GlobalConfiguration
 >;

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
-import { type Types } from "phaser";
 
 interface TextProps {
-  configuration: Types.GameObjects.Text.TextConfig;
+  configuration: TextConfiguration;
 }
 
 const props = defineProps<TextProps>();

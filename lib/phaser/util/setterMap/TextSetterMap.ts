@@ -1,4 +1,5 @@
-import { type SetterMap } from "@/lib/phaser/models/SetterMap";
+import { type WeakSetterMap } from "@/lib/phaser/models/WeakSetterMap";
+import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { ComputedSizeSetterMap } from "@/lib/phaser/util/setterMap/components/ComputedSizeSetterMap";
@@ -11,9 +12,9 @@ import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/Sc
 import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
-import { type GameObjects, type Types } from "phaser";
+import { type GameObjects } from "phaser";
 
-export const TextSetterMap: SetterMap<Types.GameObjects.Text.TextConfig, GameObjects.Text> = {
+export const TextSetterMap: WeakSetterMap<TextConfiguration, GameObjects.Text> = {
   ...AlphaSetterMap,
   ...BlendModeSetterMap,
   ...ComputedSizeSetterMap,
@@ -26,7 +27,16 @@ export const TextSetterMap: SetterMap<Types.GameObjects.Text.TextConfig, GameObj
   ...TintSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
-  padding: (gameObject) => (value) => gameObject.setPadding(value),
-  style: (gameObject) => (value) => gameObject.setStyle(value),
-  text: (gameObject) => (value) => gameObject.setText(value),
+  padding: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setPadding(value);
+  },
+  style: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setStyle(value);
+  },
+  text: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setText(value);
+  },
 };

@@ -1,5 +1,5 @@
 import { type SetterMap } from "@/lib/phaser/models/SetterMap";
-import { type OriginConfiguration } from "@/lib/phaser/models/configuration/OriginConfiguration";
+import { type OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
 import { type GameObjects } from "phaser";
 
 export const OriginSetterMap = {

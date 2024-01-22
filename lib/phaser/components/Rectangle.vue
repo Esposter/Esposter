@@ -3,7 +3,6 @@ import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeG
 import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
-import { type GameObjects } from "phaser";
 
 interface RectangleProps {
   configuration: RectangleConfiguration;
@@ -13,7 +12,7 @@ const props = defineProps<RectangleProps>();
 const { configuration } = toRefs(props);
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-useInitializeGameObject<RectangleConfiguration, GameObjects.Rectangle>(
+useInitializeGameObject(
   ({ x, y, width, height, fillColor, alpha }) => scene.value.add.rectangle(x, y, width, height, fillColor, alpha),
   configuration,
   RectangleSetterMap,
