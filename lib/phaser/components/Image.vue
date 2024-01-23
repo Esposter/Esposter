@@ -5,7 +5,7 @@ import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameO
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GAME_OBJECT_KEY } from "@/lib/phaser/util/constants";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
-import { type SetRequired } from "type-fest";
+import { type SetRequired } from "@/util/types/SetRequired";
 
 interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "textureKey">;

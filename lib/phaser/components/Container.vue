@@ -24,3 +24,7 @@ const container = useInitializeGameObject(
 );
 parentContainer.value = container.value;
 </script>
+
+<template>
+  <slot />
+</template>

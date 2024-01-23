@@ -4,7 +4,7 @@ import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextCo
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
-import { type SetRequired } from "type-fest";
+import { type SetRequired } from "@/util/types/SetRequired";
 
 interface TextProps {
   configuration: SetRequired<Partial<TextConfiguration>, "text">;
