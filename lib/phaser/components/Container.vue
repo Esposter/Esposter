@@ -11,6 +11,7 @@ interface ContainerProps {
 
 interface ContainerEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
 
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const props = defineProps<ContainerProps>();
 const { configuration } = toRefs(props);
 const emit = defineEmits<ContainerEmits>();
