@@ -2,11 +2,12 @@ import { BattleMonster } from "@/models/dungeons/battle/monsters/BattleMonster";
 import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monsters/BattleMonsterConfiguration";
 import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
+import { type Except } from "type-fest";
 
 export class EnemyBattleMonster extends BattleMonster {
   static INITIAL_POSITION: Position = { x: 768, y: 144 };
 
-  constructor(battleMonsterConfiguration: Omit<BattleMonsterConfiguration, "healthBarBackgroundImageScaleY">) {
+  constructor(battleMonsterConfiguration: Except<BattleMonsterConfiguration, "healthBarBackgroundImageScaleY">) {
     super({ ...battleMonsterConfiguration, healthBarBackgroundImageScaleY: 0.8 }, EnemyBattleMonster.INITIAL_POSITION);
   }
 

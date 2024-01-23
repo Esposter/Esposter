@@ -3,12 +3,13 @@ import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monste
 import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
+import { type Except } from "type-fest";
 
 export class PlayerBattleMonster extends BattleMonster {
   static INITIAL_POSITION: Position = { x: 256, y: 316 };
   healthBarPhaserTextGameObject: GameObjects.Text;
 
-  constructor(battleMonsterConfiguration: Omit<BattleMonsterConfiguration, "healthBarBackgroundImageScaleY">) {
+  constructor(battleMonsterConfiguration: Except<BattleMonsterConfiguration, "healthBarBackgroundImageScaleY">) {
     super({ ...battleMonsterConfiguration }, PlayerBattleMonster.INITIAL_POSITION);
     this.healthBarPhaserTextGameObject = this.scene.add
       .text(443, 80, "", {

@@ -6,6 +6,7 @@ import {
   vuetifyComponentItemSchema,
   type VuetifyComponentItem,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { type Except } from "type-fest";
 import { z } from "zod";
 
 type TableEditorTypes = {
@@ -28,4 +29,4 @@ export class TableEditorConfiguration implements TableEditorTypes {
 export const tableEditorConfigurationSchema = z.object({
   [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
-}) satisfies z.ZodType<Omit<TableEditorConfiguration, "toJSON">>;
+}) satisfies z.ZodType<Except<TableEditorConfiguration, "toJSON">>;

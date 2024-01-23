@@ -4,9 +4,10 @@ import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextCo
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
+import { type SetRequired } from "type-fest";
 
 interface TextProps {
-  configuration: Partial<TextConfiguration>;
+  configuration: SetRequired<Partial<TextConfiguration>, "text">;
 }
 
 interface TextEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
@@ -17,7 +18,7 @@ const emit = defineEmits<TextEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 useInitializeGameObject(
-  ({ x, y, text, style }) => scene.value.add.text(x ?? 0, y ?? 0, text ?? "", style),
+  ({ x, y, text, style }) => scene.value.add.text(x ?? 0, y ?? 0, text, style),
   configuration,
   emit,
   TextSetterMap,

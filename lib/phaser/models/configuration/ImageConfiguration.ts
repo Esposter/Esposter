@@ -13,6 +13,7 @@ import { type TransformConfiguration } from "@/lib/phaser/models/configuration/c
 import { type VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import { type Types } from "phaser";
+import { type Except } from "type-fest";
 
 export type ImageConfiguration = AlphaConfiguration &
   BlendModeConfiguration &
@@ -28,4 +29,4 @@ export type ImageConfiguration = AlphaConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
   GlobalConfiguration &
-  Omit<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig>;
+  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig>;

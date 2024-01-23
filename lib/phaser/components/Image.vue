@@ -5,9 +5,10 @@ import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameO
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GAME_OBJECT_KEY } from "@/lib/phaser/util/constants";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
+import { type SetRequired } from "type-fest";
 
 interface ImageProps {
-  configuration: Partial<ImageConfiguration>;
+  configuration: SetRequired<Partial<ImageConfiguration>, "textureKey">;
 }
 
 interface ImageEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
@@ -18,7 +19,7 @@ const emit = defineEmits<ImageEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const image = useInitializeGameObject(
-  ({ x, y, textureKey, frame }) => scene.value.add.image(x ?? 0, y ?? 0, textureKey ?? "", frame),
+  ({ x, y, textureKey, frame }) => scene.value.add.image(x ?? 0, y ?? 0, textureKey, frame),
   configuration,
   emit,
   ImageSetterMap,

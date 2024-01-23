@@ -12,6 +12,7 @@ import { type TransformConfiguration } from "@/lib/phaser/models/configuration/c
 import { type VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import { type Types } from "phaser";
+import { type Except } from "type-fest";
 
 export type TextConfiguration = AlphaConfiguration &
   BlendModeConfiguration &
@@ -26,4 +27,4 @@ export type TextConfiguration = AlphaConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
   GlobalConfiguration &
-  Omit<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig | "text"> & { text: string };
+  Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig | "text"> & { text: string };

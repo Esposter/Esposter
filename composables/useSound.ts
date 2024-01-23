@@ -1,5 +1,6 @@
 import { dayjs } from "@/services/dayjs";
 import { Howl, type HowlOptions } from "howler";
+import { type Except } from "type-fest";
 
 const cache: Record<string, Howl | null> = {};
 
@@ -135,4 +136,4 @@ type ComposableOptions = {
   autoplay?: boolean;
   sprite?: SpriteMap;
   onload?: () => void;
-} & Omit<HowlOptions, "src" | "onload">;
+} & Except<HowlOptions, "src" | "onload">;

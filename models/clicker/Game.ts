@@ -3,6 +3,7 @@ import { ClickerType, clickerTypeSchema } from "@/models/clicker/ClickerType";
 import { createUpgradeSchema, type Upgrade } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { type Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {
@@ -32,4 +33,4 @@ export const gameSchema = z
     boughtUpgrades: z.array(createUpgradeSchema(upgradeNameSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Omit<Game, "toJSON">>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;

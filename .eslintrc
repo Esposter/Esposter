@@ -1,12 +1,26 @@
 {
   "root": true,
-  "extends": ["@nuxt", "plugin:prettier/recommended"],
-  "plugins": ["import"],
+  "extends": [
+    "@nuxt",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "import"
+  ],
   "rules": {
     "vue/no-unused-vars": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
     "vue/multi-word-component-names": "off",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "Omit": "Use `Except` from type-fest instead",
+          "Function": false
+        }
+      }
+    ],
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/consistent-type-imports": [
       "error",
@@ -14,9 +28,15 @@
         "fixStyle": "inline-type-imports"
       }
     ],
-    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "import/consistent-type-specifier-style": [
+      "error",
+      "prefer-inline"
+    ],
     "no-duplicate-imports": "error",
-    "curly": ["error", "multi"],
+    "curly": [
+      "error",
+      "multi"
+    ],
     "eqeqeq": "error"
   }
 }
