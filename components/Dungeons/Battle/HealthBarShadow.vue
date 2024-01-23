@@ -19,7 +19,7 @@ const middleShadowX = computed(() => {
   const { x, displayWidth } = leftCapShadow.value[GAME_OBJECT_KEY];
   return x + displayWidth;
 });
-const rightShadowX = computed(() => {
+const rightCapShadowX = computed(() => {
   if (!middleShadow.value) return 0;
 
   const { x, displayWidth } = middleShadow.value[GAME_OBJECT_KEY];
@@ -36,6 +36,6 @@ const rightShadowX = computed(() => {
       :scale-y="scaleY"
       :display-width="displayWidth"
     />
-    <DungeonsBattleRightCapShadow :position="{ ...position, x: rightShadowX }" :scale-y="scaleY" />
+    <DungeonsBattleRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
   </Container>
 </template>
