@@ -1,6 +1,7 @@
+import { type FXConfiguration } from "@/lib/phaser/models/configuration/components/FXConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
 export const FXSetterMap = {
   padding: (gameObject) => (value) => gameObject.setPadding(value),
-} satisfies SetterMap<GameObjects.Components.FX, GameObjects.Components.FX>;
+} satisfies SetterMap<FXConfiguration, GameObjects.Components.FX>;

@@ -2,11 +2,13 @@
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
+import { type GameObjects } from "phaser";
 
 interface RectangleProps {
-  configuration: RectangleConfiguration;
+  configuration: Partial<RectangleConfiguration>;
 }
 
 interface RectangleEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
@@ -20,6 +22,6 @@ useInitializeGameObject(
   ({ x, y, width, height, fillColor, alpha }) => scene.value.add.rectangle(x, y, width, height, fillColor, alpha),
   configuration,
   emit,
-  RectangleSetterMap,
+  RectangleSetterMap as SetterMap<Partial<RectangleConfiguration>, GameObjects.Rectangle>,
 );
 </script>

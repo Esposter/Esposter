@@ -1,5 +1,5 @@
 import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
-import { type WeakSetterMap } from "@/lib/phaser/models/setterMap/WeakSetterMap";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { ComputedSizeSetterMap } from "@/lib/phaser/util/setterMap/components/ComputedSizeSetterMap";
@@ -15,7 +15,7 @@ import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/Visible
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { type GameObjects } from "phaser";
 
-export const TextSetterMap: WeakSetterMap<TextConfiguration, GameObjects.Text> = {
+export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text> = {
   ...AlphaSetterMap,
   ...BlendModeSetterMap,
   ...ComputedSizeSetterMap,

@@ -1,3 +1,4 @@
+import { type SizeConfiguration } from "@/lib/phaser/models/configuration/components/SizeConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -6,4 +7,4 @@ export const SizeSetterMap = {
   height: (gameObject) => (value) => gameObject.setSize(gameObject.width, value),
   displayWidth: (gameObject) => (value) => gameObject.setDisplaySize(value, gameObject.displayHeight),
   displayHeight: (gameObject) => (value) => gameObject.setDisplaySize(gameObject.displayWidth, value),
-} satisfies SetterMap<GameObjects.Components.Size, GameObjects.Components.Size>;
+} satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size>;

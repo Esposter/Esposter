@@ -1,3 +1,4 @@
+import { type AlphaConfiguration } from "@/lib/phaser/models/configuration/components/AlphaConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -11,4 +12,4 @@ export const AlphaSetterMap = {
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, value, gameObject.alphaBottomRight),
   alphaBottomRight: (gameObject) => (value) =>
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, gameObject.alphaBottomLeft, value),
-} satisfies SetterMap<GameObjects.Components.Alpha, GameObjects.Components.Alpha>;
+} satisfies SetterMap<AlphaConfiguration, GameObjects.Components.Alpha>;

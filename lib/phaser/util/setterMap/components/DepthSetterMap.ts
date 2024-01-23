@@ -1,3 +1,4 @@
+import { type DepthConfiguration } from "@/lib/phaser/models/configuration/components/DepthConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -13,4 +14,4 @@ export const DepthSetterMap = {
       ? gameObject.parentContainer.bringToTop(gameObject)
       : gameObject.parentContainer.moveTo(gameObject, Math.max(i - 1, 0));
   },
-} satisfies SetterMap<GameObjects.Components.Depth, GameObjects.Components.Depth & GameObjects.GameObject>;
+} satisfies SetterMap<DepthConfiguration, GameObjects.Components.Depth & GameObjects.GameObject>;

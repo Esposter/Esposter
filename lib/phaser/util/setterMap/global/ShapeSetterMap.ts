@@ -1,3 +1,4 @@
+import { type ShapeConfiguration } from "@/lib/phaser/models/configuration/global/ShapeConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
@@ -20,9 +21,18 @@ export const ShapeSetterMap = {
   ...ScrollFactorSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
-  active: (gameObject) => (value) => gameObject.setActive(value),
-  displayWidth: (gameObject) => (value) => gameObject.setDisplaySize(value, gameObject.displayHeight),
-  displayHeight: (gameObject) => (value) => gameObject.setDisplaySize(gameObject.displayWidth, value),
+  active: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setActive(value);
+  },
+  displayWidth: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setDisplaySize(value, gameObject.displayHeight);
+  },
+  displayHeight: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setDisplaySize(gameObject.displayWidth, value);
+  },
   fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
   fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
-} satisfies SetterMap<GameObjects.Shape, GameObjects.Shape>;
+} satisfies SetterMap<ShapeConfiguration, GameObjects.Shape>;

@@ -1,3 +1,4 @@
+import { type TintConfiguration } from "@/lib/phaser/models/configuration/components/TintConfiguration";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -11,4 +12,4 @@ export const TintSetterMap = {
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, value, gameObject.tintBottomRight),
   tintBottomRight: (gameObject) => (value) =>
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, gameObject.tintBottomLeft, value),
-} satisfies SetterMap<GameObjects.Components.Tint, GameObjects.Components.Tint>;
+} satisfies SetterMap<TintConfiguration, GameObjects.Components.Tint>;

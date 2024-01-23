@@ -1,6 +1,6 @@
 import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
-import { type WeakSetterMap } from "@/lib/phaser/models/setterMap/WeakSetterMap";
+import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type GameObjects, type Types } from "phaser";
@@ -13,7 +13,7 @@ export const useInitializeGameObject = <
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
   emit: SetupContext<GameObjectEventEmitsOptions>["emit"],
-  setterMap: WeakSetterMap<TConfiguration, TGameObject>,
+  setterMap: SetterMap<TConfiguration, TGameObject>,
 ) => {
   const phaserStore = usePhaserStore();
   const { scene, parentContainer } = storeToRefs(phaserStore);
@@ -21,7 +21,7 @@ export const useInitializeGameObject = <
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
   const settersWithValues: [
-    setter: NonNullable<WeakSetterMap<TConfiguration, TGameObject>[keyof TConfiguration]>,
+    setter: NonNullable<SetterMap<TConfiguration, TGameObject>[keyof TConfiguration]>,
     value: TConfiguration[keyof TConfiguration],
   ][] = [];
 
