@@ -3,6 +3,12 @@ import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
 export const FlipSetterMap = {
-  flipX: (gameObject) => (value) => gameObject.setFlipX(value),
-  flipY: (gameObject) => (value) => gameObject.setFlipY(value),
+  flipX: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setFlipX(value);
+  },
+  flipY: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setFlipY(value);
+  },
 } satisfies SetterMap<FlipConfiguration, GameObjects.Components.Flip>;

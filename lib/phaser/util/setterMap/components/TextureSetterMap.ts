@@ -3,6 +3,12 @@ import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
 export const TextureSetterMap = {
-  frame: (gameObject) => (value) => gameObject.setFrame(value),
-  textureKey: (gameObject) => (value) => gameObject.setTexture(value),
+  frame: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setFrame(value);
+  },
+  textureKey: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setTexture(value);
+  },
 } satisfies SetterMap<TextureConfiguration, GameObjects.Components.Texture>;

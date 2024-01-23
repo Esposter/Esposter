@@ -18,9 +18,9 @@ export type ShapeConfiguration = AlphaSingleConfiguration &
   ScrollFactorConfiguration &
   TransformConfiguration &
   VisibleConfiguration & {
-    active?: GameObjects.Shape["active"];
-    displayWidth?: GameObjects.Shape["displayWidth"];
-    displayHeight?: GameObjects.Shape["displayHeight"];
-    fillColor?: GameObjects.Shape["fillColor"];
-    fillAlpha?: GameObjects.Shape["fillAlpha"];
+    active: GameObjects.Shape["active"];
+    displayWidth: GameObjects.Shape["displayWidth"];
+    displayHeight: GameObjects.Shape["displayHeight"];
+    fillColor: GameObjects.Shape["fillColor"];
+    fillAlpha: GameObjects.Shape["fillAlpha"];
   };

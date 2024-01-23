@@ -4,6 +4,8 @@ import { type GameObjects } from "phaser";
 
 export const DepthSetterMap = {
   depth: (gameObject) => (value) => {
+    if (!value) return;
+
     gameObject.setDepth(value);
     if (!gameObject.parentContainer) return;
 

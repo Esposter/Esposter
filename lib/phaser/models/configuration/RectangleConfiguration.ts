@@ -4,6 +4,6 @@ import { type GameObjects } from "phaser";
 
 export type RectangleConfiguration = ShapeConfiguration &
   GlobalConfiguration & {
-    width?: GameObjects.Rectangle["width"];
-    height?: GameObjects.Rectangle["height"];
+    width: GameObjects.Rectangle["width"];
+    height: GameObjects.Rectangle["height"];
   };

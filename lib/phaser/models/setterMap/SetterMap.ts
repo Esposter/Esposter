@@ -5,5 +5,5 @@ export type SetterMap<TConfiguration extends object, TGameObject extends object>
   [P in keyof TConfiguration]?: (
     gameObject: TGameObject,
     emit: SetupContext<GameObjectEventEmitsOptions>["emit"],
-  ) => (value: TConfiguration[P]) => void;
+  ) => (value?: TConfiguration[P]) => void;
 };

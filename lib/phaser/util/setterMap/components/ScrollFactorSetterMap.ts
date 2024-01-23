@@ -7,6 +7,12 @@ export const ScrollFactorSetterMap = {
     if (!value) return;
     gameObject.setScrollFactor(value, gameObject.scrollFactorY);
   },
-  scrollFactorX: (gameObject) => (value) => gameObject.setScrollFactor(value, gameObject.scrollFactorY),
-  scrollFactorY: (gameObject) => (value) => gameObject.setScrollFactor(gameObject.scrollFactorX, value),
+  scrollFactorX: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setScrollFactor(value, gameObject.scrollFactorY);
+  },
+  scrollFactorY: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setScrollFactor(gameObject.scrollFactorX, value);
+  },
 } satisfies SetterMap<ScrollFactorConfiguration, GameObjects.Components.ScrollFactor>;

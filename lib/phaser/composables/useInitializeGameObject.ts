@@ -1,4 +1,3 @@
-import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
@@ -6,10 +5,7 @@ import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type GameObjects, type Types } from "phaser";
 import { type SetupContext, type WatchStopHandle } from "vue";
 
-export const useInitializeGameObject = <
-  TConfiguration extends GlobalConfiguration,
-  TGameObject extends GameObjects.GameObject,
->(
+export const useInitializeGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
   emit: SetupContext<GameObjectEventEmitsOptions>["emit"],

@@ -3,5 +3,8 @@ import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
 export const PipelineSetterMap = {
-  pipeline: (gameObject) => (value) => gameObject.setPipeline(value),
+  pipeline: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setPipeline(value);
+  },
 } satisfies SetterMap<PipelineConfiguration, GameObjects.Components.Pipeline>;
