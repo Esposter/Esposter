@@ -23,18 +23,17 @@ export const useInitializeGameObjectSetters = <
     const setter = setterMap[key];
     if (!setter) continue;
 
-    setters.push((gameObject) => {
-      setter(gameObject, emit)(value);
-      emit(getUpdateEvent(key as string), value);
-    });
+    const setterWithEmit = (gameObject: TGameObject, newValue: TConfiguration[keyof TConfiguration]) => {
+      setter(gameObject, emit)(newValue);
+      emit(getUpdateEvent(key as string), newValue);
+    };
+    setters.push((gameObject) => setterWithEmit(gameObject, value));
     watchStopHandlers.push(
       watch(
         () => configuration.value[key],
         (newValue) => {
           if (!gameObject.value) return;
-          setter(gameObject.value, emit)(newValue);
-          // @TODO: emit here does some weird thing
-          emit(getUpdateEvent(key as string), newValue);
+          setterWithEmit(gameObject.value, newValue);
         },
         { deep: typeof configuration.value[key] === "object" },
       ),
