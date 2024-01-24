@@ -13,6 +13,7 @@ export const useInitializeGameObjectSetters = <
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
+  const currentInstance = getCurrentInstance();
   const setters: ((gameObject: TGameObject) => void)[] = [];
   const watchStopHandlers: WatchStopHandle[] = [];
 
@@ -25,7 +26,7 @@ export const useInitializeGameObjectSetters = <
 
     setters.push((gameObject) => {
       setter(gameObject, emit)(value);
-      emit(getUpdateEvent(key as string));
+      emit(getUpdateEvent(key as string), value);
     });
     watchStopHandlers.push(
       watch(
@@ -33,7 +34,8 @@ export const useInitializeGameObjectSetters = <
         (newValue) => {
           if (!gameObject.value) return;
           setter(gameObject.value, emit)(newValue);
-          emit(getUpdateEvent(key as string));
+          // @TODO: emit here does some weird thing
+          emit(getUpdateEvent(key as string), newValue);
         },
         { deep: typeof configuration.value[key] === "object" },
       ),
