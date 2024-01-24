@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GAME_OBJECT_KEY } from "@/lib/phaser/util/constants";
+import { refGameObject } from "@/lib/phaser/util/refGameObject";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 
@@ -10,18 +10,18 @@ interface ShadowProps {
 const { position } = defineProps<ShadowProps>();
 const displayWidth = 360;
 const scaleY = 0.7;
-const leftCapShadow = ref<{ [GAME_OBJECT_KEY]: GameObjects.Image }>();
-const middleShadow = ref<{ [GAME_OBJECT_KEY]: GameObjects.Image }>();
+const leftCapShadow = refGameObject<GameObjects.Image>();
+const middleShadow = refGameObject<GameObjects.Image>();
 const middleShadowX = computed(() => {
   if (!leftCapShadow.value) return 0;
 
-  const { x, displayWidth } = leftCapShadow.value[GAME_OBJECT_KEY];
+  const { x, displayWidth } = leftCapShadow.value;
   return x + displayWidth;
 });
 const rightCapShadowX = computed(() => {
   if (!middleShadow.value) return 0;
 
-  const { x, displayWidth } = middleShadow.value[GAME_OBJECT_KEY];
+  const { x, displayWidth } = middleShadow.value;
   return x + displayWidth;
 });
 </script>
