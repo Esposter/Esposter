@@ -16,7 +16,7 @@
       "error",
       {
         "types": {
-          "Omit": "Use `Except` from type-fest instead",
+          "Omit": "Use `Except` instead",
           "Function": false
         }
       }

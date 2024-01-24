@@ -1,9 +1,9 @@
 import { BattleMonster } from "@/models/dungeons/battle/monsters/BattleMonster";
 import { type BattleMonsterConfiguration } from "@/models/dungeons/battle/monsters/BattleMonsterConfiguration";
 import { dayjs } from "@/services/dayjs";
+import { type Except } from "@/util/types/Except";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
-import { type Except } from "type-fest";
 
 export class PlayerBattleMonster extends BattleMonster {
   static INITIAL_POSITION: Position = { x: 256, y: 316 };

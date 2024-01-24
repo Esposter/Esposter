@@ -6,7 +6,7 @@ import {
   vuetifyComponentItemSchema,
   type VuetifyComponentItem,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { type Except } from "type-fest";
+import { type Except } from "@/util/types/Except";
 import { z } from "zod";
 
 type TableEditorTypes = {

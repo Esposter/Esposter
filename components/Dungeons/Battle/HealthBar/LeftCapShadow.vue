@@ -21,8 +21,6 @@ defineExpose({ [GAME_OBJECT_KEY]: gameObject });
     :configuration="{
       ...position,
       textureKey: TextureManagerKey.HealthBarLeftCapShadow,
-      // Set origin to the middle-left of the health caps to enable
-      // grabbing the full width of the game object
       originX: 0,
       originY: 0.5,
       scaleY,

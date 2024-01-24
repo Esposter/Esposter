@@ -40,6 +40,7 @@ defineRouteRules({ ssr: false });
       }"
     >
       <DungeonsPreloaderScene />
+      <DungeonsBattleScene />
     </Game>
   </NuxtLayout>
 </template>

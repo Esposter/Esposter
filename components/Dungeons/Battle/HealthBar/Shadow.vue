@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
 import { GAME_OBJECT_KEY } from "@/lib/phaser/util/constants";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 
-interface HealthBarShadowProps {
+interface ShadowProps {
   position: Position;
 }
 
-const { position } = defineProps<HealthBarShadowProps>();
+const { position } = defineProps<ShadowProps>();
 const displayWidth = 360;
 const scaleY = 0.7;
 const leftCapShadow = ref<{ [GAME_OBJECT_KEY]: GameObjects.Image }>();
@@ -28,14 +27,12 @@ const rightCapShadowX = computed(() => {
 </script>
 
 <template>
-  <Container :configuration="{ ...position }">
-    <DungeonsBattleLeftCapShadow ref="leftCapShadow" :position="position" :scale-y="scaleY" />
-    <DungeonsBattleMiddleShadow
-      ref="middleShadow"
-      :position="{ ...position, x: middleShadowX }"
-      :scale-y="scaleY"
-      :display-width="displayWidth"
-    />
-    <DungeonsBattleRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
-  </Container>
+  <DungeonsBattleHealthBarLeftCapShadow ref="leftCapShadow" :position="position" :scale-y="scaleY" />
+  <DungeonsBattleHealthBarMiddleShadow
+    ref="middleShadow"
+    :position="{ ...position, x: middleShadowX }"
+    :scale-y="scaleY"
+    :display-width="displayWidth"
+  />
+  <DungeonsBattleHealthBarRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
 </template>

@@ -5,13 +5,13 @@ import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 
-interface MiddleShadowProps {
+interface MiddleProps {
   position: Position;
   scaleY: number;
   displayWidth: number;
 }
 
-const { position, scaleY } = defineProps<MiddleShadowProps>();
+const { position, scaleY, displayWidth } = defineProps<MiddleProps>();
 const gameObject = ref<{ [GAME_OBJECT_KEY]: GameObjects.Image }>();
 defineExpose({ [GAME_OBJECT_KEY]: gameObject });
 </script>
@@ -21,7 +21,7 @@ defineExpose({ [GAME_OBJECT_KEY]: gameObject });
     ref="gameObject"
     :configuration="{
       ...position,
-      textureKey: TextureManagerKey.HealthBarMiddleShadow,
+      textureKey: TextureManagerKey.HealthBarMiddle,
       originX: 0,
       originY: 0.5,
       scaleY,

@@ -1,5 +1,5 @@
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import { type Except } from "type-fest";
+import { type Except } from "@/util/types/Except";
 import { z } from "zod";
 
 class BaseGame {

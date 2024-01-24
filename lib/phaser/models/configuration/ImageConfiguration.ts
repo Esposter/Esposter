@@ -12,8 +12,8 @@ import { type TintConfiguration } from "@/lib/phaser/models/configuration/compon
 import { type TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import { type VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import { type GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
+import { type Except } from "@/util/types/Except";
 import { type Types } from "phaser";
-import { type Except } from "type-fest";
 
 export type ImageConfiguration = AlphaConfiguration &
   BlendModeConfiguration &
