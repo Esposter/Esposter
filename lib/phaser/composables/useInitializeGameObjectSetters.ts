@@ -13,7 +13,6 @@ export const useInitializeGameObjectSetters = <
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
-  const currentInstance = getCurrentInstance();
   const setters: ((gameObject: TGameObject) => void)[] = [];
   const watchStopHandlers: WatchStopHandle[] = [];
 
