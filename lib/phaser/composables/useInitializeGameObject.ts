@@ -1,10 +1,10 @@
+import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
-import { getUpdateEvent } from "@/lib/phaser/util/emit/getUpdateEvent";
 import { type GameObjects, type Types } from "phaser";
-import { type SetupContext, type WatchStopHandle } from "vue";
+import { type SetupContext } from "vue";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,
@@ -22,32 +22,7 @@ export const useInitializeGameObject = <
   const { pushGameObject } = parentContainerStore;
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
-  const watchStopHandlers: WatchStopHandle[] = [];
-  const setters: ((gameObject: TGameObject) => void)[] = [];
-
-  for (const [key, value] of Object.entries(configuration.value) as [
-    keyof TConfiguration,
-    TConfiguration[keyof TConfiguration],
-  ][]) {
-    const setter = setterMap[key];
-    if (!setter) continue;
-
-    setters.push((gameObject) => {
-      setter(gameObject, emit)(value);
-      emit(getUpdateEvent(key as string));
-    });
-    watchStopHandlers.push(
-      watch(
-        () => configuration.value[key],
-        (newValue) => {
-          if (!gameObject.value) return;
-          setter(gameObject.value, emit)(newValue);
-          emit(getUpdateEvent(key as string));
-        },
-        { deep: typeof configuration.value[key] === "object" },
-      ),
-    );
-  }
+  const setters = useInitializeGameObjectSetters(gameObject, configuration, emit, setterMap);
 
   onMounted(() => {
     gameObject.value = init(configuration.value);
@@ -74,8 +49,6 @@ export const useInitializeGameObject = <
   });
 
   onBeforeUnmount(() => {
-    for (const watchStopHandler of watchStopHandlers) watchStopHandler();
-
     if (!gameObject.value) return;
     gameObject.value.destroy();
     gameObject.value = null;
