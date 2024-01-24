@@ -1,5 +1,6 @@
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type GameObjects, type Types } from "phaser";
@@ -12,7 +13,9 @@ export const useInitializeGameObject = <TConfiguration extends object, TGameObje
   setterMap: SetterMap<TConfiguration, TGameObject>,
 ) => {
   const phaserStore = usePhaserStore();
-  const { scene, parentContainer } = storeToRefs(phaserStore);
+  const { scene } = storeToRefs(phaserStore);
+  const parentContainerStore = useParentContainerStore();
+  const { pushGameObject } = parentContainerStore;
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
@@ -43,19 +46,9 @@ export const useInitializeGameObject = <TConfiguration extends object, TGameObje
 
   onMounted(() => {
     gameObject.value = init(configuration.value);
+    pushGameObject(configuration.value, gameObject.value);
+
     for (const [setter, value] of settersWithValues) setter(gameObject.value, emit)(value);
-    // Set possible parent container
-    if (parentContainer.value) {
-      const i = parentContainer.value.list.findIndex(
-        (obj) =>
-          "depth" in obj &&
-          typeof obj.depth === "number" &&
-          "depth" in configuration.value &&
-          typeof configuration.value.depth === "number" &&
-          obj.depth > configuration.value.depth,
-      );
-      i === -1 ? parentContainer.value.add(gameObject.value) : parentContainer.value.addAt(gameObject.value, i);
-    }
     // Set events
     const events = Object.keys(GameObjectEventMap).filter(
       (key) => key in configuration.value,

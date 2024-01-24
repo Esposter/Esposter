@@ -2,6 +2,7 @@
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { type ContainerConfiguration } from "@/lib/phaser/models/configuration/ContainerConfiguration";
 import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ContainerSetterMap } from "@/lib/phaser/util/setterMap/ContainerSetterMap";
 
@@ -16,7 +17,9 @@ const props = defineProps<ContainerProps>();
 const { configuration } = toRefs(props);
 const emit = defineEmits<ContainerEmits>();
 const phaserStore = usePhaserStore();
-const { scene, parentContainer } = storeToRefs(phaserStore);
+const { scene } = storeToRefs(phaserStore);
+const parentContainerStore = useParentContainerStore();
+const { parentContainer } = storeToRefs(parentContainerStore);
 const container = useInitializeGameObject(
   ({ x, y, children }) => scene.value.add.container(x, y, children),
   configuration,
