@@ -9,6 +9,7 @@ interface LeftCapShadowProps {
 }
 
 const { position, scaleY } = defineProps<LeftCapShadowProps>();
+const displayWidth = defineModel<number | undefined>("displayWidth");
 </script>
 
 <template>
@@ -19,6 +20,8 @@ const { position, scaleY } = defineProps<LeftCapShadowProps>();
       originX: 0,
       originY: 0.5,
       scaleY,
+      displayWidth,
     }"
+    @update:display-width="(value: number | undefined) => (displayWidth = value)"
   />
 </template>

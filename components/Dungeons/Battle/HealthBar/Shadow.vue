@@ -6,26 +6,23 @@ interface ShadowProps {
 }
 
 const { position } = defineProps<ShadowProps>();
-const displayWidth = 360;
+const leftCapShadowDisplayWidth = ref<number>();
+const middleShadowX = computed(() => position.x + (leftCapShadowDisplayWidth.value ?? 0));
+const middleShadowDisplayWidth = 360;
 const scaleY = 0.7;
-// const leftCapShadow = refGameObject<GameObjects.Image>();
-// const middleShadow = refGameObject<GameObjects.Image>();
-// const middleShadowX = computed(() => {
-//   if (!leftCapShadow.value) return 0;
-
-//   const { x, displayWidth } = leftCapShadow.value;
-//   return x + displayWidth;
-// });
-// const rightCapShadowX = computed(() => {
-//   if (!middleShadow.value) return 0;
-
-//   const { x, displayWidth } = middleShadow.value;
-//   return x + displayWidth;
-// });
+const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplayWidth);
 </script>
 
 <template>
-  <DungeonsBattleHealthBarLeftCapShadow :position="position" :scale-y="scaleY" />
-  <DungeonsBattleHealthBarMiddleShadow :position="{ ...position }" :scale-y="scaleY" :display-width="displayWidth" />
-  <DungeonsBattleHealthBarRightCapShadow :position="{ ...position }" :scale-y="scaleY" />
+  <DungeonsBattleHealthBarLeftCapShadow
+    v-model:display-width="leftCapShadowDisplayWidth"
+    :position="position"
+    :scale-y="scaleY"
+  />
+  <DungeonsBattleHealthBarMiddleShadow
+    :position="{ ...position, x: middleShadowX }"
+    :scale-y="scaleY"
+    :display-width="middleShadowDisplayWidth"
+  />
+  <DungeonsBattleHealthBarRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
 </template>

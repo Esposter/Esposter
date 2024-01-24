@@ -14,7 +14,7 @@ const rightCapX = computed(() => middleX.value + middleDisplayWidth);
 </script>
 
 <template>
-  <DungeonsBattleHealthBarLeftCap v-model:displayWidth="leftCapDisplayWidth" :position="position" :scale-y="scaleY" />
+  <DungeonsBattleHealthBarLeftCap v-model:display-width="leftCapDisplayWidth" :position="position" :scale-y="scaleY" />
   <DungeonsBattleHealthBarMiddle
     :position="{ ...position, x: middleX }"
     :scale-y="scaleY"
