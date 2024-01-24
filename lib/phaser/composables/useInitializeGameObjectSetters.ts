@@ -23,17 +23,25 @@ export const useInitializeGameObjectSetters = <
     const setter = setterMap[key];
     if (!setter) continue;
 
-    const setterWithEmit = (gameObject: TGameObject, newValue: TConfiguration[keyof TConfiguration]) => {
+    const initializeSetter = (gameObject: TGameObject, newValue: TConfiguration[keyof TConfiguration]) => {
+      setter(gameObject, emit)(newValue);
+      if (newValue) emit(getUpdateEvent(key as string), newValue);
+      // If we haven't defined a proper value for the game object property,
+      // we should emit the intrinsic gameObject value so vue can grab it
+      else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
+    };
+    setters.push((gameObject) => initializeSetter(gameObject, value));
+
+    const watchSetter = (gameObject: TGameObject, newValue: TConfiguration[keyof TConfiguration]) => {
       setter(gameObject, emit)(newValue);
       emit(getUpdateEvent(key as string), newValue);
     };
-    setters.push((gameObject) => setterWithEmit(gameObject, value));
     watchStopHandlers.push(
       watch(
         () => configuration.value[key],
         (newValue) => {
           if (!gameObject.value) return;
-          setterWithEmit(gameObject.value, newValue);
+          watchSetter(gameObject.value, newValue);
         },
         { deep: typeof configuration.value[key] === "object" },
       ),
