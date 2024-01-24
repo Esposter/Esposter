@@ -2,8 +2,8 @@ import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInit
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
-import { type GameObjects, type Types } from "phaser";
+import { initializeGameObjectEvents } from "@/lib/phaser/util/emit/initializeGameObjectEvents";
+import { type GameObjects } from "phaser";
 import { type SetupContext } from "vue";
 
 export const useInitializeGameObject = <
@@ -22,30 +22,13 @@ export const useInitializeGameObject = <
   const { pushGameObject } = parentContainerStore;
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
-  const setters = useInitializeGameObjectSetters(gameObject, configuration, emit, setterMap);
+  const setters = useInitializeGameObjectSetters(configuration, gameObject, emit, setterMap);
 
   onMounted(() => {
     gameObject.value = init(configuration.value);
     pushGameObject(configuration.value, gameObject.value);
-
     for (const setter of setters) setter(gameObject.value);
-    // Set events
-    const events = Object.keys(GameObjectEventMap).filter(
-      (key) => key in configuration.value,
-    ) as (keyof typeof GameObjectEventMap)[];
-
-    if (events.length === 0) return;
-
-    if (!gameObject.value.input) gameObject.value.setInteractive();
-    if (events.some((key) => "drag" in GameObjectEventMap[key])) scene.value.input.setDraggable(gameObject.value);
-
-    for (const event of events) {
-      const context = GameObjectEventMap[event];
-      gameObject.value.on(event, (...args: Types.Input.EventData[]) => {
-        if ("eventIndex" in context) args[0].stopPropagation = args[context.eventIndex].stopPropagation;
-        emit(event, ...args);
-      });
-    }
+    initializeGameObjectEvents(configuration.value, gameObject.value, emit, scene.value);
   });
 
   onBeforeUnmount(() => {

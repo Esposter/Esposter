@@ -8,8 +8,8 @@ export const useInitializeGameObjectSetters = <
   TGameObject extends GameObjects.GameObject,
   TEmitsOptions extends Record<string, any[]>,
 >(
-  gameObject: Ref<TGameObject | null>,
   configuration: Ref<TConfiguration>,
+  gameObject: Ref<TGameObject | null>,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {

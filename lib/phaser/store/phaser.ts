@@ -1,3 +1,4 @@
+import { type SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { type Game } from "phaser";
 
@@ -8,7 +9,7 @@ export const usePhaserStore = defineStore("phaser", () => {
   const scene = computed(() => {
     if (!game.value) throw new NotInitializedError("Game");
     if (!sceneKey.value) throw new NotInitializedError("Scene key");
-    return game.value.scene.getScene(sceneKey.value);
+    return game.value.scene.getScene<SceneWithPlugins>(sceneKey.value);
   });
   return {
     game,
