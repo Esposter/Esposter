@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { type ContainerConfiguration } from "@/lib/phaser/models/configuration/ContainerConfiguration";
-import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type ContainerEventEmitsOptions } from "@/lib/phaser/models/emit/ContainerEventEmitsOptions";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ContainerSetterMap } from "@/lib/phaser/util/setterMap/ContainerSetterMap";
@@ -10,7 +10,7 @@ interface ContainerProps {
   configuration: Partial<ContainerConfiguration>;
 }
 
-interface ContainerEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const props = defineProps<ContainerProps>();

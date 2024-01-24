@@ -1,4 +1,3 @@
-import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
@@ -6,11 +5,15 @@ import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { type GameObjects, type Types } from "phaser";
 import { type SetupContext, type WatchStopHandle } from "vue";
 
-export const useInitializeGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(
+export const useInitializeGameObject = <
+  TConfiguration extends object,
+  TGameObject extends GameObjects.GameObject,
+  TEmitsOptions extends ((...args: any[]) => any) | Record<string, any[]>,
+>(
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
-  emit: SetupContext<GameObjectEventEmitsOptions>["emit"],
-  setterMap: SetterMap<TConfiguration, TGameObject>,
+  emit: SetupContext<TEmitsOptions>["emit"],
+  setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
@@ -20,7 +23,7 @@ export const useInitializeGameObject = <TConfiguration extends object, TGameObje
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
   const settersWithValues: [
-    setter: NonNullable<SetterMap<TConfiguration, TGameObject>[keyof TConfiguration]>,
+    setter: NonNullable<SetterMap<TConfiguration, TGameObject, TEmitsOptions>[keyof TConfiguration]>,
     value: TConfiguration[keyof TConfiguration],
   ][] = [];
 

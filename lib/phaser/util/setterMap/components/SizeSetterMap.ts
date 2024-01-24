@@ -1,4 +1,5 @@
 import { type SizeConfiguration } from "@/lib/phaser/models/configuration/components/SizeConfiguration";
+import { type SizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/SizeEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -19,4 +20,4 @@ export const SizeSetterMap = {
     if (!value) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
-} satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size>;
+} satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size, SizeEventEmitsOptions>;

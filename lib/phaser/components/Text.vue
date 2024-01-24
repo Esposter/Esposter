@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
-import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
 import { type SetRequired } from "@/util/types/SetRequired";
@@ -10,7 +10,7 @@ interface TextProps {
   configuration: SetRequired<Partial<TextConfiguration>, "text">;
 }
 
-interface TextEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 
 const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);

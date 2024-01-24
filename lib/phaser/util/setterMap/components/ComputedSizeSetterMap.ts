@@ -1,4 +1,5 @@
 import { type ComputedSizeConfiguration } from "@/lib/phaser/models/configuration/components/ComputedSizeConfiguration";
+import { type ComputedSizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/ComputedSizeEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -19,4 +20,4 @@ export const ComputedSizeSetterMap = {
     if (!value) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
-} satisfies SetterMap<ComputedSizeConfiguration, GameObjects.Components.ComputedSize>;
+} satisfies SetterMap<ComputedSizeConfiguration, GameObjects.Components.ComputedSize, ComputedSizeEventEmitsOptions>;

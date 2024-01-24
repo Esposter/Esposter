@@ -1,4 +1,5 @@
 import { type OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
+import { type OriginEventEmitsOptions } from "@/lib/phaser/models/emit/components/OriginEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects } from "phaser";
 
@@ -8,4 +9,4 @@ export const OriginSetterMap = {
   originY: (gameObject) => (value) => gameObject.setOrigin(gameObject.originX, value),
   displayOriginX: (gameObject) => (value) => gameObject.setDisplayOrigin(value, gameObject.displayOriginY),
   displayOriginY: (gameObject) => (value) => gameObject.setDisplayOrigin(gameObject.displayOriginX, value),
-} satisfies SetterMap<OriginConfiguration, GameObjects.Components.Origin>;
+} satisfies SetterMap<OriginConfiguration, GameObjects.Components.Origin, OriginEventEmitsOptions>;

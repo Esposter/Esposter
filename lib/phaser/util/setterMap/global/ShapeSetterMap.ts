@@ -1,4 +1,5 @@
 import { type ShapeConfiguration } from "@/lib/phaser/models/configuration/global/ShapeConfiguration";
+import { type ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/global/ShapeEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
@@ -35,4 +36,4 @@ export const ShapeSetterMap = {
   },
   fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
   fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
-} satisfies SetterMap<ShapeConfiguration, GameObjects.Shape>;
+} satisfies SetterMap<ShapeConfiguration, GameObjects.Shape, ShapeEventEmitsOptions>;

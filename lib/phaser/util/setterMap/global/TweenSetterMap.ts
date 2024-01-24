@@ -1,4 +1,5 @@
 import { type TweenConfiguration } from "@/lib/phaser/models/configuration/global/TweenConfiguration";
+import { type TweenEventEmitsOptions } from "@/lib/phaser/models/emit/global/TweenEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects, type Tweens, type Types } from "phaser";
 
@@ -15,7 +16,7 @@ export const TweenSetterMap = {
       if (emit) tweenchain.on("complete", () => emit("update:tweenchain", undefined));
       return tweenchain;
     }),
-} satisfies SetterMap<TweenConfiguration, GameObjects.GameObject>;
+} satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;
 
 const createTween = <TTween extends { destroy: () => void }, TConfiguration extends object>(
   callback: (config: TConfiguration) => TTween,

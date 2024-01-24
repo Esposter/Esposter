@@ -1,3 +1,4 @@
+import { type ExcludeFunctionProperties } from "@/util/types/ExcludeFunctionProperties";
 import { type GameObjects } from "phaser";
 
-export type TransformConfiguration = GameObjects.Components.Transform;
+export type TransformConfiguration = ExcludeFunctionProperties<GameObjects.Components.Transform>;

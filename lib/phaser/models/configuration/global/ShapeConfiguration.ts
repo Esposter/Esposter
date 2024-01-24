@@ -9,6 +9,14 @@ import { type TransformConfiguration } from "@/lib/phaser/models/configuration/c
 import { type VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import { type GameObjects } from "phaser";
 
+export type BaseShapeConfiguration = {
+  active: GameObjects.Shape["active"];
+  displayWidth: GameObjects.Shape["displayWidth"];
+  displayHeight: GameObjects.Shape["displayHeight"];
+  fillColor: GameObjects.Shape["fillColor"];
+  fillAlpha: GameObjects.Shape["fillAlpha"];
+};
+
 export type ShapeConfiguration = AlphaSingleConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
@@ -17,10 +25,5 @@ export type ShapeConfiguration = AlphaSingleConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   TransformConfiguration &
-  VisibleConfiguration & {
-    active: GameObjects.Shape["active"];
-    displayWidth: GameObjects.Shape["displayWidth"];
-    displayHeight: GameObjects.Shape["displayHeight"];
-    fillColor: GameObjects.Shape["fillColor"];
-    fillAlpha: GameObjects.Shape["fillAlpha"];
-  };
+  VisibleConfiguration &
+  BaseShapeConfiguration;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
-import { type GameObjectEventEmitsOptions } from "@/lib/phaser/models/emit/GameObjectEventEmitsOptions";
+import { type RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
 
@@ -9,7 +9,7 @@ interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;
 }
 
-interface RectangleEmits extends /** @vue-ignore */ GameObjectEventEmitsOptions {}
+interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
 const props = defineProps<RectangleProps>();
 const { configuration } = toRefs(props);
