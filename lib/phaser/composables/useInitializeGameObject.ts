@@ -2,13 +2,14 @@ import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
+import { getUpdateEvent } from "@/lib/phaser/util/emit/getUpdateEvent";
 import { type GameObjects, type Types } from "phaser";
 import { type SetupContext, type WatchStopHandle } from "vue";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,
   TGameObject extends GameObjects.GameObject,
-  TEmitsOptions extends ((...args: any[]) => any) | Record<string, any[]>,
+  TEmitsOptions extends Record<string, any[]>,
 >(
   init: (configuration: TConfiguration) => TGameObject,
   configuration: Ref<TConfiguration>,
@@ -22,10 +23,7 @@ export const useInitializeGameObject = <
   // @TODO: Vue cannot unwrap generic refs yet
   const gameObject = ref(null) as Ref<TGameObject | null>;
   const watchStopHandlers: WatchStopHandle[] = [];
-  const settersWithValues: [
-    setter: NonNullable<SetterMap<TConfiguration, TGameObject, TEmitsOptions>[keyof TConfiguration]>,
-    value: TConfiguration[keyof TConfiguration],
-  ][] = [];
+  const setters: ((gameObject: TGameObject) => void)[] = [];
 
   for (const [key, value] of Object.entries(configuration.value) as [
     keyof TConfiguration,
@@ -34,13 +32,17 @@ export const useInitializeGameObject = <
     const setter = setterMap[key];
     if (!setter) continue;
 
-    settersWithValues.push([setter, value]);
+    setters.push((gameObject) => {
+      setter(gameObject, emit)(value);
+      emit(getUpdateEvent(key as string));
+    });
     watchStopHandlers.push(
       watch(
         () => configuration.value[key],
         (newValue) => {
           if (!gameObject.value) return;
           setter(gameObject.value, emit)(newValue);
+          emit(getUpdateEvent(key as string));
         },
         { deep: typeof configuration.value[key] === "object" },
       ),
@@ -51,7 +53,7 @@ export const useInitializeGameObject = <
     gameObject.value = init(configuration.value);
     pushGameObject(configuration.value, gameObject.value);
 
-    for (const [setter, value] of settersWithValues) setter(gameObject.value, emit)(value);
+    for (const setter of setters) setter(gameObject.value);
     // Set events
     const events = Object.keys(GameObjectEventMap).filter(
       (key) => key in configuration.value,
@@ -66,9 +68,6 @@ export const useInitializeGameObject = <
       const context = GameObjectEventMap[event];
       gameObject.value.on(event, (...args: Types.Input.EventData[]) => {
         if ("eventIndex" in context) args[0].stopPropagation = args[context.eventIndex].stopPropagation;
-        // @ts-expect-error
-        // emit has a bunch of different overload types which doesn't match our union type
-        // but we know that our union type matches the game object events since we're just passing in the same events
         emit(event, ...args);
       });
     }
