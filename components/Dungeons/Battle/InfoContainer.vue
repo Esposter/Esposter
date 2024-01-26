@@ -43,7 +43,6 @@ const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
           fontSize: '1.75rem',
         },
       }"
-      @update:display-width="(value: number | undefined) => (nameDisplayWidth = value)"
     />
     <Text
       :configuration="{
