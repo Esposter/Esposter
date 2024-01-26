@@ -112,7 +112,7 @@
     "phaser3-rex-plugins": "^1.60.9",
     "pinia": "^2.1.7",
     "postgres": "^3.4.3",
-    "rate-limiter-flexible": "^4.0.0",
+    "rate-limiter-flexible": "^4.0.1",
     "recursive-diff": "^1.0.9",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.2.1",
