@@ -228,7 +228,7 @@ devDependencies:
     version: 0.2.0(eslint@8.56.0)
   '@nuxt/test-utils':
     specifier: ^3.10.0
-    version: 3.10.0(h3@1.10.0)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
+    version: 3.10.0(h3@1.10.1)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
   '@nuxtjs/google-fonts':
     specifier: ^3.1.3
     version: 3.1.3(rollup@2.79.1)
@@ -284,8 +284,8 @@ devDependencies:
     specifier: ^1.3.4
     version: 1.3.4
   h3:
-    specifier: ^1.10.0
-    version: 1.10.0
+    specifier: ^1.10.1
+    version: 1.10.1
   happy-dom:
     specifier: ^13.3.1
     version: 13.3.1
@@ -3084,7 +3084,7 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/test-utils@3.10.0(h3@1.10.0)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8):
+  /@nuxt/test-utils@3.10.0(h3@1.10.1)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8):
     resolution: {integrity: sha512-9ZKKrccCUyZP0P9/BdTNHWwTRvIbBnrmDvqvO0dQpTiUhgDVeO1vdG40o4e4olw7sbzUP51C8uA0OkRur/zBvQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
     peerDependencies:
@@ -3131,7 +3131,7 @@ packages:
       execa: 8.0.1
       fake-indexeddb: 5.0.2
       get-port-please: 3.1.2
-      h3: 1.10.0
+      h3: 1.10.1
       happy-dom: 13.3.1
       local-pkg: 0.5.0
       magic-string: 0.30.5
@@ -3147,7 +3147,7 @@ packages:
       unplugin: 1.6.0
       vite: 5.0.12(sass@1.70.0)
       vitest: 1.2.1(happy-dom@13.3.1)(sass@1.70.0)
-      vitest-environment-nuxt: 1.0.0(h3@1.10.0)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
+      vitest-environment-nuxt: 1.0.0(h3@1.10.1)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
       vue: 3.4.8(typescript@5.3.3)
       vue-router: 4.2.5(vue@3.4.8)
     transitivePeerDependencies:
@@ -3179,7 +3179,7 @@ packages:
       externality: 1.0.2
       fs-extra: 11.2.0
       get-port-please: 3.1.2
-      h3: 1.10.0
+      h3: 1.10.1
       knitwork: 1.0.0
       magic-string: 0.30.5
       mlly: 1.5.0
@@ -7607,13 +7607,14 @@ packages:
     engines: {node: '>=4', npm: '>=3', yarn: '>=1.3.0'}
     dev: false
 
-  /h3@1.10.0:
-    resolution: {integrity: sha512-Tw1kcIC+AeimwRmviiObaD5EB430Yt+lTgOxLJxNr96Vd/fGRu04EF7aKfOAcpwKCI+U2JlbxOLhycD86p3Ciw==}
+  /h3@1.10.1:
+    resolution: {integrity: sha512-UBAUp47hmm4BB5/njB4LrEa9gpuvZj4/Qf/ynSMzO6Ku2RXaouxEfiG2E2IFnv6fxbhAkzjasDxmo6DFdEeXRg==}
     dependencies:
       cookie-es: 1.0.0
       defu: 6.1.4
       destr: 2.0.2
       iron-webcrypto: 1.0.0
+      ohash: 1.1.3
       radix3: 1.1.0
       ufo: 1.3.2
       uncrypto: 0.1.3
@@ -8409,7 +8410,7 @@ packages:
       consola: 3.2.3
       defu: 6.1.4
       get-port-please: 3.1.2
-      h3: 1.10.0
+      h3: 1.10.1
       http-shutdown: 1.2.2
       jiti: 1.21.0
       mlly: 1.5.0
@@ -8849,7 +8850,7 @@ packages:
       fs-extra: 11.2.0
       globby: 14.0.0
       gzip-size: 7.0.0
-      h3: 1.10.0
+      h3: 1.10.1
       hookable: 5.5.3
       httpxy: 0.1.5
       is-primitive: 3.0.1
@@ -9116,7 +9117,7 @@ packages:
       estree-walker: 3.0.3
       fs-extra: 11.2.0
       globby: 14.0.0
-      h3: 1.10.0
+      h3: 1.10.1
       hookable: 5.5.3
       jiti: 1.21.0
       klona: 2.0.6
@@ -11151,7 +11152,7 @@ packages:
     dependencies:
       '@trpc/client': 10.45.0(@trpc/server@10.45.0)
       '@trpc/server': 10.45.0
-      h3: 1.10.0
+      h3: 1.10.1
       ofetch: 1.3.3
       ohash: 1.1.3
     dev: false
@@ -11569,7 +11570,7 @@ packages:
       anymatch: 3.1.3
       chokidar: 3.5.3
       destr: 2.0.2
-      h3: 1.10.0
+      h3: 1.10.1
       ioredis: 5.3.2
       listhen: 1.5.6
       lru-cache: 10.1.0
@@ -11884,10 +11885,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /vitest-environment-nuxt@1.0.0(h3@1.10.0)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8):
+  /vitest-environment-nuxt@1.0.0(h3@1.10.1)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8):
     resolution: {integrity: sha512-AWMO9h4HdbaFdPWZw34gALFI8gbBiOpvfbyeZwHIPfh4kWg/TwElYHvYMQ61WPUlCGaS5LebfHkaI0WPyb//Iw==}
     dependencies:
-      '@nuxt/test-utils': 3.10.0(h3@1.10.0)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
+      '@nuxt/test-utils': 3.10.0(h3@1.10.1)(happy-dom@13.3.1)(rollup@2.79.1)(vite@5.0.12)(vitest@1.2.1)(vue-router@4.2.5)(vue@3.4.8)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
