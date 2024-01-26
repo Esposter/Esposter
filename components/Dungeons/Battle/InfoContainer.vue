@@ -12,7 +12,7 @@ interface InfoContainerProps {
   level: number;
 }
 
-const { position, scaleY = 1, name } = defineProps<InfoContainerProps>();
+const { position, scaleY, name } = defineProps<InfoContainerProps>();
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 </script>
