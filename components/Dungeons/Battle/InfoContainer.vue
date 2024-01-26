@@ -45,6 +45,18 @@ const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
       }"
       @update:display-width="(value: number | undefined) => (nameDisplayWidth = value)"
     />
+    <Text
+      :configuration="{
+        x: 30,
+        y: 55,
+        text: 'HP',
+        style: {
+          color: '#ff6505',
+          fontSize: '1.5rem',
+          fontStyle: 'italic',
+        },
+      }"
+    />
     <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" />
   </Container>
 </template>
