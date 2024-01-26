@@ -5,11 +5,11 @@ import { type GameObjects } from "phaser";
 
 export const FlipSetterMap = {
   flipX: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setFlipX(value);
   },
   flipY: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setFlipY(value);
   },
 } satisfies SetterMap<FlipConfiguration, GameObjects.Components.Flip, FlipEventEmitsOptions>;

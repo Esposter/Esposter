@@ -10,11 +10,11 @@ export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.R
     ...ShapeSetterMap,
     ...GlobalSetterMap,
     width: (gameObject) => (value) => {
-      if (!value) return;
+      if (value === undefined) return;
       gameObject.setSize(value, gameObject.height);
     },
     height: (gameObject) => (value) => {
-      if (!value) return;
+      if (value === undefined) return;
       gameObject.setSize(gameObject.width, value);
     },
   };

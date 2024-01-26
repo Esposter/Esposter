@@ -11,31 +11,24 @@ export const useInitializeGameObject = <
   TGameObject extends GameObjects.GameObject,
   TEmitsOptions extends Record<string, any[]>,
 >(
-  init: (configuration: TConfiguration) => TGameObject,
+  gameObject: Ref<TGameObject>,
   configuration: Ref<TConfiguration>,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
+  const setters = useInitializeGameObjectSetters(configuration, gameObject, emit, setterMap);
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
   const parentContainerStore = useParentContainerStore();
   const { pushGameObject } = parentContainerStore;
-  // @TODO: Vue cannot unwrap generic refs yet
-  const gameObject = ref(null) as Ref<TGameObject | null>;
-  const setters = useInitializeGameObjectSetters(configuration, gameObject, emit, setterMap);
+  pushGameObject(configuration.value, gameObject.value);
 
   onMounted(() => {
-    gameObject.value = init(configuration.value);
-    pushGameObject(configuration.value, gameObject.value);
     for (const setter of setters) setter(gameObject.value);
     initializeGameObjectEvents(configuration.value, gameObject.value, emit, scene.value);
   });
 
   onBeforeUnmount(() => {
-    if (!gameObject.value) return;
     gameObject.value.destroy();
-    gameObject.value = null;
   });
-
-  return gameObject;
 };

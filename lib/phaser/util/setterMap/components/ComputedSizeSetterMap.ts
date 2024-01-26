@@ -5,19 +5,19 @@ import { type GameObjects } from "phaser";
 
 export const ComputedSizeSetterMap = {
   width: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setSize(value, gameObject.height);
   },
   height: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setSize(gameObject.width, value);
   },
   displayWidth: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setDisplaySize(value, gameObject.displayHeight);
   },
   displayHeight: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
 } satisfies SetterMap<ComputedSizeConfiguration, GameObjects.Components.ComputedSize, ComputedSizeEventEmitsOptions>;

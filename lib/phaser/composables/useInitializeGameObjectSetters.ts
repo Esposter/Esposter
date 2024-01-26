@@ -9,7 +9,7 @@ export const useInitializeGameObjectSetters = <
   TEmitsOptions extends Record<string, any[]>,
 >(
   configuration: Ref<TConfiguration>,
-  gameObject: Ref<TGameObject | null>,
+  gameObject: Ref<TGameObject>,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
@@ -25,7 +25,7 @@ export const useInitializeGameObjectSetters = <
 
     setters.push((gameObject) => {
       setter(gameObject, emit)(value);
-      if (value) emit(getUpdateEvent(key as string), value);
+      if (value !== undefined) emit(getUpdateEvent(key as string), value);
       // If we haven't defined a proper value for the game object property,
       // we should emit the intrinsic gameObject value so vue can grab it
       else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
@@ -34,7 +34,6 @@ export const useInitializeGameObjectSetters = <
       watch(
         () => configuration.value[key],
         (newValue) => {
-          if (!gameObject.value) return;
           setter(gameObject.value, emit)(newValue);
           emit(getUpdateEvent(key as string), newValue);
         },

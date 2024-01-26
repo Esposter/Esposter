@@ -5,7 +5,7 @@ import { type GameObjects } from "phaser";
 
 export const TextureCropSetterMap = {
   frame: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setFrame(value);
   },
   textureKey: (gameObject) => (value) => {

@@ -5,7 +5,7 @@ import { type GameObjects } from "phaser";
 
 export const BlendModeSetterMap = {
   blendMode: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setBlendMode(value);
   },
 } satisfies SetterMap<BlendModeConfiguration, GameObjects.Components.BlendMode, BlendModeEventEmitsOptions>;

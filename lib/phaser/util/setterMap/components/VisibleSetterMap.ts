@@ -5,7 +5,7 @@ import { type GameObjects } from "phaser";
 
 export const VisibleSetterMap = {
   visible: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setVisible(value);
   },
 } satisfies SetterMap<VisibleConfiguration, GameObjects.Components.Visible, VisibleEventEmitsOptions>;

@@ -5,15 +5,15 @@ import { type GameObjects } from "phaser";
 
 export const ScrollFactorSetterMap = {
   scrollFactor: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setScrollFactor(value, gameObject.scrollFactorY);
   },
   scrollFactorX: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setScrollFactor(value, gameObject.scrollFactorY);
   },
   scrollFactorY: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setScrollFactor(gameObject.scrollFactorX, value);
   },
 } satisfies SetterMap<ScrollFactorConfiguration, GameObjects.Components.ScrollFactor, ScrollFactorEventEmitsOptions>;

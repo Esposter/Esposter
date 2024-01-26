@@ -16,13 +16,13 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
 const { game, sceneKey } = storeToRefs(phaserStore);
-const canvas = ref<HTMLDivElement>();
+const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
 const listener = () => phaserEventEmitter.emit("resize");
 
 onMounted(() => {
   window.addEventListener("resize", listener);
-  game.value = new Game({ ...configuration, parent: canvas.value });
+  game.value = new Game({ ...configuration, parent: canvasRoot.value });
   game.value.events.addListener("ready", () => {
     isReady.value = true;
   });
@@ -43,6 +43,6 @@ watch(sceneKey, (newSceneKey) => {
 </script>
 
 <template>
-  <div ref="canvas" />
+  <div ref="canvasRoot" />
   <slot v-if="isReady" />
 </template>

@@ -23,15 +23,15 @@ export const ShapeSetterMap = {
   ...TransformSetterMap,
   ...VisibleSetterMap,
   active: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setActive(value);
   },
   displayWidth: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setDisplaySize(value, gameObject.displayHeight);
   },
   displayHeight: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
   fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
