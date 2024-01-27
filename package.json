@@ -96,7 +96,7 @@
     "deep-equal": "^2.2.3",
     "drizzle-orm": "^0.29.3",
     "drizzle-zod": "^0.5.1",
-    "emoji-mart-vue-fast": "^15.0.0",
+    "emoji-mart-vue-fast": "^15.0.1",
     "eventemitter3": "^5.0.1",
     "fuse.js": "^7.0.0",
     "grid-engine": "^2.44.0",
