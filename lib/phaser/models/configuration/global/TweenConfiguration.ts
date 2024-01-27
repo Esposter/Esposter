@@ -1,6 +1,6 @@
-import { type Types } from "phaser";
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 
 export interface TweenConfiguration {
-  tween: Types.Tweens.TweenBuilderConfig;
-  tweenchain: Types.Tweens.TweenBuilderConfig[];
+  tween: TweenBuilderConfiguration;
+  tweenchain: TweenBuilderConfiguration[];
 }
