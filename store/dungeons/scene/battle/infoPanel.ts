@@ -6,10 +6,10 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
   const playerStore = usePlayerStore();
-  const { activeMonster, inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRefs(playerStore);
-  const line1Text = ref("What should");
+  const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRefs(playerStore);
+  const line1Text = ref("");
   const line1TextDisplayWidth = ref<number>();
-  const line2Text = ref(`${activeMonster.value.name} do next?`);
+  const line2Text = ref("");
   const isPlayerInputPromptCursorVisible = ref(false);
   const queuedMessages = ref<string[]>([]);
   const queuedOnComplete = ref<() => void>();

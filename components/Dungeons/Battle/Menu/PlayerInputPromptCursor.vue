@@ -3,7 +3,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
 import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { usePlayerStore } from "~/store/dungeons/scene/battle/player";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 interface PlayerInputPromptCursorProps {
   isVisible: boolean;

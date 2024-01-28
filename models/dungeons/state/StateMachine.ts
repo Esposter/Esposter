@@ -31,6 +31,7 @@ export class StateMachine<TStateName extends string> {
     }
 
     this.isChangingState = true;
+    this.currentState.onExit?.();
     this.currentState = state;
     this.currentState.onEnter?.();
     this.isChangingState = false;
