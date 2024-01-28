@@ -6,6 +6,7 @@ import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { type Position } from "grid-engine";
 
 interface MonsterProps {
   // By default, this will be the player
@@ -15,24 +16,23 @@ interface MonsterProps {
 const { isEnemy } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : usePlayerStore();
 const { activeMonster, activeMonsterAnimationState, activeMonsterAnimationStateOnComplete } = storeToRefs(store);
-const x = ref(isEnemy ? 768 : 256);
-const y = computed(() => (isEnemy ? 144 : 316));
+const position = ref<Position>(isEnemy ? { x: -100, y: 144 } : { x: -100, y: 316 });
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
   if (!activeMonsterAnimationState.value) return;
 
-  let xStart: number;
+  let xEnd: number;
   let yEnd: number;
 
   switch (activeMonsterAnimationState.value) {
     case AnimationState.Appear:
-      xStart = -30;
+      xEnd = isEnemy ? 768 : 256;
       return {
         delay: 0,
         duration: dayjs.duration(isEnemy ? 1.6 : 0.8, "seconds").asMilliseconds(),
         x: {
-          from: xStart,
-          start: xStart,
-          to: x.value,
+          from: position.value.x,
+          start: position.value.x,
+          to: xEnd,
         },
         onComplete: activeMonsterAnimationStateOnComplete.value,
       } as TweenBuilderConfiguration;
@@ -52,13 +52,13 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
         },
       } as TweenBuilderConfiguration;
     case AnimationState.Death:
-      yEnd = isEnemy ? y.value - 400 : y.value + 400;
+      yEnd = isEnemy ? position.value.y - 400 : position.value.y + 400;
       return {
         delay: 0,
         duration: dayjs.duration(2, "seconds").asMilliseconds(),
         y: {
-          from: y.value,
-          start: y.value,
+          from: position.value.y,
+          start: position.value.y,
           to: yEnd,
         },
         onComplete: activeMonsterAnimationStateOnComplete.value,
@@ -72,14 +72,13 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
 <template>
   <Image
     :configuration="{
-      x,
-      y,
+      ...position,
       textureKey: activeMonster.asset.key,
       frame: activeMonster.asset.frame,
       flipX: !isEnemy,
       tween,
     }"
-    @update:x="(value: typeof x) => (x = value)"
+    @update:x="(value: typeof position.x) => (position.x = value)"
   />
   <DungeonsBattleMonsterInfoContainer :is-enemy="isEnemy" />
 </template>
