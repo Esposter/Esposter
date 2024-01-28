@@ -8,7 +8,7 @@ import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const infoPanelStore = useInfoPanelStore();
-const { line1Text, line2Text, isPlayerInputPromptCursorVisible } = storeToRefs(infoPanelStore);
+const { line1Text, line1TextDisplayWidth, line2Text, isPlayerInputPromptCursorVisible } = storeToRefs(infoPanelStore);
 </script>
 
 <template>
@@ -19,7 +19,9 @@ const { line1Text, line2Text, isPlayerInputPromptCursorVisible } = storeToRefs(i
         y: 468,
         text: line1Text,
         style: battleUITextStyle,
+        displayWidth: line1TextDisplayWidth,
       }"
+      @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />
     <Text
       :configuration="{

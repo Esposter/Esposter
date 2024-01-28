@@ -1,17 +1,14 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { animateText } from "@/services/dungeons/animation/animateText";
-import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
 import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
-  const battleSceneStore = useBattleSceneStore();
-  const { activePanel } = storeToRefs(battleSceneStore);
   const playerStore = usePlayerStore();
-  const { activeMonster } = storeToRefs(playerStore);
+  const { activeMonster, inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRefs(playerStore);
   const line1Text = ref("What should");
+  const line1TextDisplayWidth = ref<number>();
   const line2Text = ref(`${activeMonster.value.name} do next?`);
   const isPlayerInputPromptCursorVisible = ref(false);
   const queuedMessages = ref<string[]>([]);
@@ -28,7 +25,6 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
   };
 
   const showMessage = () => {
-    activePanel.value = ActivePanel.Info;
     isWaitingForPlayerSpecialInput.value = false;
     isPlayerInputPromptCursorVisible.value = false;
     line1Text.value = "";
@@ -49,6 +45,8 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
     isQueuedMessagesAnimationPlaying.value = true;
     animateText(scene.value, line1Text, message, {
       onComplete: () => {
+        inputPromptCursorPositionX.value =
+          line1TextDisplayWidth.value ?? 0 + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
         isPlayerInputPromptCursorVisible.value = true;
         isWaitingForPlayerSpecialInput.value = true;
         isQueuedMessagesAnimationPlaying.value = false;
@@ -57,7 +55,6 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
   };
 
   const showMessageNoInputRequired = (message: string, onComplete?: () => void, isSkipAnimation?: true) => {
-    activePanel.value = ActivePanel.Info;
     line1Text.value = "";
 
     if (isSkipAnimation) {
@@ -71,6 +68,7 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
 
   return {
     line1Text,
+    line1TextDisplayWidth,
     line2Text,
     isPlayerInputPromptCursorVisible,
     isQueuedMessagesAnimationPlaying,

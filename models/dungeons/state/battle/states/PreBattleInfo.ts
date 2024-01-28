@@ -8,13 +8,13 @@ import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
 export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
   onEnter: () => {
-    const playerStore = useEnemyStore();
+    const enemyStore = useEnemyStore();
     const {
       activeMonster,
       activeMonsterAnimationState,
       activeMonsterAnimationStateOnComplete,
       isPlayingHealthBarAppearAnimation,
-    } = storeToRefs(playerStore);
+    } = storeToRefs(enemyStore);
     const infoPanelStore = useInfoPanelStore();
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 

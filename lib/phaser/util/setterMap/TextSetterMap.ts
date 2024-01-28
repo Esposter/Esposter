@@ -38,8 +38,12 @@ export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextE
     if (!value) return;
     gameObject.setStyle(value);
   },
-  text: (gameObject) => (value) => {
+  text: (gameObject, emit) => (value) => {
     if (!value) return;
+    // Unfortunately, we also have to refresh width values for vue to properly sync up,
+    // since it doesn't know that other computed phaser properties have also changed :C
     gameObject.setText(value);
+    emit("update:width", gameObject.width);
+    emit("update:displayWidth", gameObject.displayWidth);
   },
 };

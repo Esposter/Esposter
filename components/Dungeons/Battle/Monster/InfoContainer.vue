@@ -6,29 +6,33 @@ import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuratio
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
+import { useEnemyStore } from "~/store/dungeons/scene/battle/enemy";
+import { usePlayerStore } from "~/store/dungeons/scene/battle/player";
 
 interface InfoContainerProps {
-  position?: Position;
-  scaleY?: number;
-  name: string;
-  level: number;
-  healthBarPercentage: number;
+  isEnemy?: true;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { position, scaleY, name, level, healthBarPercentage } = defineProps<InfoContainerProps>();
-const isPlayingAppearAnimation = defineModel<true | undefined>("isPlayingAppearAnimation", { required: true });
+const { isEnemy } = defineProps<InfoContainerProps>();
+const store = isEnemy ? useEnemyStore() : usePlayerStore();
+const { activeMonster, isPlayingHealthBarAppearAnimation } = storeToRefs(store);
+const position = ref<Position>(isEnemy ? { x: -600, y: 0 } : { x: 1200, y: 318 });
+const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
+const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
-  if (!isPlayingAppearAnimation.value) return;
+  if (!isPlayingHealthBarAppearAnimation.value) return;
+
+  const xEnd = isEnemy ? 0 : 556;
   return {
     delay: 0,
     duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
     x: {
-      from: 800,
-      start: 800,
-      to: position?.x,
+      from: position.value.x,
+      start: position.value.x,
+      to: xEnd,
     },
   };
 });
@@ -41,7 +45,7 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       :configuration="{
         x: 30,
         y: 20,
-        text: name,
+        text: activeMonster.name,
         style: {
           color: '#7e3d3f',
           fontSize: '2rem',
@@ -54,7 +58,7 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       :configuration="{
         x: levelX,
         y: 23,
-        text: `L${level}`,
+        text: `L${activeMonster.currentLevel}`,
         style: {
           color: '#ed474b',
           fontSize: '1.75rem',
@@ -74,6 +78,19 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       }"
     />
     <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
-    <slot />
+    <Text
+      v-if="!isEnemy"
+      :configuration="{
+        x: 443,
+        y: 80,
+        originX: 1,
+        originY: 0,
+        text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
+        style: {
+          color: '#7e3d3f',
+          fontSize: '1rem',
+        },
+      }"
+    />
   </Container>
 </template>
