@@ -3,10 +3,10 @@ import { type Position } from "grid-engine";
 
 interface HealthBarProps {
   position: Position;
-  barPercentage?: number;
+  barPercentage: number;
 }
 
-const { position, barPercentage = 100 } = defineProps<HealthBarProps>();
+const { position, barPercentage } = defineProps<HealthBarProps>();
 const fullBarWidth = 360;
 const scaleY = 0.7;
 const barWidth = computed(() => (fullBarWidth * barPercentage) / 100);

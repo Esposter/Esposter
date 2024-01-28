@@ -8,7 +8,6 @@ export class StateMachine<TStateName extends string> {
 
   constructor(stateMap: Map<TStateName, State<TStateName>>) {
     this.stateMap = stateMap;
-    this.setState(this.stateMap.values().next().value.name);
   }
 
   get currentStateName() {

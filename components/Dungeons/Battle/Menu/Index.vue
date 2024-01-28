@@ -21,7 +21,7 @@ const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
       strokeStyle: [MENU_PADDING * 2, 0xe4434a],
     }"
   />
-  <DungeonsBattleMenuAttackOptionPanel />
-  <DungeonsBattleMenuAttackInfoPanel />
-  <DungeonsBattleMenuOptionPanel />
+  <DungeonsBattleMenuPanelAttackOption />
+  <DungeonsBattleMenuPanelInfo />
+  <DungeonsBattleMenuPanelOption />
 </template>

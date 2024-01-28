@@ -1,22 +1,33 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { dayjs } from "@/services/dayjs";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
+import { getAttackName } from "@/services/dungeons/battle/getAttackName";
+import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
+import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 export const EnemyAttack: State<StateName> = {
   name: StateName.EnemyAttack,
-  onEnter: function (this) {
-    this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(
-      `Enemy ${BattleSceneStore.activeEnemyMonster.name} used ${BattleSceneStore.activeEnemyMonster.attacks[0].name}.`,
+  onEnter: () => {
+    const phaserStore = usePhaserStore();
+    const { scene } = storeToRefs(phaserStore);
+    const playerStore = usePlayerStore();
+    const { takeDamage } = playerStore;
+    const enemyStore = useEnemyStore();
+    const { activeMonster } = storeToRefs(enemyStore);
+    const infoPanelStore = useInfoPanelStore();
+    const { showMessageNoInputRequired } = infoPanelStore;
+
+    showMessageNoInputRequired(
+      `Enemy ${activeMonster.value.name} used ${getAttackName(activeMonster.value.attackIds[0])}.`,
       () => {
-        this.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-          BattleSceneStore.activePlayerMonster.takeDamage(
-            calculateDamage(BattleSceneStore.activeEnemyMonster.baseAttack),
-            () => {
-              BattleSceneStore.battleStateMachine.setState(StateName.EnemyPostAttackCheck);
-            },
-          );
+        scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
+          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
+            battleStateMachine.setState(StateName.EnemyPostAttackCheck);
+          });
         });
       },
     );

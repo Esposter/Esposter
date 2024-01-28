@@ -4,14 +4,15 @@ import { type Position } from "grid-engine";
 
 interface HealthBarProps {
   position: Position;
+  barPercentage: number;
 }
 
-const { position } = defineProps<HealthBarProps>();
+const { position, barPercentage } = defineProps<HealthBarProps>();
 </script>
 
 <template>
   <Container :configuration="{ ...position }">
     <DungeonsBattleHealthBarShadow :position="position" />
-    <DungeonsBattleHealthBar :position="position" />
+    <DungeonsBattleHealthBar :position="position" :bar-percentage="barPercentage" />
   </Container>
 </template>

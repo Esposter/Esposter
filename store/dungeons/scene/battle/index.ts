@@ -1,27 +1,91 @@
-import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
-import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { StateMachine } from "@/models/dungeons/state/StateMachine";
-import { StateMap } from "@/models/dungeons/state/battle/StateMap";
-import { type StateName } from "@/models/dungeons/state/battle/StateName";
+import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
+import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { type Direction } from "grid-engine";
+import { type Types } from "phaser";
 
 export const useBattleSceneStore = defineStore("dungeons/scene/battle", () => {
-  const activePanel = ref(ActivePanel.Option);
-  const activeEnemyMonster = ref<Monster>({
-    name: TextureManagerKey.Carnodusk,
-    asset: {
-      key: TextureManagerKey.Carnodusk,
-    },
-    stats: {
-      maxHp: 25,
-      baseAttack: 5,
-    },
-    currentLevel: 5,
-    currentHp: 25,
-    attackIds: [AttackId.IceShard],
-  });
-  const battleStateMachine = new StateMachine<StateName>(StateMap);
-  const isWaitingForPlayerSpecialInput = ref(false);
-  return { activePanel, activeEnemyMonster, battleStateMachine, isWaitingForPlayerSpecialInput };
+  const playerStore = usePlayerStore();
+  const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
+  const infoPanelStore = useInfoPanelStore();
+  const { updateQueuedMessagesAndShowMessage, showMessage } = infoPanelStore;
+  const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
+
+  // We will make sure to initialise cursor keys on scene create function
+  const cursorKeys = ref() as Ref<Types.Input.Keyboard.CursorKeys>;
+  const activePanel = ref(ActivePanel.Info);
+
+  const onPlayerInput = (input: PlayerSpecialInput | Direction) => {
+    // These are all the states that use updateAndShowMessage
+    const playerConfirmShowNextMessageStates: (StateName | null)[] = [
+      StateName.PreBattleInfo,
+      StateName.PlayerInput,
+      StateName.PlayerPostAttackCheck,
+      StateName.EnemyPostAttackCheck,
+      StateName.FleeAttempt,
+    ];
+    if (!playerConfirmShowNextMessageStates.includes(battleStateMachine.currentStateName)) return;
+    // Check if we're trying to show messages
+    if (input === PlayerSpecialInput.Confirm)
+      if (isQueuedMessagesAnimationPlaying.value) return;
+      else if (isWaitingForPlayerSpecialInput) {
+        showMessage();
+        return;
+      }
+    // From here on we only have the player input state to handle
+    if (battleStateMachine.currentStateName !== StateName.PlayerInput) return;
+
+    if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
+    else onPlayerDirectionInput(input);
+  };
+
+  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+    switch (playerSpecialInput) {
+      case PlayerSpecialInput.Confirm:
+        if (activePanel.value === ActivePanel.Option) onChoosePlayerOption();
+        else if (activePanel.value === ActivePanel.AttackOption) battleStateMachine.setState(StateName.EnemyInput);
+        return;
+      case PlayerSpecialInput.Cancel:
+        activePanel.value = ActivePanel.Option;
+        return;
+      default:
+        exhaustiveGuard(playerSpecialInput);
+    }
+  };
+
+  const onPlayerDirectionInput = (direction: Direction) => {
+    if (activePanel.value === ActivePanel.Option) optionGrid.value.move(direction);
+    else if (activePanel.value === ActivePanel.AttackOption) attackOptionGrid.value.move(direction);
+  };
+
+  const onChoosePlayerOption = () => {
+    switch (optionGrid.value.value) {
+      case PlayerOption.Fight:
+        activePanel.value = ActivePanel.AttackOption;
+        return;
+      case PlayerOption.Switch:
+        updateQueuedMessagesAndShowMessage(["You have no other monsters in your party..."], () => {
+          activePanel.value = ActivePanel.Option;
+        });
+        return;
+      case PlayerOption.Item:
+        updateQueuedMessagesAndShowMessage(["Your bag is empty..."], () => {
+          activePanel.value = ActivePanel.Option;
+        });
+        return;
+      case PlayerOption.Flee:
+        battleStateMachine.setState(StateName.FleeAttempt);
+        return;
+      default:
+        exhaustiveGuard(optionGrid.value.value);
+    }
+  };
+
+  return { cursorKeys, activePanel, onPlayerInput };
 });

@@ -11,8 +11,8 @@ interface RightCapProps {
 }
 
 const { y, scaleY } = defineProps<RightCapProps>();
-const x = defineModel<number | undefined>("x");
-const animatedX = defineModel<number | undefined>("animatedX");
+const x = defineModel<number | undefined>("x", { required: true });
+const animatedX = defineModel<number | undefined>("animatedX", { required: true });
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
   if (animatedX.value === undefined) return;
   return {
@@ -21,9 +21,6 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
     ease: Math.Easing.Sine.Out,
     onUpdate: (_, __, ___, current) => {
       x.value = current;
-    },
-    onComplete: () => {
-      animatedX.value = undefined;
     },
   };
 });
@@ -40,6 +37,6 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       scaleY,
       tween,
     }"
-    @update:x="(value: number | undefined) => (x = value)"
+    @update:x="(value: typeof x) => (x = value)"
   />
 </template>

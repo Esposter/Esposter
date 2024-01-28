@@ -6,17 +6,13 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/UI/menu/constants";
-import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerAttackOptionGrid";
-import { getAttackNames } from "@/services/dungeons/battle/getAttackNames";
-import { useBattleSceneStore } from "~/store/dungeons/scene/battle";
-import { usePlayerStore } from "~/store/dungeons/scene/battle/player";
+import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const playerStore = usePlayerStore();
-const { activeMonster } = storeToRefs(playerStore);
-const attackNames = computed(() => getAttackNames(activeMonster.value));
-const grid = computed(() => getPlayerAttackOptionGrid(attackNames.value));
+const { attackNames, attackOptionGrid } = storeToRefs(playerStore);
 </script>
 
 <template>
@@ -62,6 +58,6 @@ const grid = computed(() => getPlayerAttackOptionGrid(attackNames.value));
         style: battleUITextStyle,
       }"
     />
-    <DungeonsBattleMenuCursor :grid="grid" :position-map="CursorPositionMap" />
+    <DungeonsBattleMenuCursor :grid="attackOptionGrid" :position-map="CursorPositionMap" />
   </Container>
 </template>

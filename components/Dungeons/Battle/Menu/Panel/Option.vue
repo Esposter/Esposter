@@ -6,12 +6,14 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
-import { PlayerOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerOptionGrid";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/UI/menu/constants";
-import { useBattleSceneStore } from "~/store/dungeons/scene/battle";
+import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
+const playerStore = usePlayerStore();
+const { optionGrid } = storeToRefs(playerStore);
 </script>
 
 <template>
@@ -57,6 +59,6 @@ const { activePanel } = storeToRefs(battleSceneStore);
         style: battleUITextStyle,
       }"
     />
-    <DungeonsBattleMenuCursor :grid="PlayerOptionGrid" :position-map="CursorPositionMap" />
+    <DungeonsBattleMenuCursor :grid="optionGrid" :position-map="CursorPositionMap" />
   </Container>
 </template>

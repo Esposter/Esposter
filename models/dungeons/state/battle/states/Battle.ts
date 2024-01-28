@@ -1,12 +1,10 @@
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { useBattleSceneStore } from "~/store/dungeons/scene/battle";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
   onEnter: () => {
-    const battleSceneStore = useBattleSceneStore();
-    const { battleStateMachine } = battleSceneStore;
     /**
      * 1. Show attack used
      * 2. Brief pause

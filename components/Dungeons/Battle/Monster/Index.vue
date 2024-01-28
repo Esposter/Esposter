@@ -2,43 +2,98 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
-import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
+import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
+import { dayjs } from "@/services/dayjs";
+import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
+import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Position } from "grid-engine";
-import { type AnimationState } from "~/models/dungeons/battle/monsters/AnimationState";
-import { TakeDamageTween } from "~/services/dungeons/battle/monster/TakeDamageTween";
 
 interface MonsterProps {
-  monster: Monster;
   // By default, this will be the player
   isEnemy?: true;
 }
 
-const { monster, isEnemy } = defineProps<MonsterProps>();
-const animationState = defineModel<AnimationState | null>("animationState");
-const position = computed<Position>(() => (isEnemy ? { x: 768, y: 144 } : { x: 256, y: 316 }));
+const { isEnemy } = defineProps<MonsterProps>();
+const store = isEnemy ? useEnemyStore() : usePlayerStore();
+const { activeMonsterAnimationStateOnComplete } = store;
+const { activeMonster, activeMonsterAnimationState, isPlayingHealthBarAppearAnimation } = storeToRefs(store);
+const x = ref(isEnemy ? 768 : 256);
+const y = computed(() => (isEnemy ? 144 : 316));
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
-  if (!animationState.value) return;
-  return {
-    ...TakeDamageTween,
-    onComplete: (...args) => {
-      TakeDamageTween.onComplete?.(...args);
-      animationState.value = null;
-    },
-  };
+  if (!activeMonsterAnimationState.value) return;
+
+  let xStart: number;
+  let yEnd: number;
+
+  switch (activeMonsterAnimationState.value) {
+    case AnimationState.Appear:
+      xStart = -30;
+      return {
+        delay: 0,
+        duration: dayjs.duration(isEnemy ? 1.6 : 0.8, "seconds").asMilliseconds(),
+        x: {
+          from: xStart,
+          start: xStart,
+          to: x.value,
+        },
+        onComplete: activeMonsterAnimationStateOnComplete,
+      } as TweenBuilderConfiguration;
+    case AnimationState.TakeDamage:
+      return {
+        delay: 0,
+        repeat: 10,
+        duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
+        alpha: {
+          from: 1,
+          start: 1,
+          to: 0,
+        },
+        onComplete: (_, monsterImageGameObject) => {
+          monsterImageGameObject.setAlpha(1);
+          activeMonsterAnimationStateOnComplete?.();
+        },
+      } as TweenBuilderConfiguration;
+    case AnimationState.Death:
+      yEnd = isEnemy ? y.value - 400 : y.value + 400;
+      return {
+        delay: 0,
+        duration: dayjs.duration(2, "seconds").asMilliseconds(),
+        y: {
+          from: y.value,
+          start: y.value,
+          to: yEnd,
+        },
+        onComplete: activeMonsterAnimationStateOnComplete,
+      } as TweenBuilderConfiguration;
+    default:
+      exhaustiveGuard(activeMonsterAnimationState.value);
+  }
 });
-const healthBarPosition = computed<Position | undefined>(() => (isEnemy ? undefined : { x: 556, y: 318 }));
-const healthBarScaleY = computed(() => (isEnemy ? 0.8 : undefined));
+const infoContainerPosition = computed<Position | undefined>(() => (isEnemy ? undefined : { x: 556, y: 318 }));
+const infoContainerScaleY = computed(() => (isEnemy ? 0.8 : undefined));
+const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 </script>
 
 <template>
   <Image
-    :configuration="{ ...position, textureKey: monster.asset.key, frame: monster.asset.frame, flipX: !isEnemy, tween }"
+    :configuration="{
+      x,
+      y,
+      textureKey: activeMonster.asset.key,
+      frame: activeMonster.asset.frame,
+      flipX: !isEnemy,
+      tween,
+    }"
+    @update:x="(value: typeof x) => (x = value)"
   />
   <DungeonsBattleMonsterInfoContainer
-    :position="healthBarPosition"
-    :scale-y="healthBarScaleY"
-    :name="monster.name"
-    :level="monster.currentLevel"
+    v-model:is-playing-appear-animation="isPlayingHealthBarAppearAnimation"
+    :position="infoContainerPosition"
+    :scale-y="infoContainerScaleY"
+    :name="activeMonster.name"
+    :level="activeMonster.currentLevel"
+    :health-bar-percentage="healthBarPercentage"
   >
     <template v-if="!isEnemy">
       <Text
@@ -47,7 +102,7 @@ const healthBarScaleY = computed(() => (isEnemy ? 0.8 : undefined));
           y: 80,
           originX: 1,
           originY: 0,
-          text: `${monster.currentHp}/${monster.stats.maxHp}`,
+          text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
           style: {
             color: '#7e3d3f',
             fontSize: '1rem',

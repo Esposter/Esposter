@@ -2,15 +2,12 @@ import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { PlayerOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerOptionGrid";
-import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerAttackOptionGrid";
-import { getAttackNames } from "@/services/dungeons/battle/getAttackNames";
 
-export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => {
+export const useEnemyStore = defineStore("dungeons/scene/battle/enemy", () => {
   const activeMonster = ref<Monster>({
-    name: TextureManagerKey.Iguanignite,
+    name: TextureManagerKey.Carnodusk,
     asset: {
-      key: TextureManagerKey.Iguanignite,
+      key: TextureManagerKey.Carnodusk,
     },
     stats: {
       maxHp: 25,
@@ -18,14 +15,11 @@ export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => 
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.Slash],
+    attackIds: [AttackId.IceShard],
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const activeMonsterAnimationState = ref<AnimationState | undefined>();
   const activeMonsterAnimationStateOnComplete = ref<(() => void) | undefined>();
-  const optionGrid = ref(PlayerOptionGrid);
-  const attackNames = computed(() => getAttackNames(activeMonster.value));
-  const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
   const isPlayingHealthBarAppearAnimation = ref<true>();
 
   const takeDamage = (damage: number, onComplete?: () => void) => {
@@ -41,9 +35,6 @@ export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => 
     isActiveMonsterFainted,
     activeMonsterAnimationState,
     activeMonsterAnimationStateOnComplete,
-    optionGrid,
-    attackNames,
-    attackOptionGrid,
     isPlayingHealthBarAppearAnimation,
     takeDamage,
   };

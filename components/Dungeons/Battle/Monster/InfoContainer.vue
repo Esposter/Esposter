@@ -2,7 +2,9 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
 
 interface InfoContainerProps {
@@ -10,16 +12,30 @@ interface InfoContainerProps {
   scaleY?: number;
   name: string;
   level: number;
+  healthBarPercentage: number;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { position, scaleY, name } = defineProps<InfoContainerProps>();
+const { position, scaleY, name, level, healthBarPercentage } = defineProps<InfoContainerProps>();
+const isPlayingAppearAnimation = defineModel<true | undefined>("isPlayingAppearAnimation", { required: true });
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
+const tween = computed<TweenBuilderConfiguration | undefined>(() => {
+  if (!isPlayingAppearAnimation.value) return;
+  return {
+    delay: 0,
+    duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
+    x: {
+      from: 800,
+      start: 800,
+      to: position?.x,
+    },
+  };
+});
 </script>
 
 <template>
-  <Container :configuration="{ ...position }">
+  <Container :configuration="{ ...position, tween }">
     <Image :configuration="{ textureKey: TextureManagerKey.HealthBarBackground, origin: 0, scaleY }" />
     <Text
       :configuration="{
@@ -32,7 +48,7 @@ const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
         },
         displayWidth: nameDisplayWidth,
       }"
-      @update:display-width="(value: number | undefined) => (nameDisplayWidth = value)"
+      @update:display-width="(value: typeof nameDisplayWidth) => (nameDisplayWidth = value)"
     />
     <Text
       :configuration="{
@@ -57,7 +73,7 @@ const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
         },
       }"
     />
-    <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" />
+    <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <slot />
   </Container>
 </template>

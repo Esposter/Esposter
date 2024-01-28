@@ -1,18 +1,29 @@
+import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
+import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
 
 export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
-  onEnter: function (this) {
-    BattleSceneStore.activeEnemyMonster.playMonsterAppearAnimation(() => {
-      BattleSceneStore.activeEnemyMonster.playHealthBarAppearAnimation();
-      this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-        [`Wild ${BattleSceneStore.activeEnemyMonster.name} appeared!`],
-        () => {
-          BattleSceneStore.battleStateMachine.setState(StateName.BringOutMonster);
-        },
+  onEnter: () => {
+    const playerStore = useEnemyStore();
+    const {
+      activeMonster,
+      activeMonsterAnimationState,
+      activeMonsterAnimationStateOnComplete,
+      isPlayingHealthBarAppearAnimation,
+    } = storeToRefs(playerStore);
+    const infoPanelStore = useInfoPanelStore();
+    const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
+
+    activeMonsterAnimationStateOnComplete.value = () => {
+      isPlayingHealthBarAppearAnimation.value = true;
+      updateQueuedMessagesAndShowMessage([`Wild ${activeMonster.value.name} appeared!`], () =>
+        battleStateMachine.setState(StateName.BringOutMonster),
       );
-    });
+    };
+    activeMonsterAnimationState.value = AnimationState.Appear;
   },
 };
