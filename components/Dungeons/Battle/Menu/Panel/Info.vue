@@ -8,6 +8,7 @@ import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const infoPanelStore = useInfoPanelStore();
+// Display width is only going to be computed based on the set text, so we only need the @ listener prop
 const { line1Text, line1TextDisplayWidth, line2Text, isPlayerInputPromptCursorVisible } = storeToRefs(infoPanelStore);
 </script>
 
@@ -19,7 +20,6 @@ const { line1Text, line1TextDisplayWidth, line2Text, isPlayerInputPromptCursorVi
         y: 468,
         text: line1Text,
         style: battleUITextStyle,
-        displayWidth: line1TextDisplayWidth,
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />
