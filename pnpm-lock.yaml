@@ -153,8 +153,8 @@ dependencies:
     specifier: ^3.70.0
     version: 3.70.0
   phaser3-rex-plugins:
-    specifier: ^1.60.9
-    version: 1.60.9
+    specifier: ^1.60.10
+    version: 1.60.10
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.4.8)
@@ -9486,8 +9486,8 @@ packages:
   /perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  /phaser3-rex-plugins@1.60.9:
-    resolution: {integrity: sha512-3tH98Fo3boDIFwwehlGhFdpaHAK0/gLugTyaXipfVS4dyWbT7BO5LOLhcgSuGoCTgooWN020x5juMMOtttxbSw==}
+  /phaser3-rex-plugins@1.60.10:
+    resolution: {integrity: sha512-BiwFPPGSIvPG1jMLCjMd3Im7UrjPmU9103BF//5q9ns/QVbLl54XwoHoR4FYx+iCQEYsUV53x9ABGVPlNETyDQ==}
     dependencies:
       eventemitter3: 3.1.2
       i18next: 22.5.1
