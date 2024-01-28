@@ -15,6 +15,7 @@ export type BaseShapeConfiguration = {
   displayHeight: GameObjects.Shape["displayHeight"];
   fillColor: GameObjects.Shape["fillColor"];
   fillAlpha: GameObjects.Shape["fillAlpha"];
+  strokeStyle: Parameters<GameObjects.Shape["setStrokeStyle"]>;
 };
 
 export type ShapeConfiguration = AlphaSingleConfiguration &

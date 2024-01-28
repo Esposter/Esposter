@@ -1,6 +1,6 @@
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
-import { INITIAL_PLAYER_INPUT_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
+import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
 import { type GameObjects, type Scene, type Tweens } from "phaser";
 
 export class UserInputCursor {
@@ -19,9 +19,9 @@ export class UserInputCursor {
       duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
       repeat: -1,
       y: {
-        from: INITIAL_PLAYER_INPUT_CURSOR_POSITION.y,
-        start: INITIAL_PLAYER_INPUT_CURSOR_POSITION.y,
-        to: INITIAL_PLAYER_INPUT_CURSOR_POSITION.y + 6,
+        from: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y,
+        start: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y,
+        to: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y + 6,
       },
     });
     this.hide();

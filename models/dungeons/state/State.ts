@@ -1,4 +1,4 @@
-export interface State<TContext extends object, TStateName extends string | null> {
+export interface State<TStateName extends string | null> {
   name: TStateName;
-  onEnter?: (this: TContext) => void;
+  onEnter?: () => void;
 }

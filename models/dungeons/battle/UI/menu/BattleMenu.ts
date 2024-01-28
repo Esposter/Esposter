@@ -1,13 +1,13 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
-import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
+import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { BattleSubMenu } from "@/models/dungeons/battle/UI/menu/BattleSubMenu";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
-import { PlayerBattleMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleMenuOption";
+import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
-import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerBattleMenuOptionGrid";
+import { PlayerOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Direction } from "grid-engine";
@@ -15,16 +15,16 @@ import { type GameObjects, type Scene } from "phaser";
 
 export class BattleMenu {
   scene: Scene;
-  playerBattleMenuOptionCursor: Cursor<PlayerBattleMenuOption>;
+  PlayerOptionCursor: Cursor<PlayerOption>;
   playerBattleMenuPhaserContainerGameObject: GameObjects.Container;
   battleSubMenu: BattleSubMenu;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.createMainInfoPanel();
-    this.playerBattleMenuOptionCursor = new Cursor(this.scene, CursorPositionMap, PlayerBattleMenuOptionGrid);
+    this.PlayerOptionCursor = new Cursor(this.scene, CursorPositionMap, PlayerOptionGrid);
     this.playerBattleMenuPhaserContainerGameObject = this.createPlayerBattleMenu();
-    this.playerBattleMenuPhaserContainerGameObject.add(this.playerBattleMenuOptionCursor.phaserImageGameObject);
+    this.playerBattleMenuPhaserContainerGameObject.add(this.PlayerOptionCursor.phaserImageGameObject);
     this.battleSubMenu = new BattleSubMenu(scene);
     this.hidePlayerBattleMenu();
   }
@@ -56,9 +56,8 @@ export class BattleMenu {
   onPlayerSpecialInput(playerSpecialInput: PlayerSpecialInput) {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Main) this.onChoosePlayerBattleMenuOption();
-        else if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Sub)
-          this.battleSubMenu.onChoosePlayerBattleSubMenuOption();
+        if (BattleSceneStore.activePanel === ActivePanel.Main) this.onChoosePlayerOption();
+        else if (BattleSceneStore.activePanel === ActivePanel.Sub) this.battleSubMenu.onChoosePlayerAttackOption();
         return;
       case PlayerSpecialInput.Cancel:
         this.switchToPlayerBattleMenu();
@@ -73,35 +72,34 @@ export class BattleMenu {
       case Direction.NONE:
         return;
       default:
-        if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Main)
-          this.playerBattleMenuOptionCursor.moveGridPosition(direction);
-        else if (BattleSceneStore.activeBattleMenu === ActiveBattleMenu.Sub)
-          this.battleSubMenu.playerBattleSubMenuOptionCursor.moveGridPosition(direction);
+        if (BattleSceneStore.activePanel === ActivePanel.Main) this.PlayerOptionCursor.moveGridPosition(direction);
+        else if (BattleSceneStore.activePanel === ActivePanel.Sub)
+          this.battleSubMenu.PlayerAttackOptionCursor.moveGridPosition(direction);
     }
   }
 
-  onChoosePlayerBattleMenuOption() {
+  onChoosePlayerOption() {
     this.hidePlayerBattleMenu();
 
-    switch (this.playerBattleMenuOptionCursor.activeOption) {
-      case PlayerBattleMenuOption.Fight:
+    switch (this.PlayerOptionCursor.activeOption) {
+      case PlayerOption.Fight:
         this.battleSubMenu.showBattleSubMenu();
         return;
-      case PlayerBattleMenuOption.Switch:
+      case PlayerOption.Switch:
         this.battleSubMenu.infoPanel.updateAndShowMessage(["You have no other monsters in your party..."], () => {
           this.switchToPlayerBattleMenu();
         });
         return;
-      case PlayerBattleMenuOption.Item:
+      case PlayerOption.Item:
         this.battleSubMenu.infoPanel.updateAndShowMessage(["Your bag is empty..."], () => {
           this.switchToPlayerBattleMenu();
         });
         return;
-      case PlayerBattleMenuOption.Flee:
+      case PlayerOption.Flee:
         BattleSceneStore.battleStateMachine.setState(StateName.FleeAttempt);
         return;
       default:
-        exhaustiveGuard(this.playerBattleMenuOptionCursor.activeOption);
+        exhaustiveGuard(this.PlayerOptionCursor.activeOption);
     }
   }
 
@@ -111,8 +109,8 @@ export class BattleMenu {
   }
 
   showPlayerBattleMenu() {
-    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Main;
-    this.playerBattleMenuOptionCursor.gridPosition = [0, 0];
+    BattleSceneStore.activePanel = ActivePanel.Main;
+    this.PlayerOptionCursor.gridPosition = [0, 0];
     this.battleSubMenu.battleLine1PhaserTextGameObject.setText("What should");
     this.battleSubMenu.battleLine2PhaserTextGameObject.setText(`${BattleSceneStore.activePlayerMonster.name} do next?`);
     this.playerBattleMenuPhaserContainerGameObject.setVisible(true);
@@ -155,10 +153,10 @@ export class BattleMenu {
   createPlayerBattleMenu() {
     return this.scene.add.container(520, 448, [
       this.createMainInfoSubPanel(),
-      this.scene.add.text(55, 22, PlayerBattleMenuOption.Fight, battleUITextStyle),
-      this.scene.add.text(240, 22, PlayerBattleMenuOption.Switch, battleUITextStyle),
-      this.scene.add.text(55, 70, PlayerBattleMenuOption.Item, battleUITextStyle),
-      this.scene.add.text(240, 70, PlayerBattleMenuOption.Flee, battleUITextStyle),
+      this.scene.add.text(55, 22, PlayerOption.Fight, battleUITextStyle),
+      this.scene.add.text(240, 22, PlayerOption.Switch, battleUITextStyle),
+      this.scene.add.text(55, 70, PlayerOption.Item, battleUITextStyle),
+      this.scene.add.text(240, 70, PlayerOption.Flee, battleUITextStyle),
     ]);
   }
 }

@@ -1,15 +1,14 @@
 import { type State } from "@/models/dungeons/state/State";
 
-export class StateMachine<TContext extends object, TStateName extends string> {
-  context: TContext;
-  stateMap: Map<TStateName, State<TContext, TStateName>>;
-  currentState: State<TContext, TStateName | null> = { name: null };
+export class StateMachine<TStateName extends string> {
+  stateMap: Map<TStateName, State<TStateName>>;
+  currentState: State<TStateName | null> = { name: null };
   isChangingState = false;
   changingStateNameQueue: TStateName[] = [];
 
-  constructor(context: TContext, stateMap: Map<TStateName, State<TContext, TStateName>>) {
-    this.context = context;
+  constructor(stateMap: Map<TStateName, State<TStateName>>) {
     this.stateMap = stateMap;
+    this.setState(this.stateMap.values().next().value.name);
   }
 
   get currentStateName() {
@@ -34,11 +33,11 @@ export class StateMachine<TContext extends object, TStateName extends string> {
 
     this.isChangingState = true;
     this.currentState = state;
-    this.currentState.onEnter?.call(this.context);
+    this.currentState.onEnter?.();
     this.isChangingState = false;
   }
 
-  addState(state: State<TContext, TStateName>) {
+  addState(state: State<TStateName>) {
     this.stateMap.set(state.name, state);
   }
 }

@@ -1,4 +1,4 @@
-import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
+import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { UserInputCursor } from "@/models/dungeons/battle/UI/menu/UserInputCursor";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { dayjs } from "@/services/dayjs";
@@ -29,7 +29,7 @@ export class InfoPanel {
   }
 
   showMessage() {
-    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Info;
+    BattleSceneStore.activePanel = ActivePanel.Info;
     this.isWaitingForPlayerSpecialInput = false;
     this.battleLine1PhaserTextGameObject.setText("").setVisible(true);
     this.userInputCursor.hide();
@@ -61,7 +61,7 @@ export class InfoPanel {
   }
 
   showMessageNoInputRequired(message: string, onComplete?: () => void, isSkipAnimation?: true) {
-    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Info;
+    BattleSceneStore.activePanel = ActivePanel.Info;
     this.battleLine1PhaserTextGameObject.setText("").setVisible(true);
 
     if (isSkipAnimation) {

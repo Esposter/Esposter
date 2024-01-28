@@ -1,10 +1,10 @@
 import { dayjs } from "@/services/dayjs";
 import { sleep } from "@/util/sleep";
-import { type GameObjects, type Scene } from "phaser";
+import { type Scene } from "phaser";
 
 export const animateText = (
   scene: Scene,
-  target: GameObjects.Text,
+  targetText: Ref<string>,
   text: string,
   configuration?: {
     delay?: number;
@@ -17,7 +17,7 @@ export const animateText = (
     delay,
     repeat: text.length - 1,
     callback: async () => {
-      target.text += text[i];
+      targetText.value += text[i];
       i++;
       if (i === text.length - 1) {
         // We need this delay here to prevent the last character animation

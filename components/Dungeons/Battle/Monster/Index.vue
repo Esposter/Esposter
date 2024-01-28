@@ -3,8 +3,9 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
-import { dayjs } from "@/services/dayjs";
 import { type Position } from "grid-engine";
+import { type AnimationState } from "~/models/dungeons/battle/monsters/AnimationState";
+import { TakeDamageTween } from "~/services/dungeons/battle/monster/TakeDamageTween";
 
 interface MonsterProps {
   monster: Monster;
@@ -13,22 +14,15 @@ interface MonsterProps {
 }
 
 const { monster, isEnemy } = defineProps<MonsterProps>();
-const playTakeDamageAnimation = defineModel<true | undefined>("playTakeDamageAnimation");
+const animationState = defineModel<AnimationState | null>("animationState");
 const position = computed<Position>(() => (isEnemy ? { x: 768, y: 144 } : { x: 256, y: 316 }));
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
-  if (!playTakeDamageAnimation.value) return;
+  if (!animationState.value) return;
   return {
-    delay: 0,
-    repeat: 10,
-    duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
-    alpha: {
-      from: 1,
-      start: 1,
-      to: 0,
-    },
-    onComplete: (_, monsterImageGameObject) => {
-      monsterImageGameObject.setAlpha(1);
-      playTakeDamageAnimation.value = undefined;
+    ...TakeDamageTween,
+    onComplete: (...args) => {
+      TakeDamageTween.onComplete?.(...args);
+      animationState.value = null;
     },
   };
 });

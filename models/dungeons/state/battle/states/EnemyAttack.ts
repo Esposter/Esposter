@@ -1,11 +1,10 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { dayjs } from "@/services/dayjs";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 
-export const EnemyAttack: State<BattleScene, StateName> = {
+export const EnemyAttack: State<StateName> = {
   name: StateName.EnemyAttack,
   onEnter: function (this) {
     this.battleMenu.battleSubMenu.infoPanel.showMessageNoInputRequired(

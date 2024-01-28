@@ -1,18 +1,18 @@
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
-import { ActiveBattleMenu } from "@/models/dungeons/battle/UI/menu/ActiveBattleMenu";
+import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
 import { Cursor } from "@/models/dungeons/battle/UI/menu/Cursor";
 import { InfoPanel } from "@/models/dungeons/battle/UI/menu/InfoPanel";
-import { type PlayerBattleSubMenuOption } from "@/models/dungeons/battle/UI/menu/PlayerBattleSubMenuOption";
+import { type PlayerAttackOption } from "@/models/dungeons/battle/UI/menu/PlayerAttackOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
 import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
-import { getPlayerBattleSubMenuOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerBattleSubMenuOptionGrid";
+import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerAttackOptionGrid";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { type GameObjects, type Scene } from "phaser";
 
 export class BattleSubMenu {
   scene: Scene;
-  playerBattleSubMenuOptionCursor: Cursor<PlayerBattleSubMenuOption>;
+  PlayerAttackOptionCursor: Cursor<PlayerAttackOption>;
   battleSubMenuPhaserContainerGameObject: GameObjects.Container;
   battleLine1PhaserTextGameObject: GameObjects.Text;
   battleLine2PhaserTextGameObject: GameObjects.Text;
@@ -20,13 +20,13 @@ export class BattleSubMenu {
 
   constructor(scene: Scene) {
     this.scene = scene;
-    this.playerBattleSubMenuOptionCursor = new Cursor(
+    this.PlayerAttackOptionCursor = new Cursor(
       this.scene,
       CursorPositionMap,
-      getPlayerBattleSubMenuOptionGrid(this.getAttackNames()),
+      getPlayerAttackOptionGrid(this.getAttackNames()),
     );
     this.battleSubMenuPhaserContainerGameObject = this.createBattleSubMenu();
-    this.battleSubMenuPhaserContainerGameObject.add(this.playerBattleSubMenuOptionCursor.phaserImageGameObject);
+    this.battleSubMenuPhaserContainerGameObject.add(this.PlayerAttackOptionCursor.phaserImageGameObject);
     this.battleLine1PhaserTextGameObject = this.scene.add.text(20, 468, "What should", battleUITextStyle);
     this.battleLine2PhaserTextGameObject = this.scene.add.text(
       20,
@@ -38,14 +38,14 @@ export class BattleSubMenu {
     this.hideBattleSubMenu();
   }
 
-  onChoosePlayerBattleSubMenuOption() {
+  onChoosePlayerAttackOption() {
     this.hideBattleSubMenu();
     BattleSceneStore.battleStateMachine.setState(StateName.EnemyInput);
   }
 
   showBattleSubMenu() {
-    BattleSceneStore.activeBattleMenu = ActiveBattleMenu.Sub;
-    this.playerBattleSubMenuOptionCursor.gridPosition = [0, 0];
+    BattleSceneStore.activePanel = ActivePanel.Sub;
+    this.PlayerAttackOptionCursor.gridPosition = [0, 0];
     this.battleSubMenuPhaserContainerGameObject.setVisible(true);
   }
 
@@ -63,8 +63,8 @@ export class BattleSubMenu {
     ]);
   }
 
-  private getAttackNames(): PlayerBattleSubMenuOption[] {
-    const attackNames: PlayerBattleSubMenuOption[] = [];
+  private getAttackNames(): PlayerAttackOption[] {
+    const attackNames: PlayerAttackOption[] = [];
     for (let i = 0; i < 4; i++) attackNames.push(BattleSceneStore.activePlayerMonster.attacks[i]?.name || BLANK_VALUE);
     return attackNames;
   }

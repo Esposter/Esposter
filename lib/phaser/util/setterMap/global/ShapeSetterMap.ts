@@ -36,4 +36,8 @@ export const ShapeSetterMap = {
   },
   fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
   fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
+  strokeStyle: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setStrokeStyle(...value);
+  },
 } satisfies SetterMap<ShapeConfiguration, GameObjects.Shape, ShapeEventEmitsOptions>;
