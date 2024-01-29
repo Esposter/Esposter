@@ -9,7 +9,7 @@ const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const infoPanelStore = useInfoPanelStore();
 // Display width is only going to be computed based on the set text, so we only need the @ listener prop
-const { line1Text, line1TextDisplayWidth, line2Text, isPlayerInputPromptCursorVisible } = storeToRefs(infoPanelStore);
+const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelStore);
 </script>
 
 <template>
@@ -31,6 +31,6 @@ const { line1Text, line1TextDisplayWidth, line2Text, isPlayerInputPromptCursorVi
         style: battleUITextStyle,
       }"
     />
-    <DungeonsBattleMenuPlayerInputPromptCursor :is-visible="isPlayerInputPromptCursorVisible" />
+    <DungeonsBattleMenuInputPromptCursor />
   </template>
 </template>

@@ -21,3 +21,5 @@ const { scene } = storeToRefs(phaserStore);
 const rectangle = ref(scene.value.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
 useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
 </script>
+
+<template></template>

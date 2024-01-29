@@ -22,3 +22,5 @@ const { scene } = storeToRefs(phaserStore);
 const image = ref(scene.value.add.image(x ?? 0, y ?? 0, textureKey, frame)) as Ref<GameObjects.Image>;
 useInitializeGameObject(image, configuration, emit, ImageSetterMap);
 </script>
+
+<template></template>

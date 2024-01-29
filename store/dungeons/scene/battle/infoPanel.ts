@@ -1,16 +1,15 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { animateText } from "@/services/dungeons/animation/animateText";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
 
 export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
-  const playerStore = usePlayerStore();
-  const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRefs(playerStore);
   const line1Text = ref("");
   const line1TextDisplayWidth = ref<number>();
   const line2Text = ref("");
-  const isPlayerInputPromptCursorVisible = ref(false);
+  const inputPromptCursorPositionX = ref();
+  const inputPromptCursorDisplayWidth = ref<number>();
+  const isInputPromptCursorVisible = ref(false);
   const queuedMessages = ref<string[]>([]);
   const queuedOnComplete = ref<() => void>();
   const isQueuedMessagesSkipAnimation = ref(false);
@@ -26,7 +25,7 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
 
   const showMessage = () => {
     isWaitingForPlayerSpecialInput.value = false;
-    isPlayerInputPromptCursorVisible.value = false;
+    isInputPromptCursorVisible.value = false;
     line1Text.value = "";
 
     const message = queuedMessages.value.shift();
@@ -46,8 +45,8 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
     animateText(scene.value, line1Text, message, {
       onComplete: () => {
         inputPromptCursorPositionX.value =
-          line1TextDisplayWidth.value ?? 0 + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
-        isPlayerInputPromptCursorVisible.value = true;
+          (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
+        isInputPromptCursorVisible.value = true;
         isWaitingForPlayerSpecialInput.value = true;
         isQueuedMessagesAnimationPlaying.value = false;
       },
@@ -70,7 +69,9 @@ export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", 
     line1Text,
     line1TextDisplayWidth,
     line2Text,
-    isPlayerInputPromptCursorVisible,
+    inputPromptCursorPositionX,
+    inputPromptCursorDisplayWidth,
+    isInputPromptCursorVisible,
     isQueuedMessagesAnimationPlaying,
     isWaitingForPlayerSpecialInput,
     updateQueuedMessagesAndShowMessage,

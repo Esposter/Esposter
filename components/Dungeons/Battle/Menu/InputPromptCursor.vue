@@ -3,15 +3,12 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
 import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
 
-interface PlayerInputPromptCursorProps {
-  isVisible: boolean;
-}
-
-const { isVisible } = defineProps<PlayerInputPromptCursorProps>();
-const playerStore = usePlayerStore();
-const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRefs(playerStore);
+const playerStore = useInfoPanelStore();
+// Same idea here that display width will be half-computed by scaleX
+const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } =
+  storeToRefs(playerStore);
 </script>
 
 <template>
@@ -19,7 +16,7 @@ const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth } = storeToRef
     :configuration="{
       x: inputPromptCursorPositionX,
       textureKey: TextureManagerKey.Cursor,
-      visible: isVisible,
+      visible: isInputPromptCursorVisible,
       angle: 90,
       scaleX: 2.5,
       scaleY: 1.25,

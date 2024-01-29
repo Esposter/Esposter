@@ -27,8 +27,6 @@ export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => 
   const attackNames = computed(() => getAttackNames(activeMonster.value));
   const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
   const isPlayingHealthBarAppearAnimation = ref<true>();
-  const inputPromptCursorPositionX = ref();
-  const inputPromptCursorDisplayWidth = ref<number>();
 
   const takeDamage = (damage: number, onComplete?: () => void) => {
     let newHp = activeMonster.value.currentHp - damage;
@@ -47,8 +45,6 @@ export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => 
     attackNames,
     attackOptionGrid,
     isPlayingHealthBarAppearAnimation,
-    inputPromptCursorPositionX,
-    inputPromptCursorDisplayWidth,
     takeDamage,
   };
 });

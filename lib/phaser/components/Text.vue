@@ -22,3 +22,5 @@ const { scene } = storeToRefs(phaserStore);
 const textGameObject = ref(scene.value.add.text(x ?? 0, y ?? 0, text, style)) as Ref<GameObjects.Text>;
 useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 </script>
+
+<template></template>

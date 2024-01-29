@@ -20,9 +20,10 @@ export const animateText = (
       targetText.value += text[i];
       i++;
       if (i === text.length - 1) {
-        // We need this delay here to prevent the last character animation
+        // We need this delay here to prevent the last character animations
         // from being updated after we set the text back to blank
-        await sleep(delay);
+        // It seems that we need exactly 2 ticks for it to finish
+        await sleep(2 * delay);
         configuration?.onComplete?.();
       }
     },
