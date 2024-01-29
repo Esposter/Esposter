@@ -1,5 +1,5 @@
 import { Grid } from "@/models/dungeons/Grid";
-import { type PlayerAttackOption } from "@/models/dungeons/battle/UI/menu/PlayerAttackOption";
+import { type PlayerAttackOption } from "@/models/dungeons/battle/menu/PlayerAttackOption";
 
 export const getPlayerAttackOptionGrid = (PlayerAttackOptions: PlayerAttackOption[]) =>
   new Grid(

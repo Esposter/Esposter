@@ -1,7 +1,7 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { animateText } from "@/services/dungeons/animation/animateText";
 
-export const useInfoPanelStore = defineStore("dungeons/scene/battle/infoPanel", () => {
+export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
   const line1Text = ref("");

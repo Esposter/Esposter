@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
-import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
+import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

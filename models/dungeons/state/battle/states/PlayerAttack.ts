@@ -4,9 +4,9 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
-import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,

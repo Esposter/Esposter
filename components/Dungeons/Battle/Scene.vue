@@ -6,7 +6,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlug
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
-import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
+import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { Input, type Types } from "phaser";
 
 const battleSceneStore = useBattleSceneStore();

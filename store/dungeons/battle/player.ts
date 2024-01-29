@@ -2,11 +2,11 @@ import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { PlayerOptionGrid } from "@/services/dungeons/battle/UI/menu/PlayerOptionGrid";
-import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/UI/menu/getPlayerAttackOptionGrid";
 import { getAttackNames } from "@/services/dungeons/battle/getAttackNames";
+import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
+import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/menu/getPlayerAttackOptionGrid";
 
-export const usePlayerStore = defineStore("dungeons/scene/battle/player", () => {
+export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const activeMonster = ref<Monster>({
     name: TextureManagerKey.Iguanignite,
     asset: {

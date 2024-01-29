@@ -3,12 +3,12 @@ import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
-import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
-import { CursorPositionMap } from "@/services/dungeons/battle/UI/menu/CursorPositionMap";
-import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/UI/menu/constants";
-import { useBattleSceneStore } from "@/store/dungeons/scene/battle";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
+import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
+import { CursorPositionMap } from "@/services/dungeons/battle/menu/CursorPositionMap";
+import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/menu/constants";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

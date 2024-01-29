@@ -1,16 +1,16 @@
-import { ActivePanel } from "@/models/dungeons/battle/UI/menu/ActivePanel";
-import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
+import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
+import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Direction } from "grid-engine";
 import { type Types } from "phaser";
 
-export const useBattleSceneStore = defineStore("dungeons/scene/battle", () => {
+export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const playerStore = usePlayerStore();
   const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
   const infoPanelStore = useInfoPanelStore();
@@ -30,11 +30,12 @@ export const useBattleSceneStore = defineStore("dungeons/scene/battle", () => {
       StateName.EnemyPostAttackCheck,
       StateName.FleeAttempt,
     ];
+
     if (!playerConfirmShowNextMessageStates.includes(battleStateMachine.currentStateName)) return;
     // Check if we're trying to show messages
     if (input === PlayerSpecialInput.Confirm)
       if (isQueuedMessagesAnimationPlaying.value) return;
-      else if (isWaitingForPlayerSpecialInput) {
+      else if (isWaitingForPlayerSpecialInput.value) {
         showMessage();
         return;
       }
@@ -70,11 +71,13 @@ export const useBattleSceneStore = defineStore("dungeons/scene/battle", () => {
         activePanel.value = ActivePanel.AttackOption;
         return;
       case PlayerOption.Switch:
+        activePanel.value = ActivePanel.Info;
         updateQueuedMessagesAndShowMessage(["You have no other monsters in your party..."], () => {
           activePanel.value = ActivePanel.Option;
         });
         return;
       case PlayerOption.Item:
+        activePanel.value = ActivePanel.Info;
         updateQueuedMessagesAndShowMessage(["Your bag is empty..."], () => {
           activePanel.value = ActivePanel.Option;
         });

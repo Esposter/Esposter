@@ -3,7 +3,7 @@ import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 
-export const useEnemyStore = defineStore("dungeons/scene/battle/enemy", () => {
+export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref<Monster>({
     name: TextureManagerKey.Carnodusk,
     asset: {

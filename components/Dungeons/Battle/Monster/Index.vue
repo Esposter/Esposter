@@ -3,8 +3,8 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { dayjs } from "@/services/dayjs";
-import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Position } from "grid-engine";
 

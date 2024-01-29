@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/UI/menu/constants";
+import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/menu/constants";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);

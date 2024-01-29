@@ -1,4 +1,4 @@
-import { type PlayerAttackOption } from "@/models/dungeons/battle/UI/menu/PlayerAttackOption";
+import { type PlayerAttackOption } from "@/models/dungeons/battle/menu/PlayerAttackOption";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { getAttackName } from "@/services/dungeons/battle/getAttackName";
 

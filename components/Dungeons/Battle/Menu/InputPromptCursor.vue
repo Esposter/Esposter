@@ -2,8 +2,8 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
-import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/UI/menu/constants";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
+import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/menu/constants";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 
 const playerStore = useInfoPanelStore();
 // Same idea here that display width will be half-computed by scaleX

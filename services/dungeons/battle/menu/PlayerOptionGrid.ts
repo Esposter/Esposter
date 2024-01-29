@@ -1,5 +1,5 @@
 import { Grid } from "@/models/dungeons/Grid";
-import { PlayerOption } from "@/models/dungeons/battle/UI/menu/PlayerOption";
+import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 
 export const PlayerOptionGrid = new Grid(
   [

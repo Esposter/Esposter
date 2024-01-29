@@ -5,8 +5,8 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
-import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { type Position } from "grid-engine";
 
 interface InfoContainerProps {

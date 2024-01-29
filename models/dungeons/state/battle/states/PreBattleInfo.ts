@@ -2,8 +2,8 @@ import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useEnemyStore } from "@/store/dungeons/scene/battle/enemy";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 
 export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,

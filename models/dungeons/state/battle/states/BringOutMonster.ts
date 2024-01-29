@@ -4,8 +4,8 @@ import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useInfoPanelStore } from "@/store/dungeons/scene/battle/infoPanel";
-import { usePlayerStore } from "@/store/dungeons/scene/battle/player";
+import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 export const BringOutMonster: State<StateName> = {
   name: StateName.BringOutMonster,
