@@ -14,6 +14,7 @@ export const PlayerInput: State<StateName> = {
     const { activeMonster } = storeToRefs(playerStore);
     const infoPanelStore = useInfoPanelStore();
     const { line1Text, line2Text } = storeToRefs(infoPanelStore);
+
     activePanel.value = ActivePanel.Option;
     line1Text.value = "What should";
     line2Text.value = `${activeMonster.value.name} do next?`;

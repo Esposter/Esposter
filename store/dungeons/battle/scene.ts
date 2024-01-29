@@ -14,7 +14,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const playerStore = usePlayerStore();
   const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
   const infoPanelStore = useInfoPanelStore();
-  const { updateQueuedMessagesAndShowMessage, showMessage } = infoPanelStore;
+  const { showMessage } = infoPanelStore;
   const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
 
   // We will make sure to initialise cursor keys on scene create function
@@ -22,25 +22,13 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const activePanel = ref(ActivePanel.Info);
 
   const onPlayerInput = (input: PlayerSpecialInput | Direction) => {
-    // These are all the states that use updateAndShowMessage
-    const playerConfirmShowNextMessageStates: (StateName | null)[] = [
-      StateName.PreBattleInfo,
-      StateName.PlayerInput,
-      StateName.PlayerPostAttackCheck,
-      StateName.EnemyPostAttackCheck,
-      StateName.FleeAttempt,
-    ];
-
-    if (!playerConfirmShowNextMessageStates.includes(battleStateMachine.currentStateName)) return;
-    // Check if we're trying to show messages
+    // Check if we're trying to show messages first
     if (input === PlayerSpecialInput.Confirm)
       if (isQueuedMessagesAnimationPlaying.value) return;
       else if (isWaitingForPlayerSpecialInput.value) {
         showMessage();
         return;
       }
-    // From here on we only have the player input state to handle
-    if (battleStateMachine.currentStateName !== StateName.PlayerInput) return;
 
     if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
@@ -71,16 +59,10 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
         activePanel.value = ActivePanel.AttackOption;
         return;
       case PlayerOption.Switch:
-        activePanel.value = ActivePanel.Info;
-        updateQueuedMessagesAndShowMessage(["You have no other monsters in your party..."], () => {
-          activePanel.value = ActivePanel.Option;
-        });
+        battleStateMachine.setState(StateName.SwitchAttempt);
         return;
       case PlayerOption.Item:
-        activePanel.value = ActivePanel.Info;
-        updateQueuedMessagesAndShowMessage(["Your bag is empty..."], () => {
-          activePanel.value = ActivePanel.Option;
-        });
+        battleStateMachine.setState(StateName.ItemAttempt);
         return;
       case PlayerOption.Flee:
         battleStateMachine.setState(StateName.FleeAttempt);

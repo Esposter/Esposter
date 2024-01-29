@@ -13,7 +13,8 @@ const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelSto
 </script>
 
 <template>
-  <template v-if="activePanel === ActivePanel.Info">
+  <!-- Info Panel is also shown when you choose options -->
+  <template v-if="activePanel === ActivePanel.Info || activePanel === ActivePanel.Option">
     <Text
       :configuration="{
         x: 20,

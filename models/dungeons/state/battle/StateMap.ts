@@ -8,10 +8,12 @@ import { EnemyPostAttackCheck } from "@/models/dungeons/state/battle/states/Enem
 import { Finished } from "@/models/dungeons/state/battle/states/Finished";
 import { FleeAttempt } from "@/models/dungeons/state/battle/states/FleeAttempt";
 import { Intro } from "@/models/dungeons/state/battle/states/Intro";
+import { ItemAttempt } from "@/models/dungeons/state/battle/states/ItemAttempt";
 import { PlayerAttack } from "@/models/dungeons/state/battle/states/PlayerAttack";
 import { PlayerInput } from "@/models/dungeons/state/battle/states/PlayerInput";
 import { PlayerPostAttackCheck } from "@/models/dungeons/state/battle/states/PlayerPostAttackCheck";
 import { PreBattleInfo } from "@/models/dungeons/state/battle/states/PreBattleInfo";
+import { SwitchAttempt } from "@/models/dungeons/state/battle/states/SwitchAttempt";
 
 const StateRecord: Record<StateName, State<StateName>> = {
   [StateName.Intro]: Intro,
@@ -25,6 +27,8 @@ const StateRecord: Record<StateName, State<StateName>> = {
   [StateName.EnemyAttack]: EnemyAttack,
   [StateName.EnemyPostAttackCheck]: EnemyPostAttackCheck,
   [StateName.Finished]: Finished,
+  [StateName.SwitchAttempt]: SwitchAttempt,
+  [StateName.ItemAttempt]: ItemAttempt,
   [StateName.FleeAttempt]: FleeAttempt,
 };
 

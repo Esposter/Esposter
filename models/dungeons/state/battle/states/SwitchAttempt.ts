@@ -5,8 +5,8 @@ import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachin
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
-export const FleeAttempt: State<StateName> = {
-  name: StateName.FleeAttempt,
+export const SwitchAttempt: State<StateName> = {
+  name: StateName.SwitchAttempt,
   onEnter: () => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
@@ -14,6 +14,8 @@ export const FleeAttempt: State<StateName> = {
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 
     activePanel.value = ActivePanel.Info;
-    updateQueuedMessagesAndShowMessage(["You got away safely!"], () => battleStateMachine.setState(StateName.Finished));
+    updateQueuedMessagesAndShowMessage(["You have no other monsters in your party..."], () =>
+      battleStateMachine.setState(StateName.PlayerInput),
+    );
   },
 };
