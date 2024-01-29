@@ -46,7 +46,7 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
           start: 1,
           to: 0,
         },
-        onComplete: (_, monsterImageGameObject) => {
+        onComplete: (_, [monsterImageGameObject]) => {
           monsterImageGameObject.setAlpha(1);
           activeMonsterAnimationStateOnComplete.value?.();
         },

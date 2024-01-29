@@ -26,7 +26,12 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
     let newHp = activeMonster.value.currentHp - damage;
     if (newHp < 0) newHp = 0;
     activeMonster.value.currentHp = newHp;
-    activeMonsterAnimationStateOnComplete.value = onComplete;
+    activeMonsterAnimationStateOnComplete.value = () => {
+      onComplete?.();
+      // Unlike other animations, we need to repeat this
+      // so we want to refresh the computed tween that depends on this
+      activeMonsterAnimationState.value = undefined;
+    };
     activeMonsterAnimationState.value = AnimationState.TakeDamage;
   };
 

@@ -22,7 +22,8 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     isQueuedMessagesSkipAnimation.value = isSkipAnimation;
     showMessage();
   };
-
+  // @TODO: We should be able to set the active panel to info here...
+  // not sure why vue complains when using it inside a callback
   const showMessage = () => {
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
