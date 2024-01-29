@@ -14,13 +14,13 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
       baseAttack: 5,
     },
     currentLevel: 5,
-    currentHp: 5,
+    currentHp: 25,
     attackIds: [AttackId.IceShard],
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const activeMonsterAnimationState = ref<AnimationState | undefined>();
   const activeMonsterAnimationStateOnComplete = ref<(() => void) | undefined>();
-  const isPlayingHealthBarAppearAnimation = ref<true>();
+  const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
 
   const takeDamage = (damage: number, onComplete?: () => void) => {
     let newHp = activeMonster.value.currentHp - damage;
@@ -40,7 +40,7 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
     isActiveMonsterFainted,
     activeMonsterAnimationState,
     activeMonsterAnimationStateOnComplete,
-    isPlayingHealthBarAppearAnimation,
+    isPlayingMonsterInfoContainerAppearAnimation,
     takeDamage,
   };
 });

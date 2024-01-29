@@ -17,7 +17,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
       baseAttack: 5,
     },
     currentLevel: 5,
-    currentHp: 5,
+    currentHp: 25,
     attackIds: [AttackId.Slash],
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
@@ -26,7 +26,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const optionGrid = ref(PlayerOptionGrid);
   const attackNames = computed(() => getAttackNames(activeMonster.value));
   const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
-  const isPlayingHealthBarAppearAnimation = ref<true>();
+  const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
 
   const takeDamage = (damage: number, onComplete?: () => void) => {
     let newHp = activeMonster.value.currentHp - damage;
@@ -49,7 +49,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
     optionGrid,
     attackNames,
     attackOptionGrid,
-    isPlayingHealthBarAppearAnimation,
+    isPlayingMonsterInfoContainerAppearAnimation,
     takeDamage,
   };
 });

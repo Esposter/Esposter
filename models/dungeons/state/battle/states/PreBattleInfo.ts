@@ -13,13 +13,13 @@ export const PreBattleInfo: State<StateName> = {
       activeMonster,
       activeMonsterAnimationState,
       activeMonsterAnimationStateOnComplete,
-      isPlayingHealthBarAppearAnimation,
+      isPlayingMonsterInfoContainerAppearAnimation,
     } = storeToRefs(enemyStore);
     const infoPanelStore = useInfoPanelStore();
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 
     activeMonsterAnimationStateOnComplete.value = () => {
-      isPlayingHealthBarAppearAnimation.value = true;
+      isPlayingMonsterInfoContainerAppearAnimation.value = true;
       updateQueuedMessagesAndShowMessage([`Wild ${activeMonster.value.name} appeared!`], () =>
         battleStateMachine.setState(StateName.BringOutMonster),
       );

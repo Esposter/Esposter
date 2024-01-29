@@ -16,14 +16,14 @@ interface InfoContainerProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const store = isEnemy ? useEnemyStore() : usePlayerStore();
-const { activeMonster, isPlayingHealthBarAppearAnimation } = storeToRefs(store);
+const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(store);
 const position = ref<Position>(isEnemy ? { x: -600, y: 0 } : { x: 1200, y: 318 });
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
-  if (!isPlayingHealthBarAppearAnimation.value) return;
+  if (!isPlayingMonsterInfoContainerAppearAnimation.value) return;
 
   const xEnd = isEnemy ? 0 : 556;
   return {

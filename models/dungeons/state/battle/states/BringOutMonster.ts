@@ -17,13 +17,13 @@ export const BringOutMonster: State<StateName> = {
       activeMonster,
       activeMonsterAnimationState,
       activeMonsterAnimationStateOnComplete,
-      isPlayingHealthBarAppearAnimation,
+      isPlayingMonsterInfoContainerAppearAnimation,
     } = storeToRefs(playerStore);
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
 
     activeMonsterAnimationStateOnComplete.value = () => {
-      isPlayingHealthBarAppearAnimation.value = true;
+      isPlayingMonsterInfoContainerAppearAnimation.value = true;
       showMessageNoInputRequired(`Go ${activeMonster.value.name}!`, () => {
         scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () => {
           battleStateMachine.setState(StateName.PlayerInput);
