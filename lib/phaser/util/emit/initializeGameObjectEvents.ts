@@ -1,5 +1,5 @@
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
-import { type SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
+import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { type GameObjects, type Types } from "phaser";
 import { type SetupContext } from "vue";
 

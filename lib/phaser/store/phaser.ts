@@ -1,4 +1,4 @@
-import { type SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
+import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { type Game } from "phaser";
 

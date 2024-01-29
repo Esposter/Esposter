@@ -1,4 +1,4 @@
-import { MovementManager } from "@/models/dungeons/managers/MovementManager";
+import { MovementManager } from "@/models/dungeons/manager/MovementManager";
 import { type GridEngine } from "grid-engine";
 import { type Scene } from "phaser";
 

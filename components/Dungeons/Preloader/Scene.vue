@@ -11,7 +11,7 @@ import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { TextureLoaderMap } from "@/models/dungeons/loader/TextureLoaderMap";
-import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
+import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();

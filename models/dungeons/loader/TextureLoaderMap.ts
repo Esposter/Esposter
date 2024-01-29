@@ -10,7 +10,7 @@ import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.
 import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { type SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
+import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { type Loader } from "phaser";
 
 export const TextureLoaderMap: Record<TextureManagerKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {

@@ -1,5 +1,5 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { MovementManager } from "@/models/dungeons/managers/MovementManager";
+import { MovementManager } from "@/models/dungeons/manager/MovementManager";
 import { createJoystick } from "@/services/dungeons/joystick/createJoystick";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import type GridEngine from "grid-engine";

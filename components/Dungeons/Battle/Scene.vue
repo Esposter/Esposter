@@ -2,7 +2,7 @@
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneWithPlugins } from "@/models/dungeons/scenes/plugins/SceneWithPlugins";
+import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
