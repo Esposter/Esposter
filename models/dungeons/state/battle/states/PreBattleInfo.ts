@@ -26,4 +26,9 @@ export const PreBattleInfo: State<StateName> = {
     };
     activeMonsterAnimationState.value = AnimationState.Appear;
   },
+  onExit: () => {
+    const infoPanelStore = useInfoPanelStore();
+    const { line1Text } = storeToRefs(infoPanelStore);
+    line1Text.value = "";
+  },
 };
