@@ -6,8 +6,8 @@ const modelValue = defineModel<CardType>({ required: true });
 // true = CardType.Carousel
 const modelSwitch = computed<boolean>({
   get: () => modelValue.value === CardType.Carousel,
-  set: (newValue) => {
-    modelValue.value = newValue ? CardType.Carousel : CardType.Marquee;
+  set: (newCardType) => {
+    modelValue.value = newCardType ? CardType.Carousel : CardType.Marquee;
   },
 });
 </script>

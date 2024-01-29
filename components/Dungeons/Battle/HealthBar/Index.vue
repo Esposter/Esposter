@@ -23,14 +23,14 @@ const isVisible = computed(() => middleDisplayWidth.value > 0);
 // middle bar. It is a little disgusting that we need to wait before we get the display width
 // of the left cap to determine the position of the right cap though and we wouldn't have
 // needed to do this if we could compute it based on the middleX + bar width values :C
-watch(leftCapDisplayWidth, (newValue) => {
-  if (newValue === undefined) return;
-  rightCapX.value = position.x + newValue + barWidth.value;
+watch(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
+  if (newLeftCapDisplayWidth === undefined) return;
+  rightCapX.value = position.x + newLeftCapDisplayWidth + barWidth.value;
 });
 // We'll just assume that all changes to the bar width right now will be animated
 // until a use case pops up where we want to just change it immediately without the animation
-watch(barWidth, (newValue) => {
-  animatedRightCapX.value = middleX.value + newValue;
+watch(barWidth, (newBarWidth) => {
+  animatedRightCapX.value = middleX.value + newBarWidth;
 });
 </script>
 

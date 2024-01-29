@@ -32,9 +32,9 @@ const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["v
 
 const { trigger } = watchTriggerable(
   () => editedItem.value?.component,
-  (newValue) => {
-    if (!newValue) return;
-    updatePropertyRendererMap(newValue);
+  (newComponent) => {
+    if (!newComponent) return;
+    updatePropertyRendererMap(newComponent);
     selectedProperty.value = undefined;
   },
 );

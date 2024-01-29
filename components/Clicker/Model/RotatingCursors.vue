@@ -35,7 +35,7 @@ const animateCursors = (amount: number) => {
 };
 
 // Animate after vue has updated the DOM with new cursors
-const { trigger } = watchTriggerable(amount, (newValue) => animateCursors(newValue), { flush: "post" });
+const { trigger } = watchTriggerable(amount, (newAmount) => animateCursors(newAmount), { flush: "post" });
 onMounted(trigger);
 </script>
 

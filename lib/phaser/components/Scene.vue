@@ -51,7 +51,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (!game.value) return;
-
   game.value.scene.remove(sceneKey);
 });
 </script>
