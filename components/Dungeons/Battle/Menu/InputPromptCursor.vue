@@ -6,7 +6,6 @@ import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 
 const playerStore = useInfoPanelStore();
-// Same idea here that display width will be half-computed by scaleX
 const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } =
   storeToRefs(playerStore);
 </script>
