@@ -17,7 +17,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
       baseAttack: 5,
     },
     currentLevel: 5,
-    currentHp: 25,
+    currentHp: 5,
     attackIds: [AttackId.Slash],
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
