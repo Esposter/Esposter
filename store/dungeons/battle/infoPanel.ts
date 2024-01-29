@@ -1,5 +1,7 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { animateText } from "@/services/dungeons/animation/animateText";
+import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
@@ -22,9 +24,13 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     isQueuedMessagesSkipAnimation.value = isSkipAnimation;
     showMessage();
   };
-  // @TODO: We should be able to set the active panel to info here...
-  // not sure why vue complains when using it inside a callback
+  // These show message functions are called inside a callback which loses sight of the scope
+  // that contains the battle scene store, so we need to grab it within the function
+  // instead of referencing the store outside
   const showMessage = () => {
+    const battleSceneStore = useBattleSceneStore();
+    const { activePanel } = storeToRefs(battleSceneStore);
+    activePanel.value = ActivePanel.Info;
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
     line1Text.value = "";
@@ -55,6 +61,9 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
   };
 
   const showMessageNoInputRequired = (message: string, onComplete?: () => void, isSkipAnimation?: true) => {
+    const battleSceneStore = useBattleSceneStore();
+    const { activePanel } = storeToRefs(battleSceneStore);
+    activePanel.value = ActivePanel.Info;
     line1Text.value = "";
 
     if (isSkipAnimation) {

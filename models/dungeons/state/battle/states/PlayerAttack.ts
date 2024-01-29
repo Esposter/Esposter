@@ -1,5 +1,4 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
@@ -8,15 +7,12 @@ import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
   onEnter: () => {
     const phaserStore = usePhaserStore();
     const { scene } = storeToRefs(phaserStore);
-    const battleSceneStore = useBattleSceneStore();
-    const { activePanel } = storeToRefs(battleSceneStore);
     const playerStore = usePlayerStore();
     const { activeMonster, attackOptionGrid } = storeToRefs(playerStore);
     const enemyStore = useEnemyStore();
@@ -24,7 +20,6 @@ export const PlayerAttack: State<StateName> = {
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
 
-    activePanel.value = ActivePanel.Info;
     showMessageNoInputRequired(`${activeMonster.value.name} used ${attackOptionGrid.value.value}.`, () => {
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
         takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
