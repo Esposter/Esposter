@@ -12,6 +12,7 @@ export const Finished: State<StateName> = {
     const { scene } = storeToRefs(phaserStore);
     scene.value.cameras.main.fadeOut(dayjs.duration(0.6, "seconds").asMilliseconds(), 0, 0, 0);
     scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      // @TODO: This doesn't restart...
       scene.value.scene.start(SceneKey.Battle);
     });
   },
