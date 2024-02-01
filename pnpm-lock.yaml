@@ -248,8 +248,8 @@ devDependencies:
     specifier: ^1.1.3
     version: 1.1.3
   '@types/three':
-    specifier: ^0.161.1
-    version: 0.161.1
+    specifier: ^0.161.2
+    version: 0.161.2
   '@types/ws':
     specifier: ^8.5.10
     version: 8.5.10
@@ -4250,8 +4250,8 @@ packages:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
     dev: true
 
-  /@types/three@0.161.1:
-    resolution: {integrity: sha512-ZNp+PWuygRJb70lmQVbvhraQEFrVxilWfrnoej2WSybyyMW6JbJX3vUt1pOXdIQ0C8SG5W51+61YlSKqjtZxCQ==}
+  /@types/three@0.161.2:
+    resolution: {integrity: sha512-DazpZ+cIfBzbW/p0zm6G8CS03HBMd748A3R1ZOXHpqaXZLv2I5zNgQUrRG//UfJ6zYFp2cUoCQaOLaz8ubH07w==}
     dependencies:
       '@types/stats.js': 0.17.3
       '@types/webxr': 0.5.11
