@@ -69,7 +69,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     activePanel.value = ActivePanel.Info;
     line1Text.value = "";
 
-    if (isSkipBattleAnimations) {
+    if (isSkipBattleAnimations.value) {
       line1Text.value = message;
       onComplete?.();
       return;
