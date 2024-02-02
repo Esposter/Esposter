@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
+import { getHealthBarXTween } from "@/services/dungeons/battle/getHealthBarXTween";
 import { type Position } from "grid-engine";
 
 interface HealthBarProps {
@@ -14,7 +16,7 @@ const leftCapDisplayWidth = ref<number>();
 const middleDisplayWidth = computed(() => rightCapX.value - middleX.value);
 const middleX = computed(() => position.x + (leftCapDisplayWidth.value ?? 0));
 const rightCapX = ref(position.x + (leftCapDisplayWidth.value ?? 0) + barWidth.value);
-const animatedRightCapX = ref();
+const rightCapXTween = ref<TweenBuilderConfiguration>();
 const isVisible = computed(() => middleDisplayWidth.value > 0);
 // We kinda need to do this very weird thing of animating our right cap x position
 // and computing the middle display width value based on that instead of the other way around
@@ -30,7 +32,7 @@ watch(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
 // We'll just assume that all changes to the bar width right now will be animated
 // until a use case pops up where we want to just change it immediately without the animation
 watch(barWidth, (newBarWidth) => {
-  animatedRightCapX.value = middleX.value + newBarWidth;
+  rightCapXTween.value = getHealthBarXTween(rightCapX, middleX.value + newBarWidth);
 });
 </script>
 
@@ -46,11 +48,6 @@ watch(barWidth, (newBarWidth) => {
       :scale-y="scaleY"
       :display-width="middleDisplayWidth"
     />
-    <DungeonsBattleHealthBarRightCap
-      v-model:x="rightCapX"
-      v-model:animated-x="animatedRightCapX"
-      :y="position.y"
-      :scale-y="scaleY"
-    />
+    <DungeonsBattleHealthBarRightCap v-model:x="rightCapX" :y="position.y" :scale-y="scaleY" :tween="rightCapXTween" />
   </template>
 </template>
