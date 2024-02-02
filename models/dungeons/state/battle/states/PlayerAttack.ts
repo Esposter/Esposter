@@ -20,12 +20,12 @@ export const PlayerAttack: State<StateName> = {
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
 
-    showMessageNoInputRequired(`${activeMonster.value.name} used ${attackOptionGrid.value.value}.`, () => {
+    showMessageNoInputRequired(`${activeMonster.value.name} used ${attackOptionGrid.value.value}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
         takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
           battleStateMachine.setState(StateName.PlayerPostAttackCheck),
         ),
-      );
-    });
+      ),
+    );
   },
 };

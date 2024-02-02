@@ -23,13 +23,12 @@ export const EnemyAttack: State<StateName> = {
 
     showMessageNoInputRequired(
       `Enemy ${activeMonster.value.name} used ${getAttackName(activeMonster.value.attackIds[0])}.`,
-      () => {
+      () =>
         scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
             battleStateMachine.setState(StateName.EnemyPostAttackCheck),
           );
-        });
-      },
+        }),
     );
   },
 };

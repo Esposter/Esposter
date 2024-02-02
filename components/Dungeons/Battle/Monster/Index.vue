@@ -16,19 +16,23 @@ interface MonsterProps {
 
 const { isEnemy } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : usePlayerStore();
-const { activeMonster, activeMonsterAnimationState, activeMonsterAnimationStateOnComplete } = storeToRefs(store);
+const { activeMonster, activeMonsterAnimationState } = storeToRefs(store);
+const activeMonsterAnimationStateOnComplete = useActiveMonsterAnimationStateOnComplete(isEnemy);
 const settingsStore = useSettingsStore();
 const { isSkipBattleAnimations } = storeToRefs(settingsStore);
 const position = ref<Position>(isEnemy ? { x: -100, y: 144 } : { x: -100, y: 316 });
+const isOnCompleteActive = ref(false);
+// We can't actually call the onComplete inside the computed tween
+// because it resets the animation state and recursive updates aren't applied
+// inside the computed, so we have to manually trigger it through a watch
+const onComplete = () => {
+  isOnCompleteActive.value = true;
+};
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
   if (!activeMonsterAnimationState.value) return;
 
   let xEnd: number;
   let yEnd: number;
-  const onComplete = () => {
-    activeMonsterAnimationStateOnComplete.value?.();
-    activeMonsterAnimationStateOnComplete.value = undefined;
-  };
 
   switch (activeMonsterAnimationState.value) {
     case AnimationState.Appear:
@@ -88,6 +92,13 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       exhaustiveGuard(activeMonsterAnimationState.value);
   }
 });
+
+watch(isOnCompleteActive, (newIsOnCompleteActive) => {
+  if (newIsOnCompleteActive) {
+    activeMonsterAnimationStateOnComplete();
+    isOnCompleteActive.value = false;
+  }
+});
 </script>
 
 <template>
@@ -99,7 +110,6 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
       flipX: !isEnemy,
       tween,
     }"
-    @update:x="(value: typeof position.x) => (position.x = value)"
   />
   <DungeonsBattleMonsterInfoContainer :is-enemy="isEnemy" />
 </template>

@@ -24,11 +24,11 @@ export const BringOutMonster: State<StateName> = {
 
     activeMonsterAnimationStateOnComplete.value = () => {
       isPlayingMonsterInfoContainerAppearAnimation.value = true;
-      showMessageNoInputRequired(`Go ${activeMonster.value.name}!`, () => {
-        scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () => {
-          battleStateMachine.setState(StateName.PlayerInput);
-        });
-      });
+      showMessageNoInputRequired(`Go ${activeMonster.value.name}!`, () =>
+        scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () =>
+          battleStateMachine.setState(StateName.PlayerInput),
+        ),
+      );
     };
     activeMonsterAnimationState.value = AnimationState.Appear;
   },

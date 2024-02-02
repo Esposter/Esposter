@@ -19,12 +19,11 @@ export const PlayerPostAttackCheck: State<StateName> = {
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 
     if (isActiveMonsterFainted.value) {
-      activeMonsterAnimationStateOnComplete.value = () => {
+      activeMonsterAnimationStateOnComplete.value = () =>
         updateQueuedMessagesAndShowMessage(
           [`Wild ${activeMonster.value.name} has fainted!`, "You have gained some experience."],
           () => battleStateMachine.setState(StateName.Finished),
         );
-      };
       activeMonsterAnimationState.value = AnimationState.Death;
       return;
     }

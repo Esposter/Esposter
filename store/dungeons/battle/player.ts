@@ -1,5 +1,5 @@
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
+import { type AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { getAttackNames } from "@/services/dungeons/battle/getAttackNames";
@@ -27,19 +27,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const attackNames = computed(() => getAttackNames(activeMonster.value));
   const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
   const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
-
-  const takeDamage = (damage: number, onComplete?: () => void) => {
-    let newHp = activeMonster.value.currentHp - damage;
-    if (newHp < 0) newHp = 0;
-    activeMonster.value.currentHp = newHp;
-    activeMonsterAnimationStateOnComplete.value = () => {
-      // Unlike other animations, we need to repeat this
-      // so we want to refresh the computed tween that depends on this
-      activeMonsterAnimationState.value = undefined;
-      onComplete?.();
-    };
-    activeMonsterAnimationState.value = AnimationState.TakeDamage;
-  };
+  const takeDamage = useTakeDamage();
 
   return {
     activeMonster,
