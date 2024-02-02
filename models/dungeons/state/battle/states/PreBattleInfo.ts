@@ -1,4 +1,3 @@
-import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
@@ -9,21 +8,15 @@ export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
   onEnter: () => {
     const enemyStore = useEnemyStore();
-    const {
-      activeMonster,
-      activeMonsterAnimationState,
-      activeMonsterAnimationStateOnComplete,
-      isPlayingMonsterInfoContainerAppearAnimation,
-    } = storeToRefs(enemyStore);
+    const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(enemyStore);
     const infoPanelStore = useInfoPanelStore();
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 
-    activeMonsterAnimationStateOnComplete.value = () => {
+    useMonsterAppearTween(true, () => {
       isPlayingMonsterInfoContainerAppearAnimation.value = true;
       updateQueuedMessagesAndShowMessage([`Wild ${activeMonster.value.name} appeared!`], () =>
         battleStateMachine.setState(StateName.BringOutMonster),
       );
-    };
-    activeMonsterAnimationState.value = AnimationState.Appear;
+    });
   },
 };

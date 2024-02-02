@@ -1,7 +1,8 @@
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { type AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
-import { type Monster } from "@/models/dungeons/battle/monsters/Monster";
+import { type Monster } from "@/models/dungeons/battle/monster/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { type Position } from "grid-engine";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref<Monster>({
@@ -18,16 +19,16 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
     attackIds: [AttackId.IceShard],
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
-  const activeMonsterAnimationState = ref<AnimationState | undefined>();
-  const activeMonsterAnimationStateOnComplete = ref<(() => void) | undefined>();
+  const monsterPosition = ref<Position>({ x: -100, y: 144 });
+  const monsterTween = ref<TweenBuilderConfiguration>();
   const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
   const takeDamage = useTakeDamage(true);
 
   return {
     activeMonster,
     isActiveMonsterFainted,
-    activeMonsterAnimationState,
-    activeMonsterAnimationStateOnComplete,
+    monsterPosition,
+    monsterTween,
     isPlayingMonsterInfoContainerAppearAnimation,
     takeDamage,
   };

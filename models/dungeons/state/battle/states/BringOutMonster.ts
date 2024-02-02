@@ -1,5 +1,4 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { AnimationState } from "@/models/dungeons/battle/monsters/AnimationState";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
@@ -13,23 +12,17 @@ export const BringOutMonster: State<StateName> = {
     const phaserStore = usePhaserStore();
     const { scene } = storeToRefs(phaserStore);
     const playerStore = usePlayerStore();
-    const {
-      activeMonster,
-      activeMonsterAnimationState,
-      activeMonsterAnimationStateOnComplete,
-      isPlayingMonsterInfoContainerAppearAnimation,
-    } = storeToRefs(playerStore);
+    const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(playerStore);
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
 
-    activeMonsterAnimationStateOnComplete.value = () => {
+    useMonsterAppearTween(false, () => {
       isPlayingMonsterInfoContainerAppearAnimation.value = true;
       showMessageNoInputRequired(`Go ${activeMonster.value.name}!`, () =>
         scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () =>
           battleStateMachine.setState(StateName.PlayerInput),
         ),
       );
-    };
-    activeMonsterAnimationState.value = AnimationState.Appear;
+    });
   },
 };
