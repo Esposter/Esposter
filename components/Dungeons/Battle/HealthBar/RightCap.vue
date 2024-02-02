@@ -15,14 +15,15 @@ const x = defineModel<number | undefined>("x", { required: true });
 const animatedX = defineModel<number | undefined>("animatedX", { required: true });
 const tween = computed<TweenBuilderConfiguration | undefined>(() => {
   if (animatedX.value === undefined) return;
-  return {
-    x: animatedX.value,
-    duration: dayjs.duration(1, "second").asMilliseconds(),
-    ease: Math.Easing.Sine.Out,
-    onUpdate: (_, __, ___, current) => {
-      x.value = current;
-    },
-  };
+  else
+    return {
+      x: animatedX.value,
+      duration: dayjs.duration(1, "second").asMilliseconds(),
+      ease: Math.Easing.Sine.Out,
+      onUpdate: (_, __, ___, current) => {
+        x.value = current;
+      },
+    };
 });
 </script>
 

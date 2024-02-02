@@ -7,6 +7,7 @@ import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import { type Position } from "grid-engine";
 
 interface InfoContainerProps {
@@ -17,6 +18,8 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const store = isEnemy ? useEnemyStore() : usePlayerStore();
 const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(store);
+const settingsStore = useSettingsStore();
+const { isSkipBattleAnimations } = storeToRefs(settingsStore);
 const position = ref<Position>(isEnemy ? { x: -600, y: 0 } : { x: 1200, y: 318 });
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
@@ -26,15 +29,19 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
   if (!isPlayingMonsterInfoContainerAppearAnimation.value) return;
 
   const xEnd = isEnemy ? 0 : 556;
-  return {
-    delay: 0,
-    duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
-    x: {
-      from: position.value.x,
-      start: position.value.x,
-      to: xEnd,
-    },
-  };
+  if (isSkipBattleAnimations.value) {
+    position.value.x = xEnd;
+    return;
+  } else
+    return {
+      delay: 0,
+      duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
+      x: {
+        from: position.value.x,
+        start: position.value.x,
+        to: xEnd,
+      },
+    };
 });
 </script>
 

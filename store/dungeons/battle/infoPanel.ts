@@ -2,6 +2,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { animateText } from "@/services/dungeons/animation/animateText";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
@@ -14,14 +15,12 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
   const isInputPromptCursorVisible = ref(false);
   const queuedMessages = ref<string[]>([]);
   const queuedOnComplete = ref<() => void>();
-  const isQueuedMessagesSkipAnimation = ref(false);
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
-  const updateQueuedMessagesAndShowMessage = (messages: string[], onComplete?: () => void, isSkipAnimation = false) => {
+  const updateQueuedMessagesAndShowMessage = (messages: string[], onComplete?: () => void) => {
     queuedMessages.value = messages;
     queuedOnComplete.value = onComplete;
-    isQueuedMessagesSkipAnimation.value = isSkipAnimation;
     showMessage();
   };
   // These show message functions are called inside a callback which loses sight of the scope
@@ -30,6 +29,8 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
   const showMessage = () => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
+    const settingsStore = useSettingsStore();
+    const { isSkipBattleAnimations } = storeToRefs(settingsStore);
     activePanel.value = ActivePanel.Info;
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
@@ -42,7 +43,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
       return;
     }
 
-    if (isQueuedMessagesSkipAnimation.value) {
+    if (isSkipBattleAnimations.value) {
       line1Text.value = message;
       isWaitingForPlayerSpecialInput.value = true;
       return;
@@ -60,13 +61,15 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     });
   };
 
-  const showMessageNoInputRequired = (message: string, onComplete?: () => void, isSkipAnimation?: true) => {
+  const showMessageNoInputRequired = (message: string, onComplete?: () => void) => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
+    const settingsStore = useSettingsStore();
+    const { isSkipBattleAnimations } = storeToRefs(settingsStore);
     activePanel.value = ActivePanel.Info;
     line1Text.value = "";
 
-    if (isSkipAnimation) {
+    if (isSkipBattleAnimations) {
       line1Text.value = message;
       onComplete?.();
       return;
