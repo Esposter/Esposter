@@ -8,12 +8,12 @@ export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
   onEnter: () => {
     const enemyStore = useEnemyStore();
-    const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(enemyStore);
+    const { activeMonster } = storeToRefs(enemyStore);
     const infoPanelStore = useInfoPanelStore();
     const { updateQueuedMessagesAndShowMessage } = infoPanelStore;
 
     useMonsterAppearTween(true, () => {
-      isPlayingMonsterInfoContainerAppearAnimation.value = true;
+      useMonsterInfoContainerAppearTween(true);
       updateQueuedMessagesAndShowMessage([`Wild ${activeMonster.value.name} appeared!`], () =>
         battleStateMachine.setState(StateName.BringOutMonster),
       );

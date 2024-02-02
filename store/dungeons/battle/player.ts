@@ -24,10 +24,11 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const monsterPosition = ref<Position>({ x: -100, y: 316 });
   const monsterTween = ref<TweenBuilderConfiguration>();
+  const monsterInfoContainerPosition = ref<Position>({ x: 1200, y: 318 });
+  const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const optionGrid = ref(PlayerOptionGrid);
   const attackNames = computed(() => getAttackNames(activeMonster.value));
   const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
-  const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
   const takeDamage = useTakeDamage(false);
 
   return {
@@ -35,10 +36,11 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
     isActiveMonsterFainted,
     monsterPosition,
     monsterTween,
+    monsterInfoContainerPosition,
+    monsterInfoContainerTween,
     optionGrid,
     attackNames,
     attackOptionGrid,
-    isPlayingMonsterInfoContainerAppearAnimation,
     takeDamage,
   };
 });

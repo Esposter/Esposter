@@ -21,7 +21,8 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const monsterPosition = ref<Position>({ x: -100, y: 144 });
   const monsterTween = ref<TweenBuilderConfiguration>();
-  const isPlayingMonsterInfoContainerAppearAnimation = ref<true>();
+  const monsterInfoContainerPosition = ref<Position>({ x: -600, y: 0 });
+  const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const takeDamage = useTakeDamage(true);
 
   return {
@@ -29,7 +30,8 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
     isActiveMonsterFainted,
     monsterPosition,
     monsterTween,
-    isPlayingMonsterInfoContainerAppearAnimation,
+    monsterInfoContainerPosition,
+    monsterInfoContainerTween,
     takeDamage,
   };
 });

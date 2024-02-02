@@ -12,12 +12,12 @@ export const BringOutMonster: State<StateName> = {
     const phaserStore = usePhaserStore();
     const { scene } = storeToRefs(phaserStore);
     const playerStore = usePlayerStore();
-    const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(playerStore);
+    const { activeMonster } = storeToRefs(playerStore);
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
 
     useMonsterAppearTween(false, () => {
-      isPlayingMonsterInfoContainerAppearAnimation.value = true;
+      useMonsterInfoContainerAppearTween(false);
       showMessageNoInputRequired(`Go ${activeMonster.value.name}!`, () =>
         scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () =>
           battleStateMachine.setState(StateName.PlayerInput),

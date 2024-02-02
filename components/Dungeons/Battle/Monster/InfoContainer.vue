@@ -2,13 +2,9 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
-import { useSettingsStore } from "@/store/dungeons/settings";
-import { type Position } from "grid-engine";
 
 interface InfoContainerProps {
   isEnemy?: true;
@@ -17,36 +13,15 @@ interface InfoContainerProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const store = isEnemy ? useEnemyStore() : usePlayerStore();
-const { activeMonster, isPlayingMonsterInfoContainerAppearAnimation } = storeToRefs(store);
-const settingsStore = useSettingsStore();
-const { isSkipBattleAnimations } = storeToRefs(settingsStore);
-const position = ref<Position>(isEnemy ? { x: -600, y: 0 } : { x: 1200, y: 318 });
+const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
-const tween = computed<TweenBuilderConfiguration | undefined>(() => {
-  if (!isPlayingMonsterInfoContainerAppearAnimation.value) return;
-
-  const xEnd = isEnemy ? 0 : 556;
-  if (isSkipBattleAnimations.value) {
-    position.value.x = xEnd;
-    return;
-  } else
-    return {
-      delay: 0,
-      duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
-      x: {
-        from: position.value.x,
-        start: position.value.x,
-        to: xEnd,
-      },
-    };
-});
 </script>
 
 <template>
-  <Container :configuration="{ ...position, tween }">
+  <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
     <Image :configuration="{ textureKey: TextureManagerKey.HealthBarBackground, origin: 0, scaleY }" />
     <Text
       :configuration="{
