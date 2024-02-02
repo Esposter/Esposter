@@ -48,9 +48,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     if (isSkipBattleAnimations.value) {
       line1Text.value = message;
       sleep(DEFAULT_TEXT_DELAY).then(() => {
-        inputPromptCursorPositionX.value =
-          (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
-        isInputPromptCursorVisible.value = true;
+        showInputPromptCursor();
         isWaitingForPlayerSpecialInput.value = true;
       });
       return;
@@ -59,9 +57,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     isQueuedMessagesAnimationPlaying.value = true;
     animateText(scene.value, line1Text, message, {
       onComplete: () => {
-        inputPromptCursorPositionX.value =
-          (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
-        isInputPromptCursorVisible.value = true;
+        showInputPromptCursor();
         isWaitingForPlayerSpecialInput.value = true;
         isQueuedMessagesAnimationPlaying.value = false;
       },
@@ -83,6 +79,12 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
     }
 
     animateText(scene.value, line1Text, message, { onComplete });
+  };
+
+  const showInputPromptCursor = () => {
+    inputPromptCursorPositionX.value =
+      (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
+    isInputPromptCursorVisible.value = true;
   };
 
   return {
