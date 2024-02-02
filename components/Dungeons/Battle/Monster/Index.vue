@@ -25,13 +25,17 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
 
   let xEnd: number;
   let yEnd: number;
+  const onComplete = () => {
+    activeMonsterAnimationStateOnComplete.value?.();
+    activeMonsterAnimationStateOnComplete.value = undefined;
+  };
 
   switch (activeMonsterAnimationState.value) {
     case AnimationState.Appear:
       xEnd = isEnemy ? 768 : 256;
       if (isSkipBattleAnimations.value) {
         position.value.x = xEnd;
-        activeMonsterAnimationStateOnComplete.value?.();
+        onComplete();
         return;
       } else
         return {
@@ -42,11 +46,11 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
             start: position.value.x,
             to: xEnd,
           },
-          onComplete: activeMonsterAnimationStateOnComplete.value,
+          onComplete,
         } as TweenBuilderConfiguration;
     case AnimationState.TakeDamage:
       if (isSkipBattleAnimations.value) {
-        activeMonsterAnimationStateOnComplete.value?.();
+        onComplete();
         return;
       } else
         return {
@@ -60,14 +64,14 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
           },
           onComplete: (_, [monsterImageGameObject]) => {
             monsterImageGameObject.setAlpha(1);
-            activeMonsterAnimationStateOnComplete.value?.();
+            onComplete();
           },
         } as TweenBuilderConfiguration;
     case AnimationState.Death:
       yEnd = isEnemy ? position.value.y - 400 : position.value.y + 400;
       if (isSkipBattleAnimations.value) {
         position.value.y = yEnd;
-        activeMonsterAnimationStateOnComplete.value?.();
+        onComplete();
         return;
       } else
         return {
@@ -78,7 +82,7 @@ const tween = computed<TweenBuilderConfiguration | undefined>(() => {
             start: position.value.y,
             to: yEnd,
           },
-          onComplete: activeMonsterAnimationStateOnComplete.value,
+          onComplete,
         } as TweenBuilderConfiguration;
     default:
       exhaustiveGuard(activeMonsterAnimationState.value);
