@@ -1,8 +1,10 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { animateText } from "@/services/dungeons/animation/animateText";
+import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { sleep } from "@/util/sleep";
 
 export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => {
   const phaserStore = usePhaserStore();
@@ -26,7 +28,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
   // These show message functions are called inside a callback which loses sight of the scope
   // that contains the battle scene store, so we need to grab it within the function
   // instead of referencing the store outside
-  const showMessage = () => {
+  const showMessage = async () => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
     const settingsStore = useSettingsStore();
@@ -45,7 +47,12 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
 
     if (isSkipBattleAnimations.value) {
       line1Text.value = message;
-      isWaitingForPlayerSpecialInput.value = true;
+      sleep(DEFAULT_TEXT_DELAY).then(() => {
+        inputPromptCursorPositionX.value =
+          (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7;
+        isInputPromptCursorVisible.value = true;
+        isWaitingForPlayerSpecialInput.value = true;
+      });
       return;
     }
 

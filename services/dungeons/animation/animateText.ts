@@ -1,4 +1,4 @@
-import { dayjs } from "@/services/dayjs";
+import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { sleep } from "@/util/sleep";
 import { type Scene } from "phaser";
 
@@ -11,7 +11,7 @@ export const animateText = (
     onComplete?: () => void;
   },
 ) => {
-  const delay = configuration?.delay ?? dayjs.duration(25, "milliseconds").asMilliseconds();
+  const delay = configuration?.delay ?? DEFAULT_TEXT_DELAY;
   let i = 0;
   scene.time.addEvent({
     delay,
