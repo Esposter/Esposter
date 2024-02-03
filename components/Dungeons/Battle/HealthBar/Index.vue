@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { getHealthBarXTween } from "@/services/dungeons/battle/getHealthBarXTween";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import { type Position } from "grid-engine";
 
 interface HealthBarProps {
@@ -8,9 +9,11 @@ interface HealthBarProps {
   barPercentage: number;
 }
 
-const { position, barPercentage } = defineProps<HealthBarProps>();
 const fullBarWidth = 360;
 const scaleY = 0.7;
+const { position, barPercentage } = defineProps<HealthBarProps>();
+const settingsStore = useSettingsStore();
+const { isSkipBattleAnimations } = storeToRefs(settingsStore);
 const barWidth = computed(() => (fullBarWidth * barPercentage) / 100);
 const leftCapDisplayWidth = ref<number>();
 const middleDisplayWidth = computed(() => rightCapX.value - middleX.value);
@@ -29,10 +32,11 @@ watch(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
   if (newLeftCapDisplayWidth === undefined) return;
   rightCapX.value = position.x + newLeftCapDisplayWidth + barWidth.value;
 });
-// We'll just assume that all changes to the bar width right now will be animated
-// until a use case pops up where we want to just change it immediately without the animation
+
 watch(barWidth, (newBarWidth) => {
-  rightCapXTween.value = getHealthBarXTween(rightCapX, middleX.value + newBarWidth);
+  const newRightCapX = middleX.value + newBarWidth;
+  if (isSkipBattleAnimations.value) rightCapX.value = newRightCapX;
+  else rightCapXTween.value = getHealthBarXTween(rightCapX, newRightCapX);
 });
 </script>
 
