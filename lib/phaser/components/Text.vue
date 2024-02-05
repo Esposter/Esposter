@@ -4,6 +4,7 @@ import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextCo
 import { type TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
+import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { type SetRequired } from "@/util/types/SetRequired";
 import { type GameObjects } from "phaser";
 
@@ -19,7 +20,9 @@ const { x, y, text, style } = configuration.value;
 const emit = defineEmits<TextEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const textGameObject = ref(scene.value.add.text(x ?? 0, y ?? 0, text, style)) as Ref<GameObjects.Text>;
+const textGameObject = ref(
+  scene.value.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey["Kenney-Future-Narrow"], ...style }),
+) as Ref<GameObjects.Text>;
 useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 </script>
 

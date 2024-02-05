@@ -6,7 +6,6 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
@@ -78,7 +77,7 @@ const preload = (scene: SceneWithPlugins) => {
         x,
         y,
         text: percentageText,
-        style: { font: `1.5rem ${FontKey['Kenney-Future-Narrow']}` },
+        style: { fontSize: '1.5rem' },
         origin: 0.5,
       }"
     />
@@ -87,7 +86,7 @@ const preload = (scene: SceneWithPlugins) => {
         x,
         y: y ? y + 50 : undefined,
         text: assetText,
-        style: { font: `1.5rem ${FontKey['Kenney-Future-Narrow']}` },
+        style: { fontSize: '1.5rem' },
         origin: 0.5,
       }"
     />
