@@ -20,6 +20,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
       tableEditor.value.items[index] = {
         ...tableEditor.value.items[index],
         ...updatedItem,
+        updatedAt: new Date(),
       };
   };
   const deleteItem = (id: string) => {

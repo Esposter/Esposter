@@ -6,8 +6,13 @@ export const useGameStore = defineStore("dungeons/game", () => {
   const { status } = useAuth();
   const game = ref(new Game());
   const saveGame = async () => {
-    if (status.value === "authenticated") await $client.dungeons.saveGame.mutate(game.value);
-    else if (status.value === "unauthenticated") localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
+    if (status.value === "authenticated") {
+      game.value.updatedAt = new Date();
+      await $client.dungeons.saveGame.mutate(game.value);
+    } else if (status.value === "unauthenticated") {
+      game.value.updatedAt = new Date();
+      localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
+    }
   };
   return { game, saveGame };
 });
