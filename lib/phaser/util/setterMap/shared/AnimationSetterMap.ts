@@ -10,10 +10,13 @@ export const AnimationSetterMap = {
       if (!animation) throw new Error("Invalid animation key");
       return animation;
     }),
-  isPlayingAnimation: (gameObject) => (value) => {
-    if (value === undefined) return;
-    else if (value) gameObject.play(gameObject.texture);
-    else gameObject.stop();
+  playAnimationKey: (gameObject) => (value) => {
+    if (value === undefined) {
+      gameObject.stop();
+      return;
+    }
+
+    gameObject.play(value);
   },
 } satisfies SetterMap<AnimationConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions>;
 

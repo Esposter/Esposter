@@ -2,7 +2,6 @@
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
@@ -38,12 +37,7 @@ const { cursorKeys } = storeToRefs(battleSceneStore);
     <DungeonsBattleBackground />
     <DungeonsBattleMonster is-enemy />
     <DungeonsBattleMonster />
-    <DungeonsBattleAttack
-      :position="{ x: 745, y: 140 }"
-      :spritesheet-key="SpritesheetKey.IceShard"
-      :frame="0"
-      is-playing-animation
-    />
+    <DungeonsBattleAttackIceShard />
     <DungeonsBattleMenu />
   </Scene>
 </template>
