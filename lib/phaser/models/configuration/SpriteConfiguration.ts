@@ -11,6 +11,7 @@ import { type TextureConfiguration } from "@/lib/phaser/models/configuration/com
 import { type TintConfiguration } from "@/lib/phaser/models/configuration/components/TintConfiguration";
 import { type TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import { type VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
+import { type AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
 import { type Except } from "@/util/types/Except";
 import { type Types } from "phaser";
 
@@ -27,6 +28,5 @@ export type SpriteConfiguration = AlphaConfiguration &
   TintConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
-  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig> & {
-    isPlayingAnimation: boolean;
-  };
+  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig | "anims"> &
+  AnimationConfiguration;

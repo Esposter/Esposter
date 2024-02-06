@@ -1,4 +1,4 @@
-import { type BaseShapeConfiguration } from "@/lib/phaser/models/configuration/global/ShapeConfiguration";
+import { type BaseShapeConfiguration } from "@/lib/phaser/models/configuration/shared/ShapeConfiguration";
 import { type AlphaSingleEventEmitsOptions } from "@/lib/phaser/models/emit/components/AlphaSingleEventEmitsOptions";
 import { type BlendModeEventEmitsOptions } from "@/lib/phaser/models/emit/components/BlendModeEventEmitsOptions";
 import { type DepthEventEmitsOptions } from "@/lib/phaser/models/emit/components/DepthEventEmitsOptions";

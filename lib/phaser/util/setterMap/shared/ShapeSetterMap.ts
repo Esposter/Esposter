@@ -1,5 +1,5 @@
-import { type ShapeConfiguration } from "@/lib/phaser/models/configuration/global/ShapeConfiguration";
-import { type ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/global/ShapeEventEmitsOptions";
+import { type ShapeConfiguration } from "@/lib/phaser/models/configuration/shared/ShapeConfiguration";
+import { type ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/shared/ShapeEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";

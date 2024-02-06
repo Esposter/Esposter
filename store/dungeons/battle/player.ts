@@ -1,4 +1,4 @@
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { type Monster } from "@/models/dungeons/battle/monster/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";

@@ -15,6 +15,7 @@ import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetter
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
+import { AnimationSetterMap } from "@/lib/phaser/util/setterMap/shared/AnimationSetterMap";
 import { type GameObjects } from "phaser";
 
 export const SpriteSetterMap: SetterMap<SpriteConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions> = {
@@ -32,13 +33,9 @@ export const SpriteSetterMap: SetterMap<SpriteConfiguration, GameObjects.Sprite,
   ...TransformSetterMap,
   ...VisibleSetterMap,
   ...GlobalSetterMap,
+  ...AnimationSetterMap,
   frame: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setFrame(value);
-  },
-  isPlayingAnimation: (gameObject) => (value) => {
-    if (value === undefined) return;
-    else if (value) gameObject.play(gameObject.texture);
-    else gameObject.stop();
   },
 };

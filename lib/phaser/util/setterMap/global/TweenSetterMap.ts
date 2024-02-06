@@ -1,5 +1,5 @@
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
 import { type TweenConfiguration } from "@/lib/phaser/models/configuration/global/TweenConfiguration";
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { type TweenEventEmitsOptions } from "@/lib/phaser/models/emit/global/TweenEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { type GameObjects, type Tweens } from "phaser";
@@ -20,11 +20,11 @@ export const TweenSetterMap = {
 } satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;
 
 const createTween = <TTween extends { destroy: () => void }, TConfiguration extends object>(
-  callback: (config: TConfiguration) => TTween,
+  callback: (configuration: TConfiguration) => TTween,
 ) => {
   let previousTween: TTween | undefined;
-  return (config?: TConfiguration) => {
+  return (configuration?: TConfiguration) => {
     if (previousTween) previousTween.destroy();
-    previousTween = config ? callback(config) : undefined;
+    previousTween = configuration ? callback(configuration) : undefined;
   };
 };

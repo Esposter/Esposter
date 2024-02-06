@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/components/TweenBuilderConfiguration";
+import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { getHealthBarXTween } from "@/services/dungeons/battle/getHealthBarXTween";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { type Position } from "grid-engine";
