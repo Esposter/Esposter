@@ -84,8 +84,8 @@
     "@tiptap/starter-kit": "^2.2.1",
     "@tiptap/suggestion": "^2.2.1",
     "@tiptap/vue-3": "^2.2.1",
-    "@trpc/client": "^10.45.0",
-    "@trpc/server": "^10.45.0",
+    "@trpc/client": "^10.45.1",
+    "@trpc/server": "^10.45.1",
     "@vuepic/vue-datepicker": "^8.0.0",
     "@vueuse/core": "^10.7.2",
     "@vueuse/nuxt": "^10.7.2",
@@ -116,14 +116,14 @@
     "recursive-diff": "^1.0.9",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.2.1",
-    "survey-core": "^1.9.128",
-    "survey-creator-core": "^1.9.128",
-    "survey-creator-vue": "^1.9.128",
-    "survey-vue3-ui": "^1.9.128",
+    "survey-core": "^1.9.129",
+    "survey-creator-core": "^1.9.129",
+    "survey-creator-vue": "^1.9.129",
+    "survey-vue3-ui": "^1.9.129",
     "three": "^0.161.0",
     "three-globe": "^2.30.0",
     "tippy.js": "^6.3.7",
-    "trpc-nuxt": "^0.10.17",
+    "trpc-nuxt": "^0.10.18",
     "vue": "3.4.8",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.2.5",
@@ -140,5 +140,6 @@
   },
   "engines": {
     "node": "^20.11.0"
-  }
+  },
+  "packageManager": "pnpm@8.15.1"
 }

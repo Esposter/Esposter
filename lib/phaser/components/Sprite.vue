@@ -3,10 +3,9 @@ import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeG
 import { type SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
 import { type SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { SpriteEventMap } from "@/lib/phaser/util/emit/SpriteEventMap";
 import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
 import { type SetRequired } from "@/util/types/SetRequired";
-import { type GameObjects, type Types } from "phaser";
+import { type GameObjects } from "phaser";
 
 interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "textureKey">;
@@ -21,12 +20,6 @@ const emit = defineEmits<SpriteEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const sprite = ref(scene.value.add.sprite(x ?? 0, y ?? 0, textureKey, frame)) as Ref<GameObjects.Sprite>;
-const events = Object.keys(SpriteEventMap).filter((key) => key in configuration) as (keyof typeof SpriteEventMap)[];
-// @ts-expect-error
-// emit has a bunch of different overload types which doesn't match our union type
-// but we know that our union type matches the game object events since we're just passing in the same events
-for (const event of events) sprite.value.on(event, (...args: Types.Input.EventData[]) => emit(event, ...args));
-
 useInitializeGameObject(sprite, configuration, emit, SpriteSetterMap);
 </script>
 

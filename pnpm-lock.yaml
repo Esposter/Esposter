@@ -78,11 +78,11 @@ dependencies:
     specifier: ^2.2.1
     version: 2.2.1(@tiptap/core@2.2.1)(@tiptap/pm@2.2.1)(vue@3.4.8)
   '@trpc/client':
-    specifier: ^10.45.0
-    version: 10.45.0(@trpc/server@10.45.0)
+    specifier: ^10.45.1
+    version: 10.45.1(@trpc/server@10.45.1)
   '@trpc/server':
-    specifier: ^10.45.0
-    version: 10.45.0
+    specifier: ^10.45.1
+    version: 10.45.1
   '@vuepic/vue-datepicker':
     specifier: ^8.0.0
     version: 8.0.0(vue@3.4.8)
@@ -174,17 +174,17 @@ dependencies:
     specifier: ^2.2.1
     version: 2.2.1
   survey-core:
-    specifier: ^1.9.128
-    version: 1.9.128
+    specifier: ^1.9.129
+    version: 1.9.129
   survey-creator-core:
-    specifier: ^1.9.128
-    version: 1.9.128
+    specifier: ^1.9.129
+    version: 1.9.129
   survey-creator-vue:
-    specifier: ^1.9.128
-    version: 1.9.128(vue@3.4.8)
+    specifier: ^1.9.129
+    version: 1.9.129(vue@3.4.8)
   survey-vue3-ui:
-    specifier: ^1.9.128
-    version: 1.9.128(vue@3.4.8)
+    specifier: ^1.9.129
+    version: 1.9.129(vue@3.4.8)
   three:
     specifier: ^0.161.0
     version: 0.161.0
@@ -195,8 +195,8 @@ dependencies:
     specifier: ^6.3.7
     version: 6.3.7
   trpc-nuxt:
-    specifier: ^0.10.17
-    version: 0.10.17(@trpc/client@10.45.0)(@trpc/server@10.45.0)
+    specifier: ^0.10.18
+    version: 0.10.18(@trpc/client@10.45.1)(@trpc/server@10.45.1)
   vue:
     specifier: 3.4.8
     version: 3.4.8(typescript@5.3.3)
@@ -4095,16 +4095,16 @@ packages:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
 
-  /@trpc/client@10.45.0(@trpc/server@10.45.0):
-    resolution: {integrity: sha512-m091R1qte9rvkvL8N1e/mzrbb8S4gb+Q4ZNJnEGDgd7kic/6a8DFgSciBTiCoSp0YwOTVhyQzSrrA/sZI6PhBg==}
+  /@trpc/client@10.45.1(@trpc/server@10.45.1):
+    resolution: {integrity: sha512-nVbAk1xpIiI64WgzXGgfxPOGgHoYvffn1IsjV1D/Ri7DL4BKuo2qtZ7UQ+OuHkzH2M8j4ikSVBDpk545fOdvpw==}
     peerDependencies:
-      '@trpc/server': 10.45.0
+      '@trpc/server': 10.45.1
     dependencies:
-      '@trpc/server': 10.45.0
+      '@trpc/server': 10.45.1
     dev: false
 
-  /@trpc/server@10.45.0:
-    resolution: {integrity: sha512-2Fwzv6nqpE0Ie/G7PeS0EVR89zLm+c1Mw7T+RAGtU807j4oaUx0zGkBXTu5u9AI+j+BYNN2GZxJcuDTAecbr1A==}
+  /@trpc/server@10.45.1:
+    resolution: {integrity: sha512-KOzBEVaHW9IxEedUP9E50y0tYxAuvlzyjn80Bpemw4rcNbT4WtJnhkFPUY+qDJl7Crt3B/oY2qMgSxVWi9toLg==}
     dev: false
 
   /@trysound/sax@0.2.0:
@@ -10823,12 +10823,12 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /survey-core@1.9.128:
-    resolution: {integrity: sha512-57vtR9ncOQi+OXgeredtT3AjR2YWpD6W3oQ8X0Z/HCHB/96whAW1wEQaRVxac6j1bqgvQMZoKqU2gRjq1Tbrfg==}
+  /survey-core@1.9.129:
+    resolution: {integrity: sha512-+P+joRFqbUrNDA7nttNXa7ap7dFAaf6wxnwo/0azAfs1kKRJ9nA6gXJCRyasxsPT6SyW4YZcAAAz1kX/N63pow==}
     dev: false
 
-  /survey-creator-core@1.9.128:
-    resolution: {integrity: sha512-sXOar1iDELoxsQ2h/hQ9YUHfEL1sEpn5AFv+Dr0Zz8HgpoeXtW92YZznj+NyNeXoQdT6QPk9Z0R3EoiJrPzWWQ==}
+  /survey-creator-core@1.9.129:
+    resolution: {integrity: sha512-3nHH/oSiXoTZpMOX0LB0eUuaGc3CERkzzaqblEHMHV+c59L3SrOCrDHVfWoNxCEMV3XyxcRbBkzL2Vdz9btxTA==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -10836,28 +10836,28 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.128
+      survey-core: 1.9.129
     dev: false
 
-  /survey-creator-vue@1.9.128(vue@3.4.8):
-    resolution: {integrity: sha512-/Rl7IkdijFhF/431ZcTc5+l9kbjEKHfzMogtYaD8z+x/+Ll5d6gHs3I0/3hyIRff0wbVAD8cnpJ/hIXC3ui9tQ==}
+  /survey-creator-vue@1.9.129(vue@3.4.8):
+    resolution: {integrity: sha512-oF24tnopHS9FGqGdmCn24rLICFLPzsboeEP5TunKCB06jr8i/7PVPkhdxWGuutEqXARRR++yiugAc1qWox60vQ==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.128
-      survey-creator-core: 1.9.128
-      survey-vue3-ui: 1.9.128(vue@3.4.8)
+      survey-core: 1.9.129
+      survey-creator-core: 1.9.129
+      survey-vue3-ui: 1.9.129(vue@3.4.8)
       vue: 3.4.8(typescript@5.3.3)
     transitivePeerDependencies:
       - ace-builds
     dev: false
 
-  /survey-vue3-ui@1.9.128(vue@3.4.8):
-    resolution: {integrity: sha512-hRmfM07gjJgDOfqd9PW7rGtpLJIsxYtUMwdqmDFxlxA/HE981kS+WLWLr09fDpEyYxibal8ku+Nnyid1dmGSSA==}
+  /survey-vue3-ui@1.9.129(vue@3.4.8):
+    resolution: {integrity: sha512-ZCAePTQQjSXsO7WjMJdA3UhH/nb26CDulTDf2ldot/3tVTU18IfygzgRqLY1ja6+Lz09DZ4f0VQgO1yEbnzRcA==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.128
+      survey-core: 1.9.129
       vue: 3.4.8(typescript@5.3.3)
     dev: false
 
@@ -11115,14 +11115,14 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /trpc-nuxt@0.10.17(@trpc/client@10.45.0)(@trpc/server@10.45.0):
-    resolution: {integrity: sha512-8J/34N4nMb4WfAnjOLajubM76b4DlX3YqyoLga07p/9UrnGahLK7D3BX7PDRj8HBGsUDS329S+92E8n7ysq1Jw==}
+  /trpc-nuxt@0.10.18(@trpc/client@10.45.1)(@trpc/server@10.45.1):
+    resolution: {integrity: sha512-0dtc3RrqvEe+J4Rc4GKt1T5TQzgQogUX5dAo6FNlNdAuL7eSHkwv9tq2QQPobCOCG8M4sM2xTf6SRrk4YLr+EA==}
     peerDependencies:
       '@trpc/client': ^10.38.1 <11
       '@trpc/server': ^10.38.1 <11
     dependencies:
-      '@trpc/client': 10.45.0(@trpc/server@10.45.0)
-      '@trpc/server': 10.45.0
+      '@trpc/client': 10.45.1(@trpc/server@10.45.1)
+      '@trpc/server': 10.45.1
       h3: 1.10.1
       ofetch: 1.3.3
       ohash: 1.1.3
