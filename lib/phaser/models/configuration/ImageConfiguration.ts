@@ -24,7 +24,7 @@ export type ImageConfiguration = AlphaConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   SizeConfiguration &
-  TextureCropConfiguration &
+  Except<TextureCropConfiguration, "frame"> &
   TintConfiguration &
   TransformConfiguration &
   VisibleConfiguration &

@@ -23,8 +23,10 @@ export type SpriteConfiguration = AlphaConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   SizeConfiguration &
-  TextureConfiguration &
+  Except<TextureConfiguration, "frame"> &
   TintConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
-  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig>;
+  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig> & {
+    isPlayingAnimation: boolean;
+  };

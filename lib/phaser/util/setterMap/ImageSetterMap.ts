@@ -33,7 +33,7 @@ export const ImageSetterMap: SetterMap<ImageConfiguration, GameObjects.Image, Im
   ...VisibleSetterMap,
   ...GlobalSetterMap,
   frame: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setFrame(value);
   },
 };

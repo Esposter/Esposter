@@ -33,7 +33,12 @@ export const SpriteSetterMap: SetterMap<SpriteConfiguration, GameObjects.Sprite,
   ...VisibleSetterMap,
   ...GlobalSetterMap,
   frame: (gameObject) => (value) => {
-    if (!value) return;
+    if (value === undefined) return;
     gameObject.setFrame(value);
+  },
+  isPlayingAnimation: (gameObject) => (value) => {
+    if (value === undefined) return;
+    else if (value) gameObject.play(gameObject.texture);
+    else gameObject.stop();
   },
 };
