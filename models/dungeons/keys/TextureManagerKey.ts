@@ -7,7 +7,6 @@ export enum TextureManagerKey {
   HealthBarLeftCapShadow = "HealthBarLeftCapShadow",
   HealthBarMiddleShadow = "HealthBarMiddleShadow",
   HealthBarRightCapShadow = "HealthBarRightCapShadow",
-
   // Monsters
   Carnodusk = "Carnodusk",
   Iguanignite = "Iguanignite",

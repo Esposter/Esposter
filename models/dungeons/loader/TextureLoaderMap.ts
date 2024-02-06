@@ -29,7 +29,9 @@ export const TextureLoaderMap: Record<TextureManagerKey, (scene: SceneWithPlugin
     scene.load.image(TextureManagerKey.HealthBarMiddleShadow, barHorizontalShadowMid),
   [TextureManagerKey.HealthBarRightCapShadow]: (scene) =>
     scene.load.image(TextureManagerKey.HealthBarRightCapShadow, barHorizontalShadowRight),
+  // Monsters
   [TextureManagerKey.Carnodusk]: (scene) => scene.load.image(TextureManagerKey.Carnodusk, carnodusk),
   [TextureManagerKey.Iguanignite]: (scene) => scene.load.image(TextureManagerKey.Iguanignite, iguanignite),
+
   [TextureManagerKey.Cursor]: (scene) => scene.load.image(TextureManagerKey.Cursor, cursor),
 };

@@ -1,3 +1,1 @@
-export enum TilesetKey {
-  CloudCity = "CloudCity",
-}
+export enum TilesetKey {}

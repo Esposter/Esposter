@@ -1,3 +1,5 @@
 export enum SpritesheetKey {
-  Characters = "Characters",
+  IceShard = "IceShard",
+  IceShardStart = "IceShardStart",
+  Slash = "Slash",
 }

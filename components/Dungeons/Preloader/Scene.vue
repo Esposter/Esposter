@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import characters from "@/assets/dungeons/spritesheets/characters.png";
-import cloudCityTilemap from "@/assets/dungeons/tilemaps/cloud_city.json";
-import cloudCityTileset from "@/assets/dungeons/tilesets/cloud_city.png";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
-import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { TextureLoaderMap } from "@/models/dungeons/loader/TextureLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { type Loader } from "phaser";
@@ -45,9 +40,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   for (const textureLoader of Object.values(TextureLoaderMap)) textureLoader(scene);
-  scene.load.image(TilesetKey.CloudCity, cloudCityTileset);
-  scene.load.tilemapTiledJSON(TilemapKey.CloudCity, cloudCityTilemap);
-  scene.load.spritesheet(SpritesheetKey.Characters, characters, { frameWidth: 52, frameHeight: 72 });
+  for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
 };
 </script>
 

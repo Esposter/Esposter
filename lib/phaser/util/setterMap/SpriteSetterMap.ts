@@ -1,5 +1,5 @@
-import { type ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
-import { type ImageEventEmitsOptions } from "@/lib/phaser/models/emit/ImageEventEmitsOptions";
+import { type SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
+import { type SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
@@ -10,14 +10,14 @@ import { OriginSetterMap } from "@/lib/phaser/util/setterMap/components/OriginSe
 import { PipelineSetterMap } from "@/lib/phaser/util/setterMap/components/PipelineSetterMap";
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
 import { SizeSetterMap } from "@/lib/phaser/util/setterMap/components/SizeSetterMap";
-import { TextureCropSetterMap } from "@/lib/phaser/util/setterMap/components/TextureCropSetterMap";
+import { TextureSetterMap } from "@/lib/phaser/util/setterMap/components/TextureSetterMap";
 import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { type GameObjects } from "phaser";
 
-export const ImageSetterMap: SetterMap<ImageConfiguration, GameObjects.Image, ImageEventEmitsOptions> = {
+export const SpriteSetterMap: SetterMap<SpriteConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions> = {
   ...AlphaSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,
@@ -27,7 +27,7 @@ export const ImageSetterMap: SetterMap<ImageConfiguration, GameObjects.Image, Im
   ...PipelineSetterMap,
   ...ScrollFactorSetterMap,
   ...SizeSetterMap,
-  ...TextureCropSetterMap,
+  ...TextureSetterMap,
   ...TintSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
