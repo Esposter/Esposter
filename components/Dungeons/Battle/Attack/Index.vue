@@ -8,11 +8,11 @@ interface AttackProps {
   position: Position;
   spritesheetKey: SpritesheetKey;
   frame: number;
-  anims: Types.Animations.Animation;
+  animations: Types.Animations.Animation[];
   playAnimationKey: SpritesheetKey;
 }
 
-const { position, spritesheetKey, frame, anims, playAnimationKey } = defineProps<AttackProps>();
+const { position, spritesheetKey, frame, animations, playAnimationKey } = defineProps<AttackProps>();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { position, spritesheetKey, frame, anims, playAnimationKey } = defineProps
       ...position,
       textureKey: spritesheetKey,
       frame,
-      anims,
+      animations,
       playAnimationKey,
       origin: 0.5,
       scale: 4,

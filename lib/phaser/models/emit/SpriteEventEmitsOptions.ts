@@ -8,4 +8,4 @@ export type SpriteEventEmitsOptions = {
   [P in UpdateEvent<keyof SpriteConfiguration>]: [SpriteConfiguration[ExtractUpdateEvent<P>]?];
 } & {
   [P in keyof typeof SpriteEventMap]: Types.Input.EventData[];
-};
+} & Record<string, unknown[]>;
