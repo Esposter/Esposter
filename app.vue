@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import "unfonts.css";
-
 const { "primary-lighten-1": primaryLighten1 } = useColors();
 </script>
 
