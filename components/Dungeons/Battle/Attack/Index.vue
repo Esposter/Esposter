@@ -7,9 +7,9 @@ import { type Types } from "phaser";
 interface AttackProps {
   position: Position;
   spritesheetKey: SpritesheetKey;
-  frame: number;
+  frame?: number;
   animations: Types.Animations.Animation[];
-  playAnimationKey: SpritesheetKey;
+  playAnimationKey?: SpritesheetKey;
 }
 
 const { position, spritesheetKey, frame, animations, playAnimationKey } = defineProps<AttackProps>();

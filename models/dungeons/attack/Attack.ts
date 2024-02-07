@@ -1,4 +1,4 @@
-import { type Animation } from "@/models/dungeons/Animation";
+import { type Animation } from "@/models/dungeons/animation/Animation";
 import { type AttackId } from "@/models/dungeons/attack/AttackId";
 import { type AttackName } from "@/models/dungeons/attack/AttackName";
 
