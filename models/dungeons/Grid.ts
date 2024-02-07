@@ -16,6 +16,12 @@ export class Grid<TEnum extends string> {
     return this.grid[this.position[1]][this.position[0]];
   }
 
+  // This is the array index if the grid were to be flattened
+  // going from top-left to bottom-right
+  get index() {
+    return this.position[1] * this.size + this.position[0];
+  }
+
   move(direction: Direction) {
     switch (direction) {
       case Direction.UP:

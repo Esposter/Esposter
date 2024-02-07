@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
+import { type AttackProps } from "@/models/dungeons/attack/AttackProps";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { Animations } from "phaser";
 
+const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const emit = defineEmits<{ complete: [] }>();
 const phaserStore = usePhaserStore();
@@ -13,7 +16,6 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.IceShardStart, isActive
 <template>
   <DungeonsBattleAttack
     v-model:is-active="isActive"
-    :position="{ x: 745, y: 140 }"
     :spritesheet-key="SpritesheetKey.IceShard"
     :animations="[
       {
@@ -32,6 +34,10 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.IceShardStart, isActive
       },
     ]"
     :play-animation-key="playAnimationKey"
+    :is-to-enemy="isToEnemy"
+    :configuration="{
+      type: AttackGameObjectType.Sprite,
+    }"
     @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${SpritesheetKey.IceShardStart}`]="
       playAnimationKey = SpritesheetKey.IceShard
     "

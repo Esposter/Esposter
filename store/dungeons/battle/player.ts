@@ -2,7 +2,7 @@ import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuratio
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { type Monster } from "@/models/dungeons/battle/monster/Monster";
 import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
-import { getAttackNames } from "@/services/dungeons/battle/getAttackNames";
+import { getAttackNames } from "@/services/dungeons/battle/attack/getAttackNames";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
 import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/menu/getPlayerAttackOptionGrid";
 import { type Position } from "grid-engine";

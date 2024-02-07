@@ -12,7 +12,6 @@ import { Input, type Types } from "phaser";
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 const { cursorKeys } = storeToRefs(battleSceneStore);
-const isActive = ref(true);
 </script>
 
 <template>
@@ -38,7 +37,7 @@ const isActive = ref(true);
     <DungeonsBattleBackground />
     <DungeonsBattleMonster is-enemy />
     <DungeonsBattleMonster />
-    <DungeonsBattleAttackSlash v-model:is-active="isActive" @complete="isActive = true" />
+    <DungeonsBattleAttackManager />
     <DungeonsBattleMenu />
   </Scene>
 </template>

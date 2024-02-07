@@ -5,7 +5,7 @@ import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 interface MonsterProps {
   // By default, this will be the player
-  isEnemy?: true;
+  isEnemy?: boolean;
 }
 
 const { isEnemy } = defineProps<MonsterProps>();

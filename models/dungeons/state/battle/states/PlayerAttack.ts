@@ -19,11 +19,14 @@ export const PlayerAttack: State<StateName> = {
     const { takeDamage } = enemyStore;
     const infoPanelStore = useInfoPanelStore();
     const { showMessageNoInputRequired } = infoPanelStore;
+    const attackId = computed(() => activeMonster.value.attackIds[attackOptionGrid.value.index]);
 
     showMessageNoInputRequired(`${activeMonster.value.name} used ${attackOptionGrid.value.value}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
-        takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
-          battleStateMachine.setState(StateName.PlayerPostAttackCheck),
+        useAttackAnimation(attackId.value, true, () =>
+          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
+            battleStateMachine.setState(StateName.PlayerPostAttackCheck),
+          ),
         ),
       ),
     );

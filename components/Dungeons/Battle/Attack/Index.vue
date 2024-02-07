@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import Sprite from "@/lib/phaser/components/Sprite.vue";
+import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { getAttackPosition } from "@/services/dungeons/battle/attack/getAttackPosition";
 import { type Position } from "grid-engine";
 import { Animations, type Types } from "phaser";
 
 interface AttackProps {
-  position?: Partial<Position>;
   spritesheetKey: SpritesheetKey;
   animations?: Types.Animations.Animation[];
   playAnimationKey: SpritesheetKey | undefined;
+  isToEnemy: boolean;
+  configuration:
+    | {
+        // Position can be inferred if we know that the attack is just a base sprite
+        type: AttackGameObjectType.Sprite;
+      }
+    | {
+        type: AttackGameObjectType.Container;
+        position?: Partial<Position>;
+      };
 }
 
-const { position, spritesheetKey, animations, playAnimationKey } = defineProps<AttackProps>();
+const { spritesheetKey, animations, playAnimationKey, isToEnemy, configuration } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const frame = ref<number>();
+const position = computed(() =>
+  configuration.type === AttackGameObjectType.Sprite ? getAttackPosition(isToEnemy) : configuration.position,
+);
 </script>
 
 <template>
@@ -27,6 +41,7 @@ const frame = ref<number>();
       visible: isActive,
       origin: 0.5,
       scale: 4,
+      flipX: !isToEnemy,
     }"
     @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`]="
       {

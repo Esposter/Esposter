@@ -1,6 +1,6 @@
 import { type PlayerAttackOption } from "@/models/dungeons/battle/menu/PlayerAttackOption";
 import { type Monster } from "@/models/dungeons/battle/monster/Monster";
-import { getAttackName } from "@/services/dungeons/battle/getAttackName";
+import { getAttackName } from "@/services/dungeons/battle/attack/getAttackName";
 
 export const getAttackNames = (monster: Monster): PlayerAttackOption[] => {
   const attackNames: PlayerAttackOption[] = [];

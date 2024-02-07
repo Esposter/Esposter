@@ -7,7 +7,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 interface InfoContainerProps {
-  isEnemy?: true;
+  isEnemy: boolean;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
