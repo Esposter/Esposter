@@ -3,6 +3,7 @@ import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
@@ -38,7 +39,11 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
         if (activePanel.value === ActivePanel.Option) onChoosePlayerOption();
-        else if (activePanel.value === ActivePanel.AttackOption) battleStateMachine.setState(StateName.EnemyInput);
+        else if (activePanel.value === ActivePanel.AttackOption) {
+          const playerStore = usePlayerStore();
+          const { attackOptionGrid } = storeToRefs(playerStore);
+          if (attackOptionGrid.value.value !== BLANK_VALUE) battleStateMachine.setState(StateName.EnemyInput);
+        }
         return;
       case PlayerSpecialInput.Cancel:
         activePanel.value = ActivePanel.Option;

@@ -21,7 +21,7 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
         {
           key: SpritesheetKey.Slash,
           frames: scene.anims.generateFrameNumbers(SpritesheetKey.Slash),
-          frameRate: 4,
+          frameRate: 16,
           repeat: 0,
           delay: 0,
         },

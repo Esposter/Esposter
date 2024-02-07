@@ -21,14 +21,14 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.IceShardStart, isActive
       {
         key: SpritesheetKey.IceShard,
         frames: scene.anims.generateFrameNumbers(SpritesheetKey.IceShard),
-        frameRate: 8,
+        frameRate: 16,
         repeat: 0,
         delay: 0,
       },
       {
         key: SpritesheetKey.IceShardStart,
         frames: scene.anims.generateFrameNumbers(SpritesheetKey.IceShardStart),
-        frameRate: 8,
+        frameRate: 16,
         repeat: 0,
         delay: 0,
       },
