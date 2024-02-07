@@ -38,7 +38,7 @@ const isActive = ref(true);
     <DungeonsBattleBackground />
     <DungeonsBattleMonster is-enemy />
     <DungeonsBattleMonster />
-    <DungeonsBattleAttackIceShard v-model:is-active="isActive" @complete="isActive = true" />
+    <DungeonsBattleAttackSlash v-model:is-active="isActive" @complete="isActive = true" />
     <DungeonsBattleMenu />
   </Scene>
 </template>

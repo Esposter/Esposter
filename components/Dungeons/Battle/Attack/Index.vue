@@ -2,17 +2,18 @@
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { type Position } from "grid-engine";
-import { type Types } from "phaser";
+import { Animations, type Types } from "phaser";
 
 interface AttackProps {
-  position: Position;
+  position?: Partial<Position>;
   spritesheetKey: SpritesheetKey;
-  frame?: number;
-  animations: Types.Animations.Animation[];
-  playAnimationKey?: SpritesheetKey;
+  animations?: Types.Animations.Animation[];
+  playAnimationKey: SpritesheetKey | undefined;
 }
 
-const { position, spritesheetKey, frame, animations, playAnimationKey } = defineProps<AttackProps>();
+const { position, spritesheetKey, animations, playAnimationKey } = defineProps<AttackProps>();
+const isActive = defineModel<boolean>("isActive", { required: true });
+const frame = ref<number>();
 </script>
 
 <template>
@@ -23,8 +24,15 @@ const { position, spritesheetKey, frame, animations, playAnimationKey } = define
       frame,
       animations,
       playAnimationKey,
+      visible: isActive,
       origin: 0.5,
       scale: 4,
     }"
+    @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`]="
+      {
+        isActive = false;
+        frame = 0;
+      }
+    "
   />
 </template>
