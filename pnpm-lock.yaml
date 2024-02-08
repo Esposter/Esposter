@@ -189,8 +189,8 @@ dependencies:
     specifier: ^0.161.0
     version: 0.161.0
   three-globe:
-    specifier: ^2.30.0
-    version: 2.30.0(three@0.161.0)
+    specifier: ^2.30.1
+    version: 2.30.1(three@0.161.0)
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -11009,8 +11009,8 @@ packages:
       three: 0.161.0
     dev: false
 
-  /three-globe@2.30.0(three@0.161.0):
-    resolution: {integrity: sha512-eS3y9cOv3fDkFUAHg6XOT42IY1uU8PcPMEvNQ/iz0f8zQlo+TyTSGLC1cNSAozxbRtx0excmZQ7idV5DPH4JbA==}
+  /three-globe@2.30.1(three@0.161.0):
+    resolution: {integrity: sha512-1XFF1amO+Rd9EZsjVeoQoNBZ44PAHOoxcdL4ndihtFYUEE1tq7xuc1FlDnY6fXAvlc/P6RZ95CfXOIEuOUm+ug==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.125'
