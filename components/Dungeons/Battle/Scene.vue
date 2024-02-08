@@ -11,7 +11,7 @@ import { useGameStore } from "@/store/dungeons/game";
 import { Input, type Types } from "phaser";
 
 const gameStore = useGameStore();
-const { cursorKeys } = storeToRefs(gameStore);
+const { controls } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 </script>
@@ -23,11 +23,11 @@ const { onPlayerInput } = battleSceneStore;
     @create="() => battleStateMachine.setState(StateName.Intro)"
     @update="
       () => {
-        const assertedCursorKeys = cursorKeys as Types.Input.Keyboard.CursorKeys;
+        const cursorKeys = controls.cursorKeys as Types.Input.Keyboard.CursorKeys;
         battleStateMachine.update();
-        if (Input.Keyboard.JustDown(assertedCursorKeys.space)) onPlayerInput(PlayerSpecialInput.Confirm);
-        else if (Input.Keyboard.JustDown(assertedCursorKeys.shift)) onPlayerInput(PlayerSpecialInput.Cancel);
-        else onPlayerInput(mapCursorKeysToDirection(assertedCursorKeys));
+        if (Input.Keyboard.JustDown(cursorKeys.space)) onPlayerInput(PlayerSpecialInput.Confirm);
+        else if (Input.Keyboard.JustDown(cursorKeys.shift)) onPlayerInput(PlayerSpecialInput.Cancel);
+        else onPlayerInput(mapCursorKeysToDirection(cursorKeys));
       }
     "
   >

@@ -3,17 +3,19 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { Controls } from "@/models/dungeons/input/Controls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
+import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
-const { cursorKeys } = storeToRefs(gameStore);
+const { controls } = storeToRefs(gameStore);
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -39,7 +41,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    sceneKey.value = SceneKey.World;
+    sceneKey.value = IS_DEVELOPMENT ? SceneKey.World : SceneKey.Battle;
   });
 
   for (const textureLoader of Object.values(ImageLoaderMap)) textureLoader(scene);
@@ -55,7 +57,7 @@ const preload = (scene: SceneWithPlugins) => {
     @preload="preload"
     @create="
       (scene) => {
-        cursorKeys = scene.input.keyboard!.createCursorKeys();
+        controls = new Controls(scene.input.keyboard!.createCursorKeys());
       }
     "
   >
