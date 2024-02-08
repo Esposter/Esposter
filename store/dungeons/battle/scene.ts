@@ -9,7 +9,6 @@ import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Direction } from "grid-engine";
-import { type Types } from "phaser";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const playerStore = usePlayerStore();
@@ -17,9 +16,6 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const infoPanelStore = useInfoPanelStore();
   const { showMessage } = infoPanelStore;
   const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
-
-  // We will make sure to initialise cursor keys on scene create function
-  const cursorKeys = ref() as Ref<Types.Input.Keyboard.CursorKeys>;
   const activePanel = ref(ActivePanel.Info);
 
   const onPlayerInput = (input: PlayerSpecialInput | Direction) => {
@@ -77,5 +73,5 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     }
   };
 
-  return { cursorKeys, activePanel, onPlayerInput };
+  return { activePanel, onPlayerInput };
 });

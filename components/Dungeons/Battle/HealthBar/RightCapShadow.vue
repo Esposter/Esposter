@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { type Position } from "grid-engine";
 
 interface RightCapShadowProps {
@@ -15,7 +15,7 @@ const { position, scaleY } = defineProps<RightCapShadowProps>();
   <Image
     :configuration="{
       ...position,
-      textureKey: TextureManagerKey.HealthBarRightCapShadow,
+      textureKey: ImageKey.HealthBarRightCapShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

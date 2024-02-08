@@ -1,5 +1,5 @@
 import { type BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
-import { type SpriteKey } from "@/models/dungeons/keys/SpriteKey";
+import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { type GridEngine } from "grid-engine";
 
@@ -12,7 +12,7 @@ export class MovementManager {
     this.cursorKeys = cursorKeys;
   }
 
-  moveSprite(spriteKey: SpriteKey) {
-    this.gridEngine.move(spriteKey, mapCursorKeysToDirection(this.cursorKeys));
+  moveSprite(spritesheetKey: SpritesheetKey) {
+    this.gridEngine.move(spritesheetKey, mapCursorKeysToDirection(this.cursorKeys));
   }
 }

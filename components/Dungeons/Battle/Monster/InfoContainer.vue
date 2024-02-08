@@ -2,7 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -22,7 +22,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ textureKey: TextureManagerKey.HealthBarBackground, origin: 0, scaleY }" />
+    <Image :configuration="{ textureKey: ImageKey.HealthBarBackground, origin: 0, scaleY }" />
     <Text
       :configuration="{
         x: 30,

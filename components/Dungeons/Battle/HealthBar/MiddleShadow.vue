@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { type Position } from "grid-engine";
 
 interface MiddleShadowProps {
@@ -16,7 +16,7 @@ const { position, scaleY, displayWidth } = defineProps<MiddleShadowProps>();
   <Image
     :configuration="{
       ...position,
-      textureKey: TextureManagerKey.HealthBarMiddleShadow,
+      textureKey: ImageKey.HealthBarMiddleShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

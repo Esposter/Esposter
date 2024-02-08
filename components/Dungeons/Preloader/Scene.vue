@@ -4,13 +4,16 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
-import { TextureLoaderMap } from "@/models/dungeons/loader/TextureLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { useGameStore } from "@/store/dungeons/game";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
+const gameStore = useGameStore();
+const { cursorKeys } = storeToRefs(gameStore);
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -36,16 +39,26 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    sceneKey.value = SceneKey.Battle;
+    sceneKey.value = SceneKey.World;
   });
 
-  for (const textureLoader of Object.values(TextureLoaderMap)) textureLoader(scene);
+  for (const textureLoader of Object.values(ImageLoaderMap)) textureLoader(scene);
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
 };
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload">
+  <Scene
+    :scene-key="SceneKey.Preloader"
+    auto-start
+    :cls="SceneWithPlugins"
+    @preload="preload"
+    @create="
+      (scene) => {
+        cursorKeys = scene.input.keyboard!.createCursorKeys();
+      }
+    "
+  >
     <Rectangle
       :configuration="{
         x,

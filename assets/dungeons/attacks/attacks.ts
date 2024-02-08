@@ -1,6 +1,6 @@
 import { type Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { AnimationKey } from "@/models/dungeons/keys/AnimationKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { prettifyName } from "@/util/text/prettifyName";
 import { type Except } from "@/util/types/Except";
 
@@ -17,6 +17,6 @@ export const attacks: Attack[] = baseAttacks.map((ba) => ({
   ...ba,
   name: prettifyName(ba.id),
   animation: {
-    key: AnimationKey[ba.id],
+    key: SpritesheetKey[ba.id],
   },
 }));

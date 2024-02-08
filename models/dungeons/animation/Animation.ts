@@ -1,5 +1,5 @@
-import { type AnimationKey } from "@/models/dungeons/keys/AnimationKey";
+import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 
 export interface Animation {
-  key: AnimationKey;
+  key: SpritesheetKey;
 }

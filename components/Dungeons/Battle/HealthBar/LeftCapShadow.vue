@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { type Position } from "grid-engine";
 
 interface LeftCapShadowProps {
@@ -16,7 +16,7 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
   <Image
     :configuration="{
       ...position,
-      textureKey: TextureManagerKey.HealthBarLeftCapShadow,
+      textureKey: ImageKey.HealthBarLeftCapShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

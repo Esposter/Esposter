@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends string">
 import Image from "@/lib/phaser/components/Image.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/menu/constants";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
@@ -14,7 +14,7 @@ const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth, isInputPrompt
   <Image
     :configuration="{
       x: inputPromptCursorPositionX,
-      textureKey: TextureManagerKey.Cursor,
+      textureKey: ImageKey.Cursor,
       visible: isInputPromptCursorVisible,
       angle: 90,
       scaleX: 2.5,

@@ -1,5 +1,8 @@
-export enum TextureManagerKey {
-  ForestBackground = "ForestBackground",
+export enum ImageKey {
+  ForestBattleBackground = "ForestBattleBackground",
+  WorldBackground = "WorldBackground",
+  WorldForeground = "WorldForeground",
+
   HealthBarBackground = "HealthBarBackground",
   HealthBarLeftCap = "HealthBarLeftCap",
   HealthBarMiddle = "HealthBarMiddle",

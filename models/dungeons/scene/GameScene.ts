@@ -1,5 +1,4 @@
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SpriteKey } from "@/models/dungeons/keys/SpriteKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { JoystickMovementManager } from "@/models/dungeons/manager/JoystickMovementManager";
 import { KeyboardMovementManager } from "@/models/dungeons/manager/KeyboardMovementManager";
 import { type MovementManager } from "@/models/dungeons/manager/MovementManager";
@@ -11,10 +10,6 @@ export class GameScene extends SceneWithPlugins {
   movementManager!: MovementManager;
   playerSprite!: GameObjects.Sprite;
 
-  constructor() {
-    super(SceneKey.Game);
-  }
-
   create() {
     this.movementManager = isMobile()
       ? new JoystickMovementManager(this.gridEngine, this, this.virtualJoystickPlugin)
@@ -24,6 +19,6 @@ export class GameScene extends SceneWithPlugins {
   }
 
   update() {
-    this.movementManager.moveSprite(SpriteKey.Player);
+    this.movementManager.moveSprite(SpritesheetKey.Character);
   }
 }

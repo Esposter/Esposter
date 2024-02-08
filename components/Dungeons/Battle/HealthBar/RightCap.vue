@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 
 interface RightCapProps {
   y: number;
@@ -18,7 +18,7 @@ const x = defineModel<number | undefined>("x", { required: true });
     :configuration="{
       x,
       y,
-      textureKey: TextureManagerKey.HealthBarRightCap,
+      textureKey: ImageKey.HealthBarRightCap,
       originX: 0,
       originY: 0.5,
       scaleY,

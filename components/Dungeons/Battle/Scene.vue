@@ -7,23 +7,20 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { useGameStore } from "@/store/dungeons/game";
 import { Input, type Types } from "phaser";
 
+const gameStore = useGameStore();
+const { cursorKeys } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
-const { cursorKeys } = storeToRefs(battleSceneStore);
 </script>
 
 <template>
   <Scene
     :scene-key="SceneKey.Battle"
     :cls="SceneWithPlugins"
-    @create="
-      (scene) => {
-        cursorKeys = scene.input.keyboard!.createCursorKeys();
-        battleStateMachine.setState(StateName.Intro);
-      }
-    "
+    @create="() => battleStateMachine.setState(StateName.Intro)"
     @update="
       () => {
         const assertedCursorKeys = cursorKeys as Types.Input.Keyboard.CursorKeys;

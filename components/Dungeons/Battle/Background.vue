@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { TextureManagerKey } from "@/models/dungeons/keys/TextureManagerKey";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 
-const textureKey = ref(TextureManagerKey.ForestBackground);
+const textureKey = ref(ImageKey.ForestBattleBackground);
 </script>
 
 <template>
