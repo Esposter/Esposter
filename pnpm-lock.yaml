@@ -189,8 +189,8 @@ dependencies:
     specifier: ^0.161.0
     version: 0.161.0
   three-globe:
-    specifier: ^2.30.1
-    version: 2.30.1(three@0.161.0)
+    specifier: ^2.30.2
+    version: 2.30.2(three@0.161.0)
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -252,7 +252,7 @@ devDependencies:
     version: 8.5.10
   '@unocss/nuxt':
     specifier: ^0.58.5
-    version: 0.58.5(postcss@8.4.33)(rollup@2.79.1)(vite@5.1.0)(webpack@5.90.1)
+    version: 0.58.5(postcss@8.4.35)(rollup@2.79.1)(vite@5.1.0)(webpack@5.90.1)
   '@vite-pwa/nuxt':
     specifier: ^0.4.0
     version: 0.4.0(rollup@2.79.1)(vite@5.1.0)(workbox-build@7.0.0)(workbox-window@7.0.0)
@@ -4517,7 +4517,7 @@ packages:
       sirv: 2.0.4
     dev: true
 
-  /@unocss/nuxt@0.58.5(postcss@8.4.33)(rollup@2.79.1)(vite@5.1.0)(webpack@5.90.1):
+  /@unocss/nuxt@0.58.5(postcss@8.4.35)(rollup@2.79.1)(vite@5.1.0)(webpack@5.90.1):
     resolution: {integrity: sha512-x5iIGATNAhAGfN2w0f+ulRzmJTgu7PcJ8XAFmAx9QMKkVGnnurZEyW4IEm3Kr/EsRMhJXLtmZnsAGjC09qUh6A==}
     dependencies:
       '@nuxt/kit': 3.10.0(rollup@2.79.1)
@@ -4533,7 +4533,7 @@ packages:
       '@unocss/reset': 0.58.5
       '@unocss/vite': 0.58.5(rollup@2.79.1)(vite@5.1.0)
       '@unocss/webpack': 0.58.5(rollup@2.79.1)(webpack@5.90.1)
-      unocss: 0.58.5(@unocss/webpack@0.58.5)(postcss@8.4.33)(rollup@2.79.1)(vite@5.1.0)
+      unocss: 0.58.5(@unocss/webpack@0.58.5)(postcss@8.4.35)(rollup@2.79.1)(vite@5.1.0)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -4542,7 +4542,7 @@ packages:
       - webpack
     dev: true
 
-  /@unocss/postcss@0.58.5(postcss@8.4.33):
+  /@unocss/postcss@0.58.5(postcss@8.4.35):
     resolution: {integrity: sha512-m4L2YRdYfT6CV306Kl2VwEwbqa/92EpW4GE2Kqak1RuJyFJXBnWEEMJV4Uy6B1jWKLlCEWkuVUW33JUg7X6BxQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4554,7 +4554,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.6
-      postcss: 8.4.33
+      postcss: 8.4.35
     dev: true
 
   /@unocss/preset-attributify@0.58.5:
@@ -11017,8 +11017,8 @@ packages:
       three: 0.161.0
     dev: false
 
-  /three-globe@2.30.1(three@0.161.0):
-    resolution: {integrity: sha512-1XFF1amO+Rd9EZsjVeoQoNBZ44PAHOoxcdL4ndihtFYUEE1tq7xuc1FlDnY6fXAvlc/P6RZ95CfXOIEuOUm+ug==}
+  /three-globe@2.30.2(three@0.161.0):
+    resolution: {integrity: sha512-OayvAx95NDnfeGrEnT79O6Dievvz+FIrpANMTmc6XFDlUcnUgj742WS4CrLTRc3zoApsW7sapt+wIGGG4anwGA==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.125'
@@ -11428,7 +11428,7 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  /unocss@0.58.5(@unocss/webpack@0.58.5)(postcss@8.4.33)(rollup@2.79.1)(vite@5.1.0):
+  /unocss@0.58.5(@unocss/webpack@0.58.5)(postcss@8.4.35)(rollup@2.79.1)(vite@5.1.0):
     resolution: {integrity: sha512-0g4P6jLgRRNnhscxw7nQ9RHGrKJ1UPPiHPet+YT3TXUcmy4mTiYgo9+kGQf5bjyrzsELJ10cT6Qz2y6g9Tls4g==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -11444,7 +11444,7 @@ packages:
       '@unocss/cli': 0.58.5(rollup@2.79.1)
       '@unocss/core': 0.58.5
       '@unocss/extractor-arbitrary-variants': 0.58.5
-      '@unocss/postcss': 0.58.5(postcss@8.4.33)
+      '@unocss/postcss': 0.58.5(postcss@8.4.35)
       '@unocss/preset-attributify': 0.58.5
       '@unocss/preset-icons': 0.58.5
       '@unocss/preset-mini': 0.58.5
