@@ -5,7 +5,6 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { Controls } from "@/models/dungeons/input/Controls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
@@ -52,8 +51,6 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
-  scene.gridEngine.create(tilemap, { characters: [] });
   controls.value = new Controls(scene.input.keyboard!.createCursorKeys());
 };
 </script>

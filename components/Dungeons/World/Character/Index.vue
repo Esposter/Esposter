@@ -4,19 +4,23 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { type Asset } from "@/models/dungeons/Asset";
 import { type CharacterId } from "@/models/dungeons/world/CharacterId";
 import { type Position } from "grid-engine";
-import { filter } from "rxjs";
+import { type GameObjects } from "phaser";
+import { filter, type Subscription } from "rxjs";
 
 interface CharacterProps {
   id: CharacterId;
   asset: Asset;
+  onComplete?: (sprite: GameObjects.Sprite) => void;
 }
 
 const { id, asset } = defineProps<CharacterProps>();
 const position = defineModel<Position | undefined>("position", { required: true });
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
+const subscription = ref<Subscription>();
 
 onBeforeUnmount(() => {
+  subscription.value?.unsubscribe();
   scene.value.gridEngine.removeCharacter(id);
 });
 </script>
@@ -32,12 +36,13 @@ onBeforeUnmount(() => {
           walkingAnimationMapping: 0,
           startPosition: position,
         });
-        scene.gridEngine
+        subscription = scene.gridEngine
           .positionChangeFinished()
           .pipe(filter(({ charId }) => charId === id))
           .subscribe(({ exitTile }) => {
             position = exitTile;
           });
+        onComplete?.(sprite);
       }
     "
   />

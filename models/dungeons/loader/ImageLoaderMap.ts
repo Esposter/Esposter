@@ -1,5 +1,7 @@
 import cursor from "@/assets/dungeons/UI/cursor.png";
 import battleForestBackground from "@/assets/dungeons/battle/forestBackground.png";
+import carnodusk from "@/assets/dungeons/battle/monsters/carnodusk.png";
+import iguanignite from "@/assets/dungeons/battle/monsters/iguanignite.png";
 import barHorizontalGreenLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
 import barHorizontalGreenMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
 import barHorizontalGreenRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
@@ -7,8 +9,6 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
-import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
-import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
 import worldCollision from "@/assets/dungeons/world/collision.png";
 import worldEncounter from "@/assets/dungeons/world/encounter.png";
 import worldHomeBackground from "@/assets/dungeons/world/home/background.png";

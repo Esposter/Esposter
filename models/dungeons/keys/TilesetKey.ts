@@ -1,1 +1,4 @@
-export enum TilesetKey {}
+export enum TilesetKey {
+  WorldCollision = "WorldCollision",
+  WorldEncounter = "WorldEncounter",
+}
