@@ -7,10 +7,13 @@ import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Direction } from "grid-engine";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
+  const gameStore = useGameStore();
+  const { controls } = storeToRefs(gameStore);
   const playerStore = usePlayerStore();
   const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
   const infoPanelStore = useInfoPanelStore();
@@ -18,7 +21,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
   const activePanel = ref(ActivePanel.Info);
 
-  const onPlayerInput = (input: PlayerSpecialInput | Direction) => {
+  const onPlayerInput = () => {
+    const input = controls.value.input;
     // Check if we're trying to show messages first
     if (input === PlayerSpecialInput.Confirm)
       if (isQueuedMessagesAnimationPlaying.value) return;

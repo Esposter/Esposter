@@ -1,6 +1,7 @@
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
-import { Direction, type Position } from "grid-engine";
-import { type Types } from "phaser";
+import { type Direction } from "grid-engine";
+import { Input, type Types } from "phaser";
 
 export class Controls {
   cursorKeys: Types.Input.Keyboard.CursorKeys;
@@ -9,27 +10,9 @@ export class Controls {
     this.cursorKeys = cursorKeys;
   }
 
-  move(position: Position): Position {
-    const newPosition = { ...position };
-    const direction = mapCursorKeysToDirection(this.cursorKeys);
-
-    switch (direction) {
-      case Direction.UP:
-        newPosition.y -= 1;
-        break;
-      case Direction.DOWN:
-        newPosition.y += 1;
-        break;
-      case Direction.LEFT:
-        newPosition.x -= 1;
-        break;
-      case Direction.RIGHT:
-        newPosition.x += 1;
-        break;
-      default:
-        break;
-    }
-
-    return newPosition;
+  get input(): PlayerSpecialInput | Direction {
+    if (Input.Keyboard.JustDown(this.cursorKeys.space)) return PlayerSpecialInput.Confirm;
+    else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) return PlayerSpecialInput.Cancel;
+    else return mapCursorKeysToDirection(this.cursorKeys);
   }
 }

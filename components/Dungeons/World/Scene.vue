@@ -26,11 +26,6 @@ const position = ref<Position>({ x: 1, y: 1 });
         scene.cameras.main.fadeIn(dayjs.duration(0.6, 'seconds').asMilliseconds(), 0, 0, 0);
       }
     "
-    @update="
-      () => {
-        position = controls.move(position);
-      }
-    "
   >
     <Image :configuration="{ textureKey: ImageKey.WorldHomeBackground, origin: 0 }" />
     <DungeonsWorldCharacter :id="CharacterId.Player" v-model:position="position" :asset="character.asset" />
