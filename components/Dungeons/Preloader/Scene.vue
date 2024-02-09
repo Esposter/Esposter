@@ -3,14 +3,16 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { Controls } from "@/models/dungeons/input/Controls";
+import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
+import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
-import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
+import isMobile from "is-mobile";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
@@ -51,7 +53,7 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  controls.value = new Controls(scene.input.keyboard!.createCursorKeys());
+  controls.value = isMobile() ? new JoystickControls(scene, scene.virtualJoystickPlugin) : new KeyboardControls(scene);
 };
 </script>
 

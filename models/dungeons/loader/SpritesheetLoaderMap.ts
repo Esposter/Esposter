@@ -4,7 +4,7 @@ import iceAttackActive from "@/assets/dungeons/pimen/iceAttack/active.png";
 import iceAttackStart from "@/assets/dungeons/pimen/iceAttack/start.png";
 import slash from "@/assets/dungeons/pimen/slash.png";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { type Loader } from "phaser";
 
 export const SpritesheetLoaderMap: Record<SpritesheetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {

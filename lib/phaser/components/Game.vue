@@ -32,7 +32,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", listener);
 
   if (!game.value) return;
-  game.value.destroy(false);
+  game.value.destroy(true);
   game.value = null;
 });
 

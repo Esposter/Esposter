@@ -33,7 +33,28 @@ onBeforeUnmount(() => {
         scene.gridEngine.addCharacter({
           id,
           sprite,
-          walkingAnimationMapping: 0,
+          walkingAnimationMapping: {
+            up: {
+              leftFoot: 0,
+              standing: 1,
+              rightFoot: 2,
+            },
+            down: {
+              leftFoot: 6,
+              standing: 7,
+              rightFoot: 8,
+            },
+            left: {
+              leftFoot: 9,
+              standing: 10,
+              rightFoot: 11,
+            },
+            right: {
+              leftFoot: 3,
+              standing: 4,
+              rightFoot: 5,
+            },
+          },
           startPosition: position,
         });
         subscription = scene.gridEngine

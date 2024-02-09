@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";

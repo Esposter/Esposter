@@ -22,7 +22,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const activePanel = ref(ActivePanel.Info);
 
   const onPlayerInput = () => {
-    const input = controls.value.input;
+    const input = controls.value.getInput();
     // Check if we're trying to show messages first
     if (input === PlayerSpecialInput.Confirm)
       if (isQueuedMessagesAnimationPlaying.value) return;

@@ -1,4 +1,4 @@
-import { applyScenePluginsMixin } from "@/models/dungeons/scene/plugins/ScenePlugins";
+import { applyScenePluginsMixin } from "@/models/dungeons/scene/ScenePlugins";
 import { Scene } from "phaser";
 
 export type SceneWithPlugins = typeof SceneWithPlugins.prototype;

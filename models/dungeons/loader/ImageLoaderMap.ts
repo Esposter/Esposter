@@ -16,18 +16,16 @@ import bushes from "@/assets/dungeons/tilesets/Bushes.png";
 import collision from "@/assets/dungeons/tilesets/Collision.png";
 import encounter from "@/assets/dungeons/tilesets/Encounter.png";
 import grass from "@/assets/dungeons/tilesets/Grass.png";
-import worldHomeBackground from "@/assets/dungeons/world/home/background.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { type Loader } from "phaser";
 
 export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [ImageKey.BattleForestBackground]: (scene) =>
     scene.load.image(ImageKey.BattleForestBackground, battleForestBackground),
-  [ImageKey.WorldHomeBackground]: (scene) => scene.load.image(ImageKey.WorldHomeBackground, worldHomeBackground),
-  [ImageKey.WorldForeground]: (scene) => scene.load.image(ImageKey.WorldForeground, worldHomeForeground),
+  [ImageKey.WorldHomeForeground]: (scene) => scene.load.image(ImageKey.WorldHomeForeground, worldHomeForeground),
 
   [ImageKey.HealthBarBackground]: (scene) => scene.load.image(ImageKey.HealthBarBackground, customUI),
   [ImageKey.HealthBarLeftCap]: (scene) => scene.load.image(ImageKey.HealthBarLeftCap, barHorizontalGreenLeft),
