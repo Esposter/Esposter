@@ -18,7 +18,7 @@ const emit = defineEmits<{
   update: [InstanceType<TScene>, ...Parameters<InstanceType<TScene>["update"]>];
 }>();
 const phaserStore = usePhaserStore();
-const { game, sceneKey: sceneKeyStore } = storeToRefs(phaserStore);
+const { game, sceneKey: sceneKeyStore, scene } = storeToRefs(phaserStore);
 
 const isShutdown = ref(false);
 const NewScene = class extends cls {
@@ -56,5 +56,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <slot v-if="sceneKey === sceneKeyStore && !isShutdown" />
+  <slot v-if="scene && sceneKey === sceneKeyStore && !isShutdown" />
 </template>
