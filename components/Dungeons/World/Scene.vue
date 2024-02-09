@@ -5,7 +5,6 @@ import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { TilesetName } from "@/models/dungeons/keys/TilesetName";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { LayerId } from "@/models/dungeons/world/home/LayerId";
 import { dayjs } from "@/services/dayjs";
@@ -17,12 +16,8 @@ const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
 
 const create = (scene: SceneWithPlugins) => {
   const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
-  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, TilesetName.encounter, TilesetKey.Encounter)
-    .setAlpha(0.7)
-    .setDepth(2);
-  collisionLayer.value = createLayer(tilemap, LayerId.Collision, TilesetName.collision, TilesetKey.Collision)
-    .setAlpha(0.7)
-    .setDepth(2);
+  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, TilesetKey.Encounter).setAlpha(0.7).setDepth(2);
+  collisionLayer.value = createLayer(tilemap, LayerId.Collision, TilesetKey.Collision).setAlpha(0.7).setDepth(2);
 
   scene.gridEngine.create(tilemap, { characters: [] });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
