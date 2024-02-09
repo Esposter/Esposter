@@ -5,8 +5,10 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { Controls } from "@/models/dungeons/input/Controls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
+import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
@@ -44,23 +46,20 @@ const preload = (scene: SceneWithPlugins) => {
     sceneKey.value = IS_DEVELOPMENT ? SceneKey.World : SceneKey.Battle;
   });
 
-  for (const textureLoader of Object.values(ImageLoaderMap)) textureLoader(scene);
+  for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
+  for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
+};
+
+const create = (scene: SceneWithPlugins) => {
+  const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
+  scene.gridEngine.create(tilemap, { characters: [] });
+  controls.value = new Controls(scene.input.keyboard!.createCursorKeys());
 };
 </script>
 
 <template>
-  <Scene
-    :scene-key="SceneKey.Preloader"
-    auto-start
-    :cls="SceneWithPlugins"
-    @preload="preload"
-    @create="
-      (scene) => {
-        controls = new Controls(scene.input.keyboard!.createCursorKeys());
-      }
-    "
-  >
+  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload" @create="create">
     <Rectangle
       :configuration="{
         x,

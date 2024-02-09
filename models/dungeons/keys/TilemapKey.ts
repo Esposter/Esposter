@@ -1,1 +1,3 @@
-export enum TilemapKey {}
+export enum TilemapKey {
+  Home = "Home",
+}
