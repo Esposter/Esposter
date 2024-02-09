@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
