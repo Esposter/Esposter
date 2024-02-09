@@ -7,19 +7,20 @@ import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { TilesetName } from "@/models/dungeons/keys/TilesetName";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { LayerId } from "@/models/dungeons/world/home/LayerId";
 import { dayjs } from "@/services/dayjs";
 import { createLayer } from "@/services/dungeons/world/createLayer";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
-const { collisionLayer, encounterLayer } = storeToRefs(worldSceneStore);
+const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
 
 const create = (scene: SceneWithPlugins) => {
   const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
-  collisionLayer.value = createLayer(tilemap, TilesetName.collision, TilesetKey.WorldCollision)
+  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, TilesetName.encounter, TilesetKey.Encounter)
     .setAlpha(0.7)
     .setDepth(2);
-  encounterLayer.value = createLayer(tilemap, TilesetName.encounter, TilesetKey.WorldEncounter)
+  collisionLayer.value = createLayer(tilemap, LayerId.Collision, TilesetName.collision, TilesetKey.Collision)
     .setAlpha(0.7)
     .setDepth(2);
 

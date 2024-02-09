@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="23" nextobjectid="19">
  <editorsettings>
-  <export target="../level.json" format="json"/>
+  <export target="tilemap.json" format="json"/>
  </editorsettings>
- <tileset firstgid="1" name="Plains" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="BasicPlains-tileset-Ver.2_by_AxulArt_scaled_4x_pngcrushed.png" width="512" height="512"/>
+ <tileset firstgid="1" name="basicPlains" tilewidth="64" tileheight="64" tilecount="64" columns="8">
+  <image source="../../axulart/tilesets/BasicPlains.png" width="512" height="512"/>
  </tileset>
- <tileset firstgid="65" name="BeachesAndCaves" tilewidth="64" tileheight="64" tilecount="120" columns="15">
-  <image source="Beach-and-caves-tileset_by_AxulArt_scaled_4x_pngcrushed.png" width="960" height="512"/>
+ <tileset firstgid="65" name="beachesAndCaves" tilewidth="64" tileheight="64" tilecount="120" columns="15">
+  <image source="../../axulart/tilesets/BeachAndCaves.png" width="960" height="512"/>
  </tileset>
  <tileset firstgid="185" name="grass" tilewidth="64" tileheight="64" tilecount="4" columns="2">
-  <image source="grass.png" width="128" height="128"/>
+  <image source="../grass.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="189" name="collision" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="collision.png" width="64" height="64"/>
+  <image source="../collision.png" width="64" height="64"/>
  </tileset>
  <tileset firstgid="190" name="bushes" tilewidth="64" tileheight="64" tilecount="4" columns="2">
-  <image source="bushes.png" width="128" height="128"/>
+  <image source="../bushes.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="194" name="encounter" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <transformations hflip="0" vflip="0" rotate="0" preferuntransformed="1"/>
-  <image source="encounter.png" width="64" height="64"/>
+  <image source="../encounter.png" width="64" height="64"/>
  </tileset>
  <tileset firstgid="195" name="house" tilewidth="64" tileheight="64" tilecount="12" columns="4">
-  <image source="house2_scaled_4x_pngcrushed.png" width="256" height="192"/>
+  <image source="../../axulart/tilesets/house.png" width="256" height="192"/>
  </tileset>
- <tileset firstgid="207" name="npc_paths" class="npc" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+ <tileset firstgid="207" name="npcPaths" class="npc" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <properties>
    <property name="is_spawn_point" type="bool" value="false"/>
    <property name="npc_spawn_point_object" type="object" value="0"/>
   </properties>
-  <image source="encounter.png" trans="ff00ff" width="64" height="64"/>
+  <image source="../encounter.png" trans="ff00ff" width="64" height="64"/>
  </tileset>
  <layer id="3" name="Ground" width="20" height="34" locked="1">
   <data encoding="csv">
@@ -492,7 +492,7 @@
   <object id="15" gid="70" x="704" y="1344" width="64" height="64">
    <properties>
     <property name="message">MONSTER FAN CLUB
-All Monster fans welcome!</property>
+          All Monster fans welcome!</property>
    </properties>
   </object>
   <object id="16" gid="70" x="832" y="1856" width="64" height="64">
@@ -503,7 +503,7 @@ All Monster fans welcome!</property>
   <object id="17" gid="70" x="192" y="1344" width="64" height="64">
    <properties>
     <property name="message">TRAINER TIPS
-If you want to avoid battles, stay away from grassy areas!</property>
+          If you want to avoid battles, stay away from grassy areas!</property>
    </properties>
   </object>
   <object id="18" gid="70" x="448" y="1600" width="64" height="64">

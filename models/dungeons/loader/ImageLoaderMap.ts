@@ -9,21 +9,20 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
-import worldCollision from "@/assets/dungeons/world/collision.png";
-import worldEncounter from "@/assets/dungeons/world/encounter.png";
+import collision from "@/assets/dungeons/tilesets/collision.png";
+import encounter from "@/assets/dungeons/tilesets/encounter.png";
 import worldHomeBackground from "@/assets/dungeons/world/home/background.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { type SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
 import { type Loader } from "phaser";
 
-export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
+export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [ImageKey.BattleForestBackground]: (scene) =>
     scene.load.image(ImageKey.BattleForestBackground, battleForestBackground),
   [ImageKey.WorldHomeBackground]: (scene) => scene.load.image(ImageKey.WorldHomeBackground, worldHomeBackground),
   [ImageKey.WorldForeground]: (scene) => scene.load.image(ImageKey.WorldForeground, worldHomeForeground),
-  [ImageKey.WorldCollision]: (scene) => scene.load.image(ImageKey.WorldCollision, worldCollision),
-  [ImageKey.WorldEncounter]: (scene) => scene.load.image(ImageKey.WorldEncounter, worldEncounter),
 
   [ImageKey.HealthBarBackground]: (scene) => scene.load.image(ImageKey.HealthBarBackground, customUI),
   [ImageKey.HealthBarLeftCap]: (scene) => scene.load.image(ImageKey.HealthBarLeftCap, barHorizontalGreenLeft),
@@ -39,4 +38,7 @@ export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loade
   [ImageKey.Iguanignite]: (scene) => scene.load.image(ImageKey.Iguanignite, iguanignite),
 
   [ImageKey.Cursor]: (scene) => scene.load.image(ImageKey.Cursor, cursor),
+
+  [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),
+  [TilesetKey.Encounter]: (scene) => scene.load.image(TilesetKey.Encounter, encounter),
 };

@@ -1,4 +1,4 @@
 export enum TilesetKey {
-  WorldCollision = "WorldCollision",
-  WorldEncounter = "WorldEncounter",
+  Collision = "Collision",
+  Encounter = "Encounter",
 }
