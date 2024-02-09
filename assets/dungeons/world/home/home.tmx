@@ -222,7 +222,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="7" name="Tree-Bottom" width="20" height="34" locked="1">
+ <layer id="7" name="TreeBottom" width="20" height="34" locked="1">
   <data encoding="csv">
 12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,
 12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,
@@ -260,7 +260,7 @@
 12,12,0,0,0,0,0,0,0,0,0,12,12,12,12,12,12,12,12,12
 </data>
  </layer>
- <layer id="8" name="Tree-Top" width="20" height="34" locked="1">
+ <layer id="8" name="TreeTop" width="20" height="34" locked="1">
   <data encoding="csv">
 4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,
 4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,
