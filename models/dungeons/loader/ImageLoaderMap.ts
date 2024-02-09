@@ -9,6 +9,8 @@ import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExp
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
 import carnodusk from "@/assets/dungeons/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/monsters/iguanignite.png";
+import worldCollision from "@/assets/dungeons/world/collision.png";
+import worldEncounter from "@/assets/dungeons/world/encounter.png";
 import worldHomeBackground from "@/assets/dungeons/world/home/background.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
@@ -20,6 +22,8 @@ export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loade
     scene.load.image(ImageKey.BattleForestBackground, battleForestBackground),
   [ImageKey.WorldHomeBackground]: (scene) => scene.load.image(ImageKey.WorldHomeBackground, worldHomeBackground),
   [ImageKey.WorldForeground]: (scene) => scene.load.image(ImageKey.WorldForeground, worldHomeForeground),
+  [ImageKey.WorldCollision]: (scene) => scene.load.image(ImageKey.WorldCollision, worldCollision),
+  [ImageKey.WorldEncounter]: (scene) => scene.load.image(ImageKey.WorldEncounter, worldEncounter),
 
   [ImageKey.HealthBarBackground]: (scene) => scene.load.image(ImageKey.HealthBarBackground, customUI),
   [ImageKey.HealthBarLeftCap]: (scene) => scene.load.image(ImageKey.HealthBarLeftCap, barHorizontalGreenLeft),
