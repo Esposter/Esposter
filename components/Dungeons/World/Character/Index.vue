@@ -19,7 +19,7 @@ const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const subscription = ref<Subscription>();
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   subscription.value?.unsubscribe();
   scene.value.gridEngine.removeCharacter(id);
 });

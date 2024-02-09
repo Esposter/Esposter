@@ -42,7 +42,7 @@ export const useInitializeGameObjectSetters = <
     );
   }
 
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     for (const watchStopHandler of watchStopHandlers) watchStopHandler();
   });
 

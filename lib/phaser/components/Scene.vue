@@ -49,7 +49,7 @@ onMounted(() => {
   if (autoStart) sceneKeyStore.value = sceneKey;
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   if (!game.value) return;
   game.value.scene.remove(sceneKey);
 });

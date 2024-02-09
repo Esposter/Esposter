@@ -10,7 +10,7 @@ const playerStore = usePlayerStore();
 const { character } = storeToRefs(playerStore);
 const position = ref<Position>({ x: 1, y: 1 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   scene.value.cameras.main.stopFollow();
 });
 </script>

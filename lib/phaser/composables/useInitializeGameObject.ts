@@ -28,7 +28,7 @@ export const useInitializeGameObject = <
     initializeGameObjectEvents(configuration.value, gameObject.value, emit, scene.value);
   });
 
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     gameObject.value.destroy();
   });
 };

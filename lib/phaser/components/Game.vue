@@ -28,7 +28,7 @@ onMounted(() => {
   });
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   window.removeEventListener("resize", listener);
 
   if (!game.value) return;

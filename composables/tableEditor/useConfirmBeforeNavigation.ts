@@ -14,5 +14,5 @@ export const useConfirmBeforeNavigation = () => {
     e.returnValue = "";
   };
   onBeforeMount(() => window.addEventListener("beforeunload", listener));
-  onBeforeUnmount(() => window.removeEventListener("beforeunload", listener));
+  onUnmounted(() => window.removeEventListener("beforeunload", listener));
 };
