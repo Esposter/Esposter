@@ -4,6 +4,7 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugins";
+import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { dayjs } from "@/services/dayjs";
 import { useGameStore } from "@/store/dungeons/game";
 import { usePlayerStore } from "@/store/dungeons/world/player";
@@ -32,6 +33,6 @@ const position = ref<Position>({ x: 1, y: 1 });
     "
   >
     <Image :configuration="{ textureKey: ImageKey.WorldHomeBackground, origin: 0 }" />
-    <DungeonsWorldCharacter :position="position" :asset="character.asset" />
+    <DungeonsWorldCharacter :id="CharacterId.Player" v-model:position="position" :asset="character.asset" />
   </Scene>
 </template>
