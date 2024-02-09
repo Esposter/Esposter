@@ -9,6 +9,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/plugins/SceneWithPlugi
 import { LayerId } from "@/models/dungeons/world/home/LayerId";
 import { dayjs } from "@/services/dayjs";
 import { createLayer } from "@/services/dungeons/world/createLayer";
+import { createTileset } from "@/services/dungeons/world/createTileset";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
@@ -16,9 +17,25 @@ const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
 
 const create = (scene: SceneWithPlugins) => {
   const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
-  createLayer(tilemap, LayerId.Ground, TilesetKey.Grass);
-  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, TilesetKey.Encounter).setAlpha(0.7).setDepth(2);
-  collisionLayer.value = createLayer(tilemap, LayerId.Collision, TilesetKey.Collision).setAlpha(0.7).setDepth(2);
+  const basicPlainsTileset = createTileset(tilemap, TilesetKey.BasicPlains);
+  const beachAndCavesTileset = createTileset(tilemap, TilesetKey.House);
+  const houseTileset = createTileset(tilemap, TilesetKey.Bushes);
+  const bushesTileset = createTileset(tilemap, TilesetKey.BeachAndCaves);
+  const collisionTileset = createTileset(tilemap, TilesetKey.Collision);
+  const encounterTileset = createTileset(tilemap, TilesetKey.Encounter);
+  const grassTileset = createTileset(tilemap, TilesetKey.Grass);
+  createLayer(tilemap, LayerId.Ground, grassTileset);
+  createLayer(tilemap, LayerId.Building, houseTileset);
+  createLayer(tilemap, LayerId.Water, beachAndCavesTileset);
+  createLayer(tilemap, LayerId.Decoration, [basicPlainsTileset, bushesTileset]);
+  createLayer(tilemap, LayerId.Sign, basicPlainsTileset);
+  createLayer(tilemap, LayerId.TreeBottom, basicPlainsTileset);
+  createLayer(tilemap, LayerId.TreeTop, basicPlainsTileset);
+  createLayer(tilemap, LayerId.Fence, basicPlainsTileset);
+  createLayer(tilemap, LayerId.Boulder, basicPlainsTileset);
+  createLayer(tilemap, LayerId.Foreground, [basicPlainsTileset, houseTileset]);
+  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset);
+  collisionLayer.value = createLayer(tilemap, LayerId.Collision, collisionTileset);
 
   scene.gridEngine.create(tilemap, { characters: [] });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);

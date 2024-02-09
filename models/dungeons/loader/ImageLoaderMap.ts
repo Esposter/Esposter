@@ -1,4 +1,7 @@
 import cursor from "@/assets/dungeons/UI/cursor.png";
+import basicPlains from "@/assets/dungeons/axulart/tilesets/BasicPlains.png";
+import beachAndCaves from "@/assets/dungeons/axulart/tilesets/BeachAndCaves.png";
+import house from "@/assets/dungeons/axulart/tilesets/House.png";
 import battleForestBackground from "@/assets/dungeons/battle/forestBackground.png";
 import carnodusk from "@/assets/dungeons/battle/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/battle/monsters/iguanignite.png";
@@ -9,6 +12,7 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
+import bushes from "@/assets/dungeons/tilesets/Bushes.png";
 import collision from "@/assets/dungeons/tilesets/Collision.png";
 import encounter from "@/assets/dungeons/tilesets/Encounter.png";
 import grass from "@/assets/dungeons/tilesets/Grass.png";
@@ -40,6 +44,11 @@ export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlug
 
   [ImageKey.Cursor]: (scene) => scene.load.image(ImageKey.Cursor, cursor),
 
+  [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlains),
+  [TilesetKey.BeachAndCaves]: (scene) => scene.load.image(TilesetKey.BeachAndCaves, beachAndCaves),
+  [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, house),
+
+  [TilesetKey.Bushes]: (scene) => scene.load.image(TilesetKey.Bushes, bushes),
   [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),
   [TilesetKey.Encounter]: (scene) => scene.load.image(TilesetKey.Encounter, encounter),
   [TilesetKey.Grass]: (scene) => scene.load.image(TilesetKey.Grass, grass),
