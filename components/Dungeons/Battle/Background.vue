@@ -2,7 +2,7 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 
-const textureKey = ref(ImageKey.ForestBattleBackground);
+const textureKey = ref(ImageKey.BattleForestBackground);
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 export enum ImageKey {
-  ForestBattleBackground = "ForestBattleBackground",
-  WorldBackground = "WorldBackground",
+  BattleForestBackground = "BattleForestBackground",
+  WorldHomeBackground = "WorldHomeBackground",
   WorldForeground = "WorldForeground",
 
   HealthBarBackground = "HealthBarBackground",

@@ -31,7 +31,7 @@ const position = ref<Position>({ x: 1, y: 1 });
       }
     "
   >
-    <Image :configuration="{ textureKey: ImageKey.WorldBackground, origin: 0 }" />
+    <Image :configuration="{ textureKey: ImageKey.WorldHomeBackground, origin: 0 }" />
     <DungeonsWorldCharacter :position="position" :asset="character.asset" />
   </Scene>
 </template>
