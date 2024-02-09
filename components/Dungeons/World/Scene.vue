@@ -16,6 +16,7 @@ const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
 
 const create = (scene: SceneWithPlugins) => {
   const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
+  createLayer(tilemap, LayerId.Ground, TilesetKey.Grass);
   encounterLayer.value = createLayer(tilemap, LayerId.Encounter, TilesetKey.Encounter).setAlpha(0.7).setDepth(2);
   collisionLayer.value = createLayer(tilemap, LayerId.Collision, TilesetKey.Collision).setAlpha(0.7).setDepth(2);
 

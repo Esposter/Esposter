@@ -9,8 +9,9 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
-import collision from "@/assets/dungeons/tilesets/collision.png";
-import encounter from "@/assets/dungeons/tilesets/encounter.png";
+import collision from "@/assets/dungeons/tilesets/Collision.png";
+import encounter from "@/assets/dungeons/tilesets/Encounter.png";
+import grass from "@/assets/dungeons/tilesets/Grass.png";
 import worldHomeBackground from "@/assets/dungeons/world/home/background.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
@@ -41,4 +42,5 @@ export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlug
 
   [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),
   [TilesetKey.Encounter]: (scene) => scene.load.image(TilesetKey.Encounter, encounter),
+  [TilesetKey.Grass]: (scene) => scene.load.image(TilesetKey.Grass, grass),
 };
