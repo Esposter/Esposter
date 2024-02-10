@@ -25,7 +25,7 @@ const { controls } = storeToRefs(gameStore);
       text: grid.getValue(index),
       style: battleUITextStyle,
     }"
-    @[`${Input.Events.POINTER_UP}`]="
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
       () => {
         if (grid.index === index) controls.setInput(PlayerSpecialInput.Confirm);
         else grid.index = index;
