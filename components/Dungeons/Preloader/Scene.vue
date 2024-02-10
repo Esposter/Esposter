@@ -44,7 +44,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    sceneKey.value = IS_DEVELOPMENT ? SceneKey.Battle : SceneKey.Battle;
+    sceneKey.value = IS_DEVELOPMENT ? SceneKey.World : SceneKey.World;
   });
 
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
