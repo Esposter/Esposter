@@ -83,7 +83,7 @@ const create = (scene: SceneWithPlugins) => {
         x,
         y,
         text: percentageText,
-        style: { fontSize: '1.5rem' },
+        style: { fontSize: 24 },
         origin: 0.5,
       }"
     />
@@ -92,7 +92,7 @@ const create = (scene: SceneWithPlugins) => {
         x,
         y: y ? y + 50 : undefined,
         text: assetText,
-        style: { fontSize: '1.5rem' },
+        style: { fontSize: 24 },
         origin: 0.5,
       }"
     />

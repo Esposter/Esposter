@@ -30,7 +30,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
         text: activeMonster.name,
         style: {
           color: '#7e3d3f',
-          fontSize: '2rem',
+          fontSize: 32,
         },
         displayWidth: nameDisplayWidth,
       }"
@@ -43,7 +43,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
         text: `L${activeMonster.currentLevel}`,
         style: {
           color: '#ed474b',
-          fontSize: '1.75rem',
+          fontSize: 28,
         },
       }"
     />
@@ -54,7 +54,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
         text: 'HP',
         style: {
           color: '#ff6505',
-          fontSize: '1.5rem',
+          fontSize: 24,
           fontStyle: 'italic',
         },
       }"
@@ -70,7 +70,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
         text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
         style: {
           color: '#7e3d3f',
-          fontSize: '1rem',
+          fontSize: 16,
         },
       }"
     />
