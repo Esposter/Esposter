@@ -102,6 +102,7 @@
     "grid-engine": "^2.44.0",
     "gsap": "^3.12.5",
     "howler": "^2.2.4",
+    "is-mobile": "^4.0.0",
     "marked": "^12.0.0",
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.12",
