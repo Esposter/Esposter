@@ -44,6 +44,7 @@ const create = (scene: SceneWithPlugins) => {
 
   scene.gridEngine.create(tilemap, { characters: [] });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
+  scene.cameras.main.setZoom(0.8);
   scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0);
 };
 
