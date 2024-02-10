@@ -8,7 +8,7 @@ const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const playerStore = usePlayerStore();
 const { character } = storeToRefs(playerStore);
-const position = ref<Position>({ x: 1, y: 1 });
+const position = ref<Position>({ x: 6, y: 21 });
 
 onUnmounted(() => {
   scene.value.cameras.main.stopFollow();
