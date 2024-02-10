@@ -9,13 +9,11 @@ export class JoystickControls implements Controls {
   input: PlayerInput | null = null;
 
   getInput() {
-    // We don't have any cursor keys until the joystick is rendered
-    if (!this.cursorKeys) return Direction.NONE;
-
     let result: PlayerInput;
 
     if (this.input) result = this.input;
-    else result = mapCursorKeysToDirection(this.cursorKeys);
+    // We don't have any cursor keys until the joystick is rendered
+    else result = this.cursorKeys ? mapCursorKeysToDirection(this.cursorKeys) : Direction.NONE;
 
     this.input = null;
     return result;
