@@ -29,7 +29,7 @@ const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
       fillColor: 0xede4f3,
       strokeStyle: [MENU_PADDING * 2, 0xe4434a],
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
+    @[`${Input.Events.POINTER_UP}`]="
       () => {
         if (activePanel === ActivePanel.Info) controls.setInput(PlayerSpecialInput.Confirm);
       }
