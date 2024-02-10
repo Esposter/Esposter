@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
-import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { CursorPositionMap } from "@/services/dungeons/battle/menu/CursorPositionMap";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/menu/constants";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { type Position } from "grid-engine";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const playerStore = usePlayerStore();
 const { optionGrid } = storeToRefs(playerStore);
+const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((x) => x));
 </script>
 
 <template>
@@ -27,36 +26,14 @@ const { optionGrid } = storeToRefs(playerStore);
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"
     />
-    <Text
-      :configuration="{
-        x: 55,
-        y: 22,
-        text: PlayerOption.Fight,
-        style: battleUITextStyle,
-      }"
-    />
-    <Text
-      :configuration="{
-        x: 240,
-        y: 22,
-        text: PlayerOption.Switch,
-        style: battleUITextStyle,
-      }"
-    />
-    <Text
-      :configuration="{
-        x: 55,
-        y: 70,
-        text: PlayerOption.Item,
-        style: battleUITextStyle,
-      }"
-    />
-    <Text
-      :configuration="{
-        x: 240,
-        y: 70,
-        text: PlayerOption.Flee,
-        style: battleUITextStyle,
+    <DungeonsBattleMenuPanelText
+      v-for="({ x, y }, index) in cursorPositions"
+      :key="index"
+      v-model:grid="optionGrid"
+      :index="index"
+      :position="{
+        x: x + 12,
+        y: y - 16,
       }"
     />
     <DungeonsBattleMenuCursor :grid="optionGrid" :position-map="CursorPositionMap" />

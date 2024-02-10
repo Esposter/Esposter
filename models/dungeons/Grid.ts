@@ -16,10 +16,22 @@ export class Grid<TEnum extends string> {
     return this.grid[this.position[1]][this.position[0]];
   }
 
+  getValue(index: number) {
+    const x = index % this.size;
+    const y = Math.floor(index / this.size);
+    return this.grid[y][x];
+  }
+
   // This is the array index if the grid were to be flattened
   // going from top-left to bottom-right
   get index() {
     return this.position[1] * this.size + this.position[0];
+  }
+
+  set index(value: number) {
+    const x = value % this.size;
+    const y = Math.floor(value / this.size);
+    this.position = [x, y];
   }
 
   move(direction: Direction) {
