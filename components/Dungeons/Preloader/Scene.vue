@@ -52,14 +52,7 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  if (!game.value) return;
-
-  if (!isMobile()) {
-    controls.value = new JoystickControls();
-    return;
-  }
-
-  // controls.value = new KeyboardControls(scene);
+  controls.value = isMobile() ? new JoystickControls() : new KeyboardControls(scene);
 };
 </script>
 

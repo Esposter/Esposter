@@ -55,7 +55,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <template v-if="!isMobile()">
+  <template v-if="isMobile()">
     <Circle
       :configuration="{ radius: JOYSTICK_RADIUS, fillColor: 0x888888, depth: Number.MAX_SAFE_INTEGER }"
       :on-complete="
