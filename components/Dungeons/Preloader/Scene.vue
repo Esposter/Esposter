@@ -4,6 +4,7 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
+import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
@@ -15,7 +16,7 @@ import isMobile from "is-mobile";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { game, sceneKey } = storeToRefs(phaserStore);
+const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const x = ref<number>();
