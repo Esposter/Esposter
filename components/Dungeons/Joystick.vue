@@ -12,7 +12,7 @@ import { Input, type GameObjects, type Types } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
 const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
+const { game, scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const base = ref<GameObjects.Arc>();
@@ -23,7 +23,7 @@ const resizeListener = () => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.y = getJoystickY(scene.value);
 };
-const pointerUpListener = () => {
+const touchEndListener = () => {
   if (isVirtualJoystickPressed.value) {
     isVirtualJoystickPressed.value = false;
     return;
@@ -33,7 +33,7 @@ const pointerUpListener = () => {
 };
 
 watch([base, thumb], ([newBase, newThumb]) => {
-  if (!(newBase && newThumb)) return;
+  if (!(game.value && newBase && newThumb)) return;
 
   virtualJoystick.value = scene.value.virtualJoystickPlugin.add(scene.value, {
     x: getJoystickX(),
@@ -43,13 +43,14 @@ watch([base, thumb], ([newBase, newThumb]) => {
     thumb: newThumb,
   });
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
-  scene.value.input.on(Input.Events.POINTER_UP, pointerUpListener);
+  game.value.input.touch.onTouchStart(touchEndListener);
   phaserEventEmitter.on("resize", resizeListener);
 });
 
 onUnmounted(() => {
+  if (!game.value) return;
   phaserEventEmitter.off("resize", resizeListener);
-  scene.value.input.off(Input.Events.POINTER_UP, pointerUpListener);
+  game.value.input.touch.destroy();
   scene.value.virtualJoystickPlugin.destroy();
 });
 </script>
