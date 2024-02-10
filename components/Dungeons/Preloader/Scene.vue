@@ -12,13 +12,13 @@ import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
-import isMobile from "is-mobile";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
+const { mobile } = useDisplay();
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -53,7 +53,7 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  controls.value = isMobile() ? new JoystickControls() : new KeyboardControls(scene);
+  controls.value = mobile.value ? new JoystickControls() : new KeyboardControls(scene);
 };
 </script>
 

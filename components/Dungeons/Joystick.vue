@@ -6,7 +6,6 @@ import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
-import isMobile from "is-mobile";
 import { type GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
@@ -14,6 +13,7 @@ const phaserStore = usePhaserStore();
 const { game, scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
+const { mobile } = useDisplay();
 const base = ref<GameObjects.Arc>();
 const thumb = ref<GameObjects.Arc>();
 const virtualJoystick = ref<VirtualJoystick>();
@@ -44,7 +44,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <template v-if="isMobile()">
+  <template v-if="mobile">
     <Circle
       :configuration="{ radius: JOYSTICK_RADIUS, fillColor: 0x888888, depth: Number.MAX_SAFE_INTEGER }"
       :on-complete="
