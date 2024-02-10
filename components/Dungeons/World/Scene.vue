@@ -58,5 +58,6 @@ const update = (scene: SceneWithPlugins) => {
     <DungeonsWorldCharacterPlayer />
     <!-- Create foreground for depth for player to hide behind -->
     <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0 }" />
+    <DungeonsJoystick />
   </Scene>
 </template>

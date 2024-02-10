@@ -25,7 +25,7 @@ export const useInitializeGameObject = <
 
   onMounted(() => {
     for (const setter of setters) setter(gameObject.value);
-    initializeGameObjectEvents(configuration.value, gameObject.value, emit, scene.value);
+    initializeGameObjectEvents(gameObject.value, emit, scene.value);
   });
 
   onUnmounted(() => {

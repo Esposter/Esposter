@@ -4,8 +4,6 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
-import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
@@ -14,7 +12,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import isMobile from "is-mobile";
-import { Input, type Loader } from "phaser";
+import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { game, sceneKey } = storeToRefs(phaserStore);
@@ -56,13 +54,12 @@ const preload = (scene: SceneWithPlugins) => {
 const create = (scene: SceneWithPlugins) => {
   if (!game.value) return;
 
-  if (isMobile()) {
-    controls.value = new JoystickControls(scene, scene.virtualJoystickPlugin);
-    scene.input.on(Input.Events.POINTER_UP, () => controls.value.setInput(PlayerSpecialInput.Confirm));
+  if (!isMobile()) {
+    controls.value = new JoystickControls();
     return;
   }
 
-  controls.value = new KeyboardControls(scene);
+  // controls.value = new KeyboardControls(scene);
 };
 </script>
 

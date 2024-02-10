@@ -6,14 +6,12 @@ import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKey
 import { Input, type Types } from "phaser";
 
 export class KeyboardControls implements Controls {
-  keyboard: Input.Keyboard.KeyboardPlugin;
   cursorKeys: Types.Input.Keyboard.CursorKeys;
   input: PlayerInput | null = null;
 
   constructor(scene: SceneWithPlugins) {
     if (!scene.input.keyboard) throw new Error("Keyboard plugin is not enabled");
-    this.keyboard = scene.input.keyboard;
-    this.cursorKeys = this.keyboard.createCursorKeys();
+    this.cursorKeys = scene.input.keyboard.createCursorKeys();
   }
 
   getInput() {
@@ -30,9 +28,5 @@ export class KeyboardControls implements Controls {
 
   setInput(input: PlayerInput) {
     this.input = input;
-  }
-
-  destroy() {
-    this.keyboard.destroy();
   }
 }
