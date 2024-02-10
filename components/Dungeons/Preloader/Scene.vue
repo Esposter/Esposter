@@ -5,6 +5,7 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
 import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
@@ -13,7 +14,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import isMobile from "is-mobile";
-import { type Loader } from "phaser";
+import { Input, type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
@@ -44,7 +45,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    sceneKey.value = IS_DEVELOPMENT ? SceneKey.World : SceneKey.Battle;
+    sceneKey.value = IS_DEVELOPMENT ? SceneKey.Battle : SceneKey.Battle;
   });
 
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
@@ -54,6 +55,7 @@ const preload = (scene: SceneWithPlugins) => {
 
 const create = (scene: SceneWithPlugins) => {
   controls.value = isMobile() ? new JoystickControls(scene, scene.virtualJoystickPlugin) : new KeyboardControls(scene);
+  scene.input.on(Input.Events.POINTER_UP, () => controls.value.setInput(PlayerSpecialInput.Confirm));
 };
 </script>
 

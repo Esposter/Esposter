@@ -1,5 +1,4 @@
 import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { type Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
@@ -9,10 +8,10 @@ export const usePhaserStore = defineStore("phaser", () => {
   // We will create the scene in the game and ensure that the scene will always exist
   // for the child components by using v-if for the scene value
   const scene = computed(() => {
-    if (!game.value) throw new NotInitializedError("Game");
-    if (!sceneKey.value) throw new NotInitializedError("Scene key");
+    if (!game.value) return;
+    if (!sceneKey.value) return;
     return game.value.scene.getScene<SceneWithPlugins>(sceneKey.value);
-  });
+  }) as ComputedRef<SceneWithPlugins>;
   return {
     game,
     sceneKey,

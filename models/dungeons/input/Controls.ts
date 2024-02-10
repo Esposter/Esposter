@@ -1,9 +1,10 @@
 import { type BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
-import { type PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
-import { type Direction } from "grid-engine";
+import { type PlayerInput } from "@/models/dungeons/input/PlayerInput";
 
 export interface Controls {
   cursorKeys: BaseCursorKeys;
-  getInput: () => PlayerSpecialInput | Direction;
+  input: PlayerInput | null;
+  getInput: () => PlayerInput;
+  setInput: (input: PlayerInput) => void;
   destroy: () => void;
 }
