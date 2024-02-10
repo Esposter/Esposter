@@ -19,7 +19,7 @@ import { Input, type Loader } from "phaser";
 const phaserStore = usePhaserStore();
 const { game, sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
-const { isFocused, controls } = storeToRefs(gameStore);
+const { controls } = storeToRefs(gameStore);
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
