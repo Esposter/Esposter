@@ -17,9 +17,9 @@ import isMobile from "is-mobile";
 import { Input, type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
+const { game, sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const { isFocused, controls } = storeToRefs(gameStore);
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -54,8 +54,15 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  controls.value = isMobile() ? new JoystickControls(scene, scene.virtualJoystickPlugin) : new KeyboardControls(scene);
-  scene.input.on(Input.Events.POINTER_UP, () => controls.value.setInput(PlayerSpecialInput.Confirm));
+  if (!game.value) return;
+
+  if (isMobile()) {
+    controls.value = new JoystickControls(scene, scene.virtualJoystickPlugin);
+    scene.input.on(Input.Events.POINTER_UP, () => controls.value.setInput(PlayerSpecialInput.Confirm));
+    return;
+  }
+
+  controls.value = new KeyboardControls(scene);
 };
 </script>
 
