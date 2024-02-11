@@ -31,6 +31,13 @@ const propertyRendererMap = computed<Record<string, Component>>(() => {
 });
 const properties = computed(() => Object.keys(propertyRendererMap.value));
 const selectedProperty = ref<string>();
+
+watch(
+  () => editedItem.value?.component,
+  () => {
+    selectedProperty.value = undefined;
+  },
+);
 </script>
 
 <template>
