@@ -21,6 +21,7 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene } = storeToRefs(phaserStore);
 const isShutdown = ref(false);
+const isShown = computed(() => scene.value && isSameScene(sceneKey) && !isShutdown.value);
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
     emit("init", this);
@@ -56,5 +57,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <slot v-if="scene && isSameScene(sceneKey) && !isShutdown" />
+  <slot v-if="isShown" />
 </template>
