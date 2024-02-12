@@ -37,7 +37,7 @@
     "@types/three": "^0.161.2",
     "@types/ws": "^8.5.10",
     "@unocss/nuxt": "^0.58.5",
-    "@vite-pwa/nuxt": "^0.4.0",
+    "@vite-pwa/nuxt": "^0.5.0",
     "@vitest/coverage-v8": "^1.2.2",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.20.14",
