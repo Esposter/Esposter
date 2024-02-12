@@ -15,7 +15,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerItemProperties = useClickerItemProperties();
 
   const buildingList = ref<Building[]>([]);
-  const initialiseBuildingList = (buildings: Building[]) => {
+  const initializeBuildingList = (buildings: Building[]) => {
     buildingList.value = buildings;
   };
 
@@ -67,7 +67,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   return {
     buildingList,
-    initialiseBuildingList,
+    initializeBuildingList,
     allBuildingPower,
     getBoughtBuildingPower,
     getBoughtBuildingAmount,

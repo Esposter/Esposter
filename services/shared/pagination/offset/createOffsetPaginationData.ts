@@ -21,7 +21,7 @@ export const createOffsetPaginationData = <TItem extends ItemMetadata>() => {
     },
   });
 
-  const initialiseOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
+  const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
     offsetPaginationData.value = data;
   };
   const resetOffsetPaginationData = () => {
@@ -31,7 +31,7 @@ export const createOffsetPaginationData = <TItem extends ItemMetadata>() => {
     itemList,
     pushItemList,
     hasMore,
-    initialiseOffsetPaginationData,
+    initializeOffsetPaginationData,
     resetOffsetPaginationData,
   };
 };

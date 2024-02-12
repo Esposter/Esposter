@@ -7,7 +7,7 @@ describe("Layout Store", () => {
     setActivePinia(createPinia());
   });
 
-  test("initialises", () => {
+  test("initializes", () => {
     expect(() => useLayoutStore()).toThrowError("composables must be called from inside a setup function");
   });
 });

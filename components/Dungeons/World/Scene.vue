@@ -15,6 +15,7 @@ import { createLayer } from "@/services/dungeons/world/createLayer";
 import { createTileset } from "@/services/dungeons/world/createTileset";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const gameStore = useGameStore();
@@ -22,7 +23,9 @@ const { controls } = storeToRefs(gameStore);
 const settingsStore = useSettingsStore();
 const { debugTileLayerAlpha } = storeToRefs(settingsStore);
 const worldSceneStore = useWorldSceneStore();
-const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
+const { encounterLayer } = storeToRefs(worldSceneStore);
+const encounterStore = useEncounterStore();
+const { isMonsterEncountered } = storeToRefs(encounterStore);
 
 const create = (scene: SceneWithPlugins) => {
   const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
@@ -44,15 +47,21 @@ const create = (scene: SceneWithPlugins) => {
   createLayer(tilemap, LayerId.Boulder, basicPlainsTileset);
   createLayer(tilemap, LayerId.Foreground, [basicPlainsTileset, houseTileset]);
   encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
-  collisionLayer.value = createLayer(tilemap, LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
+  createLayer(tilemap, LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
 
-  scene.gridEngine.create(tilemap, { characters: [], collisionTilePropertyName: TileProperty.Collision });
+  scene.gridEngine.create(tilemap, {
+    characters: [],
+    collisionTilePropertyName: TileProperty.Collision,
+    numberOfDirections: 8,
+  });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
   scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0);
 };
 
 const update = (scene: SceneWithPlugins) => {
+  if (isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
+
   const input = controls.value.getInput();
   if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };

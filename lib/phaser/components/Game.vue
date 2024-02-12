@@ -15,13 +15,13 @@ interface GameProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
-const { game, sceneKey } = storeToRefs(phaserStore);
+const { game } = storeToRefs(phaserStore);
 const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
-const listener = () => phaserEventEmitter.emit("resize");
+const resizeListener = () => phaserEventEmitter.emit("resize");
 
 onMounted(() => {
-  window.addEventListener("resize", listener);
+  window.addEventListener("resize", resizeListener);
   game.value = new Game({ ...configuration, parent: canvasRoot.value });
   game.value.events.addListener("ready", () => {
     isReady.value = true;
@@ -29,16 +29,11 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("resize", listener);
+  window.removeEventListener("resize", resizeListener);
 
   if (!game.value) return;
   game.value.destroy(true);
   game.value = null;
-});
-
-watch(sceneKey, (newSceneKey) => {
-  if (!(game.value && newSceneKey)) return;
-  game.value.scene.start(newSceneKey);
 });
 </script>
 

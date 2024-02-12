@@ -16,7 +16,7 @@ import isMobile from "is-mobile";
 import { type Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
+const { switchToScene } = phaserStore;
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const x = ref<number>();
@@ -43,9 +43,7 @@ const preload = (scene: SceneWithPlugins) => {
     assetText.value = `Loading asset: ${file.key}`;
   });
 
-  scene.load.on("complete", () => {
-    sceneKey.value = IS_DEVELOPMENT ? SceneKey.World : SceneKey.World;
-  });
+  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.World : SceneKey.World));
 
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);

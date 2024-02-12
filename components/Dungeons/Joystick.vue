@@ -33,13 +33,14 @@ watch([base, thumb], ([newBase, newThumb]) => {
     thumb: newThumb,
   });
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
+});
+
+onMounted(() => {
   phaserEventEmitter.on("resize", resizeListener);
 });
 
 onUnmounted(() => {
-  if (!game.value) return;
   phaserEventEmitter.off("resize", resizeListener);
-  scene.value.virtualJoystickPlugin.destroy();
 });
 </script>
 

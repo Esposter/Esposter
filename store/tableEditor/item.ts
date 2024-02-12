@@ -8,7 +8,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
   const pushItemList = (items: Item[]) => {
     tableEditor.value.items.push(...items);
   };
-  const initialiseItemList = (items: Item[]) => {
+  const initializeItemList = (items: Item[]) => {
     tableEditor.value.items = items;
   };
   const createItem = (newItem: Item) => {
@@ -29,7 +29,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
 
   return {
     pushItemList,
-    initialiseItemList,
+    initializeItemList,
     createItem,
     updateItem,
     deleteItem,

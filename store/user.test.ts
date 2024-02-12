@@ -7,7 +7,7 @@ describe("User Store", () => {
     setActivePinia(createPinia());
   });
 
-  test("initialises", () => {
+  test("initializes", () => {
     useUserStore();
   });
 });

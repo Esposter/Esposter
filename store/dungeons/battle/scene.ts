@@ -21,6 +21,10 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
   const activePanel = ref(ActivePanel.Info);
 
+  const initialize = () => {
+    battleStateMachine.setState(null);
+  };
+
   const onPlayerInput = () => {
     const input = controls.value.getInput();
     // Check if we're trying to show messages first
@@ -77,5 +81,5 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     }
   };
 
-  return { activePanel, onPlayerInput };
+  return { activePanel, initialize, onPlayerInput };
 });

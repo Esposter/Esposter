@@ -1,1 +1,1 @@
-export const GAME_OBJECT_KEY = "gameObject";
+export const DESTROY_SCENE_EVENT_KEY = "destroy";

@@ -10,7 +10,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const { decrementPoints } = pointStore;
 
   const upgradeList = ref<Upgrade[]>([]);
-  const initialiseUpgradeList = (upgrades: Upgrade[]) => {
+  const initializeUpgradeList = (upgrades: Upgrade[]) => {
     upgradeList.value = upgrades;
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
@@ -34,7 +34,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
   return {
     upgradeList,
-    initialiseUpgradeList,
+    initializeUpgradeList,
     unlockedUpgrades,
     createBoughtUpgrade,
   };

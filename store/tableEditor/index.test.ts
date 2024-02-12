@@ -16,12 +16,12 @@ describe("Table Editor Store", () => {
   test("edit item", async () => {
     const router = useRouter();
     const itemStore = useItemStore();
-    const { initialiseItemList } = itemStore;
+    const { initializeItemList } = itemStore;
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
     const { editedItem, editedIndex, editFormDialog } = storeToRefs(tableEditorStore);
     const { editItem } = tableEditorStore;
     const newItem = new TodoListItem();
-    initialiseItemList([newItem]);
+    initializeItemList([newItem]);
 
     expect(editedItem.value).toStrictEqual(null);
     expect(editedIndex.value).toStrictEqual(-1);
@@ -71,10 +71,10 @@ describe("Table Editor Store", () => {
     const { tableEditor, editedItem, editFormDialog } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
-    const { initialiseItemList } = itemStore;
+    const { initializeItemList } = itemStore;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
-    initialiseItemList([newItem]);
+    initializeItemList([newItem]);
 
     expect(editFormDialog.value).toStrictEqual(false);
     expect(tableEditor.value.items[0].name).not.toStrictEqual(updatedName);
@@ -92,9 +92,9 @@ describe("Table Editor Store", () => {
     const { tableEditor, editFormDialog } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
-    const { initialiseItemList } = itemStore;
+    const { initializeItemList } = itemStore;
     const newItem = new TodoListItem();
-    initialiseItemList([newItem]);
+    initializeItemList([newItem]);
 
     expect(editFormDialog.value).toStrictEqual(false);
     expect(tableEditor.value.items.length).toStrictEqual(1);

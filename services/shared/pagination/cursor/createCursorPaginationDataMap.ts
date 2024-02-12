@@ -37,7 +37,7 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
     },
   });
 
-  const initialiseCursorPaginationData = (data: CursorPaginationData<TItem>) => {
+  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
     cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
@@ -48,7 +48,7 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
     pushItemList,
     nextCursor,
     hasMore,
-    initialiseCursorPaginationData,
+    initializeCursorPaginationData,
     resetCursorPaginationData,
   };
 };

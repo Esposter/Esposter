@@ -18,8 +18,8 @@ const emit = defineEmits<{
   update: [InstanceType<TScene>, ...Parameters<InstanceType<TScene>["update"]>];
 }>();
 const phaserStore = usePhaserStore();
-const { game, sceneKey: sceneKeyStore, scene } = storeToRefs(phaserStore);
-
+const { isSameScene, switchToScene } = phaserStore;
+const { game, scene } = storeToRefs(phaserStore);
 const isShutdown = ref(false);
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
@@ -46,7 +46,7 @@ onMounted(() => {
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
   newScene.events.on("shutdown", () => (isShutdown.value = true));
 
-  if (autoStart) sceneKeyStore.value = sceneKey;
+  if (autoStart) switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
@@ -56,5 +56,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <slot v-if="scene && sceneKey === sceneKeyStore && !isShutdown" />
+  <slot v-if="scene && isSameScene(sceneKey) && !isShutdown" />
 </template>
