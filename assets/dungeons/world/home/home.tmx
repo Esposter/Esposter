@@ -19,7 +19,7 @@
     <image source="../../tilesets/Collision.png" width="64" height="64" />
     <tile id="0">
       <properties>
-        <property name="ge_collide" type="bool" value="true" />
+        <property name="Collision" type="bool" value="true" />
       </properties>
     </tile>
   </tileset>

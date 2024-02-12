@@ -6,6 +6,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { TileProperty } from "@/models/dungeons/tile/TileProperty";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { LayerId } from "@/models/dungeons/world/home/LayerId";
 import { dayjs } from "@/services/dayjs";
@@ -45,7 +46,7 @@ const create = (scene: SceneWithPlugins) => {
   encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
   collisionLayer.value = createLayer(tilemap, LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
 
-  scene.gridEngine.create(tilemap, { characters: [] });
+  scene.gridEngine.create(tilemap, { characters: [], collisionTilePropertyName: TileProperty.Collision });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
   scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0);

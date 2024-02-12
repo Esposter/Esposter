@@ -750,7 +750,7 @@
           "id": 0,
           "properties": [
             {
-              "name": "ge_collide",
+              "name": "Collision",
               "type": "bool",
               "value": true
             }
