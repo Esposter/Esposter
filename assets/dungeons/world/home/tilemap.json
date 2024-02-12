@@ -745,6 +745,18 @@
       "spacing": 0,
       "tilecount": 1,
       "tileheight": 64,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "ge_collide",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ],
       "tilewidth": 64
     },
     {

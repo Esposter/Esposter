@@ -13,10 +13,13 @@ import { isDirection } from "@/services/dungeons/input/isDirection";
 import { createLayer } from "@/services/dungeons/world/createLayer";
 import { createTileset } from "@/services/dungeons/world/createTileset";
 import { useGameStore } from "@/store/dungeons/game";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
+const settingsStore = useSettingsStore();
+const { debugTileLayerAlpha } = storeToRefs(settingsStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer, collisionLayer } = storeToRefs(worldSceneStore);
 
@@ -39,8 +42,8 @@ const create = (scene: SceneWithPlugins) => {
   createLayer(tilemap, LayerId.Fence, basicPlainsTileset);
   createLayer(tilemap, LayerId.Boulder, basicPlainsTileset);
   createLayer(tilemap, LayerId.Foreground, [basicPlainsTileset, houseTileset]);
-  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset);
-  collisionLayer.value = createLayer(tilemap, LayerId.Collision, collisionTileset);
+  encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
+  collisionLayer.value = createLayer(tilemap, LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
 
   scene.gridEngine.create(tilemap, { characters: [] });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
@@ -57,8 +60,8 @@ const update = (scene: SceneWithPlugins) => {
 <template>
   <Scene :scene-key="SceneKey.World" :cls="SceneWithPlugins" @create="create" @update="update">
     <DungeonsWorldCharacterPlayer />
-    <!-- Create foreground for depth for player to hide behind -->
-    <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0 }" />
+    <!-- Create foreground with a higher depth than the player to hide behind -->
+    <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0, depth: 12 }" />
     <DungeonsJoystick />
   </Scene>
 </template>

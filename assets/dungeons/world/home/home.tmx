@@ -15,20 +15,25 @@
   <tileset firstgid="185" name="Grass" tilewidth="64" tileheight="64" tilecount="4" columns="2">
     <image source="../../tilesets/Grass.png" width="128" height="128" />
   </tileset>
-  <tileset firstgid="189" name="Collision" tilewidth="64" tileheight="64" tilecount="0" columns="1">
+  <tileset firstgid="189" name="Collision" tilewidth="64" tileheight="64" tilecount="1" columns="1">
     <image source="../../tilesets/Collision.png" width="64" height="64" />
+    <tile id="0">
+      <properties>
+        <property name="ge_collide" type="bool" value="true" />
+      </properties>
+    </tile>
   </tileset>
-  <tileset firstgid="190" name="Bushes" tilewidth="64" tileheight="64" tilecount="0" columns="2">
+  <tileset firstgid="190" name="Bushes" tilewidth="64" tileheight="64" tilecount="4" columns="2">
     <image source="../../tilesets/Bushes.png" width="128" height="128" />
   </tileset>
-  <tileset firstgid="191" name="Encounter" tilewidth="64" tileheight="64" tilecount="0" columns="1">
+  <tileset firstgid="194" name="Encounter" tilewidth="64" tileheight="64" tilecount="1" columns="1">
     <transformations hflip="0" vflip="0" rotate="0" preferuntransformed="1" />
     <image source="../../tilesets/Encounter.png" width="64" height="64" />
   </tileset>
-  <tileset firstgid="192" name="House" tilewidth="64" tileheight="64" tilecount="12" columns="4">
+  <tileset firstgid="195" name="House" tilewidth="64" tileheight="64" tilecount="12" columns="4">
     <image source="../../axulart/tilesets/House.png" width="256" height="192" />
   </tileset>
-  <tileset firstgid="204" name="NpcPaths" class="npc" tilewidth="64" tileheight="64" tilecount="0"
+  <tileset firstgid="207" name="NpcPaths" class="npc" tilewidth="64" tileheight="64" tilecount="1"
     columns="1">
     <properties>
       <property name="is_spawn_point" type="bool" value="false" />
@@ -94,9 +99,9 @@
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,192,193,194,195,0,0,0,0,2147483843,2147483842,2147483841,2147483840,0,0,0,0,
-      0,0,0,0,196,197,198,199,0,0,0,0,2147483847,2147483846,2147483845,2147483844,0,0,0,0,
-      0,0,0,0,200,201,202,203,0,0,0,0,2147483851,2147483850,2147483849,2147483848,0,0,0,0,
+      0,0,0,0,195,196,197,198,0,0,0,0,2147483846,2147483845,2147483844,2147483843,0,0,0,0,
+      0,0,0,0,199,200,201,202,0,0,0,0,2147483850,2147483849,2147483848,2147483847,0,0,0,0,
+      0,0,0,0,203,204,205,206,0,0,0,0,2147483854,2147483853,2147483852,2147483851,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -398,7 +403,7 @@
       0,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,192,193,194,195,0,0,0,0,2147483843,2147483842,2147483841,2147483840,0,0,0,0,
+      0,0,0,0,195,196,197,198,0,0,0,0,2147483846,2147483845,2147483844,2147483843,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -423,18 +428,18 @@
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,191,191,191,191,191,191,191,191,191,191,191,191,0,0,0,0,
-      0,0,191,191,191,191,191,191,191,191,191,191,191,191,191,191,191,191,0,0,
-      0,0,191,191,191,191,191,191,191,191,191,191,191,191,191,191,191,191,0,0,
-      0,0,0,0,191,191,191,191,191,191,191,191,191,191,191,191,0,0,0,0,
+      0,0,0,0,194,194,194,194,194,194,194,194,194,194,194,194,0,0,0,0,
+      0,0,194,194,194,194,194,194,194,194,194,194,194,194,194,194,194,194,0,0,
+      0,0,194,194,194,194,194,194,194,194,194,194,194,194,194,194,194,194,0,0,
+      0,0,0,0,194,194,194,194,194,194,194,194,194,194,194,194,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,191,191,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,191,191,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,194,194,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,194,194,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,191,191,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,191,191,0,0,0,0,0,0,0,0,
-      0,0,0,0,0,0,0,0,0,0,191,191,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,194,194,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,194,194,0,0,0,0,0,0,0,0,
+      0,0,0,0,0,0,0,0,0,0,194,194,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
       0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -518,23 +523,23 @@
   </objectgroup>
   <group id="19" name="NPC" locked="1">
     <objectgroup id="18" name="NPC1" locked="1">
-      <object id="5" name="1" type="npc_path" gid="204" x="960" y="1408" width="64" height="64" />
-      <object id="6" name="npc" type="npc" gid="204" x="896" y="1408" width="64" height="64">
+      <object id="5" name="1" type="npc_path" gid="207" x="960" y="1408" width="64" height="64" />
+      <object id="6" name="npc" type="npc" gid="207" x="896" y="1408" width="64" height="64">
         <properties>
           <property name="frame" value="20" />
           <property name="messages" value="Make sure you read the signposts for helpful tips!" />
           <property name="movement_pattern" value="CLOCKWISE" />
         </properties>
       </object>
-      <object id="8" name="7" type="npc_path" gid="204" x="896" y="1472" width="64" height="64" />
-      <object id="9" name="6" type="npc_path" gid="204" x="896" y="1536" width="64" height="64" />
-      <object id="10" name="5" type="npc_path" gid="204" x="960" y="1536" width="64" height="64" />
-      <object id="11" name="4" type="npc_path" gid="204" x="1024" y="1536" width="64" height="64" />
-      <object id="12" name="3" type="npc_path" gid="204" x="1024" y="1472" width="64" height="64" />
-      <object id="13" name="2" type="npc_path" gid="204" x="1024" y="1408" width="64" height="64" />
+      <object id="8" name="7" type="npc_path" gid="207" x="896" y="1472" width="64" height="64" />
+      <object id="9" name="6" type="npc_path" gid="207" x="896" y="1536" width="64" height="64" />
+      <object id="10" name="5" type="npc_path" gid="207" x="960" y="1536" width="64" height="64" />
+      <object id="11" name="4" type="npc_path" gid="207" x="1024" y="1536" width="64" height="64" />
+      <object id="12" name="3" type="npc_path" gid="207" x="1024" y="1472" width="64" height="64" />
+      <object id="13" name="2" type="npc_path" gid="207" x="1024" y="1408" width="64" height="64" />
     </objectgroup>
     <objectgroup id="20" name="NPC2" locked="1">
-      <object id="14" name="npc" type="npc" gid="204" x="704" y="1920" width="64" height="64">
+      <object id="14" name="npc" type="npc" gid="207" x="704" y="1920" width="64" height="64">
         <properties>
           <property name="frame" value="0" />
           <property name="messages"

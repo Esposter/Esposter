@@ -2,5 +2,6 @@ import { IS_DEVELOPMENT } from "@/util/environment/constants";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const isSkipBattleAnimations = ref(IS_DEVELOPMENT);
-  return { isSkipBattleAnimations };
+  const debugTileLayerAlpha = ref(IS_DEVELOPMENT ? 0.7 : 0);
+  return { isSkipBattleAnimations, debugTileLayerAlpha };
 });
