@@ -6,6 +6,7 @@ import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Asset } from "@/models/dungeons/Asset";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { type CharacterId } from "@/models/dungeons/world/CharacterId";
+import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
@@ -23,9 +24,13 @@ const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
-const subscription = ref<Subscription>();
+const playerStore = usePlayerStore();
+const { isMoving } = storeToRefs(playerStore);
+const subscriptionPositionChangeStarted = ref<Subscription>();
+const subscriptionPositionChangeFinished = ref<Subscription>();
 const destroyListener = () => {
-  subscription.value?.unsubscribe();
+  subscriptionPositionChangeStarted.value?.unsubscribe();
+  subscriptionPositionChangeFinished.value?.unsubscribe();
   scene.value.gridEngine.removeCharacter(id);
 };
 
@@ -70,16 +75,22 @@ onUnmounted(() => {
           },
           startPosition: position,
         });
-        subscription = scene.gridEngine
+        subscriptionPositionChangeStarted = scene.gridEngine
+          .positionChangeStarted()
+          .pipe(filter(({ charId }) => charId === id))
+          .subscribe(() => {
+            isMoving = true;
+          });
+        subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
           .pipe(filter(({ charId }) => charId === id))
           .subscribe(({ enterTile }) => {
             position = enterTile;
 
             const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
-            if (!tile) return;
+            if (tile) useRandomEncounter();
 
-            useRandomEncounter();
+            isMoving = false;
           });
         onComplete?.(sprite);
       }

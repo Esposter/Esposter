@@ -2,6 +2,7 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -18,19 +19,27 @@ import { createTileset } from "@/services/dungeons/world/createTileset";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
+import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { type Tilemaps } from "phaser";
 
+const phaserStore = usePhaserStore();
+const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const settingsStore = useSettingsStore();
 const { debugTileLayerAlpha } = storeToRefs(settingsStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
+const playerStore = usePlayerStore();
+const { isMoving } = storeToRefs(playerStore);
 const encounterStore = useEncounterStore();
 const { isMonsterEncountered } = storeToRefs(encounterStore);
 let tilemap: Tilemaps.Tilemap;
-const destroyListener = () => tilemap.destroy();
+const destroyListener = () => {
+  tilemap.destroy();
+  scene.value.cameras.resetAll();
+};
 
 const create = (scene: SceneWithPlugins) => {
   tilemap = scene.make.tilemap({ key: TilemapKey.Home });
@@ -61,11 +70,11 @@ const create = (scene: SceneWithPlugins) => {
   });
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
-  scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0);
+  scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds());
 };
 
 const update = (scene: SceneWithPlugins) => {
-  if (isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
+  if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
 
   const input = controls.value.getInput();
   if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);

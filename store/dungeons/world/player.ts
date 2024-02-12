@@ -10,8 +10,10 @@ export const usePlayerStore = defineStore("dungeons/world/player", () => {
     },
   });
   const position = ref<Position>({ x: 6, y: 21 });
+  const isMoving = ref(false);
   return {
     character,
     position,
+    isMoving,
   };
 });

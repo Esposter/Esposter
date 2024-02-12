@@ -27,9 +27,8 @@ export const useRandomEncounter = () => {
 
   stepsSinceLastEncounter.value = 0;
   isMonsterEncountered.value = true;
-  scene.value.cameras.main.fadeOut(dayjs.duration(2, "seconds").asMilliseconds(), 0, 0, 0);
+  scene.value.cameras.main.fadeOut(dayjs.duration(2, "seconds").asMilliseconds());
   scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-    scene.value.scene.stop();
     initialize();
     switchToScene(SceneKey.Battle);
     isMonsterEncountered.value = false;
