@@ -36,6 +36,8 @@ onMounted(() => {
 onUnmounted(() => {
   phaserEventEmitter.off(`${DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
+
+console.log("I'd be sad");
 </script>
 
 <template>
