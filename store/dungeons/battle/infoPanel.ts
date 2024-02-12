@@ -28,7 +28,7 @@ export const useInfoPanelStore = defineStore("dungeons/battle/infoPanel", () => 
   // These show message functions are called inside a callback which loses sight of the scope
   // that contains the battle scene store, so we need to grab it within the function
   // instead of referencing the store outside
-  const showMessage = async () => {
+  const showMessage = () => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
     const settingsStore = useSettingsStore();

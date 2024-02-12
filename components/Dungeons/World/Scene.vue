@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
@@ -17,6 +19,7 @@ import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { type Tilemaps } from "phaser";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
@@ -26,9 +29,11 @@ const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const encounterStore = useEncounterStore();
 const { isMonsterEncountered } = storeToRefs(encounterStore);
+let tilemap: Tilemaps.Tilemap;
+const destroyListener = () => tilemap.destroy();
 
 const create = (scene: SceneWithPlugins) => {
-  const tilemap = scene.make.tilemap({ key: TilemapKey.Home });
+  tilemap = scene.make.tilemap({ key: TilemapKey.Home });
   const basicPlainsTileset = createTileset(tilemap, TilesetKey.BasicPlains);
   const beachAndCavesTileset = createTileset(tilemap, TilesetKey.BeachAndCaves);
   const houseTileset = createTileset(tilemap, TilesetKey.House);
@@ -65,6 +70,14 @@ const update = (scene: SceneWithPlugins) => {
   const input = controls.value.getInput();
   if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
+
+onMounted(() => {
+  phaserEventEmitter.on(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+});
+
+onUnmounted(() => {
+  phaserEventEmitter.off(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+});
 </script>
 
 <template>
