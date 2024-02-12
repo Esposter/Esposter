@@ -2,7 +2,7 @@
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Asset } from "@/models/dungeons/Asset";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { type CharacterId } from "@/models/dungeons/world/CharacterId";
@@ -30,11 +30,11 @@ const destroyListener = () => {
 };
 
 onMounted(() => {
-  phaserEventEmitter.on(`${DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+  phaserEventEmitter.on(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
 
 onUnmounted(() => {
-  phaserEventEmitter.off(`${DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+  phaserEventEmitter.off(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
 </script>
 

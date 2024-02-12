@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { usePlayerStore } from "@/store/dungeons/world/player";
@@ -15,11 +15,11 @@ const destroyListener = () => {
 };
 
 onMounted(() => {
-  phaserEventEmitter.on(`${DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+  phaserEventEmitter.on(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
 
 onUnmounted(() => {
-  phaserEventEmitter.off(`${DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+  phaserEventEmitter.off(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
 </script>
 
