@@ -21,15 +21,18 @@ const isReady = ref(false);
 
 useEventListener("resize", () => phaserEventEmitter.emit("resize"));
 
+const readyListener = () => {
+  isReady.value = true;
+};
+
 onMounted(() => {
   game.value = new Game({ ...configuration, parent: canvasRoot.value });
-  game.value.events.addListener("ready", () => {
-    isReady.value = true;
-  });
+  game.value.events.on("ready", readyListener);
 });
 
 onUnmounted(() => {
   if (!game.value) return;
+  game.value.events.off("ready", readyListener);
   game.value.destroy(true);
   game.value = null;
 });
