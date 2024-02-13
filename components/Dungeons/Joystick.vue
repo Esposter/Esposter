@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Circle from "@/lib/phaser/components/Circle.vue";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
@@ -17,10 +16,6 @@ const { controls } = storeToRefs(gameStore);
 const base = ref<GameObjects.Arc>();
 const thumb = ref<GameObjects.Arc>();
 const virtualJoystick = ref<VirtualJoystick>();
-const resizeListener = () => {
-  if (!virtualJoystick.value) return;
-  virtualJoystick.value.y = getJoystickY(scene.value);
-};
 
 watch([base, thumb], ([newBase, newThumb]) => {
   if (!(game.value && newBase && newThumb)) return;
@@ -35,12 +30,9 @@ watch([base, thumb], ([newBase, newThumb]) => {
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
 });
 
-onMounted(() => {
-  phaserEventEmitter.on("resize", resizeListener);
-});
-
-onUnmounted(() => {
-  phaserEventEmitter.off("resize", resizeListener);
+usePhaserListener("resize", () => {
+  if (!virtualJoystick.value) return;
+  virtualJoystick.value.y = getJoystickY(scene.value);
 });
 </script>
 

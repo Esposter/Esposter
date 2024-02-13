@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
@@ -36,10 +35,6 @@ const { isMoving } = storeToRefs(playerStore);
 const encounterStore = useEncounterStore();
 const { isMonsterEncountered } = storeToRefs(encounterStore);
 let tilemap: Tilemaps.Tilemap;
-const destroyListener = () => {
-  tilemap.destroy();
-  scene.value.cameras.resetAll();
-};
 
 const create = (scene: SceneWithPlugins) => {
   tilemap = scene.make.tilemap({ key: TilemapKey.Home });
@@ -80,12 +75,9 @@ const update = (scene: SceneWithPlugins) => {
   if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
-onMounted(() => {
-  phaserEventEmitter.on(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
-});
-
-onUnmounted(() => {
-  phaserEventEmitter.off(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
+  tilemap.destroy();
+  scene.value.cameras.resetAll();
 });
 </script>
 

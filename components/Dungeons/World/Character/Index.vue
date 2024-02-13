@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Asset } from "@/models/dungeons/Asset";
@@ -28,18 +27,11 @@ const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
-const destroyListener = () => {
+
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   scene.value.gridEngine.removeCharacter(id);
-};
-
-onMounted(() => {
-  phaserEventEmitter.on(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
-});
-
-onUnmounted(() => {
-  phaserEventEmitter.off(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, destroyListener);
 });
 </script>
 

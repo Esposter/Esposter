@@ -7,7 +7,7 @@ type DestroySceneEvents = {
   [P in DestroySceneEventKeys]: () => void;
 };
 
-interface PhaserEvents extends DestroySceneEvents {
+export interface PhaserEvents extends DestroySceneEvents {
   resize: () => void;
 }
 

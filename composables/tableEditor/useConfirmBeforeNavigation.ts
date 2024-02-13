@@ -8,11 +8,9 @@ export const useConfirmBeforeNavigation = () => {
     if (isDirty.value && !window.confirm("Changes that you made may not be saved.")) return false;
   });
 
-  const listener = (e: BeforeUnloadEvent) => {
+  useEventListener("beforeunload", (e) => {
     if (!isDirty.value) return;
     e.preventDefault();
     e.returnValue = "";
-  };
-  onBeforeMount(() => window.addEventListener("beforeunload", listener));
-  onUnmounted(() => window.removeEventListener("beforeunload", listener));
+  });
 };

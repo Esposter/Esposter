@@ -18,10 +18,10 @@ const phaserStore = usePhaserStore();
 const { game } = storeToRefs(phaserStore);
 const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
-const resizeListener = () => phaserEventEmitter.emit("resize");
+
+useEventListener("resize", () => phaserEventEmitter.emit("resize"));
 
 onMounted(() => {
-  window.addEventListener("resize", resizeListener);
   game.value = new Game({ ...configuration, parent: canvasRoot.value });
   game.value.events.addListener("ready", () => {
     isReady.value = true;
@@ -29,8 +29,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("resize", resizeListener);
-
   if (!game.value) return;
   game.value.destroy(true);
   game.value = null;
