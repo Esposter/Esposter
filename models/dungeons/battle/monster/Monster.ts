@@ -1,6 +1,6 @@
 import { type Asset } from "@/models/dungeons/Asset";
 import { type Attack } from "@/models/dungeons/attack/Attack";
-import { type Stats } from "@/models/dungeons/Stats";
+import { type Stats } from "@/models/dungeons/battle/monster/Stats";
 
 export interface Monster {
   name: string;

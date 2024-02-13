@@ -1,6 +1,6 @@
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { type Character } from "@/models/dungeons/world/Character";
-import { type Position } from "grid-engine";
+import { Direction, type Position } from "grid-engine";
 
 export const usePlayerStore = defineStore("dungeons/world/player", () => {
   const character = ref<Character>({
@@ -10,10 +10,12 @@ export const usePlayerStore = defineStore("dungeons/world/player", () => {
     },
   });
   const position = ref<Position>({ x: 6, y: 21 });
+  const direction = ref(Direction.DOWN);
   const isMoving = ref(false);
   return {
     character,
     position,
+    direction,
     isMoving,
   };
 });

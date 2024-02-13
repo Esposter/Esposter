@@ -5,34 +5,24 @@ import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Asset } from "@/models/dungeons/Asset";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { type CharacterId } from "@/models/dungeons/world/CharacterId";
-import { usePlayerStore } from "@/store/dungeons/world/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { type Position } from "grid-engine";
+import { type Direction, type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
-import { filter, type Subscription } from "rxjs";
 
 interface CharacterProps {
   id: CharacterId;
   asset: Asset;
+  startPosition: Position;
+  facingDirection?: Direction;
   onComplete?: (sprite: GameObjects.Sprite) => void;
 }
 
-const { id, asset } = defineProps<CharacterProps>();
-const position = defineModel<Position | undefined>("position", { required: true });
+const { id, asset, startPosition, facingDirection, onComplete } = defineProps<CharacterProps>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const worldSceneStore = useWorldSceneStore();
-const { encounterLayer } = storeToRefs(worldSceneStore);
-const playerStore = usePlayerStore();
-const { isMoving } = storeToRefs(playerStore);
-const subscriptionPositionChangeStarted = ref<Subscription>();
-const subscriptionPositionChangeFinished = ref<Subscription>();
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
-  subscriptionPositionChangeStarted.value?.unsubscribe();
-  subscriptionPositionChangeFinished.value?.unsubscribe();
-  scene.value.gridEngine.removeCharacter(id);
-});
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () =>
+  scene.value.gridEngine.removeCharacter(id),
+);
 </script>
 
 <template>
@@ -65,25 +55,9 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
               rightFoot: 5,
             },
           },
-          startPosition: position,
+          startPosition,
+          facingDirection,
         });
-        subscriptionPositionChangeStarted = scene.gridEngine
-          .positionChangeStarted()
-          .pipe(filter(({ charId }) => charId === id))
-          .subscribe(() => {
-            isMoving = true;
-          });
-        subscriptionPositionChangeFinished = scene.gridEngine
-          .positionChangeFinished()
-          .pipe(filter(({ charId }) => charId === id))
-          .subscribe(({ enterTile }) => {
-            position = enterTile;
-
-            const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
-            if (tile) useRandomEncounter();
-
-            isMoving = false;
-          });
         onComplete?.(sprite);
       }
     "

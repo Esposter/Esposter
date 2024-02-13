@@ -22,7 +22,6 @@ const emit = defineEmits<{
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene } = storeToRefs(phaserStore);
-if (!game.value) throw new NotInitializedError("Game");
 
 const isShown = computed(() => scene.value && isSameScene(sceneKey));
 const NewScene = class extends cls {
@@ -42,13 +41,17 @@ const NewScene = class extends cls {
     emit("update", this, ...args);
   }
 };
-const newScene = game.value.scene.add(sceneKey, NewScene);
-if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
 
-if (autoStart) switchToScene(sceneKey);
+onMounted(() => {
+  if (!game.value) throw new NotInitializedError("Game");
+  const newScene = game.value.scene.add(sceneKey, NewScene);
+  if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
+
+  if (autoStart) switchToScene(sceneKey);
+});
 
 onUnmounted(() => {
-  if (!game.value) return;
+  if (!game.value) throw new NotInitializedError("Game");
   game.value.scene.remove(sceneKey);
 });
 </script>

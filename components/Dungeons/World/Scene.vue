@@ -3,6 +3,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
@@ -11,10 +12,12 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { TileProperty } from "@/models/dungeons/tile/TileProperty";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { LayerId } from "@/models/dungeons/world/home/LayerId";
+import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { dayjs } from "@/services/dayjs";
 import { isDirection } from "@/services/dungeons/input/isDirection";
 import { createLayer } from "@/services/dungeons/world/createLayer";
 import { createTileset } from "@/services/dungeons/world/createTileset";
+import { getObjectLayer } from "@/services/dungeons/world/getObjectLayer";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
@@ -29,7 +32,7 @@ const { controls } = storeToRefs(gameStore);
 const settingsStore = useSettingsStore();
 const { debugTileLayerAlpha } = storeToRefs(settingsStore);
 const worldSceneStore = useWorldSceneStore();
-const { encounterLayer } = storeToRefs(worldSceneStore);
+const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 const encounterStore = useEncounterStore();
@@ -57,6 +60,7 @@ const create = (scene: SceneWithPlugins) => {
   createLayer(tilemap, LayerId.Foreground, [basicPlainsTileset, houseTileset]);
   encounterLayer.value = createLayer(tilemap, LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
   createLayer(tilemap, LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
+  signLayer.value = getObjectLayer(tilemap, ObjectLayer.Sign);
 
   scene.gridEngine.create(tilemap, {
     characters: [],
@@ -72,7 +76,8 @@ const update = (scene: SceneWithPlugins) => {
   if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
 
   const input = controls.value.getInput();
-  if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
+  if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
+  else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
