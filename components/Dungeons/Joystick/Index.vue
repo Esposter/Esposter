@@ -8,6 +8,7 @@ import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
+import isMobile from "is-mobile";
 import { type GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
@@ -38,21 +39,23 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
 });
 </script>
 
-<template v-if="isMobile()">
-  <Image
-    :configuration="{ textureKey: ImageKey.Base, depth: Number.MAX_SAFE_INTEGER }"
-    :on-complete="
-      (image) => {
-        base = image;
-      }
-    "
-  />
-  <Image
-    :configuration="{ textureKey: ImageKey.Thumb, depth: Number.MAX_SAFE_INTEGER }"
-    :on-complete="
-      (image) => {
-        thumb = image;
-      }
-    "
-  />
+<template>
+  <template v-if="isMobile()">
+    <Image
+      :configuration="{ textureKey: ImageKey.Base, depth: Number.MAX_SAFE_INTEGER }"
+      :on-complete="
+        (image) => {
+          base = image;
+        }
+      "
+    />
+    <Image
+      :configuration="{ textureKey: ImageKey.Thumb, depth: Number.MAX_SAFE_INTEGER }"
+      :on-complete="
+        (image) => {
+          thumb = image;
+        }
+      "
+    />
+  </template>
 </template>

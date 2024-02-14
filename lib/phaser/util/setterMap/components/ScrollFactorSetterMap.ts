@@ -6,7 +6,7 @@ import { type GameObjects } from "phaser";
 export const ScrollFactorSetterMap = {
   scrollFactor: (gameObject) => (value) => {
     if (value === undefined) return;
-    gameObject.setScrollFactor(value, gameObject.scrollFactorY);
+    gameObject.setScrollFactor(value, value);
   },
   scrollFactorX: (gameObject) => (value) => {
     if (value === undefined) return;
