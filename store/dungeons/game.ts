@@ -9,7 +9,6 @@ export const useGameStore = defineStore("dungeons/game", () => {
   // We can assume that this will always exist because
   // we will create the controls in the preloader scene
   const controls = ref() as Ref<Controls>;
-  const joystickY = ref() as Ref<number>;
   const saveGame = async () => {
     if (status.value === "authenticated") {
       game.value.updatedAt = new Date();
@@ -19,5 +18,5 @@ export const useGameStore = defineStore("dungeons/game", () => {
       localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
     }
   };
-  return { game, controls, joystickY, saveGame };
+  return { game, controls, saveGame };
 });
