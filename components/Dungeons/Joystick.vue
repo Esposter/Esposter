@@ -36,7 +36,7 @@ watch([base, thumb, confirmThumb], ([newBase, newThumb, newConfirmThumb]) => {
     thumb: newThumb,
   });
   confirmThumbJoystick.value = scene.value.virtualJoystickPlugin.add(scene.value, {
-    x: scene.value.scale.displaySize.width - getJoystickX(),
+    x: scene.value.scale.width - getJoystickX(),
     y,
     radius: 0,
     thumb: newConfirmThumb,
