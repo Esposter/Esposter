@@ -44,8 +44,9 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
         subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
           .pipe(filter(({ charId }) => charId === CharacterId.Player))
-          .subscribe(({ enterTile }) => {
+          .subscribe(({ charId, enterTile }) => {
             position = enterTile;
+            playerDirection = scene.gridEngine.getFacingDirection(charId);
 
             const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
             if (tile) useRandomEncounter();
