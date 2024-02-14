@@ -4,8 +4,8 @@ import { Geom, Math } from "phaser";
 
 export const useRectangleCameraMask = (onComplete?: () => void) => {
   const settingsStore = useSettingsStore();
-  const { isSkipBattleAnimations } = storeToRefs(settingsStore);
-  if (isSkipBattleAnimations.value) {
+  const { isSkipAnimations } = storeToRefs(settingsStore);
+  if (isSkipAnimations.value) {
     onComplete?.();
     return;
   }

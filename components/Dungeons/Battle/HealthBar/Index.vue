@@ -13,7 +13,7 @@ const fullBarWidth = 360;
 const scaleY = 0.7;
 const { position, barPercentage } = defineProps<HealthBarProps>();
 const settingsStore = useSettingsStore();
-const { isSkipBattleAnimations } = storeToRefs(settingsStore);
+const { isSkipAnimations } = storeToRefs(settingsStore);
 const barWidth = computed(() => (fullBarWidth * barPercentage) / 100);
 const leftCapDisplayWidth = ref<number>();
 const middleDisplayWidth = computed(() => rightCapX.value - middleX.value);
@@ -35,7 +35,7 @@ watch(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
 
 watch(barWidth, (newBarWidth) => {
   const newRightCapX = middleX.value + newBarWidth;
-  if (isSkipBattleAnimations.value) rightCapX.value = newRightCapX;
+  if (isSkipAnimations.value) rightCapX.value = newRightCapX;
   else rightCapXTween.value = getHealthBarXTween(rightCapX, newRightCapX);
 });
 </script>

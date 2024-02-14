@@ -16,6 +16,10 @@ const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const y = computed(() => scene.value.scale.height - MENU_HEIGHT - MENU_PADDING);
 const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
+
+usePhaserListener("showMessage", () => {
+  activePanel.value = ActivePanel.Info;
+});
 </script>
 
 <template>

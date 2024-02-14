@@ -7,10 +7,10 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : usePlayerStore();
   const { monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
-  const { isSkipBattleAnimations } = storeToRefs(settingsStore);
+  const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 0 : 556;
 
-  if (isSkipBattleAnimations.value) {
+  if (isSkipAnimations.value) {
     monsterInfoContainerPosition.value.x = xEnd;
     return;
   }

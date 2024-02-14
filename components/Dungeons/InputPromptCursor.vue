@@ -2,32 +2,36 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { dayjs } from "@/services/dayjs";
-import { INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION } from "@/services/dungeons/battle/menu/constants";
-import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
+import { useDialogStore } from "@/store/dungeons/dialog";
 
-const playerStore = useInfoPanelStore();
-const { inputPromptCursorPositionX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } =
-  storeToRefs(playerStore);
+interface InputPromptCursorProps {
+  height: number;
+  scale?: number;
+}
+
+const { height, scale = 1 } = defineProps<InputPromptCursorProps>();
+const dialogStore = useDialogStore();
+const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } = storeToRefs(dialogStore);
 </script>
 
 <template>
   <Image
     :configuration="{
-      x: inputPromptCursorPositionX,
+      x: inputPromptCursorX,
       textureKey: ImageKey.Cursor,
       visible: isInputPromptCursorVisible,
       angle: 90,
-      scaleX: 2.5,
-      scaleY: 1.25,
+      scaleX: 2.5 * scale,
+      scaleY: 1.25 * scale,
       displayWidth: inputPromptCursorDisplayWidth,
       tween: {
         delay: 0,
         duration: dayjs.duration(0.5, 'seconds').asMilliseconds(),
         repeat: -1,
         y: {
-          from: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y,
-          start: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y,
-          to: INITIAL_PLAYER_INPUT_PROMPT_CURSOR_POSITION.y + 6,
+          from: height,
+          start: height,
+          to: height + 6,
         },
       },
     }"

@@ -7,10 +7,10 @@ export const useMonsterAppearTween = (isEnemy: boolean, onComplete?: () => void)
   const store = isEnemy ? useEnemyStore() : usePlayerStore();
   const { monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
-  const { isSkipBattleAnimations } = storeToRefs(settingsStore);
+  const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 768 : 256;
 
-  if (isSkipBattleAnimations.value) {
+  if (isSkipAnimations.value) {
     monsterPosition.value.x = xEnd;
     onComplete?.();
     return;

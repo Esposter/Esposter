@@ -9,6 +9,7 @@ type DestroySceneEvents = {
 
 export interface PhaserEvents extends DestroySceneEvents {
   resize: () => void;
+  showMessage: () => void;
 }
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();

@@ -5,8 +5,8 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { type Direction } from "grid-engine";
@@ -14,11 +14,10 @@ import { type Direction } from "grid-engine";
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
+  const dialogStore = useDialogStore();
+  const { handleShowMessageInput } = dialogStore;
   const playerStore = usePlayerStore();
   const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
-  const infoPanelStore = useInfoPanelStore();
-  const { showMessage } = infoPanelStore;
-  const { isQueuedMessagesAnimationPlaying, isWaitingForPlayerSpecialInput } = storeToRefs(infoPanelStore);
   const activePanel = ref(ActivePanel.Info);
 
   const initialize = () => {
@@ -27,15 +26,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
 
   const onPlayerInput = () => {
     const input = controls.value.getInput();
-    // Check if we're trying to show messages first
-    if (input === PlayerSpecialInput.Confirm)
-      if (isQueuedMessagesAnimationPlaying.value) return;
-      else if (isWaitingForPlayerSpecialInput.value) {
-        showMessage();
-        return;
-      }
-
-    if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
+    if (handleShowMessageInput(input)) return;
+    else if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };
 

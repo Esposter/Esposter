@@ -7,9 +7,9 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean, onComplete?: () => v
   const store = isEnemy ? useEnemyStore() : usePlayerStore();
   const { monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
-  const { isSkipBattleAnimations } = storeToRefs(settingsStore);
+  const { isSkipAnimations } = storeToRefs(settingsStore);
 
-  if (isSkipBattleAnimations.value) {
+  if (isSkipAnimations.value) {
     onComplete?.();
     return;
   }

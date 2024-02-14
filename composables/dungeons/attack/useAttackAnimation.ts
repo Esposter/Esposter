@@ -4,8 +4,8 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useAttackAnimation = (attackId: AttackId, isToEnemy: boolean, onComplete?: () => void) => {
   const settingsStore = useSettingsStore();
-  const { isSkipBattleAnimations } = storeToRefs(settingsStore);
-  if (isSkipBattleAnimations.value) {
+  const { isSkipAnimations } = storeToRefs(settingsStore);
+  if (isSkipAnimations.value) {
     onComplete?.();
     return;
   }

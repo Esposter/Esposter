@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { battleUITextStyle } from "@/assets/dungeons/styles/battleUITextStyle";
+import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
@@ -20,7 +20,7 @@ const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelSto
         x: 20,
         y: 468,
         text: line1Text,
-        style: battleUITextStyle,
+        style: DialogTextStyle,
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />
@@ -29,9 +29,9 @@ const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelSto
         x: 20,
         y: 512,
         text: line2Text,
-        style: battleUITextStyle,
+        style: DialogTextStyle,
       }"
     />
-    <DungeonsBattleMenuInputPromptCursor />
+    <DungeonsInputPromptCursor :height="480" />
   </template>
 </template>

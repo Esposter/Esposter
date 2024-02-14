@@ -18,6 +18,7 @@ import { isDirection } from "@/services/dungeons/input/isDirection";
 import { createLayer } from "@/services/dungeons/world/createLayer";
 import { createTileset } from "@/services/dungeons/world/createTileset";
 import { getObjectLayer } from "@/services/dungeons/world/getObjectLayer";
+import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
@@ -31,8 +32,10 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const settingsStore = useSettingsStore();
 const { debugTileLayerAlpha } = storeToRefs(settingsStore);
+const dialogStore = useDialogStore();
+const { handleShowMessageInput } = dialogStore;
 const worldSceneStore = useWorldSceneStore();
-const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
+const { encounterLayer, signLayer, isDialogVisible } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 const encounterStore = useEncounterStore();
@@ -76,7 +79,8 @@ const update = (scene: SceneWithPlugins) => {
   if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
 
   const input = controls.value.getInput();
-  if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
+  if (handleShowMessageInput(input)) return;
+  else if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
@@ -91,6 +95,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
     <DungeonsWorldCharacterPlayer />
     <!-- Create foreground with a higher depth than the player to hide behind -->
     <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0, depth: 12 }" />
+    <DungeonsWorldDialog />
     <DungeonsJoystick />
     <DungeonsJoystickConfirmThumb />
   </Scene>
