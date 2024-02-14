@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { validate } from "@/services/router/validate";
 import { useCommentStore } from "@/store/post/comment";
+
+definePageMeta({ validate });
 
 const post = await useReadPostFromRoute();
 const readMoreComments = await useReadComments(post.id);

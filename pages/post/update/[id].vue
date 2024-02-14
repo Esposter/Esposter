@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
+import { validate } from "@/services/router/validate";
 import { usePostStore } from "@/store/post";
 
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: "auth", validate });
 
 const post = await useReadPostFromRoute();
 const { updatePost } = usePostStore();
