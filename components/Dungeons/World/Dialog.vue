@@ -33,11 +33,7 @@ watch(isDialogVisible, (newIsDialogVisible) => {
 </script>
 
 <template>
-  <Container
-    v-if="isDialogVisible"
-    :configuration="{ x, y, depth: DIALOG_DEPTH }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
-  >
+  <Container v-if="isDialogVisible" :configuration="{ x, y, depth: DIALOG_DEPTH }">
     <Rectangle
       :configuration="{
         width: DIALOG_WIDTH,
@@ -46,6 +42,7 @@ watch(isDialogVisible, (newIsDialogVisible) => {
         strokeStyle: [8, 0x905ac2],
         origin: 0,
       }"
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />
     <Text
       :configuration="{
