@@ -22,10 +22,9 @@ const thumb = ref<GameObjects.Image>();
 watch([base, thumb], ([newBase, newThumb]) => {
   if (!(game.value && newBase && newThumb)) return;
 
-  const y = getJoystickY(scene.value);
   virtualJoystick.value = scene.value.virtualJoystickPlugin.add(scene.value, {
     x: getJoystickX(),
-    y,
+    y: getJoystickY(scene.value),
     radius: JOYSTICK_RADIUS,
     base: newBase,
     thumb: newThumb,
