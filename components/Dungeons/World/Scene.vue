@@ -79,8 +79,13 @@ const update = (scene: SceneWithPlugins) => {
   if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
 
   const input = controls.value.getInput();
-  if (handleShowMessageInput(input)) return;
-  else if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
+  // We want to pause all other player input whilst the dialog is visible
+  if (isDialogVisible.value) {
+    handleShowMessageInput(input);
+    return;
+  }
+
+  if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
