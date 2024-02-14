@@ -9,6 +9,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
@@ -45,8 +46,9 @@ const preload = (scene: SceneWithPlugins) => {
 
   scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.World : SceneKey.World));
 
-  for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
+  for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
+  for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
 };
 

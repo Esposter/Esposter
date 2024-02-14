@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import Circle from "@/lib/phaser/components/Circle.vue";
+import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
@@ -13,8 +16,8 @@ const phaserStore = usePhaserStore();
 const { game, scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const base = ref<GameObjects.Arc>();
-const thumb = ref<GameObjects.Arc>();
+const base = ref<GameObjects.Image>();
+const thumb = ref<GameObjects.Image>();
 const virtualJoystick = ref<VirtualJoystick>();
 
 watch([base, thumb], ([newBase, newThumb]) => {
@@ -34,23 +37,28 @@ usePhaserListener("resize", () => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.y = getJoystickY(scene.value);
 });
+
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
+  if (!virtualJoystick.value) return;
+  virtualJoystick.value.destroy();
+});
 </script>
 
 <template>
   <template v-if="isMobile()">
-    <Circle
-      :configuration="{ radius: JOYSTICK_RADIUS, fillColor: 0x888888, depth: Number.MAX_SAFE_INTEGER }"
+    <Image
+      :configuration="{ textureKey: ImageKey.Base, depth: Number.MAX_SAFE_INTEGER }"
       :on-complete="
-        (circle) => {
-          base = circle;
+        (image) => {
+          base = image;
         }
       "
     />
-    <Circle
-      :configuration="{ radius: JOYSTICK_RADIUS / 2, fillColor: 0xcccccc, depth: Number.MAX_SAFE_INTEGER }"
+    <Image
+      :configuration="{ textureKey: ImageKey.Thumb, depth: Number.MAX_SAFE_INTEGER }"
       :on-complete="
-        (circle) => {
-          thumb = circle;
+        (image) => {
+          thumb = image;
         }
       "
     />

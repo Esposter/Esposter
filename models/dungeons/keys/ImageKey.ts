@@ -14,4 +14,6 @@ export enum ImageKey {
   Iguanignite = "Iguanignite",
 
   Cursor = "Cursor",
+  Base = "Base",
+  Thumb = "Thumb",
 }

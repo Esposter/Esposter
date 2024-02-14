@@ -1,7 +1,6 @@
-import cursor from "@/assets/dungeons/UI/cursor.png";
-import basicPlains from "@/assets/dungeons/axulart/tilesets/BasicPlains.png";
-import beachAndCaves from "@/assets/dungeons/axulart/tilesets/BeachAndCaves.png";
-import house from "@/assets/dungeons/axulart/tilesets/House.png";
+import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
+import base from "@/assets/dungeons/UI/joystick/base.png";
+import thumb from "@/assets/dungeons/UI/joystick/thumb.png";
 import battleForestBackground from "@/assets/dungeons/battle/forestBackground.png";
 import carnodusk from "@/assets/dungeons/battle/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/battle/monsters/iguanignite.png";
@@ -12,17 +11,12 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
-import bushes from "@/assets/dungeons/tilesets/Bushes.png";
-import collision from "@/assets/dungeons/tilesets/Collision.png";
-import encounter from "@/assets/dungeons/tilesets/Encounter.png";
-import grass from "@/assets/dungeons/tilesets/Grass.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { type Loader } from "phaser";
 
-export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
+export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [ImageKey.BattleForestBackground]: (scene) =>
     scene.load.image(ImageKey.BattleForestBackground, battleForestBackground),
   [ImageKey.WorldHomeForeground]: (scene) => scene.load.image(ImageKey.WorldHomeForeground, worldHomeForeground),
@@ -41,13 +35,6 @@ export const ImageLoaderMap: Record<ImageKey | TilesetKey, (scene: SceneWithPlug
   [ImageKey.Iguanignite]: (scene) => scene.load.image(ImageKey.Iguanignite, iguanignite),
 
   [ImageKey.Cursor]: (scene) => scene.load.image(ImageKey.Cursor, cursor),
-
-  [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlains),
-  [TilesetKey.BeachAndCaves]: (scene) => scene.load.image(TilesetKey.BeachAndCaves, beachAndCaves),
-  [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, house),
-
-  [TilesetKey.Bushes]: (scene) => scene.load.image(TilesetKey.Bushes, bushes),
-  [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),
-  [TilesetKey.Encounter]: (scene) => scene.load.image(TilesetKey.Encounter, encounter),
-  [TilesetKey.Grass]: (scene) => scene.load.image(TilesetKey.Grass, grass),
+  [ImageKey.Base]: (scene) => scene.load.image(ImageKey.Base, base),
+  [ImageKey.Thumb]: (scene) => scene.load.image(ImageKey.Thumb, thumb),
 };
