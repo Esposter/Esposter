@@ -92,5 +92,6 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
     <!-- Create foreground with a higher depth than the player to hide behind -->
     <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0, depth: 12 }" />
     <DungeonsJoystick />
+    <!-- <DungeonsJoystickConfirmThumb /> -->
   </Scene>
 </template>
