@@ -27,7 +27,7 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { type Tilemaps } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
+const { scene, sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const settingsStore = useSettingsStore();
@@ -89,7 +89,7 @@ const update = (scene: SceneWithPlugins) => {
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   tilemap.destroy();
   scene.value.cameras.resetAll();
 });

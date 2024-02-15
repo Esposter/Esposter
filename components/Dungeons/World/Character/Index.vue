@@ -3,7 +3,6 @@ import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Asset } from "@/models/dungeons/Asset";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { type CharacterId } from "@/models/dungeons/world/CharacterId";
 import { type Direction, type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
@@ -18,9 +17,9 @@ interface CharacterProps {
 
 const { id, asset, startPosition, facingDirection, onComplete } = defineProps<CharacterProps>();
 const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
+const { scene, sceneKey } = storeToRefs(phaserStore);
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () =>
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () =>
   scene.value.gridEngine.removeCharacter(id),
 );
 </script>

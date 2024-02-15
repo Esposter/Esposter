@@ -1,5 +1,6 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type DialogTarget } from "@/models/dungeons/DialogTarget";
 import { type PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
@@ -10,7 +11,9 @@ import { sleep } from "@/util/sleep";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+  const { scene, sceneKey } = storeToRefs(phaserStore);
+  const settingsStore = useSettingsStore();
+  const { isSkipAnimations } = storeToRefs(settingsStore);
   const inputPromptCursorX = ref();
   const inputPromptCursorDisplayWidth = ref<number>();
   const isInputPromptCursorVisible = ref(false);
@@ -40,16 +43,13 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     dialogTarget = target;
     showMessage();
   };
-  // These show message functions are called inside a callback which loses sight of the scope
-  // that contains the store, so we need to grab it within the function instead of referencing the store outside
+
   const showMessage = () => {
-    const settingsStore = useSettingsStore();
-    const { isSkipAnimations } = storeToRefs(settingsStore);
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
     dialogTarget.text.value = "";
     // Tell other components like the dialog that we're ready to show our message
-    phaserEventEmitter.emit("showMessage");
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`);
 
     const message = queuedMessages.value.shift();
     if (!message) {
@@ -78,10 +78,8 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   };
 
   const showMessageNoInputRequired = (text: DialogTarget["text"], message: string, onComplete?: () => void) => {
-    const settingsStore = useSettingsStore();
-    const { isSkipAnimations } = storeToRefs(settingsStore);
     text.value = "";
-    phaserEventEmitter.emit("showMessage");
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`);
 
     if (isSkipAnimations.value) {
       text.value = message;

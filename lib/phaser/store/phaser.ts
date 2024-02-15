@@ -16,6 +16,8 @@ export const usePhaserStore = defineStore("phaser", () => {
   });
 
   const sceneKey = ref<SceneKey | null>(null);
+  // When we access the scene key from outside components, it should already be initialized
+  const exposedSceneKey = sceneKey as Ref<SceneKey>;
   // We will create the scene in the game and ensure that the scene will always exist
   // for the child components by using v-if for the scene value
   const scene = computed(() => {
@@ -26,14 +28,20 @@ export const usePhaserStore = defineStore("phaser", () => {
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
   const switchToScene = (newSceneKey: SceneKey) => {
     if (!game.value || isSameScene(newSceneKey)) return;
+    // Cleanup old scene resources
+    const oldSceneKey = sceneKey.value;
+    if (oldSceneKey) {
+      phaserEventEmitter.emit(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${oldSceneKey}`);
+      game.value.scene.sleep(oldSceneKey);
+    }
 
-    if (sceneKey.value) phaserEventEmitter.emit(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`);
     sceneKey.value = newSceneKey;
     game.value.scene.start(newSceneKey);
   };
   return {
     game,
     scene,
+    sceneKey: exposedSceneKey,
     isSameScene,
     switchToScene,
   };
