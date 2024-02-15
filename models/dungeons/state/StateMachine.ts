@@ -38,8 +38,4 @@ export class StateMachine<TStateName extends string> {
     this.currentState.onEnter?.();
     this.isChangingState = false;
   }
-
-  addState(state: State<TStateName>) {
-    this.stateMap.set(state.name, state);
-  }
 }
