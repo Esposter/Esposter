@@ -56,6 +56,6 @@ watch(isDialogVisible, (newIsDialogVisible) => {
         },
       }"
     />
-    <DungeonsInputPromptCursor :height="DIALOG_HEIGHT - 24" :scale="2" />
+    <DungeonsInputPromptCursor :height="DIALOG_HEIGHT - 24" />
   </Container>
 </template>
