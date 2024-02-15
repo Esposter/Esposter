@@ -6,9 +6,10 @@ import { useDialogStore } from "@/store/dungeons/dialog";
 
 interface InputPromptCursorProps {
   height: number;
+  scale?: number;
 }
 
-const { height } = defineProps<InputPromptCursorProps>();
+const { height, scale = 1 } = defineProps<InputPromptCursorProps>();
 const dialogStore = useDialogStore();
 const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } = storeToRefs(dialogStore);
 </script>
@@ -20,8 +21,8 @@ const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVi
       textureKey: ImageKey.Cursor,
       visible: isInputPromptCursorVisible,
       angle: 90,
-      scaleX: 2,
-      scaleY: 1.5,
+      scaleX: 2 * scale,
+      scaleY: 1.5 * scale,
       displayWidth: inputPromptCursorDisplayWidth,
       tween: {
         delay: 0,
