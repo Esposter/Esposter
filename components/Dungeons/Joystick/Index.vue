@@ -13,7 +13,7 @@ import { type GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
 const phaserStore = usePhaserStore();
-const { game, scene } = storeToRefs(phaserStore);
+const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const virtualJoystick = ref<VirtualJoystick>();
@@ -21,7 +21,7 @@ const base = ref<GameObjects.Image>();
 const thumb = ref<GameObjects.Image>();
 
 watch([base, thumb], ([newBase, newThumb]) => {
-  if (!(game.value && newBase && newThumb)) return;
+  if (!(newBase && newThumb)) return;
 
   virtualJoystick.value = scene.value.virtualJoystickPlugin.add(scene.value, {
     x: getJoystickX(),

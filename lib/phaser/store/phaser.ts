@@ -5,7 +5,16 @@ import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { type Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  const game = ref<Game | null>(null);
+  // @NOTE: A very weird bug will occur here with setInteractive input priority
+  // if the game is a ref >:C
+  let baseGame: Game | null = null;
+  const game = computed({
+    get: () => baseGame,
+    set: (newGame: Game | null) => {
+      baseGame = newGame;
+    },
+  });
+
   const sceneKey = ref<SceneKey | null>(null);
   // We will create the scene in the game and ensure that the scene will always exist
   // for the child components by using v-if for the scene value
