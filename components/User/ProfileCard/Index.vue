@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // @TODO: https://github.com/vuejs/language-tools/issues/3830
 /* eslint-disable vue/valid-v-bind */
-import { ErrorEntity } from "@/models/shared/error/ErrorEntity";
 import { type Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { type UpdateUserInput } from "@/models/user/UpdateUserInput";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
 import { isDiff } from "@/util/isDiff";
+import { Entity } from "~/models/shared/Entity";
 
 const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
@@ -15,7 +15,7 @@ const { updateAuthUser } = userStore;
 const { authUser } = storeToRefs(userStore);
 const profileCardRows = computed<Record<keyof UpdateUserInput, Row>>(() => {
   if (!authUser.value)
-    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(ErrorEntity.User) });
+    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(Entity.User) });
 
   return {
     // @TODO: https://github.com/trpc/trpc/issues/1937

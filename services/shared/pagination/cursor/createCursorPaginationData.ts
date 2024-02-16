@@ -1,7 +1,16 @@
 import { type ItemMetadata } from "@/models/shared/ItemMetadata";
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
+import { createCrud } from "@/services/shared/pagination/createCrud";
+import { type AItemEntity } from "~/models/shared/AItemEntity";
+import { type Entity } from "~/models/shared/Entity";
+import { uncapitalize } from "~/util/text/uncapitalize";
 
-export const createCursorPaginationData = <TItem extends ItemMetadata>() => {
+export const createCursorPaginationData = <
+  TItem extends Pick<AItemEntity, "id"> & ItemMetadata,
+  TEntity extends Entity,
+>(
+  entity: TEntity,
+) => {
   // @TODO: Vue cannot unwrap generic refs yet
   const cursorPaginationData = ref(new CursorPaginationData<TItem>()) as Ref<CursorPaginationData<TItem>>;
   const itemList = computed({
@@ -34,8 +43,9 @@ export const createCursorPaginationData = <TItem extends ItemMetadata>() => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
   return {
-    itemList,
-    pushItemList,
+    [`${uncapitalize(entity)}List`]: itemList,
+    [`push${entity}List`]: pushItemList,
+    ...createCrud(itemList, entity),
     nextCursor,
     hasMore,
     initializeCursorPaginationData,

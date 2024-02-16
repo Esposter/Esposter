@@ -1,4 +1,4 @@
-export enum ErrorEntity {
+export enum Entity {
   Post = "Post",
   Survey = "Survey",
   User = "User",
