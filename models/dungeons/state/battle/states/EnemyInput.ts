@@ -1,11 +1,10 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 
-export const EnemyInput: State<BattleScene, StateName> = {
+export const EnemyInput: State<StateName> = {
   name: StateName.EnemyInput,
-  onEnter: function (this) {
-    BattleSceneStore.battleStateMachine.setState(StateName.Battle);
+  onEnter: () => {
+    battleStateMachine.setState(StateName.Battle);
   },
 };

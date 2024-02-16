@@ -15,7 +15,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerItemProperties = useClickerItemProperties();
 
   const buildingList = ref<Building[]>([]);
-  const initialiseBuildingList = (buildings: Building[]) => {
+  const initializeBuildingList = (buildings: Building[]) => {
     buildingList.value = buildings;
   };
 
@@ -36,15 +36,15 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
 
     return [
-      `Each ${boughtBuilding.name} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
+      `- Each ${boughtBuilding.name} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
         clickerItemProperties.value.pluralName
       }** per second`,
-      `${boughtBuilding.amount} ${boughtBuilding.name}s producing **${formatNumberLong(buildingPower)} ${
+      `- ${boughtBuilding.amount} ${boughtBuilding.name}s producing **${formatNumberLong(buildingPower)} ${
         clickerItemProperties.value.pluralName
       }** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(
         clickerItemProperties.value.pluralName,
       )}pS)`,
-      `**${formatNumberLong(boughtBuilding.producedValue)}** ${clickerItemProperties.value.pluralName} produced so far`,
+      `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerItemProperties.value.pluralName} produced so far`,
     ];
   };
   const getBuildingPrice = (building: Building) => {
@@ -67,7 +67,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   return {
     buildingList,
-    initialiseBuildingList,
+    initializeBuildingList,
     allBuildingPower,
     getBoughtBuildingPower,
     getBoughtBuildingAmount,

@@ -7,10 +7,10 @@ const { $client } = useNuxtApp();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
-const { initialiseUpgradeList } = upgradeStore;
+const { initializeUpgradeList } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);
 const buildingStore = useBuildingStore();
-const { initialiseBuildingList } = buildingStore;
+const { initializeBuildingList } = buildingStore;
 const { buildingList } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
@@ -19,10 +19,10 @@ const unlockedStoreUpgrades = computed(() =>
 );
 
 const upgrades = await $client.clicker.readUpgrades.query();
-initialiseUpgradeList(upgrades);
+initializeUpgradeList(upgrades);
 
 const buildings = await $client.clicker.readBuildings.query();
-initialiseBuildingList(buildings);
+initializeBuildingList(buildings);
 </script>
 
 <template>

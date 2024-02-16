@@ -1,3 +1,3 @@
 export enum TilemapKey {
-  CloudCity = "CloudCity",
+  Home = "Home",
 }

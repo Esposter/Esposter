@@ -6,8 +6,13 @@ export const useGameStore = defineStore("clicker/game", () => {
   const { status } = useAuth();
   const game = ref(new Game());
   const saveGame = async () => {
-    if (status.value === "authenticated") await $client.clicker.saveGame.mutate(game.value);
-    else if (status.value === "unauthenticated") localStorage.setItem(CLICKER_LOCAL_STORAGE_KEY, game.value.toJSON());
+    if (status.value === "authenticated") {
+      game.value.updatedAt = new Date();
+      await $client.clicker.saveGame.mutate(game.value);
+    } else if (status.value === "unauthenticated") {
+      game.value.updatedAt = new Date();
+      localStorage.setItem(CLICKER_LOCAL_STORAGE_KEY, game.value.toJSON());
+    }
   };
   return { game, saveGame };
 });

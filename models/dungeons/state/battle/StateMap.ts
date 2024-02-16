@@ -1,4 +1,3 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { Battle } from "@/models/dungeons/state/battle/states/Battle";
@@ -9,12 +8,14 @@ import { EnemyPostAttackCheck } from "@/models/dungeons/state/battle/states/Enem
 import { Finished } from "@/models/dungeons/state/battle/states/Finished";
 import { FleeAttempt } from "@/models/dungeons/state/battle/states/FleeAttempt";
 import { Intro } from "@/models/dungeons/state/battle/states/Intro";
+import { ItemAttempt } from "@/models/dungeons/state/battle/states/ItemAttempt";
 import { PlayerAttack } from "@/models/dungeons/state/battle/states/PlayerAttack";
 import { PlayerInput } from "@/models/dungeons/state/battle/states/PlayerInput";
 import { PlayerPostAttackCheck } from "@/models/dungeons/state/battle/states/PlayerPostAttackCheck";
 import { PreBattleInfo } from "@/models/dungeons/state/battle/states/PreBattleInfo";
+import { SwitchAttempt } from "@/models/dungeons/state/battle/states/SwitchAttempt";
 
-const StateRecord: Record<StateName, State<BattleScene, StateName>> = {
+const StateRecord: Record<StateName, State<StateName>> = {
   [StateName.Intro]: Intro,
   [StateName.PreBattleInfo]: PreBattleInfo,
   [StateName.BringOutMonster]: BringOutMonster,
@@ -26,9 +27,11 @@ const StateRecord: Record<StateName, State<BattleScene, StateName>> = {
   [StateName.EnemyAttack]: EnemyAttack,
   [StateName.EnemyPostAttackCheck]: EnemyPostAttackCheck,
   [StateName.Finished]: Finished,
+  [StateName.SwitchAttempt]: SwitchAttempt,
+  [StateName.ItemAttempt]: ItemAttempt,
   [StateName.FleeAttempt]: FleeAttempt,
 };
 
-export const StateMap: Map<StateName, State<BattleScene, StateName>> = new Map(
-  Object.entries(StateRecord) as [[StateName, State<BattleScene, StateName>]],
+export const StateMap: Map<StateName, State<StateName>> = new Map(
+  Object.entries(StateRecord) as [[StateName, State<StateName>]],
 );

@@ -1,11 +1,10 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 
-export const Battle: State<BattleScene, StateName> = {
+export const Battle: State<StateName> = {
   name: StateName.Battle,
-  onEnter: function (this) {
+  onEnter: () => {
     /**
      * 1. Show attack used
      * 2. Brief pause
@@ -17,6 +16,6 @@ export const Battle: State<BattleScene, StateName> = {
      * 8. Brief pause
      * 9. Repeat the steps above for the other monster
      */
-    BattleSceneStore.battleStateMachine.setState(StateName.PlayerAttack);
+    battleStateMachine.setState(StateName.PlayerAttack);
   },
 };

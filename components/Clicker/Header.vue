@@ -8,13 +8,21 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 <template>
   <v-toolbar bg-transparent="!">
     <template v-if="!leftDrawerOpenAuto" #prepend>
-      <v-btn icon="mdi-store" @click="leftDrawerOpen = true" />
+      <v-tooltip text="Store">
+        <template #activator="{ props }">
+          <v-btn icon="mdi-store" :="props" @click="leftDrawerOpen = true" />
+        </template>
+      </v-tooltip>
     </template>
     <v-spacer />
     <ClickerModelItemTypeSelectors />
     <v-spacer />
     <template v-if="!rightDrawerOpenAuto" #append>
-      <v-btn icon="mdi-bag-personal" @click="rightDrawerOpen = true" />
+      <v-tooltip text="Inventory">
+        <template #activator="{ props }">
+          <v-btn icon="mdi-bag-personal" :="props" @click="rightDrawerOpen = true" />
+        </template>
+      </v-tooltip>
     </template>
   </v-toolbar>
 </template>

@@ -6,7 +6,7 @@ export const useReadMembers = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { initialiseCursorPaginationData, pushMemberList } = memberStore;
+  const { initializeCursorPaginationData, pushMemberList } = memberStore;
   const { nextCursor, hasMore } = storeToRefs(memberStore);
   const readMoreMembers = async (onComplete: () => void) => {
     try {
@@ -22,7 +22,7 @@ export const useReadMembers = async () => {
   };
 
   if (currentRoomId.value)
-    initialiseCursorPaginationData(await $client.room.readMembers.query({ roomId: currentRoomId.value }));
+    initializeCursorPaginationData(await $client.room.readMembers.query({ roomId: currentRoomId.value }));
 
   return readMoreMembers;
 };

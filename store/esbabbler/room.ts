@@ -26,7 +26,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const roomsSearched = computed<Room[]>(() => {
     if (!roomSearchQuery.value) return [];
 
-    const fuse = new Fuse(roomList.value);
+    const fuse = new Fuse(roomList.value, { keys: ["name"] });
     return fuse.search(roomSearchQuery.value).map((x) => x.item);
   });
 

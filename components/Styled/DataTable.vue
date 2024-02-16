@@ -2,7 +2,7 @@
 import { VDataTable } from "vuetify/components/VDataTable";
 
 interface StyledDataTableProps {
-  dataTableProps?: VDataTable["$props"];
+  dataTableProps: VDataTable["$props"];
 }
 
 const { dataTableProps } = defineProps<StyledDataTableProps>();

@@ -7,10 +7,10 @@ import { type Constructor } from "@/util/types/Constructor";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
-const propertyRendererMap = ref<Record<string, Component>>({});
-const properties = computed(() => Object.keys(propertyRendererMap.value));
-const selectedProperty = ref<string>();
-const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["value"]>["component"]) => {
+const propertyRendererMap = computed<Record<string, Component>>(() => {
+  const component = editedItem.value?.component;
+  if (!component) return {};
+
   const result: Record<string, Component> = {};
   // @TODO: Remove this cast once vuetify/components import is fixed
   const props = VuetifyComponentMap[component as keyof typeof VuetifyComponentMap].props as Record<
@@ -27,19 +27,17 @@ const updatePropertyRendererMap = (component: NonNullable<(typeof editedItem)["v
       if (component) result[name] = markRaw(component);
     }
 
-  propertyRendererMap.value = result;
-};
+  return result;
+});
+const properties = computed(() => Object.keys(propertyRendererMap.value));
+const selectedProperty = ref<string>();
 
-const { trigger } = watchTriggerable(
+watch(
   () => editedItem.value?.component,
-  (newValue) => {
-    if (!newValue) return;
-    updatePropertyRendererMap(newValue);
+  () => {
     selectedProperty.value = undefined;
   },
 );
-
-onMounted(trigger);
 </script>
 
 <template>

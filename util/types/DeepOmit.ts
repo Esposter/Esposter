@@ -1,7 +1,7 @@
 import { type DeepOmitArray } from "@/util/types/DeepOmitArray";
 
 // Union of primitives to skip with deep omit utilities
-type Primitive = string | Function | number | boolean | Symbol | undefined | null;
+type Primitive = string | Function | number | boolean | symbol | undefined | null;
 
 export type DeepOmit<T, TKey> = T extends Primitive
   ? T

@@ -3,7 +3,7 @@ import { useCommentStore } from "@/store/post/comment";
 export const useReadComments = async (postId: string) => {
   const { $client } = useNuxtApp();
   const commentStore = useCommentStore();
-  const { initialiseCursorPaginationData, pushCommentList } = commentStore;
+  const { initializeCursorPaginationData, pushCommentList } = commentStore;
   const { nextCursor, hasMore } = storeToRefs(commentStore);
   const readMoreComments = async (onComplete: () => void) => {
     try {
@@ -16,6 +16,6 @@ export const useReadComments = async (postId: string) => {
     }
   };
 
-  initialiseCursorPaginationData(await $client.post.readPosts.query({ parentId: postId }));
+  initializeCursorPaginationData(await $client.post.readPosts.query({ parentId: postId }));
   return readMoreComments;
 };

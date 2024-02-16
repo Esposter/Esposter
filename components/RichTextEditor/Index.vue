@@ -36,7 +36,7 @@ const editor = useEditor({
   },
 });
 
-onBeforeUnmount(() => editor.value?.destroy());
+onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>

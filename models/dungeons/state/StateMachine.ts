@@ -1,14 +1,12 @@
 import { type State } from "@/models/dungeons/state/State";
 
-export class StateMachine<TContext extends object, TStateName extends string> {
-  context: TContext;
-  stateMap: Map<TStateName, State<TContext, TStateName>>;
-  currentState: State<TContext, TStateName | null> = { name: null };
+export class StateMachine<TStateName extends string> {
+  stateMap: Map<TStateName, State<TStateName>>;
+  currentState: State<TStateName | null> = { name: null };
   isChangingState = false;
-  changingStateNameQueue: TStateName[] = [];
+  changingStateNameQueue: (TStateName | null)[] = [];
 
-  constructor(context: TContext, stateMap: Map<TStateName, State<TContext, TStateName>>) {
-    this.context = context;
+  constructor(stateMap: Map<TStateName, State<TStateName>>) {
     this.stateMap = stateMap;
   }
 
@@ -23,9 +21,11 @@ export class StateMachine<TContext extends object, TStateName extends string> {
     this.setState(stateName);
   }
 
-  setState(stateName: TStateName) {
-    const state = this.stateMap.get(stateName);
-    if (!state || stateName === this.currentStateName) return;
+  setState(stateName: TStateName | null) {
+    if (stateName === this.currentStateName) return;
+
+    const state = stateName === null ? { name: null } : this.stateMap.get(stateName);
+    if (!state) return;
 
     if (this.isChangingState) {
       this.changingStateNameQueue.push(stateName);
@@ -33,12 +33,9 @@ export class StateMachine<TContext extends object, TStateName extends string> {
     }
 
     this.isChangingState = true;
+    this.currentState.onExit?.();
     this.currentState = state;
-    this.currentState.onEnter?.call(this.context);
+    this.currentState.onEnter?.();
     this.isChangingState = false;
-  }
-
-  addState(state: State<TContext, TStateName>) {
-    this.stateMap.set(state.name, state);
   }
 }

@@ -1,28 +1,29 @@
-import { dayjs } from "@/services/dayjs";
+import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { sleep } from "@/util/sleep";
-import { type GameObjects, type Scene } from "phaser";
+import { type Scene } from "phaser";
 
 export const animateText = (
   scene: Scene,
-  target: GameObjects.Text,
+  targetText: Ref<string>,
   text: string,
   configuration?: {
     delay?: number;
     onComplete?: () => void;
   },
 ) => {
-  const delay = configuration?.delay ?? dayjs.duration(25, "milliseconds").asMilliseconds();
+  const delay = configuration?.delay ?? DEFAULT_TEXT_DELAY;
   let i = 0;
   scene.time.addEvent({
     delay,
     repeat: text.length - 1,
     callback: async () => {
-      target.text += text[i];
+      targetText.value += text[i];
       i++;
       if (i === text.length - 1) {
-        // We need this delay here to prevent the last character animation
+        // We need this delay here to prevent the last character animations
         // from being updated after we set the text back to blank
-        await sleep(delay);
+        // It seems that we need exactly 2 ticks for it to finish
+        await sleep(2 * delay);
         configuration?.onComplete?.();
       }
     },

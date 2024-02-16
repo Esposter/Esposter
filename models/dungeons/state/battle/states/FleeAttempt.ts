@@ -1,13 +1,17 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useDialogStore } from "@/store/dungeons/dialog";
 
-export const FleeAttempt: State<BattleScene, StateName> = {
+export const FleeAttempt: State<StateName> = {
   name: StateName.FleeAttempt,
-  onEnter: function (this) {
-    this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(["You got away safely!"], () => {
-      BattleSceneStore.battleStateMachine.setState(StateName.Finished);
-    });
+  onEnter: () => {
+    const dialogStore = useDialogStore();
+    const { updateQueuedMessagesAndShowMessage } = dialogStore;
+    const battleDialogTarget = useBattleDialogTarget();
+
+    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["You got away safely!"], () =>
+      battleStateMachine.setState(StateName.Finished),
+    );
   },
 };

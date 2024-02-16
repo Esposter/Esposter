@@ -1,26 +1,29 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useDialogStore } from "@/store/dungeons/dialog";
 
-export const EnemyPostAttackCheck: State<BattleScene, StateName> = {
+export const EnemyPostAttackCheck: State<StateName> = {
   name: StateName.EnemyPostAttackCheck,
-  onEnter: function (this) {
-    if (BattleSceneStore.activePlayerMonster.isFainted) {
-      BattleSceneStore.activePlayerMonster.playDeathAnimation(() => {
-        this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-          [
-            `${BattleSceneStore.activePlayerMonster.name} has fainted!`,
-            "You have no more monsters, escaping to safety...",
-          ],
-          () => {
-            BattleSceneStore.battleStateMachine.setState(StateName.Finished);
-          },
-        );
-      });
+  onEnter: () => {
+    const dialogStore = useDialogStore();
+    const { updateQueuedMessagesAndShowMessage } = dialogStore;
+    const playerStore = usePlayerStore();
+    const { activeMonster, isActiveMonsterFainted } = storeToRefs(playerStore);
+    const battleDialogTarget = useBattleDialogTarget();
+
+    if (isActiveMonsterFainted.value) {
+      useMonsterDeathTween(false, () =>
+        updateQueuedMessagesAndShowMessage(
+          battleDialogTarget,
+          [`${activeMonster.value.name} has fainted!`, "You have no more monsters, escaping to safety..."],
+          () => battleStateMachine.setState(StateName.Finished),
+        ),
+      );
       return;
     }
 
-    BattleSceneStore.battleStateMachine.setState(StateName.PlayerInput);
+    battleStateMachine.setState(StateName.PlayerInput);
   },
 };

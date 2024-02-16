@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { validate } from "@/services/router/validate";
+
 // @TODO: Nuxt cannot build survey-creator-core yet
 // import { useSurveyStore } from "@/store/surveyer/survey";
 // import "survey-core/defaultV2.min.css";
@@ -8,7 +10,7 @@
 // import "survey-creator-core/survey-creator-core.min.css";
 
 // defineRouteRules({ ssr: false });
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: "auth", validate });
 
 // const survey = await useReadSurveyFromRoute();
 // const { status } = useAuth();

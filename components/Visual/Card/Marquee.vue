@@ -20,8 +20,8 @@ const { surface, "on-surface": onSurface } = useColors();
     p-4="!"
   >
     <div class="scene" h-64>
-      <ul class="grid" px-4 h-full grid gap-x-4 list-none>
-        <li v-for="(card, index) in cards" :key="index">
+      <div class="grid" px-4 h-full grid gap-x-4 list-none>
+        <div v-for="(card, index) in cards" :key="index" class="item-container">
           <div
             class="item border-sm"
             p-4
@@ -36,8 +36,8 @@ const { surface, "on-surface": onSurface } = useColors();
           >
             {{ card.text }}
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </StyledCard>
 </template>
@@ -68,12 +68,12 @@ $card-length: 6;
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
 
-  &:hover li {
+  &:hover .item-container {
     animation-play-state: paused;
   }
 }
 
-li {
+.item-container {
   --delay: calc(calc(var(--duration) / var(--rows)) * (var(--index, 0) - 8));
   translate: 0% calc(((var(--rows) - var(--index)) + var(--inset, 0)) * 100%);
   animation: slide var(--duration) var(--delay) infinite linear;
@@ -113,7 +113,7 @@ li {
 }
 
 @for $i from 1 through $card-length {
-  li:nth-of-type(#{$i}) {
+  .item-container:nth-of-type(#{$i}) {
     --index: #{floor(calc(($i - 1) / 2))};
   }
 }
@@ -138,7 +138,7 @@ li {
   }
 
   @for $i from 1 through $card-length {
-    li:nth-of-type(#{$i}) {
+    .item-container:nth-of-type(#{$i}) {
       --index: #{$i - 1};
     }
   }

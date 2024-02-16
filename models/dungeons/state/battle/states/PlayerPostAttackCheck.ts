@@ -1,23 +1,29 @@
-import { type BattleScene } from "@/models/dungeons/scenes/BattleScene";
 import { type State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { BattleSceneStore } from "@/models/dungeons/store/BattleSceneStore";
+import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { useDialogStore } from "@/store/dungeons/dialog";
 
-export const PlayerPostAttackCheck: State<BattleScene, StateName> = {
+export const PlayerPostAttackCheck: State<StateName> = {
   name: StateName.PlayerPostAttackCheck,
-  onEnter: function (this) {
-    if (BattleSceneStore.activeEnemyMonster.isFainted) {
-      BattleSceneStore.activeEnemyMonster.playDeathAnimation(() => {
-        this.battleMenu.battleSubMenu.infoPanel.updateAndShowMessage(
-          [`Wild ${BattleSceneStore.activeEnemyMonster.name} has fainted!`, "You have gained some experience."],
-          () => {
-            BattleSceneStore.battleStateMachine.setState(StateName.Finished);
-          },
-        );
-      });
+  onEnter: () => {
+    const dialogStore = useDialogStore();
+    const { updateQueuedMessagesAndShowMessage } = dialogStore;
+    const enemyStore = useEnemyStore();
+    const { activeMonster, isActiveMonsterFainted } = storeToRefs(enemyStore);
+    const battleDialogTarget = useBattleDialogTarget();
+
+    if (isActiveMonsterFainted.value) {
+      useMonsterDeathTween(true, () =>
+        updateQueuedMessagesAndShowMessage(
+          battleDialogTarget,
+          [`Wild ${activeMonster.value.name} has fainted!`, "You have gained some experience."],
+          () => battleStateMachine.setState(StateName.Finished),
+        ),
+      );
       return;
     }
 
-    BattleSceneStore.battleStateMachine.setState(StateName.EnemyAttack);
+    battleStateMachine.setState(StateName.EnemyAttack);
   },
 };

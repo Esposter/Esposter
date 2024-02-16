@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { useWatchProps } from "@/lib/phaser/composables/useWatchProps";
-import { TextSetterMap } from "@/lib/phaser/services/setterMap/TextSetterMap";
+import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
+import { type TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { type Types } from "phaser";
+import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
+import { FontKey } from "@/models/dungeons/keys/FontKey";
+import { type SetRequired } from "@/util/types/SetRequired";
+import { type GameObjects } from "phaser";
 
 interface TextProps {
-  configuration: Types.GameObjects.Text.TextConfig;
+  configuration: SetRequired<Partial<TextConfiguration>, "text">;
 }
+
+interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 
 const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);
+const { x, y, text, style } = configuration.value;
+const emit = defineEmits<TextEmits>();
 const phaserStore = usePhaserStore();
-const { gameObjectCreator } = storeToRefs(phaserStore);
-const text = gameObjectCreator.value.text(configuration.value);
-defineExpose(text);
-
-useWatchProps(text, configuration, TextSetterMap);
-
-onBeforeUnmount(() => {
-  text.destroy();
-});
+const { scene } = storeToRefs(phaserStore);
+const textGameObject = ref(
+  scene.value.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey["Kenney-Future-Narrow"], ...style }),
+) as Ref<GameObjects.Text>;
+useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 </script>
 
-<template>
-  <slot />
-</template>
+<template></template>

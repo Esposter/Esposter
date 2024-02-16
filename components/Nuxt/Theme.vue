@@ -28,14 +28,10 @@ watch(theme.name, async () => {
   const top = targetRect.top + targetRect.height / 2 + window.scrollY;
   el.style.setProperty("--clip-pos", `${left}px ${top}px`);
   el.style.removeProperty("--clip-size");
-
-  await nextTick(() => {
-    el.classList.add("app-transition");
-    window.requestAnimationFrame(() => {
-      el.style.setProperty("--clip-size", `${Math.hypot(window.innerWidth, window.innerHeight)}px`);
-    });
+  el.classList.add("app-transition");
+  window.requestAnimationFrame(() => {
+    el.style.setProperty("--clip-size", `${Math.hypot(window.innerWidth, window.innerHeight)}px`);
   });
-
   document.body.append(copy);
 
   const onTransitionEnd = (e: TransitionEvent) => {

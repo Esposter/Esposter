@@ -5,7 +5,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initialiseOffsetPaginationData } = surveyStore;
+  const { initializeOffsetPaginationData } = surveyStore;
   const { surveyList, hasMore, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
   const readMoreSurveys = async ({
@@ -31,7 +31,7 @@ export const useReadSurveys = async () => {
     }
   };
 
-  initialiseOffsetPaginationData(await $client.survey.readSurveys.query());
+  initializeOffsetPaginationData(await $client.survey.readSurveys.query());
   totalItemsLength.value = await $client.survey.count.query();
   return { isLoading, readMoreSurveys };
 };
