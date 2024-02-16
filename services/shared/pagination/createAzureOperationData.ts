@@ -4,9 +4,9 @@ import { Operation } from "@/models/shared/pagination/Operation";
 import { type OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
-export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeKey extends EntityTypeKey>(
+export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeKey extends EntityTypeKey = "Item">(
   itemList: Ref<TItem[]>,
-  entityTypeKey: TEntityTypeKey,
+  entityTypeKey: TEntityTypeKey = "Item" as TEntityTypeKey,
 ) => {
   const pushItemList = (...items: TItem[]) => {
     itemList.value.push(...items);
@@ -18,7 +18,7 @@ export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeK
     const index = itemList.value.findIndex(
       (i) => i.partitionKey === updatedItem.partitionKey && i.rowKey === updatedItem.rowKey,
     );
-    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem };
+    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem, updatedAt: new Date() };
   };
   const deleteItem = ({ partitionKey, rowKey }: CompositeKey) => {
     itemList.value = itemList.value.filter((i) => !(i.partitionKey === partitionKey && i.rowKey === rowKey));

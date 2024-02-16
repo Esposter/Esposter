@@ -4,9 +4,9 @@ import { Operation } from "@/models/shared/pagination/Operation";
 import { type OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
-export const createOperationData = <TItem extends AItemEntity, TEntityTypeKey extends EntityTypeKey>(
+export const createOperationData = <TItem extends AItemEntity, TEntityTypeKey extends EntityTypeKey = "Item">(
   itemList: Ref<TItem[]>,
-  entityTypeKey: TEntityTypeKey,
+  entityTypeKey: TEntityTypeKey = "Item" as TEntityTypeKey,
 ) => {
   const pushItemList = (...items: TItem[]) => {
     itemList.value.push(...items);
@@ -16,7 +16,7 @@ export const createOperationData = <TItem extends AItemEntity, TEntityTypeKey ex
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
     const index = itemList.value.findIndex((i) => i.id === updatedItem.id);
-    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem };
+    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem, updatedAt: new Date() };
   };
   const deleteItem = (id: TItem["id"]) => {
     itemList.value = itemList.value.filter((i) => i.id !== id);

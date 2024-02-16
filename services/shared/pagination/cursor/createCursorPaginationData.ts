@@ -1,9 +1,9 @@
 import { type ItemMetadata } from "@/models/shared/ItemMetadata";
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 
-export const createCursorPaginationData = <TItem extends ItemMetadata>() => {
+export const createCursorPaginationData = <TItem extends ItemMetadata>(items?: TItem[]) => {
   // @TODO: Vue cannot unwrap generic refs yet
-  const cursorPaginationData = ref(new CursorPaginationData<TItem>()) as Ref<CursorPaginationData<TItem>>;
+  const cursorPaginationData = ref(new CursorPaginationData<TItem>({ items })) as Ref<CursorPaginationData<TItem>>;
   const itemList = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {

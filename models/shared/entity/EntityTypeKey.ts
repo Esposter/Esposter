@@ -5,4 +5,5 @@ import { type DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDa
 export type EntityTypeKey =
   | keyof typeof DatabaseEntityType
   | keyof typeof DerivedDatabaseEntityType
-  | keyof typeof AzureEntityType;
+  | keyof typeof AzureEntityType
+  | "Item";
