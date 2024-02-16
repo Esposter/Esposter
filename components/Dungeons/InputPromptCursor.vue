@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends string">
+<script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { dayjs } from "@/services/dayjs";
