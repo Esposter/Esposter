@@ -11,54 +11,54 @@ describe("Create Operation Data", () => {
   });
 
   test("pushes", () => {
-    const { pushItemList } = operationData;
+    const { itemList, pushItemList } = operationData;
     const newItem = new TodoListItem();
 
-    expect(operationData.itemList.value.length).toStrictEqual(0);
+    expect(itemList.value.length).toStrictEqual(0);
 
     pushItemList(newItem);
 
-    expect(operationData.itemList.value.length).toStrictEqual(1);
-    expect(operationData.itemList.value[0]).toStrictEqual(newItem);
+    expect(itemList.value.length).toStrictEqual(1);
+    expect(itemList.value[0]).toStrictEqual(newItem);
   });
 
   test("creates", () => {
-    const { createItem } = operationData;
+    const { itemList, createItem } = operationData;
     const newItem = new TodoListItem();
 
-    expect(operationData.itemList.value.length).toStrictEqual(0);
+    expect(itemList.value.length).toStrictEqual(0);
 
     createItem(newItem);
 
-    expect(operationData.itemList.value.length).toStrictEqual(1);
-    expect(operationData.itemList.value[0]).toStrictEqual(newItem);
+    expect(itemList.value.length).toStrictEqual(1);
+    expect(itemList.value[0]).toStrictEqual(newItem);
   });
 
   test("updates", async () => {
-    const { createItem, updateItem } = operationData;
+    const { itemList, createItem, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
     const updatedAt = newItem.updatedAt;
     const msPassed = 1;
     createItem(newItem);
 
-    expect(operationData.itemList.value[0].name).not.toStrictEqual(updatedName);
+    expect(itemList.value[0].name).not.toStrictEqual(updatedName);
     vi.advanceTimersByTime(msPassed);
     updateItem({ ...newItem, name: updatedName });
 
-    expect(operationData.itemList.value[0].name).toStrictEqual(updatedName);
-    expect(operationData.itemList.value[0].updatedAt.getTime()).toStrictEqual(updatedAt.getTime() + msPassed);
+    expect(itemList.value[0].name).toStrictEqual(updatedName);
+    expect(itemList.value[0].updatedAt.getTime()).toStrictEqual(updatedAt.getTime() + msPassed);
   });
 
   test("deletes", () => {
-    const { createItem, deleteItem } = operationData;
+    const { itemList, createItem, deleteItem } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
 
-    expect(operationData.itemList.value.length).toStrictEqual(1);
+    expect(itemList.value.length).toStrictEqual(1);
 
     deleteItem(newItem.id);
 
-    expect(operationData.itemList.value.length).toStrictEqual(0);
+    expect(itemList.value.length).toStrictEqual(0);
   });
 });
