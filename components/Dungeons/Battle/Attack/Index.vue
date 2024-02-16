@@ -32,13 +32,13 @@ const position = computed(() =>
 
 <template>
   <Sprite
+    v-if="isActive"
     :configuration="{
       ...position,
       textureKey: spritesheetKey,
       frame,
       animations,
       playAnimationKey,
-      visible: isActive,
       origin: 0.5,
       scale: 4,
       flipX: !isToEnemy,
