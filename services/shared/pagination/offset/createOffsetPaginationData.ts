@@ -33,5 +33,5 @@ export const createOffsetPaginationData = <TItem extends ItemMetadata>(items?: R
     hasMore,
     initializeOffsetPaginationData,
     resetOffsetPaginationData,
-  } as const;
+  };
 };
