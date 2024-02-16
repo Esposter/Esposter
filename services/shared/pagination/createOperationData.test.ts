@@ -1,11 +1,12 @@
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Create Operation Data", () => {
   let operationData: ReturnType<typeof createOperationData<TodoListItem>>;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     operationData = createOperationData(ref<TodoListItem[]>([]));
   });
 
@@ -33,19 +34,20 @@ describe("Create Operation Data", () => {
     expect(operationData.itemList.value[0]).toStrictEqual(newItem);
   });
 
-  test("updates", () => {
+  test("updates", async () => {
     const { createItem, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
     const updatedAt = newItem.updatedAt;
+    const msPassed = 1;
     createItem(newItem);
 
     expect(operationData.itemList.value[0].name).not.toStrictEqual(updatedName);
-
+    vi.advanceTimersByTime(msPassed);
     updateItem({ ...newItem, name: updatedName });
 
     expect(operationData.itemList.value[0].name).toStrictEqual(updatedName);
-    expect(operationData.itemList.value[0].updatedAt.getMilliseconds()).toBeGreaterThan(updatedAt.getMilliseconds());
+    expect(operationData.itemList.value[0].updatedAt.getTime()).toStrictEqual(updatedAt.getTime() + msPassed);
   });
 
   test("deletes", () => {
