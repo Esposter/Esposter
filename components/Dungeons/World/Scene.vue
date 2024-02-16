@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { TilesetKeyMap } from "@/models/dungeons/keys/TilesetKeyMap";
@@ -98,8 +96,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 <template>
   <Scene :scene-key="SceneKey.World" :cls="SceneWithPlugins" @create="create" @update="update">
     <DungeonsWorldCharacterPlayer />
-    <!-- Create foreground with a higher depth than the player to hide behind -->
-    <Image :configuration="{ textureKey: ImageKey.WorldHomeForeground, origin: 0, depth: 12 }" />
+    <DungeonsWorldForeground />
     <DungeonsWorldDialog />
     <DungeonsJoystick />
     <DungeonsJoystickConfirmThumb />

@@ -11,7 +11,7 @@ const { scene, sceneKey } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
-const { character, position, direction: playerDirection, isMoving } = storeToRefs(playerStore);
+const { character, sprite: playerSprite, position, direction: playerDirection, isMoving } = storeToRefs(playerStore);
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
@@ -32,6 +32,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     :asset="character.asset"
     :on-complete="
       (sprite) => {
+        playerSprite = sprite;
         scene.cameras.main.startFollow(sprite, true);
         scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);
         subscriptionPositionChangeStarted = scene.gridEngine
