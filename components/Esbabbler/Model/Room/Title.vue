@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/esbabbler/room";
 
-const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
@@ -13,11 +12,10 @@ const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !editedRoomName.value || editedRoomName.value === currentRoomName.value) return;
 
-    const updatedRoom = await $client.room.updateRoom.mutate({
+    await updateRoom({
       id: currentRoomId.value,
       name: editedRoomName.value,
     });
-    updateRoom(updatedRoom);
   } finally {
     isUpdateMode.value = false;
     editedRoomName.value = currentRoomName.value;

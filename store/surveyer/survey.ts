@@ -1,26 +1,39 @@
 import { type Survey } from "@/db/schema/surveys";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { type CreateSurveyInput, type DeleteSurveyInput, type UpdateSurveyInput } from "@/server/trpc/routers/survey";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $client } = useNuxtApp();
-  const { itemList: surveyList, pushItemList: pushSurveyList, ...rest } = createOffsetPaginationData<Survey>();
+  const { itemList, ...restData } = createOffsetPaginationData<Survey>();
+  const {
+    createSurvey: storeCreateSurvey,
+    updateSurvey: storeUpdateSurvey,
+    deleteSurvey: storeDeleteSurvey,
+    ...restOperationData
+  } = createOperationData(itemList, DatabaseEntityType.Survey);
   const searchQuery = ref("");
   const totalItemsLength = ref(0);
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $client.survey.createSurvey.mutate(input);
-    surveyList.value.push(newSurvey);
+    if (!newSurvey) return;
+
+    storeCreateSurvey(newSurvey);
     totalItemsLength.value++;
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
-    await $client.survey.updateSurvey.mutate(input);
-    const index = surveyList.value.findIndex((s) => s.id === input.id);
-    if (index > -1) surveyList.value[index] = { ...surveyList.value[index], ...input };
+    const updatedSurvey = await $client.survey.updateSurvey.mutate(input);
+    if (!updatedSurvey) return;
+
+    storeUpdateSurvey(updatedSurvey);
   };
-  const deleteSurvey = async (surveyId: DeleteSurveyInput) => {
-    await $client.survey.deleteSurvey.mutate(surveyId);
-    surveyList.value = surveyList.value.filter((s) => s.id !== surveyId);
+  const deleteSurvey = async (input: DeleteSurveyInput) => {
+    const deletedSurvey = await $client.survey.deleteSurvey.mutate(input);
+    if (!deletedSurvey) return;
+
+    storeDeleteSurvey(deletedSurvey.id);
   };
   const autoSave = async (survey: Survey) => {
     survey.modelVersion++;
@@ -29,14 +42,13 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   };
 
   return {
-    surveyList,
-    pushSurveyList,
-    ...rest,
+    ...restOperationData,
     searchQuery,
     totalItemsLength,
     createSurvey,
     updateSurvey,
     deleteSurvey,
+    ...restData,
     autoSave,
   };
 });

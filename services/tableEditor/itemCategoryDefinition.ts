@@ -1,4 +1,4 @@
-import { AItemEntity } from "@/models/shared/AItemEntity";
+import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
 import { type Item } from "@/models/tableEditor/Item";
 import {
   type BaseItemCategoryDefinition,
@@ -8,7 +8,7 @@ import { type ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 
-class NullItem extends AItemEntity implements ItemEntityType<string> {
+class NullItem extends ATableEditorItemEntity implements ItemEntityType<string> {
   type = "None";
 }
 

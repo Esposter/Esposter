@@ -29,10 +29,8 @@ export const userRouter = router({
         // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/1163
       }) as Promise<User | undefined>,
   ),
-  updateUser: authedProcedure
-    .input(updateUserInputSchema)
-    .mutation(
-      async ({ input, ctx }) =>
-        (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning())[0],
-    ),
+  updateUser: authedProcedure.input(updateUserInputSchema).mutation<User | null>(async ({ input, ctx }) => {
+    const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning())[0];
+    return updatedUser ?? null;
+  }),
 });

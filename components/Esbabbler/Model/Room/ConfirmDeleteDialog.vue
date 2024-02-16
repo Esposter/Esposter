@@ -11,11 +11,9 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => unknown;
 }>();
 const { roomId, creatorId } = defineProps<RoomConfirmDeleteDialogProps>();
-const { $client } = useNuxtApp();
 const { session } = useAuth();
 const isCreator = computed(() => session.value?.user.id === creatorId);
-const roomStore = useRoomStore();
-const { deleteRoom } = roomStore;
+const { deleteRoom, leaveRoom } = useRoomStore();
 </script>
 
 <template>
@@ -28,8 +26,7 @@ const { deleteRoom } = roomStore;
     @delete="
       async (onComplete) => {
         try {
-          deleteRoom(roomId);
-          isCreator ? await $client.room.deleteRoom.mutate(roomId) : await $client.room.leaveRoom.mutate(roomId);
+          isCreator ? await deleteRoom(roomId) : await leaveRoom(roomId);
         } finally {
           onComplete();
         }

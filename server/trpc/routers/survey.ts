@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { selectSurveySchema, surveys } from "@/db/schema/surveys";
+import { selectSurveySchema, surveys, type Survey } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
@@ -50,7 +50,7 @@ export const surveyRouter = router({
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),
-  createSurvey: authedProcedure.input(createSurveyInputSchema).mutation(async ({ input, ctx }) => {
+  createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<Survey | null>(async ({ input, ctx }) => {
     const createdAt = new Date();
     const newSurvey = (
       await db
@@ -64,25 +64,33 @@ export const surveyRouter = router({
         })
         .returning()
     )[0];
-    return newSurvey;
+    return newSurvey ?? null;
   }),
-  updateSurvey: authedProcedure.input(updateSurveyInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
-    const survey = await db.query.surveys.findFirst({
-      where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
-    });
-    if (!survey) throw new Error("Cannot find survey");
+  updateSurvey: authedProcedure
+    .input(updateSurveyInputSchema)
+    .mutation<Survey | null>(async ({ input: { id, ...rest }, ctx }) => {
+      const survey = await db.query.surveys.findFirst({
+        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
+      });
+      if (!survey) throw new Error("Cannot find survey");
 
-    if (rest.model !== survey.model) {
-      rest.modelVersion++;
-      if (rest.modelVersion <= survey.modelVersion)
-        throw new Error("Cannot update survey model with old model version");
-    }
+      if (rest.model !== survey.model) {
+        rest.modelVersion++;
+        if (rest.modelVersion <= survey.modelVersion)
+          throw new Error("Cannot update survey model with old model version");
+      }
 
-    const updatedSurvey = (await db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0];
-    return updatedSurvey;
-  }),
-  deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation(async ({ input, ctx }) => {
-    await db.delete(surveys).where(and(eq(surveys.id, input), eq(surveys.creatorId, ctx.session.user.id)));
+      const updatedSurvey = (await db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0];
+      return updatedSurvey ?? null;
+    }),
+  deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey | null>(async ({ input, ctx }) => {
+    const deletedSurvey = (
+      await db
+        .delete(surveys)
+        .where(and(eq(surveys.id, input), eq(surveys.creatorId, ctx.session.user.id)))
+        .returning()
+    )[0];
+    return deletedSurvey ?? null;
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
     const survey = await db.query.surveys.findFirst({

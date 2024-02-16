@@ -1,9 +1,9 @@
 import { type TiledObjectProperty } from "@/models/dungeons/tile/TiledObjectProperty";
 import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectProperty";
+import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
-import { DIALOG_WIDTH } from "~/services/dungeons/world/constants";
 
 export const useInteractWithSign = () => {
   const dialogStore = useDialogStore();

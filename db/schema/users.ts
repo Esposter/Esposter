@@ -47,6 +47,7 @@ export const usersToRooms = pgTable(
     compoundKey: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
   }),
 );
+export type UserToRoom = typeof usersToRooms.$inferSelect;
 
 export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
   user: one(users, {

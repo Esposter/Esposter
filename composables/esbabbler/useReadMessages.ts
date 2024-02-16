@@ -17,7 +17,7 @@ export const useReadMessages = async () => {
         roomId: currentRoomId.value,
         cursor: nextCursor.value,
       });
-      pushMessageList(response.items);
+      pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
       await readEmojis(response.items.map((m) => m.rowKey));

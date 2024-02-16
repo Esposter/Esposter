@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { rooms, selectRoomSchema } from "@/db/schema/rooms";
-import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
+import { rooms, selectRoomSchema, type Room } from "@/db/schema/rooms";
+import { selectUserSchema, users, usersToRooms, type UserToRoom } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
 import { InviteEntity, InviteEntityPropertyNames, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
@@ -93,7 +93,7 @@ export const roomRouter = router({
     const resultRooms = joinedRooms.map((jr) => jr.Room);
     return getCursorPaginationData(resultRooms, limit, sortBy);
   }),
-  createRoom: authedProcedure.input(createRoomInputSchema).mutation(({ input, ctx }) =>
+  createRoom: authedProcedure.input(createRoomInputSchema).mutation<Room | null>(({ input, ctx }) =>
     db.transaction(async (tx) => {
       const newRoom = (
         await tx
@@ -101,24 +101,34 @@ export const roomRouter = router({
           .values({ ...input, creatorId: ctx.session.user.id })
           .returning()
       )[0];
+      if (!newRoom) return null;
+
       await tx.insert(usersToRooms).values({ userId: ctx.session.user.id, roomId: newRoom.id });
       return newRoom;
     }),
   ),
-  updateRoom: authedProcedure.input(updateRoomInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
-    const updatedRoom = (
+  updateRoom: authedProcedure
+    .input(updateRoomInputSchema)
+    .mutation<Room | null>(async ({ input: { id, ...rest }, ctx }) => {
+      const updatedRoom = (
+        await db
+          .update(rooms)
+          .set(rest)
+          .where(and(eq(rooms.id, id), eq(rooms.creatorId, ctx.session.user.id)))
+          .returning()
+      )[0];
+      return updatedRoom ?? null;
+    }),
+  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room | null>(async ({ input, ctx }) => {
+    const deletedRoom = (
       await db
-        .update(rooms)
-        .set(rest)
-        .where(and(eq(rooms.id, id), eq(rooms.creatorId, ctx.session.user.id)))
+        .delete(rooms)
+        .where(and(eq(rooms.id, input), eq(rooms.creatorId, ctx.session.user.id)))
         .returning()
     )[0];
-    return updatedRoom;
+    return deletedRoom ?? null;
   }),
-  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation(async ({ input, ctx }) => {
-    await db.delete(rooms).where(and(eq(rooms.id, input), eq(rooms.creatorId, ctx.session.user.id)));
-  }),
-  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation(async ({ input, ctx }) => {
+  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<boolean>(async ({ input, ctx }) => {
     const inviteClient = await getTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
       filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
@@ -153,11 +163,18 @@ export const roomRouter = router({
     }),
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
-    .mutation(async ({ input: { roomId, userIds } }) => {
-      await db.transaction((tx) =>
-        Promise.all([userIds.map((userId) => tx.insert(usersToRooms).values({ userId, roomId }).returning())]),
-      );
-    }),
+    .mutation<UserToRoom[]>(({ input: { roomId, userIds } }) =>
+      db.transaction(async (tx) => {
+        const newMembers: UserToRoom[] = [];
+        for await (const [newMember] of userIds.map((userId) =>
+          tx.insert(usersToRooms).values({ userId, roomId }).returning(),
+        )) {
+          if (!newMember) continue;
+          newMembers.push(newMember);
+        }
+        return newMembers;
+      }),
+    ),
   generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)
     .mutation(async ({ input: { roomId } }) => {

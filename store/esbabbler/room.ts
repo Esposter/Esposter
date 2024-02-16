@@ -1,9 +1,25 @@
 import { type Room } from "@/db/schema/rooms";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
+import {
+  type CreateRoomInput,
+  type DeleteRoomInput,
+  type LeaveRoomInput,
+  type UpdateRoomInput,
+} from "@/server/trpc/routers/room";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import Fuse from "fuse.js";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
-  const { itemList: roomList, pushItemList: pushRoomList, ...rest } = createCursorPaginationData<Room>();
+  const { $client } = useNuxtApp();
+  const { itemList, ...restData } = createCursorPaginationData<Room>();
+  const {
+    roomList,
+    createRoom: storeCreateRoom,
+    updateRoom: storeUpdateRoom,
+    deleteRoom: storeDeleteRoom,
+    ...restOperationData
+  } = createOperationData(itemList, DatabaseEntityType.Room);
   const currentRoomId = ref<string | null>(null);
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
@@ -11,16 +27,25 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     return currentRoom?.name ?? "";
   });
 
-  const createRoom = (newRoom: Room) => {
-    roomList.value.push(newRoom);
+  const createRoom = async (input: CreateRoomInput) => {
+    const newRoom = await $client.room.createRoom.mutate(input);
+    if (!newRoom) return;
+
+    storeCreateRoom(newRoom);
   };
-  const updateRoom = (updatedRoom: Room) => {
-    const index = roomList.value.findIndex((r) => r.id === updatedRoom.id);
-    if (index > -1) roomList.value[index] = { ...roomList.value[index], ...updatedRoom };
+  const updateRoom = async (input: UpdateRoomInput) => {
+    const updatedRoom = await $client.room.updateRoom.mutate(input);
+    if (!updatedRoom) return;
+
+    storeUpdateRoom(updatedRoom);
   };
-  const deleteRoom = (id: string) => {
-    roomList.value = roomList.value.filter((r) => r.id !== id);
+  const deleteRoom = async (input: DeleteRoomInput) => {
+    const deletedRoom = await $client.room.deleteRoom.mutate(input);
+    if (!deletedRoom) return;
+
+    storeDeleteRoom(deletedRoom.id);
   };
+  const leaveRoom = (input: LeaveRoomInput) => $client.room.leaveRoom.mutate(input);
 
   const roomSearchQuery = ref("");
   const roomsSearched = computed<Room[]>(() => {
@@ -32,13 +57,14 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
 
   return {
     roomList,
-    pushRoomList,
-    ...rest,
-    currentRoomId,
-    currentRoomName,
+    ...restOperationData,
     createRoom,
     updateRoom,
     deleteRoom,
+    leaveRoom,
+    ...restData,
+    currentRoomId,
+    currentRoomName,
     roomSearchQuery,
     roomsSearched,
   };

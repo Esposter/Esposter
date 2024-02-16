@@ -8,7 +8,7 @@ export const useReadComments = async (postId: string) => {
   const readMoreComments = async (onComplete: () => void) => {
     try {
       const response = await $client.post.readPosts.query({ parentId: postId, cursor: nextCursor.value });
-      pushCommentList(response.items);
+      pushCommentList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
     } finally {

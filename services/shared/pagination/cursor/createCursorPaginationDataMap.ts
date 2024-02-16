@@ -1,18 +1,8 @@
 import { type ItemMetadata } from "@/models/shared/ItemMetadata";
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
-import { createCrud } from "@/services/shared/pagination/createCrud";
-import { type AItemEntity } from "~/models/shared/AItemEntity";
-import { type Entity } from "~/models/shared/Entity";
-import { uncapitalize } from "~/util/text/uncapitalize";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <
-  TItem extends Pick<AItemEntity, "id"> & ItemMetadata,
-  TEntity extends Entity,
->(
-  currentId: Ref<string | null>,
-  entity: TEntity,
-) => {
+export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(currentId: Ref<string | null>) => {
   const cursorPaginationDataMap = ref<Record<string, CursorPaginationData<TItem>>>({});
   const cursorPaginationData = computed({
     get: () => {
@@ -30,10 +20,6 @@ export const createCursorPaginationDataMap = <
       cursorPaginationData.value.items = items;
     },
   });
-  const pushItemList = (items: TItem[]) => {
-    itemList.value.push(...items);
-  };
-
   const nextCursor = computed({
     get: () => cursorPaginationData.value.nextCursor,
     set: (nextCursor) => {
@@ -53,10 +39,9 @@ export const createCursorPaginationDataMap = <
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
+
   return {
-    [`${uncapitalize(entity)}List`]: itemList,
-    [`push${entity}List`]: pushItemList,
-    ...createCrud(itemList, entity),
+    itemList,
     nextCursor,
     hasMore,
     initializeCursorPaginationData,
