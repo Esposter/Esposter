@@ -50,7 +50,7 @@
     "happy-dom": "^13.3.8",
     "nuxt": "3.9.1",
     "prettier": "^3.2.5",
-    "sass": "^1.70.0",
+    "sass": "^1.71.0",
     "tsx": "^4.7.1",
     "type-fest": "^4.10.2",
     "unplugin-fonts": "^1.1.1",
