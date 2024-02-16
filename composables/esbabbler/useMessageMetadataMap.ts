@@ -1,7 +1,7 @@
 import { type MessageMetadataEntity } from "@/models/esbabbler/message/metadata";
 import { useRoomStore } from "@/store/esbabbler/room";
 
-export const createMessageMetadataMap = <T extends MessageMetadataEntity>() => {
+export const useMessageMetadataMap = <T extends MessageMetadataEntity>() => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   // Record<partitionKey, Record<messageRowKey, T[]>>

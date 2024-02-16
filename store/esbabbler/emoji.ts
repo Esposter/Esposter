@@ -4,12 +4,11 @@ import {
   type DeleteEmojiInput,
   type UpdateEmojiInput,
 } from "@/server/trpc/routers/message/emoji";
-import { createMessageMetadataMap } from "@/services/esbabbler/createMessageMetadataMap";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   const { $client } = useNuxtApp();
   const { getMetadataList: getEmojiList, setMetadataList: setEmojiList } =
-    createMessageMetadataMap<MessageEmojiMetadataEntity>();
+    useMessageMetadataMap<MessageEmojiMetadataEntity>();
   const createEmoji = async (input: CreateEmojiInput) => {
     const newEmoji = await $client.emoji.createEmoji.mutate(input);
     if (!newEmoji) return;
