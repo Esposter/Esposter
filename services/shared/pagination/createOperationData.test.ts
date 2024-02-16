@@ -37,6 +37,7 @@ describe("Create Operation Data", () => {
     const { createItem, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
+    const updatedAt = newItem.updatedAt;
     createItem(newItem);
 
     expect(operationData.itemList.value[0].name).not.toStrictEqual(updatedName);
@@ -44,6 +45,7 @@ describe("Create Operation Data", () => {
     updateItem({ ...newItem, name: updatedName });
 
     expect(operationData.itemList.value[0].name).toStrictEqual(updatedName);
+    expect(operationData.itemList.value[0].updatedAt.getMilliseconds()).toBeGreaterThan(updatedAt.getMilliseconds());
   });
 
   test("deletes", () => {
