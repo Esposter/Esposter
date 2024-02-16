@@ -7,7 +7,7 @@ import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
 import { type SetRequired } from "@/util/types/SetRequired";
 import { type GameObjects } from "phaser";
 
-interface SpriteProps {
+export interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "textureKey">;
   onComplete?: (sprite: GameObjects.Sprite) => void;
 }

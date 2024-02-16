@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -11,7 +12,7 @@ const { scene, sceneKey } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
-const { character, sprite: playerSprite, position, direction: playerDirection, isMoving } = storeToRefs(playerStore);
+const { sprite: playerSprite, position, direction: playerDirection, isMoving } = storeToRefs(playerStore);
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
@@ -27,9 +28,31 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 <template>
   <DungeonsWorldCharacter
     :id="CharacterId.Player"
+    :sprite-configuration="{ textureKey: SpritesheetKey.Character, frame: 7 }"
+    :walking-animation-mapping="{
+      up: {
+        leftFoot: 0,
+        standing: 1,
+        rightFoot: 2,
+      },
+      down: {
+        leftFoot: 6,
+        standing: 7,
+        rightFoot: 8,
+      },
+      left: {
+        leftFoot: 9,
+        standing: 10,
+        rightFoot: 11,
+      },
+      right: {
+        leftFoot: 3,
+        standing: 4,
+        rightFoot: 5,
+      },
+    }"
     :start-position="position"
     :facing-direction="playerDirection"
-    :asset="character.asset"
     :on-complete="
       (sprite) => {
         playerSprite = sprite;
