@@ -19,8 +19,6 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const messageInputStore = useMessageInputStore();
   const { messageInput } = storeToRefs(messageInputStore);
   const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(currentRoomId);
-  // We need to expose the internal store crud message functions
-  // since it's also used in subscriptions to receive messages created by other people
   const {
     createMessage: storeCreateMessage,
     updateMessage: storeUpdateMessage,
@@ -54,7 +52,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
     storeDeleteMessage(deletedMessageId);
   };
-
+  // We need to expose the internal store crud message functions
+  // since it's also used in subscriptions to receive messages created by other people
   return {
     storeCreateMessage,
     storeUpdateMessage,
