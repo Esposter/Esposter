@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { posts } from "@/db/schema/posts";
-import { likes, selectLikeSchema } from "@/db/schema/users";
+import { likes, selectLikeSchema, type Like } from "@/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
@@ -17,7 +17,7 @@ const deleteLikeInputSchema = selectLikeSchema.shape.postId;
 export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
-  createLike: authedProcedure.input(createLikeInputSchema).mutation(async ({ input, ctx }) => {
+  createLike: authedProcedure.input(createLikeInputSchema).mutation<Like | null>(async ({ input, ctx }) => {
     const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.postId) });
     if (!post) return null;
 
@@ -28,6 +28,8 @@ export const likeRouter = router({
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
       )[0];
+      if (!newLike) return null;
+
       const noLikesNew = post.noLikes + newLike.value;
       await tx
         .update(posts)
@@ -39,46 +41,52 @@ export const likeRouter = router({
       return newLike;
     });
   }),
-  updateLike: authedProcedure.input(updateLikeInputSchema).mutation(async ({ input: { postId, ...rest }, ctx }) => {
-    const [post, like] = await Promise.all([
-      db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) }),
-      db.query.likes.findFirst({
-        where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
-      }),
-    ]);
-    if (!post || !like || like.value === rest.value) return null;
+  updateLike: authedProcedure
+    .input(updateLikeInputSchema)
+    .mutation<Like | null>(async ({ input: { postId, ...rest }, ctx }) => {
+      const [post, like] = await Promise.all([
+        db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) }),
+        db.query.likes.findFirst({
+          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
+        }),
+      ]);
+      if (!post || !like || like.value === rest.value) return null;
 
-    const noLikesNew = post.noLikes + 2 * rest.value;
+      const noLikesNew = post.noLikes + 2 * rest.value;
 
-    return db.transaction(async (tx) => {
-      const updatedLike = (
+      return db.transaction(async (tx) => {
+        const updatedLike = (
+          await tx
+            .update(likes)
+            .set(rest)
+            .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
+            .returning()
+        )[0];
+        if (!updatedLike) return null;
+
         await tx
-          .update(likes)
-          .set(rest)
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
-          .returning()
-      )[0];
-      await tx
-        .update(posts)
-        .set({
-          noLikes: noLikesNew,
-          ranking: ranking(noLikesNew, post.createdAt),
-        })
-        .where(eq(posts.id, postId));
-      return updatedLike;
-    });
-  }),
-  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation(async ({ input, ctx }) => {
+          .update(posts)
+          .set({
+            noLikes: noLikesNew,
+            ranking: ranking(noLikesNew, post.createdAt),
+          })
+          .where(eq(posts.id, postId));
+        return updatedLike;
+      });
+    }),
+  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation<Like | null>(async ({ input, ctx }) => {
     const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) });
     if (!post) return null;
 
-    await db.transaction(async (tx) => {
+    return db.transaction(async (tx) => {
       const deletedLike = (
         await tx
           .delete(likes)
           .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
           .returning()
       )[0];
+      if (!deletedLike) return null;
+
       const noLikesNew = post.noLikes - deletedLike.value;
       await tx
         .update(posts)
@@ -87,6 +95,7 @@ export const likeRouter = router({
           ranking: ranking(noLikesNew, post.createdAt),
         })
         .where(eq(posts.id, input));
+      return deletedLike;
     });
   }),
 });

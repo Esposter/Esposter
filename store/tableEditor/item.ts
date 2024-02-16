@@ -1,37 +1,25 @@
 import { type Item } from "@/models/tableEditor/Item";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useItemStore = defineStore("tableEditor/item", () => {
   const tableEditorStore = useTableEditorStore()();
   const { tableEditor } = storeToRefs(tableEditorStore);
-
-  const pushItemList = (items: Item[]) => {
-    tableEditor.value.items.push(...items);
-  };
-  const initializeItemList = (items: Item[]) => {
-    tableEditor.value.items = items;
-  };
-  const createItem = (newItem: Item) => {
-    tableEditor.value.items.push(newItem);
-  };
-  const updateItem = (updatedItem: Item) => {
-    const index = tableEditor.value.items.findIndex((r) => r.id === updatedItem.id);
-    if (index > -1)
-      tableEditor.value.items[index] = {
-        ...tableEditor.value.items[index],
-        ...updatedItem,
-        updatedAt: new Date(),
-      };
-  };
-  const deleteItem = (id: string) => {
-    tableEditor.value.items = tableEditor.value.items.filter((r) => r.id !== id);
-  };
-
+  // We want to pass in the initial value from our tableEditor
+  // but also keep the reactivity of our operations so we need to
+  // pass in a computed state which will notify our tableEditor
+  // whenever any operations has been performed on our items
+  const { itemList, ...restData } = createOffsetPaginationData<Item>(
+    computed({
+      get: () => tableEditor.value.items,
+      set: (newItems) => {
+        tableEditor.value.items = newItems;
+      },
+    }),
+  );
   return {
-    pushItemList,
-    initializeItemList,
-    createItem,
-    updateItem,
-    deleteItem,
+    ...createOperationData(itemList),
+    ...restData,
   };
 });

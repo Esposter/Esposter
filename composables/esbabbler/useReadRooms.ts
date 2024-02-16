@@ -9,7 +9,7 @@ export const useReadRooms = async () => {
   const readMoreRooms = async (onComplete: () => void) => {
     try {
       const response = await $client.room.readRooms.query({ cursor: nextCursor.value });
-      pushRoomList(response.items);
+      pushRoomList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
     } finally {

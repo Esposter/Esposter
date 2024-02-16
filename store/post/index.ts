@@ -1,37 +1,43 @@
 import { type PostWithRelations } from "@/db/schema/posts";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { type CreatePostInput, type DeletePostInput, type UpdatePostInput } from "@/server/trpc/routers/post";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {
   const { $client } = useNuxtApp();
-  const { itemList: postList, pushItemList: pushPostList, ...rest } = createCursorPaginationData<PostWithRelations>();
+  const { itemList, ...restData } = createCursorPaginationData<PostWithRelations>();
+  const {
+    createPost: storeCreatePost,
+    updatePost: storeUpdatePost,
+    deletePost: storeDeletePost,
+    ...restOperationData
+  } = createOperationData(itemList, DatabaseEntityType.Post);
 
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $client.post.createPost.mutate(input);
     if (!newPost) return;
 
-    postList.value.push(newPost);
+    storeCreatePost(newPost);
   };
   const updatePost = async (input: UpdatePostInput) => {
     const updatedPost = await $client.post.updatePost.mutate(input);
     if (!updatedPost) return;
 
-    const index = postList.value.findIndex((r) => r.id === updatedPost.id);
-    if (index > -1) postList.value[index] = { ...postList.value[index], ...updatedPost };
+    storeUpdatePost(updatedPost);
   };
-  const deletePost = async (postId: DeletePostInput) => {
-    const deletedPost = await $client.post.deletePost.mutate(postId);
+  const deletePost = async (input: DeletePostInput) => {
+    const deletedPost = await $client.post.deletePost.mutate(input);
     if (!deletedPost) return;
 
-    postList.value = postList.value.filter((r) => r.id !== deletedPost.id);
+    storeDeletePost(deletedPost.id);
   };
 
   return {
-    postList,
-    pushPostList,
-    ...rest,
+    ...restOperationData,
     createPost,
     updatePost,
     deletePost,
+    ...restData,
   };
 });

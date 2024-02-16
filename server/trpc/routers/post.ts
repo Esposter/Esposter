@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { PostRelations, posts, selectPostSchema, type PostWithRelations } from "@/db/schema/posts";
+import { PostRelations, posts, selectPostSchema, type Post, type PostWithRelations } from "@/db/schema/posts";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -70,89 +70,97 @@ export const postRouter = router({
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);
     }),
-  createPost: authedProcedure.input(createPostInputSchema).mutation(async ({ input, ctx }) => {
-    const createdAt = new Date();
-    const newPost = (
-      await db
-        .insert(posts)
-        .values({
-          ...input,
-          creatorId: ctx.session.user.id,
-          createdAt,
-          ranking: ranking(0, createdAt),
-        })
-        .returning({ id: posts.id })
-    )[0];
-    const newPostWithRelations = await db.query.posts.findFirst({
-      where: (posts, { eq }) => eq(posts.id, newPost.id),
-      with: PostRelations,
-    });
-    return newPostWithRelations ?? null;
-  }),
-  createComment: authedProcedure.input(createCommentInputSchema).mutation(async ({ input, ctx }) => {
-    const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
-    if (!parentPost) throw new Error("Cannot find parent post");
-
-    const newComment = await db.transaction(async (tx) => {
+  createPost: authedProcedure
+    .input(createPostInputSchema)
+    .mutation<PostWithRelations | null>(async ({ input, ctx }) => {
       const createdAt = new Date();
-      const newComment = (
-        await tx
+      const newPost = (
+        await db
           .insert(posts)
           .values({
             ...input,
             creatorId: ctx.session.user.id,
             createdAt,
-            depth: parentPost.depth + 1,
             ranking: ranking(0, createdAt),
           })
           .returning({ id: posts.id })
       )[0];
-      await tx
-        .update(posts)
-        .set({ noComments: parentPost.noComments + 1 })
-        .where(eq(posts.id, parentPost.id));
-      return newComment;
-    });
-    const newCommentWithRelations = await db.query.posts.findFirst({
-      where: (posts, { eq }) => eq(posts.id, newComment.id),
-      with: PostRelations,
-    });
-    return newCommentWithRelations ?? null;
-  }),
-  updatePost: authedProcedure.input(updatePostInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
-    const post = await db.query.posts.findFirst({
-      where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
-    });
-    if (!post) throw new Error("Cannot find post, you might be trying to update a comment");
+      const newPostWithRelations = await db.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, newPost.id),
+        with: PostRelations,
+      });
+      return newPostWithRelations ?? null;
+    }),
+  createComment: authedProcedure
+    .input(createCommentInputSchema)
+    .mutation<PostWithRelations | null>(async ({ input, ctx }) => {
+      const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
+      if (!parentPost) throw new Error("Cannot find parent post");
 
-    const updatedPost = (
-      await db
-        .update(posts)
-        .set(rest)
-        .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
-        .returning({ id: posts.id })
-    )[0];
-    const updatedPostWithRelations = await db.query.posts.findFirst({
-      where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.creatorId, ctx.session.user.id)),
-      with: PostRelations,
-    });
-    return updatedPostWithRelations ?? null;
-  }),
-  updateComment: authedProcedure.input(updateCommentInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {
-    const updatedComment = (
-      await db
-        .update(posts)
-        .set(rest)
-        .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
-        .returning({ id: posts.id })
-    )[0];
-    const updatedCommentWithRelations = await db.query.posts.findFirst({
-      where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.creatorId, ctx.session.user.id)),
-      with: PostRelations,
-    });
-    return updatedCommentWithRelations ?? null;
-  }),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation(
+      const newComment = await db.transaction(async (tx) => {
+        const createdAt = new Date();
+        const newComment = (
+          await tx
+            .insert(posts)
+            .values({
+              ...input,
+              creatorId: ctx.session.user.id,
+              createdAt,
+              depth: parentPost.depth + 1,
+              ranking: ranking(0, createdAt),
+            })
+            .returning({ id: posts.id })
+        )[0];
+        await tx
+          .update(posts)
+          .set({ noComments: parentPost.noComments + 1 })
+          .where(eq(posts.id, parentPost.id));
+        return newComment;
+      });
+      const newCommentWithRelations = await db.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, newComment.id),
+        with: PostRelations,
+      });
+      return newCommentWithRelations ?? null;
+    }),
+  updatePost: authedProcedure
+    .input(updatePostInputSchema)
+    .mutation<PostWithRelations | null>(async ({ input: { id, ...rest }, ctx }) => {
+      const post = await db.query.posts.findFirst({
+        where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
+      });
+      if (!post) throw new Error("Cannot find post, you might be trying to update a comment");
+
+      const updatedPost = (
+        await db
+          .update(posts)
+          .set(rest)
+          .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+          .returning({ id: posts.id })
+      )[0];
+      const updatedPostWithRelations = await db.query.posts.findFirst({
+        where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.creatorId, ctx.session.user.id)),
+        with: PostRelations,
+      });
+      return updatedPostWithRelations ?? null;
+    }),
+  updateComment: authedProcedure
+    .input(updateCommentInputSchema)
+    .mutation<PostWithRelations | null>(async ({ input: { id, ...rest }, ctx }) => {
+      const updatedComment = (
+        await db
+          .update(posts)
+          .set(rest)
+          .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+          .returning({ id: posts.id })
+      )[0];
+      const updatedCommentWithRelations = await db.query.posts.findFirst({
+        where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.creatorId, ctx.session.user.id)),
+        with: PostRelations,
+      });
+      return updatedCommentWithRelations ?? null;
+    }),
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post | null>(
     async ({ input, ctx }) =>
       await db.transaction(async (tx) => {
         const deletedPost = (
@@ -167,7 +175,7 @@ export const postRouter = router({
         return deletedPost;
       }),
   ),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation(
+  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post | null>(
     async ({ input, ctx }) =>
       await db.transaction(async (tx) => {
         const deletedComment = (

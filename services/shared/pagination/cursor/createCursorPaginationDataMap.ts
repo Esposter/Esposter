@@ -20,10 +20,6 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
       cursorPaginationData.value.items = items;
     },
   });
-  const pushItemList = (items: TItem[]) => {
-    itemList.value.push(...items);
-  };
-
   const nextCursor = computed({
     get: () => cursorPaginationData.value.nextCursor,
     set: (nextCursor) => {
@@ -43,9 +39,9 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
+
   return {
     itemList,
-    pushItemList,
     nextCursor,
     hasMore,
     initializeCursorPaginationData,

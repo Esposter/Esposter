@@ -1,4 +1,4 @@
-import { ErrorEntity } from "@/models/shared/error/ErrorEntity";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 
 export const useReadSurveyFromRoute = async () => {
@@ -7,7 +7,7 @@ export const useReadSurveyFromRoute = async () => {
   const surveyId = route.params.id as string;
   const survey = await $client.survey.readSurvey.query(surveyId);
   if (!survey)
-    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(ErrorEntity.Survey) });
+    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.Survey) });
 
   return survey;
 };

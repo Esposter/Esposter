@@ -1,3 +1,4 @@
-import { type ErrorEntity } from "@/models/shared/error/ErrorEntity";
+import { type EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 
-export const getEntityNotFoundStatusMessage = (errorEntity: ErrorEntity) => `${errorEntity} id could not be found`;
+export const getEntityNotFoundStatusMessage = (entityTypeKey: EntityTypeKey) =>
+  `${entityTypeKey} id could not be found`;
