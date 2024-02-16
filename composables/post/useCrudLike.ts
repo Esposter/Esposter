@@ -1,7 +1,7 @@
 import { type PostWithRelations } from "@/db/schema/posts";
 import { type CreateLikeInput, type DeleteLikeInput, type UpdateLikeInput } from "@/server/trpc/routers/like";
 
-export const createCrudLike = (allPosts: Ref<PostWithRelations[]>) => {
+export const useCrudLike = (allPosts: Ref<PostWithRelations[]>) => {
   const { $client } = useNuxtApp();
   const { session } = useAuth();
 
