@@ -3,9 +3,7 @@ import Sprite, { type SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Character } from "@/models/dungeons/world/Character";
-import type GridEngine from "grid-engine";
-// eslint-disable-next-line no-duplicate-imports
-import { Direction, type Position } from "grid-engine";
+import { Direction, type GridEngine, type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 import { filter, type Subscription } from "rxjs";
 
