@@ -1,4 +1,4 @@
-import { type TiledObjectProperty } from "@/models/dungeons/tile/TiledObjectProperty";
+import { type TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectProperty";
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";

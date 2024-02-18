@@ -1,7 +1,10 @@
 import { type Character } from "@/models/dungeons/world/Character";
-import { type Position, type WalkingAnimationMapping } from "grid-engine";
+import { type Direction, type Position, type WalkingAnimationMapping } from "grid-engine";
 
-export interface NPC extends Character {
+export interface Npc extends Character {
   walkingAnimationMapping: WalkingAnimationMapping;
-  startPosition: Position;
+  position: Position;
+  direction: Direction;
+  // Some spritesheets may only animate one side and rely on us to flipX
+  flipX?: true;
 }

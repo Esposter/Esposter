@@ -1,3 +1,4 @@
 export enum ObjectType {
-  npc = "npc",
+  Npc = "Npc",
+  NpcPath = "NpcPath",
 }

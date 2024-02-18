@@ -1,12 +1,9 @@
-import { type NPC } from "@/models/dungeons/world/NPC";
+import { type Npc } from "@/models/dungeons/world/Npc";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 
-export const useNPCStore = defineStore("dungeons/world/npc", () => {
-  const npcList = ref<NPC[]>([]);
-  const pushNPCList = (npcs: NPC[]) => {
-    npcList.value.push(...npcs);
-  };
+export const useNpcStore = defineStore("dungeons/world/npc", () => {
+  const itemList = ref<Npc[]>([]);
   return {
-    npcList,
-    pushNPCList,
+    ...createOperationData(itemList, "Npc"),
   };
 });

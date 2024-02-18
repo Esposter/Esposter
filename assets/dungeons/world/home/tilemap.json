@@ -514,7 +514,7 @@
           "draworder": "topdown",
           "id": 18,
           "locked": true,
-          "name": "NPC1",
+          "name": "John",
           "objects": [
             {
               "gid": 207,
@@ -522,7 +522,7 @@
               "id": 5,
               "name": "1",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 960,
@@ -532,7 +532,7 @@
               "gid": 207,
               "height": 64,
               "id": 6,
-              "name": "npc",
+              "name": "Npc",
               "properties": [
                 {
                   "name": "frame",
@@ -551,7 +551,7 @@
                 }
               ],
               "rotation": 0,
-              "type": "npc",
+              "type": "Npc",
               "visible": true,
               "width": 64,
               "x": 896,
@@ -563,7 +563,7 @@
               "id": 8,
               "name": "7",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 896,
@@ -575,7 +575,7 @@
               "id": 9,
               "name": "6",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 896,
@@ -587,7 +587,7 @@
               "id": 10,
               "name": "5",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 960,
@@ -599,7 +599,7 @@
               "id": 11,
               "name": "4",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 1024,
@@ -611,7 +611,7 @@
               "id": 12,
               "name": "3",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 1024,
@@ -623,7 +623,7 @@
               "id": 13,
               "name": "2",
               "rotation": 0,
-              "type": "npc_path",
+              "type": "NpcPath",
               "visible": true,
               "width": 64,
               "x": 1024,
@@ -640,13 +640,13 @@
           "draworder": "topdown",
           "id": 20,
           "locked": true,
-          "name": "NPC2",
+          "name": "Smith",
           "objects": [
             {
               "gid": 207,
               "height": 64,
               "id": 14,
-              "name": "npc",
+              "name": "Npc",
               "properties": [
                 {
                   "name": "frame",
@@ -665,7 +665,7 @@
                 }
               ],
               "rotation": 0,
-              "type": "npc",
+              "type": "Npc",
               "visible": true,
               "width": 64,
               "x": 704,
@@ -680,7 +680,7 @@
         }
       ],
       "locked": true,
-      "name": "NPC",
+      "name": "Npc",
       "opacity": 1,
       "type": "group",
       "visible": true,
@@ -805,7 +805,7 @@
       "tilewidth": 64
     },
     {
-      "class": "npc",
+      "class": "Npc",
       "columns": 1,
       "firstgid": 207,
       "image": "../../tilesets/Encounter.png",
@@ -820,7 +820,7 @@
           "value": false
         },
         {
-          "name": "npc_spawn_point_object",
+          "name": "NpcSpawnPointObject",
           "type": "object",
           "value": 0
         }

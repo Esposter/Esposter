@@ -17,5 +17,5 @@ export const SpritesheetLoaderMap: Record<SpritesheetKey, (scene: SceneWithPlugi
 
   [SpritesheetKey.Character]: (scene) =>
     scene.load.spritesheet(SpritesheetKey.Character, character, { frameWidth: 64, frameHeight: 88 }),
-  [SpritesheetKey.NPC]: (scene) => scene.load.spritesheet(SpritesheetKey.NPC, npc, { frameWidth: 16, frameHeight: 16 }),
+  [SpritesheetKey.Npc]: (scene) => scene.load.spritesheet(SpritesheetKey.Npc, npc, { frameWidth: 16, frameHeight: 16 }),
 };

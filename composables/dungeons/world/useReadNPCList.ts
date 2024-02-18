@@ -1,60 +1,60 @@
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
-import { type TiledObjectProperty } from "@/models/dungeons/tile/TiledObjectProperty";
+import { type TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
-import { NPCObjectProperty } from "@/models/dungeons/world/home/NPCObjectProperty";
+import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectProperty";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
-import { useNPCStore } from "@/store/dungeons/world/npc";
+import { getUnitPosition } from "@/services/dungeons/tilemap/getUnitPosition";
+import { useNpcStore } from "@/store/dungeons/world/npc";
+import { Direction, type Position } from "grid-engine";
 import { type Tilemaps } from "phaser";
 
-export const useReadNPCList = (tilemap: Tilemaps.Tilemap) => {
-  const npcStore = useNPCStore();
-  const { pushNPCList } = npcStore;
-  const npcLayerNames = tilemap.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.NPC));
+export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
+  const npcStore = useNpcStore();
+  const { pushNpcList } = npcStore;
+  const npcLayerNames = tilemap.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.Npc));
 
   for (const npcLayerName of npcLayerNames) {
     const npcLayer = tilemap.getObjectLayer(npcLayerName);
     if (!npcLayer) continue;
 
-    const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.npc);
+    const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
     if (!(npcObject && npcObject.x && npcObject.y)) continue;
 
     const frameTiledObjectProperty = (npcObject.properties as TiledObjectProperty<string>[]).find(
-      (p) => p.name === NPCObjectProperty.frame,
+      (p) => p.name === NpcObjectProperty.frame,
     );
     if (!frameTiledObjectProperty) continue;
 
-    pushNPCList([
-      {
-        id: `${CharacterId.NPC}${npcObject.name}`,
-        asset: { key: SpritesheetKey.NPC, frame: parseInt(frameTiledObjectProperty.value) },
-        walkingAnimationMapping: {
-          up: {
-            leftFoot: 0,
-            standing: 1,
-            rightFoot: 2,
-          },
-          down: {
-            leftFoot: 6,
-            standing: 7,
-            rightFoot: 8,
-          },
-          left: {
-            leftFoot: 9,
-            standing: 10,
-            rightFoot: 11,
-          },
-          right: {
-            leftFoot: 3,
-            standing: 4,
-            rightFoot: 5,
-          },
+    const frame = parseInt(frameTiledObjectProperty.value);
+    const objectPosition: Position = { x: npcObject.x, y: npcObject.y };
+    pushNpcList({
+      id: `${CharacterId.Npc}${npcObject.name}`,
+      asset: { key: SpritesheetKey.Npc, frame },
+      walkingAnimationMapping: {
+        up: {
+          leftFoot: frame + 6,
+          standing: frame + 1,
+          rightFoot: frame + 7,
         },
-        startPosition: {
-          x: npcObject.x,
-          y: npcObject.y,
+        down: {
+          leftFoot: frame + 4,
+          standing: frame,
+          rightFoot: frame + 5,
+        },
+        left: {
+          leftFoot: frame + 8,
+          standing: frame + 2,
+          rightFoot: frame + 9,
+        },
+        right: {
+          leftFoot: frame + 8,
+          standing: frame + 2,
+          rightFoot: frame + 9,
         },
       },
-    ]);
+      position: getUnitPosition(objectPosition),
+      direction: Direction.DOWN,
+    });
   }
 };

@@ -4,5 +4,5 @@ export enum SpritesheetKey {
   Slash = "Slash",
 
   Character = "Character",
-  NPC = "NPC",
+  Npc = "Npc",
 }

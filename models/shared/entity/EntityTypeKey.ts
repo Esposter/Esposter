@@ -6,4 +6,4 @@ export type EntityTypeKey =
   | keyof typeof DatabaseEntityType
   | keyof typeof DerivedDatabaseEntityType
   | keyof typeof AzureEntityType
-  | "Item";
+  | string;

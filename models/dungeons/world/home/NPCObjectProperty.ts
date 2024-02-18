@@ -1,3 +1,3 @@
-export enum NPCObjectProperty {
+export enum NpcObjectProperty {
   frame = "frame",
 }

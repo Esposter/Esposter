@@ -4,7 +4,10 @@ import { Operation } from "@/models/shared/pagination/Operation";
 import { type OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
-export const createOperationData = <TItem extends AItemEntity, TEntityTypeKey extends EntityTypeKey = "Item">(
+export const createOperationData = <
+  TItem extends Pick<AItemEntity, "id">,
+  TEntityTypeKey extends EntityTypeKey = "Item",
+>(
   itemList: Ref<TItem[]>,
   entityTypeKey: TEntityTypeKey = "Item" as TEntityTypeKey,
 ) => {
