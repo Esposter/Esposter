@@ -20,9 +20,9 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 
 <template>
   <DungeonsWorldCharacter
-    :id="CharacterId.Player"
     v-model:position="position"
     v-model:direction="direction"
+    :character-id="CharacterId.Player"
     :sprite-configuration="{ textureKey: SpritesheetKey.Character, frame: 7 }"
     :walking-animation-mapping="{
       up: {

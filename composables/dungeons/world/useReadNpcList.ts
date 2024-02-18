@@ -4,7 +4,8 @@ import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectProperty";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
-import { getUnitPosition } from "@/services/dungeons/tilemap/getUnitPosition";
+import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
+import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { Direction } from "grid-engine";
 import { type Tilemaps } from "phaser";
@@ -26,7 +27,13 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
     );
     if (!frameTiledObjectProperty) continue;
 
+    const messagesTiledObjectProperty = (npcObject.properties as TiledObjectProperty<string>[]).find(
+      (p) => p.name === NpcObjectProperty.messages,
+    );
+    if (!messagesTiledObjectProperty) continue;
+
     const frame = parseInt(frameTiledObjectProperty.value);
+    const messages = messagesTiledObjectProperty.value.split(MESSAGE_SEPARATOR);
     pushNpcList({
       id: `${CharacterId.Npc}${npcObject.name}`,
       asset: { key: SpritesheetKey.Npc, frame },
@@ -52,9 +59,10 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
           rightFoot: frame + 9,
         },
       },
-      position: getUnitPosition({ x: npcObject.x, y: npcObject.y }),
+      position: getObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
       direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
+      messages,
     });
   }
 };

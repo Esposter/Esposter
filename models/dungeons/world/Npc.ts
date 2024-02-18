@@ -1,3 +1,5 @@
 import { type Character } from "@/models/dungeons/world/Character";
 
-export interface Npc extends Character {}
+export interface Npc extends Character {
+  messages: string[];
+}

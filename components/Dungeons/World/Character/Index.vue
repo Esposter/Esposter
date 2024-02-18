@@ -8,7 +8,7 @@ import { type GameObjects } from "phaser";
 import { filter, type Subscription } from "rxjs";
 
 interface CharacterProps {
-  id: Character["id"];
+  characterId: Character["id"];
   spriteConfiguration: SpriteProps["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
@@ -18,7 +18,7 @@ interface CharacterProps {
 }
 
 const {
-  id,
+  characterId,
   spriteConfiguration,
   walkingAnimationMapping,
   singleSidedSpritesheetDirection,
@@ -43,7 +43,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
-  scene.value.gridEngine.removeCharacter(id);
+  scene.value.gridEngine.removeCharacter(characterId);
 });
 </script>
 
@@ -53,7 +53,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     :on-complete="
       (sprite) => {
         scene.gridEngine.addCharacter({
-          id,
+          id: characterId,
           sprite,
           walkingAnimationMapping,
           startPosition: position,
@@ -62,11 +62,11 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
         if (onPositionChangeStarted)
           subscriptionPositionChangeStarted = scene.gridEngine
             .positionChangeStarted()
-            .pipe(filter(({ charId }) => charId === id))
+            .pipe(filter(({ charId }) => charId === characterId))
             .subscribe(onPositionChangeStarted);
         subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
-          .pipe(filter(({ charId }) => charId === id))
+          .pipe(filter(({ charId }) => charId === characterId))
           .subscribe((positionChange) => {
             const { charId, enterTile } = positionChange;
             position = enterTile;
@@ -75,7 +75,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
           });
         subscriptionDirectionChanged = scene.gridEngine
           .directionChanged()
-          .pipe(filter(({ charId }) => charId === id))
+          .pipe(filter(({ charId }) => charId === characterId))
           .subscribe(({ direction: newDirection }) => {
             direction = newDirection;
           });

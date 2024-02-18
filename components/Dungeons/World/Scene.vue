@@ -88,7 +88,7 @@ const update = (scene: SceneWithPlugins) => {
     return;
   }
 
-  if (input === PlayerSpecialInput.Confirm) useInteractWithSign();
+  if (input === PlayerSpecialInput.Confirm) useInteractions();
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
