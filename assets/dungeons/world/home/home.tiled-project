@@ -1,0 +1,104 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "compatibilityVersion": 1100,
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 2,
+            "members": [
+                {
+                    "name": "frame",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "messages",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "movementPattern",
+                    "propertyType": "NpcMovement",
+                    "type": "string",
+                    "value": "IDLE"
+                }
+            ],
+            "name": "Npc",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "id": 3,
+            "name": "NpcMovement",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "CLOCKWISE",
+                "IDLE"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 1,
+            "members": [
+            ],
+            "name": "NpcPath",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+                {
+                    "name": "message",
+                    "type": "string",
+                    "value": ""
+                }
+            ],
+            "name": "Sign",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        }
+    ]
+}

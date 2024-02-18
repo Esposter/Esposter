@@ -493,47 +493,46 @@
 189,189,189,189,189,0,0,189,189,189,189,189,189,189,189,189,189,189,189,189
 </data>
  </layer>
- <objectgroup id="21" name="Sign" locked="1">
-  <object id="15" gid="70" x="704" y="1344" width="64" height="64">
+ <objectgroup id="21" name="Sign" class="Sign" locked="1">
+  <object id="15" type="Sign" gid="70" x="704" y="1344" width="64" height="64">
    <properties>
     <property name="message">MONSTER FAN CLUB
           All Monster fans welcome!</property>
    </properties>
   </object>
-  <object id="16" gid="70" x="832" y="1856" width="64" height="64">
+  <object id="16" type="Sign" gid="70" x="832" y="1856" width="64" height="64">
    <properties>
     <property name="message" value="Don't leave home without a MAP!"/>
    </properties>
   </object>
-  <object id="17" gid="70" x="192" y="1344" width="64" height="64">
+  <object id="17" type="Sign" gid="70" x="192" y="1344" width="64" height="64">
    <properties>
     <property name="message">TRAINER TIPS
           If you want to avoid battles, stay away from grassy areas!</property>
    </properties>
   </object>
-  <object id="18" gid="70" x="448" y="1600" width="64" height="64">
+  <object id="18" type="Sign" gid="70" x="448" y="1600" width="64" height="64">
    <properties>
     <property name="message" value="For poison, use ANTIDOTE! Get it at the MARKET!"/>
    </properties>
   </object>
  </objectgroup>
- <group id="19" name="Npc">
-  <objectgroup id="20" name="Smith" locked="1">
+ <group id="19" name="Npc" locked="1">
+  <objectgroup id="20" name="Smith" visible="0" locked="1">
    <object id="14" name="Npc" type="Npc" gid="207" x="704" y="1920" width="64" height="64">
     <properties>
      <property name="frame" value="0"/>
      <property name="messages" value="You can save your game from the menu.::To open the menu, press the ENTER key."/>
-     <property name="movement_pattern" value="IDLE"/>
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="18" name="John">
+  <objectgroup id="18" name="John" locked="1">
    <object id="5" name="1" type="NpcPath" gid="207" x="960" y="1408" width="64" height="64"/>
    <object id="6" name="Npc" type="Npc" gid="207" x="896" y="1408" width="64" height="64">
     <properties>
      <property name="frame" value="20"/>
      <property name="messages" value="Make sure you read the signposts for helpful tips!"/>
-     <property name="movement_pattern" value="CLOCKWISE"/>
+     <property name="movementPattern" propertytype="NpcMovement" value="CLOCKWISE"/>
     </properties>
    </object>
    <object id="8" name="7" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64"/>
