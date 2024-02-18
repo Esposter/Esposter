@@ -26,7 +26,7 @@ export const useInteractWithNpc = (): boolean => {
   scene.value.gridEngine.turnTowards(interactiveObject.id, getOppositeDirection(direction.value));
   updateQueuedMessagesAndShowMessage(
     { text: dialogText, inputPromptCursorX: DIALOG_WIDTH - 16 },
-    interactiveObject.messages,
+    [...interactiveObject.messages],
     () => {
       isDialogVisible.value = false;
     },

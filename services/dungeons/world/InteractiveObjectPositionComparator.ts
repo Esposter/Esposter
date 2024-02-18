@@ -6,8 +6,8 @@ export type InteractableDirectionMap = Record<InteractableDirection, boolean>;
 const InteractiveObjectPositionOffsetMap = {
   [Direction.UP]: { x: 0, y: 1 },
   [Direction.DOWN]: { x: 0, y: -1 },
-  [Direction.LEFT]: { x: -1, y: 0 },
-  [Direction.RIGHT]: { x: 1, y: 0 },
+  [Direction.LEFT]: { x: 1, y: 0 },
+  [Direction.RIGHT]: { x: -1, y: 0 },
 } as const satisfies Record<InteractableDirection, Position>;
 
 const isInteractableDirection = (
