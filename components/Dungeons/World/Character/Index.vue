@@ -5,14 +5,15 @@ import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { type Character } from "@/models/dungeons/world/Character";
 import type GridEngine from "grid-engine";
 // eslint-disable-next-line no-duplicate-imports
-import { type Direction, type Position, type WalkingAnimationMapping } from "grid-engine";
+import { Direction, type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 import { filter, type Subscription } from "rxjs";
 
 interface CharacterProps {
   id: Character["id"];
   spriteConfiguration: SpriteProps["configuration"];
-  walkingAnimationMapping: WalkingAnimationMapping;
+  walkingAnimationMapping: Character["walkingAnimationMapping"];
+  singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
   onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
   onPositionChangeFinished?: Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0];
   onComplete?: (sprite: GameObjects.Sprite) => void;
@@ -22,6 +23,7 @@ const {
   id,
   spriteConfiguration,
   walkingAnimationMapping,
+  singleSidedSpritesheetDirection,
   onPositionChangeStarted,
   onPositionChangeFinished,
   onComplete,
@@ -30,6 +32,11 @@ const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction>("direction", { required: true });
 const phaserStore = usePhaserStore();
 const { scene, sceneKey } = storeToRefs(phaserStore);
+const flipX = computed(
+  () =>
+    (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
+    (singleSidedSpritesheetDirection === Direction.RIGHT && direction.value === Direction.LEFT),
+);
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
@@ -44,7 +51,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 
 <template>
   <Sprite
-    :configuration="{ origin: 0, ...spriteConfiguration }"
+    :configuration="{ origin: 0, flipX, ...spriteConfiguration }"
     :on-complete="
       (sprite) => {
         scene.gridEngine.addCharacter({

@@ -55,6 +55,7 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
       },
       position: getUnitPosition(objectPosition),
       direction: Direction.DOWN,
+      singleSidedSpritesheetDirection: Direction.RIGHT,
     });
   }
 };

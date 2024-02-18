@@ -3,17 +3,16 @@ import { type Npc } from "@/models/dungeons/world/Npc";
 import { type Direction, type Position } from "grid-engine";
 // Vue doesn't support complex prop types
 // eslint-disable-next-line @typescript-eslint/ban-types
-const { id, asset, walkingAnimationMapping } = defineProps<Omit<Npc, "position" | "direction">>();
+const { asset, ...rest } = defineProps<Omit<Npc, "position" | "direction">>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction>("direction", { required: true });
 </script>
 
 <template>
   <DungeonsWorldCharacter
-    :id="id"
     v-model:position="position"
     v-model:direction="direction"
     :sprite-configuration="{ textureKey: asset.key, frame: asset.frame, scale: 4 }"
-    :walking-animation-mapping="walkingAnimationMapping"
+    :="rest"
   />
 </template>
