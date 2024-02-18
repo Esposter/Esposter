@@ -6,7 +6,7 @@ import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
 import { getUnitPosition } from "@/services/dungeons/tilemap/getUnitPosition";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { Direction, type Position } from "grid-engine";
+import { Direction } from "grid-engine";
 import { type Tilemaps } from "phaser";
 
 export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
@@ -27,8 +27,6 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
     if (!frameTiledObjectProperty) continue;
 
     const frame = parseInt(frameTiledObjectProperty.value);
-    const objectPosition: Position = { x: npcObject.x, y: npcObject.y };
-
     pushNpcList({
       id: `${CharacterId.Npc}${npcObject.name}`,
       asset: { key: SpritesheetKey.Npc, frame },
@@ -54,7 +52,7 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
           rightFoot: frame + 9,
         },
       },
-      position: getUnitPosition(objectPosition),
+      position: getUnitPosition({ x: npcObject.x, y: npcObject.y }),
       direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
     });
