@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { type CharacterProps } from "@/components/Dungeons/World/Character/Index.vue";
 import { type Npc } from "@/models/dungeons/world/Npc";
 import { type Direction, type Position } from "grid-engine";
-// Vue doesn't support complex prop types, so we have to use 'Omit'
-// which is banned by our eslint in favor of stricter type 'Except'
-// eslint-disable-next-line @typescript-eslint/ban-types
-const { asset, id: characterId, ...rest } = defineProps<Omit<Npc, "position" | "direction">>();
+
+interface NpcProps
+  extends Pick<Npc, "asset">,
+    Pick<CharacterProps, "characterId" | "walkingAnimationMapping" | "singleSidedSpritesheetDirection"> {}
+
+const { asset, characterId, walkingAnimationMapping, singleSidedSpritesheetDirection } = defineProps<NpcProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction>("direction", { required: true });
 </script>
@@ -15,6 +18,7 @@ const direction = defineModel<Direction>("direction", { required: true });
     v-model:direction="direction"
     :character-id="characterId"
     :sprite-configuration="{ textureKey: asset.key, frame: asset.frame, scale: 4 }"
-    :="rest"
+    :walking-animation-mapping="walkingAnimationMapping"
+    :single-sided-spritesheet-direction="singleSidedSpritesheetDirection"
   />
 </template>

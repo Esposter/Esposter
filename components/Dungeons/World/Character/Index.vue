@@ -7,7 +7,7 @@ import { Direction, type GridEngine, type Position } from "grid-engine";
 import { type GameObjects } from "phaser";
 import { filter, type Subscription } from "rxjs";
 
-interface CharacterProps {
+export interface CharacterProps {
   characterId: Character["id"];
   spriteConfiguration: SpriteProps["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];

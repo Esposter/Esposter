@@ -102,11 +102,14 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   <Scene :scene-key="SceneKey.World" :cls="SceneWithPlugins" @create="create" @update="update">
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldCharacterNpc
-      v-for="({ id, position, direction, ...rest }, index) in npcList"
+      v-for="({ id, asset, walkingAnimationMapping, singleSidedSpritesheetDirection }, index) in npcList"
       :key="id"
       v-model:position="npcList[index].position"
       v-model:direction="npcList[index].direction"
-      :="{ id, ...rest }"
+      :character-id="id"
+      :asset="asset"
+      :walking-animation-mapping="walkingAnimationMapping"
+      :single-sided-spritesheet-direction="singleSidedSpritesheetDirection"
     />
     <DungeonsWorldForeground />
     <DungeonsWorldDialog />
