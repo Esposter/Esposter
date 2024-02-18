@@ -645,14 +645,13 @@
                 {
                  "draworder":"topdown",
                  "id":20,
-                 "locked":true,
                  "name":"Smith",
                  "objects":[
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
-                         "id":14,
-                         "name":"Npc",
+                         "id":25,
+                         "name":"Smith",
                          "properties":[
                                 {
                                  "name":"frame",
@@ -663,6 +662,12 @@
                                  "name":"messages",
                                  "type":"string",
                                  "value":"You can save your game from the menu.::To open the menu, press the ENTER key."
+                                }, 
+                                {
+                                 "name":"movementPattern",
+                                 "propertytype":"NpcMovement",
+                                 "type":"string",
+                                 "value":"IDLE"
                                 }],
                          "rotation":0,
                          "type":"Npc",
@@ -699,7 +704,7 @@
                          "gid":207,
                          "height":64,
                          "id":6,
-                         "name":"Npc",
+                         "name":"John",
                          "properties":[
                                 {
                                  "name":"frame",
@@ -810,8 +815,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":23,
- "nextobjectid":22,
+ "nextlayerid":24,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
