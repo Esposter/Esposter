@@ -28,6 +28,7 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
 
     const frame = parseInt(frameTiledObjectProperty.value);
     const objectPosition: Position = { x: npcObject.x, y: npcObject.y };
+
     pushNpcList({
       id: `${CharacterId.Npc}${npcObject.name}`,
       asset: { key: SpritesheetKey.Npc, frame },

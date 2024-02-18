@@ -518,7 +518,7 @@
   </object>
  </objectgroup>
  <group id="19" name="Npc" locked="1">
-  <objectgroup id="20" name="Smith" visible="0" locked="1">
+  <objectgroup id="20" name="Smith" locked="1">
    <object id="14" name="Npc" type="Npc" gid="207" x="704" y="1920" width="64" height="64">
     <properties>
      <property name="frame" value="0"/>
