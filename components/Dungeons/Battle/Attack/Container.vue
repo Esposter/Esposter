@@ -12,7 +12,7 @@ const position = computed(() => getAttackPosition(isToEnemy));
 </script>
 
 <template>
-  <Container v-if="isActive" :configuration="{ ...position }">
+  <Container :configuration="{ visible: isActive, ...position }">
     <slot />
   </Container>
 </template>

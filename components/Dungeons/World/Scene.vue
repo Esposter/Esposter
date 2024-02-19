@@ -23,7 +23,7 @@ const { controls } = storeToRefs(gameStore);
 const dialogStore = useDialogStore();
 const { handleShowMessageInput } = dialogStore;
 const worldSceneStore = useWorldSceneStore();
-const { isDialogVisible } = storeToRefs(worldSceneStore);
+const { tilemap, isDialogVisible } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 const npcStore = useNpcStore();
@@ -54,6 +54,7 @@ const update = (scene: SceneWithPlugins) => {
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+  tilemap.value.destroy();
   scene.value.cameras.resetAll();
 });
 </script>

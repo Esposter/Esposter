@@ -32,8 +32,8 @@ const position = computed(() =>
 
 <template>
   <Sprite
-    v-if="isActive"
     :configuration="{
+      visible: isActive,
       ...position,
       textureKey: spritesheetKey,
       frame,

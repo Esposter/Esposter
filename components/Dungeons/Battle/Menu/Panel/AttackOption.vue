@@ -16,7 +16,7 @@ const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((x) =
 </script>
 
 <template>
-  <Container v-if="activePanel === ActivePanel.AttackOption" :configuration="{ y: 448 }">
+  <Container :configuration="{ visible: activePanel === ActivePanel.AttackOption, y: 448 }">
     <Rectangle
       :configuration="{
         width: 500,

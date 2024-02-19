@@ -61,8 +61,8 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
     />
     <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <Text
-      v-if="!isEnemy"
       :configuration="{
+        visible: !isEnemy,
         x: 443,
         y: 80,
         originX: 1,

@@ -34,7 +34,7 @@ watch(isDialogVisible, (newIsDialogVisible) => {
 </script>
 
 <template>
-  <Container v-if="isDialogVisible" :configuration="{ x, y, depth: DIALOG_DEPTH }">
+  <Container :configuration="{ visible: isDialogVisible, x, y, depth: DIALOG_DEPTH }">
     <Rectangle
       :configuration="{
         width: DIALOG_WIDTH,

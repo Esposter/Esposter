@@ -16,8 +16,8 @@ const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVi
 
 <template>
   <Image
-    v-if="isInputPromptCursorVisible"
     :configuration="{
+      visible: isInputPromptCursorVisible,
       x: inputPromptCursorX,
       textureKey: ImageKey.Cursor,
       angle: 90,

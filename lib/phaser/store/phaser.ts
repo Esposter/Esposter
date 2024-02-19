@@ -32,7 +32,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     const oldSceneKey = sceneKey.value;
     if (oldSceneKey) {
       phaserEventEmitter.emit(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${oldSceneKey}`);
-      game.value.scene.sleep(oldSceneKey);
+      if (scene.value.scene.isActive()) game.value.scene.sleep(oldSceneKey);
     }
 
     sceneKey.value = newSceneKey;
