@@ -1,0 +1,32 @@
+import { TilesetKeyMap } from "@/models/dungeons/keys/TilesetKeyMap";
+import { LayerId } from "@/models/dungeons/world/home/LayerId";
+import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
+import { useSettingsStore } from "@/store/dungeons/settings";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+
+export const useCreateHomeTilemapAssets = () => {
+  const settingsStore = useSettingsStore();
+  const { debugTileLayerAlpha } = storeToRefs(settingsStore);
+  const worldSceneStore = useWorldSceneStore();
+  const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
+  const basicPlainsTileset = useCreateTileset(TilesetKeyMap.BasicPlains);
+  const beachAndCavesTileset = useCreateTileset(TilesetKeyMap.BeachAndCaves);
+  const houseCreateTileset = useCreateTileset(TilesetKeyMap.House);
+  const bushesTileset = useCreateTileset(TilesetKeyMap.Bushes);
+  const collisionTileset = useCreateTileset(TilesetKeyMap.Collision);
+  const encounterTileset = useCreateTileset(TilesetKeyMap.Encounter);
+  const grassTileset = useCreateTileset(TilesetKeyMap.Grass);
+  useCreateLayer(LayerId.Ground, [basicPlainsTileset, grassTileset]);
+  useCreateLayer(LayerId.Building, houseCreateTileset);
+  useCreateLayer(LayerId.Water, beachAndCavesTileset);
+  useCreateLayer(LayerId.Decoration, [basicPlainsTileset, bushesTileset]);
+  useCreateLayer(LayerId.Sign, basicPlainsTileset);
+  useCreateLayer(LayerId.TreeBottom, basicPlainsTileset);
+  useCreateLayer(LayerId.TreeTop, basicPlainsTileset);
+  useCreateLayer(LayerId.Fence, basicPlainsTileset);
+  useCreateLayer(LayerId.Boulder, basicPlainsTileset);
+  useCreateLayer(LayerId.Foreground, [basicPlainsTileset, houseCreateTileset]);
+  encounterLayer.value = useCreateLayer(LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
+  useCreateLayer(LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
+  signLayer.value = useObjectLayer(ObjectLayer.Sign);
+};

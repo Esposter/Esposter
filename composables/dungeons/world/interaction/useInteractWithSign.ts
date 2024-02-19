@@ -3,14 +3,23 @@ import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectPrope
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { type SetRequired } from "@/util/types/SetRequired";
 import { Direction } from "grid-engine";
+import { type ArrayElement } from "type-fest/source/internal";
 
 export const useInteractWithSign = (): boolean => {
   const dialogStore = useDialogStore();
   const { updateQueuedMessagesAndShowMessage } = dialogStore;
   const worldSceneStore = useWorldSceneStore();
   const { signLayer, isDialogVisible, dialogText } = storeToRefs(worldSceneStore);
-  const interactiveObject = useFindInteractiveObject(signLayer.value.objects, {
+  const objects: SetRequired<ArrayElement<typeof signLayer.value.objects>, "x" | "y">[] = [];
+
+  for (const { x, y, ...rest } of signLayer.value.objects) {
+    if (!(x && y)) continue;
+    objects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
+  }
+
+  const interactiveObject = useFindInteractiveObject(objects, {
     [Direction.UP]: true,
     [Direction.DOWN]: false,
     [Direction.LEFT]: false,

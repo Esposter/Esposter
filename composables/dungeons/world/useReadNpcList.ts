@@ -5,18 +5,19 @@ import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectPropert
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
-import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
 import { useNpcStore } from "@/store/dungeons/world/npc";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
-import { type Tilemaps } from "phaser";
 
-export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
+export const useReadNpcList = () => {
+  const worldSceneStore = useWorldSceneStore();
+  const { tilemap } = storeToRefs(worldSceneStore);
   const npcStore = useNpcStore();
   const { pushNpcList } = npcStore;
-  const npcLayerNames = tilemap.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.Npc));
+  const npcLayerNames = tilemap.value.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.Npc));
 
   for (const npcLayerName of npcLayerNames) {
-    const npcLayer = tilemap.getObjectLayer(npcLayerName);
+    const npcLayer = tilemap.value.getObjectLayer(npcLayerName);
     if (!npcLayer) continue;
 
     const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
@@ -59,7 +60,7 @@ export const useReadNpcList = (tilemap: Tilemaps.Tilemap) => {
           rightFoot: frame + 9,
         },
       },
-      position: getObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
+      position: useObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
       direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
       messages,

@@ -1,6 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { getOppositeDirection } from "@/services/dungeons/getOppositeDirection";
-import { getObjectPixelPosition } from "@/services/dungeons/tilemap/getObjectPixelPosition";
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useNpcStore } from "@/store/dungeons/world/npc";
@@ -19,7 +18,7 @@ export const useInteractWithNpc = (): boolean => {
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
   const interactiveObject = useFindInteractiveObject(
-    npcList.value.map(({ position, ...rest }) => ({ ...getObjectPixelPosition(position), ...rest })),
+    npcList.value.map(({ position, ...rest }) => ({ ...position, ...rest })),
   );
   if (!interactiveObject) return false;
 
