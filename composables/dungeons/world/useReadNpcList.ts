@@ -1,6 +1,7 @@
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { type TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
+import { type Npc } from "@/models/dungeons/world/Npc";
 import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectProperty";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
@@ -13,8 +14,9 @@ export const useReadNpcList = () => {
   const worldSceneStore = useWorldSceneStore();
   const { tilemap } = storeToRefs(worldSceneStore);
   const npcStore = useNpcStore();
-  const { pushNpcList } = npcStore;
+  const { initializeCursorPaginationData } = npcStore;
   const npcLayerNames = tilemap.value.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.Npc));
+  const npcList: Npc[] = [];
 
   for (const npcLayerName of npcLayerNames) {
     const npcLayer = tilemap.value.getObjectLayer(npcLayerName);
@@ -35,7 +37,8 @@ export const useReadNpcList = () => {
 
     const frame = parseInt(frameTiledObjectProperty.value);
     const messages = messagesTiledObjectProperty.value.split(MESSAGE_SEPARATOR);
-    pushNpcList({
+    const createdAt = new Date();
+    npcList.push({
       id: `${CharacterId.Npc}${npcObject.name}`,
       asset: { key: SpritesheetKey.Npc, frame },
       walkingAnimationMapping: {
@@ -64,6 +67,11 @@ export const useReadNpcList = () => {
       direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
       messages,
+      createdAt,
+      updatedAt: createdAt,
+      deletedAt: null,
     });
   }
+
+  initializeCursorPaginationData({ items: npcList, hasMore: false, nextCursor: null });
 };

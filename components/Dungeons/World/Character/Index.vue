@@ -12,6 +12,8 @@ export interface CharacterProps {
   spriteConfiguration: SpriteProps["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
+  onMovementStarted?: Parameters<ReturnType<GridEngine["movementStarted"]>["subscribe"]>[0];
+  onMovementStopped?: Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0];
   onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
   onPositionChangeFinished?: Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0];
   onComplete?: (sprite: GameObjects.Sprite) => void;
@@ -22,6 +24,8 @@ const {
   spriteConfiguration,
   walkingAnimationMapping,
   singleSidedSpritesheetDirection,
+  onMovementStarted,
+  onMovementStopped,
   onPositionChangeStarted,
   onPositionChangeFinished,
   onComplete,
@@ -35,11 +39,15 @@ const flipX = computed(
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
     (singleSidedSpritesheetDirection === Direction.RIGHT && direction.value === Direction.LEFT),
 );
+const subscriptionMovementStarted = ref<Subscription>();
+const subscriptionMovementStopped = ref<Subscription>();
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+  subscriptionMovementStarted.value?.unsubscribe();
+  subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
@@ -59,6 +67,16 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
           startPosition: position,
           facingDirection: direction,
         });
+        if (onMovementStarted)
+          subscriptionMovementStarted = scene.gridEngine
+            .movementStarted()
+            .pipe(filter(({ charId }) => charId === characterId))
+            .subscribe(onMovementStarted);
+        if (onMovementStopped)
+          subscriptionMovementStopped = scene.gridEngine
+            .movementStopped()
+            .pipe(filter(({ charId }) => charId === characterId))
+            .subscribe(onMovementStopped);
         if (onPositionChangeStarted)
           subscriptionPositionChangeStarted = scene.gridEngine
             .positionChangeStarted()

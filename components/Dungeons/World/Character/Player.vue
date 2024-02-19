@@ -46,16 +46,20 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
         rightFoot: 5,
       },
     }"
-    :on-position-change-started="
+    :on-movement-started="
       () => {
         isMoving = true;
+      }
+    "
+    :on-movement-stopped="
+      () => {
+        isMoving = false;
       }
     "
     :on-position-change-finished="
       ({ enterTile }) => {
         const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
         if (tile) useRandomEncounter();
-        isMoving = false;
       }
     "
     :on-complete="
