@@ -38,7 +38,7 @@ const create = (scene: SceneWithPlugins) => {
 
 const update = (scene: SceneWithPlugins) => {
   const input = controls.value.getInput();
-  // We want to pause all other player input whilst the dialog is visible
+  // We want to pause all other input whilst the dialog is visible
   if (isDialogVisible.value) {
     handleShowMessageInput(input);
     return;
