@@ -1,14 +1,15 @@
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
-import { type TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { type Npc } from "@/models/dungeons/world/Npc";
+import { type NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";
 import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectProperty";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
+import { findTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { Direction } from "grid-engine";
+import { Direction, type Position } from "grid-engine";
 
 export const useReadNpcList = () => {
   const worldSceneStore = useWorldSceneStore();
@@ -25,18 +26,34 @@ export const useReadNpcList = () => {
     const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
     if (!(npcObject && npcObject.x && npcObject.y)) continue;
 
-    const frameTiledObjectProperty = (npcObject.properties as TiledObjectProperty<string>[]).find(
-      (p) => p.name === NpcObjectProperty.frame,
-    );
+    const npcPathObjects = npcLayer.objects.filter((obj) => obj.type === ObjectType.NpcPath);
+    const npcPath: Record<number, Position> = {
+      0: useObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
+    };
+
+    for (const { name, x, y } of npcPathObjects) {
+      if (!(x && y)) continue;
+      npcPath[parseInt(name)] = useObjectUnitPosition({ x, y });
+    }
+
+    const frameTiledObjectProperty = findTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);
     if (!frameTiledObjectProperty) continue;
 
-    const messagesTiledObjectProperty = (npcObject.properties as TiledObjectProperty<string>[]).find(
-      (p) => p.name === NpcObjectProperty.messages,
+    const messagesTiledObjectProperty = findTiledObjectProperty<string>(
+      npcObject.properties,
+      NpcObjectProperty.messages,
     );
     if (!messagesTiledObjectProperty) continue;
 
+    const movementPatternTiledObjectProperty = findTiledObjectProperty<NpcMovementPattern>(
+      npcObject.properties,
+      NpcObjectProperty.movementPattern,
+    );
+    if (!movementPatternTiledObjectProperty) continue;
+
     const frame = parseInt(frameTiledObjectProperty.value);
     const messages = messagesTiledObjectProperty.value.split(MESSAGE_SEPARATOR);
+    const movementPattern = movementPatternTiledObjectProperty.value;
     const createdAt = new Date();
     npcList.push({
       id: `${CharacterId.Npc}${npcObject.name}`,
@@ -63,10 +80,13 @@ export const useReadNpcList = () => {
           rightFoot: frame + 9,
         },
       },
-      position: useObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
       direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
       messages,
+      path: npcPath,
+      pathIndex: 0,
+      movementPattern,
+      isMoving: false,
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,

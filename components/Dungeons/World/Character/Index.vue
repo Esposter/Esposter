@@ -12,6 +12,7 @@ export interface CharacterProps {
   spriteConfiguration: SpriteProps["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
+  speed?: number;
   onMovementStarted?: Parameters<ReturnType<GridEngine["movementStarted"]>["subscribe"]>[0];
   onMovementStopped?: Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0];
   onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
@@ -24,6 +25,7 @@ const {
   spriteConfiguration,
   walkingAnimationMapping,
   singleSidedSpritesheetDirection,
+  speed,
   onMovementStarted,
   onMovementStopped,
   onPositionChangeStarted,
@@ -66,6 +68,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
           walkingAnimationMapping,
           startPosition: position,
           facingDirection: direction,
+          speed,
         });
         if (onMovementStarted)
           subscriptionMovementStarted = scene.gridEngine

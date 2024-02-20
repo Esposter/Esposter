@@ -523,7 +523,7 @@
     <properties>
      <property name="frame" value="0"/>
      <property name="messages" value="You can save your game from the menu.::To open the menu, press the ENTER key."/>
-     <property name="movementPattern" propertytype="NpcMovement" value="IDLE"/>
+     <property name="movementPattern" propertytype="NpcMovement" value="Idle"/>
     </properties>
    </object>
   </objectgroup>
@@ -533,7 +533,7 @@
     <properties>
      <property name="frame" value="20"/>
      <property name="messages" value="Make sure you read the signposts for helpful tips!"/>
-     <property name="movementPattern" propertytype="NpcMovement" value="CLOCKWISE"/>
+     <property name="movementPattern" propertytype="NpcMovement" value="Clockwise"/>
     </properties>
    </object>
    <object id="8" name="7" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64"/>

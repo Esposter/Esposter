@@ -12,7 +12,6 @@ import { isDirection } from "@/services/dungeons/input/isDirection";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
-import { useNpcStore } from "@/store/dungeons/world/npc";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -26,8 +25,6 @@ const worldSceneStore = useWorldSceneStore();
 const { tilemap, isDialogVisible } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
-const npcStore = useNpcStore();
-const { npcList } = storeToRefs(npcStore);
 const encounterStore = useEncounterStore();
 const { isMonsterEncountered } = storeToRefs(encounterStore);
 
@@ -40,8 +37,6 @@ const create = (scene: SceneWithPlugins) => {
 };
 
 const update = (scene: SceneWithPlugins) => {
-  if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
-
   const input = controls.value.getInput();
   // We want to pause all other player input whilst the dialog is visible
   if (isDialogVisible.value) {
@@ -49,7 +44,10 @@ const update = (scene: SceneWithPlugins) => {
     return;
   }
 
-  if (input === PlayerSpecialInput.Confirm) useInteractions();
+  useMoveNpcList();
+
+  if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
+  else if (input === PlayerSpecialInput.Confirm) useInteractions();
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
@@ -62,16 +60,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 <template>
   <Scene :scene-key="SceneKey.World" :cls="SceneWithPlugins" @create="create" @update="update">
     <DungeonsWorldCharacterPlayer />
-    <DungeonsWorldCharacterNpc
-      v-for="({ id, asset, walkingAnimationMapping, singleSidedSpritesheetDirection }, index) in npcList"
-      :key="id"
-      v-model:position="npcList[index].position"
-      v-model:direction="npcList[index].direction"
-      :character-id="id"
-      :asset="asset"
-      :walking-animation-mapping="walkingAnimationMapping"
-      :single-sided-spritesheet-direction="singleSidedSpritesheetDirection"
-    />
+    <DungeonsWorldNpcList />
     <DungeonsWorldForeground />
     <DungeonsWorldDialog />
     <DungeonsJoystick />

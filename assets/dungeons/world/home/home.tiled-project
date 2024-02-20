@@ -29,7 +29,7 @@
                     "name": "movementPattern",
                     "propertyType": "NpcMovement",
                     "type": "string",
-                    "value": "IDLE"
+                    "value": "Idle"
                 }
             ],
             "name": "Npc",
@@ -51,8 +51,8 @@
             "storageType": "string",
             "type": "enum",
             "values": [
-                "CLOCKWISE",
-                "IDLE"
+                "Clockwise",
+                "Idle"
             ],
             "valuesAsFlags": false
         },
