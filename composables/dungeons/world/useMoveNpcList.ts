@@ -15,6 +15,7 @@ export const useMoveNpcList = () => {
     if (npc.isMoving) continue;
 
     let pathSize: number;
+    let newPathIndex: number;
     let currentPosition: Position;
     let nextPosition: Position;
 
@@ -23,10 +24,13 @@ export const useMoveNpcList = () => {
         continue;
       case NpcMovementPattern.Clockwise:
         pathSize = Object.keys(npc.path).length;
+        newPathIndex = (npc.pathIndex + 1) % pathSize;
         currentPosition = npc.path[npc.pathIndex];
-        npc.pathIndex = (npc.pathIndex + 1) % pathSize;
-        nextPosition = npc.path[npc.pathIndex];
+        nextPosition = npc.path[newPathIndex];
+        if (scene.value.gridEngine.isBlocked(nextPosition)) continue;
+
         scene.value.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));
+        npc.pathIndex = newPathIndex;
         continue;
       default:
         exhaustiveGuard(npc.movementPattern);
