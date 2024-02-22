@@ -8,7 +8,7 @@ defineRouteRules({ ssr: false });
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout :main-style="{ maxHeight: '100dvh' }">
     <Game
       :configuration="{
         title: 'Dungeons',
@@ -16,7 +16,7 @@ defineRouteRules({ ssr: false });
         scale: {
           width: 1024,
           height: 576,
-          mode: Scale.FIT,
+          mode: Scale.ScaleModes.FIT,
           autoCenter: Scale.CENTER_BOTH,
         },
         input: {
