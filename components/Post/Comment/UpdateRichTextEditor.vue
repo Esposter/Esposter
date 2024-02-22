@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/db/schema/posts";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { type Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/vue-3";
 
 interface PostUpdateCommentRichTextEditorProps {
   comment: PostWithRelations;

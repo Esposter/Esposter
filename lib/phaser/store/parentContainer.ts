@@ -1,5 +1,5 @@
 import { InjectionKeyMap } from "@/lib/phaser/models/InjectionKeyMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const useParentContainerStore = defineStore("parentContainer", () => {
   const pushGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(

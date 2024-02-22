@@ -1,4 +1,4 @@
-import { type State } from "@/models/dungeons/state/State";
+import type { State } from "@/models/dungeons/state/State";
 
 export class StateMachine<TStateName extends string> {
   stateMap: Map<TStateName, State<TStateName>>;

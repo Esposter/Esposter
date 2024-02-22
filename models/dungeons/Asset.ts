@@ -1,5 +1,5 @@
-import { type ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import type { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import type { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 
 export interface Asset {
   key: ImageKey | SpritesheetKey;

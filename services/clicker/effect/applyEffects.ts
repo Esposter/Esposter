@@ -1,5 +1,5 @@
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { type Effect } from "@/models/clicker/Effect";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { Effect } from "@/models/clicker/Effect";
 import { EffectType } from "@/models/clicker/EffectType";
 import { EffectOperatorMap } from "@/services/clicker/effect/EffectOperatorMap";
 

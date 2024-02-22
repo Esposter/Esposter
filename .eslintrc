@@ -23,17 +23,9 @@
       }
     ],
     "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      {
-        "fixStyle": "inline-type-imports"
-      }
-    ],
-    "import/consistent-type-specifier-style": [
-      "error",
-      "prefer-inline"
-    ],
-    "no-duplicate-imports": "error",
+    "@typescript-eslint/no-import-type-side-effects": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "import/consistent-type-specifier-style": "error",
     "curly": [
       "error",
       "multi"

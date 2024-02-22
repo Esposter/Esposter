@@ -1,4 +1,4 @@
-import { type ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
+import type { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useObjectLayer = (objectLayer: ObjectLayer) => {

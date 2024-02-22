@@ -1,4 +1,4 @@
-import { type Item } from "@/models/tableEditor/Item";
+import type { Item } from "@/models/tableEditor/Item";
 
 export interface BaseItemCategoryDefinition<TItem extends Item = Item> {
   value: TItem["type"];

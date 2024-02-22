@@ -1,9 +1,9 @@
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { getEventName } from "@/lib/phaser/util/emit/getEventName";
 import { isEvent } from "@/lib/phaser/util/emit/isEvent";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { type GameObjects, type Types } from "phaser";
-import { type SetupContext } from "vue";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { GameObjects, Types } from "phaser";
+import type { SetupContext } from "vue";
 
 export const initializeGameObjectEvents = <
   TGameObject extends GameObjects.GameObject,

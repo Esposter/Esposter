@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import buySfx from "@/assets/clicker/sound/buy.mp3";
-import { type Building } from "@/models/clicker/Building";
+import type { Building } from "@/models/clicker/Building";
 import { ItemType } from "@/models/clicker/ItemType";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";

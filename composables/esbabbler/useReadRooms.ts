@@ -1,4 +1,4 @@
-import { type Room } from "@/db/schema/rooms";
+import type { Room } from "@/db/schema/rooms";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadRooms = async () => {

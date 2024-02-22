@@ -1,4 +1,4 @@
-import { type Except } from "@/util/types/Except";
+import type { Except } from "@/util/types/Except";
 
 type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;

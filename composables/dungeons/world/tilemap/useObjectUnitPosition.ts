@@ -1,5 +1,5 @@
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 export const useObjectUnitPosition = (pixelPosition: Position): Position => {
   const worldSceneStore = useWorldSceneStore();

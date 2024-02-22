@@ -4,7 +4,7 @@ import { isAuthed } from "@/server/trpc/middleware/auth";
 import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
 import { UUIDV4_REGEX } from "@/util/uuid/constants";
 import { TRPCError } from "@trpc/server";
-import { type z } from "zod";
+import type { z } from "zod";
 
 export const rateLimitedProcedure = publicProcedure.use(isRateLimited);
 export const authedProcedure = rateLimitedProcedure.use(isAuthed);

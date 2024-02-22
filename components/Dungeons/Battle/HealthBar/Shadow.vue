@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 interface ShadowProps {
   position: Position;

@@ -1,7 +1,7 @@
 import { EffectType } from "@/models/clicker/EffectType";
 import { ItemType } from "@/models/clicker/ItemType";
 import { Target } from "@/models/clicker/Target";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { CursorUpgradeName } from "@/models/clicker/UpgradeName";
 
 export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [

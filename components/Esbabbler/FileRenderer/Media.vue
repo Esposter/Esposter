@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 import { TypeRendererMap } from "@/models/esbabbler/file/TypeRendererMap";
 import { getLanguageForFileUrl } from "@/services/file/code";
-import { type Component } from "vue";
+import type { Component } from "vue";
 
 const { url, mimetype } = defineProps<FileRendererProps>();
 const defaultRenderer = defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Default.vue"));

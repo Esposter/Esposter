@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { selectSurveySchema, surveys, type Survey } from "@/db/schema/surveys";
+import { selectSurveySchema, surveys } from "@/db/schema/surveys";
+import type { Survey } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
@@ -9,7 +10,7 @@ import { getOffsetPaginationData } from "@/services/shared/pagination/offset/get
 import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, desc, eq } from "drizzle-orm";
-import { type z } from "zod";
+import type { z } from "zod";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;

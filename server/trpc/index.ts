@@ -1,4 +1,4 @@
-import { type Context } from "@/server/trpc/context";
+import type { Context } from "@/server/trpc/context";
 import { superjson } from "@/services/superjson";
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";

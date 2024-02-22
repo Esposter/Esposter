@@ -1,5 +1,5 @@
 import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/menu/constants";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 export const CursorPositionMap = [
   [

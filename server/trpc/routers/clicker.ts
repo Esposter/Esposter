@@ -3,7 +3,7 @@ import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursor";
 import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandma";
 import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/Game";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";

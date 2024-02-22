@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 import { extendedLanguages } from "@/models/esbabbler/file/LanguageRegexSupportPatternMap";
 import { Compartment } from "@codemirror/state";
-import { type EditorView } from "@codemirror/view";
+import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
 
 interface FileRendererCodeProps extends FileRendererProps {

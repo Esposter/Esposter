@@ -1,6 +1,6 @@
-import { type PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/db/schema/posts";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { type CreatePostInput, type DeletePostInput, type UpdatePostInput } from "@/server/trpc/routers/post";
+import type { CreatePostInput, DeletePostInput, UpdatePostInput } from "@/server/trpc/routers/post";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 

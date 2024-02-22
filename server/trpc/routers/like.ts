@@ -1,11 +1,12 @@
 import { db } from "@/db";
 import { posts } from "@/db/schema/posts";
-import { likes, selectLikeSchema, type Like } from "@/db/schema/users";
+import { likes, selectLikeSchema } from "@/db/schema/users";
+import type { Like } from "@/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { and, eq } from "drizzle-orm";
-import { type z } from "zod";
+import type { z } from "zod";
 
 const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
 export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;

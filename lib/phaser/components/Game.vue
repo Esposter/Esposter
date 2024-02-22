@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { type Except } from "@/util/types/Except";
-import { Game, type Types } from "phaser";
+import type { Except } from "@/util/types/Except";
+import { Game } from "phaser";
+import type { Types } from "phaser";
 
 interface GameProps {
   // We're gonna stop people from being stupid and adding scenes like this

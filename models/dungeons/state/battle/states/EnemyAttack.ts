@@ -1,5 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { type State } from "@/models/dungeons/state/State";
+import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { getAttackName } from "@/services/dungeons/battle/attack/getAttackName";

@@ -1,4 +1,4 @@
-import { type AttackId } from "@/models/dungeons/attack/AttackId";
+import type { AttackId } from "@/models/dungeons/attack/AttackId";
 import { getAttack } from "@/services/dungeons/battle/attack/getAttack";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
 

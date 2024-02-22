@@ -1,6 +1,6 @@
-import { type inferAsyncReturnType } from "@trpc/server";
-import { type CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
-import { type H3Event } from "h3";
+import type { inferAsyncReturnType } from "@trpc/server";
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
+import type { H3Event } from "h3";
 
 type Contexts = H3Event | CreateWSSContextFnOptions;
 

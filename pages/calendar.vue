@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { type EventSourceInput } from "@fullcalendar/core";
+import type { EventSourceInput } from "@fullcalendar/core";
 
 await useReadTableEditor();
 const tableEditorStore = useTableEditorStore<TodoListItem>()();

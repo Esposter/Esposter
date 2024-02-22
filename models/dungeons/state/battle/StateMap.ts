@@ -1,4 +1,4 @@
-import { type State } from "@/models/dungeons/state/State";
+import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { Battle } from "@/models/dungeons/state/battle/states/Battle";
 import { BringOutMonster } from "@/models/dungeons/state/battle/states/BringOutMonster";

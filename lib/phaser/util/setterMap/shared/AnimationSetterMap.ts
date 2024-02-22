@@ -1,7 +1,8 @@
-import { type AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
-import { type SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { Animations, type GameObjects } from "phaser";
+import type { AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
+import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import { Animations } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const AnimationSetterMap = {
   animations: (gameObject, emit) =>

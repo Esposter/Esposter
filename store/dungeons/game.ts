@@ -1,5 +1,5 @@
 import { Game } from "@/models/dungeons/Game";
-import { type Controls } from "@/models/dungeons/input/Controls";
+import type { Controls } from "@/models/dungeons/input/Controls";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 
 export const useGameStore = defineStore("dungeons/game", () => {

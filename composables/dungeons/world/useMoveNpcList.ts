@@ -3,7 +3,7 @@ import { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPatt
 import { getNextDirection } from "@/services/dungeons/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 export const useMoveNpcList = () => {
   const phaserStore = usePhaserStore();

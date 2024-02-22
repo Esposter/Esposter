@@ -8,7 +8,7 @@ import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
 import isMobile from "is-mobile";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
 const phaserStore = usePhaserStore();

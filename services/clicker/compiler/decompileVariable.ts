@@ -1,4 +1,4 @@
-import { type ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
 import { compileVariable } from "@/services/clicker/compiler/compileVariable";
 import { VARIABLE_REGEX } from "@/services/clicker/constants";
 

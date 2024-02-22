@@ -1,4 +1,4 @@
-import { type NuxtConfig } from "nuxt/schema";
+import type { NuxtConfig } from "nuxt/schema";
 import { FontKey } from "../models/dungeons/keys/FontKey";
 
 export const unfonts: NuxtConfig["unfonts"] = {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
-import { type User } from "@/db/schema/users";
+import type { User } from "@/db/schema/users";
 
 interface MemberListProps {
   members: User[];

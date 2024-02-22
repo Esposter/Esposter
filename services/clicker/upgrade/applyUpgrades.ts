@@ -1,6 +1,6 @@
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ItemType } from "@/models/clicker/ItemType";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { applyEffects } from "@/services/clicker/effect/applyEffects";
 import { applyUpgradeEffects } from "@/services/clicker/effect/applyUpgradeEffects";
 

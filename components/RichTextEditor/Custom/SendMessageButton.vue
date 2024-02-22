@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMessageStore } from "@/store/esbabbler/message";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { type Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/vue-3";
 
 interface CustomEmojiPickerButtonProps {
   editor?: Editor;

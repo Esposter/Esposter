@@ -1,8 +1,8 @@
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
+import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { type Monster } from "@/models/dungeons/battle/monster/Monster";
+import type { Monster } from "@/models/dungeons/battle/monster/Monster";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref<Monster>({

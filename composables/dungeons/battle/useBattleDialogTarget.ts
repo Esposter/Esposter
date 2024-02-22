@@ -1,4 +1,4 @@
-import { type DialogTarget } from "@/models/dungeons/DialogTarget";
+import type { DialogTarget } from "@/models/dungeons/DialogTarget";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useDialogStore } from "@/store/dungeons/dialog";
 

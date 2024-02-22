@@ -1,7 +1,7 @@
-import { type AItemEntity } from "@/models/shared/entity/AItemEntity";
-import { type EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
+import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
+import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import { Operation } from "@/models/shared/pagination/Operation";
-import { type OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
+import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
 export const createOperationData = <

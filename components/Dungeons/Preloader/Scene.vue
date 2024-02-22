@@ -14,7 +14,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import isMobile from "is-mobile";
-import { type Loader } from "phaser";
+import type { Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;

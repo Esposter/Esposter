@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { type TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
-import { type TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
+import type { TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
+import type { TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
 import { FontKey } from "@/models/dungeons/keys/FontKey";
-import { type SetRequired } from "@/util/types/SetRequired";
-import { type GameObjects } from "phaser";
+import type { SetRequired } from "@/util/types/SetRequired";
+import type { GameObjects } from "phaser";
 
 interface TextProps {
   configuration: SetRequired<Partial<TextConfiguration>, "text">;

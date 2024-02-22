@@ -1,6 +1,8 @@
-import { effectSchema, type Effect } from "@/models/clicker/Effect";
-import { unlockConditionSchema, type UnlockCondition } from "@/models/clicker/unlockCondition/UnlockCondition";
-import { type UpgradeName } from "@/models/clicker/UpgradeName";
+import { effectSchema } from "@/models/clicker/Effect";
+import type { Effect } from "@/models/clicker/Effect";
+import { unlockConditionSchema } from "@/models/clicker/unlockCondition/UnlockCondition";
+import type { UnlockCondition } from "@/models/clicker/unlockCondition/UnlockCondition";
+import type { UpgradeName } from "@/models/clicker/UpgradeName";
 import { z } from "zod";
 
 export interface Upgrade<TName = UpgradeName> {

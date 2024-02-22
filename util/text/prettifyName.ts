@@ -1,4 +1,4 @@
-import { type PrettifyName } from "@/util/types/PrettifyName";
+import type { PrettifyName } from "@/util/types/PrettifyName";
 
 // Puts space between capital and non-capital letters
 export const prettifyName = <T extends string>(string: T) =>

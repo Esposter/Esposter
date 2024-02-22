@@ -1,6 +1,6 @@
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { type Effect } from "@/models/clicker/Effect";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { Effect } from "@/models/clicker/Effect";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { applyEffects } from "@/services/clicker/effect/applyEffects";
 
 export const applyUpgradeEffects = (

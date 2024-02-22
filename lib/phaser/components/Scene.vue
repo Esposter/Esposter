@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="TScene extends Constructor<Scene>">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { type SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
-import { type Constructor } from "@/util/types/Constructor";
-import { type Scene } from "phaser";
+import type { Constructor } from "@/util/types/Constructor";
+import type { Scene } from "phaser";
 
 interface SceneProps {
   sceneKey: SceneKey;

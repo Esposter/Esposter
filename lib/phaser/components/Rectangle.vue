@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
-import { type RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
+import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
+import type { RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;

@@ -6,7 +6,7 @@ import { CursorPositionMap } from "@/services/dungeons/battle/menu/CursorPositio
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/menu/constants";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

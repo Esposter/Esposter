@@ -1,4 +1,5 @@
-import { likes, users, type Like, type User } from "@/db/schema/users";
+import { likes, users } from "@/db/schema/users";
+import type { Like, User } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
 import { relations } from "drizzle-orm";

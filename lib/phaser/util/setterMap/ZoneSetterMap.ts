@@ -1,13 +1,13 @@
-import { type ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
-import { type ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
+import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
 import { OriginSetterMap } from "@/lib/phaser/util/setterMap/components/OriginSetterMap";
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const ZoneSetterMap: SetterMap<ZoneConfiguration, GameObjects.Zone, ZoneEventEmitsOptions> = {
   ...DepthSetterMap,

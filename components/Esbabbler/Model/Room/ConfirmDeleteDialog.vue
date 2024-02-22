@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomConfirmDeleteDialogProps {

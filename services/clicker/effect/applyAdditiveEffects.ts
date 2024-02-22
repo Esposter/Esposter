@@ -1,5 +1,5 @@
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { type Effect } from "@/models/clicker/Effect";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { Effect } from "@/models/clicker/Effect";
 
 export const applyAdditiveEffects = (basePower: number, additiveEffects: Effect[], _: BuildingWithStats[]) => {
   let resultPower = basePower;

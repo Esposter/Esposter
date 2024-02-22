@@ -1,5 +1,5 @@
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import { type DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
 import { todoListHeaders } from "@/services/tableEditor/todoList/headers";
 import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList/itemCategoryDefinition";

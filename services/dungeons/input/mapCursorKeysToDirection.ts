@@ -1,4 +1,4 @@
-import { type BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
+import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import { Direction } from "grid-engine";
 
 export const mapCursorKeysToDirection = (cursorKeys: BaseCursorKeys) => {

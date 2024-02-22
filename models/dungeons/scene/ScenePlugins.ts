@@ -1,5 +1,5 @@
-import { type Constructor } from "@/util/types/Constructor";
-import { type GridEngine } from "grid-engine";
+import type { Constructor } from "@/util/types/Constructor";
+import type { GridEngine } from "grid-engine";
 import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
 export interface ScenePlugins {

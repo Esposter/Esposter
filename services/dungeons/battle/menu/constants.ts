@@ -1,4 +1,4 @@
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 export const INITIAL_CURSOR_POSITION = { x: 42, y: 38 } as const satisfies Position;
 

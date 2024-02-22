@@ -1,8 +1,8 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { type SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { type Game } from "phaser";
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // @NOTE: A very weird bug will occur here with setInteractive input priority

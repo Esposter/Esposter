@@ -1,11 +1,11 @@
-import { type TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
+import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectProperty";
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { type SetRequired } from "@/util/types/SetRequired";
+import type { SetRequired } from "@/util/types/SetRequired";
 import { Direction } from "grid-engine";
-import { type ArrayElement } from "type-fest/source/internal";
+import type { ArrayElement } from "type-fest/source/internal";
 
 export const useInteractWithSign = (): boolean => {
   const dialogStore = useDialogStore();

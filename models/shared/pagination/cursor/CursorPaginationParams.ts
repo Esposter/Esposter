@@ -1,8 +1,6 @@
-import {
-  createCommonPaginationParamsSchema,
-  type CommonPaginationParams,
-} from "@/models/shared/pagination/CommonPaginationParams";
-import { type SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import { createCommonPaginationParamsSchema } from "@/models/shared/pagination/CommonPaginationParams";
+import type { CommonPaginationParams } from "@/models/shared/pagination/CommonPaginationParams";
+import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { z } from "zod";
 
 export interface CursorPaginationParams<TSortKey extends string> extends CommonPaginationParams<TSortKey> {

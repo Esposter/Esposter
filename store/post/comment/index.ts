@@ -1,6 +1,6 @@
-import { type PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/db/schema/posts";
 import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
-import { type CreateCommentInput, type DeleteCommentInput, type UpdateCommentInput } from "@/server/trpc/routers/post";
+import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

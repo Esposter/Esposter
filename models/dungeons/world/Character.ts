@@ -1,7 +1,7 @@
-import { type Asset } from "@/models/dungeons/Asset";
-import { type CharacterId } from "@/models/dungeons/world/CharacterId";
-import { type ItemMetadata } from "@/models/shared/ItemMetadata";
-import { type Direction, type Position, type WalkingAnimationMapping } from "grid-engine";
+import type { Asset } from "@/models/dungeons/Asset";
+import type { CharacterId } from "@/models/dungeons/world/CharacterId";
+import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+import type { Direction, Position, WalkingAnimationMapping } from "grid-engine";
 
 export interface Character extends ItemMetadata {
   id: `${CharacterId}${string}`;

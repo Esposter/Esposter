@@ -1,4 +1,4 @@
-import { type AttackId } from "@/models/dungeons/attack/AttackId";
+import type { AttackId } from "@/models/dungeons/attack/AttackId";
 import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 

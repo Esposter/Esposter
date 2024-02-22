@@ -9,12 +9,8 @@ import {
   Scene,
   TextureLoader,
   WebGLRenderer,
-  type BufferGeometry,
-  type Light,
-  type Mesh,
-  type MeshBasicMaterial,
-  type MeshStandardMaterial,
 } from "three";
+import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 

@@ -1,5 +1,5 @@
-import { type EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
-import { type Operation } from "@/models/shared/pagination/Operation";
+import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
+import type { Operation } from "@/models/shared/pagination/Operation";
 
 export type OperationDataKey<TEntityTypeKey extends EntityTypeKey> =
   | `${Uncapitalize<TEntityTypeKey>}List`

@@ -1,6 +1,6 @@
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { type Unsubscribable } from "@trpc/server/observable";
+import type { Unsubscribable } from "@trpc/server/observable";
 
 export const useEmojiSubscribables = () => {
   const { $client } = useNuxtApp();

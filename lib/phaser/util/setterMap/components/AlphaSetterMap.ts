@@ -1,7 +1,7 @@
-import { type AlphaConfiguration } from "@/lib/phaser/models/configuration/components/AlphaConfiguration";
-import { type AlphaEventEmitsOptions } from "@/lib/phaser/models/emit/components/AlphaEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { AlphaConfiguration } from "@/lib/phaser/models/configuration/components/AlphaConfiguration";
+import type { AlphaEventEmitsOptions } from "@/lib/phaser/models/emit/components/AlphaEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const AlphaSetterMap = {
   alpha: (gameObject) => (value) => gameObject.setAlpha(value, value, value, value),

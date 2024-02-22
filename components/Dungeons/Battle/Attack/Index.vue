@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { type SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import type { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { getAttackPosition } from "@/services/dungeons/battle/attack/getAttackPosition";
-import { type Position } from "grid-engine";
-import { Animations, type Types } from "phaser";
+import type { Position } from "grid-engine";
+import { Animations } from "phaser";
+import type { Types } from "phaser";
 
 interface AttackProps {
   spritesheetKey: SpritesheetKey;

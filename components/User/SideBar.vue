@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type SideBarItem } from "@/models/user/SideBarItem";
+import type { SideBarItem } from "@/models/user/SideBarItem";
 
 interface StyledSideBar {
   items: SideBarItem[];

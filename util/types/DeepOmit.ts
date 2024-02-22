@@ -1,4 +1,4 @@
-import { type DeepOmitArray } from "@/util/types/DeepOmitArray";
+import type { DeepOmitArray } from "@/util/types/DeepOmitArray";
 
 // Union of primitives to skip with deep omit utilities
 type Primitive = string | Function | number | boolean | symbol | undefined | null;

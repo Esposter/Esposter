@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
-import { type MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/models/esbabbler/message";
 
 interface MessageListProps {
   messages: MessageEntity[];

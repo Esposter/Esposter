@@ -1,4 +1,4 @@
-import { type DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import { dayjs } from "@/services/dayjs";
 
 export const surveyerHeaders: DataTableHeader[] = [

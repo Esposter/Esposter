@@ -1,8 +1,8 @@
-import { type Attack } from "@/models/dungeons/attack/Attack";
+import type { Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { prettifyName } from "@/util/text/prettifyName";
-import { type Except } from "@/util/types/Except";
+import type { Except } from "@/util/types/Except";
 
 const baseAttacks: Except<Attack, "name" | "animation">[] = [
   {

@@ -1,9 +1,9 @@
-import { type RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
-import { type RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
+import type { RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "@/lib/phaser/util/setterMap/shared/ShapeSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.Rectangle, RectangleEventEmitsOptions> =
   {

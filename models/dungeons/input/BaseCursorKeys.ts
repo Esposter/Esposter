@@ -1,4 +1,4 @@
-import { type Input } from "phaser";
+import type { Input } from "phaser";
 
 export interface BaseCursorKeys {
   up: Input.Keyboard.Key;

@@ -6,8 +6,8 @@ import collision from "@/assets/dungeons/tilesets/Collision.png";
 import encounter from "@/assets/dungeons/tilesets/Encounter.png";
 import grass from "@/assets/dungeons/tilesets/Grass.png";
 import { TilesetKeyMap } from "@/models/dungeons/keys/TilesetKeyMap";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { type Loader } from "phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
 
 export const TilesetLoaderMap: Record<keyof TilesetKeyMap, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [TilesetKeyMap.BasicPlains]: (scene) => scene.load.image(TilesetKeyMap.BasicPlains, basicPlains),

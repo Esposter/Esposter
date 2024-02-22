@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type SVGAttributes } from "vue";
+import type { SVGAttributes } from "vue";
 
 export interface ClickerSvgGroupProps {
   gAttrs?: SVGAttributes;

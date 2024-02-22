@@ -1,11 +1,6 @@
-import { type Room } from "@/db/schema/rooms";
+import type { Room } from "@/db/schema/rooms";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import {
-  type CreateRoomInput,
-  type DeleteRoomInput,
-  type LeaveRoomInput,
-  type UpdateRoomInput,
-} from "@/server/trpc/routers/room";
+import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import Fuse from "fuse.js";

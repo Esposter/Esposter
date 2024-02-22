@@ -1,6 +1,6 @@
-import { type Trim } from "type-fest";
-import { type UpperCaseToLowerCase } from "type-fest/source/delimiter-case";
-import { type UpperCaseCharacters } from "type-fest/source/internal";
+import type { Trim } from "type-fest";
+import type { UpperCaseToLowerCase } from "type-fest/source/delimiter-case";
+import type { UpperCaseCharacters } from "type-fest/source/internal";
 
 type BasePrettifyName<T extends string> = T extends `${infer Start}${infer UpperCaseCharacter}${infer Rest}`
   ? Start extends UpperCaseToLowerCase<UpperCaseCharacters>

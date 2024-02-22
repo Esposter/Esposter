@@ -1,7 +1,7 @@
-import { type SizeConfiguration } from "@/lib/phaser/models/configuration/components/SizeConfiguration";
-import { type SizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/SizeEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { SizeConfiguration } from "@/lib/phaser/models/configuration/components/SizeConfiguration";
+import type { SizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/SizeEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const SizeSetterMap = {
   width: (gameObject) => (value) => {

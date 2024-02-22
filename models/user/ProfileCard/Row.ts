@@ -1,4 +1,4 @@
-import { type RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
 export interface Row {
   type: RowValueType;

@@ -4,7 +4,7 @@ import { useGameStore } from "@/store/clicker/game";
 import { isDiff } from "@/util/isDiff";
 import { jsonDateParse } from "@/util/jsonDateParse";
 import { omitDeep } from "@/util/omitDeep";
-import { type RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
+import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
 
 export const useReadClickerGame = async () => {
   const { $client } = useNuxtApp();

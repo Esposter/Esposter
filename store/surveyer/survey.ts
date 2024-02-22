@@ -1,6 +1,6 @@
-import { type Survey } from "@/db/schema/surveys";
+import type { Survey } from "@/db/schema/surveys";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { type CreateSurveyInput, type DeleteSurveyInput, type UpdateSurveyInput } from "@/server/trpc/routers/survey";
+import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 

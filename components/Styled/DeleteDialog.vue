@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import { type VCard } from "vuetify/components";
+import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { VCard } from "vuetify/components";
 
 export interface StyledDeleteDialogProps {
   cardProps?: VCard["$props"];

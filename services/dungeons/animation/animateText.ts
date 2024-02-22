@@ -1,6 +1,6 @@
 import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { sleep } from "@/util/sleep";
-import { type Scene } from "phaser";
+import type { Scene } from "phaser";
 
 export const animateText = (
   scene: Scene,

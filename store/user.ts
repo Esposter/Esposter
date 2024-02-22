@@ -1,5 +1,5 @@
-import { type User } from "@/db/schema/users";
-import { type UpdateUserInput } from "@/models/user/UpdateUserInput";
+import type { User } from "@/db/schema/users";
+import type { UpdateUserInput } from "@/models/user/UpdateUserInput";
 
 export const useUserStore = defineStore("user", () => {
   const { $client } = useNuxtApp();

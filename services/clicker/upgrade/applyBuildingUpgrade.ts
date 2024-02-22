@@ -1,5 +1,5 @@
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { applyUpgrades } from "@/services/clicker/upgrade/applyUpgrades";
 
 export const applyBuildingUpgrade = (

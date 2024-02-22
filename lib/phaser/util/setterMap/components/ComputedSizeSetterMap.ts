@@ -1,7 +1,7 @@
-import { type ComputedSizeConfiguration } from "@/lib/phaser/models/configuration/components/ComputedSizeConfiguration";
-import { type ComputedSizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/ComputedSizeEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { ComputedSizeConfiguration } from "@/lib/phaser/models/configuration/components/ComputedSizeConfiguration";
+import type { ComputedSizeEventEmitsOptions } from "@/lib/phaser/models/emit/components/ComputedSizeEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const ComputedSizeSetterMap = {
   width: (gameObject) => (value) => {

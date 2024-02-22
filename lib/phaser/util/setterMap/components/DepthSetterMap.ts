@@ -1,7 +1,7 @@
-import { type DepthConfiguration } from "@/lib/phaser/models/configuration/components/DepthConfiguration";
-import { type DepthEventEmitsOptions } from "@/lib/phaser/models/emit/components/DepthEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { DepthConfiguration } from "@/lib/phaser/models/configuration/components/DepthConfiguration";
+import type { DepthEventEmitsOptions } from "@/lib/phaser/models/emit/components/DepthEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const DepthSetterMap = {
   depth: (gameObject) => (value) => {

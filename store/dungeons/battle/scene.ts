@@ -9,7 +9,7 @@ import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { type Direction } from "grid-engine";
+import type { Direction } from "grid-engine";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const gameStore = useGameStore();

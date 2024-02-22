@@ -1,6 +1,6 @@
 import deepEqual from "deep-equal";
-import { type ArrayElement } from "type-fest/source/internal";
-import { type VValidation } from "vuetify/components";
+import type { ArrayElement } from "type-fest/source/internal";
+import type { VValidation } from "vuetify/components";
 
 // @TODO: Internal vuetify types
 // https://github.com/vuetifyjs/vuetify/issues/16680

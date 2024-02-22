@@ -1,4 +1,4 @@
-import { type IsEqual } from "@/util/types/IsEqual";
+import type { IsEqual } from "@/util/types/IsEqual";
 
 type Filter<KeyType, ExcludeType> =
   IsEqual<KeyType, ExcludeType> extends true ? never : KeyType extends ExcludeType ? never : KeyType;

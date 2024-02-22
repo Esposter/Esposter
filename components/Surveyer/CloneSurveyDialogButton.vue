@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Survey } from "@/db/schema/surveys";
+import type { Survey } from "@/db/schema/surveys";
 
 interface CloneSurveyDialogButton {
   name: Survey["name"];

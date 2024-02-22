@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 interface LeftCapProps {
   position: Position;

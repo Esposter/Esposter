@@ -1,9 +1,9 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
-import { type CompositeKey } from "@/models/azure";
+import type { CompositeKey } from "@/models/azure";
 import { AzureTable } from "@/models/azure/table";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import { type SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";

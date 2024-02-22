@@ -1,6 +1,6 @@
-import { type ShapeConfiguration } from "@/lib/phaser/models/configuration/shared/ShapeConfiguration";
-import { type ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/shared/ShapeEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { ShapeConfiguration } from "@/lib/phaser/models/configuration/shared/ShapeConfiguration";
+import type { ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/shared/ShapeEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
@@ -10,7 +10,7 @@ import { PipelineSetterMap } from "@/lib/phaser/util/setterMap/components/Pipeli
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,

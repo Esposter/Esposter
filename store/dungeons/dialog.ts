@@ -1,8 +1,8 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { type DialogTarget } from "@/models/dungeons/DialogTarget";
-import { type PlayerInput } from "@/models/dungeons/input/PlayerInput";
+import type { DialogTarget } from "@/models/dungeons/DialogTarget";
+import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { animateText } from "@/services/dungeons/animation/animateText";
 import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";

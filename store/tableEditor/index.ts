@@ -1,7 +1,7 @@
-import { type Item } from "@/models/tableEditor/Item";
+import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import { type VFormRef } from "@/models/vuetify/VFormRef";
+import type { VFormRef } from "@/models/vuetify/VFormRef";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";

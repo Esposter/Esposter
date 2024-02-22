@@ -1,7 +1,7 @@
-import { type OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
-import { type OriginEventEmitsOptions } from "@/lib/phaser/models/emit/components/OriginEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
+import type { OriginEventEmitsOptions } from "@/lib/phaser/models/emit/components/OriginEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const OriginSetterMap = {
   origin: (gameObject) => (value) => gameObject.setOrigin(value, value),

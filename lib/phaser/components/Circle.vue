@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { type ArcConfiguration } from "@/lib/phaser/models/configuration/ArcConfiguration";
-import { type ArcEventEmitsOptions } from "@/lib/phaser/models/emit/ArcEventEmitsOptions";
+import type { ArcConfiguration } from "@/lib/phaser/models/configuration/ArcConfiguration";
+import type { ArcEventEmitsOptions } from "@/lib/phaser/models/emit/ArcEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ArcSetterMap } from "@/lib/phaser/util/setterMap/ArcSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 interface CircleProps {
   configuration: Partial<ArcConfiguration>;

@@ -1,4 +1,4 @@
-import { type AttackId } from "@/models/dungeons/attack/AttackId";
+import type { AttackId } from "@/models/dungeons/attack/AttackId";
 
 export const useAttackManagerStore = defineStore("dungeons/battle/attackManager", () => {
   const attackId = ref<AttackId>();

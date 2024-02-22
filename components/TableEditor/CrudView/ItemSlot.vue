@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type Item } from "@/models/tableEditor/Item";
-import { type ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { Item } from "@/models/tableEditor/Item";
+import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { defaultPropsMap } from "@/services/tableEditor/defaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";

@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="TEnum extends string">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { type Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 import { Input } from "phaser";
 
 interface TextProps {

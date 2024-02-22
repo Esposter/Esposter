@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { type MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/models/esbabbler/message";
 import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { type Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {

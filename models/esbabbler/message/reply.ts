@@ -1,4 +1,4 @@
-import { type CompositeKeyEntity } from "@/models/azure";
+import type { CompositeKeyEntity } from "@/models/azure";
 import { messageSchema } from "@/models/esbabbler/message";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/models/esbabbler/message/metadata";
 import { getPropertyNames } from "@/services/shared/getPropertyNames";

@@ -1,8 +1,8 @@
-import { type TweenConfiguration } from "@/lib/phaser/models/configuration/global/TweenConfiguration";
-import { type TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import { type TweenEventEmitsOptions } from "@/lib/phaser/models/emit/global/TweenEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects, type Tweens } from "phaser";
+import type { TweenConfiguration } from "@/lib/phaser/models/configuration/global/TweenConfiguration";
+import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
+import type { TweenEventEmitsOptions } from "@/lib/phaser/models/emit/global/TweenEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects, Tweens } from "phaser";
 
 export const TweenSetterMap = {
   tween: (gameObject, emit) =>

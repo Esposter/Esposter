@@ -1,9 +1,9 @@
-import { type ArcConfiguration } from "@/lib/phaser/models/configuration/ArcConfiguration";
-import { type ArcEventEmitsOptions } from "@/lib/phaser/models/emit/ArcEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { ArcConfiguration } from "@/lib/phaser/models/configuration/ArcConfiguration";
+import type { ArcEventEmitsOptions } from "@/lib/phaser/models/emit/ArcEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "@/lib/phaser/util/setterMap/shared/ShapeSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 export const ArcSetterMap: SetterMap<ArcConfiguration, GameObjects.Arc, ArcEventEmitsOptions> = {
   ...ShapeSetterMap,

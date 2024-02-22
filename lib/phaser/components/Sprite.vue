@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { type SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
-import { type SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
+import type { SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
+import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
-import { type SetRequired } from "@/util/types/SetRequired";
-import { type GameObjects } from "phaser";
+import type { SetRequired } from "@/util/types/SetRequired";
+import type { GameObjects } from "phaser";
 
 export interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "textureKey">;

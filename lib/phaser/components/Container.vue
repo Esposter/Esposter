@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import { InjectionKeyMap } from "@/lib/phaser/models/InjectionKeyMap";
-import { type ContainerConfiguration } from "@/lib/phaser/models/configuration/ContainerConfiguration";
-import { type ContainerEventEmitsOptions } from "@/lib/phaser/models/emit/ContainerEventEmitsOptions";
+import type { ContainerConfiguration } from "@/lib/phaser/models/configuration/ContainerConfiguration";
+import type { ContainerEventEmitsOptions } from "@/lib/phaser/models/emit/ContainerEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ContainerSetterMap } from "@/lib/phaser/util/setterMap/ContainerSetterMap";
-import { type GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 
 interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ClickerSvgGroupProps } from "@/components/Clicker/Svg/Group.vue";
+import type { ClickerSvgGroupProps } from "@/components/Clicker/Svg/Group.vue";
 
 const svgGroupProps = defineProps<ClickerSvgGroupProps>();
 const emit = defineEmits<{ click: [value: MouseEvent] }>();

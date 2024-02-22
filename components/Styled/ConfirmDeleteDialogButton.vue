@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type StyledDeleteDialogProps } from "@/components/Styled/DeleteDialog.vue";
+import type { StyledDeleteDialogProps } from "@/components/Styled/DeleteDialog.vue";
 
 const { cardProps } = defineProps<StyledDeleteDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();

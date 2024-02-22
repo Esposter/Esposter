@@ -1,10 +1,11 @@
-import { type AzureUpdateEntity, type CompositeKey } from "@/models/azure";
-import { type AzureTable, type AzureTableEntityMap, type CustomTableClient } from "@/models/azure/table";
+import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
 import { dayjs } from "@/services/dayjs";
 import { now } from "@/util/now";
-import { type Constructor } from "@/util/types/Constructor";
-import { type TupleSlice } from "@/util/types/TupleSlice";
-import { TableClient, type TableEntity, type TableEntityQueryOptions } from "@azure/data-tables";
+import type { Constructor } from "@/util/types/Constructor";
+import type { TupleSlice } from "@/util/types/TupleSlice";
+import { TableClient } from "@azure/data-tables";
+import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import { plainToInstance } from "class-transformer";
 
 const runtimeConfig = useRuntimeConfig();

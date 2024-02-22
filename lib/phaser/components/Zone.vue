@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { type ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
-import { type ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
+import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
+import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ZoneSetterMap } from "@/lib/phaser/util/setterMap/ZoneSetterMap";
-import { type SetRequired } from "@/util/types/SetRequired";
-import { type GameObjects } from "phaser";
+import type { SetRequired } from "@/util/types/SetRequired";
+import type { GameObjects } from "phaser";
 
 interface ZoneProps {
   configuration: SetRequired<Partial<ZoneConfiguration>, "x" | "y" | "width" | "height">;

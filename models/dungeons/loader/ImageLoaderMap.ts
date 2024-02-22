@@ -13,8 +13,8 @@ import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExp
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { type SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { type Loader } from "phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
 
 export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [ImageKey.BattleForestBackground]: (scene) =>

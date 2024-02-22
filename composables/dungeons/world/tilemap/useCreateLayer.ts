@@ -1,5 +1,5 @@
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { type Tilemaps } from "phaser";
+import type { Tilemaps } from "phaser";
 
 export const useCreateLayer = (layerId: string, tileset: Tilemaps.Tileset | Tilemaps.Tileset[]) => {
   const worldSceneStore = useWorldSceneStore();

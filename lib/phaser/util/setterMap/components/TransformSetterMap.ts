@@ -1,7 +1,7 @@
-import { type TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
-import { type TransformEventEmitsOptions } from "@/lib/phaser/models/emit/components/TransformEventEmitsOptions";
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { type GameObjects } from "phaser";
+import type { TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
+import type { TransformEventEmitsOptions } from "@/lib/phaser/models/emit/components/TransformEventEmitsOptions";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
 
 export const TransformSetterMap = {
   angle: (gameObject) => (value) => gameObject.setAngle(value),

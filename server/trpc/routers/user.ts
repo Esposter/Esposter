@@ -1,10 +1,11 @@
 import { db } from "@/db";
-import { selectUserSchema, users, type User } from "@/db/schema/users";
+import { selectUserSchema, users } from "@/db/schema/users";
+import type { User } from "@/db/schema/users";
 import { updateUserInputSchema } from "@/models/user/UpdateUserInput";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { eq } from "drizzle-orm";
-import { type z } from "zod";
+import type { z } from "zod";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;

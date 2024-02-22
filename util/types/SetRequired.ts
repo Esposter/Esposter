@@ -1,5 +1,5 @@
-import { type Except } from "@/util/types/Except";
-import { type Simplify } from "type-fest";
+import type { Except } from "@/util/types/Except";
+import type { Simplify } from "type-fest";
 
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
   // `extends unknown` is always going to be the case and is used to convert any

@@ -1,10 +1,7 @@
 import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
-import { type Item } from "@/models/tableEditor/Item";
-import {
-  type BaseItemCategoryDefinition,
-  type ItemCategoryDefinition,
-} from "@/models/tableEditor/ItemCategoryDefinition";
-import { type ItemEntityType } from "@/models/tableEditor/ItemEntityType";
+import type { Item } from "@/models/tableEditor/Item";
+import type { BaseItemCategoryDefinition, ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 

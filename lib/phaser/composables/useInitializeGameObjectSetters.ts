@@ -1,7 +1,7 @@
-import { type SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { getUpdateEvent } from "@/lib/phaser/util/emit/getUpdateEvent";
-import { type GameObjects } from "phaser";
-import { type SetupContext, type WatchStopHandle } from "vue";
+import type { GameObjects } from "phaser";
+import type { SetupContext, WatchStopHandle } from "vue";
 
 export const useInitializeGameObjectSetters = <
   TConfiguration extends object,

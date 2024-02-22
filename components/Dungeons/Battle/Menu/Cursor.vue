@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T extends string">
 import Image from "@/lib/phaser/components/Image.vue";
-import { type Grid } from "@/models/dungeons/Grid";
+import type { Grid } from "@/models/dungeons/Grid";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { type Position } from "grid-engine";
+import type { Position } from "grid-engine";
 
 interface CursorProps {
   grid: Grid<T>;

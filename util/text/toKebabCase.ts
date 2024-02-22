@@ -1,4 +1,4 @@
-import { type CamelToKebab } from "@/util/types/CamelToKebab";
+import type { CamelToKebab } from "@/util/types/CamelToKebab";
 
 export const toKebabCase = <T extends string>(string: T) =>
   (string

@@ -1,5 +1,6 @@
 import { selectRoomSchema } from "@/db/schema/rooms";
-import { AzureTable, type CustomTableClient } from "@/models/azure/table";
+import { AzureTable } from "@/models/azure/table";
+import type { CustomTableClient } from "@/models/azure/table";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import {
   MessageReplyMetadataEntity,

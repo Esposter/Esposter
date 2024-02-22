@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
 import { ItemType } from "@/models/clicker/ItemType";
-import { type Upgrade } from "@/models/clicker/Upgrade";
+import type { Upgrade } from "@/models/clicker/Upgrade";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";

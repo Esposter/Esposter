@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { type AttackProps } from "@/models/dungeons/attack/AttackProps";
+import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { Animations } from "phaser";
 
