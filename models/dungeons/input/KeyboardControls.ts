@@ -15,13 +15,13 @@ export class KeyboardControls implements Controls {
     this.cursorKeys = scene.input.keyboard.createCursorKeys();
   }
 
-  getInput() {
+  getInput(justDown?: true) {
     let result: PlayerInput;
 
     if (this.input) result = this.input;
     else if (Input.Keyboard.JustDown(this.cursorKeys.space)) result = PlayerSpecialInput.Confirm;
     else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) result = PlayerSpecialInput.Cancel;
-    else result = mapCursorKeysToDirection(this.cursorKeys);
+    else result = mapCursorKeysToDirection(this.cursorKeys, justDown);
     // We've retrieved an input so the old saved input is invalid now
     this.input = null;
     return result;

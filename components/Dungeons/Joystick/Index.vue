@@ -3,7 +3,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
+import { getJoystickRadius } from "@/services/dungeons/joystick/getJoystickRadius";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
@@ -18,14 +18,15 @@ const { controls } = storeToRefs(gameStore);
 const virtualJoystick = ref<VirtualJoystick>();
 const base = ref<GameObjects.Image>();
 const thumb = ref<GameObjects.Image>();
+const joystickRadius = computed(() => getJoystickRadius(scene.value));
 
 watch([base, thumb], ([newBase, newThumb]) => {
   if (!(newBase && newThumb)) return;
 
   virtualJoystick.value = scene.value.virtualJoystickPlugin.add(scene.value, {
-    x: getJoystickX(),
+    x: getJoystickX(scene.value),
     y: getJoystickY(scene.value),
-    radius: JOYSTICK_RADIUS,
+    radius: joystickRadius.value,
     base: newBase,
     thumb: newThumb,
   });
@@ -41,7 +42,12 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 <template>
   <template v-if="isMobile()">
     <Image
-      :configuration="{ textureKey: ImageKey.Base, depth: Number.MAX_SAFE_INTEGER }"
+      :configuration="{
+        displayWidth: joystickRadius * 2,
+        displayHeight: joystickRadius * 2,
+        textureKey: ImageKey.Base,
+        depth: Number.MAX_SAFE_INTEGER,
+      }"
       :on-complete="
         (image) => {
           base = image;
@@ -49,7 +55,12 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
       "
     />
     <Image
-      :configuration="{ textureKey: ImageKey.Thumb, depth: Number.MAX_SAFE_INTEGER }"
+      :configuration="{
+        displayWidth: joystickRadius,
+        displayHeight: joystickRadius,
+        textureKey: ImageKey.Thumb,
+        depth: Number.MAX_SAFE_INTEGER,
+      }"
       :on-complete="
         (image) => {
           thumb = image;

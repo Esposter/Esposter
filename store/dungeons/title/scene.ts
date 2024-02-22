@@ -14,7 +14,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
-  const isContinueEnabled = ref(false);
+  const isContinueEnabled = ref(true);
   const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption>>;
 
   watch(
@@ -42,7 +42,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   );
 
   const onPlayerInput = () => {
-    const input = controls.value.getInput();
+    const input = controls.value.getInput(true);
     if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };

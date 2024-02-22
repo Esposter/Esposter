@@ -1,1 +1,1 @@
-export const JOYSTICK_RADIUS = 100;
+export const JOYSTICK_BASE_RADIUS = 100;

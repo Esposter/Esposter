@@ -56,5 +56,7 @@ const { optionGrid } = storeToRefs(titleSceneStore);
       }"
     />
     <DungeonsTitleMenuContainer />
+    <DungeonsJoystick />
+    <DungeonsJoystickConfirmThumb />
   </Scene>
 </template>
