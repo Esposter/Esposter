@@ -1,8 +1,8 @@
-import { buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
 import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
+import { buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
 import { ClickerType, clickerTypeSchema } from "@/models/clicker/ClickerType";
-import { createUpgradeSchema } from "@/models/clicker/Upgrade";
 import type { Upgrade } from "@/models/clicker/Upgrade";
+import { createUpgradeSchema } from "@/models/clicker/Upgrade";
 import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Except } from "@/util/types/Except";

@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { posts } from "@/db/schema/posts";
-import { likes, selectLikeSchema } from "@/db/schema/users";
 import type { Like } from "@/db/schema/users";
+import { likes, selectLikeSchema } from "@/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";

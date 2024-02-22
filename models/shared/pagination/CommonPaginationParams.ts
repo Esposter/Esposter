@@ -1,5 +1,5 @@
-import { createSortItemSchema } from "@/models/shared/pagination/sorting/SortItem";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import { createSortItemSchema } from "@/models/shared/pagination/sorting/SortItem";
 import { DEFAULT_READ_LIMIT, MAX_READ_LIMIT } from "@/services/shared/pagination/constants";
 import { z } from "zod";
 

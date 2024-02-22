@@ -1,7 +1,7 @@
 import { dayjs } from "@/services/dayjs";
 import type { Except } from "@/util/types/Except";
-import { Howl } from "howler";
 import type { HowlOptions } from "howler";
+import { Howl } from "howler";
 
 const cache: Record<string, Howl | null> = {};
 

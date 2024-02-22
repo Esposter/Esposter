@@ -4,8 +4,8 @@ import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectT
 import type { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { getAttackPosition } from "@/services/dungeons/battle/attack/getAttackPosition";
 import type { Position } from "grid-engine";
-import { Animations } from "phaser";
 import type { Types } from "phaser";
+import { Animations } from "phaser";
 
 interface AttackProps {
   spritesheetKey: SpritesheetKey;

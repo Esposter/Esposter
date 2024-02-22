@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import type { Post, PostWithRelations } from "@/db/schema/posts";
+import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";

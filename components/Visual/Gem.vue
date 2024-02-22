@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
 import {
   AmbientLight,
   Clock,
@@ -10,7 +11,6 @@ import {
   TextureLoader,
   WebGLRenderer,
 } from "three";
-import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 

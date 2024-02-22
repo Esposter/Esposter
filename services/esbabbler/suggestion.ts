@@ -2,8 +2,8 @@ import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 import type { MentionOptions } from "@tiptap/extension-mention";
 import { VueRenderer } from "@tiptap/vue-3";
-import tippy from "tippy.js";
 import type { Instance } from "tippy.js";
+import tippy from "tippy.js";
 
 export const suggestion: MentionOptions["suggestion"] = {
   items: async ({ query }) => {

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import Sprite from "@/lib/phaser/components/Sprite.vue";
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
+import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { Character } from "@/models/dungeons/world/Character";
-import { Direction } from "grid-engine";
 import type { GridEngine, Position } from "grid-engine";
+import { Direction } from "grid-engine";
 import type { GameObjects } from "phaser";
-import { filter } from "rxjs";
 import type { Subscription } from "rxjs";
+import { filter } from "rxjs";
 
 export interface CharacterProps {
   characterId: Character["id"];

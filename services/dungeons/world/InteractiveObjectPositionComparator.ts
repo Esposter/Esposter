@@ -1,6 +1,6 @@
 import type { InteractableDirection } from "@/models/dungeons/InteractableDirection";
-import { Direction } from "grid-engine";
 import type { Position } from "grid-engine";
+import { Direction } from "grid-engine";
 
 export type InteractableDirectionMap = Record<InteractableDirection, boolean>;
 

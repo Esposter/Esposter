@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { selectUserSchema, users } from "@/db/schema/users";
 import type { User } from "@/db/schema/users";
+import { selectUserSchema, users } from "@/db/schema/users";
 import { updateUserInputSchema } from "@/models/user/UpdateUserInput";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";

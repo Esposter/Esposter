@@ -1,7 +1,7 @@
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { asc, desc } from "drizzle-orm";
 import type { TableConfig } from "drizzle-orm";
+import { asc, desc } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 export const convertSortByToSql = <TTable extends TableConfig>(

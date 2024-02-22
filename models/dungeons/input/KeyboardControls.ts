@@ -3,8 +3,8 @@ import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
-import { Input } from "phaser";
 import type { Types } from "phaser";
+import { Input } from "phaser";
 
 export class KeyboardControls implements Controls {
   cursorKeys: Types.Input.Keyboard.CursorKeys;

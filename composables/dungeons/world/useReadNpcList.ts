@@ -9,8 +9,8 @@ import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
 import { findTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { Direction } from "grid-engine";
 import type { Position } from "grid-engine";
+import { Direction } from "grid-engine";
 
 export const useReadNpcList = () => {
   const worldSceneStore = useWorldSceneStore();

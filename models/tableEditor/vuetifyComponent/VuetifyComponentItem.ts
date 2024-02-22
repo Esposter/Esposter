@@ -1,6 +1,6 @@
 import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
-import { createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
 import type { ItemEntityType } from "@/models/tableEditor/ItemEntityType";
+import { createItemEntityTypeSchema } from "@/models/tableEditor/ItemEntityType";
 import {
   VuetifyComponentItemType,
   vuetifyComponentItemTypeSchema,

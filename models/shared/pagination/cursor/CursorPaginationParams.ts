@@ -1,5 +1,5 @@
-import { createCommonPaginationParamsSchema } from "@/models/shared/pagination/CommonPaginationParams";
 import type { CommonPaginationParams } from "@/models/shared/pagination/CommonPaginationParams";
+import { createCommonPaginationParamsSchema } from "@/models/shared/pagination/CommonPaginationParams";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { z } from "zod";
 

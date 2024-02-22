@@ -4,8 +4,8 @@ import { CharacterCount } from "@tiptap/extension-character-count";
 import { Link } from "@tiptap/extension-link";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
 import type { AnyExtension } from "@tiptap/vue-3";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
   height?: string;

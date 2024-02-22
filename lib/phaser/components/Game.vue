@@ -2,8 +2,8 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Except } from "@/util/types/Except";
-import { Game } from "phaser";
 import type { Types } from "phaser";
+import { Game } from "phaser";
 
 interface GameProps {
   // We're gonna stop people from being stupid and adding scenes like this
