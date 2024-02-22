@@ -1,10 +1,11 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
+import { Grid } from "@/models/dungeons/Grid";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
+import type { PlayerAttackOption } from "@/models/dungeons/battle/menu/PlayerAttackOption";
 import type { Monster } from "@/models/dungeons/battle/monster/Monster";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { getAttackNames } from "@/services/dungeons/battle/attack/getAttackNames";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
-import { getPlayerAttackOptionGrid } from "@/services/dungeons/battle/menu/getPlayerAttackOptionGrid";
 import type { Position } from "grid-engine";
 
 export const usePlayerStore = defineStore("dungeons/battle/player", () => {
@@ -28,7 +29,23 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const optionGrid = ref(PlayerOptionGrid);
   const attackNames = computed(() => getAttackNames(activeMonster.value));
-  const attackOptionGrid = ref(getPlayerAttackOptionGrid(attackNames.value));
+  const attackOptionGrid = ref() as Ref<Grid<PlayerAttackOption>>;
+
+  watch(
+    attackNames,
+    (newAttackNames) => {
+      attackOptionGrid.value = new Grid(
+        [
+          [newAttackNames[0], newAttackNames[1]],
+          [newAttackNames[2], newAttackNames[3]],
+        ],
+        2,
+        2,
+      );
+    },
+    { immediate: true },
+  );
+
   const takeDamage = useTakeDamage(false);
 
   return {

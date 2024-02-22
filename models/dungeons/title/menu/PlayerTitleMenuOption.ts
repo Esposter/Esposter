@@ -1,4 +1,4 @@
-export enum PlayerOption {
+export enum PlayerTitleMenuOption {
   "New Game" = "New Game",
   Continue = "Continue",
   Options = "Options",
