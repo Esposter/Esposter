@@ -7,7 +7,7 @@ import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
 import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
 
-interface ImageProps {
+export interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "textureKey">;
   onComplete?: (image: GameObjects.Image) => void;
 }

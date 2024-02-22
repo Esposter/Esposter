@@ -7,8 +7,8 @@ export const getHealthBarXTween = (
   newX: number,
   onComplete?: () => void,
 ): TweenBuilderConfiguration => ({
-  x: newX,
   duration: dayjs.duration(1, "second").asMilliseconds(),
+  x: newX,
   ease: Math.Easing.Sine.Out,
   onUpdate: (_, __, ___, current) => {
     target.value = current;

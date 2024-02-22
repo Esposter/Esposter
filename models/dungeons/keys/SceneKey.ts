@@ -1,5 +1,6 @@
 export enum SceneKey {
   Preloader = "Preloader",
-  Battle = "Battle",
+  Title = "Title",
   World = "World",
+  Battle = "Battle",
 }

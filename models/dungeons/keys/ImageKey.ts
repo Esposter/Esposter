@@ -1,6 +1,10 @@
 export enum ImageKey {
-  BattleForestBackground = "BattleForestBackground",
+  TitleScreenBackground = "TitleScreenBackground",
+  TitleTextBackground = "TitleTextBackground",
+  TitleText = "TitleText",
+
   WorldHomeForeground = "WorldHomeForeground",
+  BattleForestBackground = "BattleForestBackground",
 
   HealthBarBackground = "HealthBarBackground",
   HealthBarLeftCap = "HealthBarLeftCap",
@@ -9,11 +13,13 @@ export enum ImageKey {
   HealthBarLeftCapShadow = "HealthBarLeftCapShadow",
   HealthBarMiddleShadow = "HealthBarMiddleShadow",
   HealthBarRightCapShadow = "HealthBarRightCapShadow",
+  MenuBackground = "MenuBackground",
   // Monsters
   Carnodusk = "Carnodusk",
   Iguanignite = "Iguanignite",
 
   Cursor = "Cursor",
+  CursorWhite = "CursorWhite",
   Base = "Base",
   Thumb = "Thumb",
 }

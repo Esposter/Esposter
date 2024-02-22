@@ -12,7 +12,7 @@ const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const playerStore = usePlayerStore();
 const { attackOptionGrid } = storeToRefs(playerStore);
-const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((x) => x));
+const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((positions) => positions));
 </script>
 
 <template>
@@ -36,6 +36,6 @@ const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((x) =
         y: y - 16,
       }"
     />
-    <DungeonsBattleMenuCursor :grid="attackOptionGrid" :position-map="CursorPositionMap" />
+    <DungeonsInputCursor :grid="attackOptionGrid" :position-map="CursorPositionMap" />
   </Container>
 </template>

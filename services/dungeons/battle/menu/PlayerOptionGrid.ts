@@ -7,4 +7,5 @@ export const PlayerOptionGrid = new Grid(
     [PlayerOption.Item, PlayerOption.Flee],
   ],
   2,
+  2,
 );

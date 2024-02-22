@@ -8,4 +8,5 @@ export const getPlayerAttackOptionGrid = (PlayerAttackOptions: PlayerAttackOptio
       [PlayerAttackOptions[2], PlayerAttackOptions[3]],
     ],
     2,
+    2,
   );
