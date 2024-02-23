@@ -14,7 +14,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
-  const isContinueEnabled = ref(true);
+  const isContinueEnabled = ref(false);
   const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption>>;
 
   watch(
