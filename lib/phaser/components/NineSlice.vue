@@ -9,17 +9,18 @@ import type { GameObjects } from "phaser";
 
 export interface NineSliceProps {
   configuration: SetRequired<Partial<NineSliceConfiguration>, "textureKey">;
+  onComplete?: (nineslice: GameObjects.NineSlice) => void;
 }
 
 interface NineSliceEmits extends /** @vue-ignore */ NineSliceEventEmitsOptions {}
 
 const props = defineProps<NineSliceProps>();
-const { configuration } = toRefs(props);
+const { configuration, onComplete } = toRefs(props);
 const { x, y, textureKey, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight } = configuration.value;
 const emit = defineEmits<NineSliceEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const NineSlice = ref(
+const nineslice = ref(
   scene.value.add.nineslice(
     x ?? 0,
     y ?? 0,
@@ -33,7 +34,8 @@ const NineSlice = ref(
     bottomHeight,
   ),
 ) as Ref<GameObjects.NineSlice>;
-useInitializeGameObject(NineSlice, configuration, emit, NineSliceSetterMap);
+useInitializeGameObject(nineslice, configuration, emit, NineSliceSetterMap);
+onComplete.value?.(nineslice.value);
 </script>
 
 <template></template>
