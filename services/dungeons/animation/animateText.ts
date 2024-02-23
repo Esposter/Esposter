@@ -23,7 +23,7 @@ export const animateText = (
         // We need this delay here to prevent the last character animations
         // from being updated after we set the text back to blank
         // It seems that we need exactly 2 ticks for it to finish
-        await sleep(2 * delay);
+        await sleep(delay * 2);
         configuration?.onComplete?.();
       }
     },

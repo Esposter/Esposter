@@ -25,7 +25,7 @@ export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
     const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
     if (index > -1) {
       post.likes[index] = { ...post.likes[index], ...updatedLike };
-      post.noLikes += 2 * updatedLike.value;
+      post.noLikes += updatedLike.value * 2;
     }
   };
   const deleteLike = async (postId: DeleteLikeInput) => {

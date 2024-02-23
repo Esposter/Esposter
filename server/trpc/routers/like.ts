@@ -53,7 +53,7 @@ export const likeRouter = router({
       ]);
       if (!post || !like || like.value === rest.value) return null;
 
-      const noLikesNew = post.noLikes + 2 * rest.value;
+      const noLikesNew = post.noLikes + rest.value * 2;
 
       return db.transaction(async (tx) => {
         const updatedLike = (

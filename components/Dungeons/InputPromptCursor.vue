@@ -21,8 +21,8 @@ const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVi
       x: inputPromptCursorX,
       textureKey: ImageKey.Cursor,
       angle: 90,
-      scaleX: 2 * scale,
-      scaleY: 1.5 * scale,
+      scaleX: scale * 2,
+      scaleY: scale * 1.5,
       displayWidth: inputPromptCursorDisplayWidth,
       tween: {
         delay: 0,
