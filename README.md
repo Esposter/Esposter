@@ -191,7 +191,6 @@
 |   GitLens — Git supercharged   |   https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens   |
 |   Powershell   |   https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell   |
 |   Material Icon Theme   |   https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme   |
-|   Import Cost   |   https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost   |
 |   Better Comments   |   https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments   |
 |   Dark++ Italic   |   https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic   |
 
