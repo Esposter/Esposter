@@ -48,7 +48,7 @@
     "gen-env-types": "^1.3.4",
     "h3": "^1.11.1",
     "happy-dom": "^13.6.0",
-    "nuxt": "3.9.1",
+    "nuxt": "^3.10.3",
     "prettier": "^3.2.5",
     "sass": "^1.71.1",
     "tsx": "^4.7.1",
@@ -125,7 +125,7 @@
     "three-globe": "^2.31.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.19",
-    "vue": "3.4.8",
+    "vue": "^3.4.20",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.3.0",
     "vue-waypoint": "^4.3.0",
@@ -136,11 +136,10 @@
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released",
-    "nuxt & vue": "https://github.com/nuxt/nuxt/issues/25214",
     "@auth/core": ""
   },
   "engines": {
     "node": "^20.11.1"
   },
-  "packageManager": "pnpm@8.15.3"
+  "packageManager": "pnpm@8.15.4"
 }

@@ -4,8 +4,7 @@ import { NOT_FOUND_BACKGROUND_PATH } from "@/services/esposter/constants";
 import { gsap } from "gsap";
 
 const event = useRequestEvent();
-
-setResponseStatus(event, 404);
+if (event) setResponseStatus(event, 404);
 
 onMounted(() => {
   gsap.to(".hover", {
