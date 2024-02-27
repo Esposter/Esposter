@@ -124,7 +124,7 @@ dependencies:
     version: 7.0.0
   grid-engine:
     specifier: ^2.44.0
-    version: 2.44.0(phaser@3.80.0)
+    version: 2.44.0(phaser@3.80.1)
   gsap:
     specifier: ^3.12.5
     version: 3.12.5
@@ -150,8 +150,8 @@ dependencies:
     specifier: ^1.1.2
     version: 1.1.2
   phaser:
-    specifier: ^3.80.0
-    version: 3.80.0
+    specifier: ^3.80.1
+    version: 3.80.1
   phaser3-rex-plugins:
     specifier: ^1.80.0
     version: 1.80.0
@@ -7763,13 +7763,13 @@ packages:
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  /grid-engine@2.44.0(phaser@3.80.0):
+  /grid-engine@2.44.0(phaser@3.80.1):
     resolution: {integrity: sha512-DdWT63o5Sn7lLqhw0KAt+lHtjcBWLjIhJNhbopHLhETsRRMjGweHPFNWNso4EXSYOL26ZDCHIj2H0FJpbAAOVg==}
     peerDependencies:
       phaser: ~3.70.0
     dependencies:
       mnemonist: 0.39.8
-      phaser: 3.80.0
+      phaser: 3.80.1
       rxjs: 7.8.1
       tiled-property-flattener: 1.1.1
     dev: false
@@ -9706,8 +9706,8 @@ packages:
       - encoding
     dev: false
 
-  /phaser@3.80.0:
-    resolution: {integrity: sha512-LUEPFzQKXSlPxrDjFUaeq6t47j1Y58F67OsCKflvDH1DUSwVxAD1/vDUPQJj+dWniKBxAlL1BoCXQnjmtcJxUQ==}
+  /phaser@3.80.1:
+    resolution: {integrity: sha512-VQGAWoDOkEpAWYkI+PUADv5Ql+SM0xpLuAMBJHz9tBcOLqjJ2wd8bUhxJgOqclQlLTg97NmMd9MhS75w16x1Cw==}
     dependencies:
       eventemitter3: 5.0.1
     dev: false
