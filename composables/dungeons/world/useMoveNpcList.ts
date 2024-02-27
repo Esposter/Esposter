@@ -12,7 +12,7 @@ export const useMoveNpcList = () => {
   const { npcList } = storeToRefs(npcStore);
 
   for (const npc of npcList.value) {
-    if (npc.isMoving) continue;
+    if (!scene.value.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
 
     let pathSize: number;
     let newPathIndex: number;
