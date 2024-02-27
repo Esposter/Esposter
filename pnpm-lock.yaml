@@ -317,8 +317,8 @@ devDependencies:
     specifier: ^1.8.27
     version: 1.8.27(typescript@5.3.3)
   vuetify-nuxt-module:
-    specifier: ^0.11.0
-    version: 0.11.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.1.4)(vue@3.4.20)
+    specifier: ^0.12.0
+    version: 0.12.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.1.4)(vue@3.4.20)
 
 packages:
 
@@ -12275,8 +12275,8 @@ packages:
       '@vue/shared': 3.4.20
       typescript: 5.3.3
 
-  /vuetify-nuxt-module@0.11.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.1.4)(vue@3.4.20):
-    resolution: {integrity: sha512-8FMGIkYwyxxyOYibmRNVc7vFGhbTOoOI0NyLBb+cGK/SWCSw2080K6ymv306HiBvnk6+B2VT779Rs8Tw7PEndA==}
+  /vuetify-nuxt-module@0.12.0(rollup@2.79.1)(typescript@5.3.3)(vite@5.1.4)(vue@3.4.20):
+    resolution: {integrity: sha512-ALpirykO22UpGOaiBP9TW21EiDpCqooxnAB5OFCYRcnBhLQxhwr6UZEIvQTZVafeVVMAhZjVVO1jIVyL5ndw5g==}
     dependencies:
       '@nuxt/kit': 3.10.3(rollup@2.79.1)
       defu: 6.1.4
@@ -12560,7 +12560,6 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
