@@ -2,17 +2,20 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
-import { CursorPositionMap } from "@/services/dungeons/battle/menu/CursorPositionMap";
-import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/battle/menu/constants";
+import {
+  CURSOR_POSITION_INCREMENT,
+  INITIAL_CURSOR_POSITION,
+  MENU_HEIGHT,
+  MENU_PADDING,
+} from "@/services/dungeons/battle/menu/constants";
+import { getPanelTextPosition } from "@/services/dungeons/battle/menu/getPanelTextPosition";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import type { Position } from "grid-engine";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const playerStore = usePlayerStore();
 const { attackOptionGrid } = storeToRefs(playerStore);
-const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((positions) => positions));
 </script>
 
 <template>
@@ -26,16 +29,19 @@ const cursorPositions = computed(() => CursorPositionMap.flatMap<Position>((posi
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"
     />
-    <DungeonsBattleMenuPanelText
-      v-for="({ x, y }, index) in cursorPositions"
-      :key="index"
-      v-model:grid="attackOptionGrid"
-      :index="index"
-      :position="{
-        x: x + 12,
-        y: y - 16,
-      }"
+    <template v-for="(row, rowIndex) in attackOptionGrid.grid" :key="rowIndex">
+      <DungeonsBattleMenuPanelText
+        v-for="(_, columnIndex) in row"
+        :key="rowIndex * attackOptionGrid.columnSize + columnIndex"
+        v-model:grid="attackOptionGrid"
+        :index="rowIndex * attackOptionGrid.columnSize + columnIndex"
+        :position="getPanelTextPosition(rowIndex, columnIndex)"
+      />
+    </template>
+    <DungeonsInputCursor
+      :grid="attackOptionGrid"
+      :initial-position="INITIAL_CURSOR_POSITION"
+      :position-increment="CURSOR_POSITION_INCREMENT"
     />
-    <DungeonsInputCursor :grid="attackOptionGrid" :position-map="CursorPositionMap" />
   </Container>
 </template>

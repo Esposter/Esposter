@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TEnum extends string">
+<script setup lang="ts" generic="TEnum extends string, TGrid extends TEnum[][]">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { Grid } from "@/models/dungeons/Grid";
@@ -13,7 +13,7 @@ interface TextProps {
 }
 
 const { index, position } = defineProps<TextProps>();
-const grid = defineModel<Grid<TEnum>>("grid", { required: true });
+const grid = defineModel<Grid<TEnum, TGrid>>("grid", { required: true });
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 </script>

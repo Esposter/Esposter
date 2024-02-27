@@ -41,6 +41,7 @@ defineRouteRules({ ssr: false });
     >
       <DungeonsPreloaderScene />
       <DungeonsTitleScene />
+      <DungeonsSettingsScene />
       <DungeonsWorldScene />
       <DungeonsBattleScene />
     </Game>

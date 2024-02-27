@@ -29,7 +29,9 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const optionGrid = ref(PlayerOptionGrid);
   const attackNames = computed(() => getAttackNames(activeMonster.value));
-  const attackOptionGrid = ref() as Ref<Grid<PlayerAttackOption>>;
+  const attackOptionGrid = ref() as Ref<
+    Grid<PlayerAttackOption, [[PlayerAttackOption, PlayerAttackOption], [PlayerAttackOption, PlayerAttackOption]]>
+  >;
 
   watch(
     attackNames,

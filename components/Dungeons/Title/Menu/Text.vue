@@ -3,37 +3,39 @@ import { MenuTextStyle } from "@/assets/dungeons/title/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
-import { MENU_BACKGROUND_DISPLAY_WIDTH } from "@/services/dungeons/title/menu/constants";
+import { INITIAL_CURSOR_POSITION, MENU_BACKGROUND_DISPLAY_WIDTH } from "@/services/dungeons/title/menu/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-import type { Position } from "grid-engine";
 import { Input } from "phaser";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const titleSceneStore = useTitleSceneStore();
-const { isContinueEnabled, optionGrid, cursorPositionMap } = storeToRefs(titleSceneStore);
-const cursorPositions = computed(() => cursorPositionMap.value.flatMap<Position>((positions) => positions));
+const { isContinueEnabled, optionGrid } = storeToRefs(titleSceneStore);
+const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
 </script>
 
 <template>
-  <Text
-    v-for="({ y }, index) in cursorPositions"
-    :key="index"
-    :configuration="{
-      x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
-      y: y - 1,
-      text: optionGrid.getValue(index),
-      style: MenuTextStyle,
-      origin: 0.5,
-    }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-      () => {
-        if (optionGrid.index === index) controls.setInput(PlayerSpecialInput.Confirm);
-        else optionGrid.index = index;
-      }
-    "
-  />
+  <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
+    <Text
+      v-for="(_, columnIndex) in row"
+      :key="rowIndex * optionGrid.columnSize + columnIndex"
+      :configuration="{
+        x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
+        y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,
+        text: optionGrid.getValue(rowIndex * optionGrid.columnSize + columnIndex),
+        style: MenuTextStyle,
+        origin: 0.5,
+      }"
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
+        () => {
+          const index = rowIndex * optionGrid.columnSize + columnIndex;
+          if (optionGrid.index === index) controls.setInput(PlayerSpecialInput.Confirm);
+          else optionGrid.index = index;
+        }
+      "
+    />
+  </template>
   <Text
     :configuration="{
       visible: !isContinueEnabled,

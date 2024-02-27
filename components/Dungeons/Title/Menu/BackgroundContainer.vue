@@ -5,7 +5,8 @@ import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/title/menu/constant
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
 const titleSceneStore = useTitleSceneStore();
-const { optionGrid, cursorPositionMap } = storeToRefs(titleSceneStore);
+const { optionGrid } = storeToRefs(titleSceneStore);
+const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
 </script>
 
 <template>
@@ -13,7 +14,8 @@ const { optionGrid, cursorPositionMap } = storeToRefs(titleSceneStore);
     <DungeonsTitleMenuBackground />
     <DungeonsInputCursor
       :grid="optionGrid"
-      :position-map="cursorPositionMap"
+      :initial-position="INITIAL_CURSOR_POSITION"
+      :position-increment="titleCursorPositionIncrement"
       :tween="{
         delay: 0,
         repeat: -1,

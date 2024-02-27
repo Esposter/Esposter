@@ -4,7 +4,6 @@ import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
 import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/title/menu/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
@@ -15,30 +14,20 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
   const isContinueEnabled = ref(false);
-  const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption>>;
+  const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>>;
 
   watch(
     isContinueEnabled,
     (newIsContinueEnabled) => {
       optionGrid.value = newIsContinueEnabled
         ? new Grid(
-            [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Options]],
+            [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Settings]],
             3,
             1,
           )
-        : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Options]], 2, 1);
+        : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Settings]], 2, 1);
     },
     { immediate: true },
-  );
-
-  const cursorPositionMap = computed(() =>
-    isContinueEnabled.value
-      ? [
-          [{ x: INITIAL_CURSOR_POSITION.x, y: 41 }],
-          [{ x: INITIAL_CURSOR_POSITION.x, y: 91 }],
-          [{ x: INITIAL_CURSOR_POSITION.x, y: 141 }],
-        ]
-      : [[{ x: INITIAL_CURSOR_POSITION.x, y: 41 }], [{ x: INITIAL_CURSOR_POSITION.x, y: 141 }]],
   );
 
   const onPlayerInput = () => {
@@ -51,11 +40,9 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (optionGrid.value.value) {
         case PlayerTitleMenuOption["New Game"]:
-          scene.value.cameras.main.fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
-          return;
         case PlayerTitleMenuOption.Continue:
-          return;
-        case PlayerTitleMenuOption.Options:
+        case PlayerTitleMenuOption.Settings:
+          scene.value.cameras.main.fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
           return;
         default:
           exhaustiveGuard(optionGrid.value.value);
@@ -66,5 +53,5 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     optionGrid.value.move(direction);
   };
 
-  return { isContinueEnabled, optionGrid, cursorPositionMap, onPlayerInput };
+  return { isContinueEnabled, optionGrid, onPlayerInput };
 });

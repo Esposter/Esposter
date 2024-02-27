@@ -7,6 +7,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Cameras } from "phaser";
 
 const phaserStore = usePhaserStore();
@@ -24,7 +25,18 @@ const { optionGrid } = storeToRefs(titleSceneStore);
     @create="
       (scene) => {
         scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-          if (optionGrid.value === PlayerTitleMenuOption['New Game']) switchToScene(SceneKey.World);
+          switch (optionGrid.value) {
+            case PlayerTitleMenuOption['New Game']:
+              switchToScene(SceneKey.World);
+              return;
+            case PlayerTitleMenuOption.Continue:
+              return;
+            case PlayerTitleMenuOption.Settings:
+              switchToScene(SceneKey.Settings);
+              return;
+            default:
+              exhaustiveGuard(optionGrid.value);
+          }
         });
       }
     "

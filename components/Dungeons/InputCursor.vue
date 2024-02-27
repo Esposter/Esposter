@@ -1,18 +1,22 @@
-<script setup lang="ts" generic="T extends string">
-import Image from "@/lib/phaser/components/Image.vue";
+<script setup lang="ts" generic="TEnum extends string, TGrid extends TEnum[][]">
 import type { ImageProps } from "@/lib/phaser/components/Image.vue";
+import Image from "@/lib/phaser/components/Image.vue";
 import type { Grid } from "@/models/dungeons/Grid";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import type { Position } from "grid-engine";
 
 interface CursorProps {
-  grid: Grid<T>;
-  positionMap: Position[][];
+  grid: Grid<TEnum, TGrid>;
+  initialPosition: Position;
+  positionIncrement: Partial<Position>;
   tween?: ImageProps["configuration"]["tween"];
 }
 
-const { grid, positionMap, tween } = defineProps<CursorProps>();
-const position = computed(() => positionMap[grid.position[1]][grid.position[0]]);
+const { grid, initialPosition, positionIncrement, tween } = defineProps<CursorProps>();
+const position = computed(() => ({
+  x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position[0],
+  y: initialPosition.y + (positionIncrement.y ?? 0) * grid.position[1],
+}));
 </script>
 
 <template>

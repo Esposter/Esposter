@@ -1,13 +1,13 @@
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { Direction } from "grid-engine";
 
-export class Grid<TEnum extends string> {
-  grid: TEnum[][];
+export class Grid<TEnum extends string, TGrid extends TEnum[][]> {
+  grid: TGrid;
   rowSize: number;
   columnSize: number;
   position: [number, number];
 
-  constructor(grid: TEnum[][], rowSize: number, columnSize: number, position: [number, number] = [0, 0]) {
+  constructor(grid: TGrid, rowSize: number, columnSize: number, position: [number, number] = [0, 0]) {
     this.grid = grid;
     this.rowSize = rowSize;
     this.columnSize = columnSize;
