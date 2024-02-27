@@ -19,7 +19,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     [PlayerSettingsMenuOption["Menu Color"]],
     [PlayerSettingsMenuOption["Close"]],
   ];
-  const optionGrid = ref(new Grid<PlayerSettingsMenuOption, typeof grid>(grid, 7, 4));
+  const optionGrid = ref(new Grid<PlayerSettingsMenuOption, typeof grid>(grid));
 
   const onPlayerInput = () => {
     const input = controls.value.getInput(true);

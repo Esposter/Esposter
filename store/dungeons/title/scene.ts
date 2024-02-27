@@ -20,12 +20,12 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     isContinueEnabled,
     (newIsContinueEnabled) => {
       optionGrid.value = newIsContinueEnabled
-        ? new Grid(
-            [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Settings]],
-            3,
-            1,
-          )
-        : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Settings]], 2, 1);
+        ? new Grid([
+            [PlayerTitleMenuOption["New Game"]],
+            [PlayerTitleMenuOption.Continue],
+            [PlayerTitleMenuOption.Settings],
+          ])
+        : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Settings]]);
     },
     { immediate: true },
   );

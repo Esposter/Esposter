@@ -19,17 +19,17 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(_, columnIndex) in row"
-      :key="rowIndex * optionGrid.columnSize + columnIndex"
+      :key="optionGrid.getIndex({ x: columnIndex, y: rowIndex })"
       :configuration="{
         x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,
-        text: optionGrid.getValue(rowIndex * optionGrid.columnSize + columnIndex),
+        text: optionGrid.getValue(optionGrid.getIndex({ x: columnIndex, y: rowIndex })),
         style: MenuTextStyle,
         origin: 0.5,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          const index = rowIndex * optionGrid.columnSize + columnIndex;
+          const index = optionGrid.getIndex({ x: columnIndex, y: rowIndex });
           if (optionGrid.index === index) controls.setInput(PlayerSpecialInput.Confirm);
           else optionGrid.index = index;
         }

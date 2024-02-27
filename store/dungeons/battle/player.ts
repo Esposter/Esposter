@@ -36,14 +36,10 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   watch(
     attackNames,
     (newAttackNames) => {
-      attackOptionGrid.value = new Grid(
-        [
-          [newAttackNames[0], newAttackNames[1]],
-          [newAttackNames[2], newAttackNames[3]],
-        ],
-        2,
-        2,
-      );
+      attackOptionGrid.value = new Grid([
+        [newAttackNames[0], newAttackNames[1]],
+        [newAttackNames[2], newAttackNames[3]],
+      ]);
     },
     { immediate: true },
   );

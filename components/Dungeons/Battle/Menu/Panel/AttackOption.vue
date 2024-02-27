@@ -32,9 +32,9 @@ const { attackOptionGrid } = storeToRefs(playerStore);
     <template v-for="(row, rowIndex) in attackOptionGrid.grid" :key="rowIndex">
       <DungeonsBattleMenuPanelText
         v-for="(_, columnIndex) in row"
-        :key="rowIndex * attackOptionGrid.columnSize + columnIndex"
+        :key="attackOptionGrid.getIndex({ x: columnIndex, y: rowIndex })"
         v-model:grid="attackOptionGrid"
-        :index="rowIndex * attackOptionGrid.columnSize + columnIndex"
+        :index="attackOptionGrid.getIndex({ x: columnIndex, y: rowIndex })"
         :position="getPanelTextPosition(rowIndex, columnIndex)"
       />
     </template>
