@@ -2,56 +2,22 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
-export class Grid<TEnum extends string, TGrid extends ReadonlyArray<ReadonlyArray<TEnum>>> {
+export class Grid<TValue, TGrid extends ReadonlyArray<ReadonlyArray<TValue>>> {
   grid: TGrid;
-  position: [number, number];
+  position: Position;
 
-  constructor(grid: TGrid, position: [number, number] = [0, 0]) {
+  constructor(grid: TGrid, position: Position = { x: 0, y: 0 }) {
     this.grid = grid;
     this.position = position;
   }
 
   get value() {
-    return this.grid[this.position[1]][this.position[0]];
+    return this.grid[this.position.y][this.position.x];
   }
 
-  getValue(index: number) {
-    for (let i = 0; i < this.rowSize; i++) {
-      const columnSize = this.getColumnSize(i);
-      if (index < columnSize) return this.grid[i][index];
-      index -= columnSize;
-    }
-
-    throw new Error("Invalid index");
-  }
-
-  // This is the array index if the grid were to be flattened
-  // going from top-left to bottom-right
-  get index() {
-    let index = this.position[0];
-    for (let i = 0; i < this.position[1]; i++) index += this.getColumnSize(i);
-    return index;
-  }
-
-  set index(value: number) {
-    for (let i = 0; i < this.rowSize; i++) {
-      const columnSize = this.getColumnSize(i);
-      if (value < columnSize) {
-        this.position = [value, i];
-        return;
-      }
-      value -= columnSize;
-    }
-
-    throw new Error("Invalid index");
-  }
-
-  getIndex({ x, y }: Position) {
-    if (x > this.getColumnSize(y)) throw new Error("Invalid position");
-
-    let index = 0;
-    for (let i = 0; i < y; i++) index += this.getColumnSize(i);
-    return index + x;
+  getValue({ x, y }: Position) {
+    if (x > this.getColumnSize(y)) throw new Error(`Invalid position: { x: ${x}, y: ${y} }`);
+    return this.grid[y][x];
   }
 
   get rowSize() {
@@ -59,24 +25,23 @@ export class Grid<TEnum extends string, TGrid extends ReadonlyArray<ReadonlyArra
   }
 
   getColumnSize(rowIndex: number) {
-    if (rowIndex > this.rowSize - 1) throw new Error("Invalid row index");
-
+    if (rowIndex > this.rowSize - 1) throw new Error(`Invalid row index: ${rowIndex}`);
     return this.grid[rowIndex].length;
   }
 
   move(direction: Direction) {
     switch (direction) {
       case Direction.UP:
-        if (this.position[1] > 0) this.position[1] -= 1;
+        if (this.position.y > 0) this.position.y -= 1;
         return;
       case Direction.DOWN:
-        if (this.position[1] < this.rowSize - 1) this.position[1] += 1;
+        if (this.position.y < this.rowSize - 1) this.position.y += 1;
         return;
       case Direction.LEFT:
-        if (this.position[0] > 0) this.position[0] -= 1;
+        if (this.position.x > 0) this.position.x -= 1;
         return;
       case Direction.RIGHT:
-        if (this.position[0] < this.getColumnSize(this.position[1]) - 1) this.position[0] += 1;
+        if (this.position.x < this.getColumnSize(this.position.y) - 1) this.position.x += 1;
         return;
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:

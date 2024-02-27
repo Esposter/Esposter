@@ -6,6 +6,8 @@ import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleM
 import { INITIAL_CURSOR_POSITION, MENU_BACKGROUND_DISPLAY_WIDTH } from "@/services/dungeons/title/menu/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import deepEqual from "deep-equal";
+import type { Position } from "grid-engine";
 import { Input } from "phaser";
 
 const gameStore = useGameStore();
@@ -19,19 +21,19 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(_, columnIndex) in row"
-      :key="optionGrid.getIndex({ x: columnIndex, y: rowIndex })"
+      :key="optionGrid.getValue({ x: columnIndex, y: rowIndex })"
       :configuration="{
         x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,
-        text: optionGrid.getValue(optionGrid.getIndex({ x: columnIndex, y: rowIndex })),
+        text: optionGrid.getValue({ x: columnIndex, y: rowIndex }),
         style: MenuTextStyle,
         origin: 0.5,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          const index = optionGrid.getIndex({ x: columnIndex, y: rowIndex });
-          if (optionGrid.index === index) controls.setInput(PlayerSpecialInput.Confirm);
-          else optionGrid.index = index;
+          const gridPosition: Position = { x: columnIndex, y: rowIndex };
+          if (deepEqual(gridPosition, optionGrid.position)) controls.setInput(PlayerSpecialInput.Confirm);
+          else optionGrid.position = gridPosition;
         }
       "
     />

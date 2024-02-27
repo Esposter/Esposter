@@ -1,10 +1,10 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { Grid } from "@/models/dungeons/Grid";
+import type { Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { PlayerAttackOption } from "@/models/dungeons/battle/menu/PlayerAttackOption";
 import type { Monster } from "@/models/dungeons/battle/monster/Monster";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { getAttackNames } from "@/services/dungeons/battle/attack/getAttackNames";
+import { getAttack } from "@/services/dungeons/battle/attack/getAttack";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
 import type { Position } from "grid-engine";
 
@@ -27,24 +27,23 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterTween = ref<TweenBuilderConfiguration>();
   const monsterInfoContainerPosition = ref<Position>({ x: 1200, y: 318 });
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
+  const takeDamage = useTakeDamage(false);
   const optionGrid = ref(PlayerOptionGrid);
-  const attackNames = computed(() => getAttackNames(activeMonster.value));
+  const attacks = computed(() => activeMonster.value.attackIds.map((attackId) => getAttack(attackId)));
   const attackOptionGrid = ref() as Ref<
-    Grid<PlayerAttackOption, [[PlayerAttackOption, PlayerAttackOption], [PlayerAttackOption, PlayerAttackOption]]>
+    Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>
   >;
 
   watch(
-    attackNames,
-    (newAttackNames) => {
+    attacks,
+    (newAttacks) => {
       attackOptionGrid.value = new Grid([
-        [newAttackNames[0], newAttackNames[1]],
-        [newAttackNames[2], newAttackNames[3]],
+        [newAttacks[0], newAttacks[1]],
+        [newAttacks[2], newAttacks[3]],
       ]);
     },
     { immediate: true },
   );
-
-  const takeDamage = useTakeDamage(false);
 
   return {
     activeMonster,
@@ -53,9 +52,9 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
     monsterTween,
     monsterInfoContainerPosition,
     monsterInfoContainerTween,
-    optionGrid,
-    attackNames,
-    attackOptionGrid,
     takeDamage,
+    optionGrid,
+    attacks,
+    attackOptionGrid,
   };
 });

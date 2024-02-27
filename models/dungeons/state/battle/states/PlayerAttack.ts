@@ -22,11 +22,13 @@ export const PlayerAttack: State<StateName> = {
     const { takeDamage } = enemyStore;
     const infoPanelStore = useInfoPanelStore();
     const { line1Text } = storeToRefs(infoPanelStore);
-    const attackId = computed(() => activeMonster.value.attackIds[attackOptionGrid.value.index]);
+    // We won't use computed here because we've locked in our attack now
+    const attack = attackOptionGrid.value.value;
+    if (!attack) return;
 
-    showMessageNoInputRequired(line1Text, `${activeMonster.value.name} used ${attackOptionGrid.value.value}.`, () =>
+    showMessageNoInputRequired(line1Text, `${activeMonster.value.name} used ${attack.name}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
-        useAttackAnimation(attackId.value, true, () =>
+        useAttackAnimation(attack.id, true, () =>
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
             battleStateMachine.setState(StateName.PlayerPostAttackCheck),
           ),
