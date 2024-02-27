@@ -2,7 +2,7 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
-export class Grid<TEnum extends string, TGrid extends TEnum[][]> {
+export class Grid<TEnum extends string, TGrid extends ReadonlyArray<ReadonlyArray<TEnum>>> {
   grid: TGrid;
   position: [number, number];
 

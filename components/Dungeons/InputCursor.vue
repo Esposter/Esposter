@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TEnum extends string, TGrid extends TEnum[][]">
+<script setup lang="ts" generic="TEnum extends string, TGrid extends ReadonlyArray<ReadonlyArray<TEnum>>">
 import type { ImageProps } from "@/lib/phaser/components/Image.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import type { Grid } from "@/models/dungeons/Grid";

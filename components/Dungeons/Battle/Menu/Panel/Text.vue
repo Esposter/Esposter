@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TEnum extends string, TGrid extends TEnum[][]">
+<script setup lang="ts" generic="TEnum extends string, TGrid extends ReadonlyArray<ReadonlyArray<TEnum>>">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { Grid } from "@/models/dungeons/Grid";

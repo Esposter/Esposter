@@ -21,5 +21,6 @@
   "files.associations": {
     ".env": "env",
     ".env.example": "env"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
