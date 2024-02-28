@@ -38,7 +38,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) +
-        +17,
+        17,
       width: 10,
       height: 25,
       fillColor: 0xff2222,
