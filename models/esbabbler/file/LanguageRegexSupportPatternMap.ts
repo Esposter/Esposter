@@ -11,7 +11,7 @@ export const extendedLanguages = languages.concat(
 );
 
 const getLanguageRegexSupportPattern = (supportedExtensions: string) =>
-  /\^/.test(supportedExtensions)
+  supportedExtensions.includes("^")
     ? supportedExtensions.replaceAll(/\|(\^)?/g, (_, b) => `$|${b ? "^" : "^.*\\."}$`)
     : `^.*\\.(${supportedExtensions})$`;
 

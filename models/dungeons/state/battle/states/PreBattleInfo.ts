@@ -15,8 +15,12 @@ export const PreBattleInfo: State<StateName> = {
 
     useMonsterAppearTween(true, () => {
       useMonsterInfoContainerAppearTween(true);
-      updateQueuedMessagesAndShowMessage(battleDialogTarget, [`A wild ${activeMonster.value.name} has appeared!`], () =>
-        battleStateMachine.setState(StateName.BringOutMonster),
+      updateQueuedMessagesAndShowMessage(
+        battleDialogTarget,
+        [`A wild ${activeMonster.value.name} has appeared!`],
+        () => {
+          battleStateMachine.setState(StateName.BringOutMonster);
+        },
       );
     });
   },

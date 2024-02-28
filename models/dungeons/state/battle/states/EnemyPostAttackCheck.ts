@@ -14,13 +14,15 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const battleDialogTarget = useBattleDialogTarget();
 
     if (isActiveMonsterFainted.value) {
-      useMonsterDeathTween(false, () =>
+      useMonsterDeathTween(false, () => {
         updateQueuedMessagesAndShowMessage(
           battleDialogTarget,
           [`${activeMonster.value.name} has fainted!`, "You have no more monsters, escaping to safety..."],
-          () => battleStateMachine.setState(StateName.Finished),
-        ),
-      );
+          () => {
+            battleStateMachine.setState(StateName.Finished);
+          },
+        );
+      });
       return;
     }
 

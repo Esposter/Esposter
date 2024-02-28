@@ -37,10 +37,15 @@
         "*.ts"
       ],
       "extends": [
+        "plugin:@typescript-eslint/strict-type-checked",
         "plugin:@typescript-eslint/stylistic-type-checked"
       ],
       "parserOptions": {
         "project": ".nuxt/tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/unbound-method": "off"
       }
     },
     {

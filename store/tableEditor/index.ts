@@ -39,7 +39,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         return !this.editFormRef || this.editFormRef.errors.length === 0;
       },
       isSavable(): boolean {
-        if (!this.tableEditor || !this.editedItem) return false;
+        if (!this.editedItem) return false;
 
         const originalItem = this.tableEditor.items.find((item) => item.id === this.editedItem?.id);
         // For the form to be savable, it has to have no errors
@@ -55,8 +55,6 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     },
     actions: {
       async editItem(id: string) {
-        if (!this.tableEditor) return;
-
         const item = this.tableEditor.items.find((item) => item.id === id);
         if (!item) return;
         // @TODO: Vue cannot unwrap generic refs yet
@@ -68,7 +66,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
       },
       async save(isDeleteAction?: true) {
-        if (!this.tableEditorConfiguration || !this.editedItem) return;
+        if (!this.editedItem) return;
 
         const { $client } = useNuxtApp();
         const { status } = useAuth();

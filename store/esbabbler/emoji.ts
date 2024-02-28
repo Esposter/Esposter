@@ -14,8 +14,6 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   };
   const updateEmoji = async (input: UpdateEmojiInput) => {
     const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
-    if (!updatedEmoji) return;
-
     const emojiList = getEmojiList(updatedEmoji.messageRowKey);
     const index = emojiList.findIndex(
       (e) => e.partitionKey === updatedEmoji.partitionKey && e.rowKey === updatedEmoji.rowKey,

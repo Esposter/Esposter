@@ -16,7 +16,9 @@ export default defineEventHandler((event) => {
 
   wss.on("connection", (ws) => {
     console.log(`Connection opened, client size: ${wss.clients.size}`);
-    ws.once("close", () => console.log(`Connection closed, client size: ${wss.clients.size}`));
+    ws.once("close", () => {
+      console.log(`Connection closed, client size: ${wss.clients.size}`);
+    });
   });
   process.on("SIGTERM", () => {
     handler.broadcastReconnectNotification();

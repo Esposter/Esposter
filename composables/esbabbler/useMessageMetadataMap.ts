@@ -7,7 +7,7 @@ export const useMessageMetadataMap = <T extends MessageMetadataEntity>() => {
   // Record<partitionKey, Record<messageRowKey, T[]>>
   const metadataMap = ref<Record<string, Record<string, T[]>>>({});
   const getMetadataList = (messageRowKey: string) => {
-    if (!currentRoomId.value || !metadataMap.value[currentRoomId.value]?.[messageRowKey]) return [];
+    if (!currentRoomId.value || !metadataMap.value[currentRoomId.value][messageRowKey]) return [];
     return metadataMap.value[currentRoomId.value][messageRowKey];
   };
   const setMetadataList = (messageRowKey: string, metadatas: T[]) => {

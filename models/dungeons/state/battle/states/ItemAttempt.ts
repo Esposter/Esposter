@@ -10,8 +10,8 @@ export const ItemAttempt: State<StateName> = {
     const { updateQueuedMessagesAndShowMessage } = dialogStore;
     const battleDialogTarget = useBattleDialogTarget();
 
-    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["Your bag is empty..."], () =>
-      battleStateMachine.setState(StateName.PlayerInput),
-    );
+    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["Your bag is empty..."], () => {
+      battleStateMachine.setState(StateName.PlayerInput);
+    });
   },
 };

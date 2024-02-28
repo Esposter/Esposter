@@ -12,7 +12,9 @@ export const AnimationSetterMap = {
         const animation = gameObject.scene.anims.create(configuration);
         if (!animation) throw new Error(`Invalid animation key: ${configuration.key}`);
         const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
-        gameObject.once(event, () => emit(event));
+        gameObject.once(event, () => {
+          emit(event);
+        });
         animations.push(animation);
       }
       return animations;

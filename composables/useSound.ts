@@ -26,7 +26,7 @@ export const useSound = (
 
     duration.value = (duration.value ?? sound.value?.duration() ?? 0) * dayjs.duration(1, "second").asMilliseconds();
 
-    if (autoplay === true) isPlaying.value = true;
+    if (autoplay) isPlaying.value = true;
   }
 
   onMounted(async () => {

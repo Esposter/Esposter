@@ -10,8 +10,8 @@ export const FleeAttempt: State<StateName> = {
     const { updateQueuedMessagesAndShowMessage } = dialogStore;
     const battleDialogTarget = useBattleDialogTarget();
 
-    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["You got away safely!"], () =>
-      battleStateMachine.setState(StateName.Finished),
-    );
+    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["You got away safely!"], () => {
+      battleStateMachine.setState(StateName.Finished);
+    });
   },
 };

@@ -8,13 +8,19 @@ export const TweenSetterMap = {
   tween: (gameObject, emit) =>
     createTween<Tweens.Tween, TweenBuilderConfiguration>((configuration) => {
       const tween = gameObject.scene.add.tween({ ...configuration, targets: gameObject });
-      if (emit) tween.on("complete", () => emit("update:tween", undefined));
+      if (emit)
+        tween.on("complete", () => {
+          emit("update:tween", undefined);
+        });
       return tween;
     }),
   tweenchain: (gameObject, emit) =>
     createTween<Tweens.TweenChain, TweenBuilderConfiguration[]>((configurations) => {
       const tweenchain = gameObject.scene.add.tweenchain(configurations.map((c) => ({ ...c, targets: gameObject })));
-      if (emit) tweenchain.on("complete", () => emit("update:tweenchain", undefined));
+      if (emit)
+        tweenchain.on("complete", () => {
+          emit("update:tweenchain", undefined);
+        });
       return tweenchain;
     }),
 } satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;

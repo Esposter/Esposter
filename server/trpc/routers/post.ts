@@ -185,7 +185,7 @@ export const postRouter = router({
             .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNotNull(posts.parentId)))
             .returning()
         )[0];
-        const postId = deletedComment?.parentId;
+        const postId = deletedComment.parentId;
         if (!postId) return null;
         // Update number of comments
         const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });

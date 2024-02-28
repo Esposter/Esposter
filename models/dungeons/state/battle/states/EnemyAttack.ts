@@ -27,13 +27,13 @@ export const EnemyAttack: State<StateName> = {
     if (!attack) return;
 
     showMessageNoInputRequired(line1Text, `Enemy ${activeMonster.value.name} used ${attack.name}.`, () =>
-      scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
-        useAttackAnimation(attack.id, false, () =>
-          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
-            battleStateMachine.setState(StateName.EnemyPostAttackCheck),
-          ),
-        ),
-      ),
+      scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
+        useAttackAnimation(attack.id, false, () => {
+          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
+            battleStateMachine.setState(StateName.EnemyPostAttackCheck);
+          });
+        });
+      }),
     );
   },
 };

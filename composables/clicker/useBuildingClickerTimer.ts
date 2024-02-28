@@ -13,7 +13,9 @@ export const useBuildingClickerTimer = () => {
 
   onMounted(() => {
     buildingClickerTimer.value = setInterval(
-      () => incrementPoints(allBuildingPower.value / FPS),
+      () => {
+        incrementPoints(allBuildingPower.value / FPS);
+      },
       dayjs.duration(1, "second").asMilliseconds() / FPS,
     );
   });

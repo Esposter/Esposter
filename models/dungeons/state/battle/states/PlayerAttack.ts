@@ -27,13 +27,13 @@ export const PlayerAttack: State<StateName> = {
     if (!attack) return;
 
     showMessageNoInputRequired(line1Text, `${activeMonster.value.name} used ${attack.name}.`, () =>
-      scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () =>
-        useAttackAnimation(attack.id, true, () =>
-          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () =>
-            battleStateMachine.setState(StateName.PlayerPostAttackCheck),
-          ),
-        ),
-      ),
+      scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
+        useAttackAnimation(attack.id, true, () => {
+          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
+            battleStateMachine.setState(StateName.PlayerPostAttackCheck);
+          });
+        });
+      }),
     );
   },
 };

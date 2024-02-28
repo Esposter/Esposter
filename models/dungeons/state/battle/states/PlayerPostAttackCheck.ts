@@ -14,13 +14,15 @@ export const PlayerPostAttackCheck: State<StateName> = {
     const battleDialogTarget = useBattleDialogTarget();
 
     if (isActiveMonsterFainted.value) {
-      useMonsterDeathTween(true, () =>
+      useMonsterDeathTween(true, () => {
         updateQueuedMessagesAndShowMessage(
           battleDialogTarget,
           [`Wild ${activeMonster.value.name} has fainted!`, "You have gained some experience."],
-          () => battleStateMachine.setState(StateName.Finished),
-        ),
-      );
+          () => {
+            battleStateMachine.setState(StateName.Finished);
+          },
+        );
+      });
       return;
     }
 

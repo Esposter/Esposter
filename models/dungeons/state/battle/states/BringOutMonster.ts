@@ -22,9 +22,9 @@ export const BringOutMonster: State<StateName> = {
     useMonsterAppearTween(false, () => {
       useMonsterInfoContainerAppearTween(false);
       showMessageNoInputRequired(line1Text, `Go ${activeMonster.value.name}!`, () =>
-        scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () =>
-          battleStateMachine.setState(StateName.PlayerInput),
-        ),
+        scene.value.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), () => {
+          battleStateMachine.setState(StateName.PlayerInput);
+        }),
       );
     });
   },

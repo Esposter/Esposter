@@ -8,13 +8,10 @@ export const serialize = <TItem extends ItemMetadata>(
   if (!item) return null;
 
   const keys = sortBy.map((s) => s.key);
-  const itemCursors = keys.reduce(
-    (acc, key) => {
-      const value = item[key];
-      acc[key] = value;
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
+  const itemCursors = keys.reduce<Record<string, unknown>>((acc, key) => {
+    const value = item[key];
+    acc[key] = value;
+    return acc;
+  }, {});
   return Buffer.from(JSON.stringify(itemCursors)).toString("base64");
 };

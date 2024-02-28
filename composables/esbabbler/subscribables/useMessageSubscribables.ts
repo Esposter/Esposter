@@ -18,15 +18,27 @@ export const useMessageSubscribables = () => {
 
     createMessageUnsubscribable.value = $client.message.onCreateMessage.subscribe(
       { roomId: currentRoomId.value },
-      { onData: (data) => storeCreateMessage(data) },
+      {
+        onData: (data) => {
+          storeCreateMessage(data);
+        },
+      },
     );
     updateMessageUnsubscribable.value = $client.message.onUpdateMessage.subscribe(
       { roomId: currentRoomId.value },
-      { onData: (data) => storeUpdateMessage(data) },
+      {
+        onData: (data) => {
+          storeUpdateMessage(data);
+        },
+      },
     );
     deleteMessageUnsubscribable.value = $client.message.onDeleteMessage.subscribe(
       { roomId: currentRoomId.value },
-      { onData: (data) => storeDeleteMessage(data) },
+      {
+        onData: (data) => {
+          storeDeleteMessage(data);
+        },
+      },
     );
   });
 

@@ -12,7 +12,14 @@ export const errorLink: TRPCLink<AppRouter> =
         error: (err) => {
           observer.error(err);
           if (err.data && (err.data.code === "UNAUTHORIZED" || err.data.code === "FORBIDDEN"))
-            navigateTo(RoutePath.Login);
+            Promise.resolve(navigateTo(RoutePath.Login)).then(
+              () => {
+                return;
+              },
+              () => {
+                return;
+              },
+            );
         },
         complete: observer.complete,
       });

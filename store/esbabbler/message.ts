@@ -32,20 +32,14 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
   const createMessage = async (input: CreateMessageInput) => {
     const newMessage = await $client.message.createMessage.mutate(input);
-    if (!newMessage) return;
-
     storeCreateMessage(newMessage);
   };
   const updateMessage = async (input: UpdateMessageInput) => {
     const updatedMessage = await $client.message.updateMessage.mutate(input);
-    if (!updatedMessage) return;
-
     storeUpdateMessage(updatedMessage);
   };
   const deleteMessage = async (input: DeleteMessageInput) => {
     const deletedMessageId = await $client.message.deleteMessage.mutate(input);
-    if (!deletedMessageId) return;
-
     storeDeleteMessage(deletedMessageId);
   };
   // We need to expose the internal store crud message functions

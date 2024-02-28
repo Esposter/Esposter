@@ -5,6 +5,8 @@ import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachin
 export const Intro: State<StateName> = {
   name: StateName.Intro,
   onEnter: () => {
-    useRectangleCameraMask(() => battleStateMachine.setState(StateName.PreBattleInfo));
+    useRectangleCameraMask(() => {
+      battleStateMachine.setState(StateName.PreBattleInfo);
+    });
   },
 };
