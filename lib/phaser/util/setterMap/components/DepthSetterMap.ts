@@ -8,6 +8,7 @@ export const DepthSetterMap = {
     if (value === undefined) return;
 
     gameObject.setDepth(value);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!gameObject.parentContainer) return;
 
     const i = gameObject.parentContainer.list.findIndex(

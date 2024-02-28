@@ -1,4 +1,4 @@
-import type { MaybeElement, MaybeElementRef } from "@vueuse/core";
+import type { MaybeElementRef } from "@vueuse/core";
 
 export const useRotatingTransform = (target: MaybeElementRef) => {
   const { elementX, elementY, isOutside, elementHeight, elementWidth } = useMouseInElement(target);

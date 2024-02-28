@@ -29,7 +29,7 @@ export const useSound = (
     if (autoplay) isPlaying.value = true;
   }
 
-  onMounted(async () => {
+  onMounted(() => {
     const src = unref(url);
     let howl = cache[src];
     if (howl) {

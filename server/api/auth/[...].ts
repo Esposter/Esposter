@@ -33,7 +33,7 @@ export const authOptions: AuthConfig = {
   callbacks: {
     session: (params) => {
       const { session, user } = params as { session: Session; user: AdapterUser };
-      if (session.user) session.user.id = user.id;
+      if ("user" in session) session.user.id = user.id;
       return session;
     },
   },

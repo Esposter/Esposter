@@ -53,7 +53,7 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         return Boolean((component.ref as InstanceType<typeof MentionList> | null)?.onKeyDown(props));
       },
 
