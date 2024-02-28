@@ -23,8 +23,8 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) -
-        18,
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) +
+        17,
       width: 300,
       height: 4,
       fillColor: 0xffffff,
@@ -37,8 +37,8 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 290,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) -
-        18,
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) +
+        +17,
       width: 10,
       height: 25,
       fillColor: 0xff2222,
@@ -51,8 +51,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0) -
-        35,
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption.Volume)?.y ?? 0),
       text: '100%',
       style: MenuTextStyle,
     }"
