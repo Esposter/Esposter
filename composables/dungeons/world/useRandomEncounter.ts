@@ -21,19 +21,17 @@ export const useRandomEncounter = () => {
   const battleSceneStore = useBattleSceneStore();
   const { initialize } = battleSceneStore;
   const encounterStore = useEncounterStore();
-  const { stepsSinceLastEncounter, isMonsterEncountered } = storeToRefs(encounterStore);
+  const { stepsSinceLastEncounter } = storeToRefs(encounterStore);
   stepsSinceLastEncounter.value++;
 
   const encounterChance = stepsSinceLastEncounter.value / MAX_STEPS_BEFORE_NEXT_ENCOUNTER;
   const isEncounter = Math.random() < encounterChance;
   if (!isEncounter) return;
 
-  isMonsterEncountered.value = true;
   stepsSinceLastEncounter.value = 0;
   fadeOut(dayjs.duration(2, "seconds").asMilliseconds());
   scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
     initialize();
     switchToScene(SceneKey.Battle);
-    isMonsterEncountered.value = false;
   });
 };

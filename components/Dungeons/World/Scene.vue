@@ -12,7 +12,6 @@ import { dayjs } from "@/services/dayjs";
 import { isDirection } from "@/services/dungeons/input/isDirection";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
-import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -28,8 +27,6 @@ const worldSceneStore = useWorldSceneStore();
 const { tilemap, isDialogVisible } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
-const encounterStore = useEncounterStore();
-const { isMonsterEncountered } = storeToRefs(encounterStore);
 
 const create = (scene: SceneWithPlugins) => {
   useCreateTilemap(TilemapKey.Home);
@@ -49,14 +46,15 @@ const update = (scene: SceneWithPlugins) => {
 
   useMoveNpcList();
 
-  if (isMoving.value || isMonsterEncountered.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
+  if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
   else if (input === PlayerSpecialInput.Confirm) useInteractions();
   else if (isDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   tilemap.value.destroy();
-  scene.value.cameras.resetAll();
+  scene.value.cameras.main.removeBounds();
+  scene.value.cameras.main.setZoom(1);
 });
 </script>
 

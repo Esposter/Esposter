@@ -16,6 +16,6 @@ const menuContainerX = computed(() => scene.value.scale.width / 2 - MENU_BACKGRO
     }"
   >
     <DungeonsTitleMenuBackgroundContainer />
-    <DungeonsTitleMenuText />
+    <DungeonsTitleMenuContent />
   </Container>
 </template>

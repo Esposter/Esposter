@@ -29,6 +29,16 @@ export class Grid<TValue, TGrid extends ReadonlyArray<ReadonlyArray<TValue>>> {
     return this.grid[rowIndex].length;
   }
 
+  getPosition(value: TValue): Position | null {
+    for (let y = 0; y < this.rowSize - 1; y++)
+      for (let x = 0; x < this.getColumnSize(y); x++) {
+        const position: Position = { x, y };
+        if (this.getValue(position) === value) return position;
+      }
+
+    return null;
+  }
+
   move(direction: Direction) {
     switch (direction) {
       case Direction.UP:

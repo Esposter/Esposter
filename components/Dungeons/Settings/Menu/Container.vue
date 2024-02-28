@@ -6,6 +6,6 @@ import { MENU_PADDING } from "@/services/dungeons/settings/menu/constants";
 <template>
   <Container :configuration="{ x: MENU_PADDING, y: 20 }">
     <DungeonsSettingsMenuBackground />
-    <DungeonsSettingsMenuText />
+    <DungeonsSettingsMenuContent />
   </Container>
 </template>

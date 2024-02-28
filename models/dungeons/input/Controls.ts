@@ -6,4 +6,5 @@ export interface Controls {
   input: PlayerInput | null;
   getInput: (justDown?: true) => PlayerInput;
   setInput: (input: PlayerInput) => void;
+  resetInput: () => void;
 }

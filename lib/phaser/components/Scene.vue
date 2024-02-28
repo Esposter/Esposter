@@ -47,7 +47,6 @@ const NewScene = class extends cls {
   }
 
   update(this: InstanceType<TScene>, ...args: Parameters<InstanceType<TScene>["update"]>) {
-    if (isFading.value) return;
     emit("update", this, ...args);
   }
 };

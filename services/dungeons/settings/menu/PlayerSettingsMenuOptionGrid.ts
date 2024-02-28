@@ -5,9 +5,9 @@ const grid = [
   [PlayerSettingsMenuOption["Text Speed"], "Slow", "Mid", "Fast"],
   [PlayerSettingsMenuOption["Battle Scene"], "On", "Off"],
   [PlayerSettingsMenuOption["Battle Style"], "Set", "Shift"],
-  [PlayerSettingsMenuOption["Sound"], "On", "Off"],
-  [PlayerSettingsMenuOption["Volume"]],
+  [PlayerSettingsMenuOption.Sound, "On", "Off"],
+  [PlayerSettingsMenuOption.Volume],
   [PlayerSettingsMenuOption["Menu Color"]],
-  [PlayerSettingsMenuOption["Close"]],
+  [PlayerSettingsMenuOption.Close],
 ] as const;
 export const PlayerSettingsMenuOptionGrid = new Grid<string, typeof grid>(grid, { x: 1, y: 0 });

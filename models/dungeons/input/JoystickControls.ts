@@ -1,25 +1,16 @@
+import { BaseControls } from "@/models/dungeons/input/BaseControls";
 import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 import type { Controls } from "@/models/dungeons/input/Controls";
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 
-export class JoystickControls implements Controls {
+export class JoystickControls extends BaseControls implements Controls {
   cursorKeys: BaseCursorKeys | null = null;
-  input: PlayerInput | null = null;
 
   getInput(justDown?: true) {
-    let result: PlayerInput;
-
-    if (this.input) result = this.input;
+    const input = super.getInput();
+    if (input === -1) return Direction.NONE;
     // We don't have any cursor keys until the joystick is rendered
-    else result = this.cursorKeys ? mapCursorKeysToDirection(this.cursorKeys, justDown) : Direction.NONE;
-
-    this.input = null;
-    return result;
-  }
-
-  setInput(input: PlayerInput) {
-    this.input = input;
+    else return input ?? (this.cursorKeys ? mapCursorKeysToDirection(this.cursorKeys, justDown) : Direction.NONE);
   }
 }
