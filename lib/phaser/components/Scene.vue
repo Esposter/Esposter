@@ -1,9 +1,11 @@
 <script setup lang="ts" generic="TScene extends Constructor<Scene>">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { Constructor } from "@/util/types/Constructor";
 import type { Scene } from "phaser";
+import { Cameras } from "phaser";
 
 interface SceneProps {
   sceneKey: SceneKey;
@@ -22,7 +24,8 @@ const emit = defineEmits<{
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene } = storeToRefs(phaserStore);
-
+const cameraStore = useCameraStore();
+const { isFading } = storeToRefs(cameraStore);
 const isShown = computed(() => scene.value && isSameScene(sceneKey));
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
@@ -35,9 +38,16 @@ const NewScene = class extends cls {
 
   create(this: InstanceType<TScene>) {
     emit("create", this);
+    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+      isFading.value = false;
+    });
+    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      isFading.value = false;
+    });
   }
 
   update(this: InstanceType<TScene>, ...args: Parameters<InstanceType<TScene>["update"]>) {
+    if (isFading.value) return;
     emit("update", this, ...args);
   }
 };

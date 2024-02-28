@@ -1,4 +1,4 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
@@ -9,8 +9,8 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+  const cameraStore = useCameraStore();
+  const { fadeOut } = cameraStore;
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
   const isContinueEnabled = ref(false);
@@ -42,7 +42,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
         case PlayerTitleMenuOption["New Game"]:
         case PlayerTitleMenuOption.Continue:
         case PlayerTitleMenuOption.Settings:
-          scene.value.cameras.main.fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
+          fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
           return;
         default:
           exhaustiveGuard(optionGrid.value.value);

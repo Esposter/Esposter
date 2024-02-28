@@ -13,6 +13,7 @@ import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
+import { prettifyName } from "@/util/text/prettifyName";
 import isMobile from "is-mobile";
 import type { Loader } from "phaser";
 
@@ -41,10 +42,10 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("fileprogress", (file: Loader.File) => {
-    assetText.value = `Loading asset: ${file.key}`;
+    assetText.value = `Loading asset: ${prettifyName(file.key)}`;
   });
 
-  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.Settings : SceneKey.Title));
+  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title));
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);

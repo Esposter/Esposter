@@ -1,7 +1,7 @@
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
 import { initializeGameObjectEvents } from "@/lib/phaser/util/emit/initializeGameObjectEvents";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";

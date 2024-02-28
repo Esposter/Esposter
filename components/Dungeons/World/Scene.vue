@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -17,6 +18,8 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const phaserStore = usePhaserStore();
 const { scene, sceneKey } = storeToRefs(phaserStore);
+const cameraStore = useCameraStore();
+const { fadeIn } = cameraStore;
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const dialogStore = useDialogStore();
@@ -33,7 +36,7 @@ const create = (scene: SceneWithPlugins) => {
   useReadNpcList();
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
-  scene.cameras.main.fadeIn(dayjs.duration(1, "second").asMilliseconds());
+  fadeIn(dayjs.duration(1, "second").asMilliseconds());
 };
 
 const update = (scene: SceneWithPlugins) => {

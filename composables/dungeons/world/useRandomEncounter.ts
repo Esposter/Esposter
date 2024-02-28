@@ -1,4 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { dayjs } from "@/services/dayjs";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/world/constants";
@@ -15,6 +16,8 @@ export const useRandomEncounter = () => {
   const phaserStore = usePhaserStore();
   const { switchToScene } = phaserStore;
   const { scene } = storeToRefs(phaserStore);
+  const cameraStore = useCameraStore();
+  const { fadeOut } = cameraStore;
   const battleSceneStore = useBattleSceneStore();
   const { initialize } = battleSceneStore;
   const encounterStore = useEncounterStore();
@@ -27,7 +30,7 @@ export const useRandomEncounter = () => {
 
   isMonsterEncountered.value = true;
   stepsSinceLastEncounter.value = 0;
-  scene.value.cameras.main.fadeOut(dayjs.duration(2, "seconds").asMilliseconds());
+  fadeOut(dayjs.duration(2, "seconds").asMilliseconds());
   scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
     initialize();
     switchToScene(SceneKey.Battle);

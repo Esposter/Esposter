@@ -38,11 +38,10 @@ export const usePhaserStore = defineStore("phaser", () => {
     sceneKey.value = newSceneKey;
     game.value.scene.start(newSceneKey);
   };
-
   return {
     game,
-    scene,
     sceneKey: exposedSceneKey,
+    scene,
     isSameScene,
     switchToScene,
   };

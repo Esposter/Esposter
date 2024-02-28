@@ -1,4 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
@@ -11,7 +12,9 @@ export const Finished: State<StateName> = {
     const phaserStore = usePhaserStore();
     const { switchToScene } = phaserStore;
     const { scene } = storeToRefs(phaserStore);
-    scene.value.cameras.main.fadeOut(dayjs.duration(0.6, "seconds").asMilliseconds());
+    const cameraStore = useCameraStore();
+    const { fadeOut } = cameraStore;
+    fadeOut(dayjs.duration(0.6, "seconds").asMilliseconds());
     scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => switchToScene(SceneKey.World));
   },
 };

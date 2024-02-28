@@ -9,7 +9,7 @@ const { onPlayerInput } = settingsSceneStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Settings" :cls="SceneWithPlugins" @create="(scene) => {}" @update="onPlayerInput()">
+  <Scene :scene-key="SceneKey.Settings" :cls="SceneWithPlugins" @update="onPlayerInput()">
     <DungeonsSettingsMenuContainer />
     <DungeonsJoystick />
     <DungeonsJoystickConfirmThumb />
