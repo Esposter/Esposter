@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import Nineslice from "@/lib/phaser/components/Nineslice.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
-import { MENU_HEIGHT, MENU_HORIZONTAL_PADDING } from "@/services/dungeons/settings/menu/constants";
+import { MENU_HEIGHT } from "@/services/dungeons/settings/menu/constants";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
-const width = computed(() => scene.value.scale.width - MENU_HORIZONTAL_PADDING * 2);
+const width = useSettingsMenuWidth();
 </script>
 
 <template>

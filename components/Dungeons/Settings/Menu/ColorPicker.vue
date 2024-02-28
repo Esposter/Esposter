@@ -9,11 +9,8 @@ import {
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/settings/menu/constants";
-import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 </script>
@@ -35,12 +32,13 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
   />
   <Text
     :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 170,
+      x: INITIAL_SETTINGS_VALUE_POSITION.x + 130,
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsMenuOption['Menu Color'])?.y ?? 0),
       text: 'White',
       style: MenuTextStyle,
+      originY: 0,
     }"
   />
   <Image

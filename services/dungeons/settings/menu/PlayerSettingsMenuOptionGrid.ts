@@ -3,7 +3,7 @@ import { PlayerSettingsMenuOption } from "@/models/dungeons/settings/menu/Player
 
 const grid = [
   [PlayerSettingsMenuOption["Text Speed"], "Slow", "Mid", "Fast"],
-  [PlayerSettingsMenuOption["Battle Scene"], "On", "Off"],
+  [PlayerSettingsMenuOption.Animations, "On", "Off"],
   [PlayerSettingsMenuOption["Battle Style"], "Set", "Shift"],
   [PlayerSettingsMenuOption.Sound, "On", "Off"],
   [PlayerSettingsMenuOption.Volume],

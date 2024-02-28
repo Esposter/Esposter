@@ -6,6 +6,7 @@ import { MENU_HORIZONTAL_PADDING, MENU_VERTICAL_PADDING } from "@/services/dunge
 <template>
   <Container :configuration="{ x: MENU_HORIZONTAL_PADDING, y: MENU_VERTICAL_PADDING }">
     <DungeonsSettingsMenuBackground />
+    <DungeonsSettingsMenuTitle />
     <DungeonsSettingsMenuContent />
     <DungeonsSettingsInfoContainer />
   </Container>

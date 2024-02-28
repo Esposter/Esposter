@@ -8,11 +8,8 @@ import {
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/settings/menu/constants";
-import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 </script>

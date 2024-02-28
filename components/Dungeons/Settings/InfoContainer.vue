@@ -9,7 +9,6 @@ import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
 import {
   INITIAL_SETTINGS_POSITION,
   MENU_HEIGHT,
-  MENU_HORIZONTAL_PADDING,
   MENU_VERTICAL_PADDING,
 } from "@/services/dungeons/settings/menu/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
@@ -18,7 +17,7 @@ const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);
-const width = computed(() => scene.value.scale.width - MENU_HORIZONTAL_PADDING * 2);
+const width = useSettingsMenuWidth();
 const height = computed(() => scene.value.scale.height - (MENU_HEIGHT + MENU_VERTICAL_PADDING * 3));
 </script>
 

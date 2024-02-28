@@ -48,4 +48,5 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
   </template>
   <DungeonsSettingsMenuVolumeSlider />
   <DungeonsSettingsMenuColorPicker />
+  <DungeonsSettingsMenuCursor />
 </template>
