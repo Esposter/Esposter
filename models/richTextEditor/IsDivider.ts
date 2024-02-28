@@ -1,3 +1,3 @@
-export type IsDivider = {
+export interface IsDivider {
   isDivider: boolean;
-};
+}

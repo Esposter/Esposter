@@ -25,7 +25,7 @@ export const useReadNpcList = () => {
     if (!npcLayer) continue;
 
     const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
-    if (!(npcObject && npcObject.x && npcObject.y)) continue;
+    if (!(npcObject?.x && npcObject.y)) continue;
 
     const npcPathObjects = npcLayer.objects.filter((obj) => obj.type === ObjectType.NpcPath);
     const npcPath: Record<number, Position> = {

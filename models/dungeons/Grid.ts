@@ -2,7 +2,7 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
-export class Grid<TValue, TGrid extends ReadonlyArray<ReadonlyArray<TValue>>> {
+export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   grid: TGrid;
   position: Position;
 

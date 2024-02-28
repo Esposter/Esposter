@@ -3,7 +3,7 @@ import type { IsEqual } from "@/util/types/IsEqual";
 type Filter<KeyType, ExcludeType> =
   IsEqual<KeyType, ExcludeType> extends true ? never : KeyType extends ExcludeType ? never : KeyType;
 
-type ExceptOptions = {
+interface ExceptOptions {
   /**
 	Disallow assigning non-specified properties.
 
@@ -12,7 +12,7 @@ type ExceptOptions = {
 	@default false
 	*/
   requireExactProps?: boolean;
-};
+}
 
 export type Except<
   ObjectType,

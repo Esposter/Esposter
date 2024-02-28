@@ -13,7 +13,6 @@
     "vue/no-v-text-v-html-on-component": "off",
     "vue/multi-word-component-names": "off",
     "vue/valid-template-root": "off",
-    "@typescript-eslint/dot-notation": "error",
     "@typescript-eslint/ban-types": [
       "error",
       {
@@ -33,8 +32,17 @@
     ],
     "eqeqeq": "error"
   },
-  "parserOptions": {
-    "parser": "@typescript-eslint/parser",
-    "project": ".nuxt/tsconfig.json"
-  }
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "plugin:@typescript-eslint/stylistic-type-checked"
+      ],
+      "parserOptions": {
+        "project": ".nuxt/tsconfig.json"
+      }
+    }
+  ]
 }

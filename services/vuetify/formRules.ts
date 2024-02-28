@@ -13,8 +13,8 @@ export const formRules: {
   requireAtMostNCharacters: (n: number) => ValidationRule;
   isNotEqual: (oldValue: FormFieldValue) => ValidationRule;
 } = {
-  required: (value: FormFieldValue) => (value && value.length > 0) || "required",
-  requireAtMostNCharacters: (n) => (value: FormFieldValue) => (value && value.length <= n) || `max ${n} characters`,
+  required: (value: FormFieldValue) => (value && value.length > 0) ?? "required",
+  requireAtMostNCharacters: (n) => (value: FormFieldValue) => (value && value.length <= n) ?? `max ${n} characters`,
   isNotEqual: (oldValue) => (value: FormFieldValue) =>
     !deepEqual(value, oldValue) || `new value cannot be the same as the existing value`,
 };

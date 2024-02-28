@@ -24,7 +24,7 @@ export const useSound = (
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);
 
-    duration.value = (duration.value || sound.value?.duration() || 0) * dayjs.duration(1, "second").asMilliseconds();
+    duration.value = (duration.value ?? sound.value?.duration() ?? 0) * dayjs.duration(1, "second").asMilliseconds();
 
     if (autoplay === true) isPlaying.value = true;
   }
@@ -125,9 +125,7 @@ interface PlayOptions {
   playbackRate?: number;
 }
 
-interface SpriteMap {
-  [key: string]: [number, number];
-}
+type SpriteMap = Record<string, [number, number]>;
 
 type ComposableOptions = {
   volume?: MaybeRef<number>;

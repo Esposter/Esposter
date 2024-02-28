@@ -1,5 +1,5 @@
-export type TiledObjectProperty<T> = {
+export interface TiledObjectProperty<T> {
   name: string;
   type: string;
   value: T;
-};
+}

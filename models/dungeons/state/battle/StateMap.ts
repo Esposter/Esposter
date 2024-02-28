@@ -32,6 +32,6 @@ const StateRecord: Record<StateName, State<StateName>> = {
   [StateName.FleeAttempt]: FleeAttempt,
 };
 
-export const StateMap: Map<StateName, State<StateName>> = new Map(
+export const StateMap = new Map<StateName, State<StateName>>(
   Object.entries(StateRecord) as [[StateName, State<StateName>]],
 );
