@@ -25,7 +25,6 @@ const position = computed(() => ({
       x: position.x,
       y: position.y,
       textureKey: ImageKey.Cursor,
-      origin: 0.5,
       scale: 2.5,
       tween,
     }"

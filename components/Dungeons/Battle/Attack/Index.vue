@@ -40,7 +40,6 @@ const position = computed(() =>
       frame,
       animations,
       playAnimationKey,
-      origin: 0.5,
       scale: 4,
       flipX: !isToEnemy,
     }"
