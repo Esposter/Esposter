@@ -7,7 +7,6 @@ import type { Direction } from "grid-engine";
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
-  const isContinueEnabled = ref(false);
   const optionGrid = ref(PlayerSettingsMenuOptionGrid);
 
   const onPlayerInput = () => {
@@ -28,5 +27,5 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     optionGrid.value.move(direction);
   };
 
-  return { isContinueEnabled, optionGrid, onPlayerInput };
+  return { optionGrid, onPlayerInput };
 });

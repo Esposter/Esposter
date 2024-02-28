@@ -2,19 +2,17 @@
 import Nineslice from "@/lib/phaser/components/Nineslice.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { MENU_PADDING } from "@/services/dungeons/settings/menu/constants";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const padding = 100;
-const width = computed(() => scene.value.scale.width - padding * 2);
+const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
 const cornerCutLength = 32;
 </script>
 
 <template>
   <Nineslice
     :configuration="{
-      x: padding,
-      y: 20,
       width,
       height: 432,
       leftWidth: cornerCutLength,

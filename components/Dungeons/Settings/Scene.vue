@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
-const phaserStore = usePhaserStore();
-const { switchToScene } = phaserStore;
-const { scene } = storeToRefs(phaserStore);
-const titleSceneStore = useTitleSceneStore();
-const { onPlayerInput } = titleSceneStore;
-const { optionGrid } = storeToRefs(titleSceneStore);
+const settingsSceneStore = useSettingsSceneStore();
+const { onPlayerInput } = settingsSceneStore;
 </script>
 
 <template>
