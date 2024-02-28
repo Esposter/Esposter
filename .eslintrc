@@ -22,7 +22,6 @@
         }
       }
     ],
-    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-import-type-side-effects": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "import/consistent-type-specifier-style": "error",
@@ -42,6 +41,14 @@
       ],
       "parserOptions": {
         "project": ".nuxt/tsconfig.json"
+      }
+    },
+    {
+      "files": [
+        "*.vue"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
       }
     }
   ]

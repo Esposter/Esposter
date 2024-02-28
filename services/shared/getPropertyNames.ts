@@ -2,7 +2,7 @@ export const getPropertyNames = <T>() =>
   new Proxy(
     {},
     {
-      get: (_, prop, __) => prop,
+      get: (_, prop) => prop,
     },
   ) as {
     [P in keyof T]: P;

@@ -1,6 +1,6 @@
-export interface Item {
+export type Item = {
   icon: string;
   title: string;
   onClick: () => void;
   active?: boolean;
-}
+} & Record<string, unknown>;
