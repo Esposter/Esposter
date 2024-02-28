@@ -2,24 +2,24 @@
 import Nineslice from "@/lib/phaser/components/Nineslice.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { MENU_PADDING } from "@/services/dungeons/settings/menu/constants";
+import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
+import { MENU_HEIGHT, MENU_HORIZONTAL_PADDING } from "@/services/dungeons/settings/menu/constants";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
-const cornerCutLength = 32;
+const width = computed(() => scene.value.scale.width - MENU_HORIZONTAL_PADDING * 2);
 </script>
 
 <template>
   <Nineslice
     :configuration="{
       width,
-      height: 432,
-      leftWidth: cornerCutLength,
-      rightWidth: cornerCutLength,
-      topHeight: cornerCutLength,
-      bottomHeight: cornerCutLength,
-      textureKey: ImageKey.MenuBackground,
+      height: MENU_HEIGHT,
+      leftWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
+      rightWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
+      topHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
+      bottomHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
+      textureKey: ImageKey.GlassPanel,
       origin: 0,
     }"
   />

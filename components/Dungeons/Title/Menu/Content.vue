@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/title/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
-import { INITIAL_CURSOR_POSITION, MENU_BACKGROUND_DISPLAY_WIDTH } from "@/services/dungeons/title/menu/constants";
+import { INITIAL_CURSOR_POSITION, MENU_BACKGROUND_WIDTH } from "@/services/dungeons/title/menu/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 import deepEqual from "deep-equal";
@@ -23,7 +23,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
       v-for="(_, columnIndex) in row"
       :key="optionGrid.getValue({ x: columnIndex, y: rowIndex })"
       :configuration="{
-        x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
+        x: MENU_BACKGROUND_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,
         text: optionGrid.getValue({ x: columnIndex, y: rowIndex }),
         style: MenuTextStyle,
@@ -41,7 +41,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
   <Text
     :configuration="{
       visible: !isContinueEnabled,
-      x: MENU_BACKGROUND_DISPLAY_WIDTH / 2,
+      x: MENU_BACKGROUND_WIDTH / 2,
       y: 90,
       text: PlayerTitleMenuOption.Continue,
       style: MenuTextStyle,

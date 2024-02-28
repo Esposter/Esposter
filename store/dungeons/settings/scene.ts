@@ -8,6 +8,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
   const optionGrid = ref(PlayerSettingsMenuOptionGrid);
+  const infoText = ref("Test");
 
   const onPlayerInput = () => {
     const input = controls.value.getInput(true);
@@ -27,5 +28,5 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     optionGrid.value.move(direction);
   };
 
-  return { optionGrid, onPlayerInput };
+  return { optionGrid, infoText, onPlayerInput };
 });

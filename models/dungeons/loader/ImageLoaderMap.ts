@@ -15,7 +15,7 @@ import barHorizontalShadowLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpa
 import barHorizontalShadowMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowMid.png";
 import barHorizontalShadowRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalShadowRight.png";
 import customUI from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/customUI.png";
-import menuBackground from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/glassPanel.png";
+import glassPanel from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/glassPanel.png";
 import worldHomeForeground from "@/assets/dungeons/world/home/foreground.png";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
@@ -39,7 +39,7 @@ export const ImageLoaderMap: Record<ImageKey, (scene: SceneWithPlugins) => Loade
   [ImageKey.HealthBarMiddleShadow]: (scene) => scene.load.image(ImageKey.HealthBarMiddleShadow, barHorizontalShadowMid),
   [ImageKey.HealthBarRightCapShadow]: (scene) =>
     scene.load.image(ImageKey.HealthBarRightCapShadow, barHorizontalShadowRight),
-  [ImageKey.MenuBackground]: (scene) => scene.load.image(ImageKey.MenuBackground, menuBackground),
+  [ImageKey.GlassPanel]: (scene) => scene.load.image(ImageKey.GlassPanel, glassPanel),
   // Monsters
   [ImageKey.Carnodusk]: (scene) => scene.load.image(ImageKey.Carnodusk, carnodusk),
   [ImageKey.Iguanignite]: (scene) => scene.load.image(ImageKey.Iguanignite, iguanignite),
