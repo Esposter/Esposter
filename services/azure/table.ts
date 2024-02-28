@@ -80,7 +80,7 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
   const iterator = listResults.byPage({ maxPageSize: topN });
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  const firstPage = (await iterator.next()).value as (TEntity | string)[];
+  const firstPage = (await iterator.next()).value as (TEntity | string)[] | null;
   if (!firstPage) return [];
   // Filter out metadata like continuation token
   // before deserializing the json to handle transforming Date objects

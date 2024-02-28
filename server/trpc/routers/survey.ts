@@ -64,7 +64,7 @@ export const surveyRouter = router({
           updatedAt: createdAt,
         })
         .returning()
-    )[0];
+    ).find(Boolean);
     return newSurvey ?? null;
   }),
   updateSurvey: authedProcedure
@@ -81,7 +81,7 @@ export const surveyRouter = router({
           throw new Error("Cannot update survey model with old model version");
       }
 
-      const updatedSurvey = (await db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0];
+      const updatedSurvey = (await db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(Boolean);
       return updatedSurvey ?? null;
     }),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey | null>(async ({ input, ctx }) => {
@@ -90,7 +90,7 @@ export const surveyRouter = router({
         .delete(surveys)
         .where(and(eq(surveys.id, input), eq(surveys.creatorId, ctx.session.user.id)))
         .returning()
-    )[0];
+    ).find(Boolean);
     return deletedSurvey ?? null;
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ input: { id, ...rest }, ctx }) => {

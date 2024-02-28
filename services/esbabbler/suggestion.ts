@@ -22,7 +22,7 @@ export const suggestion: MentionOptions["suggestion"] = {
 
     return {
       onStart: (props) => {
-        component = new VueRenderer(MentionList, { props, editor: props.editor });
+        component = new VueRenderer(MentionList as Component, { props, editor: props.editor });
 
         if (!props.clientRect) return;
 
@@ -53,7 +53,8 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        return component.ref?.onKeyDown(props);
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        return Boolean((component.ref as InstanceType<typeof MentionList> | null)?.onKeyDown(props));
       },
 
       onExit() {

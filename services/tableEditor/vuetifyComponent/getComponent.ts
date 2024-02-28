@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { Constructor } from "@/util/types/Constructor";
 
 export const getComponent = (type: Constructor<unknown>) => {

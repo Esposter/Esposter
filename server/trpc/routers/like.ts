@@ -28,7 +28,7 @@ export const likeRouter = router({
           .insert(likes)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
-      )[0];
+      ).find(Boolean);
       if (!newLike) return null;
 
       const noLikesNew = post.noLikes + newLike.value;
@@ -62,7 +62,7 @@ export const likeRouter = router({
             .set(rest)
             .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
             .returning()
-        )[0];
+        ).find(Boolean);
         if (!updatedLike) return null;
 
         await tx
@@ -85,7 +85,7 @@ export const likeRouter = router({
           .delete(likes)
           .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
           .returning()
-      )[0];
+      ).find(Boolean);
       if (!deletedLike) return null;
 
       const noLikesNew = post.noLikes - deletedLike.value;

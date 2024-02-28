@@ -6,7 +6,8 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
   const cursorPaginationDataMap = ref<Record<string, CursorPaginationData<TItem>>>({});
   const cursorPaginationData = computed({
     get: () => {
-      if (!currentId.value || !cursorPaginationDataMap.value[currentId.value]) return new CursorPaginationData<TItem>();
+      if (!(currentId.value && currentId.value in cursorPaginationDataMap.value))
+        return new CursorPaginationData<TItem>();
       else return cursorPaginationDataMap.value[currentId.value];
     },
     set: (newCursorPaginationData) => {

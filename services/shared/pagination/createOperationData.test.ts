@@ -34,7 +34,7 @@ describe("Create Operation Data", () => {
     expect(itemList.value[0]).toStrictEqual(newItem);
   });
 
-  test("updates", async () => {
+  test("updates", () => {
     const { itemList, createItem, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";

@@ -60,9 +60,8 @@ export const DrizzleAdapter: Adapter = {
         .from(accounts)
         .where(and(eq(accounts.providerAccountId, account.providerAccountId), eq(accounts.provider, account.provider)))
         .leftJoin(users, eq(accounts.userId, users.id))
-    )[0];
-    if (!dbAccount) return null;
-    return dbAccount.User;
+    ).find(Boolean);
+    return dbAccount?.User ?? null;
   },
   deleteSession: async (sessionToken) =>
     (await db.delete(sessions).where(eq(sessions.sessionToken, sessionToken)).returning())[0],

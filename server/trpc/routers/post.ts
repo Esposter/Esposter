@@ -169,7 +169,7 @@ export const postRouter = router({
             .delete(posts)
             .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNull(posts.parentId)))
             .returning()
-        )[0];
+        ).find(Boolean);
         if (!deletedPost) return null;
         // Delete comments
         await tx.delete(posts).where(eq(posts.parentId, deletedPost.id));
@@ -184,8 +184,8 @@ export const postRouter = router({
             .delete(posts)
             .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNotNull(posts.parentId)))
             .returning()
-        )[0];
-        const postId = deletedComment.parentId;
+        ).find(Boolean);
+        const postId = deletedComment?.parentId;
         if (!postId) return null;
         // Update number of comments
         const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });

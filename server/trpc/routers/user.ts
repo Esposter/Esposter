@@ -31,7 +31,9 @@ export const userRouter = router({
       }) as Promise<User | undefined>,
   ),
   updateUser: authedProcedure.input(updateUserInputSchema).mutation<User | null>(async ({ input, ctx }) => {
-    const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning())[0];
+    const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning()).find(
+      Boolean,
+    );
     return updatedUser ?? null;
   }),
 });

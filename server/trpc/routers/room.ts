@@ -72,8 +72,8 @@ export const roomRouter = router({
           .select()
           .from(rooms)
           .innerJoin(usersToRooms, and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
-      )[0];
-      return joinedRoom ? joinedRoom.Room : null;
+      ).find(Boolean);
+      return joinedRoom?.Room ?? null;
     }
 
     // By default, we will return the latest updated room
@@ -83,13 +83,13 @@ export const roomRouter = router({
         .from(rooms)
         .innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id))
         .orderBy(desc(rooms.updatedAt))
-    )[0];
-    return joinedRoom ? joinedRoom.Room : null;
+    ).find(Boolean);
+    return joinedRoom?.Room ?? null;
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
-    if (cursor) query.where(getCursorWhere(rooms, cursor, sortBy));
-    query.orderBy(...convertSortByToSql(rooms, sortBy));
+    if (cursor) void query.where(getCursorWhere(rooms, cursor, sortBy));
+    void query.orderBy(...convertSortByToSql(rooms, sortBy));
 
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
@@ -102,7 +102,7 @@ export const roomRouter = router({
           .insert(rooms)
           .values({ ...input, creatorId: ctx.session.user.id })
           .returning()
-      )[0];
+      ).find(Boolean);
       if (!newRoom) return null;
 
       await tx.insert(usersToRooms).values({ userId: ctx.session.user.id, roomId: newRoom.id });
@@ -118,7 +118,7 @@ export const roomRouter = router({
           .set(rest)
           .where(and(eq(rooms.id, id), eq(rooms.creatorId, ctx.session.user.id)))
           .returning()
-      )[0];
+      ).find(Boolean);
       return updatedRoom ?? null;
     }),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room | null>(async ({ input, ctx }) => {
@@ -127,7 +127,7 @@ export const roomRouter = router({
         .delete(rooms)
         .where(and(eq(rooms.id, input), eq(rooms.creatorId, ctx.session.user.id)))
         .returning()
-    )[0];
+    ).find(Boolean);
     return deletedRoom ?? null;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<boolean>(async ({ input, ctx }) => {
@@ -168,9 +168,10 @@ export const roomRouter = router({
     .mutation<UserToRoom[]>(({ input: { roomId, userIds } }) =>
       db.transaction(async (tx) => {
         const newMembers: UserToRoom[] = [];
-        for await (const [newMember] of userIds.map((userId) =>
+        for await (const members of userIds.map((userId) =>
           tx.insert(usersToRooms).values({ userId, roomId }).returning(),
         )) {
+          const newMember = members.find(Boolean);
           if (!newMember) continue;
           newMembers.push(newMember);
         }
