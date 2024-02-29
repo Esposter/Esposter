@@ -153,8 +153,8 @@ dependencies:
     specifier: ^3.80.1
     version: 3.80.1
   phaser3-rex-plugins:
-    specifier: ^1.80.0
-    version: 1.80.0
+    specifier: ^1.80.1
+    version: 1.80.1
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.4.21)
@@ -9704,8 +9704,8 @@ packages:
   /perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  /phaser3-rex-plugins@1.80.0:
-    resolution: {integrity: sha512-OeayvK1rKSKUKs/nGWvMPx/x5AgyaV8WgyyCy5shn84B702yatlt93xLIIii5ER3O5ovqndK6Ne/ARaGsdbiwQ==}
+  /phaser3-rex-plugins@1.80.1:
+    resolution: {integrity: sha512-JfKnu3cb5j+2AWDgmpDQsrOhJMZ38lkr7FPXmgIIRiMTp8cPJEa34AMyJFbmS+MFBfh+xELpBU+UHE8Mwwuj1Q==}
     dependencies:
       eventemitter3: 3.1.2
       i18next: 22.5.1
@@ -12597,6 +12597,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
