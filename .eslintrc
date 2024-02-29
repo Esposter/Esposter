@@ -55,7 +55,8 @@
             "types": [
               "boolean",
               "number",
-              "string"
+              "string",
+              "array"
             ]
           }
         ],
