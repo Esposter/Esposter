@@ -1,4 +1,4 @@
-import type { InteractableDirection } from "@/models/dungeons/InteractableDirection";
+import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 

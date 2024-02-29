@@ -1,12 +1,12 @@
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { Grid } from "@/models/dungeons/Grid";
-import type { InteractableDirection } from "@/models/dungeons/InteractableDirection";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
 import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import type { Direction } from "grid-engine";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const cameraStore = useCameraStore();
@@ -49,7 +49,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
       }
   };
 
-  const onPlayerDirectionInput = (direction: InteractableDirection) => {
+  const onPlayerDirectionInput = (direction: Direction) => {
     optionGrid.value.move(direction);
   };
 
