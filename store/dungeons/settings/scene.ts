@@ -27,7 +27,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   // We need to do 1 of 2 things when the option grid is updated:
   // 1. If the user has selected the settings option column or moved up or down regardless of keyboard/click/touch
   // i.e. (newX === 0 || newY !== oldY), then we should automatically switch it to the active settings value
-  // 2.Otherwise automatically sync settings value with option grid value
+  // 2. Otherwise automatically sync settings value with option grid value
   // We unforunately need to watch the properties separately instead of
   // watching the entire position object with deep: true, since oldValue
   // won't update at all unless you replace the entire object everytime
