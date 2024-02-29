@@ -49,8 +49,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   });
 
   const infoText = computed(() => {
-    const SettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-    return InfoContainerTextMap[SettingsOption as keyof typeof InfoContainerTextMap];
+    const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
+    return InfoContainerTextMap[selectedSettingsOption as keyof typeof InfoContainerTextMap];
   });
 
   const onPlayerInput = () => {

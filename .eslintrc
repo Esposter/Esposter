@@ -44,6 +44,21 @@
         "project": ".nuxt/tsconfig.json"
       },
       "rules": {
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "variable",
+            "format": [
+              "strictCamelCase",
+              "UPPER_CASE"
+            ],
+            "types": [
+              "boolean",
+              "number",
+              "string"
+            ]
+          }
+        ],
         "@typescript-eslint/no-base-to-string": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-redundant-type-constituents": "off",
