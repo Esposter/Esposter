@@ -7,5 +7,5 @@ export const InfoContainerTextMap = {
   [PlayerSettingsMenuOption.Sound]: "Choose to enable or disable the sound.",
   [PlayerSettingsMenuOption.Volume]: "Choose the volume for the music and sound effects of the game.",
   [PlayerSettingsMenuOption["Menu Color"]]: "Choose one of the three menu color options.",
-  [PlayerSettingsMenuOption.Confirm]: "Save your changes and go back to the main menu.",
-} as const satisfies Record<Exclude<PlayerSettingsMenuOption, PlayerSettingsMenuOption.Close>, string>;
+  [PlayerSettingsMenuOption.Close]: "Save your changes and go back to the main menu.",
+} as const satisfies Record<PlayerSettingsMenuOption, string>;

@@ -6,5 +6,4 @@ export enum PlayerSettingsMenuOption {
   "Volume" = "Volume",
   "Menu Color" = "Menu Color",
   "Close" = "Close",
-  "Confirm" = "Confirm",
 }

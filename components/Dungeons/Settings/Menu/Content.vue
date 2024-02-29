@@ -36,9 +36,6 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          // First column is the settings name
-          if (columnIndex === 0) return;
-
           const gridPosition: Position = { x: columnIndex, y: rowIndex };
           if (deepEqual(gridPosition, optionGrid.position)) controls.setInput(PlayerSpecialInput.Confirm);
           else optionGrid.position = gridPosition;
