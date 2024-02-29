@@ -34,11 +34,13 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   // you do an update which is way too annoying and not clean code at all :C
   watch([() => optionGrid.value.position.y, () => optionGrid.value.position.x], ([newY, newX], [oldY]) => {
     const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: newY });
+    if (!(selectedSettingsOption in settings.value)) return;
 
     if (newX === 0 || newY !== oldY) {
       const value = settings.value[selectedSettingsOption as keyof typeof settings.value] as string;
       const x = optionGrid.value.getPositionX(value, newY);
       if (x === null) return;
+
       optionGrid.value.position.x = x;
       return;
     }
@@ -59,9 +61,11 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
-      case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === SettingsOption.Close) switchToTitleScene();
+      case PlayerSpecialInput.Confirm: {
+        const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
+        if (selectedSettingsOption === SettingsOption.Close) switchToTitleScene();
         return;
+      }
       case PlayerSpecialInput.Cancel:
         switchToTitleScene();
         return;
