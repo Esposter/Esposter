@@ -2,12 +2,13 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSettingsMenuOption } from "@/models/dungeons/settings/menu/PlayerSettingsMenuOption";
+import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
 import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { InfoContainerTextMap } from "@/services/dungeons/settings/menu/InfoContainerTextMap";
-import { PlayerSettingsMenuOptionGrid } from "@/services/dungeons/settings/menu/PlayerSettingsMenuOptionGrid";
+import { InfoContainerTextMap } from "@/services/dungeons/settings/InfoContainerTextMap";
+import { PlayerSettingsOptionGrid } from "@/services/dungeons/settings/PlayerSettingsOptionGrid";
 import { useGameStore } from "@/store/dungeons/game";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 import { Cameras } from "phaser";
@@ -20,12 +21,12 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { fadeOut } = cameraStore;
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
-  const optionGrid = ref(PlayerSettingsMenuOptionGrid);
+  const settingsStore = useSettingsStore();
+  const { settings } = storeToRefs(settingsStore);
+  const optionGrid = ref(PlayerSettingsOptionGrid);
   const infoText = computed(() => {
-    const playerSettingsMenuOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-    if (playerSettingsMenuOption in InfoContainerTextMap)
-      return InfoContainerTextMap[playerSettingsMenuOption as keyof typeof InfoContainerTextMap];
-    else return "";
+    const PlayerSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
+    return InfoContainerTextMap[PlayerSettingsOption as keyof typeof InfoContainerTextMap];
   });
 
   const onPlayerInput = () => {
@@ -35,15 +36,27 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+    const selectedSettingsOption = optionGrid.value.getValue({
+      x: 0,
+      y: optionGrid.value.position.y,
+    });
+
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        switch (optionGrid.value.value) {
-          case PlayerSettingsMenuOption.Close:
-            switchToTitleScene();
-            return;
-          default:
-            return;
+        if (optionGrid.value.value === PlayerSettingsOption.Close) {
+          switchToTitleScene();
+          return;
         }
+        // Ignore confirmations on the settings option column
+        else if (
+          Object.values<string>(PlayerSettingsOption)
+            .filter((o) => o !== PlayerSettingsOption.Close)
+            .includes(optionGrid.value.value)
+        )
+          return;
+
+        settings.value[selectedSettingsOption as keyof typeof settings.value] = optionGrid.value.value;
+        return;
       case PlayerSpecialInput.Cancel:
         switchToTitleScene();
         return;

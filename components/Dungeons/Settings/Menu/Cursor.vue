@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/settings/menu/constants";
+import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();

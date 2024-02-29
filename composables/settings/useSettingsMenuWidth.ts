@@ -1,5 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { MENU_HORIZONTAL_PADDING } from "@/services/dungeons/settings/menu/constants";
+import { MENU_HORIZONTAL_PADDING } from "@/services/dungeons/settings/constants";
 
 export const useSettingsMenuWidth = () => {
   const phaserStore = usePhaserStore();

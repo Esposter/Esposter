@@ -21,7 +21,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(_, columnIndex) in row"
-      :key="optionGrid.getValue({ x: columnIndex, y: rowIndex })"
+      :key="`${rowIndex}|${columnIndex}`"
       :configuration="{
         x: MENU_BACKGROUND_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,

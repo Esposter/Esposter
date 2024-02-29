@@ -2,7 +2,7 @@
 import Nineslice from "@/lib/phaser/components/Nineslice.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
-import { MENU_HEIGHT } from "@/services/dungeons/settings/menu/constants";
+import { MENU_HEIGHT } from "@/services/dungeons/settings/constants";
 
 const width = useSettingsMenuWidth();
 </script>

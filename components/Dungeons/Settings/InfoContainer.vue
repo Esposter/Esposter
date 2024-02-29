@@ -6,11 +6,7 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
-import {
-  INITIAL_SETTINGS_POSITION,
-  MENU_HEIGHT,
-  MENU_VERTICAL_PADDING,
-} from "@/services/dungeons/settings/menu/constants";
+import { INITIAL_SETTINGS_POSITION, MENU_HEIGHT, MENU_VERTICAL_PADDING } from "@/services/dungeons/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const phaserStore = usePhaserStore();
