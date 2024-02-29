@@ -1,5 +1,6 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import type { InteractableDirection } from "@/models/dungeons/InteractableDirection";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
@@ -10,7 +11,6 @@ import { PlayerSettingsOptionGrid } from "@/services/dungeons/settings/PlayerSet
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import type { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
@@ -65,7 +65,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     }
   };
 
-  const onPlayerDirectionInput = (direction: Direction) => {
+  const onPlayerDirectionInput = (direction: InteractableDirection) => {
     optionGrid.value.move(direction);
   };
 
