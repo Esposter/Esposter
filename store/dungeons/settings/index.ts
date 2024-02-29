@@ -1,10 +1,10 @@
+import { AnimationsOption } from "@/models/dungeons/settings/AnimationsOption";
 import { BattleStyleOption } from "@/models/dungeons/settings/BattleStyleOption";
 import { MenuColorOption } from "@/models/dungeons/settings/MenuColorOption";
 import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
+import { SoundOption } from "@/models/dungeons/settings/SoundOption";
 import { TextSpeedOption } from "@/models/dungeons/settings/TextSpeedOption";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
-import { AnimationsOption } from "~/models/dungeons/settings/AnimationsOption";
-import { SoundOption } from "~/models/dungeons/settings/SoundOption";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const settings = ref<Record<Exclude<PlayerSettingsOption, PlayerSettingsOption.Close>, string | number>>({
