@@ -13,7 +13,7 @@ const { surface } = useColors();
   <v-tooltip v-for="clickerType in Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
     <template #activator="{ props }">
       <v-btn class="border-sm" :="props" :active="game.type === clickerType" @click="game.type = clickerType">
-        <svg w-8 h-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <svg size-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <g>
             <component :is="IconComponentMap[clickerType]" />
           </g>

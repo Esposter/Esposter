@@ -28,7 +28,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">
-          <div px-2 w-full h-full flex items-center overflow-hidden :="props">
+          <div px-2 size-full flex items-center overflow-hidden :="props">
             <span>{{ timeText }}</span>
             <span pl-2 font-bold>{{ event.title }}</span>
           </div>
