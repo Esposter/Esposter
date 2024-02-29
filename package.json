@@ -120,7 +120,7 @@
     "survey-creator-core": "^1.9.132",
     "survey-creator-vue": "^1.9.132",
     "survey-vue3-ui": "^1.9.132",
-    "three": "^0.161.0",
+    "three": "^0.162.0",
     "three-globe": "^2.31.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.19",
