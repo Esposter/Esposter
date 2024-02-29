@@ -1,10 +1,10 @@
 import { Game } from "@/models/clicker/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
-import { isDiff } from "@/util/isDiff";
 import { jsonDateParse } from "@/util/jsonDateParse";
 import { omitDeep } from "@/util/omitDeep";
 import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
+import deepEqual from "deep-equal";
 
 export const useReadClickerGame = async () => {
   const { $client } = useNuxtApp();
@@ -16,7 +16,7 @@ export const useReadClickerGame = async () => {
   // which is everything excluding automatic updates like noPoints
   const gameTracker = computed<RecursiveDeepOmit<Game, ["noPoints", "producedValue"]>>((oldGameTracker) => {
     const newGameTracker = omitDeep(game.value, "noPoints", "producedValue");
-    return !oldGameTracker || isDiff(oldGameTracker, newGameTracker) ? newGameTracker : oldGameTracker;
+    return oldGameTracker && deepEqual(newGameTracker, oldGameTracker) ? oldGameTracker : newGameTracker;
   });
 
   await useReadData(

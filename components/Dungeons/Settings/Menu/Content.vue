@@ -2,7 +2,7 @@
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
-import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
+import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -50,16 +50,11 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
         () => {
           const gridPosition: Position = { x: columnIndex, y: rowIndex };
           if (deepEqual(gridPosition, optionGrid.position)) {
-            if (optionGrid.value === PlayerSettingsOption.Close) controls.setInput(PlayerSpecialInput.Confirm);
+            if (optionGrid.value === SettingsOption.Close) controls.setInput(PlayerSpecialInput.Confirm);
             return;
           }
 
           optionGrid.position = gridPosition;
-          if (columnIndex === 0) return;
-          // We actually want to directly confirm and update the settings value
-          // instead of making the user click twice as it's a lightweight action
-          // unlike most of our other menu text options that switch scenes
-          else controls.setInput(PlayerSpecialInput.Confirm);
         }
       "
     />

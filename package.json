@@ -113,7 +113,6 @@
     "pinia": "^2.1.7",
     "postgres": "^3.4.3",
     "rate-limiter-flexible": "^5.0.0",
-    "recursive-diff": "^1.0.9",
     "rxjs": "^7.8.1",
     "sql-highlight": "^4.4.0",
     "superjson": "^2.2.1",

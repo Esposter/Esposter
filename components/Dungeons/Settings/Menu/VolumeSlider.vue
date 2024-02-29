@@ -2,7 +2,7 @@
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
+import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -20,7 +20,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption.Volume)?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption.Volume)?.y ?? 0) +
         17,
       width: 300,
       height: 4,
@@ -34,7 +34,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 290,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption.Volume)?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption.Volume)?.y ?? 0) +
         17,
       width: 10,
       height: 25,
@@ -48,7 +48,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption.Volume)?.y ?? 0),
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption.Volume)?.y ?? 0),
       text: '100%',
       style: MenuTextStyle,
     }"

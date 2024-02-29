@@ -1,4 +1,4 @@
-export enum PlayerSettingsOption {
+export enum SettingsOption {
   "Text Speed" = "Text Speed",
   "Animations" = "Animations",
   "Battle Style" = "Battle Style",

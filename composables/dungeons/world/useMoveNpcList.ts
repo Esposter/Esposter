@@ -3,7 +3,6 @@ import { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPatt
 import { getNextDirection } from "@/services/dungeons/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import type { Position } from "grid-engine";
 
 export const useMoveNpcList = () => {
   const phaserStore = usePhaserStore();
@@ -14,24 +13,20 @@ export const useMoveNpcList = () => {
   for (const npc of npcList.value) {
     if (!scene.value.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
 
-    let pathSize: number;
-    let newPathIndex: number;
-    let currentPosition: Position;
-    let nextPosition: Position;
-
     switch (npc.movementPattern) {
       case NpcMovementPattern.Idle:
         continue;
-      case NpcMovementPattern.Clockwise:
-        pathSize = Object.keys(npc.path).length;
-        newPathIndex = (npc.pathIndex + 1) % pathSize;
-        currentPosition = npc.path[npc.pathIndex];
-        nextPosition = npc.path[newPathIndex];
+      case NpcMovementPattern.Clockwise: {
+        const pathSize = Object.keys(npc.path).length;
+        const newPathIndex = (npc.pathIndex + 1) % pathSize;
+        const currentPosition = npc.path[npc.pathIndex];
+        const nextPosition = npc.path[newPathIndex];
         if (scene.value.gridEngine.isBlocked(nextPosition)) continue;
 
         scene.value.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));
         npc.pathIndex = newPathIndex;
         continue;
+      }
       default:
         exhaustiveGuard(npc.movementPattern);
     }

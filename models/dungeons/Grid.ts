@@ -39,6 +39,11 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return null;
   }
 
+  getPositionX(value: TValue, y: number): number | null {
+    for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
+    return null;
+  }
+
   move(direction: Direction) {
     switch (direction) {
       case Direction.UP:

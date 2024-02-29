@@ -3,11 +3,11 @@ import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import type { InteractableDirection } from "@/models/dungeons/InteractableDirection";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
+import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/settings/InfoContainerTextMap";
-import { PlayerSettingsOptionGrid } from "@/services/dungeons/settings/PlayerSettingsOptionGrid";
+import { SettingsOptionGrid } from "@/services/dungeons/settings/SettingsOptionGrid";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
@@ -23,10 +23,32 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { controls } = storeToRefs(gameStore);
   const settingsStore = useSettingsStore();
   const { settings } = storeToRefs(settingsStore);
-  const optionGrid = ref(PlayerSettingsOptionGrid);
+  const optionGrid = ref(SettingsOptionGrid);
+  // We need to do 2 things when the option grid is updated:
+  // 1. If the user has selected the settings option column or moved up or down regardless of keyboard/click/touch
+  // i.e. (x === 0 || newY !== oldY), then we should automatically switch it to the active settings value
+  // 2. Automatically sync settings value with option grid value
+  // We unforunately need to watch the properties separately instead of
+  // watching the entire position object with deep: true, since oldValue
+  // won't update at all unless you replace the entire object everytime
+  // you do an update which is way too annoying and not clean code at all :C
+  watch([() => optionGrid.value.position.y, () => optionGrid.value.position.x], ([newY, newX], [oldY]) => {
+    const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: newY });
+
+    if (newX === 0 || newY !== oldY) {
+      const value = settings.value[selectedSettingsOption as keyof typeof settings.value] as string;
+      const x = optionGrid.value.getPositionX(value, newY);
+      if (x === null) return;
+      optionGrid.value.position.x = x;
+      return;
+    }
+
+    settings.value[selectedSettingsOption as keyof typeof settings.value] = optionGrid.value.value;
+  });
+
   const infoText = computed(() => {
-    const PlayerSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-    return InfoContainerTextMap[PlayerSettingsOption as keyof typeof InfoContainerTextMap];
+    const SettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
+    return InfoContainerTextMap[SettingsOption as keyof typeof InfoContainerTextMap];
   });
 
   const onPlayerInput = () => {
@@ -36,26 +58,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
-    const selectedSettingsOption = optionGrid.value.getValue({
-      x: 0,
-      y: optionGrid.value.position.y,
-    });
-
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === PlayerSettingsOption.Close) {
-          switchToTitleScene();
-          return;
-        }
-        // Ignore confirmations on the settings option column
-        else if (
-          Object.values<string>(PlayerSettingsOption)
-            .filter((o) => o !== PlayerSettingsOption.Close)
-            .includes(optionGrid.value.value)
-        )
-          return;
-
-        settings.value[selectedSettingsOption as keyof typeof settings.value] = optionGrid.value.value;
+        if (optionGrid.value.value === SettingsOption.Close) switchToTitleScene();
         return;
       case PlayerSpecialInput.Cancel:
         switchToTitleScene();

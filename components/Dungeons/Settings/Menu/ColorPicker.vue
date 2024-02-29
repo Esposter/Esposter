@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { PlayerSettingsOption } from "@/models/dungeons/settings/PlayerSettingsOption";
+import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -21,7 +21,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 110,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption['Menu Color'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
         12,
       textureKey: ImageKey.CursorWhite,
       originX: 1,
@@ -35,7 +35,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 130,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption['Menu Color'])?.y ?? 0),
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0),
       text: 'White',
       style: MenuTextStyle,
       originY: 0,
@@ -46,7 +46,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 240,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(PlayerSettingsOption['Menu Color'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
         12,
       textureKey: ImageKey.CursorWhite,
       origin: 0,

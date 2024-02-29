@@ -7,7 +7,7 @@ import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import type { UpdateUserInput } from "@/models/user/UpdateUserInput";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
-import { isDiff } from "@/util/isDiff";
+import deepEqual from "deep-equal";
 
 const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
@@ -38,7 +38,7 @@ const profileCardRowValues = computed(() =>
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);
 const isValid = ref(true);
-const isUpdated = computed(() => isValid.value && isDiff(profileCardRowValues.value, editedProfileCardRows.value));
+const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValues.value, editedProfileCardRows.value));
 </script>
 
 <template>
