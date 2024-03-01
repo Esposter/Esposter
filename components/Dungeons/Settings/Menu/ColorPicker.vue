@@ -11,10 +11,13 @@ import {
 } from "@/services/dungeons/settings/constants";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { Direction } from "grid-engine";
+import { Input } from "phaser";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 const colorPickerStore = useColorPickerStore();
+const { updateMenuColor } = colorPickerStore;
 const { menuColor } = storeToRefs(colorPickerStore);
 const padding = 100;
 const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
@@ -36,6 +39,7 @@ const rightCursorX = textX + padding;
       scaleX: 2.5,
       flipX: true,
     }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateMenuColor(Direction.LEFT)"
   />
   <Text
     :configuration="{
@@ -60,5 +64,6 @@ const rightCursorX = textX + padding;
       origin: 0,
       scaleX: 2.5,
     }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateMenuColor(Direction.RIGHT)"
   />
 </template>
