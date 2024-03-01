@@ -2,7 +2,8 @@
 import Game from "@/lib/phaser/components/Game.vue";
 import { GridEngine } from "grid-engine";
 import { AUTO, Scale } from "phaser";
-import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin.js";
+import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
+import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
 defineRouteRules({ ssr: false });
 </script>
@@ -34,6 +35,11 @@ defineRouteRules({ ssr: false });
               key: 'virtualJoystickPlugin',
               plugin: VirtualJoystickPlugin,
               mapping: 'virtualJoystickPlugin',
+            },
+            {
+              key: 'sliderPlugin',
+              plugin: SliderPlugin,
+              mapping: 'sliderPlugin',
             },
           ],
         },

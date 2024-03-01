@@ -8,10 +8,13 @@ import {
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/settings/constants";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
 </script>
 
 <template>
@@ -49,7 +52,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption.Volume)?.y ?? 0),
-      text: '100%',
+      text: `${settings[SettingsOption.Volume]}%`,
       style: MenuTextStyle,
     }"
   />
