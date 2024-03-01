@@ -13,11 +13,10 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
-const settingsMenuWidth = useSettingsMenuWidth();
-const padding = 150;
+const padding = 100;
 const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
-const rightCursorX = computed(() => settingsMenuWidth.value - padding);
-const textX = computed(() => (leftCursorX + rightCursorX.value) / 2);
+const textX = leftCursorX + padding;
+const rightCursorX = textX + padding;
 </script>
 
 <template>
