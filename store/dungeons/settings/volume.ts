@@ -1,3 +1,4 @@
+import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Direction } from "grid-engine";
@@ -10,6 +11,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volume = computed(() => settings.value[SettingsOption.Volume] as number);
   const volumeSlider = ref<Slider>();
   const setVolume = (value: number, isUpdateSlider = true) => {
+    if (!(value >= 0 && value <= 100)) throw new Error(`Invalid volume: ${value}`);
     setSettings(SettingsOption.Volume, value);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
@@ -26,10 +28,13 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     if (newVolume === null) return;
     setVolume(newVolume);
   };
+  const isUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction =>
+    settingsOption === SettingsOption.Volume && (input === Direction.LEFT || input === Direction.RIGHT);
   return {
     volume,
     volumeSlider,
     setVolume,
     updateVolume,
+    isUpdateVolume,
   };
 });

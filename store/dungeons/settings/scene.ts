@@ -11,7 +11,7 @@ import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { Direction } from "grid-engine";
+import type { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
@@ -26,7 +26,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
   const volumeStore = useVolumeStore();
-  const { updateVolume } = volumeStore;
+  const { updateVolume, isUpdateVolume } = volumeStore;
   const optionGrid = ref(SettingsOptionGrid);
   const selectedSettingsOption = computed(
     () => optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y }) as SettingsOption,
@@ -57,9 +57,12 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
   const onPlayerInput = () => {
-    const input = controls.value.getInput(true);
-    if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
-    else onPlayerDirectionInput(input);
+    const justDownInput = controls.value.getInput(true);
+    const input = controls.value.getInput();
+    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+    // Handle special cases first with player direction input
+    else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input);
+    else onPlayerDirectionInput(justDownInput);
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
@@ -78,15 +81,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    // Handle special cases first
-    if (
-      selectedSettingsOption.value === SettingsOption.Volume &&
-      (direction === Direction.LEFT || direction === Direction.RIGHT)
-    ) {
-      updateVolume(direction);
-      return;
-    }
-
     optionGrid.value.move(direction);
   };
 
