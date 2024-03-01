@@ -7,4 +7,5 @@ export const useSlider = (...args: Parameters<SliderPlugin["add"]>) => {
   const { scene, sceneKey } = storeToRefs(phaserStore);
   const slider = scene.value.sliderPlugin.add(...args);
   usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, slider.destroy);
+  return slider;
 };

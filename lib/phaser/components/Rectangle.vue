@@ -8,18 +8,20 @@ import type { GameObjects } from "phaser";
 
 interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;
+  onComplete?: (rectangle: GameObjects.Rectangle) => void;
 }
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
 const props = defineProps<RectangleProps>();
-const { configuration } = toRefs(props);
+const { configuration, onComplete } = toRefs(props);
 const { x, y, width, height, fillColor, alpha } = configuration.value;
 const emit = defineEmits<RectangleEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const rectangle = ref(scene.value.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
 useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
+onComplete.value?.(rectangle.value);
 </script>
 
 <template></template>
