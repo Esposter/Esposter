@@ -47,8 +47,7 @@ const baseY = computed(
         const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
         const selectedVolumeSliderWidth =
           x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
-        const newValue = selectedVolumeSliderWidth / volumeSliderWidth;
-        settings[SettingsOption.Volume] = Math.floor(newValue * 100);
+        settings[SettingsOption.Volume] = Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100);
         volumeSlider.value = volume / 100;
       }
     "
