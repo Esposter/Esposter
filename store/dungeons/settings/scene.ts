@@ -56,12 +56,12 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
-  const onPlayerInput = () => {
+  const onPlayerInput = (delta: number) => {
     const justDownInput = controls.value.getInput(true);
     const input = controls.value.getInput();
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     // Handle special cases first with player direction input
-    else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input);
+    else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
     else onPlayerDirectionInput(justDownInput);
   };
 
