@@ -9,10 +9,13 @@ import {
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/settings/constants";
+import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
+const colorPickerStore = useColorPickerStore();
+const { menuColor } = storeToRefs(colorPickerStore);
 const padding = 100;
 const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
 const textX = leftCursorX + padding;
@@ -40,7 +43,7 @@ const rightCursorX = textX + padding;
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0),
-      text: 'White',
+      text: menuColor,
       style: MenuTextStyle,
       originX: 0.5,
       originY: 0,

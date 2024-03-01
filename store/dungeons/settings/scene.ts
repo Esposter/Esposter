@@ -13,6 +13,7 @@ import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 import { Cameras } from "phaser";
+import { useColorPickerStore } from "./colorPicker";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const phaserStore = usePhaserStore();
@@ -27,6 +28,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { settings } = storeToRefs(settingsStore);
   const volumeStore = useVolumeStore();
   const { updateVolume, isUpdateVolume } = volumeStore;
+  const colorPickerStore = useColorPickerStore();
+  const { updateMenuColor, isUpdateMenuColor } = colorPickerStore;
   const optionGrid = ref(SettingsOptionGrid);
   const selectedSettingsOption = computed(
     () => optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y }) as SettingsOption,
@@ -62,6 +65,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
+    else if (isUpdateMenuColor(justDownInput, selectedSettingsOption.value)) updateMenuColor(justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 

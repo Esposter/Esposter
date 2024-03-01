@@ -14,6 +14,8 @@ export enum ImageKey {
   HealthBarMiddleShadow = "HealthBarMiddleShadow",
   HealthBarRightCapShadow = "HealthBarRightCapShadow",
   GlassPanel = "GlassPanel",
+  GlassPanelGreen = "GlassPanelGreen",
+  GlassPanelPurple = "GlassPanelPurple",
   // Monsters
   Carnodusk = "Carnodusk",
   Iguanignite = "Iguanignite",

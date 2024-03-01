@@ -13,7 +13,7 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     [SettingsOption["Battle Style"]]: BattleStyleOption.Shift,
     [SettingsOption.Sound]: SoundOption.On,
     [SettingsOption.Volume]: 100,
-    [SettingsOption["Menu Color"]]: MenuColorOption.White,
+    [SettingsOption["Menu Color"]]: MenuColorOption.Blue,
   });
   const setSettings = (settingsOption: keyof typeof settings.value, value: string | number) => {
     settings.value[settingsOption] = value;

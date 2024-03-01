@@ -1,3 +1,5 @@
 export enum MenuColorOption {
-  White = "White",
+  Blue = "Blue",
+  Green = "Green",
+  Purple = "Purple",
 }
