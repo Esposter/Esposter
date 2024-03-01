@@ -13,15 +13,15 @@ import {
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
 } from "@/services/dungeons/settings/constants";
-import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
-const settingsStore = useSettingsStore();
-const { settings, volumeSlider } = storeToRefs(settingsStore);
-const volume = computed(() => settings.value[SettingsOption.Volume] as number);
+const volumeStore = useVolumeStore();
+const { setVolume } = volumeStore;
+const { volume, volumeSlider } = storeToRefs(volumeStore);
 const baseY = computed(
   () =>
     INITIAL_SETTINGS_POSITION.y +
@@ -47,8 +47,7 @@ const baseY = computed(
         const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
         const selectedVolumeSliderWidth =
           x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
-        settings[SettingsOption.Volume] = Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100);
-        volumeSlider.value = volume / 100;
+        setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
       }
     "
   />
@@ -70,9 +69,9 @@ const baseY = computed(
             { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
           ],
           value: volume / 100,
-          valuechangeCallback: (newValue) => {
-            settings[SettingsOption.Volume] = Math.floor(newValue * 100);
-          },
+          // We want the sliding of the volume cursor to be smooth
+          // so it will only be handled by the plugin instead of our store
+          valuechangeCallback: (newValue) => setVolume(Math.floor(newValue * 100), false),
         });
       }
     "

@@ -9,8 +9,9 @@ import { InfoContainerTextMap } from "@/services/dungeons/settings/InfoContainer
 import { SettingsOptionGrid } from "@/services/dungeons/settings/SettingsOptionGrid";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import type { Direction } from "grid-engine";
+import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
@@ -22,8 +23,14 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const gameStore = useGameStore();
   const { controls } = storeToRefs(gameStore);
   const settingsStore = useSettingsStore();
+  const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
+  const volumeStore = useVolumeStore();
+  const { updateVolume } = volumeStore;
   const optionGrid = ref(SettingsOptionGrid);
+  const selectedSettingsOption = computed(
+    () => optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y }) as SettingsOption,
+  );
   // We need to do 1 of 2 things when the option grid is updated:
   // 1. If the user has selected the settings option column or moved up or down regardless of keyboard/click/touch
   // i.e. (newX === 0 || newY !== oldY), then we should automatically switch it to the active settings value
@@ -33,11 +40,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   // won't update at all unless you replace the entire object everytime
   // you do an update which is way too annoying and not clean code at all :C
   watch([() => optionGrid.value.position.y, () => optionGrid.value.position.x], ([newY, newX], [oldY]) => {
-    const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: newY });
-    if (!(selectedSettingsOption in settings.value)) return;
+    if (!(selectedSettingsOption.value in settings.value)) return;
 
     if (newX === 0 || newY !== oldY) {
-      const value = settings.value[selectedSettingsOption as keyof typeof settings.value] as string;
+      const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value] as string;
       const x = optionGrid.value.getPositionX(value, newY);
       if (x === null) return;
 
@@ -45,13 +51,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       return;
     }
 
-    settings.value[selectedSettingsOption as keyof typeof settings.value] = optionGrid.value.value;
+    setSettings(selectedSettingsOption.value as keyof typeof settings.value, optionGrid.value.value);
   });
 
-  const infoText = computed(() => {
-    const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-    return InfoContainerTextMap[selectedSettingsOption as keyof typeof InfoContainerTextMap];
-  });
+  const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
   const onPlayerInput = () => {
     const input = controls.value.getInput(true);
@@ -75,6 +78,15 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
+    // Handle special cases first
+    if (
+      selectedSettingsOption.value === SettingsOption.Volume &&
+      (direction === Direction.LEFT || direction === Direction.RIGHT)
+    ) {
+      updateVolume(direction);
+      return;
+    }
+
     optionGrid.value.move(direction);
   };
 
