@@ -13,12 +13,17 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
+const settingsMenuWidth = useSettingsMenuWidth();
+const padding = 150;
+const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
+const rightCursorX = computed(() => settingsMenuWidth.value - padding);
+const textX = computed(() => (leftCursorX + rightCursorX.value) / 2);
 </script>
 
 <template>
   <Image
     :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 110,
+      x: leftCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
@@ -32,18 +37,19 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
   />
   <Text
     :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 130,
+      x: textX,
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0),
       text: 'White',
       style: MenuTextStyle,
+      originX: 0.5,
       originY: 0,
     }"
   />
   <Image
     :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 240,
+      x: rightCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
