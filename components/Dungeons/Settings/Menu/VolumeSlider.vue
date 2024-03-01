@@ -6,6 +6,7 @@ import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
+  MENU_HORIZONTAL_PADDING,
   SETTINGS_POSITION_INCREMENT,
   VOLUME_SLIDER_BAR_WIDTH,
   VOLUME_SLIDER_END_X,
@@ -15,13 +16,11 @@ import {
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
-import type Slider from "phaser3-rex-plugins/plugins/slider";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 const settingsStore = useSettingsStore();
-const { settings } = storeToRefs(settingsStore);
-const slider = ref<Slider>();
+const { settings, volumeSlider } = storeToRefs(settingsStore);
 const volume = computed(() => settings.value[SettingsOption.Volume] as number);
 const baseY = computed(
   () =>
@@ -41,6 +40,18 @@ const baseY = computed(
       originX: 0,
       originY: 0.5,
     }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="
+      ({ x }: Input.Pointer) => {
+        if (!volumeSlider) return;
+
+        const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
+        const selectedVolumeSliderWidth =
+          x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
+        const newValue = selectedVolumeSliderWidth / volumeSliderWidth;
+        settings[SettingsOption.Volume] = Math.floor(newValue * 100);
+        volumeSlider.value = volume / 100;
+      }
+    "
   />
   <Rectangle
     :configuration="{
@@ -54,7 +65,7 @@ const baseY = computed(
     }"
     :on-complete="
       (rectangle) => {
-        slider = useSlider(rectangle, {
+        volumeSlider = useSlider(rectangle, {
           endPoints: [
             { x: VOLUME_SLIDER_START_X, y: baseY + 17 },
             { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
@@ -67,11 +78,11 @@ const baseY = computed(
       }
     "
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-      async () => {
-        if (!slider) return;
+      () => {
+        if (!volumeSlider) return;
         // We just need to sync the slider to the valid volume value
         // once the user has finished deciding on the volume of the game
-        slider.value = volume / 100;
+        volumeSlider.value = volume / 100;
       }
     "
   />
