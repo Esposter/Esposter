@@ -53,8 +53,6 @@ const baseY = computed(
   />
   <Rectangle
     :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x + 290,
-      y: baseY + 17,
       width: VOLUME_SLIDER_WIDTH,
       height: 25,
       fillColor: 0xff2222,
