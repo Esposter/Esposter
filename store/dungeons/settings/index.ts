@@ -19,7 +19,7 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     settings.value[settingsOption] = value;
   };
   const isSkipAnimations = computed(
-    () => IS_DEVELOPMENT || settings.value[SettingsOption.Animations] === AnimationsOption.On,
+    () => IS_DEVELOPMENT || settings.value[SettingsOption.Animations] === AnimationsOption.Off,
   );
   const isSkipEncounters = ref(false);
   const debugTileLayerAlpha = ref(IS_DEVELOPMENT ? 0.7 : 0);
