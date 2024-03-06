@@ -177,8 +177,8 @@ dependencies:
     specifier: ^1.9.132
     version: 1.9.132
   survey-creator-core:
-    specifier: ^1.9.132
-    version: 1.9.132
+    specifier: ^1.9.133
+    version: 1.9.133
   survey-creator-vue:
     specifier: ^1.9.132
     version: 1.9.132(vue@3.4.21)
@@ -11018,8 +11018,12 @@ packages:
     resolution: {integrity: sha512-zOshdQHlOACXhjWETXqdam03LA2Lx54tV6I66MnBrTesxvir8AY9YXEv+dj5UPX3OFL8pSBpY1iVnlo0IdJGoQ==}
     dev: false
 
-  /survey-creator-core@1.9.132:
-    resolution: {integrity: sha512-+5+uljye//4MfNEKQym9leDwco+M1/ydF05x4uvQ2LLA4irrb8NtyeTb35rTT2zopNN/4De9/gDNTrA2inVV/w==}
+  /survey-core@1.9.133:
+    resolution: {integrity: sha512-PR3CxerWAfMBTSa/oz7x7QRqFa/tbI5vfzaxZ+nTABh/cdqI8EjlioKlRCr2nNSP8sReEbhyw5xLTLNRrDyeUw==}
+    dev: false
+
+  /survey-creator-core@1.9.133:
+    resolution: {integrity: sha512-I3R4qjNSZgb6BpkTsNCCgJm1xYKBGxYV9n6rydJQzLHF4N7lFvvAJhedU0ZIvmbKuZ4QT5ilOgeMx9ipUzXdfw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -11027,7 +11031,7 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.132
+      survey-core: 1.9.133
     dev: false
 
   /survey-creator-vue@1.9.132(vue@3.4.21):
@@ -11036,7 +11040,7 @@ packages:
       vue: ^3.2.41
     dependencies:
       survey-core: 1.9.132
-      survey-creator-core: 1.9.132
+      survey-creator-core: 1.9.133
       survey-vue3-ui: 1.9.132(vue@3.4.21)
       vue: 3.4.21(typescript@5.3.3)
     transitivePeerDependencies:
