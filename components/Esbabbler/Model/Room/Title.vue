@@ -30,9 +30,9 @@ onClickOutside(titleRef, async () => {
 <template>
   <div
     ref="titleRef"
-    px-1
     flex
     items-center
+    px-1
     :w="isUpdateMode ? 'full' : ''"
     :b="!isUpdateMode && titleHovered ? '1 solid rd' : '1 solid transparent rd'"
     @mouseenter="titleHovered = true"

@@ -32,12 +32,12 @@ watch(
       </v-avatar>
       <v-file-input
         v-if="editMode"
-        my-2
         prepend-icon=""
         prepend-inner-icon="mdi-upload"
         label="Upload image"
         density="compact"
         hide-details
+        my-2
       />
     </v-col>
     <v-col v-else self-center cols="6" font-bold>

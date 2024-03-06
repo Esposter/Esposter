@@ -12,13 +12,13 @@ const { xs, sm } = useDisplay();
 <template>
   <StyledCard
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
-    p-4
     flex="!"
+    font="Montserrat!"
     justify-center
     items-center
     text-center
-    font="Montserrat!"
     font-bold
+    p-4
     break-word
     :card-props="{
       minHeight: '200',

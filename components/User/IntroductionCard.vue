@@ -9,7 +9,7 @@ const { authUser } = storeToRefs(userStore);
 
 <template>
   <StyledCard v-if="authUser" p-6="!" flex="!">
-    <div grid flex-1>
+    <div flex-1 grid>
       <div v-if="authUser.name" class="text-h5" font-bold>{{ authUser.name }}</div>
       <div>
         {{ authUser.email }}

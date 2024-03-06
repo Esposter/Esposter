@@ -59,11 +59,11 @@ watch(
         <v-avatar v-if="item.image" size="x-small">
           <v-img :src="item.image" :alt="item.name ?? undefined" />
         </v-avatar>
-        <span pl-2 font-bold case-normal>
+        <span font-bold pl-2 case-normal>
           {{ item.name }}
         </span>
       </v-btn>
-      <div v-if="items.length === 0" p-2 text-center font-bold>No result</div>
+      <div v-if="items.length === 0" font-bold p-2 text-center>No result</div>
     </StyledCard>
   </div>
 </template>

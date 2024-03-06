@@ -32,7 +32,7 @@ onMounted(() => {
       bg-center
       bg-cover
     >
-      <div mt-25 flex flex-col items-center z-1>
+      <div flex flex-col items-center z-1 mt-25>
         <div class="text-#ddd" text-center text-5xl>Lost in space?</div>
         <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
           <StyledButton>Go back home</StyledButton>

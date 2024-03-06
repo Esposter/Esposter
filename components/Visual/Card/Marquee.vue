@@ -30,9 +30,9 @@ const { surface, "on-surface": onSurface } = useColors();
             justify-center
             items-center
             text-center
-            rd-1
             cursor-pointer
-            font-Montserrat
+            rd-1
+            font-montserrat
           >
             {{ card.text }}
           </div>
