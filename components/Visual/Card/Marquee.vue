@@ -26,10 +26,10 @@ const { surface, "on-surface": onSurface } = useColors();
             class="item border-sm"
             p-4
             h-full
-            flex
             justify-center
             items-center
             text-center
+            flex
             cursor-pointer
             rd-1
             font-montserrat

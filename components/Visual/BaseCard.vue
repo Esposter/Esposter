@@ -14,10 +14,10 @@ const { xs, sm } = useDisplay();
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
     flex="!"
     font="Montserrat!"
+    font-bold
     justify-center
     items-center
     text-center
-    font-bold
     p-4
     break-word
     :card-props="{
