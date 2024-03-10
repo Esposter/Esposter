@@ -116,7 +116,7 @@
     "postgres": "^3.4.3",
     "rate-limiter-flexible": "^5.0.0",
     "rxjs": "^7.8.1",
-    "sql-highlight": "^4.4.0",
+    "sql-highlight": "^4.4.2",
     "superjson": "^2.2.1",
     "survey-core": "^1.9.133",
     "survey-creator-core": "^1.9.133",
