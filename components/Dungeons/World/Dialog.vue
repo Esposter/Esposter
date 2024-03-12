@@ -17,7 +17,7 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldSceneStore = useWorldSceneStore();
 const { isDialogVisible, dialogText } = storeToRefs(worldSceneStore);
-const worldView = computed(() => scene.value.cameras.main.worldView);
+const worldView = useWorldView();
 const x = ref(worldView.value.x + DIALOG_PADDING);
 const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);
 

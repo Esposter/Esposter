@@ -7,5 +7,6 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const signLayer = ref() as Ref<Tilemaps.ObjectLayer>;
   const isDialogVisible = ref(false);
   const dialogText = ref("");
-  return { tilemap, encounterLayer, signLayer, isDialogVisible, dialogText };
+  const isMenuVisible = ref(false);
+  return { tilemap, encounterLayer, signLayer, isDialogVisible, dialogText, isMenuVisible };
 });

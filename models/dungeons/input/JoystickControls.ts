@@ -7,6 +7,11 @@ import { Direction } from "grid-engine";
 export class JoystickControls extends BaseControls implements Controls {
   cursorKeys: BaseCursorKeys | null = null;
 
+  isToggleMenuInput() {
+    // @TODO: Implement
+    return false;
+  }
+
   getInput(justDown?: true) {
     const input = super.getInput();
     if (input === -1) return Direction.NONE;

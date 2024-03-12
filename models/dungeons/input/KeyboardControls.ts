@@ -9,11 +9,17 @@ import { Input } from "phaser";
 
 export class KeyboardControls extends BaseControls implements Controls {
   cursorKeys: Types.Input.Keyboard.CursorKeys;
+  enterKey: Input.Keyboard.Key;
 
   constructor(scene: SceneWithPlugins) {
     super();
     if (!scene.input.keyboard) throw new Error("Keyboard plugin is not enabled");
     this.cursorKeys = scene.input.keyboard.createCursorKeys();
+    this.enterKey = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.ENTER);
+  }
+
+  isToggleMenuInput() {
+    return Input.Keyboard.JustDown(this.enterKey);
   }
 
   getInput(justDown?: true) {
