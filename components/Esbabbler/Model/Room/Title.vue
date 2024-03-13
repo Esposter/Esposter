@@ -41,10 +41,10 @@ onClickOutside(titleRef, async () => {
     <v-text-field
       v-if="isUpdateMode"
       v-model="editedRoomName"
-      font-bold
-      text-xl
       density="compact"
+      font-bold
       hide-details
+      text-xl
       autofocus
       @keydown.enter="onUpdateRoom"
     />

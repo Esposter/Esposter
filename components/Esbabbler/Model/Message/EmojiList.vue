@@ -32,10 +32,10 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"
       flex
-      w-fit
-      px-2
       items-center
       shadow-md
+      w-fit
+      px-2
       cursor-pointer
       z-1
       @click="

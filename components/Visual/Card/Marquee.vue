@@ -23,7 +23,7 @@ const { surface, "on-surface": onSurface } = useColors();
       <div class="grid" px-4 h-full grid gap-x-4 list-none>
         <div v-for="(card, index) in cards" :key="index" class="item-container">
           <div
-            class="item border-sm"
+            class="border-sm item"
             h-full
             flex
             justify-center
