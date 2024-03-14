@@ -108,11 +108,11 @@ dependencies:
     specifier: ^2.2.3
     version: 2.2.3
   drizzle-orm:
-    specifier: ^0.30.1
-    version: 0.30.1(postgres@3.4.3)
+    specifier: ^0.30.2
+    version: 0.30.2(postgres@3.4.3)
   drizzle-zod:
     specifier: ^0.5.1
-    version: 0.5.1(drizzle-orm@0.30.1)(zod@3.22.4)
+    version: 0.5.1(drizzle-orm@0.30.2)(zod@3.22.4)
   emoji-mart-vue-fast:
     specifier: ^15.0.1
     version: 15.0.1(vue@3.4.21)
@@ -291,7 +291,7 @@ devDependencies:
     version: 13.8.4
   nuxt:
     specifier: ^3.10.3
-    version: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+    version: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -2720,7 +2720,7 @@ packages:
       defu: 6.1.4
       immer: 10.0.4
       jose: 4.15.5
-      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       unctx: 2.3.1
     transitivePeerDependencies:
       - rollup
@@ -3094,7 +3094,7 @@ packages:
       '@nuxt/kit': 3.10.3(rollup@2.79.1)
       '@nuxt/schema': 3.10.3(rollup@2.79.1)
       execa: 7.2.0
-      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       vite: 5.1.6(sass@1.72.0)
     transitivePeerDependencies:
       - rollup
@@ -3140,7 +3140,7 @@ packages:
       launch-editor: 2.6.1
       local-pkg: 0.5.0
       magicast: 0.3.3
-      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       nypm: 0.3.8
       ohash: 1.1.3
       pacote: 17.0.6
@@ -5180,7 +5180,7 @@ packages:
       '@vueuse/core': 10.9.0(vue@3.4.21)
       '@vueuse/metadata': 10.9.0
       local-pkg: 0.5.0
-      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       vue-demi: 0.14.7(vue@3.4.21)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -6359,7 +6359,7 @@ packages:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: false
 
-  /db0@0.1.4(drizzle-orm@0.30.1):
+  /db0@0.1.4(drizzle-orm@0.30.2):
     resolution: {integrity: sha512-Ft6eCwONYxlwLjBXSJxw0t0RYtA5gW9mq8JfBXn9TtC0nDPlqePAhpv9v4g9aONBi6JI1OXHTKKkUYGd+BOrCA==}
     peerDependencies:
       '@libsql/client': ^0.5.2
@@ -6373,7 +6373,7 @@ packages:
       drizzle-orm:
         optional: true
     dependencies:
-      drizzle-orm: 0.30.1(postgres@3.4.3)
+      drizzle-orm: 0.30.2(postgres@3.4.3)
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -6632,8 +6632,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.30.1(postgres@3.4.3):
-    resolution: {integrity: sha512-5P6CXl4XyWtDDiYOX/jYOJp1HTUmBlXRAwaq+muUOgaSykMEy5sJesCxceMT0oCGvxeWkKfSXo5owLnfKwCIdw==}
+  /drizzle-orm@0.30.2(postgres@3.4.3):
+    resolution: {integrity: sha512-DNd3djg03o+WxZX3pGD8YD+qrWT8gbrbhaZ2W0PVb6yH4rtM/VTB92cTGvumcRh7SSd2KfV0NWYDB70BHIXQTg==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -6708,13 +6708,13 @@ packages:
     dependencies:
       postgres: 3.4.3
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.30.1)(zod@3.22.4):
+  /drizzle-zod@0.5.1(drizzle-orm@0.30.2)(zod@3.22.4):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
-      drizzle-orm: 0.30.1(postgres@3.4.3)
+      drizzle-orm: 0.30.2(postgres@3.4.3)
       zod: 3.22.4
     dev: false
 
@@ -9020,7 +9020,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: true
 
-  /nitropack@2.9.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1):
+  /nitropack@2.9.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2):
     resolution: {integrity: sha512-k3wXlhxmTNkkFXnVyRYJ6CCdZmvlqjYJ4oaL8o9uTKIjg7A1udAle+3cVDxUWi2r9owwEysAP2+quNsAujZyTg==}
     engines: {node: ^16.11.0 || >=17.0.0}
     hasBin: true
@@ -9051,7 +9051,7 @@ packages:
       cookie-es: 1.0.0
       croner: 8.0.1
       crossws: 0.2.4
-      db0: 0.1.4(drizzle-orm@0.30.1)
+      db0: 0.1.4(drizzle-orm@0.30.2)
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 8.0.2
@@ -9297,7 +9297,7 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /nuxt@3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27):
+  /nuxt@3.10.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27):
     resolution: {integrity: sha512-NchGNiiz9g/ErJAb462W/lpX2NqcXYb9hugySKWvLXNdrjeAPiJ2/7mhgwUSiZA9MpjuQg3saiEajr1zlRIOCg==}
     engines: {node: ^14.18.0 || >=16.10.0}
     hasBin: true
@@ -9340,7 +9340,7 @@ packages:
       knitwork: 1.0.0
       magic-string: 0.30.8
       mlly: 1.6.1
-      nitropack: 2.9.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.1)
+      nitropack: 2.9.3(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)
       nuxi: 3.10.1
       nypm: 0.3.8
       ofetch: 1.3.3
