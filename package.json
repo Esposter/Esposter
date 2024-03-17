@@ -88,7 +88,7 @@
     "@tiptap/vue-3": "^2.2.4",
     "@trpc/client": "^10.45.2",
     "@trpc/server": "^10.45.2",
-    "@vuepic/vue-datepicker": "^8.2.0",
+    "@vuepic/vue-datepicker": "^8.3.1",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
     "class-transformer": "^0.5.1",
