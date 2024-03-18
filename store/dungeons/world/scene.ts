@@ -1,3 +1,4 @@
+import { MenuOptionGrid } from "@/services/dungeons/world/MenuOptionGrid";
 import type { Tilemaps } from "phaser";
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
@@ -8,5 +9,6 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const isDialogVisible = ref(false);
   const dialogText = ref("");
   const isMenuVisible = ref(false);
-  return { tilemap, encounterLayer, signLayer, isDialogVisible, dialogText, isMenuVisible };
+  const menuOptionGrid = ref(MenuOptionGrid);
+  return { tilemap, encounterLayer, signLayer, isDialogVisible, dialogText, isMenuVisible, menuOptionGrid };
 });

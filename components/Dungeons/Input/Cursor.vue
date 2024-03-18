@@ -6,13 +6,20 @@ import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import type { Position } from "grid-engine";
 
 interface CursorProps {
+  cursorImageKey?: ImageKey.CursorWhite;
   grid: Grid<TValue, TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
   tween?: ImageProps["configuration"]["tween"];
 }
 
-const { grid, initialPosition, positionIncrement, tween } = defineProps<CursorProps>();
+const {
+  cursorImageKey = ImageKey.Cursor,
+  grid,
+  initialPosition,
+  positionIncrement,
+  tween,
+} = defineProps<CursorProps>();
 const position = computed(() => ({
   x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position.x,
   y: initialPosition.y + (positionIncrement.y ?? 0) * grid.position.y,
@@ -24,7 +31,7 @@ const position = computed(() => ({
     :configuration="{
       x: position.x,
       y: position.y,
-      textureKey: ImageKey.Cursor,
+      textureKey: cursorImageKey,
       scale: 2.5,
       tween,
     }"

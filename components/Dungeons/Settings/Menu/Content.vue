@@ -25,7 +25,6 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
 </script>
 
 <template>
-  <DungeonsSettingsMenuCursor />
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(_, columnIndex) in row"
@@ -61,4 +60,5 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
   </template>
   <DungeonsSettingsMenuVolumeSlider />
   <DungeonsSettingsMenuColorPicker />
+  <DungeonsSettingsMenuCursor />
 </template>

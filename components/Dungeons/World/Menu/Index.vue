@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { MENU_DEPTH, MENU_HEIGHT, MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/world/constants";
+import { MENU_DEPTH, MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/world/constants";
+import { getMenuHeight } from "@/services/dungeons/world/getMenuHeight";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
-const { isMenuVisible } = storeToRefs(worldSceneStore);
+const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
 const worldView = useWorldView();
 const x = ref(worldView.value.right - MENU_PADDING * 2 - MENU_WIDTH);
 const y = ref(worldView.value.top + MENU_PADDING * 2);
+const menuHeight = computed(() => getMenuHeight(menuOptionGrid.value.rowSize));
 
 watch(isMenuVisible, (newIsMenuVisible) => {
   if (!newIsMenuVisible) return;
@@ -24,12 +26,13 @@ watch(isMenuVisible, (newIsMenuVisible) => {
       :configuration="{
         x: 1,
         width: MENU_WIDTH - 1,
-        height: MENU_HEIGHT - 1,
+        height: menuHeight - 1,
         origin: 0,
         fillColor: 0x32454c,
         alpha: 0.9,
         strokeStyle: [8, 0x6d9aa8],
       }"
     />
+    <DungeonsWorldMenuText />
   </Container>
 </template>
