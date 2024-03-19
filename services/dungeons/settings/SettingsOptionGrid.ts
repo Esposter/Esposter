@@ -14,4 +14,4 @@ const grid = [
   [SettingsOption["Menu Color"]],
   [SettingsOption.Close],
 ] as const;
-export const SettingsOptionGrid = new Grid<string, typeof grid>(grid, { x: 2, y: 0 });
+export const SettingsOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>(grid, { x: 2, y: 0 });

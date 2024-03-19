@@ -37,8 +37,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     if (!(selectedSettingsOption.value in settings.value)) return;
 
     if (newX === 0 || newY !== oldY) {
-      const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value] as string;
-      const x = optionGrid.value.getPositionX(value, newY);
+      const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value];
+      const x = optionGrid.value.getPositionX(value as typeof optionGrid.value.value, newY);
       if (x === null) return;
 
       optionGrid.value.position.x = x;
