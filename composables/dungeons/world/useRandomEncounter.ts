@@ -1,23 +1,17 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { dayjs } from "@/services/dayjs";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/world/constants";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
-import { Cameras } from "phaser";
 
 export const useRandomEncounter = () => {
+  const gameStore = useGameStore();
+  const { fadeSwitchToScene } = gameStore;
   const settingsStore = useSettingsStore();
   const { isSkipEncounters } = storeToRefs(settingsStore);
   if (isSkipEncounters.value) return;
 
-  const phaserStore = usePhaserStore();
-  const { switchToScene } = phaserStore;
-  const { scene } = storeToRefs(phaserStore);
-  const cameraStore = useCameraStore();
-  const { fadeOut } = cameraStore;
   const battleSceneStore = useBattleSceneStore();
   const { initialize } = battleSceneStore;
   const encounterStore = useEncounterStore();
@@ -29,9 +23,7 @@ export const useRandomEncounter = () => {
   if (!isEncounter) return;
 
   stepsSinceLastEncounter.value = 0;
-  fadeOut(dayjs.duration(2, "seconds").asMilliseconds());
-  scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+  fadeSwitchToScene(SceneKey.Battle, 2000, () => {
     initialize();
-    switchToScene(SceneKey.Battle);
   });
 };

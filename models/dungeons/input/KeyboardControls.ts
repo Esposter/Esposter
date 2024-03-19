@@ -24,7 +24,7 @@ export class KeyboardControls extends BaseControls implements Controls {
     else if (input) return input;
     else if (Input.Keyboard.JustDown(this.cursorKeys.space)) return PlayerSpecialInput.Confirm;
     else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) return PlayerSpecialInput.Cancel;
-    else if (Input.Keyboard.JustDown(this.enterKey)) return PlayerSpecialInput.ToggleMenu;
+    else if (Input.Keyboard.JustDown(this.enterKey)) return PlayerSpecialInput.Enter;
     else return mapCursorKeysToDirection(this.cursorKeys, justDown);
   }
 }

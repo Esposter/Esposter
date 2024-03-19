@@ -1,18 +1,16 @@
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
+import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
-  const gameStore = useGameStore();
-  const { controls } = storeToRefs(gameStore);
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const playerStore = usePlayerStore();
@@ -23,8 +21,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     battleStateMachine.setState(null);
   };
 
-  const onPlayerInput = () => {
-    const input = controls.value.getInput();
+  const onPlayerInput = (input: PlayerInput) => {
     if (handleShowMessageInput(input)) return;
     else if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
@@ -42,6 +39,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
         return;
       case PlayerSpecialInput.Cancel:
         activePanel.value = ActivePanel.Option;
+        return;
+      case PlayerSpecialInput.Enter:
         return;
       default:
         exhaustiveGuard(playerSpecialInput);

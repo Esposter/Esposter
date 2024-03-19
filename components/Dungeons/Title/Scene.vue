@@ -5,43 +5,19 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
+import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { Cameras } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { switchToScene } = phaserStore;
 const { scene } = storeToRefs(phaserStore);
+const gameStore = useGameStore();
+const { controls } = storeToRefs(gameStore);
 const titleSceneStore = useTitleSceneStore();
 const { onPlayerInput } = titleSceneStore;
-const { optionGrid } = storeToRefs(titleSceneStore);
 </script>
 
 <template>
-  <Scene
-    :scene-key="SceneKey.Title"
-    :cls="SceneWithPlugins"
-    @create="
-      (scene) => {
-        scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-          switch (optionGrid.value) {
-            case PlayerTitleMenuOption['New Game']:
-              switchToScene(SceneKey.World);
-              return;
-            case PlayerTitleMenuOption.Continue:
-              return;
-            case PlayerTitleMenuOption.Settings:
-              switchToScene(SceneKey.Settings);
-              return;
-            default:
-              exhaustiveGuard(optionGrid.value);
-          }
-        });
-      }
-    "
-    @update="onPlayerInput()"
-  >
+  <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput())">
     <Image
       :configuration="{
         textureKey: ImageKey.TitleScreenBackground,

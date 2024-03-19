@@ -1,18 +1,16 @@
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { Grid } from "@/models/dungeons/Grid";
+import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
-import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
-  const cameraStore = useCameraStore();
-  const { fadeOut } = cameraStore;
   const gameStore = useGameStore();
-  const { controls } = storeToRefs(gameStore);
+  const { fadeSwitchToScene } = gameStore;
   const isContinueEnabled = ref(false);
   const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>>;
 
@@ -30,8 +28,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     { immediate: true },
   );
 
-  const onPlayerInput = () => {
-    const input = controls.value.getInput(true);
+  const onPlayerInput = (input: PlayerInput) => {
     if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };
@@ -40,9 +37,12 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (optionGrid.value.value) {
         case PlayerTitleMenuOption["New Game"]:
+          fadeSwitchToScene(SceneKey.World);
+          return;
         case PlayerTitleMenuOption.Continue:
+          return;
         case PlayerTitleMenuOption.Settings:
-          fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
+          fadeSwitchToScene(SceneKey.Settings);
           return;
         default:
           exhaustiveGuard(optionGrid.value.value);

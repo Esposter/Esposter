@@ -5,7 +5,10 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { useGameStore } from "@/store/dungeons/game";
 
+const gameStore = useGameStore();
+const { controls } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 </script>
@@ -18,7 +21,7 @@ const { onPlayerInput } = battleSceneStore;
     @update="
       () => {
         battleStateMachine.update();
-        onPlayerInput();
+        onPlayerInput(controls.getInput());
       }
     "
   >

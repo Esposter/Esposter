@@ -12,6 +12,7 @@ import { dayjs } from "@/services/dayjs";
 import { isMovingDirection } from "@/services/dungeons/input/isMovingDirection";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
+import { useWorldMenuStore } from "@/store/dungeons/world/menu";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -24,7 +25,9 @@ const { controls } = storeToRefs(gameStore);
 const dialogStore = useDialogStore();
 const { handleShowMessageInput } = dialogStore;
 const worldSceneStore = useWorldSceneStore();
-const { tilemap, isDialogVisible, isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
+const { tilemap, isDialogVisible, isMenuVisible } = storeToRefs(worldSceneStore);
+const worldMenuStore = useWorldMenuStore();
+const { onPlayerInput: onMenuPlayerInput } = worldMenuStore;
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 
@@ -43,8 +46,7 @@ const update = (scene: SceneWithPlugins) => {
     handleShowMessageInput(input);
     return;
   } else if (isMenuVisible.value) {
-    if (input === PlayerSpecialInput.ToggleMenu || input === PlayerSpecialInput.Cancel) isMenuVisible.value = false;
-    else if (isMovingDirection(input)) menuOptionGrid.value.move(input);
+    onMenuPlayerInput(input);
     return;
   }
 
@@ -53,7 +55,7 @@ const update = (scene: SceneWithPlugins) => {
   if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
   else if (input === PlayerSpecialInput.Confirm) useInteractions();
   else if (isMovingDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
-  else if (input === PlayerSpecialInput.ToggleMenu) isMenuVisible.value = true;
+  else if (input === PlayerSpecialInput.Enter) isMenuVisible.value = true;
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {

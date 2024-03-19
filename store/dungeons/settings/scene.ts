@@ -1,9 +1,7 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
-import { dayjs } from "@/services/dayjs";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/settings/SettingsOptionGrid";
@@ -12,16 +10,10 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import { Cameras } from "phaser";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
-  const phaserStore = usePhaserStore();
-  const { switchToScene } = phaserStore;
-  const { scene } = storeToRefs(phaserStore);
-  const cameraStore = useCameraStore();
-  const { fadeOut } = cameraStore;
   const gameStore = useGameStore();
-  const { controls } = storeToRefs(gameStore);
+  const { fadeSwitchToScene } = gameStore;
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
@@ -58,9 +50,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
-  const onPlayerInput = (delta: number) => {
-    const justDownInput = controls.value.getInput(true);
-    const input = controls.value.getInput();
+  const onPlayerInput = (justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
@@ -72,22 +62,17 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm: {
         const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-        if (selectedSettingsOption === SettingsOption.Close) switchToTitleScene();
+        if (selectedSettingsOption === SettingsOption.Close) fadeSwitchToScene(SceneKey.Title);
         return;
       }
       case PlayerSpecialInput.Cancel:
-        switchToTitleScene();
+        fadeSwitchToScene(SceneKey.Title);
+        return;
+      case PlayerSpecialInput.Enter:
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
     }
-  };
-
-  const switchToTitleScene = () => {
-    fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
-    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      switchToScene(SceneKey.Title);
-    });
   };
 
   return { optionGrid, infoText, onPlayerInput };
