@@ -4,12 +4,8 @@ import EventEmitter from "eventemitter3";
 
 type SceneEventKeys =
   `${typeof BEFORE_DESTROY_SCENE_EVENT_KEY | typeof SHOW_MESSAGE_SCENE_EVENT_KEY}${keyof typeof SceneKey}`;
-type SceneEvents = {
+export type PhaserEvents = {
   [P in SceneEventKeys]: () => void;
 };
-
-export interface PhaserEvents extends SceneEvents {
-  resize: () => void;
-}
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();

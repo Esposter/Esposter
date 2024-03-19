@@ -24,7 +24,7 @@ const { controls } = storeToRefs(gameStore);
 const dialogStore = useDialogStore();
 const { handleShowMessageInput } = dialogStore;
 const worldSceneStore = useWorldSceneStore();
-const { tilemap, isDialogVisible, isMenuVisible } = storeToRefs(worldSceneStore);
+const { tilemap, isDialogVisible, isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { isMoving } = storeToRefs(playerStore);
 
@@ -43,7 +43,8 @@ const update = (scene: SceneWithPlugins) => {
     handleShowMessageInput(input);
     return;
   } else if (isMenuVisible.value) {
-    if (controls.value.isToggleMenuInput()) isMenuVisible.value = false;
+    if (input === PlayerSpecialInput.ToggleMenu || input === PlayerSpecialInput.Cancel) isMenuVisible.value = false;
+    else if (isMovingDirection(input)) menuOptionGrid.value.move(input);
     return;
   }
 
@@ -52,7 +53,7 @@ const update = (scene: SceneWithPlugins) => {
   if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
   else if (input === PlayerSpecialInput.Confirm) useInteractions();
   else if (isMovingDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
-  else if (controls.value.isToggleMenuInput()) isMenuVisible.value = true;
+  else if (input === PlayerSpecialInput.ToggleMenu) isMenuVisible.value = true;
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {

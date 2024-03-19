@@ -9,11 +9,10 @@ import { InfoContainerTextMap } from "@/services/dungeons/settings/InfoContainer
 import { SettingsOptionGrid } from "@/services/dungeons/settings/SettingsOptionGrid";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-import type { Direction } from "grid-engine";
 import { Cameras } from "phaser";
-import { useColorPickerStore } from "./colorPicker";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const phaserStore = usePhaserStore();
@@ -66,7 +65,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
     else if (isUpdateMenuColor(justDownInput, selectedSettingsOption.value)) updateMenuColor(justDownInput);
-    else onPlayerDirectionInput(justDownInput);
+    else optionGrid.value.move(justDownInput);
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
@@ -82,10 +81,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       default:
         exhaustiveGuard(playerSpecialInput);
     }
-  };
-
-  const onPlayerDirectionInput = (direction: Direction) => {
-    optionGrid.value.move(direction);
   };
 
   const switchToTitleScene = () => {

@@ -18,16 +18,13 @@ export class KeyboardControls extends BaseControls implements Controls {
     this.enterKey = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.ENTER);
   }
 
-  isToggleMenuInput() {
-    return Input.Keyboard.JustDown(this.enterKey);
-  }
-
   getInput(justDown?: true) {
     const input = super.getInput();
     if (input === -1) return Direction.NONE;
     else if (input) return input;
     else if (Input.Keyboard.JustDown(this.cursorKeys.space)) return PlayerSpecialInput.Confirm;
     else if (Input.Keyboard.JustDown(this.cursorKeys.shift)) return PlayerSpecialInput.Cancel;
+    else if (Input.Keyboard.JustDown(this.enterKey)) return PlayerSpecialInput.ToggleMenu;
     else return mapCursorKeysToDirection(this.cursorKeys, justDown);
   }
 }
