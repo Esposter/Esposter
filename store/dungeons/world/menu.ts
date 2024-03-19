@@ -18,6 +18,7 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
         case MenuOption.Save:
           return;
         case MenuOption.Exit:
+          isMenuVisible.value = false;
           fadeSwitchToScene(SceneKey.Title);
           return;
         default:
