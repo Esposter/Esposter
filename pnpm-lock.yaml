@@ -108,11 +108,11 @@ dependencies:
     specifier: ^2.2.3
     version: 2.2.3
   drizzle-orm:
-    specifier: ^0.30.2
-    version: 0.30.2(postgres@3.4.3)
+    specifier: ^0.30.4
+    version: 0.30.4(postgres@3.4.3)
   drizzle-zod:
     specifier: ^0.5.1
-    version: 0.5.1(drizzle-orm@0.30.2)(zod@3.22.4)
+    version: 0.5.1(drizzle-orm@0.30.4)(zod@3.22.4)
   emoji-mart-vue-fast:
     specifier: ^15.0.1
     version: 15.0.1(vue@3.4.21)
@@ -174,17 +174,17 @@ dependencies:
     specifier: ^2.2.1
     version: 2.2.1
   survey-core:
-    specifier: ^1.9.134
-    version: 1.9.134
+    specifier: ^1.9.135
+    version: 1.9.135
   survey-creator-core:
-    specifier: ^1.9.134
-    version: 1.9.134
+    specifier: ^1.9.135
+    version: 1.9.135
   survey-creator-vue:
     specifier: ^1.9.134
     version: 1.9.134(vue@3.4.21)
   survey-vue3-ui:
-    specifier: ^1.9.134
-    version: 1.9.134(vue@3.4.21)
+    specifier: ^1.9.135
+    version: 1.9.135(vue@3.4.21)
   three:
     specifier: ^0.162.0
     version: 0.162.0
@@ -210,8 +210,8 @@ dependencies:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.4.21)
   vuetify:
-    specifier: ^3.5.9
-    version: 3.5.9(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
+    specifier: ^3.5.10
+    version: 3.5.10(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
   worker-timers:
     specifier: ^7.1.4
     version: 7.1.4
@@ -228,7 +228,7 @@ devDependencies:
     version: 0.2.0(eslint@8.57.0)
   '@nuxt/test-utils':
     specifier: ^3.12.0
-    version: 3.12.0(h3@1.11.1)(happy-dom@13.10.1)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+    version: 3.12.0(h3@1.11.1)(happy-dom@14.0.0)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
   '@types/dedent':
     specifier: ^0.7.2
     version: 0.7.2
@@ -287,11 +287,11 @@ devDependencies:
     specifier: ^1.11.1
     version: 1.11.1
   happy-dom:
-    specifier: ^13.10.1
-    version: 13.10.1
+    specifier: ^14.0.0
+    version: 14.0.0
   nuxt:
     specifier: ^3.11.1
-    version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+    version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -302,8 +302,8 @@ devDependencies:
     specifier: ^4.7.1
     version: 4.7.1
   type-fest:
-    specifier: ^4.12.0
-    version: 4.12.0
+    specifier: ^4.13.0
+    version: 4.13.0
   unocss:
     specifier: ^0.58.6
     version: 0.58.6(@unocss/webpack@0.58.6)(postcss@8.4.36)(rollup@2.79.1)(vite@5.1.6)
@@ -315,7 +315,7 @@ devDependencies:
     version: 5.1.6(sass@1.72.0)
   vitest:
     specifier: ^1.4.0
-    version: 1.4.0(happy-dom@13.10.1)(sass@1.72.0)
+    version: 1.4.0(happy-dom@14.0.0)(sass@1.72.0)
   vue-tsc:
     specifier: ^1.8.27
     version: 1.8.27(typescript@5.4.2)
@@ -2720,7 +2720,7 @@ packages:
       defu: 6.1.4
       immer: 10.0.4
       jose: 4.15.5
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       unctx: 2.3.1
     transitivePeerDependencies:
       - rollup
@@ -3094,7 +3094,7 @@ packages:
       '@nuxt/kit': 3.11.1(rollup@2.79.1)
       '@nuxt/schema': 3.11.1(rollup@2.79.1)
       execa: 7.2.0
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       vite: 5.1.6(sass@1.72.0)
     transitivePeerDependencies:
       - rollup
@@ -3140,7 +3140,7 @@ packages:
       launch-editor: 2.6.1
       local-pkg: 0.5.0
       magicast: 0.3.3
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       nypm: 0.3.8
       ohash: 1.1.3
       pacote: 17.0.6
@@ -3295,7 +3295,7 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/test-utils@3.12.0(h3@1.11.1)(happy-dom@13.10.1)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
+  /@nuxt/test-utils@3.12.0(h3@1.11.1)(happy-dom@14.0.0)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
     resolution: {integrity: sha512-Q3HP53TDIYeqHT65r31HZhK/gRwVBmchSdVj1tfiYECyqstckvsQ4Cyt/GX/XmD7cLdD3d5aHow8LaMfP+BSqQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
     peerDependencies:
@@ -3346,7 +3346,7 @@ packages:
       fake-indexeddb: 5.0.2
       get-port-please: 3.1.2
       h3: 1.11.1
-      happy-dom: 13.10.1
+      happy-dom: 14.0.0
       local-pkg: 0.5.0
       magic-string: 0.30.8
       node-fetch-native: 1.6.2
@@ -3360,8 +3360,8 @@ packages:
       unenv: 1.9.0
       unplugin: 1.10.0
       vite: 5.1.6(sass@1.72.0)
-      vitest: 1.4.0(happy-dom@13.10.1)(sass@1.72.0)
-      vitest-environment-nuxt: 1.0.0(h3@1.11.1)(happy-dom@13.10.1)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+      vitest: 1.4.0(happy-dom@14.0.0)(sass@1.72.0)
+      vitest-environment-nuxt: 1.0.0(h3@1.11.1)(happy-dom@14.0.0)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
       vue: 3.4.21(typescript@5.4.2)
       vue-router: 4.3.0(vue@3.4.21)
     transitivePeerDependencies:
@@ -5039,7 +5039,7 @@ packages:
       strip-literal: 2.0.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.4.0(happy-dom@13.10.1)(sass@1.72.0)
+      vitest: 1.4.0(happy-dom@14.0.0)(sass@1.72.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5252,7 +5252,7 @@ packages:
       vue: 3.4.21(typescript@5.4.2)
     dev: false
 
-  /@vuetify/loader-shared@2.0.3(vue@3.4.21)(vuetify@3.5.9):
+  /@vuetify/loader-shared@2.0.3(vue@3.4.21)(vuetify@3.5.10):
     resolution: {integrity: sha512-Ss3GC7eJYkp2SF6xVzsT7FAruEmdihmn4OCk2+UocREerlXKWgOKKzTN5PN3ZVN5q05jHHrsNhTuWbhN61Bpdg==}
     peerDependencies:
       vue: ^3.0.0
@@ -5260,7 +5260,7 @@ packages:
     dependencies:
       upath: 2.0.1
       vue: 3.4.21(typescript@5.4.2)
-      vuetify: 3.5.9(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
+      vuetify: 3.5.10(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
 
   /@vueuse/core@10.9.0(vue@3.4.21):
     resolution: {integrity: sha512-/1vjTol8SXnx6xewDEKfS0Ra//ncg4Hb0DaZiwKf7drgfMsKFExQ+FnnENcN6efPen+1kIzhLQoGSy0eDUVOMg==}
@@ -5287,7 +5287,7 @@ packages:
       '@vueuse/core': 10.9.0(vue@3.4.21)
       '@vueuse/metadata': 10.9.0
       local-pkg: 0.5.0
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27)
       vue-demi: 0.14.7(vue@3.4.21)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -6493,7 +6493,7 @@ packages:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: false
 
-  /db0@0.1.4(drizzle-orm@0.30.2):
+  /db0@0.1.4(drizzle-orm@0.30.4):
     resolution: {integrity: sha512-Ft6eCwONYxlwLjBXSJxw0t0RYtA5gW9mq8JfBXn9TtC0nDPlqePAhpv9v4g9aONBi6JI1OXHTKKkUYGd+BOrCA==}
     peerDependencies:
       '@libsql/client': ^0.5.2
@@ -6507,7 +6507,7 @@ packages:
       drizzle-orm:
         optional: true
     dependencies:
-      drizzle-orm: 0.30.2(postgres@3.4.3)
+      drizzle-orm: 0.30.4(postgres@3.4.3)
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -6766,8 +6766,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.30.2(postgres@3.4.3):
-    resolution: {integrity: sha512-DNd3djg03o+WxZX3pGD8YD+qrWT8gbrbhaZ2W0PVb6yH4rtM/VTB92cTGvumcRh7SSd2KfV0NWYDB70BHIXQTg==}
+  /drizzle-orm@0.30.4(postgres@3.4.3):
+    resolution: {integrity: sha512-kWoSMGbrOFkmkAweLTFtHJMpN+nwhx89q0mLELqT2aEU+1szNV8jrnBmJwZ0WGNp7J7yQn/ezEtxBI/qzTSElQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -6781,6 +6781,7 @@ packages:
       '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '*'
+      '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=13.2.0'
@@ -6817,6 +6818,8 @@ packages:
         optional: true
       '@vercel/postgres':
         optional: true
+      '@xata.io/client':
+        optional: true
       better-sqlite3:
         optional: true
       bun-types:
@@ -6842,13 +6845,13 @@ packages:
     dependencies:
       postgres: 3.4.3
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.30.2)(zod@3.22.4):
+  /drizzle-zod@0.5.1(drizzle-orm@0.30.4)(zod@3.22.4):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
-      drizzle-orm: 0.30.2(postgres@3.4.3)
+      drizzle-orm: 0.30.4(postgres@3.4.3)
       zod: 3.22.4
     dev: false
 
@@ -8032,8 +8035,8 @@ packages:
       sisteransi: 1.0.5
     dev: true
 
-  /happy-dom@13.10.1:
-    resolution: {integrity: sha512-9GZLEFvQL5EgfJX2zcBgu1nsPUn98JF/EiJnSfQbdxI6YEQGqpd09lXXxOmYonRBIEFz9JlGCOiPflDzgS1p8w==}
+  /happy-dom@14.0.0:
+    resolution: {integrity: sha512-XdxaqufN4QZs0WFuo7L4vGkKpj08gmpEpSMFxDtvYo4OipZLssz7VlavE03FuLabHBTJAWxcR6MlKyOQZM9e0w==}
     engines: {node: '>=16.0.0'}
     dependencies:
       entities: 4.5.0
@@ -9210,7 +9213,7 @@ packages:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
     dev: true
 
-  /nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2):
+  /nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4):
     resolution: {integrity: sha512-i/cbDW5qfZS6pQR4DrlQOFlNoNvQVBuiy7EEvMlrqkmMGXiIJY1WW7L7D4/6m9dF1cwitOu7k0lJWVn74gxfvw==}
     engines: {node: ^16.11.0 || >=17.0.0}
     hasBin: true
@@ -9241,7 +9244,7 @@ packages:
       cookie-es: 1.0.0
       croner: 8.0.1
       crossws: 0.2.4
-      db0: 0.1.4(drizzle-orm@0.30.2)
+      db0: 0.1.4(drizzle-orm@0.30.4)
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 8.0.2
@@ -9488,7 +9491,7 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27):
+  /nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)(eslint@8.57.0)(rollup@2.79.1)(sass@1.72.0)(typescript@5.4.2)(vite@5.1.6)(vue-tsc@1.8.27):
     resolution: {integrity: sha512-CsncE1dxP0cmOYT+PBdjMD0bOK8eZizG5tgNWUOJAAAtU45sO38maoBumYYL2kUpT/SC/dMP+831DAcVPvi9pQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
     hasBin: true
@@ -9531,7 +9534,7 @@ packages:
       knitwork: 1.0.0
       magic-string: 0.30.8
       mlly: 1.6.1
-      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.2)
+      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.4)
       nuxi: 3.11.0
       nypm: 0.3.8
       ofetch: 1.3.3
@@ -11268,12 +11271,12 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  /survey-core@1.9.134:
-    resolution: {integrity: sha512-qqGCbcos6InT6s8c1UwAm7SEwkwvEk3MvGyzyDft2dmRMQkFis80qJ1xR1ihPu9aBDIW4gg12a0C0A2cohiAiA==}
+  /survey-core@1.9.135:
+    resolution: {integrity: sha512-hca9h5He8IqMSgTFQG5o63/h09+hERVUBoOmVZRcyzJKY80Q0vFdtfEQRKh0J6H+PhmC1mvMJpb0gT+TBhnGrA==}
     dev: false
 
-  /survey-creator-core@1.9.134:
-    resolution: {integrity: sha512-5SRmOE+ecn1IOV8p2GUyxaY/icPGRNqiqDRti86S3N215yvm8HAvZloBBQ/BKMb/QUXefZRRrvSfYv4tXfxB6g==}
+  /survey-creator-core@1.9.135:
+    resolution: {integrity: sha512-YUu91/HQ5MpY6UtOwaY88fwNXMLPGek1rKo7PKHRyoi9+jNlsaWaSG2qZI98BWCDmr6JtXV31lYnT/AbWY4aJg==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -11281,7 +11284,7 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.134
+      survey-core: 1.9.135
     dev: false
 
   /survey-creator-vue@1.9.134(vue@3.4.21):
@@ -11289,20 +11292,20 @@ packages:
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.134
-      survey-creator-core: 1.9.134
-      survey-vue3-ui: 1.9.134(vue@3.4.21)
+      survey-core: 1.9.135
+      survey-creator-core: 1.9.135
+      survey-vue3-ui: 1.9.135(vue@3.4.21)
       vue: 3.4.21(typescript@5.4.2)
     transitivePeerDependencies:
       - ace-builds
     dev: false
 
-  /survey-vue3-ui@1.9.134(vue@3.4.21):
-    resolution: {integrity: sha512-wveJfEXcRclp4o4GhgGDjP50V9kE0VIncLHt98NSj78N3cssb2Y/0VknWTMpyFScjFFqb6YZUOsPRAxj+zlNIw==}
+  /survey-vue3-ui@1.9.135(vue@3.4.21):
+    resolution: {integrity: sha512-FPWEojgToBnAD4quXCiHLHmAl24xAVcoE3tx7T2tK9TN2Pduxq5jbzARwutqrsKSO6KGlJkCZNfPOeYIKO2qNQ==}
     peerDependencies:
       vue: ^3.2.41
     dependencies:
-      survey-core: 1.9.134
+      survey-core: 1.9.135
       vue: 3.4.21(typescript@5.4.2)
     dev: false
 
@@ -11651,8 +11654,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  /type-fest@4.12.0:
-    resolution: {integrity: sha512-5Y2/pp2wtJk8o08G0CMkuFPCO354FGwk/vbidxrdhRGZfd0tFnb4Qb8anp9XxXriwBgVPjdWbKpGl4J9lJY2jQ==}
+  /type-fest@4.13.0:
+    resolution: {integrity: sha512-nKO1N9IFeTec3jnNe/3nZlX+RzwZsvT3c4akWC3IlhYGQbRSPFMBe87vmoaymS3hW2l/rs+4ptDDTxzcbqAcmA==}
     engines: {node: '>=16'}
     dev: true
 
@@ -12245,7 +12248,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /vite-plugin-vuetify@2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.9):
+  /vite-plugin-vuetify@2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.10):
     resolution: {integrity: sha512-HbYajgGgb/noaVKNRhnnXIiQZrNXfNIeanUGAwXgOxL6h/KULS40Uf51Kyz8hNmdegF+DwjgXXI/8J1PNS83xw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
@@ -12253,12 +12256,12 @@ packages:
       vue: ^3.0.0
       vuetify: ^3.0.0
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.4.21)(vuetify@3.5.9)
+      '@vuetify/loader-shared': 2.0.3(vue@3.4.21)(vuetify@3.5.10)
       debug: 4.3.4
       upath: 2.0.1
       vite: 5.1.6(sass@1.72.0)
       vue: 3.4.21(typescript@5.4.2)
-      vuetify: 3.5.9(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
+      vuetify: 3.5.10(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
     transitivePeerDependencies:
       - supports-color
 
@@ -12297,10 +12300,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /vitest-environment-nuxt@1.0.0(h3@1.11.1)(happy-dom@13.10.1)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
+  /vitest-environment-nuxt@1.0.0(h3@1.11.1)(happy-dom@14.0.0)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
     resolution: {integrity: sha512-AWMO9h4HdbaFdPWZw34gALFI8gbBiOpvfbyeZwHIPfh4kWg/TwElYHvYMQ61WPUlCGaS5LebfHkaI0WPyb//Iw==}
     dependencies:
-      '@nuxt/test-utils': 3.12.0(h3@1.11.1)(happy-dom@13.10.1)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+      '@nuxt/test-utils': 3.12.0(h3@1.11.1)(happy-dom@14.0.0)(rollup@2.79.1)(vite@5.1.6)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -12320,7 +12323,7 @@ packages:
       - vue-router
     dev: true
 
-  /vitest@1.4.0(happy-dom@13.10.1)(sass@1.72.0):
+  /vitest@1.4.0(happy-dom@14.0.0)(sass@1.72.0):
     resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -12354,7 +12357,7 @@ packages:
       chai: 4.4.1
       debug: 4.3.4
       execa: 8.0.1
-      happy-dom: 13.10.1
+      happy-dom: 14.0.0
       local-pkg: 0.5.0
       magic-string: 0.30.8
       pathe: 1.1.2
@@ -12523,8 +12526,8 @@ packages:
       perfect-debounce: 1.0.0
       ufo: 1.5.1
       unconfig: 0.3.11
-      vite-plugin-vuetify: 2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.9)
-      vuetify: 3.5.9(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
+      vite-plugin-vuetify: 2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.10)
+      vuetify: 3.5.10(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -12535,8 +12538,8 @@ packages:
       - webpack-plugin-vuetify
     dev: true
 
-  /vuetify@3.5.9(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21):
-    resolution: {integrity: sha512-tA3N2uWZFNSZRFNnXN841x4rWozYXKC0fGW/mJIwcKkQiI0+gmVCETtjF8bnOS7L1s0buWzw94uYTlXQa5AQ4w==}
+  /vuetify@3.5.10(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21):
+    resolution: {integrity: sha512-UutmZX7lAJfneAHx75DaONBD0w3zRGok7HE+dDepWyWMh0vOSUPLap5WXu80UwUNcTT2j0OYWYAsnTK/bJ/c1A==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
@@ -12555,7 +12558,7 @@ packages:
         optional: true
     dependencies:
       typescript: 5.4.2
-      vite-plugin-vuetify: 2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.9)
+      vite-plugin-vuetify: 2.0.3(vite@5.1.6)(vue@3.4.21)(vuetify@3.5.10)
       vue: 3.4.21(typescript@5.4.2)
 
   /w3c-keyname@2.2.8:
