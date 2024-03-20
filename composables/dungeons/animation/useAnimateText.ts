@@ -1,8 +1,7 @@
-import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { sleep } from "@/util/sleep";
 import type { Scene } from "phaser";
 
-export const animateText = (
+export const useAnimateText = (
   scene: Scene,
   targetText: Ref<string>,
   text: string,
@@ -11,7 +10,7 @@ export const animateText = (
     onComplete?: () => void;
   },
 ) => {
-  const delay = configuration?.delay ?? DEFAULT_TEXT_DELAY;
+  const delay = useTextDelay(configuration?.delay);
   let i = 0;
   scene.time.addEvent({
     delay,

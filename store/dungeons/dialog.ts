@@ -4,8 +4,6 @@ import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { DialogTarget } from "@/models/dungeons/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
-import { animateText } from "@/services/dungeons/animation/animateText";
-import { DEFAULT_TEXT_DELAY } from "@/services/dungeons/animation/constants";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/sleep";
 
@@ -59,8 +57,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     if (isSkipAnimations.value) {
+      const delay = useTextDelay();
       dialogTarget.text.value = message;
-      void sleep(DEFAULT_TEXT_DELAY).then(() => {
+      void sleep(delay).then(() => {
         showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
       });
@@ -68,7 +67,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     isQueuedMessagesAnimationPlaying.value = true;
-    animateText(scene.value, dialogTarget.text, message, {
+    useAnimateText(scene.value, dialogTarget.text, message, {
       onComplete: () => {
         showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
@@ -87,7 +86,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       return;
     }
 
-    animateText(scene.value, text, message, { onComplete });
+    useAnimateText(scene.value, text, message, { onComplete });
   };
 
   const showInputPromptCursor = (x: number) => {
