@@ -6,6 +6,8 @@ import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
 defineRouteRules({ ssr: false });
+
+await useReadDungeonsGame();
 </script>
 
 <template>
