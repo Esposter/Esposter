@@ -91,3 +91,4 @@ const baseY = computed(
     }"
   />
 </template>
+@/models/dungeons/settings/SettingsSetting

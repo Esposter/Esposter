@@ -1,5 +1,5 @@
 import { Game as ClickerGame } from "@/models/clicker/Game";
-import { Game as DungeonsGame } from "@/models/dungeons/Game";
+import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
 import { TableEditor } from "@/models/tableEditor/TableEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";

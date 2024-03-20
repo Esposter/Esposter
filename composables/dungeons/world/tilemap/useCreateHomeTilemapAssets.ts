@@ -1,4 +1,4 @@
-import { TilesetKeyMap } from "@/models/dungeons/keys/TilesetKeyMap";
+import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { LayerId } from "@/models/dungeons/world/home/LayerId";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -9,13 +9,13 @@ export const useCreateHomeTilemapAssets = () => {
   const { debugTileLayerAlpha } = storeToRefs(settingsStore);
   const worldSceneStore = useWorldSceneStore();
   const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
-  const basicPlainsTileset = useCreateTileset(TilesetKeyMap.BasicPlains);
-  const beachAndCavesTileset = useCreateTileset(TilesetKeyMap.BeachAndCaves);
-  const houseCreateTileset = useCreateTileset(TilesetKeyMap.House);
-  const bushesTileset = useCreateTileset(TilesetKeyMap.Bushes);
-  const collisionTileset = useCreateTileset(TilesetKeyMap.Collision);
-  const encounterTileset = useCreateTileset(TilesetKeyMap.Encounter);
-  const grassTileset = useCreateTileset(TilesetKeyMap.Grass);
+  const basicPlainsTileset = useCreateTileset(TilesetKey.BasicPlains);
+  const beachAndCavesTileset = useCreateTileset(TilesetKey.BeachAndCaves);
+  const houseCreateTileset = useCreateTileset(TilesetKey.House);
+  const bushesTileset = useCreateTileset(TilesetKey.Bushes);
+  const collisionTileset = useCreateTileset(TilesetKey.Collision);
+  const encounterTileset = useCreateTileset(TilesetKey.Encounter);
+  const grassTileset = useCreateTileset(TilesetKey.Grass);
   useCreateLayer(LayerId.Ground, [basicPlainsTileset, grassTileset]);
   useCreateLayer(LayerId.Building, houseCreateTileset);
   useCreateLayer(LayerId.Water, beachAndCavesTileset);

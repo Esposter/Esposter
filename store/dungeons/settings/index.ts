@@ -1,25 +1,29 @@
-import { AnimationsOption } from "@/models/dungeons/settings/AnimationsOption";
-import { BattleStyleOption } from "@/models/dungeons/settings/BattleStyleOption";
-import { MenuColorOption } from "@/models/dungeons/settings/MenuColorOption";
+import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
-import { SoundOption } from "@/models/dungeons/settings/SoundOption";
-import { TextSpeedOption } from "@/models/dungeons/settings/TextSpeedOption";
+import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
-  const settings = ref<Record<Exclude<SettingsOption, SettingsOption.Close>, string | number>>({
-    [SettingsOption["Text Speed"]]: TextSpeedOption.Mid,
-    [SettingsOption.Animations]: AnimationsOption.On,
-    [SettingsOption["Battle Style"]]: BattleStyleOption.Shift,
-    [SettingsOption.Sound]: SoundOption.On,
-    [SettingsOption.Volume]: 100,
-    [SettingsOption["Menu Color"]]: MenuColorOption.Blue,
+  const gameStore = useGameStore();
+  const { saveGame } = gameStore;
+  const { game } = storeToRefs(gameStore);
+  const settings = computed({
+    get: () => game.value.settings,
+    set: (newSettings) => {
+      game.value.settings = newSettings;
+    },
   });
-  const setSettings = (settingsOption: keyof typeof settings.value, value: string | number) => {
-    settings.value[settingsOption] = value;
+  const setSettings = async (
+    settingsOption: keyof typeof settings.value,
+    value: (typeof settings.value)[typeof settingsOption],
+  ) => {
+    // Doing this casting hack here because we'll assume
+    // that the correct settings option + value will be passed in
+    settings.value[settingsOption] = value as never;
+    await saveGame();
   };
   const isSkipAnimations = computed(
-    () => IS_DEVELOPMENT || settings.value[SettingsOption.Animations] === AnimationsOption.Off,
+    () => IS_DEVELOPMENT || settings.value[SettingsOption.Animations] === AnimationsSetting.Off,
   );
   const isSkipEncounters = ref(false);
   const debugTileLayerAlpha = ref(IS_DEVELOPMENT ? 0.7 : 0);

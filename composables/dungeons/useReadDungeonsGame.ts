@@ -1,4 +1,4 @@
-import { Game } from "@/models/dungeons/Game";
+import { Game } from "@/models/dungeons/data/Game";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { jsonDateParse } from "@/util/jsonDateParse";

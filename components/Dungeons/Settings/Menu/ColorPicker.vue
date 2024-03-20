@@ -67,3 +67,4 @@ const rightCursorX = textX + padding;
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateMenuColor(Direction.RIGHT)"
   />
 </template>
+@/models/dungeons/settings/SettingsSetting

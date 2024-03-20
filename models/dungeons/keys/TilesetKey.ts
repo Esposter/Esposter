@@ -1,6 +1,6 @@
 import type { ImageKey } from "@/models/dungeons/keys/ImageKey";
 
-export const TilesetKeyMap = {
+export const TilesetKey = {
   BasicPlains: "BasicPlains",
   BeachAndCaves: "BeachAndCaves",
   House: "House",
@@ -14,4 +14,4 @@ export const TilesetKeyMap = {
   // so we can't have conflicting key names
   [P in ImageKey]?: never;
 };
-export type TilesetKeyMap = typeof TilesetKeyMap;
+export type TilesetKey = keyof typeof TilesetKey;

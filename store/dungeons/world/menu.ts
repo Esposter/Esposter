@@ -9,13 +9,14 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
 export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
   const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
+  const { saveGame, fadeSwitchToScene } = gameStore;
   const worldSceneStore = useWorldSceneStore();
   const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
-  const onPlayerInput = (input: PlayerInput) => {
+  const onPlayerInput = async (input: PlayerInput) => {
     if (input === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Save:
+          await saveGame();
           return;
         case MenuOption.Exit:
           isMenuVisible.value = false;

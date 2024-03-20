@@ -10,18 +10,18 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
-  const volume = computed(() => settings.value[SettingsOption.Volume] as number);
+  const volume = computed(() => settings.value[SettingsOption.Volume]);
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
-  const setVolume = (value: number, isUpdateSlider = true) => {
+  const setVolume = async (value: number, isUpdateSlider = true) => {
     if (!(value >= 0 && value <= 100)) throw new Error(`Invalid volume: ${value}`);
-    setSettings(SettingsOption.Volume, value);
+    await setSettings(SettingsOption.Volume, value);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
     volumeSlider.value.value = value / 100;
   };
-  const updateVolume = (direction: Direction, delta: number) => {
+  const updateVolume = async (direction: Direction, delta: number) => {
     volumeDelta.value += delta / dayjs.duration(1, "second").asMilliseconds();
     const incrementSpeed = step(volumeDelta.value, [
       { threshold: 1, speed: 0.1 },
@@ -32,7 +32,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     volumeIncrementCooldown.value -= incrementSpeed;
     if (volumeIncrementCooldown.value > 0) return;
 
-    const volume = settings.value[SettingsOption.Volume] as number;
+    const volume = settings.value[SettingsOption.Volume];
     const newVolume =
       direction === Direction.LEFT && volume > 0
         ? Math.max(volume - increment, 0)
@@ -40,7 +40,7 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
           ? Math.min(volume + increment, 100)
           : null;
     if (newVolume === null) return;
-    setVolume(newVolume);
+    await setVolume(newVolume);
     volumeIncrementCooldown.value += increment;
   };
   const isUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {

@@ -1,6 +1,6 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import { Game } from "@/models/dungeons/Game";
+import { Game } from "@/models/dungeons/data/Game";
 import type { Controls } from "@/models/dungeons/input/Controls";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { dayjs } from "@/services/dayjs";

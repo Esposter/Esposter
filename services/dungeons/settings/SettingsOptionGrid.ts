@@ -1,15 +1,15 @@
 import { Grid } from "@/models/dungeons/Grid";
-import { AnimationsOption } from "@/models/dungeons/settings/AnimationsOption";
-import { BattleStyleOption } from "@/models/dungeons/settings/BattleStyleOption";
+import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
+import { BattleStyleSetting } from "@/models/dungeons/data/settings/BattleStyleSetting";
+import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
+import { TextSpeedSetting } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
-import { SoundOption } from "@/models/dungeons/settings/SoundOption";
-import { TextSpeedOption } from "@/models/dungeons/settings/TextSpeedOption";
 
 const grid = [
-  [SettingsOption["Text Speed"], TextSpeedOption.Slow, TextSpeedOption.Mid, TextSpeedOption.Fast],
-  [SettingsOption.Animations, AnimationsOption.On, AnimationsOption.Off],
-  [SettingsOption["Battle Style"], BattleStyleOption.Set, BattleStyleOption.Shift],
-  [SettingsOption.Sound, SoundOption.On, SoundOption.Off],
+  [SettingsOption["Text Speed"], TextSpeedSetting.Slow, TextSpeedSetting.Mid, TextSpeedSetting.Fast],
+  [SettingsOption.Animations, AnimationsSetting.On, AnimationsSetting.Off],
+  [SettingsOption["Battle Style"], BattleStyleSetting.Set, BattleStyleSetting.Shift],
+  [SettingsOption.Sound, SoundSetting.On, SoundSetting.Off],
   [SettingsOption.Volume],
   [SettingsOption["Menu Color"]],
   [SettingsOption.Close],

@@ -1,8 +1,8 @@
+import { MenuColorSetting } from "@/models/dungeons/data/settings/MenuColorSetting";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
-import { MenuColorOption } from "@/models/dungeons/settings/MenuColorOption";
 
 export const MenuColorImageKeyMap = {
-  [MenuColorOption.Blue]: ImageKey.GlassPanel,
-  [MenuColorOption.Green]: ImageKey.GlassPanelGreen,
-  [MenuColorOption.Purple]: ImageKey.GlassPanelPurple,
-} as const satisfies Record<MenuColorOption, ImageKey>;
+  [MenuColorSetting.Blue]: ImageKey.GlassPanel,
+  [MenuColorSetting.Green]: ImageKey.GlassPanelGreen,
+  [MenuColorSetting.Purple]: ImageKey.GlassPanelPurple,
+} as const satisfies Record<MenuColorSetting, ImageKey>;

@@ -33,7 +33,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   // watching the entire position object with deep: true, since oldValue
   // won't update at all unless you replace the entire object everytime
   // you do an update which is way too annoying and not clean code at all :C
-  watch([() => optionGrid.value.position.y, () => optionGrid.value.position.x], ([newY, newX], [oldY]) => {
+  watch([() => optionGrid.value.position.y, () => optionGrid.value.position.x], async ([newY, newX], [oldY]) => {
     if (!(selectedSettingsOption.value in settings.value)) return;
 
     if (newX === 0 || newY !== oldY) {
@@ -45,16 +45,19 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       return;
     }
 
-    setSettings(selectedSettingsOption.value as keyof typeof settings.value, optionGrid.value.value);
+    await setSettings(
+      selectedSettingsOption.value as keyof typeof settings.value,
+      optionGrid.value.value as (typeof settings.value)[keyof typeof settings.value],
+    );
   });
 
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
-  const onPlayerInput = (justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
+  const onPlayerInput = async (justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     // Handle special cases first with player direction input
-    else if (isUpdateVolume(input, selectedSettingsOption.value)) updateVolume(input, delta);
-    else if (isUpdateMenuColor(justDownInput, selectedSettingsOption.value)) updateMenuColor(justDownInput);
+    else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
+    else if (isUpdateMenuColor(justDownInput, selectedSettingsOption.value)) await updateMenuColor(justDownInput);
     else optionGrid.value.move(justDownInput);
   };
 
