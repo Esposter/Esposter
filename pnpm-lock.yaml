@@ -195,8 +195,8 @@ dependencies:
     specifier: ^6.3.7
     version: 6.3.7
   trpc-nuxt:
-    specifier: ^0.10.20
-    version: 0.10.20(@trpc/client@10.45.2)(@trpc/server@10.45.2)
+    specifier: ^0.10.21
+    version: 0.10.21(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ofetch@1.3.3)
   vue:
     specifier: ^3.4.21
     version: 3.4.21(typescript@5.4.2)
@@ -11146,7 +11146,7 @@ packages:
     dependencies:
       call-bind: 1.0.7
       define-properties: 1.2.1
-      es-abstract: 1.22.5
+      es-abstract: 1.23.1
       get-intrinsic: 1.2.4
       has-symbols: 1.0.3
       internal-slot: 1.0.7
@@ -11590,15 +11590,17 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /trpc-nuxt@0.10.20(@trpc/client@10.45.2)(@trpc/server@10.45.2):
-    resolution: {integrity: sha512-OSehO1f/nmJ5osmhmyAf0UxhmR5Dy7IU3d52e1ZC3G9i3sOh3mhvN75msoeNCeOzl8ESN73JRQ7gDt0kwkAhZA==}
+  /trpc-nuxt@0.10.21(@trpc/client@10.45.2)(@trpc/server@10.45.2)(ofetch@1.3.3):
+    resolution: {integrity: sha512-QNrKFNosZ6ax8QLG6VBi3VUurXvoyrRvt0utvuQk2H1ej54YG6SbHEfBnGSIsz7HyDJt4mFvdNIE1lbebEtUAQ==}
     peerDependencies:
       '@trpc/client': ^10.38.1 <11
       '@trpc/server': ^10.38.1 <11
+      ofetch: ^1.3.3
     dependencies:
       '@trpc/client': 10.45.2(@trpc/server@10.45.2)
       '@trpc/server': 10.45.2
       h3: 1.11.1
+      ofetch: 1.3.3
       ohash: 1.1.3
     transitivePeerDependencies:
       - uWebSockets.js
