@@ -50,8 +50,8 @@ watch(
         v-for="(item, index) in items"
         :key="item.id"
         :style="{ backgroundColor: infoOpacity10 }"
-        w-full
         justify-start="!"
+        w-full
         rd
         :ripple="false"
         @click="selectItem(index)"

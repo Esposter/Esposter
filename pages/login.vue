@@ -61,9 +61,9 @@ const providerProps = ref<ProviderProps[]>([
               class="button"
               :style="{ ...buttonStyle }"
               pl-2
-              w-full
               flex
               items-center
+              w-full
               rd
               mb-3
               h-12
