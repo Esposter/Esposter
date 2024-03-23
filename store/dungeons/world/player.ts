@@ -4,12 +4,12 @@ import type { GameObjects } from "phaser";
 
 export const usePlayerStore = defineStore("dungeons/world/player", () => {
   const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
+  const { save } = storeToRefs(gameStore);
   const sprite = ref<GameObjects.Sprite>();
   const position = computed({
-    get: () => game.value.player.position,
+    get: () => save.value.player.position,
     set: (newPosition) => {
-      game.value.player.position = newPosition;
+      save.value.player.position = newPosition;
     },
   });
   const direction = ref(Direction.DOWN);

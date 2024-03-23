@@ -8,6 +8,7 @@ export class Player {
   position: Position = { x: 6, y: 21 };
   direction = Direction.DOWN;
 }
+
 export const playerSchema = z.object({
   position: positionSchema,
   direction: directionSchema,

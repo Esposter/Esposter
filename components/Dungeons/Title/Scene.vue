@@ -17,7 +17,7 @@ const { onPlayerInput } = titleSceneStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput())">
+  <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
     <Image
       :configuration="{
         textureKey: ImageKey.TitleScreenBackground,

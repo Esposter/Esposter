@@ -1,4 +1,5 @@
-import { Player, playerSchema } from "@/models/dungeons/data/Player";
+import { saveSchema } from "@/models/dungeons/data/Save";
+import type { Save } from "@/models/dungeons/data/Save";
 import { InitialSettings, settingsSchema } from "@/models/dungeons/data/settings/Settings";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Except } from "@/util/types/Except";
@@ -6,7 +7,7 @@ import { z } from "zod";
 
 class BaseGame {
   id = crypto.randomUUID() as string;
-  player = new Player();
+  saves: Save[] = [];
   settings = InitialSettings;
 
   constructor(init?: Partial<BaseGame>) {
@@ -24,7 +25,7 @@ export const Game = applyItemMetadataMixin(BaseGame);
 export const gameSchema = z
   .object({
     id: z.string().uuid(),
-    player: playerSchema,
+    saves: z.array(saveSchema),
     settings: settingsSchema,
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;

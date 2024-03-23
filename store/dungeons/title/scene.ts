@@ -11,7 +11,8 @@ import type { Direction } from "grid-engine";
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const gameStore = useGameStore();
   const { fadeSwitchToScene } = gameStore;
-  const isContinueEnabled = ref(false);
+  const { game, save } = storeToRefs(gameStore);
+  const isContinueEnabled = computed(() => game.value.saves.length > 0);
   const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>>;
 
   watch(
@@ -28,9 +29,9 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     { immediate: true },
   );
 
-  const onPlayerInput = (input: PlayerInput) => {
-    if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
-    else onPlayerDirectionInput(input);
+  const onPlayerInput = (justDownInput: PlayerInput) => {
+    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+    else onPlayerDirectionInput(justDownInput);
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
@@ -40,6 +41,8 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
           fadeSwitchToScene(SceneKey.World);
           return;
         case PlayerTitleMenuOption.Continue:
+          save.value = game.value.saves[0];
+          fadeSwitchToScene(SceneKey.World);
           return;
         case PlayerTitleMenuOption.Settings:
           fadeSwitchToScene(SceneKey.Settings);
