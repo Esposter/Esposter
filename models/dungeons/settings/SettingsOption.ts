@@ -4,6 +4,6 @@ export enum SettingsOption {
   "Battle Style" = "Battle Style",
   "Sound" = "Sound",
   "Volume" = "Volume",
-  "Menu Color" = "Menu Color",
+  "Theme Mode" = "Theme Mode",
   "Close" = "Close",
 }

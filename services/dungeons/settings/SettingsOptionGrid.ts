@@ -11,7 +11,7 @@ const grid = [
   [SettingsOption["Battle Style"], BattleStyleSetting.Set, BattleStyleSetting.Shift],
   [SettingsOption.Sound, SoundSetting.On, SoundSetting.Off],
   [SettingsOption.Volume],
-  [SettingsOption["Menu Color"]],
+  [SettingsOption["Theme Mode"]],
   [SettingsOption.Close],
 ] as const;
 export const SettingsOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>(grid, { x: 2, y: 0 });

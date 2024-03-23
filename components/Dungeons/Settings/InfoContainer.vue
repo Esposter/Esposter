@@ -5,17 +5,14 @@ import Nineslice from "@/lib/phaser/components/Nineslice.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
-import { MenuColorImageKeyMap } from "@/services/dungeons/settings/MenuColorImageKeyMap";
 import { INITIAL_SETTINGS_POSITION, MENU_HEIGHT, MENU_VERTICAL_PADDING } from "@/services/dungeons/settings/constants";
-import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);
-const colorPickerStore = useColorPickerStore();
-const { menuColor } = storeToRefs(colorPickerStore);
+const glassPanelImageKey = useGlassPanelImageKey();
 const width = useSettingsMenuWidth();
 const height = computed(() => scene.value.scale.height - (MENU_HEIGHT + MENU_VERTICAL_PADDING * 3));
 </script>
@@ -30,7 +27,7 @@ const height = computed(() => scene.value.scale.height - (MENU_HEIGHT + MENU_VER
         rightWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
         topHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
         bottomHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
-        textureKey: MenuColorImageKeyMap[menuColor],
+        textureKey: glassPanelImageKey,
         origin: 0,
       }"
     />

@@ -20,7 +20,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const volumeStore = useVolumeStore();
   const { updateVolume, isUpdateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
-  const { updateMenuColor, isUpdateMenuColor } = colorPickerStore;
+  const { updateThemeModeSetting, isUpdateThemeModeSetting } = colorPickerStore;
   const optionGrid = ref(SettingsOptionGrid);
   const selectedSettingsOption = computed(
     () => optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y }) as SettingsOption,
@@ -57,7 +57,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
-    else if (isUpdateMenuColor(justDownInput, selectedSettingsOption.value)) await updateMenuColor(justDownInput);
+    else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
+      await updateThemeModeSetting(justDownInput);
     else optionGrid.value.move(justDownInput);
   };
 

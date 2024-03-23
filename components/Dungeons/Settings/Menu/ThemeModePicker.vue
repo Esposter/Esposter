@@ -17,8 +17,8 @@ import { Input } from "phaser";
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 const colorPickerStore = useColorPickerStore();
-const { updateMenuColor } = colorPickerStore;
-const { menuColor } = storeToRefs(colorPickerStore);
+const { updateThemeModeSetting } = colorPickerStore;
+const { themeModeSetting } = storeToRefs(colorPickerStore);
 const padding = 100;
 const leftCursorX = INITIAL_SETTINGS_VALUE_POSITION.x + padding;
 const textX = leftCursorX + padding;
@@ -31,7 +31,7 @@ const rightCursorX = textX + padding;
       x: leftCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
       textureKey: ImageKey.CursorWhite,
       originX: 1,
@@ -39,15 +39,15 @@ const rightCursorX = textX + padding;
       scaleX: 2.5,
       flipX: true,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateMenuColor(Direction.LEFT)"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.LEFT)"
   />
   <Text
     :configuration="{
       x: textX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0),
-      text: menuColor,
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0),
+      text: themeModeSetting,
       style: MenuTextStyle,
       originX: 0.5,
       originY: 0,
@@ -58,13 +58,12 @@ const rightCursorX = textX + padding;
       x: rightCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Menu Color'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
       textureKey: ImageKey.CursorWhite,
       origin: 0,
       scaleX: 2.5,
     }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateMenuColor(Direction.RIGHT)"
+    @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.RIGHT)"
   />
 </template>
-@/models/dungeons/settings/SettingsSetting

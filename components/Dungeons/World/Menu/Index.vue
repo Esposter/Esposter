@@ -7,6 +7,7 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
 const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
+const { primary, border } = useDungeonsColors();
 const worldView = useWorldView();
 const x = ref(worldView.value.right - MENU_PADDING * 2 - MENU_WIDTH);
 const y = ref(worldView.value.top + MENU_PADDING * 2);
@@ -28,9 +29,9 @@ watch(isMenuVisible, (newIsMenuVisible) => {
         width: MENU_WIDTH - 1,
         height: menuHeight - 1,
         origin: 0,
-        fillColor: 0x32454c,
+        fillColor: primary,
         alpha: 0.9,
-        strokeStyle: [8, 0x6d9aa8],
+        strokeStyle: [8, border],
       }"
     />
     <DungeonsWorldMenuText />

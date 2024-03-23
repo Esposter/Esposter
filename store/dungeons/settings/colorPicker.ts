@@ -1,4 +1,4 @@
-import { MenuColorSetting } from "@/models/dungeons/data/settings/MenuColorSetting";
+import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -9,24 +9,26 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
-  const menuColor = computed(() => settings.value[SettingsOption["Menu Color"]] as MenuColorSetting);
-  const setMenuColor = async (value: MenuColorSetting) => {
-    await setSettings(SettingsOption["Menu Color"], value);
+  const themeModeSetting = computed(() => settings.value[SettingsOption["Theme Mode"]] as ThemeModeSetting);
+  const setThemeModeSetting = async (value: ThemeModeSetting) => {
+    await setSettings(SettingsOption["Theme Mode"], value);
   };
-  const updateMenuColor = async (direction: Direction) => {
-    const menuColors = Object.values(MenuColorSetting);
-    for (let i = 0; i < menuColors.length; i++)
-      if (menuColors[i] === menuColor.value) {
-        if (direction === Direction.LEFT) await setMenuColor(menuColors[mod(i - 1, menuColors.length)]);
-        else if (direction === Direction.RIGHT) await setMenuColor(menuColors[(i + 1) % menuColors.length]);
+  const updateThemeModeSetting = async (direction: Direction) => {
+    const themeModeSettings = Object.values(ThemeModeSetting);
+    for (let i = 0; i < themeModeSettings.length; i++)
+      if (themeModeSettings[i] === themeModeSetting.value) {
+        if (direction === Direction.LEFT)
+          await setThemeModeSetting(themeModeSettings[mod(i - 1, themeModeSettings.length)]);
+        else if (direction === Direction.RIGHT)
+          await setThemeModeSetting(themeModeSettings[(i + 1) % themeModeSettings.length]);
         return;
       }
   };
-  const isUpdateMenuColor = (input: PlayerInput, settingsOption: SettingsOption): input is Direction =>
-    settingsOption === SettingsOption["Menu Color"] && (input === Direction.LEFT || input === Direction.RIGHT);
+  const isUpdateThemeModeSetting = (input: PlayerInput, settingsOption: SettingsOption): input is Direction =>
+    settingsOption === SettingsOption["Theme Mode"] && (input === Direction.LEFT || input === Direction.RIGHT);
   return {
-    menuColor,
-    updateMenuColor,
-    isUpdateMenuColor,
+    themeModeSetting,
+    updateThemeModeSetting,
+    isUpdateThemeModeSetting,
   };
 });
