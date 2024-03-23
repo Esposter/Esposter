@@ -1,4 +1,5 @@
 import { Grid } from "@/models/dungeons/Grid";
+import { Save } from "@/models/dungeons/data/Save";
 import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -38,6 +39,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (optionGrid.value.value) {
         case PlayerTitleMenuOption["New Game"]:
+          save.value = new Save();
           fadeSwitchToScene(SceneKey.World);
           return;
         case PlayerTitleMenuOption.Continue:
