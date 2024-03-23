@@ -9,7 +9,13 @@ import type { Position } from "grid-engine";
 export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const gameStore = useGameStore();
   const { save } = storeToRefs(gameStore);
-  const activeMonster = computed(() => save.value.player.monsters[0]);
+  const activeMonsterIndex = ref(0);
+  const activeMonster = computed({
+    get: () => save.value.player.monsters[activeMonsterIndex.value],
+    set: (newActiveMonster) => {
+      save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
+    },
+  });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const monsterPosition = ref<Position>({ x: -100, y: 316 });
   const monsterTween = ref<TweenBuilderConfiguration>();

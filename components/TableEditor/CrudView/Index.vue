@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { DefaultPropsMap } from "~/services/tableEditor/DefaultPropsMap";
 
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
@@ -34,4 +34,3 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
     </StyledDataTable>
   </v-container>
 </template>
-~/services/tableEditor/DefaultPropsMap

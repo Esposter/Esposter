@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
-import { DefaultPropsMap } from "~/services/tableEditor/DefaultPropsMap";
 
 const tableEditorStore = useTableEditorStore()();
 const { tableEditorType, editFormDialog, editedItem } = storeToRefs(tableEditorStore);
@@ -42,4 +42,3 @@ const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.v
   margin-inline-end: 0.25rem;
 }
 </style>
-~/services/tableEditor/DefaultPropsMap

@@ -1,10 +1,9 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "@/util/types/Except";
 
-const baseAttacks: Except<Attack, "name" | "animation">[] = [
+const baseAttacks: Except<Attack, "name">[] = [
   {
     id: AttackId.IceShard,
   },
@@ -16,7 +15,4 @@ const baseAttacks: Except<Attack, "name" | "animation">[] = [
 export const attacks: Attack[] = baseAttacks.map((ba) => ({
   ...ba,
   name: prettifyName(ba.id),
-  animation: {
-    key: SpritesheetKey[ba.id],
-  },
 }));

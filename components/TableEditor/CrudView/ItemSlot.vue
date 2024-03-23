@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Item } from "@/models/tableEditor/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { DefaultPropsMap } from "~/services/tableEditor/DefaultPropsMap";
 
 interface TableEditorCrudViewItemSlotProps {
   item: Item;
@@ -24,4 +24,3 @@ const itemCategoryDefinition = computed(() =>
     {{ itemCategoryDefinition.title }}
   </v-chip>
 </template>
-~/services/tableEditor/DefaultPropsMap

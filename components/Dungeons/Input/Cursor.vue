@@ -6,7 +6,7 @@ import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import type { Position } from "grid-engine";
 
 interface CursorProps {
-  cursorImageKey?: ImageKey.CursorWhite;
+  cursorImageKey?: Extract<ImageKey, "CursorWhite">;
   grid: Grid<TValue, TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;

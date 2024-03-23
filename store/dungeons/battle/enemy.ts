@@ -1,12 +1,14 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { Monster } from "@/models/dungeons/battle/monster/Monster";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import type { Monster } from "@/models/dungeons/monster/Monster";
+import { MonsterId } from "@/models/dungeons/monster/MonsterId";
 import type { Position } from "grid-engine";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref<Monster>({
-    name: ImageKey.Carnodusk,
+    id: MonsterId.Carnodusk,
+    name: MonsterId.Carnodusk,
     asset: {
       key: ImageKey.Carnodusk,
     },

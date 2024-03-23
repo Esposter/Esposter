@@ -1,9 +1,10 @@
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { Monster } from "@/models/dungeons/battle/monster/Monster";
-import { monsterSchema } from "@/models/dungeons/battle/monster/Monster";
 import { directionSchema } from "@/models/dungeons/data/Direction";
 import { positionSchema } from "@/models/dungeons/data/Position";
 import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import type { Monster } from "@/models/dungeons/monster/Monster";
+import { monsterSchema } from "@/models/dungeons/monster/Monster";
+import { MonsterId } from "@/models/dungeons/monster/MonsterId";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import { z } from "zod";
@@ -13,7 +14,8 @@ export class Player {
   direction = Direction.DOWN;
   monsters: Monster[] = [
     {
-      name: ImageKey.Iguanignite,
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
       asset: {
         key: ImageKey.Iguanignite,
       },
