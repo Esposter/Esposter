@@ -17,7 +17,7 @@ const isUpdateMode = ref(false);
   <PostCommentConfirmDeleteDialog :comment-id="comment.id">
     <template #default="{ updateIsOpen }">
       <div flex>
-        <PostLikeSection pt-2 :post="comment" is-comment-store />
+        <PostLikeSection :post="comment" is-comment-store pt-2 />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">
           <v-avatar>
             <v-img v-if="comment.creator.image" :src="comment.creator.image" />

@@ -14,7 +14,7 @@ currentPost.value = post;
 
 <template>
   <NuxtLayout>
-    <v-container v-if="currentPost" h-full flex flex-1 flex-col>
+    <v-container v-if="currentPost" h-full flex flex-col flex-1>
       <v-row flex-none="!">
         <v-col>
           <PostCard :post="currentPost" is-comment-store />
