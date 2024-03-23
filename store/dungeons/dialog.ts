@@ -57,9 +57,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     if (isSkipAnimations.value) {
-      const delay = useTextDelay();
+      const textDelay = useTextDelay();
       dialogTarget.text.value = message;
-      void sleep(delay).then(() => {
+      void sleep(textDelay.value).then(() => {
         showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
       });

@@ -10,10 +10,10 @@ export const useAnimateText = (
     onComplete?: () => void;
   },
 ) => {
-  const delay = useTextDelay(configuration?.delay);
+  const textDelay = useTextDelay(configuration?.delay);
   let i = 0;
   scene.time.addEvent({
-    delay,
+    delay: textDelay.value,
     repeat: text.length - 1,
     callback: async () => {
       targetText.value += text[i];
@@ -22,7 +22,7 @@ export const useAnimateText = (
         // We need this delay here to prevent the last character animations
         // from being updated after we set the text back to blank
         // It seems that we need exactly 2 ticks for it to finish
-        await sleep(delay * 2);
+        await sleep(textDelay.value * 2);
         configuration?.onComplete?.();
       }
     },

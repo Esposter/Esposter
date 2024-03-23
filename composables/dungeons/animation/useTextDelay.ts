@@ -1,24 +1,10 @@
-import { TextSpeedSetting } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { TextSpeedDelayMap } from "@/services/dungeons/settings/TextSpeedDelayMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
-// @ts-expect-error Typescript doesn't check switch statements properly
-export const useTextDelay = (delay?: number): number => {
-  if (delay) return delay;
-
+export const useTextDelay = (delay?: number) => {
   const settingsStore = useSettingsStore();
   const { settings } = storeToRefs(settingsStore);
   const textSpeedSetting = computed(() => settings.value[SettingsOption["Text Speed"]]);
-
-  switch (textSpeedSetting.value) {
-    case TextSpeedSetting.Fast:
-      return 50;
-    case TextSpeedSetting.Mid:
-      return 30;
-    case TextSpeedSetting.Slow:
-      return 15;
-    default:
-      exhaustiveGuard(textSpeedSetting.value);
-  }
+  return computed(() => delay ?? TextSpeedDelayMap[textSpeedSetting.value]);
 };

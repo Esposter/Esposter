@@ -1,6 +1,6 @@
 import type { Theme } from "@/models/dungeons/theme/Theme";
-import { ThemeModeColorsMap } from "@/services/dungeons/theme/ThemeModeColorsMap";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
+import { ThemeModeColorsMap } from "~/services/dungeons/settings/ThemeModeColorsMap";
 
 type DungeonsColors = {
   [P in keyof Theme]: ComputedRef<Theme[P]>;
