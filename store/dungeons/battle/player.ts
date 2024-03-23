@@ -1,27 +1,15 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
-import { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { Monster } from "@/models/dungeons/battle/monster/Monster";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { getAttack } from "@/services/dungeons/battle/attack/getAttack";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
+import { useGameStore } from "@/store/dungeons/game";
 import type { Position } from "grid-engine";
 
 export const usePlayerStore = defineStore("dungeons/battle/player", () => {
-  const activeMonster = ref<Monster>({
-    name: ImageKey.Iguanignite,
-    asset: {
-      key: ImageKey.Iguanignite,
-    },
-    stats: {
-      maxHp: 25,
-      baseAttack: 5,
-    },
-    currentLevel: 5,
-    currentHp: 25,
-    attackIds: [AttackId.Slash],
-  });
+  const gameStore = useGameStore();
+  const { save } = storeToRefs(gameStore);
+  const activeMonster = computed(() => save.value.player.monsters[0]);
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const monsterPosition = ref<Position>({ x: -100, y: 316 });
   const monsterTween = ref<TweenBuilderConfiguration>();

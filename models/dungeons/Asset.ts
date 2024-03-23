@@ -1,8 +1,16 @@
 import type { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { imageKeySchema } from "@/models/dungeons/keys/ImageKey";
 import type { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { spriteSheetKeySchema } from "@/models/dungeons/keys/SpritesheetKey";
+import { z } from "zod";
 
 export interface Asset {
   key: ImageKey | SpritesheetKey;
   // By default, this will be 0
   frame?: number;
 }
+
+export const assetSchema = z.object({
+  key: z.union([imageKeySchema, spriteSheetKeySchema]),
+  frame: z.number().int().nonnegative().optional(),
+}) satisfies z.ZodType<Asset>;

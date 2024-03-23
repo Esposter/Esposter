@@ -11,4 +11,7 @@ export const EffectOperatorMap = {
   [EffectType.Multiplicative]: applyMultiplicativeEffects,
   [EffectType.BuildingAdditive]: applyBuildingAdditiveEffects,
   [EffectType.BuildingAdditiveNor]: applyBuildingAdditiveNorEffects,
-} as const satisfies Record<EffectType, (basePower: number, effects: Effect[], boughtBuildings: BuildingWithStats[]) => number>;
+} as const satisfies Record<
+  EffectType,
+  (basePower: number, effects: Effect[], boughtBuildings: BuildingWithStats[]) => number
+>;

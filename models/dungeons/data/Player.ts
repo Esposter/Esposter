@@ -1,5 +1,9 @@
+import { AttackId } from "@/models/dungeons/attack/AttackId";
+import type { Monster } from "@/models/dungeons/battle/monster/Monster";
+import { monsterSchema } from "@/models/dungeons/battle/monster/Monster";
 import { directionSchema } from "@/models/dungeons/data/Direction";
 import { positionSchema } from "@/models/dungeons/data/Position";
+import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import { z } from "zod";
@@ -7,9 +11,25 @@ import { z } from "zod";
 export class Player {
   position: Position = { x: 6, y: 21 };
   direction = Direction.DOWN;
+  monsters: Monster[] = [
+    {
+      name: ImageKey.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
+  ];
 }
 
 export const playerSchema = z.object({
   position: positionSchema,
   direction: directionSchema,
+  monsters: z.array(monsterSchema),
 }) satisfies z.ZodType<Player>;

@@ -6,4 +6,4 @@ export enum ItemType {
   Mouse = "Mouse",
 }
 
-export const itemTypeSchema = z.nativeEnum(ItemType);
+export const itemTypeSchema = z.nativeEnum(ItemType) satisfies z.ZodType<ItemType>;

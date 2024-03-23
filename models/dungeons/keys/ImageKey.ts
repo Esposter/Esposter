@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum ImageKey {
   TitleScreenBackground = "TitleScreenBackground",
   TitleTextBackground = "TitleTextBackground",
@@ -25,3 +27,5 @@ export enum ImageKey {
   Base = "Base",
   Thumb = "Thumb",
 }
+
+export const imageKeySchema = z.nativeEnum(ImageKey) satisfies z.ZodType<ImageKey>;
