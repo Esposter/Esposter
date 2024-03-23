@@ -1,3 +1,3 @@
 export const InjectionKeyMap = {
   ParentContainer: Symbol("ParentContainer"),
-} satisfies Record<string, symbol>;
+} as const satisfies Record<string, symbol>;

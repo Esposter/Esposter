@@ -26,7 +26,7 @@ const BaseColorsMap = {
     surface: "#36393f",
     text: "#fff",
   },
-} satisfies Record<ThemeMode, ThemeColors>;
+} as const satisfies Record<ThemeMode, ThemeColors>;
 
 type BaseColors = (typeof BaseColorsMap)[ThemeMode];
 

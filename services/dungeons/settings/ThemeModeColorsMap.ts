@@ -14,4 +14,4 @@ export const ThemeModeColorsMap = {
     primary: 0x38324c,
     border: 0x796da8,
   },
-} satisfies Record<ThemeModeSetting, Theme>;
+} as const satisfies Record<ThemeModeSetting, Theme>;

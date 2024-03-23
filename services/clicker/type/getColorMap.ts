@@ -5,4 +5,4 @@ export const getColorMap = ({ primary, error, info }: ReturnType<typeof useColor
     [ClickerType.Default]: primary.value,
     [ClickerType.Physical]: error.value,
     [ClickerType.Magical]: info.value,
-  }) satisfies Record<ClickerType, string>;
+  }) as const satisfies Record<ClickerType, string>;

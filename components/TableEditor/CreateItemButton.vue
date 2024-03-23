@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { defaultPropsMap } from "@/services/tableEditor/defaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
+import { DefaultPropsMap } from "~/services/tableEditor/DefaultPropsMap";
 
 const tableEditorStore = useTableEditorStore()();
 const { tableEditorType, editFormDialog, editedItem } = storeToRefs(tableEditorStore);
-const itemCategoryDefinitions = computed(() => defaultPropsMap[tableEditorType.value].itemCategoryDefinitions);
+const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.value].itemCategoryDefinitions);
 </script>
 
 <template>
@@ -42,3 +42,4 @@ const itemCategoryDefinitions = computed(() => defaultPropsMap[tableEditorType.v
   margin-inline-end: 0.25rem;
 }
 </style>
+~/services/tableEditor/DefaultPropsMap

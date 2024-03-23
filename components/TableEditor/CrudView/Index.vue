@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { defaultPropsMap } from "@/services/tableEditor/defaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { DefaultPropsMap } from "~/services/tableEditor/DefaultPropsMap";
 
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
 const { tableEditor, tableEditorType, searchQuery } = storeToRefs(tableEditorStore);
-const props = computed(() => defaultPropsMap[tableEditorType.value]);
+const props = computed(() => DefaultPropsMap[tableEditorType.value]);
 // We can assume that the first element of the headers is the type
 const itemTypeKey = computed(() => props.value.headers[0].key);
 </script>
@@ -34,3 +34,4 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
     </StyledDataTable>
   </v-container>
 </template>
+~/services/tableEditor/DefaultPropsMap

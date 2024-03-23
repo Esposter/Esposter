@@ -5,7 +5,7 @@ import { todoListHeaders } from "@/services/tableEditor/todoList/headers";
 import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList/itemCategoryDefinition";
 import { vuetifyComponentItemCategoryDefinitions } from "@/services/tableEditor/vuetifyComponent/itemCategoryDefinition";
 
-export const defaultPropsMap = {
+export const DefaultPropsMap = {
   [TableEditorType.TodoList]: {
     itemCategoryDefinitions: todoListItemCategoryDefinitions,
     headers: todoListHeaders,
@@ -14,7 +14,7 @@ export const defaultPropsMap = {
     itemCategoryDefinitions: vuetifyComponentItemCategoryDefinitions,
     headers: tableEditorHeaders,
   },
-} satisfies Record<
+} as const satisfies Record<
   TableEditorType,
   {
     itemCategoryDefinitions: unknown[];

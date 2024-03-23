@@ -4,4 +4,4 @@ export const PluralNameMap = {
   [ClickerType.Default]: "Piña Coladas",
   [ClickerType.Physical]: "Strength",
   [ClickerType.Magical]: "Mana",
-} satisfies Record<ClickerType, string>;
+} as const satisfies Record<ClickerType, string>;

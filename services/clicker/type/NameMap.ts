@@ -4,4 +4,4 @@ export const NameMap = {
   [ClickerType.Default]: "Piña Colada",
   [ClickerType.Physical]: "Strength",
   [ClickerType.Magical]: "Mana",
-} satisfies Record<ClickerType, string>;
+} as const satisfies Record<ClickerType, string>;
