@@ -1,17 +1,16 @@
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectProperty";
-import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { SetRequired } from "@/util/types/SetRequired";
 import { Direction } from "grid-engine";
 import type { ArrayElement } from "type-fest/source/internal";
 
 export const useInteractWithSign = (): boolean => {
-  const dialogStore = useDialogStore();
-  const { updateQueuedMessagesAndShowMessage } = dialogStore;
   const worldSceneStore = useWorldSceneStore();
-  const { signLayer, isDialogVisible, dialogText } = storeToRefs(worldSceneStore);
+  const { signLayer } = storeToRefs(worldSceneStore);
+  const worldDialogStore = useWorldDialogStore();
+  const { showMessages } = worldDialogStore;
   const objects: SetRequired<ArrayElement<typeof signLayer.value.objects>, "x" | "y">[] = [];
 
   for (const { x, y, ...rest } of signLayer.value.objects) {
@@ -32,12 +31,6 @@ export const useInteractWithSign = (): boolean => {
   );
   if (!messageTiledObjectProperty) return false;
 
-  updateQueuedMessagesAndShowMessage(
-    { text: dialogText, inputPromptCursorX: DIALOG_WIDTH - 16 },
-    [messageTiledObjectProperty.value],
-    () => {
-      isDialogVisible.value = false;
-    },
-  );
+  showMessages([messageTiledObjectProperty.value]);
   return true;
 };

@@ -12,7 +12,7 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Input } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { scene, sceneKey } = storeToRefs(phaserStore);
+const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldSceneStore = useWorldSceneStore();
