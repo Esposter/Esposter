@@ -4,6 +4,7 @@ import { GridEngine } from "grid-engine";
 import { AUTO, Scale } from "phaser";
 import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import { SceneKeyMap } from "@/services/dungeons/SceneKeyMap";
 
 defineRouteRules({ ssr: false });
 
@@ -47,11 +48,7 @@ await useReadDungeonsGame();
         },
       }"
     >
-      <DungeonsPreloaderScene />
-      <DungeonsTitleScene />
-      <DungeonsSettingsScene />
-      <DungeonsWorldScene />
-      <DungeonsBattleScene />
+      <component :is="component" v-for="[sceneKey, component] in Object.entries(SceneKeyMap)" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>

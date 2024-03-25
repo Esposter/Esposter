@@ -17,7 +17,7 @@ import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const phaserStore = usePhaserStore();
-const { scene, sceneKey } = storeToRefs(phaserStore);
+const { scene } = storeToRefs(phaserStore);
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
 const gameStore = useGameStore();
@@ -58,7 +58,7 @@ const update = (scene: SceneWithPlugins) => {
   else if (input === PlayerSpecialInput.Enter) isMenuVisible.value = true;
 };
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
   tilemap.value.destroy();
   scene.value.cameras.main.removeBounds();
   scene.value.cameras.main.setZoom(1);
