@@ -3,7 +3,7 @@ export type NoConflictingKeys<T extends object[]> = T extends [infer TFirst, inf
     ? TRemaining extends object[]
       ? NoConflictingKeys<[TSecond, ...TRemaining]>
       : TFirst & TSecond
-    : TFirst & TSecond
+    : never
   : T extends [infer TFirst]
     ? TFirst
     : never;
