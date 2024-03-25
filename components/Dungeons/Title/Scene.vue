@@ -2,8 +2,8 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";

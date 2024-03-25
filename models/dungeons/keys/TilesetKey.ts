@@ -1,4 +1,4 @@
-import type { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
 export const TilesetKey = {
   BasicPlains: "BasicPlains",

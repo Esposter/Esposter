@@ -2,7 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 

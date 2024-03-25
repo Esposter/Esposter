@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 
 const playerStore = usePlayerStore();

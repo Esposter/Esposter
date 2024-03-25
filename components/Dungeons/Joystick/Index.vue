@@ -2,7 +2,7 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { getJoystickRadius } from "@/services/dungeons/joystick/getJoystickRadius";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";

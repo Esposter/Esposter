@@ -1,4 +1,4 @@
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { z } from "zod";
 
 export const MonsterId = {

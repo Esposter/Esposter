@@ -2,7 +2,7 @@
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,

@@ -2,7 +2,7 @@
 import type { ImageProps } from "@/lib/phaser/components/Image.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import type { Grid } from "@/models/dungeons/Grid";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Position } from "grid-engine";
 
 interface CursorProps {

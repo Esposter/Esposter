@@ -1,6 +1,6 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { ImageKey } from "@/models/dungeons/keys/ImageKey";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { MonsterId } from "@/models/dungeons/monster/MonsterId";
 import type { Position } from "grid-engine";
