@@ -6,7 +6,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JoystickControls } from "@/models/dungeons/input/JoystickControls";
 import { KeyboardControls } from "@/models/dungeons/input/KeyboardControls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { ImageLoaderMap } from "@/models/dungeons/loader/ImageLoaderMap";
+import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";

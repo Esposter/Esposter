@@ -1,8 +1,8 @@
-import { ControlsImageKey } from "@/models/dungeons/keys/image/UI/ControlsImageKey";
-import { MonsterImageKey } from "@/models/dungeons/keys/image/UI/MonsterImageKey";
+import { ControlsKey } from "@/models/dungeons/keys/image/UI/ControlsKey";
+import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
 
-export const UIImageKey = mergeObjectsStrict(
+export const ImageKey = mergeObjectsStrict(
   {
     BlueButton: "BlueButton",
     BlueButtonSelected: "BlueButtonSelected",
@@ -19,6 +19,7 @@ export const UIImageKey = mergeObjectsStrict(
     HealthBarMiddleShadow: "HealthBarMiddleShadow",
     HealthBarRightCapShadow: "HealthBarRightCapShadow",
   } as const,
-  ControlsImageKey,
-  MonsterImageKey,
+  ControlsKey,
+  MonsterKey,
 );
+export type ImageKey = keyof typeof ImageKey;
