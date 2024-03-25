@@ -17,7 +17,7 @@ const BaseUIImageKey = {
   HealthBarLeftCapShadow: "HealthBarLeftCapShadow",
   HealthBarMiddleShadow: "HealthBarMiddleShadow",
   HealthBarRightCapShadow: "HealthBarRightCapShadow",
-};
+} as const;
 
 export const UIImageKey = {
   ...BaseUIImageKey,
