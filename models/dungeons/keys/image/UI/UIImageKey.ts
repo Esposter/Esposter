@@ -1,6 +1,6 @@
 import { ControlsImageKey } from "@/models/dungeons/keys/image/UI/ControlsImageKey";
 import { MonsterImageKey } from "@/models/dungeons/keys/image/UI/MonsterImageKey";
-import type { NoConflictingKeys } from "@/util/types/NoConflictingKeys";
+import type { MergeNonConflictingKeys } from "@/util/types/MergeNonConflictingKeys";
 
 const BaseUIImageKey = {
   BlueButton: "BlueButton",
@@ -23,4 +23,4 @@ export const UIImageKey = {
   ...BaseUIImageKey,
   ...ControlsImageKey,
   ...MonsterImageKey,
-} as const satisfies NoConflictingKeys<[typeof BaseUIImageKey, typeof ControlsImageKey, typeof MonsterImageKey]>;
+} as const satisfies MergeNonConflictingKeys<[typeof BaseUIImageKey, typeof ControlsImageKey, typeof MonsterImageKey]>;
