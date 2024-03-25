@@ -8,4 +8,4 @@ import type { GameObjects } from "phaser";
 export const GlobalSetterMap = {
   ...TweenSetterMap,
   ...GameObjectSetterMap,
-} satisfies SetterMap<GlobalConfiguration, GameObjects.GameObject, GlobalEventEmitsOptions>;
+} as const satisfies SetterMap<GlobalConfiguration, GameObjects.GameObject, GlobalEventEmitsOptions>;

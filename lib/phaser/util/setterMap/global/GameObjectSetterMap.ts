@@ -8,4 +8,4 @@ export const GameObjectSetterMap = {
     if (value === undefined) return;
     gameObject.setActive(value);
   },
-} satisfies SetterMap<GameObjectConfiguration, GameObjects.GameObject, GameObjectEventEmitsOptions>;
+} as const satisfies SetterMap<GameObjectConfiguration, GameObjects.GameObject, GameObjectEventEmitsOptions>;

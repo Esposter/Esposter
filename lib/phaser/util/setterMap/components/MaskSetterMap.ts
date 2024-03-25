@@ -8,4 +8,4 @@ export const MaskSetterMap = {
     if (!value) return;
     gameObject.setMask(value);
   },
-} satisfies SetterMap<MaskConfiguration, GameObjects.Components.Mask, MaskEventEmitsOptions>;
+} as const satisfies SetterMap<MaskConfiguration, GameObjects.Components.Mask, MaskEventEmitsOptions>;

@@ -20,4 +20,4 @@ export const SizeSetterMap = {
     if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
-} satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size, SizeEventEmitsOptions>;
+} as const satisfies SetterMap<SizeConfiguration, GameObjects.Components.Size, SizeEventEmitsOptions>;

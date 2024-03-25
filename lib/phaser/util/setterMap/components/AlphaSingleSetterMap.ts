@@ -5,4 +5,8 @@ import type { GameObjects } from "phaser";
 
 export const AlphaSingleSetterMap = {
   alpha: (gameObject) => (value) => gameObject.setAlpha(value),
-} satisfies SetterMap<AlphaSingleConfiguration, GameObjects.Components.AlphaSingle, AlphaSingleEventEmitsOptions>;
+} as const satisfies SetterMap<
+  AlphaSingleConfiguration,
+  GameObjects.Components.AlphaSingle,
+  AlphaSingleEventEmitsOptions
+>;

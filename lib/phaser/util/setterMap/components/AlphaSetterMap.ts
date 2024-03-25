@@ -13,4 +13,4 @@ export const AlphaSetterMap = {
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, value, gameObject.alphaBottomRight),
   alphaBottomRight: (gameObject) => (value) =>
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, gameObject.alphaBottomLeft, value),
-} satisfies SetterMap<AlphaConfiguration, GameObjects.Components.Alpha, AlphaEventEmitsOptions>;
+} as const satisfies SetterMap<AlphaConfiguration, GameObjects.Components.Alpha, AlphaEventEmitsOptions>;

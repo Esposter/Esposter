@@ -20,4 +20,8 @@ export const ComputedSizeSetterMap = {
     if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
-} satisfies SetterMap<ComputedSizeConfiguration, GameObjects.Components.ComputedSize, ComputedSizeEventEmitsOptions>;
+} as const satisfies SetterMap<
+  ComputedSizeConfiguration,
+  GameObjects.Components.ComputedSize,
+  ComputedSizeEventEmitsOptions
+>;

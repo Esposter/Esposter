@@ -18,7 +18,7 @@ export const DepthSetterMap = {
       ? gameObject.parentContainer.bringToTop(gameObject)
       : gameObject.parentContainer.moveTo(gameObject, Math.max(i - 1, 0));
   },
-} satisfies SetterMap<
+} as const satisfies SetterMap<
   DepthConfiguration,
   GameObjects.Components.Depth & GameObjects.GameObject,
   DepthEventEmitsOptions

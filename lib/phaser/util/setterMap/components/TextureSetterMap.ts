@@ -12,4 +12,4 @@ export const TextureSetterMap = {
     if (!value) return;
     gameObject.setTexture(value);
   },
-} satisfies SetterMap<TextureConfiguration, GameObjects.Components.Texture, TextureEventEmitsOptions>;
+} as const satisfies SetterMap<TextureConfiguration, GameObjects.Components.Texture, TextureEventEmitsOptions>;

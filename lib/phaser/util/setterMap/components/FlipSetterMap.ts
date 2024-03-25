@@ -12,4 +12,4 @@ export const FlipSetterMap = {
     if (value === undefined) return;
     gameObject.setFlipY(value);
   },
-} satisfies SetterMap<FlipConfiguration, GameObjects.Components.Flip, FlipEventEmitsOptions>;
+} as const satisfies SetterMap<FlipConfiguration, GameObjects.Components.Flip, FlipEventEmitsOptions>;

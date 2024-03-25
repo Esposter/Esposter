@@ -40,4 +40,4 @@ export const ShapeSetterMap = {
     if (!value) return;
     gameObject.setStrokeStyle(...value);
   },
-} satisfies SetterMap<ShapeConfiguration, GameObjects.Shape, ShapeEventEmitsOptions>;
+} as const satisfies SetterMap<ShapeConfiguration, GameObjects.Shape, ShapeEventEmitsOptions>;

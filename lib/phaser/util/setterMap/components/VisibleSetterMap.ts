@@ -8,4 +8,4 @@ export const VisibleSetterMap = {
     if (value === undefined) return;
     gameObject.setVisible(value);
   },
-} satisfies SetterMap<VisibleConfiguration, GameObjects.Components.Visible, VisibleEventEmitsOptions>;
+} as const satisfies SetterMap<VisibleConfiguration, GameObjects.Components.Visible, VisibleEventEmitsOptions>;

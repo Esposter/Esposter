@@ -8,4 +8,8 @@ export const PathFollowerSetterMap = {
     if (!value) return;
     gameObject.setPath(value);
   },
-} satisfies SetterMap<PathFollowerConfiguration, GameObjects.Components.PathFollower, PathFollowerEventEmitsOptions>;
+} as const satisfies SetterMap<
+  PathFollowerConfiguration,
+  GameObjects.Components.PathFollower,
+  PathFollowerEventEmitsOptions
+>;

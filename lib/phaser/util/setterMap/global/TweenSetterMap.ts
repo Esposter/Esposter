@@ -21,7 +21,7 @@ export const TweenSetterMap = {
       });
       return tweenchain;
     }),
-} satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;
+} as const satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;
 
 const createTween = <TTween extends { destroy: () => void }, TConfiguration extends object>(
   callback: (configuration: TConfiguration) => TTween,

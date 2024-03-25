@@ -16,4 +16,8 @@ export const ScrollFactorSetterMap = {
     if (value === undefined) return;
     gameObject.setScrollFactor(gameObject.scrollFactorX, value);
   },
-} satisfies SetterMap<ScrollFactorConfiguration, GameObjects.Components.ScrollFactor, ScrollFactorEventEmitsOptions>;
+} as const satisfies SetterMap<
+  ScrollFactorConfiguration,
+  GameObjects.Components.ScrollFactor,
+  ScrollFactorEventEmitsOptions
+>;

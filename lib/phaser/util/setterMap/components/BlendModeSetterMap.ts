@@ -8,4 +8,4 @@ export const BlendModeSetterMap = {
     if (value === undefined) return;
     gameObject.setBlendMode(value);
   },
-} satisfies SetterMap<BlendModeConfiguration, GameObjects.Components.BlendMode, BlendModeEventEmitsOptions>;
+} as const satisfies SetterMap<BlendModeConfiguration, GameObjects.Components.BlendMode, BlendModeEventEmitsOptions>;

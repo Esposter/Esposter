@@ -13,4 +13,4 @@ export const TransformSetterMap = {
   x: (gameObject) => (value) => gameObject.setX(value),
   y: (gameObject) => (value) => gameObject.setY(value),
   z: (gameObject) => (value) => gameObject.setZ(value),
-} satisfies SetterMap<TransformConfiguration, GameObjects.Components.Transform, TransformEventEmitsOptions>;
+} as const satisfies SetterMap<TransformConfiguration, GameObjects.Components.Transform, TransformEventEmitsOptions>;

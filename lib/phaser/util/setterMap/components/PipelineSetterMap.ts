@@ -8,4 +8,4 @@ export const PipelineSetterMap = {
     if (!value) return;
     gameObject.setPipeline(value);
   },
-} satisfies SetterMap<PipelineConfiguration, GameObjects.Components.Pipeline, PipelineEventEmitsOptions>;
+} as const satisfies SetterMap<PipelineConfiguration, GameObjects.Components.Pipeline, PipelineEventEmitsOptions>;

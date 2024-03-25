@@ -27,7 +27,7 @@ export const AnimationSetterMap = {
 
     gameObject.play(value);
   },
-} satisfies SetterMap<AnimationConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions>;
+} as const satisfies SetterMap<AnimationConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions>;
 
 const createAnimations = <TAnimation extends { destroy: () => void }, TConfigurations extends object[]>(
   callback: (configurations: TConfigurations) => TAnimation[],

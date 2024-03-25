@@ -12,4 +12,8 @@ export const TextureCropSetterMap = {
     if (!value) return;
     gameObject.setTexture(value);
   },
-} satisfies SetterMap<TextureCropConfiguration, GameObjects.Components.TextureCrop, TextureCropEventEmitsOptions>;
+} as const satisfies SetterMap<
+  TextureCropConfiguration,
+  GameObjects.Components.TextureCrop,
+  TextureCropEventEmitsOptions
+>;
