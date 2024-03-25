@@ -1,4 +1,4 @@
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { z } from "zod";
 
 export const AttackId = {

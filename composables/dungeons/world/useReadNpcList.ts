@@ -1,4 +1,4 @@
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import type { Npc } from "@/models/dungeons/world/Npc";
 import type { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";

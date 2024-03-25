@@ -1,7 +1,7 @@
-import type { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
-import { spriteSheetKeySchema } from "@/models/dungeons/keys/SpritesheetKey";
 import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { imageKeySchema } from "@/models/dungeons/keys/image/ImageKey";
+import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import { spriteSheetKeySchema } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { z } from "zod";
 
 export interface Asset {

@@ -2,7 +2,7 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
-import { SpritesheetKey } from "@/models/dungeons/keys/SpritesheetKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 
 const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
