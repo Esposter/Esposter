@@ -1,9 +1,8 @@
 import { ControlsImageKey } from "@/models/dungeons/keys/image/UI/ControlsImageKey";
 import { MonsterImageKey } from "@/models/dungeons/keys/image/UI/MonsterImageKey";
+import type { NoConflictingKeys } from "@/util/types/NoConflictingKeys";
 
-export const UIImageKey = {
-  ...ControlsImageKey,
-  ...MonsterImageKey,
+const BaseUIImageKey = {
   BlueButton: "BlueButton",
   BlueButtonSelected: "BlueButtonSelected",
   Cursor: "Cursor",
@@ -18,4 +17,10 @@ export const UIImageKey = {
   HealthBarLeftCapShadow: "HealthBarLeftCapShadow",
   HealthBarMiddleShadow: "HealthBarMiddleShadow",
   HealthBarRightCapShadow: "HealthBarRightCapShadow",
-} as const;
+};
+
+export const UIImageKey = {
+  ...BaseUIImageKey,
+  ...ControlsImageKey,
+  ...MonsterImageKey,
+} as const satisfies NoConflictingKeys<[typeof BaseUIImageKey, typeof ControlsImageKey, typeof MonsterImageKey]>;
