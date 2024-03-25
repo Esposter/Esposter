@@ -6,10 +6,10 @@ import titleScreenBackground from "@/assets/dungeons/UI/title/screenBackground.p
 import titleText from "@/assets/dungeons/UI/title/text.png";
 import titleTextBackground from "@/assets/dungeons/UI/title/textBackground.png";
 import battleForestBackground from "@/assets/dungeons/battle/forestBackground.png";
-import blueButton from "@/assets/dungeons/battle/monsters/blueButton00.png";
-import blueButtonSelected from "@/assets/dungeons/battle/monsters/blueButton01.png";
 import carnodusk from "@/assets/dungeons/battle/monsters/carnodusk.png";
 import iguanignite from "@/assets/dungeons/battle/monsters/iguanignite.png";
+import blueButton from "@/assets/dungeons/kenneysAssets/UIPack/blueButton00.png";
+import blueButtonSelected from "@/assets/dungeons/kenneysAssets/UIPack/blueButton01.png";
 import barHorizontalGreenLeft from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
 import barHorizontalGreenMid from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
 import barHorizontalGreenRight from "@/assets/dungeons/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
