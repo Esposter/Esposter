@@ -177,8 +177,8 @@ dependencies:
     specifier: ^1.9.135
     version: 1.9.135
   survey-creator-core:
-    specifier: ^1.9.135
-    version: 1.9.135
+    specifier: ^1.9.136
+    version: 1.9.136
   survey-creator-vue:
     specifier: ^1.9.135
     version: 1.9.135(vue@3.4.21)
@@ -11306,8 +11306,12 @@ packages:
     resolution: {integrity: sha512-hca9h5He8IqMSgTFQG5o63/h09+hERVUBoOmVZRcyzJKY80Q0vFdtfEQRKh0J6H+PhmC1mvMJpb0gT+TBhnGrA==}
     dev: false
 
-  /survey-creator-core@1.9.135:
-    resolution: {integrity: sha512-YUu91/HQ5MpY6UtOwaY88fwNXMLPGek1rKo7PKHRyoi9+jNlsaWaSG2qZI98BWCDmr6JtXV31lYnT/AbWY4aJg==}
+  /survey-core@1.9.136:
+    resolution: {integrity: sha512-0bZsETSx45rIyRu74ziwoEQZRL4WTzMXXjpEt9vhYT8ghYNPtyD2xeua4jxQfxpwjBHN55lwGrxi9VlGOaMnoA==}
+    dev: false
+
+  /survey-creator-core@1.9.136:
+    resolution: {integrity: sha512-Y7eXzJ/aX53OdnCN4Ojj7TI3cSdC6PAyfb3GMwVarTc59pqBgA3pSOdko++JTOAR3YquuvMJ5YC6Rr6iE0eMjg==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
@@ -11315,7 +11319,7 @@ packages:
       ace-builds:
         optional: true
     dependencies:
-      survey-core: 1.9.135
+      survey-core: 1.9.136
     dev: false
 
   /survey-creator-vue@1.9.135(vue@3.4.21):
@@ -11324,7 +11328,7 @@ packages:
       vue: ^3.2.41
     dependencies:
       survey-core: 1.9.135
-      survey-creator-core: 1.9.135
+      survey-creator-core: 1.9.136
       survey-vue3-ui: 1.9.135(vue@3.4.21)
       vue: 3.4.21(typescript@5.4.2)
     transitivePeerDependencies:
@@ -12834,6 +12838,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
