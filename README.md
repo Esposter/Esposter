@@ -184,8 +184,7 @@
 
 |   Name   |   Url   |
 | ---- | ---- |
-|   Vue Language Features (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.volar   |
-|   TypeScript Vue Plugin (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin   |
+|   Vue - Official (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.volar   |
 |   ESLint   |   https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint   |
 |   Prettier - Code formatter   |   https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode   |
 |   GitLens — Git supercharged   |   https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens   |
