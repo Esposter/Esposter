@@ -27,8 +27,4 @@ export const NineSliceSetterMap: SetterMap<NineSliceConfiguration, GameObjects.N
     ...TransformSetterMap,
     ...VisibleSetterMap,
     ...GlobalSetterMap,
-    frame: (gameObject) => (value) => {
-      if (value === undefined) return;
-      gameObject.setFrame(value);
-    },
   };

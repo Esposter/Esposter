@@ -6,8 +6,6 @@ import { ShapeSetterMap } from "@/lib/phaser/util/setterMap/shared/ShapeSetterMa
 import type { GameObjects } from "phaser";
 
 export const ArcSetterMap: SetterMap<ArcConfiguration, GameObjects.Arc, ArcEventEmitsOptions> = {
-  ...ShapeSetterMap,
-  ...GlobalSetterMap,
   radius: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setRadius(value);
@@ -24,4 +22,6 @@ export const ArcSetterMap: SetterMap<ArcConfiguration, GameObjects.Arc, ArcEvent
     if (value === undefined) return;
     gameObject.setEndAngle(value);
   },
+  ...ShapeSetterMap,
+  ...GlobalSetterMap,
 };

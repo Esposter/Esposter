@@ -7,6 +7,7 @@ import type { MaskConfiguration } from "@/lib/phaser/models/configuration/compon
 import type { OriginConfiguration } from "@/lib/phaser/models/configuration/components/OriginConfiguration";
 import type { PipelineConfiguration } from "@/lib/phaser/models/configuration/components/PipelineConfiguration";
 import type { ScrollFactorConfiguration } from "@/lib/phaser/models/configuration/components/ScrollFactorConfiguration";
+import type { TextureConfiguration } from "@/lib/phaser/models/configuration/components/TextureConfiguration";
 import type { TintConfiguration } from "@/lib/phaser/models/configuration/components/TintConfiguration";
 import type { TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import type { VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
@@ -14,9 +15,11 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Except } from "@/util/types/Except";
 import type { Types } from "phaser";
 
-export type TextConfiguration = Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig> & {
-  text: string;
-} & AlphaConfiguration &
+export type TileSpriteConfiguration = Except<
+  Types.GameObjects.TileSprite.TileSpriteConfig,
+  keyof Types.GameObjects.GameObjectConfig
+> &
+  AlphaConfiguration &
   BlendModeConfiguration &
   ComputedSizeConfiguration &
   DepthConfiguration &
@@ -25,6 +28,7 @@ export type TextConfiguration = Except<Types.GameObjects.Text.TextConfig, keyof 
   OriginConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
+  TextureConfiguration &
   TintConfiguration &
   TransformConfiguration &
   VisibleConfiguration &

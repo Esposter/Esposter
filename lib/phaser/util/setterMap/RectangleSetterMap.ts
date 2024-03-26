@@ -7,8 +7,6 @@ import type { GameObjects } from "phaser";
 
 export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.Rectangle, RectangleEventEmitsOptions> =
   {
-    ...ShapeSetterMap,
-    ...GlobalSetterMap,
     width: (gameObject) => (value) => {
       if (value === undefined) return;
       gameObject.setSize(value, gameObject.height);
@@ -17,4 +15,6 @@ export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.R
       if (value === undefined) return;
       gameObject.setSize(gameObject.width, value);
     },
+    ...ShapeSetterMap,
+    ...GlobalSetterMap,
   };

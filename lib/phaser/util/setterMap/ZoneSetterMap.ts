@@ -10,12 +10,6 @@ import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetter
 import type { GameObjects } from "phaser";
 
 export const ZoneSetterMap: SetterMap<ZoneConfiguration, GameObjects.Zone, ZoneEventEmitsOptions> = {
-  ...DepthSetterMap,
-  ...OriginSetterMap,
-  ...TransformSetterMap,
-  ...ScrollFactorSetterMap,
-  ...VisibleSetterMap,
-  ...GlobalSetterMap,
   width: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setSize(value, gameObject.height);
@@ -32,4 +26,10 @@ export const ZoneSetterMap: SetterMap<ZoneConfiguration, GameObjects.Zone, ZoneE
     if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
+  ...DepthSetterMap,
+  ...OriginSetterMap,
+  ...TransformSetterMap,
+  ...ScrollFactorSetterMap,
+  ...VisibleSetterMap,
+  ...GlobalSetterMap,
 };

@@ -15,7 +15,11 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Except } from "@/util/types/Except";
 import type { Types } from "phaser";
 
-export type ImageConfiguration = AlphaConfiguration &
+export type ImageConfiguration = Except<
+  Types.GameObjects.Sprite.SpriteConfig,
+  keyof Types.GameObjects.GameObjectConfig
+> &
+  AlphaConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
   FlipConfiguration &
@@ -24,9 +28,8 @@ export type ImageConfiguration = AlphaConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   SizeConfiguration &
-  Except<TextureCropConfiguration, "frame"> &
+  TextureCropConfiguration &
   TintConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
-  GlobalConfiguration &
-  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig>;
+  GlobalConfiguration;

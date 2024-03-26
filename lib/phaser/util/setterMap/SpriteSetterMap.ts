@@ -32,10 +32,6 @@ export const SpriteSetterMap: SetterMap<SpriteConfiguration, GameObjects.Sprite,
   ...TintSetterMap,
   ...TransformSetterMap,
   ...VisibleSetterMap,
-  ...GlobalSetterMap,
   ...AnimationSetterMap,
-  frame: (gameObject) => (value) => {
-    if (value === undefined) return;
-    gameObject.setFrame(value);
-  },
+  ...GlobalSetterMap,
 };
