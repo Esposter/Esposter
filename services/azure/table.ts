@@ -63,8 +63,8 @@ export const getEntity = async <TEntity extends CompositeKey>(
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
 ): Promise<TEntity | null> => {
   try {
-    const result = await tableClient.getEntity<TEntity>(...args);
-    return plainToInstance(cls, result);
+    const entity = await tableClient.getEntity<TEntity>(...args);
+    return plainToInstance(cls, entity);
   } catch {
     return null;
   }

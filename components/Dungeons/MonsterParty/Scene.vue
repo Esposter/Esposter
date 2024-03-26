@@ -7,6 +7,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 <template>
   <Scene :scene-key="SceneKey.MonsterParty" :cls="SceneWithPlugins">
     <DungeonsMonsterPartyBackground />
+    <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
     <DungeonsJoystick />

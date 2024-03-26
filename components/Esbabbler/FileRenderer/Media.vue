@@ -8,12 +8,12 @@ const { url, mimetype } = defineProps<FileRendererProps>();
 const defaultRenderer = defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Default.vue"));
 const rendererProps = ref<FileRendererProps & Record<string, string>>({ url, mimetype });
 const renderer = computed<Component>(() => {
-  const result =
+  const renderer =
     TypeRendererMap[mimetype] || TypeRendererMap[mimetype.substring(0, mimetype.indexOf("/"))] || defaultRenderer;
-  if (result !== defaultRenderer) return result;
+  if (renderer !== defaultRenderer) return renderer;
 
   const language = getLanguageForFileUrl(url);
-  if (!language) return result;
+  if (!language) return renderer;
 
   rendererProps.value.language = language;
   return defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Code.vue"));
