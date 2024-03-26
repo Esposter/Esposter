@@ -6,7 +6,7 @@ import type { Loader } from "phaser";
 
 export const MonsterPartyLoaderMap = {
   [MonsterPartyKey.MonsterDetailsBackground]: (scene) =>
-    scene.load.image(MonsterPartyKey.MonsterDetailsBackground, monsterPartyBackground),
+    scene.load.image(MonsterPartyKey.MonsterDetailsBackground, monsterDetailsBackground),
   [MonsterPartyKey.MonsterPartyBackground]: (scene) =>
-    scene.load.image(MonsterPartyKey.MonsterPartyBackground, monsterDetailsBackground),
+    scene.load.image(MonsterPartyKey.MonsterPartyBackground, monsterPartyBackground),
 } as const satisfies Record<MonsterPartyKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;

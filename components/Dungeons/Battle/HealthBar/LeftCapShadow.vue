@@ -16,7 +16,7 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
   <Image
     :configuration="{
       ...position,
-      textureKey: ImageKey.HealthBarLeftCapShadow,
+      texture: ImageKey.HealthBarLeftCapShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

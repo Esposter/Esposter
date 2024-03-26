@@ -45,7 +45,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
       :configuration="{
         displayWidth: joystickRadius * 2,
         displayHeight: joystickRadius * 2,
-        textureKey: ImageKey.Base,
+        texture: ImageKey.Base,
         depth: Number.MAX_SAFE_INTEGER,
       }"
       :on-complete="
@@ -58,7 +58,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
       :configuration="{
         displayWidth: joystickRadius,
         displayHeight: joystickRadius,
-        textureKey: ImageKey.Thumb,
+        texture: ImageKey.Thumb,
         depth: Number.MAX_SAFE_INTEGER,
       }"
       :on-complete="

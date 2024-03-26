@@ -16,7 +16,7 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
   <Image
     :configuration="{
       ...position,
-      textureKey: ImageKey.HealthBarLeftCap,
+      texture: ImageKey.HealthBarLeftCap,
       // Set origin to the middle-left of the health caps to enable
       // grabbing the full width of the game object
       originX: 0,

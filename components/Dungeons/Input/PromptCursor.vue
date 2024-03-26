@@ -19,7 +19,7 @@ const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVi
     :configuration="{
       visible: isInputPromptCursorVisible,
       x: inputPromptCursorX,
-      textureKey: ImageKey.Cursor,
+      texture: ImageKey.Cursor,
       angle: 90,
       scaleX: scale * 2,
       scaleY: scale * 1.5,

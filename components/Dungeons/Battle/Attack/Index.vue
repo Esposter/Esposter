@@ -36,7 +36,7 @@ const position = computed(() =>
     :configuration="{
       visible: isActive,
       ...position,
-      textureKey: spritesheetKey,
+      texture: spritesheetKey,
       frame,
       animations,
       playAnimationKey,

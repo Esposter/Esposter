@@ -26,7 +26,7 @@ const alpha = ref(1);
       y: getJoystickY(scene),
       displayWidth: joystickRadius,
       displayHeight: joystickRadius,
-      textureKey: ImageKey.Thumb,
+      texture: ImageKey.Thumb,
       depth: Number.MAX_SAFE_INTEGER,
       alpha,
       scrollFactor: 0,

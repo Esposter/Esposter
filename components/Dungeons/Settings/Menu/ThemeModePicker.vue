@@ -33,7 +33,7 @@ const rightCursorX = textX + padding;
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
-      textureKey: ImageKey.CursorWhite,
+      texture: ImageKey.CursorWhite,
       originX: 1,
       originY: 0,
       scaleX: 2.5,
@@ -60,7 +60,7 @@ const rightCursorX = textX + padding;
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
-      textureKey: ImageKey.CursorWhite,
+      texture: ImageKey.CursorWhite,
       origin: 0,
       scaleX: 2.5,
     }"

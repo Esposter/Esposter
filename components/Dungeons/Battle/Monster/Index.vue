@@ -17,7 +17,7 @@ const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
   <Image
     :configuration="{
       ...monsterPosition,
-      textureKey: activeMonster.asset.key,
+      texture: activeMonster.asset.key,
       frame: activeMonster.asset.frame,
       flipX: !isEnemy,
       tween: monsterTween,

@@ -18,7 +18,7 @@ const x = defineModel<number | undefined>("x", { required: true });
     :configuration="{
       x,
       y,
-      textureKey: ImageKey.HealthBarRightCap,
+      texture: ImageKey.HealthBarRightCap,
       originX: 0,
       originY: 0.5,
       scaleY,

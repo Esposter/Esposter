@@ -8,7 +8,7 @@ import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
 
 export interface ImageProps {
-  configuration: SetRequired<Partial<ImageConfiguration>, "textureKey">;
+  configuration: SetRequired<Partial<ImageConfiguration>, "texture">;
   onComplete?: (image: GameObjects.Image) => void;
 }
 
@@ -16,11 +16,11 @@ interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
 const props = defineProps<ImageProps>();
 const { configuration, onComplete } = toRefs(props);
-const { x, y, textureKey, frame } = configuration.value;
+const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<ImageEmits>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const image = ref(scene.value.add.image(x ?? 0, y ?? 0, textureKey, frame)) as Ref<GameObjects.Image>;
+const image = ref(scene.value.add.image(x ?? 0, y ?? 0, texture, frame)) as Ref<GameObjects.Image>;
 useInitializeGameObject(image, configuration, emit, ImageSetterMap);
 onComplete.value?.(image.value);
 </script>

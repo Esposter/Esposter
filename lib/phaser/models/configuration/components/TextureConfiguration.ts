@@ -4,5 +4,5 @@ import type { ExcludeFunctionProperties } from "@/util/types/ExcludeFunctionProp
 import type { GameObjects } from "phaser";
 
 export type TextureConfiguration = ExcludeFunctionProperties<
-  Except<GameObjects.Components.Texture, "frame"> & BaseTextureConfiguration
+  Except<GameObjects.Components.Texture, keyof BaseTextureConfiguration> & BaseTextureConfiguration
 >;

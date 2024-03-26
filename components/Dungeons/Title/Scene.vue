@@ -20,7 +20,7 @@ const { onPlayerInput } = titleSceneStore;
   <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
     <Image
       :configuration="{
-        textureKey: ImageKey.TitleScreenBackground,
+        texture: ImageKey.TitleScreenBackground,
         origin: 0,
         scale: 0.58,
       }"
@@ -29,7 +29,7 @@ const { onPlayerInput } = titleSceneStore;
       :configuration="{
         x: scene.scale.width / 2,
         y: 150,
-        textureKey: ImageKey.TitleTextBackground,
+        texture: ImageKey.TitleTextBackground,
         scale: 0.25,
         alpha: 0.5,
       }"
@@ -38,7 +38,7 @@ const { onPlayerInput } = titleSceneStore;
       :configuration="{
         x: scene.scale.width / 2,
         y: 150,
-        textureKey: ImageKey.TitleText,
+        texture: ImageKey.TitleText,
         scale: 0.55,
         alpha: 0.5,
       }"

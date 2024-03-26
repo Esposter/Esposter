@@ -22,7 +22,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ textureKey: ImageKey.HealthBarBackground, origin: 0, scaleY }" />
+    <Image :configuration="{ texture: ImageKey.HealthBarBackground, origin: 0, scaleY }" />
     <Text
       :configuration="{
         x: 30,

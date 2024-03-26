@@ -31,7 +31,7 @@ const position = computed(() => ({
     :configuration="{
       x: position.x,
       y: position.y,
-      textureKey: cursorImageKey,
+      texture: cursorImageKey,
       scale: 2.5,
       tween,
     }"

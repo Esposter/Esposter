@@ -16,7 +16,7 @@ const { position, scaleY, displayWidth } = defineProps<MiddleProps>();
   <Image
     :configuration="{
       ...position,
-      textureKey: ImageKey.HealthBarMiddle,
+      texture: ImageKey.HealthBarMiddle,
       originX: 0,
       originY: 0.5,
       scaleY,

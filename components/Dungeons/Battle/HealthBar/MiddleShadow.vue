@@ -16,7 +16,7 @@ const { position, scaleY, displayWidth } = defineProps<MiddleShadowProps>();
   <Image
     :configuration="{
       ...position,
-      textureKey: ImageKey.HealthBarMiddleShadow,
+      texture: ImageKey.HealthBarMiddleShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

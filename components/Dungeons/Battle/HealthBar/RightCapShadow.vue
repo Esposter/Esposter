@@ -15,7 +15,7 @@ const { position, scaleY } = defineProps<RightCapShadowProps>();
   <Image
     :configuration="{
       ...position,
-      textureKey: ImageKey.HealthBarRightCapShadow,
+      texture: ImageKey.HealthBarRightCapShadow,
       originX: 0,
       originY: 0.5,
       scaleY,

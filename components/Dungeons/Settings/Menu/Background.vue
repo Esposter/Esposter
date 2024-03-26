@@ -16,7 +16,7 @@ const width = useSettingsMenuWidth();
       rightWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
       topHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
       bottomHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
-      textureKey: glassPanelImageKey,
+      texture: glassPanelImageKey,
       origin: 0,
     }"
   />
