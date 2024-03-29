@@ -245,8 +245,8 @@ devDependencies:
     specifier: ^1.1.3
     version: 1.1.3
   '@types/three':
-    specifier: ^0.162.0
-    version: 0.162.0
+    specifier: ^0.163.0
+    version: 0.163.0
   '@types/ws':
     specifier: ^8.5.10
     version: 8.5.10
@@ -4444,13 +4444,13 @@ packages:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
     dev: true
 
-  /@types/three@0.162.0:
-    resolution: {integrity: sha512-0j5yZcVukVIhrhSIC7+LmBPkkMoMuEJ1AfYBZfgNytdYqYREMuiyXWhYOMeZLBElTEAlJIZn7r2W3vqTIgjWlg==}
+  /@types/three@0.163.0:
+    resolution: {integrity: sha512-uIdDhsXRpQiBUkflBS/i1l3JX14fW6Ot9csed60nfbZNXHDTRsnV2xnTVwXcgbvTiboAR4IW+t+lTL5f1rqIqA==}
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       '@types/stats.js': 0.17.3
       '@types/webxr': 0.5.14
-      fflate: 0.6.10
+      fflate: 0.8.2
       meshoptimizer: 0.18.1
     dev: true
 
@@ -7675,8 +7675,8 @@ packages:
     dependencies:
       reusify: 1.0.4
 
-  /fflate@0.6.10:
-    resolution: {integrity: sha512-IQrh3lEPM93wVCEczc9SaAOvkmcoQn/G8Bo1e8ZPlY3X3bnAxWaBdvTdvM1hP62iZp0BXWDy4vTAy4fF0+Dlpg==}
+  /fflate@0.8.2:
+    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
     dev: true
 
   /file-entry-cache@6.0.1:
