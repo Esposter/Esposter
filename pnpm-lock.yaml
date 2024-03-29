@@ -213,8 +213,8 @@ dependencies:
     specifier: ^3.5.13
     version: 3.5.13(typescript@5.4.2)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
   worker-timers:
-    specifier: ^7.1.5
-    version: 7.1.5
+    specifier: ^7.1.6
+    version: 7.1.6
   ws:
     specifier: ^8.16.0
     version: 8.16.0
@@ -255,7 +255,7 @@ devDependencies:
     version: 0.58.8(eslint@8.57.0)(typescript@5.4.2)
   '@unocss/nuxt':
     specifier: ^0.58.8
-    version: 0.58.8(postcss@8.4.36)(rollup@2.79.1)(vite@5.2.7)(webpack@5.90.3)
+    version: 0.58.8(postcss@8.4.38)(rollup@2.79.1)(vite@5.2.7)(webpack@5.90.3)
   '@vite-pwa/nuxt':
     specifier: ^0.6.0
     version: 0.6.0(rollup@2.79.1)(vite@5.2.7)(workbox-build@7.0.0)(workbox-window@7.0.0)
@@ -306,7 +306,7 @@ devDependencies:
     version: 4.14.0
   unocss:
     specifier: ^0.58.8
-    version: 0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.36)(rollup@2.79.1)(vite@5.2.7)
+    version: 0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.38)(rollup@2.79.1)(vite@5.2.7)
   unplugin-fonts:
     specifier: ^1.1.1
     version: 1.1.1(vite@5.2.7)
@@ -4799,7 +4799,7 @@ packages:
       sirv: 2.0.4
     dev: true
 
-  /@unocss/nuxt@0.58.8(postcss@8.4.36)(rollup@2.79.1)(vite@5.2.7)(webpack@5.90.3):
+  /@unocss/nuxt@0.58.8(postcss@8.4.38)(rollup@2.79.1)(vite@5.2.7)(webpack@5.90.3):
     resolution: {integrity: sha512-RxNHzb5LL95aHymR6Jjzq1iYq2D+i9TM438S51JlSsmPwVnKW5PFGBeyQclUPYuBluWfOnsok3Rsg55JgZKwqA==}
     dependencies:
       '@nuxt/kit': 3.11.1(rollup@2.79.1)
@@ -4815,7 +4815,7 @@ packages:
       '@unocss/reset': 0.58.8
       '@unocss/vite': 0.58.8(rollup@2.79.1)(vite@5.2.7)
       '@unocss/webpack': 0.58.8(rollup@2.79.1)(webpack@5.90.3)
-      unocss: 0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.36)(rollup@2.79.1)(vite@5.2.7)
+      unocss: 0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.38)(rollup@2.79.1)(vite@5.2.7)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -4824,7 +4824,7 @@ packages:
       - webpack
     dev: true
 
-  /@unocss/postcss@0.58.8(postcss@8.4.36):
+  /@unocss/postcss@0.58.8(postcss@8.4.38):
     resolution: {integrity: sha512-nI8Cbvc7/IFMGVeFXAHEom5X76gb0dSylBGvlVtWakq27nBwlxG4c3+58dVWg7Nyqvn1mC/sOMGpqjfk8FdJcQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -4836,7 +4836,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.3.2
       magic-string: 0.30.8
-      postcss: 8.4.36
+      postcss: 8.4.38
     dev: true
 
   /@unocss/preset-attributify@0.58.8:
@@ -8228,7 +8228,7 @@ packages:
   /i18next@22.5.1:
     resolution: {integrity: sha512-8TGPgM3pAD+VRsMtUMNknRz3kzqwp/gPALrWMsDnmC1mKqJwpWyooQRLMcbTwq8z8YwSmuj+ZYvc+xCuEpkssA==}
     dependencies:
-      '@babel/runtime': 7.24.0
+      '@babel/runtime': 7.24.1
     dev: false
 
   /iconv-lite@0.6.3:
@@ -11943,7 +11943,7 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  /unocss@0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.36)(rollup@2.79.1)(vite@5.2.7):
+  /unocss@0.58.8(@unocss/webpack@0.58.8)(postcss@8.4.38)(rollup@2.79.1)(vite@5.2.7):
     resolution: {integrity: sha512-oMWCEgwvxJcF1BZxxkbTyTd83xtArsza3DModUrJrPndnpOVVz9fZ5g6wcrDbVpv6+cvRrgMCeKMlWKt9WIIsA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -11959,7 +11959,7 @@ packages:
       '@unocss/cli': 0.58.8(rollup@2.79.1)
       '@unocss/core': 0.58.8
       '@unocss/extractor-arbitrary-variants': 0.58.8
-      '@unocss/postcss': 0.58.8(postcss@8.4.36)
+      '@unocss/postcss': 0.58.8(postcss@8.4.38)
       '@unocss/preset-attributify': 0.58.8
       '@unocss/preset-icons': 0.58.8
       '@unocss/preset-mini': 0.58.8
@@ -12940,29 +12940,29 @@ packages:
       workbox-core: 7.0.0
     dev: true
 
-  /worker-timers-broker@6.1.5:
-    resolution: {integrity: sha512-DZfLypD1f1AyiItRNJZwMGEjGZpx3clwifPFO+x1UwosjbXvEVXrrQn/RwMuNO8BEEUBs/n5CNFwavG9U4Ai6g==}
+  /worker-timers-broker@6.1.6:
+    resolution: {integrity: sha512-ZRRjoIVU3vHJlDur51qHRY0hNExyXfmP9vEVu9FIlTNtsL/bYBreryFMD/NUBSyDE7IHTEc1PUG9J0q9OB4E5w==}
     dependencies:
       '@babel/runtime': 7.24.1
       fast-unique-numbers: 8.0.13
       tslib: 2.6.2
-      worker-timers-worker: 7.0.68
+      worker-timers-worker: 7.0.69
     dev: false
 
-  /worker-timers-worker@7.0.68:
-    resolution: {integrity: sha512-Ts3hYhX6GqVRHZzW8+9WIi9FOeL29madwSvdVytF/tRpTxcNgPxa7KHC1ryj8U5ZDlpjnw/p7+wsm1KOJHG4cA==}
+  /worker-timers-worker@7.0.69:
+    resolution: {integrity: sha512-ykpImmLGYw/l9IuM6gklY0wd7WBXfNyQgzR2jEb8uMPHZhM5i8KWHTy3xb0Kr2QVwooU5eE0xAG6FiFYHPOssQ==}
     dependencies:
       '@babel/runtime': 7.24.1
       tslib: 2.6.2
     dev: false
 
-  /worker-timers@7.1.5:
-    resolution: {integrity: sha512-uRtPgMB1oTgKGv9dh45gmALk4z1l7EXqs/uaUfqY0SmkXvWMhvoT6u7UIPHKBXQSOZdm7nXSI2HrvP8NLzAR7g==}
+  /worker-timers@7.1.6:
+    resolution: {integrity: sha512-yNd+WSL5T8fyKTM3iIxrH4VQkB0EhQJAVsOQCyAbb56bNHc70ADLAMFi4g2m7dD4S0jcSoJxmiy7FB9fy1e4JA==}
     dependencies:
       '@babel/runtime': 7.24.1
       tslib: 2.6.2
-      worker-timers-broker: 6.1.5
-      worker-timers-worker: 7.0.68
+      worker-timers-broker: 6.1.6
+      worker-timers-worker: 7.0.69
     dev: false
 
   /wrap-ansi@7.0.0:
