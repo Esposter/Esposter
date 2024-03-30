@@ -19,7 +19,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
   <Container
     :configuration="{
       x: columnIndex * 510,
-      y: rowIndex * 150 + columnIndex * 30 + 10,
+      y: rowIndex * 150 + (columnIndex % 2) * 30 + 10,
     }"
   >
     <Image
