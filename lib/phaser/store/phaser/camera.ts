@@ -1,6 +1,6 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 
-export const useCameraStore = defineStore("dungeons/camera", () => {
+export const useCameraStore = defineStore("phaser/camera", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
   const isFading = ref(false);
