@@ -1,6 +1,6 @@
-import iceAttackActive from "@/assets/dungeons/pimen/iceAttack/active.png";
-import iceAttackStart from "@/assets/dungeons/pimen/iceAttack/start.png";
-import slash from "@/assets/dungeons/pimen/slash.png";
+import iceAttackActive from "@/assets/dungeons/thirdParty/pimen/iceAttack/active.png";
+import iceAttackStart from "@/assets/dungeons/thirdParty/pimen/iceAttack/start.png";
+import slash from "@/assets/dungeons/thirdParty/pimen/slash.png";
 import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";

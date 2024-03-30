@@ -10,7 +10,7 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
-    <DungeonsJoystick />
-    <DungeonsJoystickConfirmThumb />
+    <DungeonsUIJoystick />
+    <DungeonsUIJoystickConfirmThumb />
   </Scene>
 </template>

@@ -6,15 +6,15 @@ import type { Position } from "grid-engine";
 
 interface HealthBarProps {
   position: Position;
+  width: number;
+  scaleY: number;
   barPercentage: number;
 }
 
-const fullBarWidth = 360;
-const scaleY = 0.7;
-const { position, barPercentage } = defineProps<HealthBarProps>();
+const { position, width, scaleY, barPercentage } = defineProps<HealthBarProps>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
-const barWidth = computed(() => (fullBarWidth * barPercentage) / 100);
+const barWidth = computed(() => (width * barPercentage) / 100);
 const leftCapDisplayWidth = ref<number>();
 const middleDisplayWidth = computed(() => rightCapX.value - middleX.value);
 const middleX = computed(() => position.x + (leftCapDisplayWidth.value ?? 0));
@@ -42,16 +42,12 @@ watch(barWidth, (newBarWidth) => {
 
 <template>
   <template v-if="isVisible">
-    <DungeonsBattleHealthBarLeftCap
-      v-model:display-width="leftCapDisplayWidth"
-      :position="position"
-      :scale-y="scaleY"
-    />
-    <DungeonsBattleHealthBarMiddle
+    <DungeonsUIHealthBarLeftCap v-model:display-width="leftCapDisplayWidth" :position="position" :scale-y="scaleY" />
+    <DungeonsUIHealthBarMiddle
       :position="{ ...position, x: middleX }"
       :scale-y="scaleY"
       :display-width="middleDisplayWidth"
     />
-    <DungeonsBattleHealthBarRightCap v-model:x="rightCapX" :y="position.y" :scale-y="scaleY" :tween="rightCapXTween" />
+    <DungeonsUIHealthBarRightCap v-model:x="rightCapX" :y="position.y" :scale-y="scaleY" :tween="rightCapXTween" />
   </template>
 </template>

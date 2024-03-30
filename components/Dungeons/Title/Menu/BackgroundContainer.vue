@@ -12,7 +12,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
 <template>
   <Container>
     <DungeonsTitleMenuBackground />
-    <DungeonsInputCursor
+    <DungeonsUIInputCursor
       :grid="optionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="titleCursorPositionIncrement"

@@ -39,7 +39,7 @@ const { optionGrid } = storeToRefs(playerStore);
         :position="getPanelTextPosition(rowIndex, columnIndex)"
       />
     </template>
-    <DungeonsInputCursor
+    <DungeonsUIInputCursor
       :grid="optionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="CURSOR_POSITION_INCREMENT"

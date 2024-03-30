@@ -1,5 +1,5 @@
-import character from "@/assets/dungeons/axulart/character/custom.png";
-import npc from "@/assets/dungeons/parabellumGames/characters.png";
+import character from "@/assets/dungeons/thirdParty/axulart/character/custom.png";
+import npc from "@/assets/dungeons/thirdParty/parabellumGames/characters.png";
 import { CharacterKey } from "@/models/dungeons/keys/spritesheet/CharacterKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";

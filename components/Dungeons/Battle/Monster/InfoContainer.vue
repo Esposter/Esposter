@@ -59,7 +59,7 @@ const healthBarPercentage = computed(() => (activeMonster.value.currentHp / acti
         },
       }"
     />
-    <DungeonsBattleHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <Text
       :configuration="{
         visible: !isEnemy,

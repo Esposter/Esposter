@@ -36,7 +36,7 @@ const { menuOptionGrid } = storeToRefs(worldSceneStore);
       "
     />
   </template>
-  <DungeonsInputCursor
+  <DungeonsUIInputCursor
     :cursor-image-key="ImageKey.CursorWhite"
     :grid="menuOptionGrid"
     :initial-position="INITIAL_MENU_CURSOR_POSITION"

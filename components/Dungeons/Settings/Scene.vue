@@ -18,7 +18,7 @@ const { onPlayerInput } = settingsSceneStore;
     @update="(_, __, delta) => onPlayerInput(controls.getInput(true), controls.getInput(), delta)"
   >
     <DungeonsSettingsContainer />
-    <DungeonsJoystick />
-    <DungeonsJoystickConfirmThumb />
+    <DungeonsUIJoystick />
+    <DungeonsUIJoystickConfirmThumb />
   </Scene>
 </template>

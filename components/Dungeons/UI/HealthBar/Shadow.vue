@@ -3,26 +3,26 @@ import type { Position } from "grid-engine";
 
 interface ShadowProps {
   position: Position;
+  width: number;
+  scaleY: number;
 }
 
-const { position } = defineProps<ShadowProps>();
+const { position, width, scaleY } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
 const middleShadowX = computed(() => position.x + (leftCapShadowDisplayWidth.value ?? 0));
-const middleShadowDisplayWidth = 360;
-const scaleY = 0.7;
-const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplayWidth);
+const rightCapShadowX = computed(() => middleShadowX.value + width);
 </script>
 
 <template>
-  <DungeonsBattleHealthBarLeftCapShadow
+  <DungeonsUIHealthBarLeftCapShadow
     v-model:display-width="leftCapShadowDisplayWidth"
     :position="position"
     :scale-y="scaleY"
   />
-  <DungeonsBattleHealthBarMiddleShadow
+  <DungeonsUIHealthBarMiddleShadow
     :position="{ ...position, x: middleShadowX }"
     :scale-y="scaleY"
-    :display-width="middleShadowDisplayWidth"
+    :display-width="width"
   />
-  <DungeonsBattleHealthBarRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
+  <DungeonsUIHealthBarRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
 </template>

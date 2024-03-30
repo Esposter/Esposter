@@ -7,7 +7,8 @@ export const unfonts: NuxtConfig["unfonts"] = {
   },
   custom: {
     families: {
-      [FontKey["Kenney-Future-Narrow"]]: `./assets/dungeons/kenneysAssets/fonts/${FontKey["Kenney-Future-Narrow"]}.ttf`,
+      [FontKey["Kenney-Future-Narrow"]]:
+        `./assets/dungeons/thirdParty/kenneysAssets/fonts/${FontKey["Kenney-Future-Narrow"]}.ttf`,
     },
   },
 };

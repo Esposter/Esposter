@@ -40,7 +40,7 @@ const { attackOptionGrid } = storeToRefs(playerStore);
         :position="getPanelTextPosition(rowIndex, columnIndex)"
       />
     </template>
-    <DungeonsInputCursor
+    <DungeonsUIInputCursor
       :grid="attackOptionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="CURSOR_POSITION_INCREMENT"
