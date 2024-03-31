@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import buySfx from "@/assets/clicker/sound/buy.mp3";
-import { ItemType } from "@/models/clicker/ItemType";
-import type { Upgrade } from "@/models/clicker/Upgrade";
+import { Sound } from "@/models/clicker/Sound";
+import { ItemType } from "@/models/clicker/data/ItemType";
+import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import { SoundMap } from "@/services/clicker/SoundMap";
 import { useGameStore } from "@/store/clicker/game";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
@@ -15,7 +16,7 @@ const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
-const { play } = useSound(buySfx);
+const { play } = useSound(SoundMap[Sound.Buy]);
 const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price));
 const displayDescription = useDecompileString(upgrade.description);
 const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);

@@ -1,5 +1,5 @@
-import type { UpgradeName } from "@/models/clicker/UpgradeName";
-import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
+import type { UpgradeName } from "@/models/clicker/data/UpgradeName";
+import { upgradeNameSchema } from "@/models/clicker/data/UpgradeName";
 import { z } from "zod";
 
 export interface UpgradeUnlockCondition {

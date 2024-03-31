@@ -1,6 +1,6 @@
-import { BuildingName, buildingNameSchema } from "@/models/clicker/BuildingName";
-import { ItemType, itemTypeSchema } from "@/models/clicker/ItemType";
-import { UpgradeName, upgradeNameSchema } from "@/models/clicker/UpgradeName";
+import { ItemType, itemTypeSchema } from "@/models/clicker/data/ItemType";
+import { UpgradeName, upgradeNameSchema } from "@/models/clicker/data/UpgradeName";
+import { BuildingName, buildingNameSchema } from "@/models/clicker/data/building/BuildingName";
 import { z } from "zod";
 
 export const Target = { ...ItemType, ...UpgradeName, ...BuildingName };

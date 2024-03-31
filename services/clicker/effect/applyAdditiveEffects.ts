@@ -1,4 +1,4 @@
-import type { Effect } from "@/models/clicker/Effect";
+import type { Effect } from "@/models/clicker/data/effect/Effect";
 
 export const applyAdditiveEffects = (basePower: number, additiveEffects: Effect[]) => {
   let resultPower = basePower;

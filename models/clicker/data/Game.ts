@@ -1,9 +1,9 @@
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import { buildingWithStatsSchema } from "@/models/clicker/BuildingWithStats";
-import { ClickerType, clickerTypeSchema } from "@/models/clicker/ClickerType";
-import type { Upgrade } from "@/models/clicker/Upgrade";
-import { createUpgradeSchema } from "@/models/clicker/Upgrade";
-import { upgradeNameSchema } from "@/models/clicker/UpgradeName";
+import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerType";
+import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import { createUpgradeSchema } from "@/models/clicker/data/Upgrade";
+import { upgradeNameSchema } from "@/models/clicker/data/UpgradeName";
+import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import { buildingWithStatsSchema } from "@/models/clicker/data/building/BuildingWithStats";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Except } from "@/util/types/Except";
 import { z } from "zod";

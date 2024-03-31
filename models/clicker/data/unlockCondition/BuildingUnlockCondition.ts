@@ -1,5 +1,5 @@
-import type { BuildingName } from "@/models/clicker/BuildingName";
-import { buildingNameSchema } from "@/models/clicker/BuildingName";
+import type { BuildingName } from "@/models/clicker/data/building/BuildingName";
+import { buildingNameSchema } from "@/models/clicker/data/building/BuildingName";
 import { z } from "zod";
 
 export interface BuildingUnlockCondition {

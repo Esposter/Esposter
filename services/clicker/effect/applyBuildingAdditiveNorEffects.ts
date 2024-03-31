@@ -1,5 +1,5 @@
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import type { Effect } from "@/models/clicker/Effect";
+import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Effect } from "@/models/clicker/data/effect/Effect";
 
 export const applyBuildingAdditiveNorEffects = (
   basePower: number,

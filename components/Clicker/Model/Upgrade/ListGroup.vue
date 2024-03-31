@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Upgrade } from "@/models/clicker/Upgrade";
+import type { Upgrade } from "@/models/clicker/data/Upgrade";
 
 interface UpgradeListGroupProps {
   upgrades: Upgrade[];

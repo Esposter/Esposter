@@ -1,7 +1,7 @@
-import { EffectType } from "@/models/clicker/EffectType";
-import { Target } from "@/models/clicker/Target";
-import type { Upgrade } from "@/models/clicker/Upgrade";
-import { GrandmaUpgradeName } from "@/models/clicker/UpgradeName";
+import { EffectType } from "@/models/clicker/data/effect/EffectType";
+import { Target } from "@/models/clicker/data/Target";
+import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import { GrandmaUpgradeName } from "@/models/clicker/data/UpgradeName";
 
 export const grandmaUpgrades: Upgrade<GrandmaUpgradeName>[] = [
   {

@@ -1,6 +1,6 @@
-import type { BuildingWithStats } from "@/models/clicker/BuildingWithStats";
-import type { Effect } from "@/models/clicker/Effect";
-import { EffectType } from "@/models/clicker/EffectType";
+import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Effect } from "@/models/clicker/data/effect/Effect";
+import { EffectType } from "@/models/clicker/data/effect/EffectType";
 import { EffectOperatorMap } from "@/services/clicker/effect/EffectOperatorMap";
 
 export const applyEffects = (basePower: number, allEffects: Effect[], boughtBuildings: BuildingWithStats[]) => {

@@ -1,4 +1,4 @@
-import { Game as ClickerGame } from "@/models/clicker/Game";
+import { Game as ClickerGame } from "@/models/clicker/data/Game";
 import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { jsonDateParse } from "@/util/jsonDateParse";

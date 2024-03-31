@@ -1,4 +1,4 @@
-import { Game } from "@/models/clicker/Game";
+import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 
 export const useGameStore = defineStore("clicker/game", () => {

@@ -1,5 +1,5 @@
-import type { Building } from "@/models/clicker/Building";
-import { BuildingName } from "@/models/clicker/BuildingName";
+import type { Building } from "@/models/clicker/data/building/Building";
+import { BuildingName } from "@/models/clicker/data/building/BuildingName";
 import { compileVariable } from "@/services/clicker/compiler/compileVariable";
 
 export const buildings: Building[] = [

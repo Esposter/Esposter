@@ -1,4 +1,4 @@
-import { getColorMap } from "@/services/clicker/type/getColorMap";
+import { getColorMap } from "@/services/clicker/properties/getColorMap";
 import { useGameStore } from "@/store/clicker/game";
 
 export const useClickerItemColor = () => {

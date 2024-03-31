@@ -1,5 +1,5 @@
-import type { Upgrade } from "@/models/clicker/Upgrade";
-import type { BuildingUnlockCondition } from "@/models/clicker/unlockCondition/BuildingUnlockCondition";
+import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import type { BuildingUnlockCondition } from "@/models/clicker/data/unlockCondition/BuildingUnlockCondition";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 

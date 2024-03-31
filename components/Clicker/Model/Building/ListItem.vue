@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import buySfx from "@/assets/clicker/sound/buy.mp3";
-import type { Building } from "@/models/clicker/Building";
-import { ItemType } from "@/models/clicker/ItemType";
+import { Sound } from "@/models/clicker/Sound";
+import { ItemType } from "@/models/clicker/data/ItemType";
+import type { Building } from "@/models/clicker/data/building/Building";
+import { SoundMap } from "@/services/clicker/SoundMap";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useGameStore } from "@/store/clicker/game";
 import { marked } from "marked";
@@ -15,7 +16,7 @@ const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
-const { play } = useSound(buySfx);
+const { play } = useSound(SoundMap[Sound.Buy]);
 const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);

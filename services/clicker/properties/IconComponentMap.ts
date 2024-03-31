@@ -1,4 +1,4 @@
-import { ClickerType } from "@/models/clicker/ClickerType";
+import { ClickerType } from "@/models/clicker/data/ClickerType";
 
 export const IconComponentMap = {
   [ClickerType.Default]: defineAsyncComponent(() => import("@/components/Clicker/Icon/PinaColada.vue")),

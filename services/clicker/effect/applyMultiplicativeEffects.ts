@@ -1,4 +1,4 @@
-import type { Effect } from "@/models/clicker/Effect";
+import type { Effect } from "@/models/clicker/data/effect/Effect";
 
 export const applyMultiplicativeEffects = (basePower: number, multiplicativeEffects: Effect[]) => {
   let resultPower = basePower;
