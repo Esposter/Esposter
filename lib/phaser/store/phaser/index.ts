@@ -15,6 +15,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
+  const previousSceneKey = ref<SceneKey | null>(null);
   const sceneKey = ref<SceneKey | null>(null);
   // When we access the scene key from outside components, it should already be initialized
   const exposedSceneKey = sceneKey as Ref<SceneKey>;
@@ -36,13 +37,21 @@ export const usePhaserStore = defineStore("phaser", () => {
     }
 
     sceneKey.value = newSceneKey;
+    previousSceneKey.value = oldSceneKey;
     game.value.scene.start(newSceneKey);
   };
+  const switchToPreviousScene = () => {
+    if (!previousSceneKey.value) return;
+    switchToScene(previousSceneKey.value);
+  };
+
   return {
     game,
+    previousSceneKey,
     sceneKey: exposedSceneKey,
     scene,
     isSameScene,
     switchToScene,
+    switchToPreviousScene,
   };
 });

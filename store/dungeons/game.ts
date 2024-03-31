@@ -12,7 +12,7 @@ export const useGameStore = defineStore("dungeons/game", () => {
   const { $client } = useNuxtApp();
   const { status } = useAuth();
   const phaserStore = usePhaserStore();
-  const { switchToScene } = phaserStore;
+  const { switchToScene, switchToPreviousScene } = phaserStore;
   const { scene } = storeToRefs(phaserStore);
   const cameraStore = useCameraStore();
   const { fadeOut } = cameraStore;
@@ -45,6 +45,13 @@ export const useGameStore = defineStore("dungeons/game", () => {
       switchToScene(sceneKey);
     });
   };
+  const fadeSwitchToPreviousScene = (msDuration = 500, initializeSceneData?: () => void) => {
+    fadeOut(dayjs.duration(msDuration, "milliseconds").asMilliseconds());
+    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+      initializeSceneData?.();
+      switchToPreviousScene();
+    });
+  };
 
-  return { game, saveGame, save, saveData, controls, fadeSwitchToScene };
+  return { game, saveGame, save, saveData, controls, fadeSwitchToScene, fadeSwitchToPreviousScene };
 });
