@@ -10,6 +10,13 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     this.grid = grid;
     this.position = position;
   }
+  // This is the array index if the grid were to be flattened
+  // going from top-left to bottom-right
+  get index() {
+    let index = this.position.x;
+    for (let i = 0; i < this.position.y; i++) index += this.getColumnSize(i);
+    return index;
+  }
 
   get value() {
     return this.grid[this.position.y][this.position.x];

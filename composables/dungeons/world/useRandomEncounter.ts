@@ -23,7 +23,6 @@ export const useRandomEncounter = () => {
   if (!isEncounter) return;
 
   stepsSinceLastEncounter.value = 0;
-  fadeSwitchToScene(SceneKey.Battle, 2000, () => {
-    initialize();
-  });
+  initialize();
+  fadeSwitchToScene(SceneKey.Battle, 2000);
 };

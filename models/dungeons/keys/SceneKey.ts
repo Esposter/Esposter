@@ -1,5 +1,6 @@
 export enum SceneKey {
   Battle = "Battle",
+  MonsterDetails = "MonsterDetails",
   MonsterParty = "MonsterParty",
   Preloader = "Preloader",
   Settings = "Settings",

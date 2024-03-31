@@ -2,6 +2,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 
 export const SceneKeyMap = {
   [SceneKey.Battle]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Scene.vue")),
+  [SceneKey.MonsterDetails]: defineAsyncComponent(() => import("@/components/Dungeons/MonsterDetails/Scene.vue")),
   [SceneKey.MonsterParty]: defineAsyncComponent(() => import("@/components/Dungeons/MonsterParty/Scene.vue")),
   [SceneKey.Preloader]: defineAsyncComponent(() => import("@/components/Dungeons/Preloader/Scene.vue")),
   [SceneKey.Settings]: defineAsyncComponent(() => import("@/components/Dungeons/Settings/Scene.vue")),

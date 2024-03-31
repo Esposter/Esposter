@@ -2,7 +2,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
-import { getAttack } from "@/services/dungeons/battle/attack/getAttack";
+import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";

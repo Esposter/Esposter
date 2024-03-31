@@ -1,17 +1,21 @@
 import { Grid } from "@/models/dungeons/Grid";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/monsterParty/constants";
 import { useGameStore } from "@/store/dungeons/game";
+import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
   const gameStore = useGameStore();
-  const { fadeSwitchToPreviousScene } = gameStore;
+  const { fadeSwitchToScene, fadeSwitchToPreviousScene } = gameStore;
   const { save } = storeToRefs(gameStore);
+  const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
+  const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const monsters = computed({
     get: () => save.value.player.monsters,
     set: (newMonsters) => {
@@ -42,6 +46,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
+        monsterIndex.value = optionGrid.value.index;
+        fadeSwitchToScene(SceneKey.MonsterDetails);
         return;
       case PlayerSpecialInput.Cancel:
         fadeSwitchToPreviousScene();

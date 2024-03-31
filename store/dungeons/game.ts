@@ -38,17 +38,15 @@ export const useGameStore = defineStore("dungeons/game", () => {
   // We can assume that this will always exist because
   // we will create the controls in the preloader scene
   const controls = ref() as Ref<Controls>;
-  const fadeSwitchToScene = (sceneKey: SceneKey, msDuration = 500, initializeSceneData?: () => void) => {
+  const fadeSwitchToScene = (sceneKey: SceneKey, msDuration = 500) => {
     fadeOut(dayjs.duration(msDuration, "milliseconds").asMilliseconds());
     scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      initializeSceneData?.();
       switchToScene(sceneKey);
     });
   };
-  const fadeSwitchToPreviousScene = (msDuration = 500, initializeSceneData?: () => void) => {
+  const fadeSwitchToPreviousScene = (msDuration = 500) => {
     fadeOut(dayjs.duration(msDuration, "milliseconds").asMilliseconds());
     scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      initializeSceneData?.();
       switchToPreviousScene();
     });
   };
