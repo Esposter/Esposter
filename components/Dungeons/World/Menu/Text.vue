@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/world/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/world/constants";
 import { useGameStore } from "@/store/dungeons/game";

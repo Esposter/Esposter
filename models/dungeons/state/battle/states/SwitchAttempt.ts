@@ -1,16 +1,14 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useDialogStore } from "@/store/dungeons/dialog";
+import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 
 export const SwitchAttempt: State<StateName> = {
   name: StateName.SwitchAttempt,
   onEnter: () => {
-    const dialogStore = useDialogStore();
-    const { updateQueuedMessagesAndShowMessage } = dialogStore;
-    const battleDialogTarget = useBattleDialogTarget();
-
-    updateQueuedMessagesAndShowMessage(battleDialogTarget, ["You have no other monsters in your party..."], () => {
+    const battleDialogStore = useBattleDialogStore();
+    const { showMessages } = battleDialogStore;
+    showMessages(["You have no other monsters in your party..."], () => {
       battleStateMachine.setState(StateName.PlayerInput);
     });
   },

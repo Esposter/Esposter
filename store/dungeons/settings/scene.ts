@@ -1,5 +1,5 @@
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";

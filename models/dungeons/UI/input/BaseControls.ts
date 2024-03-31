@@ -1,5 +1,5 @@
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 
 export abstract class BaseControls {
   input: PlayerInput | null = null;

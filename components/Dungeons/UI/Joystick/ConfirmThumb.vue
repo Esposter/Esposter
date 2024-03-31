@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { getJoystickRadius } from "@/services/dungeons/joystick/getJoystickRadius";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";

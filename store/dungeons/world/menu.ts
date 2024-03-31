@@ -1,5 +1,5 @@
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/input/isMovingDirection";
@@ -20,7 +20,7 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
       switch (menuOptionGrid.value.value) {
         case MenuOption.Save:
           await saveData();
-          showMessages(["Game has been saved."]);
+          showMessages([{ text: "Game has been saved." }]);
           return;
         case MenuOption.Exit:
           isMenuVisible.value = false;

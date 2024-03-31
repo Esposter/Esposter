@@ -1,6 +1,6 @@
-import { BaseControls } from "@/models/dungeons/input/BaseControls";
-import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
-import type { Controls } from "@/models/dungeons/input/Controls";
+import { BaseControls } from "@/models/dungeons/UI/input/BaseControls";
+import type { BaseCursorKeys } from "@/models/dungeons/UI/input/BaseCursorKeys";
+import type { Controls } from "@/models/dungeons/UI/input/Controls";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 

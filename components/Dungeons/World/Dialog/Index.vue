@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -16,7 +14,7 @@ const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldSceneStore = useWorldSceneStore();
-const { isDialogVisible, dialogText } = storeToRefs(worldSceneStore);
+const { isDialogVisible, dialogMessage } = storeToRefs(worldSceneStore);
 const worldView = useWorldView();
 const x = ref(worldView.value.x + DIALOG_PADDING);
 const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);
@@ -45,17 +43,7 @@ watch(isDialogVisible, (newIsDialogVisible) => {
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />
-    <Text
-      :configuration="{
-        x: 18,
-        y: 12,
-        text: dialogText,
-        style: {
-          ...DialogTextStyle,
-          wordWrap: { width: DIALOG_WIDTH - 18 },
-        },
-      }"
-    />
+    <DungeonsWorldDialogText :dialog-message="dialogMessage" />
     <DungeonsUIInputPromptCursor :height="DIALOG_HEIGHT - 24" :scale="1.25" />
   </Container>
 </template>

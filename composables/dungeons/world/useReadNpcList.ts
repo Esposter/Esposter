@@ -58,6 +58,7 @@ export const useReadNpcList = () => {
     const createdAt = new Date();
     npcList.push({
       id: `${CharacterId.Npc}${npcObject.name}`,
+      name: npcObject.name,
       asset: { key: SpritesheetKey.Npc, frame },
       walkingAnimationMapping: {
         up: {

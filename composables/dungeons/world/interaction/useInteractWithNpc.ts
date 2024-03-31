@@ -13,12 +13,12 @@ export const useInteractWithNpc = (): boolean => {
   const { direction } = storeToRefs(playerStore);
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
-  const interactiveObject = useFindInteractiveObject(
+  const npc = useFindInteractiveObject(
     npcList.value.map(({ path, pathIndex, ...rest }) => ({ ...path[pathIndex], ...rest })),
   );
-  if (!interactiveObject) return false;
+  if (!npc) return false;
 
-  scene.value.gridEngine.turnTowards(interactiveObject.id, getOppositeDirection(direction.value));
-  showMessages([...interactiveObject.messages]);
+  scene.value.gridEngine.turnTowards(npc.id, getOppositeDirection(direction.value));
+  showMessages(npc.messages.map((text) => ({ title: npc.name, text })));
   return true;
 };

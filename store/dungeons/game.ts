@@ -1,8 +1,8 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import type { Controls } from "@/models/dungeons/UI/input/Controls";
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
-import type { Controls } from "@/models/dungeons/input/Controls";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { dayjs } from "@/services/dayjs";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";

@@ -1,4 +1,4 @@
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";

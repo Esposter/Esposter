@@ -3,7 +3,7 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";

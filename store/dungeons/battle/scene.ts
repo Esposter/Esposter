@@ -1,7 +1,7 @@
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";

@@ -18,19 +18,19 @@ export const useInteractWithSign = (): boolean => {
     objects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
   }
 
-  const interactiveObject = useFindInteractiveObject(objects, {
+  const sign = useFindInteractiveObject(objects, {
     [Direction.UP]: true,
     [Direction.DOWN]: false,
     [Direction.LEFT]: false,
     [Direction.RIGHT]: false,
   });
-  if (!interactiveObject) return false;
+  if (!sign) return false;
 
-  const messageTiledObjectProperty = (interactiveObject.properties as TiledObjectProperty<string>[]).find(
+  const messageTiledObjectProperty = (sign.properties as TiledObjectProperty<string>[]).find(
     (p) => p.name === SignObjectProperty.message,
   );
   if (!messageTiledObjectProperty) return false;
 
-  showMessages([messageTiledObjectProperty.value]);
+  showMessages([{ text: messageTiledObjectProperty.value }]);
   return true;
 };

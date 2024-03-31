@@ -2,7 +2,7 @@
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { Grid } from "@/models/dungeons/Grid";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
 import deepEqual from "deep-equal";
 import type { Position } from "grid-engine";

@@ -1,6 +1,6 @@
-import { BaseControls } from "@/models/dungeons/input/BaseControls";
-import type { Controls } from "@/models/dungeons/input/Controls";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { BaseControls } from "@/models/dungeons/UI/input/BaseControls";
+import type { Controls } from "@/models/dungeons/UI/input/Controls";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";

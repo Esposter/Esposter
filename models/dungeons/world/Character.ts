@@ -5,6 +5,7 @@ import type { Direction, Position, WalkingAnimationMapping } from "grid-engine";
 
 export interface Character extends ItemMetadata {
   id: `${CharacterId}${string}`;
+  name: string;
   position: Position;
   direction: Direction;
   asset: Asset;

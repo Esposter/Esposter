@@ -13,16 +13,16 @@ export const PlayerInput: State<StateName> = {
     const playerStore = usePlayerStore();
     const { activeMonster } = storeToRefs(playerStore);
     const infoPanelStore = useInfoPanelStore();
-    const { line1Text, line2Text } = storeToRefs(infoPanelStore);
+    const { line1DialogMessage, line2Text } = storeToRefs(infoPanelStore);
 
     activePanel.value = ActivePanel.Option;
-    line1Text.value = "What should";
+    line1DialogMessage.value.text = "What should";
     line2Text.value = `${activeMonster.value.name} do next?`;
   },
   onExit: () => {
     const infoPanelStore = useInfoPanelStore();
-    const { line1Text, line2Text } = storeToRefs(infoPanelStore);
-    line1Text.value = "";
+    const { line1DialogMessage, line2Text } = storeToRefs(infoPanelStore);
+    line1DialogMessage.value.text = "";
     line2Text.value = "";
   },
 };

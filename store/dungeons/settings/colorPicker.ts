@@ -1,5 +1,5 @@
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
-import type { PlayerInput } from "@/models/dungeons/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { mod } from "@/util/math/mod";

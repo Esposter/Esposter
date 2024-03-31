@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerSpecialInput } from "@/models/dungeons/input/PlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,

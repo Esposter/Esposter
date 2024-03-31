@@ -9,7 +9,7 @@ const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const infoPanelStore = useInfoPanelStore();
 // Display width is only going to be computed based on the set text, so we only need the @ listener prop
-const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelStore);
+const { line1DialogMessage, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelStore);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { line1Text, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelSto
       :configuration="{
         x: 20,
         y: 468,
-        text: line1Text,
+        text: line1DialogMessage.text,
         style: DialogTextStyle,
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
