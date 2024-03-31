@@ -27,6 +27,76 @@ export class Player {
       currentHp: 25,
       attackIds: [AttackId.Slash],
     },
+    {
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
+    {
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
+    {
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
+    {
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
+    {
+      id: MonsterId.Iguanignite,
+      name: MonsterId.Iguanignite,
+      asset: {
+        key: ImageKey.Iguanignite,
+      },
+      stats: {
+        maxHp: 25,
+        baseAttack: 5,
+      },
+      currentLevel: 5,
+      currentHp: 25,
+      attackIds: [AttackId.Slash],
+    },
   ];
 }
 
