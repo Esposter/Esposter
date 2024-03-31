@@ -4,9 +4,13 @@ import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
+const monsterPartySceneStore = useMonsterPartySceneStore();
+const { optionGrid } = storeToRefs(monsterPartySceneStore);
+const cancelButtonActive = computed(() => optionGrid.value.position.y === optionGrid.value.rowSize - 1);
 </script>
 
 <template>
@@ -24,7 +28,7 @@ const { scene } = storeToRefs(phaserStore);
       :configuration="{
         x: 15,
         y: 14,
-        text: '',
+        text: cancelButtonActive ? 'Go back to previous menu' : 'Choose a monster',
         style: MenuTextStyle,
       }"
     />
