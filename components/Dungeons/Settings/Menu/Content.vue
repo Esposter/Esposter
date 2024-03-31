@@ -27,7 +27,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
 <template>
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
-      v-for="(_, columnIndex) in row"
+      v-for="(text, columnIndex) in row"
       :key="`${rowIndex}|${columnIndex}`"
       :configuration="{
         x:
@@ -35,14 +35,11 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
             ? INITIAL_SETTINGS_POSITION.x
             : INITIAL_SETTINGS_VALUE_POSITION.x + SETTINGS_VALUE_POSITION_INCREMENT.x * (columnIndex - 1),
         y: INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * rowIndex,
-        text: optionGrid.getValue({ x: columnIndex, y: rowIndex }),
+        text,
         style: {
           ...MenuTextStyle,
           color:
-            settings[optionGrid.getValue({ x: 0, y: rowIndex }) as keyof typeof settings] ===
-            optionGrid.getValue({ x: columnIndex, y: rowIndex })
-              ? '#ff2222'
-              : '#fff',
+            settings[optionGrid.getValue({ x: 0, y: rowIndex }) as keyof typeof settings] === text ? '#ff2222' : '#fff',
         },
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="

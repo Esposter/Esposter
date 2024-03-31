@@ -1,25 +1,14 @@
 <script setup lang="ts">
-import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { monsters } = storeToRefs(monsterPartySceneStore);
-const rowSize = 3;
-const columnSize = 2;
-const monstersGrid = computed(() => {
-  const monstersGrid: Monster[][] = [];
-
-  for (let i = 0; i < Math.min(monsters.value.length, rowSize * columnSize); i += columnSize)
-    monstersGrid.push(monsters.value.slice(i, i + columnSize));
-
-  return monstersGrid;
-});
+const { monstersGrid } = storeToRefs(monsterPartySceneStore);
 </script>
 
 <template>
-  <template v-for="(monstersRow, rowIndex) in monstersGrid" :key="rowIndex">
+  <template v-for="(row, rowIndex) in monstersGrid" :key="rowIndex">
     <DungeonsMonsterPartyPanelListItem
-      v-for="(monster, columnIndex) in monstersRow"
+      v-for="(monster, columnIndex) in row"
       :key="columnIndex"
       :row-index="rowIndex"
       :column-index="columnIndex"

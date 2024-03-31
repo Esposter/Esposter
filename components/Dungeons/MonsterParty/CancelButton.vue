@@ -4,6 +4,7 @@ import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 </script>
 
 <template>
@@ -20,7 +21,7 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
       :configuration="{
         x: 66.5,
         y: 20.6,
-        text: 'cancel',
+        text: PlayerSpecialInput.Cancel,
         style: ButtonTextStyle,
         origin: 0.5,
       }"

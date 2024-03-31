@@ -19,12 +19,12 @@ const { menuOptionGrid } = storeToRefs(worldSceneStore);
 <template>
   <template v-for="(row, rowIndex) in menuOptionGrid.grid" :key="rowIndex">
     <Text
-      v-for="(_, columnIndex) in row"
+      v-for="(text, columnIndex) in row"
       :key="`${rowIndex}|${columnIndex}`"
       :configuration="{
         x: INITIAL_MENU_CURSOR_POSITION.x + MENU_CURSOR_POSITION_INCREMENT.x * columnIndex + 20,
         y: INITIAL_MENU_CURSOR_POSITION.y + MENU_CURSOR_POSITION_INCREMENT.y * rowIndex - 18,
-        text: menuOptionGrid.getValue({ x: columnIndex, y: rowIndex }),
+        text,
         style: MenuTextStyle,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
