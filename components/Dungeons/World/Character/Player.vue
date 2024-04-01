@@ -3,6 +3,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
+import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -23,29 +24,11 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     v-model:position="player.position"
     v-model:direction="player.direction"
     :character-id="CharacterId.Player"
-    :sprite-configuration="{ texture: SpritesheetKey.Character, frame: 7 }"
-    :walking-animation-mapping="{
-      up: {
-        leftFoot: 0,
-        standing: 1,
-        rightFoot: 2,
-      },
-      down: {
-        leftFoot: 6,
-        standing: 7,
-        rightFoot: 8,
-      },
-      left: {
-        leftFoot: 9,
-        standing: 10,
-        rightFoot: 11,
-      },
-      right: {
-        leftFoot: 3,
-        standing: 4,
-        rightFoot: 5,
-      },
+    :sprite-configuration="{
+      texture: SpritesheetKey.Character,
+      frame: PlayerWalkingAnimationMapping[player.direction].standing,
     }"
+    :walking-animation-mapping="PlayerWalkingAnimationMapping"
     :on-movement-started="
       () => {
         isMoving = true;

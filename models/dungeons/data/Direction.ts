@@ -1,4 +1,4 @@
-import { Direction } from "grid-engine";
+import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import { z } from "zod";
 
-export const directionSchema = z.nativeEnum(Direction) satisfies z.ZodType<Direction>;
+export const directionSchema = z.nativeEnum(InteractableDirection) satisfies z.ZodType<InteractableDirection>;

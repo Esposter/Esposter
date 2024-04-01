@@ -14,7 +14,7 @@ interface NpcProps {
 
 const { asset, path, pathIndex, characterId, walkingAnimationMapping, singleSidedSpritesheetDirection } =
   defineProps<NpcProps>();
-const direction = defineModel<Direction>("direction", { required: true });
+const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
 </script>
 

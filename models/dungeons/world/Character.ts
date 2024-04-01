@@ -7,7 +7,7 @@ export interface Character extends ItemMetadata {
   id: `${CharacterId}${string}`;
   name: string;
   position: Position;
-  direction: Direction;
+  direction?: Direction;
   asset: Asset;
   walkingAnimationMapping: WalkingAnimationMapping;
   // Some spritesheets may only animate one side and rely on us to flipX

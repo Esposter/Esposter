@@ -36,7 +36,7 @@ const {
   onComplete,
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
-const direction = defineModel<Direction>("direction", { required: true });
+const direction = defineModel<Direction | undefined>("direction", { required: true });
 const phaserStore = usePhaserStore();
 const { scene, sceneKey } = storeToRefs(phaserStore);
 const flipX = computed(
@@ -62,7 +62,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 
 <template>
   <Sprite
-    :configuration="{ origin: 0, flipX, ...spriteConfiguration }"
+    :configuration="{ flipX, ...spriteConfiguration }"
     :on-complete="
       (sprite) => {
         scene.gridEngine.addCharacter({

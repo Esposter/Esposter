@@ -82,7 +82,6 @@ export const useReadNpcList = () => {
           rightFoot: frame + 9,
         },
       },
-      direction: Direction.DOWN,
       singleSidedSpritesheetDirection: Direction.RIGHT,
       messages,
       path: npcPath,
