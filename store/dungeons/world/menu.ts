@@ -22,8 +22,8 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
   const { showMessages } = worldDialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { previousSceneKey } = storeToRefs(monsterPartySceneStore);
-  const onPlayerInput = async (input: PlayerInput) => {
-    if (input === PlayerSpecialInput.Confirm)
+  const onPlayerInput = async (justDownInput: PlayerInput) => {
+    if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Monsters:
           scene.value.scene.pause();
@@ -41,8 +41,9 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
         default:
           exhaustiveGuard(menuOptionGrid.value.value);
       }
-    else if (input === PlayerSpecialInput.Enter || input === PlayerSpecialInput.Cancel) isMenuVisible.value = false;
-    else if (isMovingDirection(input)) menuOptionGrid.value.move(input);
+    else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel)
+      isMenuVisible.value = false;
+    else if (isMovingDirection(justDownInput)) menuOptionGrid.value.move(justDownInput);
   };
   return { onPlayerInput };
 });

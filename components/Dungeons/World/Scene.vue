@@ -40,22 +40,23 @@ const create = (scene: SceneWithPlugins) => {
 };
 
 const update = (scene: SceneWithPlugins) => {
+  const justDownInput = controls.value.getInput(true);
   const input = controls.value.getInput();
   // We want to pause all other input whilst the dialog/menus are visible
   if (isDialogVisible.value) {
-    handleShowMessageInput(input);
+    handleShowMessageInput(justDownInput);
     return;
   } else if (isMenuVisible.value) {
-    onMenuPlayerInput(input);
+    onMenuPlayerInput(justDownInput);
     return;
   }
 
   useMoveNpcList();
 
   if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return;
-  else if (input === PlayerSpecialInput.Confirm) useInteractions();
+  else if (justDownInput === PlayerSpecialInput.Confirm) useInteractions();
   else if (isMovingDirection(input)) scene.gridEngine.move(CharacterId.Player, input);
-  else if (input === PlayerSpecialInput.Enter) isMenuVisible.value = true;
+  else if (justDownInput === PlayerSpecialInput.Enter) isMenuVisible.value = true;
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
