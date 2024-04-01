@@ -13,6 +13,8 @@ const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { sprite, player, isMoving } = storeToRefs(playerStore);
+// We only care about the starting frame, so we don't want this to be reactive
+const frame = PlayerWalkingAnimationMapping[player.value.direction].standing;
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   scene.value.cameras.main.stopFollow();
@@ -24,10 +26,7 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     v-model:position="player.position"
     v-model:direction="player.direction"
     :character-id="CharacterId.Player"
-    :sprite-configuration="{
-      texture: SpritesheetKey.Character,
-      frame: PlayerWalkingAnimationMapping[player.direction].standing,
-    }"
+    :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
     :on-movement-started="
       () => {
