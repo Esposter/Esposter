@@ -52,16 +52,15 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
+        if (optionGrid.value.value === PlayerSpecialInput.Cancel) {
+          switchToPreviousScene();
+          return;
+        }
         monsterIndex.value = optionGrid.value.index;
         launchParallelScene(SceneKey.MonsterDetails);
         return;
       case PlayerSpecialInput.Cancel:
-        if (!previousSceneKey.value) return;
-        else if (previousSceneKey.value === SceneKey.World) {
-          removeTopParallelScene();
-          scene.value.scene.resume();
-        } else fadeSwitchToScene(previousSceneKey.value);
-        previousSceneKey.value = null;
+        switchToPreviousScene();
         return;
       case PlayerSpecialInput.Enter:
         return;
@@ -72,6 +71,15 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   const onPlayerDirectionInput = (direction: Direction) => {
     optionGrid.value.move(direction);
+  };
+
+  const switchToPreviousScene = () => {
+    if (!previousSceneKey.value) return;
+    else if (previousSceneKey.value === SceneKey.World) {
+      removeTopParallelScene();
+      scene.value.scene.resume();
+    } else fadeSwitchToScene(previousSceneKey.value);
+    previousSceneKey.value = null;
   };
 
   return {
