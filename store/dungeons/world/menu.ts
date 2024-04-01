@@ -5,6 +5,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/input/isMovingDirection";
 import { useGameStore } from "@/store/dungeons/game";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
@@ -19,11 +20,14 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
   const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
+  const monsterPartySceneStore = useMonsterPartySceneStore();
+  const { previousSceneKey } = storeToRefs(monsterPartySceneStore);
   const onPlayerInput = async (input: PlayerInput) => {
     if (input === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Monsters:
           scene.value.scene.pause();
+          previousSceneKey.value = SceneKey.World;
           launchParallelScene(SceneKey.MonsterParty);
           return;
         case MenuOption.Save:

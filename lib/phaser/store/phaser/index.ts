@@ -15,7 +15,6 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
-  const previousSceneKey = ref<SceneKey | null>(null);
   const sceneKey = ref<SceneKey | null>(null);
   // When we access the scene key from outside components, it should already be initialized
   const exposedSceneKey = sceneKey as Ref<SceneKey>;
@@ -37,36 +36,30 @@ export const usePhaserStore = defineStore("phaser", () => {
     }
 
     sceneKey.value = newSceneKey;
-    previousSceneKey.value = oldSceneKey;
     game.value.scene.start(newSceneKey);
   };
-  const switchToPreviousScene = () => {
-    if (!previousSceneKey.value) return;
-    switchToScene(previousSceneKey.value);
-  };
 
-  const parallelSceneKey = ref<SceneKey | null>(null);
+  const parallelSceneKeys = ref<SceneKey[]>([]);
   const launchParallelScene = (sceneKey: SceneKey) => {
+    if (parallelSceneKeys.value.includes(sceneKey)) return;
     scene.value.scene.bringToTop(sceneKey);
     scene.value.scene.launch(sceneKey);
-    parallelSceneKey.value = sceneKey;
+    parallelSceneKeys.value.push(sceneKey);
   };
-  const removeParallelScene = () => {
-    if (!parallelSceneKey.value) return;
-    scene.value.scene.stop(parallelSceneKey.value);
-    parallelSceneKey.value = null;
+  const removeTopParallelScene = () => {
+    const parallelSceneKey = parallelSceneKeys.value.pop();
+    if (!parallelSceneKey) return;
+    scene.value.scene.stop(parallelSceneKey);
   };
 
   return {
     game,
-    previousSceneKey,
     sceneKey: exposedSceneKey,
     scene,
     isSameScene,
     switchToScene,
-    switchToPreviousScene,
-    parallelSceneKey,
+    parallelSceneKeys,
     launchParallelScene,
-    removeParallelScene,
+    removeTopParallelScene,
   };
 });

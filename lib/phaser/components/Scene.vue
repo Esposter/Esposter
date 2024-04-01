@@ -24,10 +24,10 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
-const { game, scene, parallelSceneKey } = storeToRefs(phaserStore);
+const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
-const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || sceneKey === parallelSceneKey.value);
+const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || parallelSceneKeys.value.includes(sceneKey));
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
     emit("init", this);

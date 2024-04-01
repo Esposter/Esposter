@@ -1,3 +1,4 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { Grid } from "@/models/dungeons/Grid";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -11,8 +12,11 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
+  const phaserStore = usePhaserStore();
+  const { launchParallelScene, removeTopParallelScene } = phaserStore;
+  const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
-  const { fadeSwitchToScene, fadeSwitchToPreviousScene } = gameStore;
+  const { fadeSwitchToScene } = gameStore;
   const { save } = storeToRefs(gameStore);
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
@@ -38,6 +42,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     { immediate: true },
   );
 
+  const previousSceneKey = ref<SceneKey | null>(null);
+
   const onPlayerInput = (justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
     else onPlayerDirectionInput(justDownInput);
@@ -47,10 +53,15 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
         monsterIndex.value = optionGrid.value.index;
-        fadeSwitchToScene(SceneKey.MonsterDetails);
+        launchParallelScene(SceneKey.MonsterDetails);
         return;
       case PlayerSpecialInput.Cancel:
-        fadeSwitchToPreviousScene();
+        if (!previousSceneKey.value) return;
+        else if (previousSceneKey.value === SceneKey.World) {
+          removeTopParallelScene();
+          scene.value.scene.resume();
+        } else fadeSwitchToScene(previousSceneKey.value);
+        previousSceneKey.value = null;
         return;
       case PlayerSpecialInput.Enter:
         return;
@@ -67,6 +78,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     monsters,
     monstersGrid,
     optionGrid,
+    previousSceneKey,
     onPlayerInput,
   };
 });

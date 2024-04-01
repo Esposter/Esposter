@@ -1,3 +1,4 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Attack } from "@/models/dungeons/attack/Attack";
@@ -8,8 +9,9 @@ import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
+  const phaserStore = usePhaserStore();
+  const { removeTopParallelScene } = phaserStore;
   const gameStore = useGameStore();
-  const { fadeSwitchToPreviousScene } = gameStore;
   const { save } = storeToRefs(gameStore);
   const monsterIndex = ref(0);
   const monster = computed(() => save.value.player.monsters[monsterIndex.value]);
@@ -32,7 +34,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
       case PlayerSpecialInput.Cancel:
-        fadeSwitchToPreviousScene();
+        removeTopParallelScene();
         return;
       case PlayerSpecialInput.Enter:
         return;
