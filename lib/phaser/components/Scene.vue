@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="TScene extends Constructor<Scene>">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { Constructor } from "@/util/types/Constructor";
@@ -23,10 +24,10 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
-const { game, scene } = storeToRefs(phaserStore);
+const { game, scene, parallelSceneKey } = storeToRefs(phaserStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
-const isShown = computed(() => scene.value && isSameScene(sceneKey));
+const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || sceneKey === parallelSceneKey.value);
 const NewScene = class extends cls {
   init(this: InstanceType<TScene>) {
     emit("init", this);
@@ -55,6 +56,7 @@ onMounted(() => {
   if (!game.value) throw new NotInitializedError("Game");
   const newScene = game.value.scene.add(sceneKey, NewScene);
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
+  provide(InjectionKeyMap.Scene, newScene);
 
   if (autoStart) switchToScene(sceneKey);
 });
@@ -66,5 +68,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <slot v-if="isShown" />
+  <slot v-if="isActive" />
 </template>

@@ -1,4 +1,4 @@
-import { InjectionKeyMap } from "@/lib/phaser/models/InjectionKeyMap";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { GameObjects } from "phaser";
 
 export const useParentContainerStore = defineStore("phaser/parentContainer", () => {

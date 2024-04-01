@@ -45,6 +45,18 @@ export const usePhaserStore = defineStore("phaser", () => {
     switchToScene(previousSceneKey.value);
   };
 
+  const parallelSceneKey = ref<SceneKey | null>(null);
+  const launchParallelScene = (sceneKey: SceneKey) => {
+    scene.value.scene.bringToTop(sceneKey);
+    scene.value.scene.launch(sceneKey);
+    parallelSceneKey.value = sceneKey;
+  };
+  const removeParallelScene = () => {
+    if (!parallelSceneKey.value) return;
+    scene.value.scene.stop(parallelSceneKey.value);
+    parallelSceneKey.value = null;
+  };
+
   return {
     game,
     previousSceneKey,
@@ -53,5 +65,8 @@ export const usePhaserStore = defineStore("phaser", () => {
     isSameScene,
     switchToScene,
     switchToPreviousScene,
+    parallelSceneKey,
+    launchParallelScene,
+    removeParallelScene,
   };
 });

@@ -13,21 +13,21 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const active = computed(() => optionGrid.value.position.y === optionGrid.value.rowSize - 1);
+const isActive = computed(() => optionGrid.value.position.y === optionGrid.value.rowSize - 1);
 </script>
 
 <template>
   <Container :configuration="{ x: 883, y: 519 }">
     <Image
       :configuration="{
-        texture: active ? ImageKey.BlueButtonSelected : ImageKey.BlueButton,
+        texture: isActive ? ImageKey.BlueButtonSelected : ImageKey.BlueButton,
         origin: 0,
         scaleX: 0.7,
-        alpha: active ? 1 : 0.7,
+        alpha: isActive ? 1 : 0.7,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          if (active) {
+          if (isActive) {
             controls.setInput(PlayerSpecialInput.Cancel);
             return;
           }

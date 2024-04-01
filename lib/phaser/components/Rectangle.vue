@@ -2,8 +2,10 @@
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
 import type { RectangleEventEmitsOptions } from "@/lib/phaser/models/emit/RectangleEventEmitsOptions";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { RectangleSetterMap } from "@/lib/phaser/util/setterMap/RectangleSetterMap";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { GameObjects } from "phaser";
 
 interface RectangleProps {
@@ -17,9 +19,10 @@ const props = defineProps<RectangleProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, width, height, fillColor, alpha } = configuration.value;
 const emit = defineEmits<RectangleEmits>();
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
-const rectangle = ref(scene.value.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
+const scene = inject<SceneWithPlugins>(InjectionKeyMap.Scene);
+if (!scene) throw new NotInitializedError("Scene");
+
+const rectangle = ref(scene.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
 useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
 onComplete.value?.(rectangle.value);
 </script>

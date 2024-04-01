@@ -22,7 +22,7 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const active = computed(() => {
+const isActive = computed(() => {
   const gridPosition: Position = { x: columnIndex, y: rowIndex };
   return deepEqual(gridPosition, optionGrid.value.position);
 });
@@ -42,11 +42,11 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         origin: 0,
         scaleX: 1.1,
         scaleY: 1.2,
-        alpha: active ? 1 : 0.7,
+        alpha: isActive ? 1 : 0.7,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          if (active) {
+          if (isActive) {
             controls.setInput(PlayerSpecialInput.Confirm);
             return;
           }
