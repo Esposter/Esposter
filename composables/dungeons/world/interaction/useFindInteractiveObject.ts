@@ -14,8 +14,8 @@ export const useFindInteractiveObject = <T extends Position>(
   },
 ) => {
   const playerStore = usePlayerStore();
-  const { position, direction } = storeToRefs(playerStore);
+  const { player } = storeToRefs(playerStore);
   return objects.find((o) =>
-    InteractiveObjectPositionComparator(position.value, direction.value, o, interactableDirectionMap),
+    InteractiveObjectPositionComparator(player.value.position, player.value.direction, o, interactableDirectionMap),
   );
 };

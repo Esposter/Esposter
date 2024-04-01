@@ -10,7 +10,7 @@ export const useInteractWithNpc = (): boolean => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const playerStore = usePlayerStore();
-  const { direction } = storeToRefs(playerStore);
+  const { player } = storeToRefs(playerStore);
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
   const npc = useFindInteractiveObject(
@@ -18,7 +18,7 @@ export const useInteractWithNpc = (): boolean => {
   );
   if (!npc) return false;
 
-  scene.value.gridEngine.turnTowards(npc.id, getOppositeDirection(direction.value));
+  scene.value.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
   showMessages(npc.messages.map((text) => ({ title: npc.name, text })));
   return true;
 };

@@ -11,7 +11,7 @@ const { scene, sceneKey } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
-const { sprite, position, direction, isMoving } = storeToRefs(playerStore);
+const { sprite, player, isMoving } = storeToRefs(playerStore);
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   scene.value.cameras.main.stopFollow();
@@ -20,8 +20,8 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
 
 <template>
   <DungeonsWorldCharacter
-    v-model:position="position"
-    v-model:direction="direction"
+    v-model:position="player.position"
+    v-model:direction="player.direction"
     :character-id="CharacterId.Player"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame: 7 }"
     :walking-animation-mapping="{
