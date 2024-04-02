@@ -3,29 +3,26 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { getJoystickRadius } from "@/services/dungeons/joystick/getJoystickRadius";
+import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
-import isMobile from "is-mobile";
 import { Input } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const joystickRadius = computed(() => getJoystickRadius(scene.value));
 const alpha = ref(1);
 </script>
 
 <template>
   <Image
-    v-if="isMobile()"
     :configuration="{
-      x: scene.scale.width - getJoystickX(scene),
+      x: scene.scale.width - getJoystickX(),
       y: getJoystickY(scene),
-      displayWidth: joystickRadius,
-      displayHeight: joystickRadius,
+      displayWidth: JOYSTICK_RADIUS,
+      displayHeight: JOYSTICK_RADIUS,
       texture: ImageKey.Thumb,
       depth: Number.MAX_SAFE_INTEGER,
       alpha,

@@ -73,7 +73,5 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
     <DungeonsWorldForeground />
     <DungeonsWorldDialog />
     <DungeonsWorldMenu />
-    <DungeonsUIJoystick />
-    <DungeonsUIJoystickConfirmThumb />
   </Scene>
 </template>

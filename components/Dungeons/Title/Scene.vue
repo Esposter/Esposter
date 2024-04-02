@@ -44,7 +44,5 @@ const { onPlayerInput } = titleSceneStore;
       }"
     />
     <DungeonsTitleMenuContainer />
-    <DungeonsUIJoystick />
-    <DungeonsUIJoystickConfirmThumb />
   </Scene>
 </template>

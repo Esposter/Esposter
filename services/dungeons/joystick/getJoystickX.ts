@@ -1,4 +1,3 @@
-import { JOYSTICK_BASE_RADIUS } from "@/services/dungeons/joystick/constants";
-import type { Scene } from "phaser";
+import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 
-export const getJoystickX = (scene: Scene) => JOYSTICK_BASE_RADIUS * scene.cameras.main.zoom;
+export const getJoystickX = () => 1.5 * JOYSTICK_RADIUS;

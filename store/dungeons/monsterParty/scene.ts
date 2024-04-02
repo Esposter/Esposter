@@ -13,7 +13,7 @@ import type { Direction } from "grid-engine";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
   const phaserStore = usePhaserStore();
-  const { launchParallelScene, removeTopParallelScene } = phaserStore;
+  const { launchParallelScene, removeParallelScene } = phaserStore;
   const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { fadeSwitchToScene } = gameStore;
@@ -76,7 +76,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const switchToPreviousScene = () => {
     if (!previousSceneKey.value) return;
     else if (previousSceneKey.value === SceneKey.World) {
-      removeTopParallelScene();
+      removeParallelScene(SceneKey.MonsterParty);
       scene.value.scene.resume();
     } else fadeSwitchToScene(previousSceneKey.value);
     previousSceneKey.value = null;

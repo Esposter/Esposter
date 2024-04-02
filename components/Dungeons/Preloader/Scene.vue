@@ -19,7 +19,7 @@ import isMobile from "is-mobile";
 import type { Loader } from "phaser";
 
 const phaserStore = usePhaserStore();
-const { switchToScene } = phaserStore;
+const { switchToScene, launchParallelScene } = phaserStore;
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const x = ref<number>();
@@ -56,7 +56,13 @@ const preload = (scene: SceneWithPlugins) => {
 };
 
 const create = (scene: SceneWithPlugins) => {
-  controls.value = isMobile() ? new JoystickControls() : new KeyboardControls(scene);
+  if (isMobile()) {
+    controls.value = new JoystickControls();
+    launchParallelScene(SceneKey.MobileJoystick);
+    return;
+  }
+
+  controls.value = new KeyboardControls(scene);
 };
 </script>
 

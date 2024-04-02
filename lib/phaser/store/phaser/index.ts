@@ -1,6 +1,6 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Game } from "phaser";
 
@@ -43,12 +43,17 @@ export const usePhaserStore = defineStore("phaser", () => {
   const launchParallelScene = (sceneKey: SceneKey) => {
     if (parallelSceneKeys.value.includes(sceneKey)) return;
     scene.value.scene.bringToTop(sceneKey);
+    // Mobile controls should always be the first to render
+    if (parallelSceneKeys.value.includes(SceneKey.MobileJoystick))
+      scene.value.scene.bringToTop(SceneKey.MobileJoystick);
     scene.value.scene.launch(sceneKey);
     parallelSceneKeys.value.push(sceneKey);
   };
-  const removeTopParallelScene = () => {
-    const parallelSceneKey = parallelSceneKeys.value.pop();
-    if (!parallelSceneKey) return;
+  const removeParallelScene = (sceneKey: SceneKey) => {
+    const index = parallelSceneKeys.value.indexOf(sceneKey);
+    if (index === -1) return;
+
+    const parallelSceneKey = parallelSceneKeys.value.splice(index, 1)[0];
     scene.value.scene.stop(parallelSceneKey);
   };
 
@@ -60,6 +65,6 @@ export const usePhaserStore = defineStore("phaser", () => {
     switchToScene,
     parallelSceneKeys,
     launchParallelScene,
-    removeTopParallelScene,
+    removeParallelScene,
   };
 });

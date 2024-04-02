@@ -17,7 +17,5 @@ const { onPlayerInput } = monsterPartySceneStore;
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
-    <DungeonsUIJoystick />
-    <DungeonsUIJoystickConfirmThumb />
   </Scene>
 </template>
