@@ -1,6 +1,6 @@
 export const TitleKey = {
   TitleScreenBackground: "TitleScreenBackground",
-  TitleTextBackground: "TitleTextBackground",
   TitleText: "TitleText",
+  TitleTextBackground: "TitleTextBackground",
 } as const;
 export type TitleKey = keyof typeof TitleKey;
