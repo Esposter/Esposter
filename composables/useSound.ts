@@ -1,6 +1,6 @@
+import type { ComposableOptions } from "@/models/sound/ComposableOptions";
+import type { PlayOptions } from "@/models/sound/PlayOptions";
 import { dayjs } from "@/services/dayjs";
-import type { Except } from "@/util/types/Except";
-import type { HowlOptions } from "howler";
 import { Howl } from "howler";
 
 const cache: Record<string, Howl | null> = {};
@@ -95,17 +95,13 @@ export const useSound = (
 
   const stop = (id?: number) => {
     if (!sound.value) return;
-
     sound.value.stop(id);
-
     isPlaying.value = false;
   };
 
   const pause = (id?: number) => {
     if (!sound.value) return;
-
     sound.value.pause(id);
-
     isPlaying.value = false;
   };
 
@@ -118,21 +114,3 @@ export const useSound = (
     stop,
   };
 };
-
-interface PlayOptions {
-  id?: number;
-  forceSoundEnabled?: boolean;
-  playbackRate?: number;
-}
-
-type SpriteMap = Record<string, [number, number]>;
-
-type ComposableOptions = {
-  volume?: MaybeRef<number>;
-  playbackRate?: MaybeRef<number>;
-  interrupt?: boolean;
-  soundEnabled?: boolean;
-  autoplay?: boolean;
-  sprite?: SpriteMap;
-  onload?: () => void;
-} & Except<HowlOptions, "src" | "onload">;

@@ -6,6 +6,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { JoystickControls } from "@/models/dungeons/UI/input/JoystickControls";
 import { KeyboardControls } from "@/models/dungeons/UI/input/KeyboardControls";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SoundLoaderMap } from "@/models/dungeons/loader/SoundLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
@@ -51,6 +52,7 @@ const preload = (scene: SceneWithPlugins) => {
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
+  for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
 };
 
 const create = (scene: SceneWithPlugins) => {
