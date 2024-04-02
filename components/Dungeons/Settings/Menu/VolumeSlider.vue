@@ -2,6 +2,7 @@
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
@@ -10,6 +11,7 @@ import {
   SETTINGS_POSITION_INCREMENT,
   VOLUME_SLIDER_BAR_WIDTH,
   VOLUME_SLIDER_END_X,
+  VOLUME_SLIDER_HEIGHT,
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
 } from "@/services/dungeons/settings/constants";
@@ -27,34 +29,35 @@ const baseY = computed(
     INITIAL_SETTINGS_POSITION.y +
     SETTINGS_POSITION_INCREMENT.y * (optionGrid.value.getPosition(SettingsOption.Volume)?.y ?? 0),
 );
+const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
+  x: INITIAL_SETTINGS_VALUE_POSITION.x,
+  y: baseY.value + 17,
+  width: VOLUME_SLIDER_BAR_WIDTH,
+  originX: 0,
+  originY: 0.5,
+}));
+const onSliderBarClick = ({ x }: Input.Pointer) => {
+  if (!volumeSlider) return;
+
+  const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
+  const selectedVolumeSliderWidth = x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
+  setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
+};
 </script>
 
 <template>
   <Rectangle
-    :configuration="{
-      x: INITIAL_SETTINGS_VALUE_POSITION.x,
-      y: baseY + 17,
-      width: VOLUME_SLIDER_BAR_WIDTH,
-      height: 4,
-      fillColor: 0xffffff,
-      originX: 0,
-      originY: 0.5,
-    }"
-    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="
-      ({ x }: Input.Pointer) => {
-        if (!volumeSlider) return;
-
-        const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
-        const selectedVolumeSliderWidth =
-          x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
-        setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
-      }
-    "
+    :configuration="{ ...baseSliderBarConfiguration, height: VOLUME_SLIDER_HEIGHT }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
+  />
+  <Rectangle
+    :configuration="{ ...baseSliderBarConfiguration, height: 4, fillColor: 0xffffff }"
+    @[`${Input.Events.GAMEOBJECT_POINTER_DOWN}`]="onSliderBarClick"
   />
   <Rectangle
     :configuration="{
       width: VOLUME_SLIDER_WIDTH,
-      height: 25,
+      height: VOLUME_SLIDER_HEIGHT,
       fillColor: 0xff2222,
       originX: 0,
       originY: 0.5,
