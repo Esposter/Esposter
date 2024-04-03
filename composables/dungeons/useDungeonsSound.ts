@@ -16,5 +16,8 @@ export const useDungeonsSound = (soundKey: SoundKey, options?: Except<Types.Soun
     scene.value.sound.setVolume(newVolume);
   });
 
-  return { stop: () => scene.value.sound.stopByKey(soundKey) };
+  return {
+    play: () => scene.value.sound.play(soundKey, { ...options, volume: volume.value }),
+    stop: () => scene.value.sound.stopByKey(soundKey),
+  };
 };
