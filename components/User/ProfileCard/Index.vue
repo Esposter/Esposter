@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// @TODO: https://github.com/vuejs/language-tools/issues/3830
-/* eslint-disable vue/valid-v-bind */
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
