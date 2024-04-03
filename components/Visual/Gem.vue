@@ -85,8 +85,6 @@ onMounted(() => {
 
 <template>
   <Transition name="fade">
-    <!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
-    <!-- eslint-disable-next-line vue/valid-v-bind -->
     <canvas v-show="ready" :id />
   </Transition>
 </template>

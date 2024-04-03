@@ -16,10 +16,7 @@ interface StyledEmojiPickerProps {
 }
 
 const { tooltipProps, buttonProps, buttonAttrs } = defineProps<StyledEmojiPickerProps>();
-const emit = defineEmits<{
-  "update:menu": [value: boolean];
-  select: [emoji: string];
-}>();
+const emit = defineEmits<{ "update:menu": [value: boolean]; select: [emoji: string] }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
 const onEmojiSelect = (emoji: { native: string }) => {

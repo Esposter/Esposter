@@ -120,7 +120,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- @TODO: https://github.com/vuejs/language-tools/issues/3830 -->
-  <!-- eslint-disable-next-line vue/valid-v-bind -->
   <canvas :id />
 </template>
