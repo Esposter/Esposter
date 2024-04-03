@@ -25,9 +25,9 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
       :configuration="{
         x: MENU_BACKGROUND_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,
+        origin: 0.5,
         text,
         style: MenuTextStyle,
-        origin: 0.5,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
@@ -43,9 +43,9 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
       visible: !isContinueEnabled,
       x: MENU_BACKGROUND_WIDTH / 2,
       y: 90,
+      origin: 0.5,
       text: PlayerTitleMenuOption.Continue,
       style: MenuTextStyle,
-      origin: 0.5,
       alpha: 0.5,
     }"
   />

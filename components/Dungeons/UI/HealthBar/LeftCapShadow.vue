@@ -1,27 +1,20 @@
 <script setup lang="ts">
+import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { Position } from "grid-engine";
 
 interface LeftCapShadowProps {
-  position: Position;
+  imagePosition: ImagePosition;
   scaleY: number;
 }
 
-const { position, scaleY } = defineProps<LeftCapShadowProps>();
+const { imagePosition, scaleY } = defineProps<LeftCapShadowProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
 </script>
 
 <template>
   <Image
-    :configuration="{
-      ...position,
-      texture: ImageKey.HealthBarLeftCapShadow,
-      originX: 0,
-      originY: 0.5,
-      scaleY,
-      displayWidth,
-    }"
+    :configuration="{ ...imagePosition, texture: ImageKey.HealthBarLeftCapShadow, scaleY, displayWidth }"
     @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
   />
 </template>

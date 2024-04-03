@@ -1,24 +1,16 @@
 <script setup lang="ts">
+import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { Position } from "grid-engine";
 
 interface RightCapShadowProps {
-  position: Position;
+  imagePosition: ImagePosition;
   scaleY: number;
 }
 
-const { position, scaleY } = defineProps<RightCapShadowProps>();
+const { imagePosition, scaleY } = defineProps<RightCapShadowProps>();
 </script>
 
 <template>
-  <Image
-    :configuration="{
-      ...position,
-      texture: ImageKey.HealthBarRightCapShadow,
-      originX: 0,
-      originY: 0.5,
-      scaleY,
-    }"
-  />
+  <Image :configuration="{ ...imagePosition, texture: ImageKey.HealthBarRightCapShadow, scaleY }" />
 </template>

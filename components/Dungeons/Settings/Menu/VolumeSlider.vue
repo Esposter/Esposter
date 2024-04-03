@@ -32,9 +32,9 @@ const baseY = computed(
 const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
   x: INITIAL_SETTINGS_VALUE_POSITION.x,
   y: baseY.value + 17,
-  width: VOLUME_SLIDER_BAR_WIDTH,
   originX: 0,
   originY: 0.5,
+  width: VOLUME_SLIDER_BAR_WIDTH,
 }));
 const onSliderBarClick = ({ x }: Input.Pointer) => {
   if (!volumeSlider) return;
@@ -56,11 +56,11 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
   />
   <Rectangle
     :configuration="{
+      originX: 0,
+      originY: 0.5,
       width: VOLUME_SLIDER_WIDTH,
       height: VOLUME_SLIDER_HEIGHT,
       fillColor: 0xff2222,
-      originX: 0,
-      originY: 0.5,
     }"
     :on-complete="
       (rectangle) => {

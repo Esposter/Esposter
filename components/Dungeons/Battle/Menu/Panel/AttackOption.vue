@@ -23,9 +23,9 @@ const { attackOptionGrid } = storeToRefs(playerStore);
   <Container :configuration="{ visible: activePanel === ActivePanel.AttackOption, y: 448 }">
     <Rectangle
       :configuration="{
+        origin: 0,
         width: 500,
         height: MENU_HEIGHT,
-        origin: 0,
         fillColor: 0xede4f3,
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"

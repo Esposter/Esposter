@@ -28,9 +28,9 @@ usePhaserListener(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     :configuration="{
       x: MENU_PADDING,
       y,
+      origin: 0,
       width,
       height: MENU_HEIGHT,
-      origin: 0,
       fillColor: 0xede4f3,
       strokeStyle: [MENU_PADDING * 2, 0xe4434a],
     }"

@@ -11,18 +11,18 @@ const { scene } = storeToRefs(phaserStore);
 <template>
   <Rectangle
     :configuration="{
+      origin: 0,
       width: scene.scale.width,
       height: scene.scale.height,
       fillColor: 0x000000,
-      origin: 0,
     }"
   />
   <TileSprite
     :configuration="{
+      origin: 0,
       width: scene.scale.width,
       height: scene.scale.height,
       texture: ImageKey.MonsterPartyBackground,
-      origin: 0,
       alpha: 0.7,
     }"
   />

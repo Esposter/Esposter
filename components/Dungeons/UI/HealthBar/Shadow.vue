@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import type { Position } from "grid-engine";
+import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
 
 interface ShadowProps {
-  position: Position;
+  imagePosition: ImagePosition;
   width: number;
   scaleY: number;
 }
 
-const { position, width, scaleY } = defineProps<ShadowProps>();
+const { imagePosition, width, scaleY } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
-const middleShadowX = computed(() => position.x + (leftCapShadowDisplayWidth.value ?? 0));
+const middleShadowX = computed(() => imagePosition.x + (leftCapShadowDisplayWidth.value ?? 0));
 const rightCapShadowX = computed(() => middleShadowX.value + width);
 </script>
 
 <template>
   <DungeonsUIHealthBarLeftCapShadow
     v-model:display-width="leftCapShadowDisplayWidth"
-    :position="position"
+    :image-position="imagePosition"
     :scale-y="scaleY"
   />
   <DungeonsUIHealthBarMiddleShadow
-    :position="{ ...position, x: middleShadowX }"
+    :image-position="{ ...imagePosition, x: middleShadowX }"
     :scale-y="scaleY"
     :display-width="width"
   />
-  <DungeonsUIHealthBarRightCapShadow :position="{ ...position, x: rightCapShadowX }" :scale-y="scaleY" />
+  <DungeonsUIHealthBarRightCapShadow :image-position="{ ...imagePosition, x: rightCapShadowX }" :scale-y="scaleY" />
 </template>

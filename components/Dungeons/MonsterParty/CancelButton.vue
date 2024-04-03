@@ -20,8 +20,8 @@ const isActive = computed(() => optionGrid.value.position.y === optionGrid.value
   <Container :configuration="{ x: 883, y: 519 }">
     <Image
       :configuration="{
-        texture: isActive ? ImageKey.BlueButtonSelected : ImageKey.BlueButton,
         origin: 0,
+        texture: isActive ? ImageKey.BlueButtonSelected : ImageKey.BlueButton,
         scaleX: 0.7,
         alpha: isActive ? 1 : 0.7,
       }"
@@ -40,9 +40,9 @@ const isActive = computed(() => optionGrid.value.position.y === optionGrid.value
       :configuration="{
         x: 66.5,
         y: 20.6,
+        origin: 0.5,
         text: PlayerSpecialInput.Cancel,
         style: ButtonTextStyle,
-        origin: 0.5,
       }"
     />
   </Container>

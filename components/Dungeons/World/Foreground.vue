@@ -10,5 +10,5 @@ const depth = computed(() => (sprite.value ? sprite.value.depth + 1 : 0));
 </script>
 
 <template>
-  <Image :configuration="{ texture: ImageKey.WorldHomeForeground, origin: 0, depth }" />
+  <Image :configuration="{ origin: 0, texture: ImageKey.WorldHomeForeground, depth }" />
 </template>

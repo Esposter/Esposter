@@ -70,7 +70,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         y: 36,
         text: monster.name,
         style: {
-          color: '#fff',
+          color: 'white',
           fontSize: 30,
         },
       }"
@@ -81,7 +81,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         y: 116,
         text: `LV. ${monster.currentLevel}`,
         style: {
-          color: '#fff',
+          color: 'white',
           fontSize: 22,
         },
       }"
@@ -107,7 +107,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         originY: 0,
         text: `${monster.currentHp}/${monster.stats.maxHp}`,
         style: {
-          color: '#fff',
+          color: 'white',
           fontSize: 38,
         },
       }"

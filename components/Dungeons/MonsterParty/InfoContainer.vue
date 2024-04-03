@@ -17,9 +17,9 @@ const cancelButtonActive = computed(() => optionGrid.value.position.y === option
   <Container :configuration="{ x: 4, y: scene.scale.height - 69 }">
     <Rectangle
       :configuration="{
+        origin: 0,
         width: 867,
         height: 65,
-        origin: 0,
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
       }"

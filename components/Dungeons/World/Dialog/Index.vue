@@ -35,11 +35,11 @@ watch(isDialogVisible, (newIsDialogVisible) => {
   <Container :configuration="{ visible: isDialogVisible, x, y, depth: DIALOG_DEPTH }">
     <Rectangle
       :configuration="{
+        origin: 0,
         width: DIALOG_WIDTH,
         height: DIALOG_HEIGHT,
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
-        origin: 0,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />

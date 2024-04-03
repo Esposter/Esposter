@@ -14,6 +14,7 @@ const glassPanelImageKey = useGlassPanelImageKey();
 <template>
   <Nineslice
     :configuration="{
+      origin: 0,
       width,
       height,
       leftWidth: GLASS_PANEL_CORNER_CUT_LENGTH,
@@ -21,7 +22,6 @@ const glassPanelImageKey = useGlassPanelImageKey();
       topHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
       bottomHeight: GLASS_PANEL_CORNER_CUT_LENGTH,
       texture: glassPanelImageKey,
-      origin: 0,
     }"
   />
 </template>

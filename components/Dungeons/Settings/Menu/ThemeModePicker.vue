@@ -33,9 +33,9 @@ const rightCursorX = textX + padding;
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
-      texture: ImageKey.CursorWhite,
       originX: 1,
       originY: 0,
+      texture: ImageKey.CursorWhite,
       scaleX: 2.5,
       flipX: true,
     }"
@@ -47,10 +47,10 @@ const rightCursorX = textX + padding;
       y:
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0),
-      text: themeModeSetting,
-      style: MenuTextStyle,
       originX: 0.5,
       originY: 0,
+      text: themeModeSetting,
+      style: MenuTextStyle,
     }"
   />
   <Image
@@ -60,8 +60,8 @@ const rightCursorX = textX + padding;
         INITIAL_SETTINGS_POSITION.y +
         SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
-      texture: ImageKey.CursorWhite,
       origin: 0,
+      texture: ImageKey.CursorWhite,
       scaleX: 2.5,
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.RIGHT)"

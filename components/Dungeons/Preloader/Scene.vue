@@ -46,7 +46,7 @@ const preload = (scene: SceneWithPlugins) => {
     assetText.value = `Loading asset: ${prettifyName(file.key)}`;
   });
 
-  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title));
+  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.Inventory : SceneKey.Title));
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
@@ -91,18 +91,18 @@ const create = (scene: SceneWithPlugins) => {
       :configuration="{
         x,
         y,
+        origin: 0.5,
         text: percentageText,
         style: { fontSize: 24 },
-        origin: 0.5,
       }"
     />
     <Text
       :configuration="{
         x,
         y: y ? y + 50 : undefined,
+        origin: 0.5,
         text: assetText,
         style: { fontSize: 24 },
-        origin: 0.5,
       }"
     />
   </Scene>

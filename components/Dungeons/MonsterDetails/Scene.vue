@@ -18,13 +18,13 @@ const { monster } = storeToRefs(monsterDetailsSceneStore);
 
 <template>
   <Scene :scene-key="SceneKey.MonsterDetails" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
-    <Image :configuration="{ texture: ImageKey.MonsterDetailsBackground, origin: 0 }" />
+    <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
       :configuration="{ x: 20, y: 60, text: `LV. ${monster.currentLevel}`, style: { ...MenuTextStyle, fontSize: 40 } }"
     />
     <Text :configuration="{ x: 200, y: 60, text: monster.name, style: { ...MenuTextStyle, fontSize: 40 } }" />
-    <Image :configuration="{ x: 160, y: 310, texture: monster.asset.key, originX: 0, originY: 1, scale: 0.7 }" />
+    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: monster.asset.key, scale: 0.7 }" />
     <DungeonsMonsterDetailsAttackList />
   </Scene>
 </template>

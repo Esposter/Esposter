@@ -1,29 +1,20 @@
 <script setup lang="ts">
+import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { Position } from "grid-engine";
 
 interface LeftCapProps {
-  position: Position;
+  imagePosition: ImagePosition;
   scaleY: number;
 }
 
-const { position, scaleY } = defineProps<LeftCapProps>();
+const { imagePosition, scaleY } = defineProps<LeftCapProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
 </script>
 
 <template>
   <Image
-    :configuration="{
-      ...position,
-      texture: ImageKey.HealthBarLeftCap,
-      // Set origin to the middle-left of the health caps to enable
-      // grabbing the full width of the game object
-      originX: 0,
-      originY: 0.5,
-      scaleY,
-      displayWidth,
-    }"
+    :configuration="{ ...imagePosition, texture: ImageKey.HealthBarLeftCap, scaleY, displayWidth }"
     @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
   />
 </template>

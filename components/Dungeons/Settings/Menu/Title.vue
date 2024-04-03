@@ -10,9 +10,9 @@ const settingsMenuWidth = useSettingsMenuWidth();
     :configuration="{
       x: settingsMenuWidth / 2,
       y: 20,
+      origin: 0.5,
       text: 'Settings',
       style: MenuTextStyle,
-      origin: 0.5,
     }"
   />
 </template>

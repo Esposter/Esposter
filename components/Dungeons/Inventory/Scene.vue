@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -18,21 +17,19 @@ const { onPlayerInput } = settingsSceneStore;
   <Scene :scene-key="SceneKey.Inventory" :cls="SceneWithPlugins">
     <Image
       :configuration="{
-        texture: ImageKey.InventoryBackground,
         origin: 0,
+        texture: ImageKey.InventoryBackground,
       }"
     />
     <Image
       :configuration="{
         x: 40,
         y: 120,
-        texture: ImageKey.Bag,
         origin: 0,
+        texture: ImageKey.Bag,
         scale: 0.5,
       }"
     />
-    <Container :configuration="{ x: 300, y: 20 }">
-      <DungeonsUIGlassPanelNineSlice :width="700" :height="360" />
-    </Container>
+    <DungeonsInventoryMenu />
   </Scene>
 </template>

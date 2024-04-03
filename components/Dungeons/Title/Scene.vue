@@ -20,8 +20,8 @@ const { onPlayerInput } = titleSceneStore;
   <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
     <Image
       :configuration="{
-        texture: ImageKey.TitleScreenBackground,
         origin: 0,
+        texture: ImageKey.TitleScreenBackground,
         scale: 0.58,
       }"
     />
