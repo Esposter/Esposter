@@ -1,4 +1,4 @@
-import { Player, playerSchema } from "@/models/dungeons/data/Player";
+import { Player, playerSchema } from "@/models/dungeons/data/player/Player";
 import { z } from "zod";
 
 export class Save {

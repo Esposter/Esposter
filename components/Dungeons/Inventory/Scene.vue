@@ -5,16 +5,16 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const settingsSceneStore = useSettingsSceneStore();
-const { onPlayerInput } = settingsSceneStore;
+const inventorySceneStore = useInventorySceneStore();
+const { onPlayerInput } = inventorySceneStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Inventory" :cls="SceneWithPlugins">
+  <Scene :scene-key="SceneKey.Inventory" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
     <Image
       :configuration="{
         origin: 0,

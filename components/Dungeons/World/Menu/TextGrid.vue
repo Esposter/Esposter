@@ -3,6 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/world/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { getGridKey } from "@/services/dungeons/getGridKey";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/world/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -20,7 +21,7 @@ const { menuOptionGrid } = storeToRefs(worldSceneStore);
   <template v-for="(row, rowIndex) in menuOptionGrid.grid" :key="rowIndex">
     <Text
       v-for="(text, columnIndex) in row"
-      :key="`${rowIndex}|${columnIndex}`"
+      :key="getGridKey(rowIndex, columnIndex)"
       :configuration="{
         x: INITIAL_MENU_CURSOR_POSITION.x + MENU_CURSOR_POSITION_INCREMENT.x * columnIndex + 20,
         y: INITIAL_MENU_CURSOR_POSITION.y + MENU_CURSOR_POSITION_INCREMENT.y * rowIndex - 18,

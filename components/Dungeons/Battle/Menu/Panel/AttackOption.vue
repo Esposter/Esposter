@@ -10,6 +10,7 @@ import {
 } from "@/services/dungeons/battle/menu/constants";
 import { getPanelTextPosition } from "@/services/dungeons/battle/menu/getPanelTextPosition";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
+import { getGridKey } from "@/services/dungeons/getGridKey";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
@@ -33,7 +34,7 @@ const { attackOptionGrid } = storeToRefs(playerStore);
     <template v-for="(row, rowIndex) in attackOptionGrid.grid" :key="rowIndex">
       <DungeonsBattleMenuPanelText
         v-for="(attack, columnIndex) in row"
-        :key="`${rowIndex}|${columnIndex}`"
+        :key="getGridKey(rowIndex, columnIndex)"
         v-model:grid="attackOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
         :text="attack?.name ?? BLANK_VALUE"

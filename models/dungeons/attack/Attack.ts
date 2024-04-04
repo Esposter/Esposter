@@ -13,4 +13,4 @@ export interface Attack {
 export const attackSchema = z.object({
   id: attackIdSchema,
   name: attackNameSchema,
-}) satisfies z.ZodType<Except<Attack, "name">>;
+}) satisfies z.ZodType<Except<Attack, "name"> & { name: string }>;

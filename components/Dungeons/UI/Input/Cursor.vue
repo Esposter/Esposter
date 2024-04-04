@@ -10,6 +10,7 @@ interface CursorProps {
   grid: Grid<TValue, TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
+  scale?: number;
   tween?: ImageProps["configuration"]["tween"];
 }
 
@@ -18,6 +19,7 @@ const {
   grid,
   initialPosition,
   positionIncrement,
+  scale = 2.5,
   tween,
 } = defineProps<CursorProps>();
 const position = computed(() => ({
@@ -29,10 +31,9 @@ const position = computed(() => ({
 <template>
   <Image
     :configuration="{
-      x: position.x,
-      y: position.y,
+      ...position,
       texture: cursorImageKey,
-      scale: 2.5,
+      scale,
       tween,
     }"
   />

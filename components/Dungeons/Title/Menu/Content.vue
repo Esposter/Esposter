@@ -3,6 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/title/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
+import { getGridKey } from "@/services/dungeons/getGridKey";
 import { INITIAL_CURSOR_POSITION, MENU_BACKGROUND_WIDTH } from "@/services/dungeons/title/menu/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
@@ -21,7 +22,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(text, columnIndex) in row"
-      :key="`${rowIndex}|${columnIndex}`"
+      :key="getGridKey(rowIndex, columnIndex)"
       :configuration="{
         x: MENU_BACKGROUND_WIDTH / 2,
         y: INITIAL_CURSOR_POSITION.y + titleCursorPositionIncrement.y * rowIndex - 1,

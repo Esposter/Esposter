@@ -2,6 +2,7 @@
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import { WORD_PADDING } from "@/services/dungeons/constants";
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 
 interface DialogTextProps {
@@ -22,7 +23,7 @@ const y = 12;
         text: dialogMessage.title,
         style: {
           ...DialogTextStyle,
-          wordWrap: { width: DIALOG_WIDTH - x },
+          wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
         },
       }"
     />
@@ -33,7 +34,7 @@ const y = 12;
         text: dialogMessage.text,
         style: {
           ...DialogTextStyle,
-          wordWrap: { width: DIALOG_WIDTH - x },
+          wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
         },
       }"
     />

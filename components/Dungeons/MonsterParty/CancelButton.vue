@@ -32,7 +32,7 @@ const isActive = computed(() => optionGrid.value.position.y === optionGrid.value
             return;
           }
 
-          optionGrid.position = { x: optionGrid.position.x, y: optionGrid.rowSize - 1 };
+          optionGrid.position.y = optionGrid.rowSize - 1;
         }
       "
     />

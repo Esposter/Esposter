@@ -1,7 +1,10 @@
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { directionSchema } from "@/models/dungeons/data/Direction";
-import { positionSchema } from "@/models/dungeons/data/Position";
+import { directionSchema } from "@/models/dungeons/data/player/Direction";
+import { inventorySchema } from "@/models/dungeons/data/player/Inventory";
+import { positionSchema } from "@/models/dungeons/data/player/Position";
 import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
+import type { Item } from "@/models/dungeons/item/Item";
+import { ItemId } from "@/models/dungeons/item/ItemId";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { monsterSchema } from "@/models/dungeons/monster/Monster";
@@ -28,10 +31,19 @@ export class Player {
       attackIds: [AttackId.Slash],
     },
   ];
+  inventory: Item[] = [
+    {
+      id: ItemId.Potion,
+      name: ItemId.Potion,
+      description: "A basic healing item that will heal 30 HP from a single monster.",
+      quantity: 10,
+    },
+  ];
 }
 
 export const playerSchema = z.object({
   position: positionSchema,
   direction: directionSchema,
   monsters: z.array(monsterSchema),
+  inventory: inventorySchema,
 }) satisfies z.ZodType<Player>;

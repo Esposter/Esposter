@@ -3,6 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { getGridKey } from "@/services/dungeons/getGridKey";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -28,7 +29,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
     <Text
       v-for="(text, columnIndex) in row"
-      :key="`${rowIndex}|${columnIndex}`"
+      :key="getGridKey(rowIndex, columnIndex)"
       :configuration="{
         x:
           columnIndex === 0

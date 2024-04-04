@@ -34,6 +34,6 @@ watch(isMenuVisible, (newIsMenuVisible) => {
         strokeStyle: [8, border],
       }"
     />
-    <DungeonsWorldMenuText />
+    <DungeonsWorldMenuTextGrid />
   </Container>
 </template>
