@@ -2,15 +2,15 @@ import type { Asset } from "@/models/dungeons/Asset";
 import { assetSchema } from "@/models/dungeons/Asset";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { attackSchema } from "@/models/dungeons/attack/Attack";
-import { monsterIdSchema } from "@/models/dungeons/monster/MonsterId";
-import type { MonsterId } from "@/models/dungeons/monster/MonsterId";
+import type { MonsterName } from "@/models/dungeons/monster/MonsterName";
+import { monsterNameSchema } from "@/models/dungeons/monster/MonsterName";
 import type { Stats } from "@/models/dungeons/monster/Stats";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
 import { z } from "zod";
 
 export interface Monster {
-  id: MonsterId;
-  name: string;
+  id: string;
+  name: MonsterName;
   asset: Asset;
   stats: Stats;
   currentLevel: number;
@@ -19,8 +19,8 @@ export interface Monster {
 }
 
 export const monsterSchema = z.object({
-  id: monsterIdSchema,
-  name: z.string().min(1),
+  id: z.string().uuid(),
+  name: monsterNameSchema,
   asset: assetSchema,
   stats: statsSchema,
   currentLevel: z.number().int().positive(),

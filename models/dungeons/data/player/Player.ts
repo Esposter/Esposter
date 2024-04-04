@@ -8,7 +8,7 @@ import { ItemId } from "@/models/dungeons/item/ItemId";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { monsterSchema } from "@/models/dungeons/monster/Monster";
-import { MonsterId } from "@/models/dungeons/monster/MonsterId";
+import { MonsterName } from "@/models/dungeons/monster/MonsterName";
 import type { Position } from "grid-engine";
 import { z } from "zod";
 
@@ -17,8 +17,8 @@ export class Player {
   direction: InteractableDirection = InteractableDirection.DOWN;
   monsters: Monster[] = [
     {
-      id: MonsterId.Iguanignite,
-      name: MonsterId.Iguanignite,
+      id: crypto.randomUUID(),
+      name: MonsterName.Iguanignite,
       asset: {
         key: ImageKey.Iguanignite,
       },

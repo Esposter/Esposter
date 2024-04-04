@@ -1,10 +1,10 @@
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { z } from "zod";
 
-export const MonsterId = {
+export const MonsterName = {
   [ImageKey.Carnodusk]: ImageKey.Carnodusk,
   [ImageKey.Iguanignite]: ImageKey.Iguanignite,
 } as const;
-export type MonsterId = keyof typeof MonsterId;
+export type MonsterName = keyof typeof MonsterName;
 
-export const monsterIdSchema = z.nativeEnum(MonsterId) satisfies z.ZodType<MonsterId>;
+export const monsterNameSchema = z.nativeEnum(MonsterName) satisfies z.ZodType<MonsterName>;
