@@ -61,6 +61,9 @@
     "vue-tsc": "^1.8.27",
     "vuetify-nuxt-module": "^0.13.1"
   },
+  "devDependenciesComments": {
+    "nuxt": "upgrading currently breaks phaser"
+  },
   "dependencies": {
     "@auth/core": "0.21.0",
     "@azure/data-tables": "^13.2.2",
@@ -136,7 +139,6 @@
     "zod": "^3.22.4"
   },
   "dependenciesComments": {
-    "nuxt": "upgrading currently breaks phaser",
     "class-transformer": "Remove this when es decorators are released",
     "@auth/core": ""
   },
