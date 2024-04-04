@@ -2,7 +2,6 @@
 import Game from "@/lib/phaser/components/Game.vue";
 import { SceneKeyMap } from "@/services/dungeons/SceneKeyMap";
 import { GridEngine } from "grid-engine";
-import isMobile from "is-mobile";
 import { AUTO, Scale } from "phaser";
 import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
@@ -27,8 +26,6 @@ await useReadDungeonsGame();
         input: {
           keyboard: true,
           touch: true,
-          // We need 2 for joystick controls
-          activePointers: isMobile() ? 2 : undefined,
         },
         plugins: {
           scene: [

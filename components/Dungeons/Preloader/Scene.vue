@@ -57,6 +57,8 @@ const preload = (scene: SceneWithPlugins) => {
 
 const create = (scene: SceneWithPlugins) => {
   if (isMobile()) {
+    // Support multi-touch for the joystick
+    scene.input.addPointer();
     controls.value = new JoystickControls();
     launchParallelScene(SceneKey.MobileJoystick);
     return;
