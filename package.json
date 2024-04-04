@@ -49,7 +49,7 @@
     "gen-env-types": "^1.3.4",
     "h3": "^1.11.1",
     "happy-dom": "^14.4.0",
-    "nuxt": "^3.11.1",
+    "nuxt": "3.11.1",
     "prettier": "^3.2.5",
     "sass": "^1.74.1",
     "tsx": "^4.7.2",
@@ -136,6 +136,7 @@
     "zod": "^3.22.4"
   },
   "dependenciesComments": {
+    "nuxt": "upgrading currently breaks phaser",
     "class-transformer": "Remove this when es decorators are released",
     "@auth/core": ""
   },
