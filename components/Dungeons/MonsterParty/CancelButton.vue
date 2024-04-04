@@ -13,7 +13,7 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const isActive = computed(() => optionGrid.value.position.y === optionGrid.value.rowSize - 1);
+const isActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
 </script>
 
 <template>

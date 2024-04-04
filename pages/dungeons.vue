@@ -29,7 +29,7 @@ await useReadDungeonsGame();
           touch: true,
           // We need to support multi-touch for mobile joystick
           // https://phaser.discourse.group/t/how-to-enable-multitouch-jsfiddle-inside/2422
-          activePointers: isMobile() ? 3 : undefined,
+          activePointers: isMobile() ? 3 : 2,
         },
         plugins: {
           scene: [
