@@ -1,9 +1,10 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
-import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
+import { getAttack } from "@/services/dungeons/data/attack/getAttack";
 import { useGameStore } from "@/store/dungeons/game";
+import { mapIds } from "@/util/mapIds";
 import type { Position } from "grid-engine";
 
 export const usePlayerStore = defineStore("dungeons/battle/player", () => {
@@ -23,7 +24,7 @@ export const usePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const takeDamage = useTakeDamage(false);
   const optionGrid = ref(PlayerOptionGrid);
-  const attacks = computed(() => activeMonster.value.attackIds.map((attackId) => getAttack(attackId)));
+  const attacks = computed(() => mapIds(activeMonster.value.attackIds, getAttack));
   const attackOptionGrid = ref() as Ref<
     Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>
   >;
