@@ -7,15 +7,7 @@ const cache: Record<string, Howl | null> = {};
 
 export const useSound = (
   url: MaybeRef<string>,
-  {
-    volume = 1,
-    playbackRate = 1,
-    soundEnabled = true,
-    interrupt = false,
-    autoplay = false,
-    onload,
-    ...rest
-  }: ComposableOptions = {},
+  { volume = 1, rate = 1, soundEnabled = true, interrupt, autoplay, onload, ...rest }: ComposableOptions = {},
 ) => {
   const sound = ref<Howl | null>(null);
   const duration = ref<number | null>(null);
@@ -23,9 +15,7 @@ export const useSound = (
 
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);
-
     duration.value = (duration.value ?? sound.value?.duration() ?? 0) * dayjs.duration(1, "second").asMilliseconds();
-
     if (autoplay) isPlaying.value = true;
   }
 
@@ -40,7 +30,7 @@ export const useSound = (
     howl = new Howl({
       src,
       volume: unref(volume),
-      rate: unref(playbackRate),
+      rate: unref(rate),
       onload: handleLoad,
       ...rest,
     });
@@ -56,40 +46,36 @@ export const useSound = (
         return;
       }
 
-      howl = new Howl({
-        src,
-        volume: unref(volume),
-        rate: unref(playbackRate),
-        onload: handleLoad,
-        ...rest,
-      });
+      howl = new Howl({ src, volume: unref(volume), rate: unref(rate), onload: handleLoad, ...rest });
       cache[src] = sound.value = howl;
     },
   );
 
   watch(
-    () => [unref(volume), unref(playbackRate)],
-    ([newVolume, newPlaybackRate]) => {
+    () => unref(volume),
+    (newVolume) => {
       if (!sound.value) return;
-
       sound.value.volume(newVolume);
-      sound.value.rate(newPlaybackRate);
     },
   );
 
-  const play = (options: PlayOptions = {}) => {
-    if (!sound.value || !(soundEnabled || options.forceSoundEnabled)) return;
+  watch(
+    () => unref(rate),
+    (newRate) => {
+      if (!sound.value) return;
+      sound.value.rate(newRate);
+    },
+  );
 
+  const play = ({ id, rate, forceSoundEnabled }: PlayOptions = {}) => {
+    if (!sound.value || !(soundEnabled || forceSoundEnabled)) return;
     if (interrupt) sound.value.stop();
+    if (rate) sound.value.rate(rate);
 
-    if (options.playbackRate) sound.value.rate(options.playbackRate);
-
-    sound.value.play(options.id);
-
+    sound.value.play(id);
     sound.value.once("end", () => {
       if (sound.value && !sound.value.playing()) isPlaying.value = false;
     });
-
     isPlaying.value = true;
   };
 
