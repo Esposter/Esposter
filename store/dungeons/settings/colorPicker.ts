@@ -9,7 +9,7 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
-  const themeModeSetting = computed(() => settings.value[SettingsOption["Theme Mode"]] as ThemeModeSetting);
+  const themeModeSetting = computed(() => settings.value[SettingsOption["Theme Mode"]]);
   const setThemeModeSetting = async (value: ThemeModeSetting) => {
     await setSettings(SettingsOption["Theme Mode"], value);
   };
