@@ -1,4 +1,3 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Attack } from "@/models/dungeons/attack/Attack";
@@ -10,9 +9,6 @@ import { useGameStore } from "@/store/dungeons/game";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
-  const phaserStore = usePhaserStore();
-  const { removeParallelScene } = phaserStore;
-  const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { save } = storeToRefs(gameStore);
   const monsterIndex = ref(0);
@@ -27,7 +23,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
     return attacks;
   });
   const attackNames = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.name));
-  const previousSceneKey = ref<SceneKey | null>(null);
+  const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
@@ -46,18 +42,10 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
     }
   };
 
-  const switchToPreviousScene = () => {
-    if (!previousSceneKey.value) return;
-    removeParallelScene(SceneKey.MonsterDetails);
-    scene.value.scene.resume(previousSceneKey.value);
-    previousSceneKey.value = null;
-  };
-
   return {
     monsterIndex,
     monster,
     attackNames,
-    previousSceneKey,
     onPlayerInput,
   };
 });

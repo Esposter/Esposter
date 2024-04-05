@@ -1,39 +1,30 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/input/isMovingDirection";
 import { useGameStore } from "@/store/dungeons/game";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
 export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
-  const { launchParallelScene } = phaserStore;
   const gameStore = useGameStore();
   const { saveData, fadeSwitchToScene } = gameStore;
   const worldSceneStore = useWorldSceneStore();
   const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
-  const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { previousSceneKey } = storeToRefs(monsterPartySceneStore);
+  const { launchScene } = usePreviousScene(SceneKey.World);
+
   const onPlayerInput = async (justDownInput: PlayerInput) => {
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Monsters:
-          previousSceneKey.value = SceneKey.World;
-          scene.value.scene.pause(previousSceneKey.value);
-          launchParallelScene(SceneKey.MonsterParty);
+          launchScene(SceneKey.MonsterParty);
           return;
         case MenuOption.Inventory:
-          previousSceneKey.value = SceneKey.World;
-          scene.value.scene.pause(previousSceneKey.value);
-          launchParallelScene(SceneKey.Inventory);
+          launchScene(SceneKey.Inventory);
           return;
         case MenuOption.Save:
           await saveData();
