@@ -21,7 +21,7 @@ interface InventoryItemListItemProps {
 const { rowIndex, columnIndex, item } = defineProps<InventoryItemListItemProps>();
 const inventorySceneStore = useInventorySceneStore();
 const { itemOptionGrid } = storeToRefs(inventorySceneStore);
-const gridPosition = computed(() => ({ x: rowIndex, y: columnIndex }));
+const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
 const onGridClick = useOnGridClick(itemOptionGrid, gridPosition);
 const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex;
 </script>
