@@ -6,15 +6,15 @@ import type { Item } from "@/models/dungeons/item/Item";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
   const phaserStore = usePhaserStore();
-  const { removeParallelScene } = phaserStore;
+  const { launchParallelScene, removeParallelScene } = phaserStore;
   const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
   const { save } = storeToRefs(gameStore);
   const inventory = computed({
     get: () => save.value.player.inventory,
@@ -22,6 +22,8 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
       save.value.player.inventory = newInventory;
     },
   });
+  const monsterPartySceneStore = useMonsterPartySceneStore();
+  const { previousSceneKey: monsterPartyPreviousSceneKey } = storeToRefs(monsterPartySceneStore);
   const itemOptionGrid = ref() as Ref<Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]>>;
 
   watch(
@@ -46,6 +48,9 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
           switchToPreviousScene();
           return;
         }
+        monsterPartyPreviousSceneKey.value = SceneKey.Inventory;
+        scene.value.scene.pause(monsterPartyPreviousSceneKey.value);
+        launchParallelScene(SceneKey.MonsterParty);
         return;
       case PlayerSpecialInput.Cancel:
         switchToPreviousScene();
@@ -63,10 +68,8 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
 
   const switchToPreviousScene = () => {
     if (!previousSceneKey.value) return;
-    else if (previousSceneKey.value === SceneKey.World) {
-      removeParallelScene(SceneKey.Inventory);
-      scene.value.scene.resume();
-    } else fadeSwitchToScene(previousSceneKey.value);
+    removeParallelScene(SceneKey.Inventory);
+    scene.value.scene.resume(previousSceneKey.value);
     previousSceneKey.value = null;
   };
 

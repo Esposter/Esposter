@@ -16,10 +16,9 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const { launchParallelScene, removeParallelScene } = phaserStore;
   const { scene } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
   const { save } = storeToRefs(gameStore);
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-  const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
+  const { monsterIndex, previousSceneKey: monsterDetailsPreviousSceneKey } = storeToRefs(monsterDetailsSceneStore);
   const monsters = computed({
     get: () => save.value.player.monsters,
     set: (newMonsters) => {
@@ -57,6 +56,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
           return;
         }
         monsterIndex.value = optionGrid.value.index;
+        monsterDetailsPreviousSceneKey.value = SceneKey.MonsterParty;
+        scene.value.scene.pause(monsterDetailsPreviousSceneKey.value);
         launchParallelScene(SceneKey.MonsterDetails);
         return;
       case PlayerSpecialInput.Cancel:
@@ -75,10 +76,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   const switchToPreviousScene = () => {
     if (!previousSceneKey.value) return;
-    else if (previousSceneKey.value === SceneKey.World) {
-      removeParallelScene(SceneKey.MonsterParty);
-      scene.value.scene.resume();
-    } else fadeSwitchToScene(previousSceneKey.value);
+    removeParallelScene(SceneKey.MonsterParty);
+    scene.value.scene.resume(previousSceneKey.value);
     previousSceneKey.value = null;
   };
 

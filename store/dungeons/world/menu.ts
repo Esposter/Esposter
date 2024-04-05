@@ -26,9 +26,14 @@ export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Monsters:
-          scene.value.scene.pause();
           previousSceneKey.value = SceneKey.World;
+          scene.value.scene.pause(previousSceneKey.value);
           launchParallelScene(SceneKey.MonsterParty);
+          return;
+        case MenuOption.Inventory:
+          previousSceneKey.value = SceneKey.World;
+          scene.value.scene.pause(previousSceneKey.value);
+          launchParallelScene(SceneKey.Inventory);
           return;
         case MenuOption.Save:
           await saveData();
