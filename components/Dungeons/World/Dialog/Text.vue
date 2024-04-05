@@ -30,7 +30,7 @@ const y = 12;
     <Text
       :configuration="{
         x,
-        y: y + Number(DialogTextStyle.fontSize ?? 0),
+        y: y + DialogTextStyle.fontSize,
         text: dialogMessage.text,
         style: {
           ...DialogTextStyle,

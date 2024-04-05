@@ -12,6 +12,7 @@ const { itemOptionGrid } = storeToRefs(inventorySceneStore);
       v-for="(item, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index="rowIndex"
+      :column-index="columnIndex"
       :item="item"
     />
   </template>

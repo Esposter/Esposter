@@ -5,14 +5,15 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { useGameStore } from "@/store/dungeons/game";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
+const onGridClick = useOnGridClick(optionGrid, () => ({
+  x: optionGrid.value.position.x,
+  y: optionGrid.value.rowSize - 1,
+}));
 const isActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
 </script>
 
@@ -25,16 +26,7 @@ const isActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Ca
         scaleX: 0.7,
         alpha: isActive ? 1 : 0.7,
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-        () => {
-          if (isActive) {
-            controls.setInput(PlayerSpecialInput.Cancel);
-            return;
-          }
-
-          optionGrid.position.y = optionGrid.rowSize - 1;
-        }
-      "
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />
     <Text
       :configuration="{
