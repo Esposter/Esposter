@@ -2,13 +2,10 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import { useGameStore } from "@/store/dungeons/game";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import deepEqual from "deep-equal";
-import type { Position } from "grid-engine";
 import { Input } from "phaser";
 
 interface PanelListItemProps {
@@ -18,14 +15,11 @@ interface PanelListItemProps {
 }
 
 const { rowIndex, columnIndex, monster } = defineProps<PanelListItemProps>();
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const isActive = computed(() => {
-  const gridPosition: Position = { x: columnIndex, y: rowIndex };
-  return deepEqual(gridPosition, optionGrid.value.position);
-});
+const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
+const onGridClick = useOnGridClick(optionGrid, gridPosition);
+const isActive = computed(() => deepEqual(gridPosition, optionGrid.value.position));
 const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.maxHp) * 100);
 </script>
 
@@ -44,16 +38,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         scaleY: 1.2,
         alpha: isActive ? 1 : 0.7,
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
-        () => {
-          if (isActive) {
-            controls.setInput(PlayerSpecialInput.Confirm);
-            return;
-          }
-
-          optionGrid.position = { x: columnIndex, y: rowIndex };
-        }
-      "
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />
     <Image
       :configuration="{

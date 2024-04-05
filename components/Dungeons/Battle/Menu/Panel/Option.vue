@@ -36,8 +36,8 @@ const { optionGrid } = storeToRefs(playerStore);
         :key="getGridKey(rowIndex, columnIndex)"
         v-model:grid="optionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
-        :text
         :position="getPanelTextPosition(rowIndex, columnIndex)"
+        :text
       />
     </template>
     <DungeonsUIInputCursor

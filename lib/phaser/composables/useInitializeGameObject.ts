@@ -14,7 +14,7 @@ export const useInitializeGameObject = <
   gameObject: Ref<TGameObject>,
   configuration: Ref<TConfiguration>,
   emit: SetupContext<TEmitsOptions>["emit"],
-  setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
+  setterMap: SetterMap<NoInfer<TConfiguration>, TGameObject, TEmitsOptions>,
 ) => {
   const setters = useInitializeGameObjectSetters(configuration, gameObject, emit, setterMap);
   const phaserStore = usePhaserStore();
