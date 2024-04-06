@@ -18,9 +18,15 @@ const { isSkipAnimations } = storeToRefs(settingsStore);
 const leftCapDisplayWidth = ref<number>();
 const barWidth = computed(() => (width * barPercentage) / 100);
 const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0));
-const middleDisplayWidth = ref(barWidth.value);
-const rightCapX = computed(() => middleX.value + middleDisplayWidth.value);
-const isVisible = computed(() => middleDisplayWidth.value > 0);
+// Unfortunately, we need to do this little hack here of extending
+// our middle bar width to account for the animation delay caused by
+// vue's computed trigger being a little slow calling phaser's displayWidth setter
+const offset = 3;
+const middleDisplayWidth = ref(barWidth.value + offset);
+// This is the actual display width to use for calculating positions of other images
+const properMiddleDisplayWidth = ref(barWidth.value);
+const rightCapX = computed(() => middleX.value + properMiddleDisplayWidth.value);
+const isVisible = computed(() => properMiddleDisplayWidth.value > 0);
 const tween = ref<TweenBuilderConfiguration>();
 
 watch(barWidth, (newBarWidth) => {
@@ -28,10 +34,10 @@ watch(barWidth, (newBarWidth) => {
 
   tween.value = {
     duration: dayjs.duration(1, "second").asMilliseconds(),
-    displayWidth: newBarWidth,
+    displayWidth: newBarWidth + offset,
     ease: Math.Easing.Sine.Out,
     onUpdate: (_, __, ___, current) => {
-      middleDisplayWidth.value = current;
+      properMiddleDisplayWidth.value = current - offset;
     },
     onComplete: () => {
       tween.value = undefined;
