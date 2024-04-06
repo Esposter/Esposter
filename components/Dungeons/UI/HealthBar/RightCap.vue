@@ -13,8 +13,12 @@ interface RightCapProps {
 
 const { y, imageOrigin, scaleY, tween } = defineProps<RightCapProps>();
 const x = defineModel<number | undefined>("x", { required: true });
+const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
 </script>
 
 <template>
-  <Image :configuration="{ x, y, ...imageOrigin, texture: ImageKey.HealthBarRightCap, scaleY, tween }" />
+  <Image
+    :configuration="{ x, y, ...imageOrigin, texture: ImageKey.HealthBarRightCap, displayWidth, scaleY, tween }"
+    @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
+  />
 </template>
