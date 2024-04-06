@@ -1,8 +1,8 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
+import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
-import { getAttack } from "@/services/dungeons/data/attack/getAttack";
 import { useGameStore } from "@/store/dungeons/game";
 import { mapIds } from "@/util/mapIds";
 import type { Position } from "grid-engine";

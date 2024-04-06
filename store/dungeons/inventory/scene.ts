@@ -5,6 +5,7 @@ import type { Item } from "@/models/dungeons/item/Item";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
@@ -17,7 +18,6 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
       save.value.player.inventory = newInventory;
     },
   });
-  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
   const itemOptionGrid = ref() as Ref<Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]>>;
 
   watch(
@@ -27,6 +27,10 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
     },
     { immediate: true },
   );
+
+  const monsterPartySceneStore = useMonsterPartySceneStore();
+  const { selectedItemIndex } = storeToRefs(monsterPartySceneStore);
+  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
@@ -40,6 +44,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
           switchToPreviousScene();
           return;
         }
+        selectedItemIndex.value = itemOptionGrid.value.index;
         launchScene(SceneKey.MonsterParty);
         return;
       case PlayerSpecialInput.Cancel:

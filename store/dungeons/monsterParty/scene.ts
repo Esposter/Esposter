@@ -38,6 +38,27 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
+  const selectedItemIndex = ref<number>(-1);
+  const selectedItem = computed({
+    get: () => save.value.player.inventory[selectedItemIndex.value],
+    set: (newSelectedItem) => {
+      if (selectedItemIndex.value === -1) return;
+      else if (newSelectedItem.quantity === 0) {
+        save.value.player.inventory.splice(selectedItemIndex.value, 1);
+        return;
+      }
+
+      save.value.player.inventory[selectedItemIndex.value] = newSelectedItem;
+    },
+  });
+  const activeMonsterIndex = ref(0);
+  const activeMonster = computed({
+    get: () => save.value.player.monsters[activeMonsterIndex.value],
+    set: (newActiveMonster) => {
+      save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
+    },
+  });
+  const infoText = ref("");
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
@@ -50,9 +71,13 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
         if (optionGrid.value.value === PlayerSpecialInput.Cancel) {
           switchToPreviousScene();
           return;
+        } else if (selectedItemIndex.value === -1) {
+          monsterIndex.value = optionGrid.value.index;
+          launchScene(SceneKey.MonsterDetails);
+          return;
         }
-        monsterIndex.value = optionGrid.value.index;
-        launchScene(SceneKey.MonsterDetails);
+        activeMonsterIndex.value = optionGrid.value.index;
+        useItem(selectedItem, activeMonster);
         return;
       case PlayerSpecialInput.Cancel:
         switchToPreviousScene();
@@ -71,6 +96,11 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   return {
     monstersGrid,
     optionGrid,
+    selectedItemIndex,
+    selectedItem,
+    activeMonsterIndex,
+    activeMonster,
+    infoText,
     onPlayerInput,
   };
 });

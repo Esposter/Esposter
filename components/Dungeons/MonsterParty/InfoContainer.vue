@@ -10,8 +10,18 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { optionGrid } = storeToRefs(monsterPartySceneStore);
+const { optionGrid, infoText } = storeToRefs(monsterPartySceneStore);
 const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
+
+watch(
+  cancelButtonActive,
+  (newCancelButtonActive) => {
+    // We will keep info text as a ref as it can be set by other things
+    // e.g. when using items
+    infoText.value = newCancelButtonActive ? "Go back to previous menu" : "Choose a monster";
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -29,7 +39,7 @@ const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpeci
       :configuration="{
         x: 15,
         y: 14,
-        text: cancelButtonActive ? 'Go back to previous menu' : 'Choose a monster',
+        text: infoText,
         style: MenuTextStyle,
       }"
     />

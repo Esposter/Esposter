@@ -9,7 +9,7 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { monsterSchema } from "@/models/dungeons/monster/Monster";
 import { MonsterName } from "@/models/dungeons/monster/MonsterName";
-import { getItem } from "@/services/dungeons/data/item/getItem";
+import { getItem } from "@/services/dungeons/item/getItem";
 import { mapIds } from "@/util/mapIds";
 import type { Position } from "grid-engine";
 import { z } from "zod";
