@@ -6,6 +6,7 @@ import type { Monster } from "@/models/dungeons/monster/Monster";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/monsterParty/constants";
 import { useGameStore } from "@/store/dungeons/game";
+import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
@@ -37,18 +38,18 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
-  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
-  const selectedItemIndex = ref<number>(-1);
+  const selectedItemIndex = ref(-1);
   const selectedItem = computed({
-    get: () => save.value.player.inventory[selectedItemIndex.value],
+    get: () => {
+      const inventorySceneStore = useInventorySceneStore();
+      const { inventory } = storeToRefs(inventorySceneStore);
+      return inventory.value[selectedItemIndex.value];
+    },
     set: (newSelectedItem) => {
       if (selectedItemIndex.value === -1) return;
-      else if (newSelectedItem.quantity === 0) {
-        save.value.player.inventory.splice(selectedItemIndex.value, 1);
-        return;
-      }
-
-      save.value.player.inventory[selectedItemIndex.value] = newSelectedItem;
+      const inventorySceneStore = useInventorySceneStore();
+      const { inventory } = storeToRefs(inventorySceneStore);
+      inventory.value[selectedItemIndex.value] = newSelectedItem;
     },
   });
   const activeMonsterIndex = ref(0);
@@ -58,6 +59,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
+  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
   const infoText = ref("");
 
   const onPlayerInput = (justDownInput: PlayerInput) => {

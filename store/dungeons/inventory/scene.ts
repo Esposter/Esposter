@@ -25,7 +25,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
     (newInventory) => {
       itemOptionGrid.value = new Grid([...newInventory.map((item) => [item]), [PlayerSpecialInput.Cancel]]);
     },
-    { immediate: true },
+    { immediate: true, deep: true },
   );
 
   const monsterPartySceneStore = useMonsterPartySceneStore();
@@ -62,6 +62,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   };
 
   return {
+    inventory,
     itemOptionGrid,
     onPlayerInput,
   };
