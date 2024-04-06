@@ -7,6 +7,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
+import { getAllInputResolvers } from "@/services/dungeons/world/getAllInputResolvers";
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -18,7 +19,7 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldSceneStore = useWorldSceneStore();
 const { tilemap } = storeToRefs(worldSceneStore);
-const worldInputResolvers = useWorldInputResolvers();
+const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
   useCreateTilemap(TilemapKey.Home);
@@ -32,11 +33,9 @@ const update = async () => {
   const justDownInput = controls.value.getInput(true);
   const input = controls.value.getInput();
 
-  for (const worldInputResolver of worldInputResolvers)
-    if (await worldInputResolver.handleInputPre(justDownInput, input)) return;
+  for (const inputResolver of inputResolvers) if (await inputResolver.handleInputPre(justDownInput, input)) return;
 
-  for (const worldInputResolver of worldInputResolvers)
-    if (await worldInputResolver.handleInput(justDownInput, input)) return;
+  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input)) return;
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
