@@ -17,7 +17,6 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
 
   const switchToPreviousScene = () => {
     if (previousSceneKeys.value.length === 0) return;
-
     const previousSceneKey = previousSceneKeys.value.pop();
     removeParallelScene(currentSceneKey);
     scene.value.scene.resume(previousSceneKey);
