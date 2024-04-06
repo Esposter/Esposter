@@ -16,6 +16,6 @@ export const itemSchema = z.object({
   id: itemIdSchema,
   name: z.string().min(1),
   description: z.string().min(1),
-  quantity: z.number().positive(),
+  quantity: z.number().int().positive(),
   effect: itemEffectSchema,
 }) satisfies z.ZodType<Item>;
