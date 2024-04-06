@@ -14,7 +14,7 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
 
 <template>
   <Image
-    :configuration="{ ...imagePosition, texture: ImageKey.HealthBarLeftCap, scaleY, displayWidth }"
+    :configuration="{ ...imagePosition, texture: ImageKey.HealthBarLeftCap, displayWidth, scaleY }"
     @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
   />
 </template>

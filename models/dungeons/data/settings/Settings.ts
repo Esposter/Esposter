@@ -4,6 +4,7 @@ import { SoundSetting, soundSettingSchema } from "@/models/dungeons/data/setting
 import { TextSpeedSetting, textSpeedSettingSchema } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { ThemeModeSetting, themeModeSettingSchema } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { z } from "zod";
 
 export const InitialSettings = {
@@ -11,7 +12,7 @@ export const InitialSettings = {
   [SettingsOption.Animations]: AnimationsSetting.On,
   [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
   [SettingsOption.Sound]: SoundSetting.On,
-  [SettingsOption.Volume]: 100,
+  [SettingsOption.Volume]: IS_DEVELOPMENT ? 0 : 100,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
 };
 export type Settings = typeof InitialSettings;
