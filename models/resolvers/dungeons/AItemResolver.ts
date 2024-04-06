@@ -8,7 +8,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export abstract class AItemResolver {
   // @TODO: Ideally if we had es decorators we would be able to look up the class
-  // if we knew the type, instead of storing the value then validating against it >:C
+  // if we knew the type, instead of storing the value then preValidating against it >:C
   type: ItemEffectType;
 
   constructor(type: ItemEffectType) {
@@ -16,6 +16,8 @@ export abstract class AItemResolver {
   }
 
   static preValidate(item: Ref<Item>): boolean {
+    if (item.value.effect.type !== this.type) return false:
+    
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { infoText } = storeToRefs(monsterPartySceneStore);
 
