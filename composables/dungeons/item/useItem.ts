@@ -4,13 +4,11 @@ import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { getAllItemResolvers } from "@/services/dungeons/item/getAllItemResolvers";
 
 export const useItem = (item: Ref<Item>, target: Ref<Monster>) => {
-  if (!AItemResolver.preValidate(item)) return;
-
   const itemResolvers = getAllItemResolvers();
   let handled = false;
 
   for (const itemResolver of itemResolvers) {
-    if (!itemResolver.validate(item, target)) continue;
+    if (!(itemResolver.preValidate(item) && itemResolver.validate(item, target))) continue;
     itemResolver.handleItem(item, target);
     handled = true;
     break;

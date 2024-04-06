@@ -15,9 +15,10 @@ export abstract class AItemResolver {
     this.type = type;
   }
 
-  static preValidate(item: Ref<Item>): boolean {
-    if (item.value.effect.type !== this.type) return false:
-    
+  preValidate(item: Ref<Item>): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (item.value.effect.type !== this.type) return false;
+
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { infoText } = storeToRefs(monsterPartySceneStore);
 
