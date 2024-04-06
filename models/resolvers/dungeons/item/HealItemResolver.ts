@@ -13,7 +13,10 @@ export class HealItemResolver extends AItemResolver {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster, infoText } = storeToRefs(monsterPartySceneStore);
 
-    if (target.value.currentHp === target.value.stats.maxHp) {
+    if (target.value.currentHp === 0) {
+      infoText.value = `Cannot heal fainted ${activeMonster.value.name}`;
+      return false;
+    } else if (target.value.currentHp === target.value.stats.maxHp) {
       infoText.value = `${activeMonster.value.name} is already fully healed`;
       return false;
     }
