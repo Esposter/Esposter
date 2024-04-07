@@ -4,10 +4,12 @@ import { Direction } from "grid-engine";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   grid: TGrid;
+  wrap: boolean;
   position: Position;
 
-  constructor(grid: TGrid, position: Position = { x: 0, y: 0 }) {
+  constructor(grid: TGrid, wrap = false, position: Position = { x: 0, y: 0 }) {
     this.grid = grid;
+    this.wrap = wrap;
     this.position = position;
   }
   // This is the array index if the grid were to be flattened
@@ -55,15 +57,19 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     switch (direction) {
       case Direction.UP:
         if (this.position.y > 0) this.position.y -= 1;
+        else if (this.wrap && this.position.y === 0) this.position.y = this.rowSize - 1;
         return;
       case Direction.DOWN:
         if (this.position.y < this.rowSize - 1) this.position.y += 1;
+        else if (this.wrap && this.position.y === this.rowSize - 1) this.position.y = 0;
         return;
       case Direction.LEFT:
         if (this.position.x > 0) this.position.x -= 1;
+        else if (this.wrap && this.position.x === 0) this.position.x = this.getColumnSize(this.position.y) - 1;
         return;
       case Direction.RIGHT:
         if (this.position.x < this.getColumnSize(this.position.y) - 1) this.position.x += 1;
+        else if (this.wrap && this.position.x === this.getColumnSize(this.position.y) - 1) this.position.x = 0;
         return;
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:

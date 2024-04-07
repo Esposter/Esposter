@@ -17,10 +17,6 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
   const activePanel = ref(ActivePanel.Info);
 
-  const initialize = () => {
-    battleStateMachine.setState(null);
-  };
-
   const onPlayerInput = (input: PlayerInput) => {
     if (handleShowMessageInput(input)) return;
     else if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
@@ -71,5 +67,5 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     }
   };
 
-  return { activePanel, initialize, onPlayerInput };
+  return { activePanel, onPlayerInput };
 });

@@ -1,6 +1,5 @@
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/world/constants";
-import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
@@ -12,8 +11,6 @@ export const useRandomEncounter = () => {
   const { isSkipEncounters } = storeToRefs(settingsStore);
   if (isSkipEncounters.value) return;
 
-  const battleSceneStore = useBattleSceneStore();
-  const { initialize } = battleSceneStore;
   const encounterStore = useEncounterStore();
   const { stepsSinceLastEncounter } = storeToRefs(encounterStore);
   stepsSinceLastEncounter.value++;
@@ -23,6 +20,5 @@ export const useRandomEncounter = () => {
   if (!isEncounter) return;
 
   stepsSinceLastEncounter.value = 0;
-  initialize();
   fadeSwitchToScene(SceneKey.Battle, 2000);
 };
