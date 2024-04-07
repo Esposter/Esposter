@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
+import Image from "@/lib/phaser/components/Image.vue";
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -16,6 +17,7 @@ const { imagePosition, width, scaleY, barPercentage } = defineProps<HealthBarPro
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
 const barWidth = computed(() => (width * barPercentage) / 100);
+const barDisplayWidth = ref(barWidth.value);
 const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useDisplayWidths(
   () => width,
   barWidth,
@@ -26,6 +28,7 @@ const tween = ref<TweenBuilderConfiguration>();
 
 watch(barWidth, (newBarWidth) => {
   if (isSkipAnimations.value) {
+    barDisplayWidth.value = newBarWidth;
     syncDisplayWidths(newBarWidth);
     return;
   }
@@ -45,6 +48,8 @@ watch(barWidth, (newBarWidth) => {
 </script>
 
 <template>
+  <!-- We use a placeholder component to hold the tween for the entire health bar -->
+  <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
   <DungeonsUIHealthBarLeftCap
     v-model:display-width="leftCapDisplayWidth"
     :image-position="imagePosition"
@@ -54,7 +59,6 @@ watch(barWidth, (newBarWidth) => {
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
     :scale-y="scaleY"
-    :tween
   />
   <DungeonsUIHealthBarRightCap
     v-model:x="rightCapX"
