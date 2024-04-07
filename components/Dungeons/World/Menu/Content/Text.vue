@@ -14,8 +14,7 @@ interface ContentTextProps {
 const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
 const worldSceneStore = useWorldSceneStore();
 const { menuOptionGrid } = storeToRefs(worldSceneStore);
-const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
-const onGridClick = useOnGridClick(menuOptionGrid, gridPosition);
+const onGridClick = useOnGridClick(menuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 
 <template>

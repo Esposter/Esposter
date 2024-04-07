@@ -15,8 +15,7 @@ const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
 const titleSceneStore = useTitleSceneStore();
 const { optionGrid } = storeToRefs(titleSceneStore);
 const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
-const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
-const onGridClick = useOnGridClick(optionGrid, gridPosition);
+const onGridClick = useOnGridClick(optionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 
 <template>

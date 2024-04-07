@@ -17,9 +17,8 @@ interface PanelListItemProps {
 const { rowIndex, columnIndex, monster } = defineProps<PanelListItemProps>();
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
-const onGridClick = useOnGridClick(optionGrid, gridPosition);
-const isActive = computed(() => deepEqual(gridPosition.value, optionGrid.value.position));
+const onGridClick = useOnGridClick(optionGrid, () => ({ x: columnIndex, y: rowIndex }));
+const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, optionGrid.value.position));
 const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.maxHp) * 100);
 </script>
 

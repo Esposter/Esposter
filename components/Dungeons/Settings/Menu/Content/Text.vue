@@ -27,10 +27,13 @@ const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
-const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
-const onGridClick = useOnGridClick(optionGrid, gridPosition, () => {
-  if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
-});
+const onGridClick = useOnGridClick(
+  optionGrid,
+  () => ({ x: columnIndex, y: rowIndex }),
+  () => {
+    if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
+  },
+);
 </script>
 
 <template>
