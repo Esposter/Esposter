@@ -78,13 +78,11 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
             .movementStarted()
             .pipe(filter(({ charId }) => charId === characterId))
             .subscribe(onMovementStarted);
-        subscriptionMovementStopped = scene.gridEngine
-          .movementStopped()
-          .pipe(filter(({ charId }) => charId === characterId))
-          .subscribe((directionChange) => {
-            direction = directionChange.direction;
-            onMovementStopped?.(directionChange);
-          });
+        if (onMovementStopped)
+          subscriptionMovementStopped = scene.gridEngine
+            .movementStopped()
+            .pipe(filter(({ charId }) => charId === characterId))
+            .subscribe(onMovementStopped);
         if (onPositionChangeStarted)
           subscriptionPositionChangeStarted = scene.gridEngine
             .positionChangeStarted()
