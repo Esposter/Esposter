@@ -1,6 +1,6 @@
 import type { Types } from "phaser";
 
-export const MonsterAttackTextStyle = {
+export const MonsterAttackTextStyle: Types.GameObjects.Text.TextStyle = {
   color: "black",
   fontSize: 40,
-} as const satisfies Types.GameObjects.Text.TextStyle;
+};

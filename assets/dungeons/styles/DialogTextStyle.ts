@@ -1,6 +1,6 @@
 import type { Types } from "phaser";
 
-export const DialogTextStyle = {
+export const DialogTextStyle: Types.GameObjects.Text.TextStyle = {
   color: "black",
   fontSize: 30,
-} as const satisfies Types.GameObjects.Text.TextStyle;
+};

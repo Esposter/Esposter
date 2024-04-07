@@ -10,6 +10,7 @@ import {
   INITIAL_CURSOR_POSITION,
 } from "@/services/dungeons/inventory/constants";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
+import { parsePixel } from "@/util/parsePixel";
 import { Input } from "phaser";
 
 interface InventoryItemListItemProps {
@@ -32,7 +33,7 @@ const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREM
         y,
         origin: 0,
         width: CONTENT_MENU_WIDTH,
-        height: MenuTextStyle.fontSize,
+        height: parsePixel(MenuTextStyle.fontSize ?? 0),
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />
@@ -51,7 +52,7 @@ const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREM
         y,
         origin: 0,
         width: CONTENT_MENU_WIDTH,
-        height: MenuTextStyle.fontSize,
+        height: parsePixel(MenuTextStyle.fontSize ?? 0),
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />

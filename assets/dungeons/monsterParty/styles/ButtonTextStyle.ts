@@ -1,6 +1,6 @@
 import type { Types } from "phaser";
 
-export const ButtonTextStyle = {
+export const ButtonTextStyle: Types.GameObjects.Text.TextStyle = {
   color: "white",
   fontSize: 24,
-} as const satisfies Types.GameObjects.Text.TextStyle;
+};

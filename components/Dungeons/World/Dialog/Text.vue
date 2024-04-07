@@ -4,6 +4,7 @@ import Text from "@/lib/phaser/components/Text.vue";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import { WORD_PADDING } from "@/services/dungeons/constants";
 import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
+import { parsePixel } from "@/util/parsePixel";
 
 interface DialogTextProps {
   dialogMessage: DialogMessage;
@@ -30,7 +31,7 @@ const y = 12;
     <Text
       :configuration="{
         x,
-        y: y + DialogTextStyle.fontSize,
+        y: y + parsePixel(DialogTextStyle.fontSize ?? 0),
         text: dialogMessage.text,
         style: {
           ...DialogTextStyle,

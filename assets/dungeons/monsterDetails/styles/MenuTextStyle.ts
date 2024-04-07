@@ -1,5 +1,5 @@
 import type { Types } from "phaser";
 
-export const MenuTextStyle = {
+export const MenuTextStyle: Types.GameObjects.Text.TextStyle = {
   color: "white",
-} as const satisfies Types.GameObjects.Text.TextStyle;
+};

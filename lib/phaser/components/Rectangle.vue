@@ -21,7 +21,7 @@ const { x, y, width, height, fillColor, alpha } = configuration.value;
 const emit = defineEmits<RectangleEmits>();
 const scene = inject<SceneWithPlugins>(InjectionKeyMap.Scene);
 if (!scene) throw new NotInitializedError("Scene");
-
+console.log(height);
 const rectangle = ref(scene.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
 useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
 onComplete.value?.(rectangle.value);
