@@ -10,7 +10,11 @@ interface ShadowProps {
 const { imagePosition, width, scaleY } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
 const middleShadowX = computed(() => imagePosition.x + (leftCapShadowDisplayWidth.value ?? 0));
-const rightCapShadowX = computed(() => middleShadowX.value + width);
+const middleShadowDisplayWidth = computed(
+  () => width - ((leftCapShadowDisplayWidth.value ?? 0) + (rightCapShadowDisplayWidth.value ?? 0)),
+);
+const rightCapShadowDisplayWidth = ref<number>();
+const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplayWidth.value);
 </script>
 
 <template>
@@ -22,7 +26,11 @@ const rightCapShadowX = computed(() => middleShadowX.value + width);
   <DungeonsUIHealthBarMiddleShadow
     :image-position="{ ...imagePosition, x: middleShadowX }"
     :scale-y="scaleY"
-    :display-width="width"
+    :display-width="middleShadowDisplayWidth"
   />
-  <DungeonsUIHealthBarRightCapShadow :image-position="{ ...imagePosition, x: rightCapShadowX }" :scale-y="scaleY" />
+  <DungeonsUIHealthBarRightCapShadow
+    v-model:display-width="rightCapShadowDisplayWidth"
+    :image-position="{ ...imagePosition, x: rightCapShadowX }"
+    :scale-y="scaleY"
+  />
 </template>

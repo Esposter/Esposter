@@ -12,7 +12,7 @@ interface HealthBarProps {
   barPercentage: number;
 }
 
-const { position, width = 360, scaleY = 0.7, barPercentage } = defineProps<HealthBarProps>();
+const { position, width = 372, scaleY = 0.7, barPercentage } = defineProps<HealthBarProps>();
 // Set origin to the middle-left of the health caps to enable
 // grabbing the full width of the game object
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;

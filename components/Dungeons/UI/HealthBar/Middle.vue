@@ -6,14 +6,24 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
 interface MiddleProps {
   imagePosition: ImagePosition;
-  displayWidth: number;
+  displayWidth: number | undefined;
   scaleY: number;
   tween?: TweenBuilderConfiguration;
 }
 
 const { imagePosition, displayWidth, scaleY, tween } = defineProps<MiddleProps>();
+const isVisible = computed(() => (displayWidth ?? 0) > 0);
 </script>
 
 <template>
-  <Image :configuration="{ ...imagePosition, texture: ImageKey.HealthBarMiddle, displayWidth, scaleY, tween }" />
+  <Image
+    :configuration="{
+      visible: isVisible,
+      ...imagePosition,
+      texture: ImageKey.HealthBarMiddle,
+      displayWidth,
+      scaleY,
+      tween,
+    }"
+  />
 </template>

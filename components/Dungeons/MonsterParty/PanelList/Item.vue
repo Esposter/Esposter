@@ -83,7 +83,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         },
       }"
     />
-    <DungeonsUIHealthBarContainer :position="{ x: 100, y: 40 }" :width="240" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIHealthBarContainer :position="{ x: 100, y: 40 }" :width="252" :bar-percentage="healthBarPercentage" />
     <Text
       :configuration="{
         x: 458,

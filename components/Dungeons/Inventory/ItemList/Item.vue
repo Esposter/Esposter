@@ -23,14 +23,14 @@ const inventorySceneStore = useInventorySceneStore();
 const { itemOptionGrid } = storeToRefs(inventorySceneStore);
 const gridPosition = computed(() => ({ x: columnIndex, y: rowIndex }));
 const onGridClick = useOnGridClick(itemOptionGrid, gridPosition);
-const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex;
+const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex);
 </script>
 
 <template>
   <template v-if="item === PlayerSpecialInput.Cancel">
     <Rectangle
       :configuration="{
-        y: getY(rowIndex),
+        y,
         origin: 0,
         width: CONTENT_MENU_WIDTH,
         height: MenuTextStyle.fontSize,
@@ -40,7 +40,7 @@ const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSIT
     <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
-        y: getY(rowIndex),
+        y,
         text: PlayerSpecialInput.Cancel,
         style: MenuTextStyle,
       }"
@@ -49,7 +49,7 @@ const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSIT
   <template v-else>
     <Rectangle
       :configuration="{
-        y: getY(rowIndex),
+        y,
         origin: 0,
         width: CONTENT_MENU_WIDTH,
         height: MenuTextStyle.fontSize,
@@ -59,7 +59,7 @@ const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSIT
     <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
-        y: getY(rowIndex),
+        y,
         text: item.name,
         style: MenuTextStyle,
       }"
@@ -67,7 +67,7 @@ const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSIT
     <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 590,
-        y: getY(rowIndex) + 3,
+        y: y + 3,
         text: 'x',
         style: { ...MenuTextStyle, fontFamily: 'Courier' },
       }"
@@ -75,7 +75,7 @@ const getY = (rowIndex: number) => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSIT
     <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 620,
-        y: getY(rowIndex),
+        y,
         text: `${item.quantity}`,
         style: MenuTextStyle,
       }"

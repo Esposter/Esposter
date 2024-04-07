@@ -9,8 +9,12 @@ interface RightCapShadowProps {
 }
 
 const { imagePosition, scaleY } = defineProps<RightCapShadowProps>();
+const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
 </script>
 
 <template>
-  <Image :configuration="{ ...imagePosition, texture: ImageKey.HealthBarRightCapShadow, scaleY }" />
+  <Image
+    :configuration="{ ...imagePosition, texture: ImageKey.HealthBarRightCapShadow, displayWidth, scaleY }"
+    @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
+  />
 </template>
