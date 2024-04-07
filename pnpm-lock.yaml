@@ -84,8 +84,8 @@ dependencies:
     specifier: ^10.45.2
     version: 10.45.2
   '@vuepic/vue-datepicker':
-    specifier: ^8.3.2
-    version: 8.3.2(vue@3.4.21)
+    specifier: ^8.4.0
+    version: 8.4.0(vue@3.4.21)
   '@vueuse/core':
     specifier: ^10.9.0
     version: 10.9.0(vue@3.4.21)
@@ -1721,13 +1721,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
+    dev: false
 
   /@babel/runtime@7.24.4:
     resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
-    dev: false
 
   /@babel/standalone@7.24.0:
     resolution: {integrity: sha512-yIZ/X3EAASgX/MW1Bn8iZKxCwixgYJAUaIScoZ9C6Gapw5l3eKIbtVSgO/IGldQed9QXm22yurKVWyWj5/j+SQ==}
@@ -5311,8 +5311,8 @@ packages:
   /@vue/shared@3.4.21:
     resolution: {integrity: sha512-PuJe7vDIi6VYSinuEbUIQgMIRZGgM8e4R+G+/dQTk0X1NEdvgvvgv7m+rfmDH1gZzyA1OjjoWskvHlfRNfQf3g==}
 
-  /@vuepic/vue-datepicker@8.3.2(vue@3.4.21):
-    resolution: {integrity: sha512-kOAUl6EVGU7BgNByjUuLRBUWvTBiYJHUj9jll7fTQSz/vNNkhYoo8vEH75zPMXyVmn1gRmeoom4cMl77GtNraw==}
+  /@vuepic/vue-datepicker@8.4.0(vue@3.4.21):
+    resolution: {integrity: sha512-Twgvqwd5GrQf3JT2DvAQ/Ku0+sM51zsH1OkQKoRwYqJyF+EugItS8I0CveYmcI3Gbu92RZ9C3DMutvkaiuDzAQ==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
@@ -10673,7 +10673,7 @@ packages:
   /regenerator-transform@0.15.2:
     resolution: {integrity: sha512-hfMp2BoF0qOk3uc5V20ALGDS2ddjQaLrdl7xrGXvAIow7qeWRM2VA2HuCHkUKk9slq3VwEwLNK3DFBqDfPGYtg==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
     dev: true
 
   /regexp.prototype.flags@1.5.2:
@@ -12840,7 +12840,7 @@ packages:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.12.0)
       '@babel/core': 7.24.3
       '@babel/preset-env': 7.24.0(@babel/core@7.24.3)
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rollup/plugin-babel': 5.3.1(@babel/core@7.24.3)(rollup@2.79.1)
       '@rollup/plugin-node-resolve': 11.2.1(rollup@2.79.1)
       '@rollup/plugin-replace': 2.4.2(rollup@2.79.1)
