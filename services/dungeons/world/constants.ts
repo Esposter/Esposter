@@ -1,4 +1,4 @@
-import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
+import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import type { FrameRow, Position, WalkingAnimationMapping } from "grid-engine";
 import { Direction } from "grid-engine";
 
@@ -16,25 +16,33 @@ export const MENU_DEPTH = 3000;
 export const INITIAL_MENU_CURSOR_POSITION = { x: 20 + MENU_PADDING, y: 28 + MENU_PADDING } as const satisfies Position;
 export const MENU_CURSOR_POSITION_INCREMENT = { x: 30, y: 50 } as const satisfies Position;
 
-export const PlayerWalkingAnimationMapping: Record<InteractableDirection, FrameRow> = {
-  [Direction.UP]: {
+const BasePlayerWalkingAnimationMapping = {
+  [InteractableDirection.UP]: {
     leftFoot: 0,
     standing: 1,
     rightFoot: 2,
   },
-  [Direction.DOWN]: {
+  [InteractableDirection.DOWN]: {
     leftFoot: 6,
     standing: 7,
     rightFoot: 8,
   },
-  [Direction.LEFT]: {
+  [InteractableDirection.LEFT]: {
     leftFoot: 9,
     standing: 10,
     rightFoot: 11,
   },
-  [Direction.RIGHT]: {
+  [InteractableDirection.RIGHT]: {
     leftFoot: 3,
     standing: 4,
     rightFoot: 5,
   },
-} satisfies WalkingAnimationMapping;
+} as const satisfies Record<InteractableDirection, FrameRow>;
+
+export const PlayerWalkingAnimationMapping = {
+  ...BasePlayerWalkingAnimationMapping,
+  [Direction.UP_LEFT]: BasePlayerWalkingAnimationMapping[Direction.LEFT],
+  [Direction.UP_RIGHT]: BasePlayerWalkingAnimationMapping[Direction.RIGHT],
+  [Direction.DOWN_LEFT]: BasePlayerWalkingAnimationMapping[Direction.LEFT],
+  [Direction.DOWN_RIGHT]: BasePlayerWalkingAnimationMapping[Direction.RIGHT],
+} as const satisfies WalkingAnimationMapping;

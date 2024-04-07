@@ -29,13 +29,14 @@ const create = (scene: SceneWithPlugins) => {
   fadeIn(dayjs.duration(1, "second").asMilliseconds());
 };
 
-const update = async () => {
+const update = async (scene: SceneWithPlugins) => {
   const justDownInput = controls.value.getInput(true);
   const input = controls.value.getInput();
 
-  for (const inputResolver of inputResolvers) if (await inputResolver.handleInputPre(justDownInput, input)) return;
+  for (const inputResolver of inputResolvers)
+    if (await inputResolver.handleInputPre(justDownInput, input, scene)) return;
 
-  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input)) return;
+  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input, scene)) return;
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {

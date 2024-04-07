@@ -6,6 +6,7 @@ import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
 import { usePlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { Direction } from "grid-engine";
 
 const phaserStore = usePhaserStore();
 const { scene, sceneKey } = storeToRefs(phaserStore);
@@ -14,7 +15,9 @@ const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { sprite, player, isMoving } = storeToRefs(playerStore);
 // We only care about the starting frame, so we don't want this to be reactive
-const frame = PlayerWalkingAnimationMapping[player.value.direction].standing;
+const frame =
+  PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
+    .standing;
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   scene.value.cameras.main.stopFollow();

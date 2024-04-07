@@ -1,17 +1,15 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";
 import { getNextDirection } from "@/services/dungeons/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
-export const useMoveNpcList = () => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+export const useMoveNpcList = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
 
   for (const npc of npcList.value) {
-    if (!scene.value.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
+    if (!scene.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
 
     switch (npc.movementPattern) {
       case NpcMovementPattern.Idle:
@@ -21,9 +19,9 @@ export const useMoveNpcList = () => {
         const newPathIndex = (npc.pathIndex + 1) % pathSize;
         const currentPosition = npc.path[npc.pathIndex];
         const nextPosition = npc.path[newPathIndex];
-        if (scene.value.gridEngine.isBlocked(nextPosition)) continue;
+        if (scene.gridEngine.isBlocked(nextPosition)) continue;
 
-        scene.value.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));
+        scene.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));
         npc.pathIndex = newPathIndex;
         continue;
       }
