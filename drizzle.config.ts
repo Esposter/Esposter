@@ -1,10 +1,9 @@
 import { defineConfig } from "drizzle-kit";
+import { MIGRATIONS_FOLDER_PATH } from "./db/constants";
 
 export default defineConfig({
   schema: "db/schema",
-  // We need the migrations folder in the production build
-  // for drizzle to access when running migrations
-  out: "public/db/migrations",
+  out: MIGRATIONS_FOLDER_PATH,
   driver: "pg",
   dbCredentials: {
     connectionString: process.env.DATABASE_URL,

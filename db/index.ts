@@ -1,3 +1,4 @@
+import { MIGRATIONS_FOLDER_PATH } from "@/db/constants";
 import { DrizzleLogger } from "@/db/logger";
 import * as accounts from "@/db/schema/accounts";
 import * as posts from "@/db/schema/posts";
@@ -27,4 +28,4 @@ export const db = drizzle(client, {
   logger: !IS_PRODUCTION ? new DrizzleLogger() : undefined,
 });
 
-await migrate(db, { migrationsFolder: "public/db/migrations" });
+await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER_PATH });
