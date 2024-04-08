@@ -33,6 +33,7 @@ watch(isMenuVisible, (newIsMenuVisible) => {
         alpha: 0.9,
         strokeStyle: [8, border],
       }"
+      @clickoutside="isMenuVisible = false"
     />
     <DungeonsWorldMenuContent />
   </Container>
