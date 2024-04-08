@@ -12,4 +12,5 @@ export const GameObjectEventMap = {
   dragover: { drag: true },
   dragleave: { drag: true },
   drop: { drag: true },
+  clickoutside: {},
 } as const;

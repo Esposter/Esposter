@@ -21,8 +21,8 @@ dependencies:
     specifier: ^6.10.1
     version: 6.10.1
   '@codemirror/language-data':
-    specifier: ^6.4.1
-    version: 6.4.1(@codemirror/view@6.26.1)
+    specifier: ^6.5.0
+    version: 6.5.0(@codemirror/view@6.26.1)
   '@codemirror/state':
     specifier: ^6.4.1
     version: 6.4.1
@@ -84,8 +84,8 @@ dependencies:
     specifier: ^10.45.2
     version: 10.45.2
   '@vuepic/vue-datepicker':
-    specifier: ^8.3.2
-    version: 8.3.2(vue@3.4.21)
+    specifier: ^8.4.0
+    version: 8.4.0(vue@3.4.21)
   '@vueuse/core':
     specifier: ^10.9.0
     version: 10.9.0(vue@3.4.21)
@@ -213,8 +213,8 @@ dependencies:
     specifier: ^3.5.14
     version: 3.5.14(typescript@5.4.4)(vite-plugin-vuetify@2.0.3)(vue@3.4.21)
   worker-timers:
-    specifier: ^7.1.6
-    version: 7.1.6
+    specifier: ^7.1.7
+    version: 7.1.7
   ws:
     specifier: ^8.16.0
     version: 8.16.0
@@ -228,7 +228,7 @@ devDependencies:
     version: 0.2.0(eslint@8.57.0)
   '@nuxt/test-utils':
     specifier: ^3.12.0
-    version: 3.12.0(h3@1.11.1)(happy-dom@14.6.2)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+    version: 3.12.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
   '@types/dedent':
     specifier: ^0.7.2
     version: 0.7.2
@@ -287,8 +287,8 @@ devDependencies:
     specifier: ^1.11.1
     version: 1.11.1
   happy-dom:
-    specifier: ^14.6.2
-    version: 14.6.2
+    specifier: ^14.7.1
+    version: 14.7.1
   nuxt:
     specifier: 3.11.1
     version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0)(drizzle-orm@0.30.7)(eslint@8.57.0)(rollup@2.79.1)(sass@1.74.1)(typescript@5.4.4)(vite@5.2.8)(vue-tsc@1.8.27)
@@ -318,7 +318,7 @@ devDependencies:
     version: 5.2.8(sass@1.74.1)
   vitest:
     specifier: ^1.4.0
-    version: 1.4.0(happy-dom@14.6.2)(sass@1.74.1)
+    version: 1.4.0(happy-dom@14.7.1)(sass@1.74.1)
   vue-tsc:
     specifier: ^1.8.27
     version: 1.8.27(typescript@5.4.4)
@@ -1721,6 +1721,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
+    dev: false
+
+  /@babel/runtime@7.24.4:
+    resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.1
 
   /@babel/standalone@7.24.0:
     resolution: {integrity: sha512-yIZ/X3EAASgX/MW1Bn8iZKxCwixgYJAUaIScoZ9C6Gapw5l3eKIbtVSgO/IGldQed9QXm22yurKVWyWj5/j+SQ==}
@@ -1817,6 +1824,18 @@ packages:
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
       '@lezer/css': 1.1.8
+    transitivePeerDependencies:
+      - '@codemirror/view'
+    dev: false
+
+  /@codemirror/lang-go@6.0.0(@codemirror/view@6.26.1):
+    resolution: {integrity: sha512-mMT4YeYdKGjnffDBOhr1ur1glee4oV/rfMe28vzazNHZkSt7vSiuHiBcgr3L/79Cl2RIjFdpQ1XMD0/T8Rx64g==}
+    dependencies:
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.1)(@codemirror/state@6.4.1)(@codemirror/view@6.26.1)(@lezer/common@1.2.1)
+      '@codemirror/language': 6.10.1
+      '@codemirror/state': 6.4.1
+      '@lezer/common': 1.2.1
+      '@lezer/go': 1.0.0
     transitivePeerDependencies:
       - '@codemirror/view'
     dev: false
@@ -1995,12 +2014,13 @@ packages:
       - '@codemirror/view'
     dev: false
 
-  /@codemirror/language-data@6.4.1(@codemirror/view@6.26.1):
-    resolution: {integrity: sha512-NYhC3NvEMwUxSWS1sB5AePUtr5g2ASSYOZ37YixicDG8PWHslDV9mmXIX0KvmtEm50V8FT4F5i4HAsk/7i78LA==}
+  /@codemirror/language-data@6.5.0(@codemirror/view@6.26.1):
+    resolution: {integrity: sha512-+F2PyUJtTfGO/3X0fgwZwyyCQ35GZycQSI/731tHifhFMaKYTM8Ic45uK1jrcg086pDy573CL2DWvHJlSkFGzQ==}
     dependencies:
       '@codemirror/lang-angular': 0.1.3
       '@codemirror/lang-cpp': 6.0.2
       '@codemirror/lang-css': 6.2.1(@codemirror/view@6.26.1)
+      '@codemirror/lang-go': 6.0.0(@codemirror/view@6.26.1)
       '@codemirror/lang-html': 6.4.8
       '@codemirror/lang-java': 6.0.1
       '@codemirror/lang-javascript': 6.2.2
@@ -2890,6 +2910,14 @@ packages:
       '@lezer/lr': 1.4.0
     dev: false
 
+  /@lezer/go@1.0.0:
+    resolution: {integrity: sha512-co9JfT3QqX1YkrMmourYw2Z8meGC50Ko4d54QEcQbEYpvdUvN4yb0NBZdn/9ertgvjsySxHsKzH3lbm3vqJ4Jw==}
+    dependencies:
+      '@lezer/common': 1.2.1
+      '@lezer/highlight': 1.2.0
+      '@lezer/lr': 1.4.0
+    dev: false
+
   /@lezer/highlight@1.2.0:
     resolution: {integrity: sha512-WrS5Mw51sGrpqjlh3d4/fOwpEV2Hd3YOkp9DBt4k8XZQcoTHZFB7sx030A6OcahF4J1nDQAa3jXlTVVYH50IFA==}
     dependencies:
@@ -3336,7 +3364,7 @@ packages:
       - rollup
       - supports-color
 
-  /@nuxt/test-utils@3.12.0(h3@1.11.1)(happy-dom@14.6.2)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
+  /@nuxt/test-utils@3.12.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
     resolution: {integrity: sha512-Q3HP53TDIYeqHT65r31HZhK/gRwVBmchSdVj1tfiYECyqstckvsQ4Cyt/GX/XmD7cLdD3d5aHow8LaMfP+BSqQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
     peerDependencies:
@@ -3387,7 +3415,7 @@ packages:
       fake-indexeddb: 5.0.2
       get-port-please: 3.1.2
       h3: 1.11.1
-      happy-dom: 14.6.2
+      happy-dom: 14.7.1
       local-pkg: 0.5.0
       magic-string: 0.30.8
       node-fetch-native: 1.6.2
@@ -3401,8 +3429,8 @@ packages:
       unenv: 1.9.0
       unplugin: 1.10.0
       vite: 5.2.8(sass@1.74.1)
-      vitest: 1.4.0(happy-dom@14.6.2)(sass@1.74.1)
-      vitest-environment-nuxt: 1.0.0(h3@1.11.1)(happy-dom@14.6.2)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+      vitest: 1.4.0(happy-dom@14.7.1)(sass@1.74.1)
+      vitest-environment-nuxt: 1.0.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
       vue: 3.4.21(typescript@5.4.4)
       vue-router: 4.3.0(vue@3.4.21)
     transitivePeerDependencies:
@@ -5080,7 +5108,7 @@ packages:
       strip-literal: 2.0.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.4.0(happy-dom@14.6.2)(sass@1.74.1)
+      vitest: 1.4.0(happy-dom@14.7.1)(sass@1.74.1)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5283,8 +5311,8 @@ packages:
   /@vue/shared@3.4.21:
     resolution: {integrity: sha512-PuJe7vDIi6VYSinuEbUIQgMIRZGgM8e4R+G+/dQTk0X1NEdvgvvgv7m+rfmDH1gZzyA1OjjoWskvHlfRNfQf3g==}
 
-  /@vuepic/vue-datepicker@8.3.2(vue@3.4.21):
-    resolution: {integrity: sha512-kOAUl6EVGU7BgNByjUuLRBUWvTBiYJHUj9jll7fTQSz/vNNkhYoo8vEH75zPMXyVmn1gRmeoom4cMl77GtNraw==}
+  /@vuepic/vue-datepicker@8.4.0(vue@3.4.21):
+    resolution: {integrity: sha512-Twgvqwd5GrQf3JT2DvAQ/Ku0+sM51zsH1OkQKoRwYqJyF+EugItS8I0CveYmcI3Gbu92RZ9C3DMutvkaiuDzAQ==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
@@ -7664,7 +7692,7 @@ packages:
     resolution: {integrity: sha512-7OnTFAVPefgw2eBJ1xj2PGGR9FwYzSUso9decayHgCDX4sJkHLdcsYTytTg+tYv+wKF3U8gJuSBz2jJpQV4u/g==}
     engines: {node: '>=16.1.0'}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       tslib: 2.6.2
     dev: false
 
@@ -8081,8 +8109,8 @@ packages:
       sisteransi: 1.0.5
     dev: true
 
-  /happy-dom@14.6.2:
-    resolution: {integrity: sha512-yiaVI0Da/tGrBD6QwmXkJZH9RPW1/TCxqadbwkp0MgwRTTDNyBC09Ow+nppVLhbG4Ws2Z6t29Vzbbd6C0y7LCQ==}
+  /happy-dom@14.7.1:
+    resolution: {integrity: sha512-v60Q0evZ4clvMcrAh5/F8EdxDdfHdFrtffz/CNe10jKD+nFweZVxM91tW+UyY2L4AtpgIaXdZ7TQmiO1pfcwbg==}
     engines: {node: '>=16.0.0'}
     dependencies:
       entities: 4.5.0
@@ -10645,7 +10673,7 @@ packages:
   /regenerator-transform@0.15.2:
     resolution: {integrity: sha512-hfMp2BoF0qOk3uc5V20ALGDS2ddjQaLrdl7xrGXvAIow7qeWRM2VA2HuCHkUKk9slq3VwEwLNK3DFBqDfPGYtg==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
     dev: true
 
   /regexp.prototype.flags@1.5.2:
@@ -12369,10 +12397,10 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /vitest-environment-nuxt@1.0.0(h3@1.11.1)(happy-dom@14.6.2)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
+  /vitest-environment-nuxt@1.0.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21):
     resolution: {integrity: sha512-AWMO9h4HdbaFdPWZw34gALFI8gbBiOpvfbyeZwHIPfh4kWg/TwElYHvYMQ61WPUlCGaS5LebfHkaI0WPyb//Iw==}
     dependencies:
-      '@nuxt/test-utils': 3.12.0(h3@1.11.1)(happy-dom@14.6.2)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
+      '@nuxt/test-utils': 3.12.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@2.79.1)(vite@5.2.8)(vitest@1.4.0)(vue-router@4.3.0)(vue@3.4.21)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -12392,7 +12420,7 @@ packages:
       - vue-router
     dev: true
 
-  /vitest@1.4.0(happy-dom@14.6.2)(sass@1.74.1):
+  /vitest@1.4.0(happy-dom@14.7.1)(sass@1.74.1):
     resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -12426,7 +12454,7 @@ packages:
       chai: 4.4.1
       debug: 4.3.4
       execa: 8.0.1
-      happy-dom: 14.6.2
+      happy-dom: 14.7.1
       local-pkg: 0.5.0
       magic-string: 0.30.8
       pathe: 1.1.2
@@ -12812,7 +12840,7 @@ packages:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.12.0)
       '@babel/core': 7.24.3
       '@babel/preset-env': 7.24.0(@babel/core@7.24.3)
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rollup/plugin-babel': 5.3.1(@babel/core@7.24.3)(rollup@2.79.1)
       '@rollup/plugin-node-resolve': 11.2.1(rollup@2.79.1)
       '@rollup/plugin-replace': 2.4.2(rollup@2.79.1)
@@ -12939,29 +12967,29 @@ packages:
       workbox-core: 7.0.0
     dev: true
 
-  /worker-timers-broker@6.1.6:
-    resolution: {integrity: sha512-ZRRjoIVU3vHJlDur51qHRY0hNExyXfmP9vEVu9FIlTNtsL/bYBreryFMD/NUBSyDE7IHTEc1PUG9J0q9OB4E5w==}
+  /worker-timers-broker@6.1.7:
+    resolution: {integrity: sha512-8hb4lSMAijDY/Dp/MOw9Hc2x6uU59XWFYjcWQgC4bai+sxcLXjeexd9aYKdYMFZPiPoieGzMYIs9WGpv2Co3eA==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       fast-unique-numbers: 8.0.13
       tslib: 2.6.2
-      worker-timers-worker: 7.0.69
+      worker-timers-worker: 7.0.70
     dev: false
 
-  /worker-timers-worker@7.0.69:
-    resolution: {integrity: sha512-ykpImmLGYw/l9IuM6gklY0wd7WBXfNyQgzR2jEb8uMPHZhM5i8KWHTy3xb0Kr2QVwooU5eE0xAG6FiFYHPOssQ==}
+  /worker-timers-worker@7.0.70:
+    resolution: {integrity: sha512-lemWEME0RHB78hzGkkQcKfF6L82gqVhV3T9iY14jHBhbLxLq9t1RRCLmPDBZV7sdnUoW6Khkfn6coqPjgEK6cw==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       tslib: 2.6.2
     dev: false
 
-  /worker-timers@7.1.6:
-    resolution: {integrity: sha512-yNd+WSL5T8fyKTM3iIxrH4VQkB0EhQJAVsOQCyAbb56bNHc70ADLAMFi4g2m7dD4S0jcSoJxmiy7FB9fy1e4JA==}
+  /worker-timers@7.1.7:
+    resolution: {integrity: sha512-Dr4La61d94SjOA8P57h2LN8W3MXOVe/m1P7jER8cmuIy+JaDMqPttSwo6QRJFSK6YnG9cD6SU7J8m7CVlu8jlw==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       tslib: 2.6.2
-      worker-timers-broker: 6.1.6
-      worker-timers-worker: 7.0.69
+      worker-timers-broker: 6.1.7
+      worker-timers-worker: 7.0.70
     dev: false
 
   /wrap-ansi@7.0.0:
