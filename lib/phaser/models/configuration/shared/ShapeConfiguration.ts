@@ -7,18 +7,17 @@ import type { PipelineConfiguration } from "@/lib/phaser/models/configuration/co
 import type { ScrollFactorConfiguration } from "@/lib/phaser/models/configuration/components/ScrollFactorConfiguration";
 import type { TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import type { VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
+import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import type { GameObjects } from "phaser";
 
-export interface BaseShapeConfiguration {
+export type ShapeConfiguration = {
   active: GameObjects.Shape["active"];
   displayWidth: GameObjects.Shape["displayWidth"];
   displayHeight: GameObjects.Shape["displayHeight"];
   fillColor: GameObjects.Shape["fillColor"];
   fillAlpha: GameObjects.Shape["fillAlpha"];
   strokeStyle: Parameters<GameObjects.Shape["setStrokeStyle"]>;
-}
-
-export type ShapeConfiguration = AlphaSingleConfiguration &
+} & AlphaSingleConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
   MaskConfiguration &
@@ -27,4 +26,4 @@ export type ShapeConfiguration = AlphaSingleConfiguration &
   ScrollFactorConfiguration &
   TransformConfiguration &
   VisibleConfiguration &
-  BaseShapeConfiguration;
+  GlobalConfiguration;
