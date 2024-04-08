@@ -20,7 +20,7 @@ const { optionGrid } = storeToRefs(playerStore);
 </script>
 
 <template>
-  <Container v-if="activePanel === ActivePanel.Option" :configuration="{ x: 520, y: 448 }">
+  <Container :configuration="{ visible: activePanel === ActivePanel.Option, x: 520, y: 448 }">
     <Rectangle
       :configuration="{
         origin: 0,
