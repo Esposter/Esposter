@@ -4,6 +4,7 @@ import { SceneKeyMap } from "@/services/dungeons/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
 import { AUTO, Scale } from "phaser";
+import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
 import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
@@ -47,6 +48,10 @@ await useReadDungeonsGame();
               key: 'sliderPlugin',
               plugin: SliderPlugin,
               mapping: 'sliderPlugin',
+            },
+            {
+              key: 'clickOutside',
+              plugin: ClickOutside,
             },
           ],
         },
