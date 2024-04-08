@@ -6,10 +6,7 @@ import type { GameObjects, Types } from "phaser";
 import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
 import type { SetupContext } from "vue";
 
-export const useInitializeGameObjectEvents = <
-  TGameObject extends GameObjects.GameObject,
-  TEmitsOptions extends Record<string, any[]>,
->() => {
+export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
   const events = Object.keys(currentInstance?.attrs ?? {})
     .filter(isEvent)
@@ -18,7 +15,10 @@ export const useInitializeGameObjectEvents = <
     events.includes(key),
   ) as (keyof typeof GameObjectEventMap)[];
   const unsubscribes = ref<(() => void)[]>([]);
-  const initializeGameObjectEvents = (
+  const initializeGameObjectEvents = <
+    TGameObject extends GameObjects.GameObject,
+    TEmitsOptions extends Record<string, any[]>,
+  >(
     gameObject: TGameObject,
     emit: SetupContext<TEmitsOptions>["emit"],
     scene: SceneWithPlugins,
