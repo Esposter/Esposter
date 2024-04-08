@@ -8,6 +8,7 @@ import type { PipelineEventEmitsOptions } from "@/lib/phaser/models/emit/compone
 import type { ScrollFactorEventEmitsOptions } from "@/lib/phaser/models/emit/components/ScrollFactorEventEmitsOptions";
 import type { TransformEventEmitsOptions } from "@/lib/phaser/models/emit/components/TransformEventEmitsOptions";
 import type { VisibleEventEmitsOptions } from "@/lib/phaser/models/emit/components/VisibleEventEmitsOptions";
+import type { GlobalEventEmitsOptions } from "@/lib/phaser/models/emit/global/GlobalEventEmitsOptions";
 import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
 import type { UpdateEvent } from "@/util/types/UpdateEvent";
 
@@ -24,4 +25,5 @@ export type ShapeEventEmitsOptions = AlphaSingleEventEmitsOptions &
   ScrollFactorEventEmitsOptions &
   TransformEventEmitsOptions &
   VisibleEventEmitsOptions &
-  BaseShapeEventEmitsOptions;
+  BaseShapeEventEmitsOptions &
+  GlobalEventEmitsOptions;
