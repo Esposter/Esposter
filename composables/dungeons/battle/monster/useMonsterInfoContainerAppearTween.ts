@@ -1,3 +1,4 @@
+import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
@@ -15,7 +16,7 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
     return;
   }
 
-  monsterInfoContainerTween.value = {
+  useTween(monsterInfoContainerTween, {
     delay: 0,
     duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
     x: {
@@ -23,8 +24,5 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
       start: monsterInfoContainerPosition.value.x,
       to: xEnd,
     },
-    onComplete: () => {
-      monsterInfoContainerTween.value = undefined;
-    },
-  };
+  });
 };

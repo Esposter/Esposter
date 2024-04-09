@@ -4,9 +4,15 @@ import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 import { Animations } from "phaser";
 
+let previousAnimations: Animations.Animation[] = [];
+
 export const AnimationSetterMap = {
   animations: (gameObject, emit) => (configurations) => {
-    if (!(configurations && configurations.length > 0)) return;
+    if (!(configurations && configurations.length > 0)) {
+      for (const { destroy } of previousAnimations) destroy();
+      previousAnimations = [];
+      return;
+    }
 
     const animations: Animations.Animation[] = [];
     for (const configuration of configurations) {

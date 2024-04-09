@@ -1,3 +1,4 @@
+import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
@@ -14,7 +15,7 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean, onComplete?: () => v
     return;
   }
 
-  monsterTween.value = {
+  useTween(monsterTween, {
     delay: 0,
     repeat: 10,
     duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
@@ -25,8 +26,7 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean, onComplete?: () => v
     },
     onComplete: (_, [monsterImageGameObject]) => {
       monsterImageGameObject.setAlpha(1);
-      monsterTween.value = undefined;
       onComplete?.();
     },
-  };
+  });
 };

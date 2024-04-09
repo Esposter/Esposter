@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAnimations } from "@/lib/phaser/composables/useAnimations";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
@@ -10,6 +11,15 @@ const emit = defineEmits<{ complete: [] }>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
+const animations = useAnimations([
+  {
+    key: SpritesheetKey.Slash,
+    frames: scene.value.anims.generateFrameNumbers(SpritesheetKey.Slash),
+    frameRate: 16,
+    repeat: 0,
+    delay: 0,
+  },
+]);
 </script>
 
 <template>
@@ -17,15 +27,7 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :animations="[
-        {
-          key: SpritesheetKey.Slash,
-          frames: scene.anims.generateFrameNumbers(SpritesheetKey.Slash),
-          frameRate: 16,
-          repeat: 0,
-          delay: 0,
-        },
-      ]"
+      :animations
       :play-animation-key="playAnimationKey"
       :is-to-enemy="isToEnemy"
       :configuration="{

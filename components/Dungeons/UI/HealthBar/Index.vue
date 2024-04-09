@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
+import { useTween } from "@/lib/phaser/composables/useTween";
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -33,17 +34,14 @@ watch(barWidth, (newBarWidth) => {
     return;
   }
 
-  tween.value = {
+  useTween(tween, {
     duration: dayjs.duration(1, "second").asMilliseconds(),
     displayWidth: newBarWidth,
     ease: Math.Easing.Sine.Out,
     onUpdate: (_, __, ___, current) => {
       syncDisplayWidths(current);
     },
-    onComplete: () => {
-      tween.value = undefined;
-    },
-  };
+  });
 });
 </script>
 
