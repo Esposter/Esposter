@@ -68,8 +68,8 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   };
 
   const onCancel = () => {
-    if (onUnuseItemComplete.value) onUnuseItemComplete.value();
-    else switchToPreviousScene();
+    switchToPreviousScene();
+    onUnuseItemComplete.value?.();
   };
 
   return {

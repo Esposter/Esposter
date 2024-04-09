@@ -30,14 +30,10 @@ export const ItemAttempt: State<StateName> = {
     launchScene(SceneKey.Inventory);
   },
   onExit: () => {
-    const phaserStore = usePhaserStore();
-    const { sceneKey } = storeToRefs(phaserStore);
     const monsterPartyItemStore = useMonsterPartyItemStore();
     const { onUnuseItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
-    const { switchToPreviousScene } = usePreviousScene(sceneKey.value);
 
     onUnuseItemComplete.value = undefined;
     onUseItemComplete.value = undefined;
-    switchToPreviousScene();
   },
 };
