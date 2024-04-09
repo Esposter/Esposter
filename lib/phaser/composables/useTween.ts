@@ -11,8 +11,4 @@ export const useTween = (
       configuration.onComplete?.(...args);
     },
   };
-
-  onUnmounted(() => {
-    tween.value = undefined;
-  });
 };
