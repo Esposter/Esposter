@@ -33,11 +33,6 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
-    else onPlayerDirectionInput(justDownInput);
-  };
-
-  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     if (itemUsed.value) {
       const item = itemUsed.value;
       itemUsed.value = undefined;
@@ -46,6 +41,11 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
       return;
     }
 
+    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+    else onPlayerDirectionInput(justDownInput);
+  };
+
+  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
         if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel) onCancel();
