@@ -4,27 +4,23 @@ import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 import { Animations } from "phaser";
 
-let previousAnimations: Animations.Animation[] = [];
-
 export const AnimationSetterMap = {
-  animations: (gameObject, emit) => (configurations) => {
-    if (!(configurations && configurations.length > 0)) {
-      for (const { destroy } of previousAnimations) destroy();
-      previousAnimations = [];
-      return;
-    }
+  animations: (gameObject, emit) =>
+    createAnimations<Animations.Animation, AnimationConfiguration["animations"]>((configurations) => {
+      const animations: Animations.Animation[] = [];
 
-    const animations: Animations.Animation[] = [];
-    for (const configuration of configurations) {
-      const animation = gameObject.scene.anims.create(configuration);
-      if (!animation) throw new Error(`Invalid animation key: ${configuration.key}`);
-      const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
-      gameObject.once(event, () => {
-        emit(event);
-      });
-      animations.push(animation);
-    }
-  },
+      for (const configuration of configurations) {
+        const animation = gameObject.scene.anims.create(configuration);
+        if (!animation) throw new Error(`Invalid animation key: ${configuration.key}`);
+        const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
+        gameObject.once(event, () => {
+          emit(event);
+        });
+        animations.push(animation);
+      }
+
+      return animations;
+    }),
   playAnimationKey: (gameObject) => (value) => {
     if (value === undefined) {
       gameObject.stop();
@@ -34,3 +30,13 @@ export const AnimationSetterMap = {
     gameObject.play(value);
   },
 } as const satisfies SetterMap<AnimationConfiguration, GameObjects.Sprite, SpriteEventEmitsOptions>;
+
+const createAnimations = <TAnimation extends { destroy: () => void }, TConfigurations extends object[]>(
+  callback: (configurations: TConfigurations) => TAnimation[],
+) => {
+  let previousAnimations: TAnimation[] = [];
+  return (configurations?: TConfigurations) => {
+    for (const { destroy } of previousAnimations) destroy();
+    previousAnimations = configurations ? callback(configurations) : [];
+  };
+};
