@@ -24,8 +24,9 @@ export const ItemAttempt: State<StateName> = {
       battleStateMachine.setState(StateName.PlayerInput);
     };
     onUseItemComplete.value = (item) => {
-      battleStateMachine.setState(StateName.EnemyInput);
-      showMessages([`You used ${item.name} on ${activeMonster.value.name}.`]);
+      showMessages([`You used ${item.name} on ${activeMonster.value.name}.`], () => {
+        battleStateMachine.setState(StateName.EnemyInput);
+      });
     };
     launchScene(SceneKey.Inventory);
   },
