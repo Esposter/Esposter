@@ -15,9 +15,7 @@ const { attackId, isToEnemy, isActive, onComplete } = storeToRefs(attackManagerS
     @complete="
       () => {
         const callback = onComplete;
-        attackId = undefined;
-        isToEnemy = undefined;
-        onComplete = undefined;
+        attackId = isToEnemy = onComplete = undefined;
         callback?.();
       }
     "
