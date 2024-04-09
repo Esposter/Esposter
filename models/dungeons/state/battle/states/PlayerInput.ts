@@ -22,6 +22,7 @@ export const PlayerInput: State<StateName> = {
   onExit: () => {
     const infoPanelStore = useInfoPanelStore();
     const { line1DialogMessage, line2Text } = storeToRefs(infoPanelStore);
+
     line1DialogMessage.value.text = "";
     line2Text.value = "";
   },

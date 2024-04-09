@@ -4,6 +4,7 @@ import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
+import { useMonsterPartyItemStore } from "@/store/dungeons/monsterParty/item";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export abstract class AItemResolver {
@@ -39,8 +40,8 @@ export abstract class AItemResolver {
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();
     const { inventory } = storeToRefs(inventorySceneStore);
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { selectedItemIndex } = storeToRefs(monsterPartySceneStore);
+    const monsterPartyItemStore = useMonsterPartyItemStore();
+    const { selectedItemIndex } = storeToRefs(monsterPartyItemStore);
 
     item.value.quantity--;
     if (item.value.quantity === 0) inventory.value.splice(selectedItemIndex.value, 1);

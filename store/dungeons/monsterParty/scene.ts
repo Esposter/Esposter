@@ -6,8 +6,8 @@ import type { Monster } from "@/models/dungeons/monster/Monster";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/monsterParty/constants";
 import { useGameStore } from "@/store/dungeons/game";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
+import { useMonsterPartyItemStore } from "@/store/dungeons/monsterParty/item";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
@@ -38,20 +38,6 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
-  const selectedItemIndex = ref(-1);
-  const selectedItem = computed({
-    get: () => {
-      const inventorySceneStore = useInventorySceneStore();
-      const { inventory } = storeToRefs(inventorySceneStore);
-      return inventory.value[selectedItemIndex.value];
-    },
-    set: (newSelectedItem) => {
-      if (selectedItemIndex.value === -1) return;
-      const inventorySceneStore = useInventorySceneStore();
-      const { inventory } = storeToRefs(inventorySceneStore);
-      inventory.value[selectedItemIndex.value] = newSelectedItem;
-    },
-  });
   const activeMonsterIndex = ref(0);
   const activeMonster = computed({
     get: () => save.value.player.monsters[activeMonsterIndex.value],
@@ -59,6 +45,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
+  const monsterPartyItemStore = useMonsterPartyItemStore();
+  const { selectedItemIndex, selectedItem } = storeToRefs(monsterPartyItemStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
   const infoText = ref("");
 
@@ -70,16 +58,14 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === PlayerSpecialInput.Cancel) {
-          switchToPreviousScene();
-          return;
-        } else if (selectedItemIndex.value === -1) {
+        if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene();
+        else if (selectedItemIndex.value === -1) {
           monsterIndex.value = optionGrid.value.index;
           launchScene(SceneKey.MonsterDetails);
-          return;
+        } else {
+          activeMonsterIndex.value = optionGrid.value.index;
+          useItem(selectedItem, activeMonster);
         }
-        activeMonsterIndex.value = optionGrid.value.index;
-        useItem(selectedItem, activeMonster);
         return;
       case PlayerSpecialInput.Cancel:
         switchToPreviousScene();
@@ -98,8 +84,6 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   return {
     monstersGrid,
     optionGrid,
-    selectedItemIndex,
-    selectedItem,
     activeMonsterIndex,
     activeMonster,
     infoText,
