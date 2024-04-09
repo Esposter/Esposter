@@ -41,9 +41,10 @@ export abstract class AItemResolver {
     const inventorySceneStore = useInventorySceneStore();
     const { inventory } = storeToRefs(inventorySceneStore);
     const monsterPartyItemStore = useMonsterPartyItemStore();
-    const { selectedItemIndex } = storeToRefs(monsterPartyItemStore);
+    const { selectedItemIndex, itemUsed } = storeToRefs(monsterPartyItemStore);
 
     item.value.quantity--;
     if (item.value.quantity === 0) inventory.value.splice(selectedItemIndex.value, 1);
+    itemUsed.value = item.value;
   }
 }

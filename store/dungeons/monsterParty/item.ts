@@ -16,12 +16,14 @@ export const useMonsterPartyItemStore = defineStore("dungeons/monsterParty/item"
       inventory.value[selectedItemIndex.value] = newSelectedItem;
     },
   });
-  const onUnusedItemComplete = ref<() => void>();
+  const itemUsed = ref<Item>();
+  const onUnuseItemComplete = ref<() => void>();
   const onUseItemComplete = ref<(item: Item) => void>();
   return {
     selectedItemIndex,
     selectedItem,
-    onUnusedItemComplete,
+    itemUsed,
+    onUnuseItemComplete,
     onUseItemComplete,
   };
 });

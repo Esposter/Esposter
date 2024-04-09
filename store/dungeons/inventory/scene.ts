@@ -32,7 +32,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   );
 
   const monsterPartyItemStore = useMonsterPartyItemStore();
-  const { selectedItemIndex, onUnusedItemComplete } = storeToRefs(monsterPartyItemStore);
+  const { selectedItemIndex, itemUsed, onUnuseItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
@@ -41,6 +41,12 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   };
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+    if (itemUsed.value) {
+      const item = itemUsed.value;
+      itemUsed.value = undefined;
+      onUseItemComplete.value?.(item);
+    }
+
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
         if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel) onCancel();
@@ -64,7 +70,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   };
 
   const onCancel = () => {
-    if (sceneKey.value === SceneKey.Battle) onUnusedItemComplete.value?.();
+    if (sceneKey.value === SceneKey.Battle) onUnuseItemComplete.value?.();
     else switchToPreviousScene();
   };
 

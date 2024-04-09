@@ -17,29 +17,27 @@ export const ItemAttempt: State<StateName> = {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const monsterPartyItemStore = useMonsterPartyItemStore();
-    const { onUnusedItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
+    const { onUnuseItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
     const { launchScene } = usePreviousScene(sceneKey.value);
 
-    onUnusedItemComplete.value = () => {
-      const { switchToPreviousScene } = usePreviousScene(sceneKey.value);
-      switchToPreviousScene();
+    onUnuseItemComplete.value = () => {
       battleStateMachine.setState(StateName.PlayerInput);
     };
     onUseItemComplete.value = (item) => {
-      const { switchToPreviousScene } = usePreviousScene(sceneKey.value);
-      // Switch back from MonsterParty -> Inventory -> Battle scene
-      switchToPreviousScene();
-      switchToPreviousScene();
       battleStateMachine.setState(StateName.EnemyInput);
       showMessages([`You used ${item.name} on ${activeMonster.value.name}.`]);
     };
     launchScene(SceneKey.Inventory);
   },
   onExit: () => {
+    const phaserStore = usePhaserStore();
+    const { sceneKey } = storeToRefs(phaserStore);
     const monsterPartyItemStore = useMonsterPartyItemStore();
-    const { onUnusedItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
+    const { onUnuseItemComplete, onUseItemComplete } = storeToRefs(monsterPartyItemStore);
+    const { switchToPreviousScene } = usePreviousScene(sceneKey.value);
 
-    onUnusedItemComplete.value = undefined;
+    onUnuseItemComplete.value = undefined;
     onUseItemComplete.value = undefined;
+    switchToPreviousScene();
   },
 };
