@@ -41,6 +41,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
     if (itemUsed.value) {
       const item = itemUsed.value;
       itemUsed.value = undefined;
+      switchToPreviousScene();
       onUseItemComplete.value?.(item);
       return;
     }

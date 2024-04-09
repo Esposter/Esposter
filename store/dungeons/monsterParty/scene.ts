@@ -65,6 +65,9 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
         } else {
           activeMonsterIndex.value = optionGrid.value.index;
           useItem(selectedItem, activeMonster);
+          // @TODO: Change this to be a dialog prompt and add input prompt cursor from player
+          // so they can see the animation properly
+          switchToPreviousScene();
         }
         return;
       case PlayerSpecialInput.Cancel:
