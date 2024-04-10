@@ -1,3 +1,4 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { Grid } from "@/models/dungeons/Grid";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -10,6 +11,8 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
+  const phaserStore = usePhaserStore();
+  const { sceneKey } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { save } = storeToRefs(gameStore);
   const inventory = computed({
@@ -35,7 +38,10 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
   const onPlayerInput = (justDownInput: PlayerInput) => {
     if (itemUsed.value) {
       const item = itemUsed.value;
-      switchToPreviousScene();
+      selectedItemIndex.value = -1;
+      // If the player used an item during battle,
+      // they are not allowed to use another item again
+      if (sceneKey.value === SceneKey.Battle) switchToPreviousScene();
       onUseItemComplete.value?.(item);
       return;
     }
