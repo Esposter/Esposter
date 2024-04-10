@@ -34,7 +34,6 @@ export default withNuxt(
         },
       ],
       "@typescript-eslint/no-base-to-string": "off",
-      "@typescript-eslint/no-import-type-side-effects": "error",
       "@typescript-eslint/no-redundant-type-constituents": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
