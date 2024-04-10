@@ -1,6 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useItemStore } from "@/store/dungeons/monsterParty/item";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
@@ -14,8 +15,15 @@ export const Battle: State<StateName> = {
      * 6. Brief pause
      * 7. Play health bar animation
      * 8. Brief pause
-     * 9. Repeat the steps above for the other monster
+     * 9. Repeat the steps above for the other monster if necessary
      */
-    battleStateMachine.setState(StateName.PlayerAttack);
+
+    const itemStore = useItemStore();
+    const { itemUsed } = storeToRefs(itemStore);
+
+    if (itemUsed.value) {
+      itemUsed.value = undefined;
+      battleStateMachine.setState(StateName.EnemyAttack);
+    } else battleStateMachine.setState(StateName.PlayerAttack);
   },
 };
