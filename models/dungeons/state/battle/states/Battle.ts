@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useItemStore } from "@/store/dungeons/monsterParty/item";
+import { useItemStore } from "@/store/dungeons/inventory/item";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
@@ -21,8 +21,8 @@ export const Battle: State<StateName> = {
     const { itemUsed } = storeToRefs(itemStore);
 
     if (itemUsed.value) {
-      itemUsed.value = undefined;
       battleStateMachine.setState(StateName.EnemyAttack);
+      itemUsed.value = undefined;
     } else battleStateMachine.setState(StateName.PlayerAttack);
   },
 };

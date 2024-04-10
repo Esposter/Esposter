@@ -4,7 +4,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useItemStore } from "@/store/dungeons/monsterParty/item";
+import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export const ItemAttempt: State<StateName> = {

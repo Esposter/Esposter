@@ -5,12 +5,12 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
+import { useInputStore } from "@/store/dungeons/inventory/input";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const inventorySceneStore = useInventorySceneStore();
-const { onPlayerInput } = inventorySceneStore;
+const inputStore = useInputStore();
+const { onPlayerInput } = inputStore;
 </script>
 
 <template>

@@ -1,4 +1,3 @@
-import type { Item } from "@/models/dungeons/item/Item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
 export const useItemStore = defineStore("dungeons/monsterParty/item", () => {
@@ -16,14 +15,8 @@ export const useItemStore = defineStore("dungeons/monsterParty/item", () => {
       inventory.value[selectedItemIndex.value] = newSelectedItem;
     },
   });
-  const itemUsed = ref<Item>();
-  const onUnuseItemComplete = ref<() => void>();
-  const onUseItemComplete = ref<(item: Item) => void>();
   return {
     selectedItemIndex,
     selectedItem,
-    itemUsed,
-    onUnuseItemComplete,
-    onUseItemComplete,
   };
 });
