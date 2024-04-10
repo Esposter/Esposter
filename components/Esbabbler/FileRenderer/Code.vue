@@ -15,7 +15,7 @@ const languageRequested = computed(() => extendedLanguages.find((l) => l.name ==
 const languageConfiguration = ref(new Compartment());
 const languageSupport = ref(languageRequested.value ? await languageRequested.value.load() : undefined);
 const languageExtension = computed(() =>
-  // @ts-expect-error
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts(2589)
   languageSupport.value ? languageConfiguration.value.of(languageSupport.value) : undefined,
 );
 const editorView = shallowRef<EditorView>();

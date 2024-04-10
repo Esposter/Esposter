@@ -23,7 +23,7 @@ const onUpdateRoom = async () => {
 };
 
 onClickOutside(titleRef, async () => {
-  if (isUpdateMode) await onUpdateRoom();
+  if (isUpdateMode.value) await onUpdateRoom();
 });
 </script>
 

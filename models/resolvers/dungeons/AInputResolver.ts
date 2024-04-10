@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 // @TODO: Add GetAll{Scene}InputResolvers once es decorators gets implemented

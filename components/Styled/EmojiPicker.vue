@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import "emoji-mart-vue-fast/css/emoji-mart.css";
 import data from "emoji-mart-vue-fast/data/all.json";
-// @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
-// @ts-expect-error
+// @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
-// @ts-expect-error
+// @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
 import { VBtn, VTooltip } from "vuetify/components";

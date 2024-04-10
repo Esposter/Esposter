@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
@@ -17,7 +15,6 @@ export abstract class AItemResolver {
   }
 
   preValidate(item: Ref<Item>): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (item.value.effect.type !== this.type) return false;
 
     const infoPanelStore = useInfoPanelStore();
