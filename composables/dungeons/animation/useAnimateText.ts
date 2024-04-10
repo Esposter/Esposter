@@ -1,5 +1,4 @@
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
-import { sleep } from "@/util/sleep";
 import type { Scene } from "phaser";
 
 export const useAnimateText = (
@@ -13,22 +12,20 @@ export const useAnimateText = (
 ) => {
   const { play, stop } = useDungeonsSound(SoundKey.TextBlip, { loop: true });
   const textDelay = useTextDelay(configuration?.delay);
+  const textSections = text.split(/(\S|\s+)/).filter(Boolean);
   let i = 0;
 
   play();
   scene.time.addEvent({
     delay: textDelay.value,
-    repeat: text.length - 1,
+    repeat: textSections.length - 1,
     callback: async () => {
-      const character = text[i];
-      targetText.value += character;
+      const textSection = textSections[i];
+      targetText.value += textSection;
       i++;
-      if (i === text.length - 1) {
+
+      if (i === textSections.length) {
         stop();
-        // We need this delay here to prevent the last character animations
-        // from being updated after we set the text back to blank
-        // It seems that we need exactly 2 ticks for it to finish
-        await sleep(textDelay.value * 2);
         configuration?.onComplete?.();
       }
     },

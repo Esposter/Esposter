@@ -7,7 +7,6 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { sleep } from "@/util/sleep";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const settingsStore = useSettingsStore();
@@ -61,12 +60,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     if (isSkipAnimations.value) {
-      const textDelay = useTextDelay();
       dialogTarget.setMessage(message);
-      void sleep(textDelay.value).then(() => {
-        showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
-        isWaitingForPlayerSpecialInput.value = true;
-      });
+      showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
+      isWaitingForPlayerSpecialInput.value = true;
       return;
     }
 
