@@ -27,7 +27,7 @@
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "0.2.0",
+    "@nuxt/eslint-config": "^0.3.4",
     "@nuxt/test-utils": "^3.12.0",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
@@ -63,7 +63,6 @@
     "vuetify-nuxt-module": "^0.13.2"
   },
   "devDependenciesComments": {
-    "@nuxt/eslint-config": "upgrading breaks @typescript-eslint/consistent-type-imports",
     "nuxt": "upgrading breaks phaser"
   },
   "dependencies": {
@@ -147,5 +146,11 @@
   "engines": {
     "node": "^20.12.1"
   },
-  "packageManager": "pnpm@8.15.6"
+  "packageManager": "pnpm@8.15.6",
+  "pnpm": {
+    "overrides": {
+      "@typescript-eslint/eslint-plugin": "6.21.0",
+      "@typescript-eslint/parser": "6.21.0"
+    }
+  }
 }
