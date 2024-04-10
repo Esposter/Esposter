@@ -6,15 +6,15 @@ import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useGameStore } from "@/store/dungeons/game";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const worldSceneStore = useWorldSceneStore();
-const { isDialogVisible, dialogMessage } = storeToRefs(worldSceneStore);
+const worldDialogStore = useWorldDialogStore();
+const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
 const worldView = useWorldView();
 const x = ref(worldView.value.x + DIALOG_PADDING);
 const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);

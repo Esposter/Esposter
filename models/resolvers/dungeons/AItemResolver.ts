@@ -4,8 +4,8 @@ import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
-import { useMonsterPartyItemStore } from "@/store/dungeons/monsterParty/item";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
+import { useItemStore } from "@/store/dungeons/monsterParty/item";
 
 export abstract class AItemResolver {
   // @TODO: Ideally if we had es decorators we would be able to look up the class
@@ -20,11 +20,11 @@ export abstract class AItemResolver {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (item.value.effect.type !== this.type) return false;
 
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { infoText } = storeToRefs(monsterPartySceneStore);
+    const infoPanelStore = useInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
     if (item.value.quantity === 0) {
-      infoText.value = `No more ${item.value.name} available`;
+      infoDialogMessage.value.text = `No more ${item.value.name} available`;
       return false;
     }
 
@@ -40,8 +40,8 @@ export abstract class AItemResolver {
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();
     const { inventory } = storeToRefs(inventorySceneStore);
-    const monsterPartyItemStore = useMonsterPartyItemStore();
-    const { selectedItemIndex, itemUsed } = storeToRefs(monsterPartyItemStore);
+    const itemStore = useItemStore();
+    const { selectedItemIndex, itemUsed } = storeToRefs(itemStore);
 
     item.value.quantity--;
     if (item.value.quantity === 0) inventory.value.splice(selectedItemIndex.value, 1);

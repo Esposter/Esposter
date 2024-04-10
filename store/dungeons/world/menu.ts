@@ -1,3 +1,4 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -8,14 +9,16 @@ import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
-export const useWorldMenuStore = defineStore("dungeons/world/menu", () => {
+export const useMenuStore = defineStore("dungeons/world/menu", () => {
+  const phaserStore = usePhaserStore();
+  const { sceneKey } = storeToRefs(phaserStore);
   const gameStore = useGameStore();
   const { saveData, fadeSwitchToScene } = gameStore;
   const worldSceneStore = useWorldSceneStore();
   const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
-  const { launchScene } = usePreviousScene(SceneKey.World);
+  const { launchScene } = usePreviousScene(sceneKey.value);
 
   const onPlayerInput = async (justDownInput: PlayerInput) => {
     if (justDownInput === PlayerSpecialInput.Confirm)

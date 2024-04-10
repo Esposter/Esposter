@@ -1,16 +1,15 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/sleep";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
-  const phaserStore = usePhaserStore();
-  const { scene, sceneKey } = storeToRefs(phaserStore);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const inputPromptCursorX = ref();
@@ -25,11 +24,11 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
-  const handleShowMessageInput = (input: PlayerInput) => {
+  const handleShowMessageInput = (input: PlayerInput, scene: SceneWithPlugins) => {
     if (input === PlayerSpecialInput.Confirm)
       if (isQueuedMessagesAnimationPlaying.value) return true;
       else if (isWaitingForPlayerSpecialInput.value) {
-        showMessage();
+        showMessage(scene);
         return true;
       }
 
@@ -37,6 +36,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   };
 
   const updateQueuedMessagesAndShowMessage = (
+    scene: SceneWithPlugins,
     target: DialogTarget,
     messages: DialogMessage[],
     onComplete?: () => void,
@@ -44,15 +44,15 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     queuedMessages.value = messages;
     queuedOnComplete.value = onComplete;
     dialogTarget = target;
-    showMessage();
+    showMessage(scene);
   };
 
-  const showMessage = () => {
+  const showMessage = (scene: SceneWithPlugins) => {
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
     dialogTarget.reset();
     // Tell other components like the dialog that we're ready to show our message
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`);
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
 
     const message = queuedMessages.value.shift();
     if (!message) {
@@ -79,7 +79,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     });
     dialogTarget.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
-    useAnimateText(scene.value, targetText, message.text, {
+    useAnimateText(scene, targetText, message.text, {
       onComplete: () => {
         showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
@@ -88,9 +88,14 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     });
   };
 
-  const showMessageNoInputRequired = (target: DialogTarget, message: DialogMessage, onComplete?: () => void) => {
+  const showMessageNoInputRequired = (
+    scene: SceneWithPlugins,
+    target: DialogTarget,
+    message: DialogMessage,
+    onComplete?: () => void,
+  ) => {
     target.reset();
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`);
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
 
     if (isSkipAnimations.value) {
       target.setMessage(message);
@@ -105,7 +110,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       },
     });
     dialogTarget.message.value.title = message.title;
-    useAnimateText(scene.value, targetText, message.text, { onComplete });
+    useAnimateText(scene, targetText, message.text, { onComplete });
   };
 
   const showInputPromptCursor = (x: number) => {

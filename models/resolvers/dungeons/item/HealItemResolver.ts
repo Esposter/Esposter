@@ -1,7 +1,9 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
+import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export class HealItemResolver extends AItemResolver {
@@ -11,13 +13,15 @@ export class HealItemResolver extends AItemResolver {
 
   validate(item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster, infoText } = storeToRefs(monsterPartySceneStore);
+    const { activeMonster } = storeToRefs(monsterPartySceneStore);
+    const infoPanelStore = useInfoPanelStore();
+    const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
     if (target.value.currentHp === 0) {
-      infoText.value = `Cannot heal fainted ${activeMonster.value.name}`;
+      infoDialogMessage.value.text = `Cannot heal fainted ${activeMonster.value.name}`;
       return false;
     } else if (target.value.currentHp === target.value.stats.maxHp) {
-      infoText.value = `${activeMonster.value.name} is already fully healed`;
+      infoDialogMessage.value.text = `${activeMonster.value.name} is already fully healed`;
       return false;
     }
 
@@ -26,11 +30,16 @@ export class HealItemResolver extends AItemResolver {
 
   handleItem(item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster, infoText } = storeToRefs(monsterPartySceneStore);
+    const { activeMonster } = storeToRefs(monsterPartySceneStore);
+    const infoPanelStore = useInfoPanelStore();
+    const { showMessages } = infoPanelStore;
+    const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
     const oldHp = target.value.currentHp;
     const newHp = Math.min(oldHp + item.value.effect.value, target.value.stats.maxHp);
 
     target.value.currentHp = newHp;
-    infoText.value = `Healed ${activeMonster.value.name} by ${newHp - oldHp} HP`;
+    showMessages([`Healed ${activeMonster.value.name} by ${newHp - oldHp} HP`], () => {
+      switchToPreviousScene();
+    });
   }
 }

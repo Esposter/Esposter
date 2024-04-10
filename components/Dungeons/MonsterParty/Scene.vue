@@ -3,16 +3,20 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { useInputStore } from "@/store/dungeons/monsterParty/input";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
-const monsterPartySceneStore = useMonsterPartySceneStore();
-const { onPlayerInput } = monsterPartySceneStore;
+const inputStore = useInputStore();
+const { onPlayerInput } = inputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterParty" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
+  <Scene
+    :scene-key="SceneKey.MonsterParty"
+    :cls="SceneWithPlugins"
+    @update="(scene) => onPlayerInput(controls.getInput(true), scene)"
+  >
     <DungeonsMonsterPartyBackground />
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />

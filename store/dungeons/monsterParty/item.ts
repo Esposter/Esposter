@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
-export const useMonsterPartyItemStore = defineStore("dungeons/monsterParty/item", () => {
+export const useItemStore = defineStore("dungeons/monsterParty/item", () => {
   const selectedItemIndex = ref(-1);
   const selectedItem = computed({
     get: () => {

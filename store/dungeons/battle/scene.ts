@@ -1,3 +1,4 @@
+import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
@@ -11,6 +12,8 @@ import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
+  const phaserStore = usePhaserStore();
+  const { scene } = storeToRefs(phaserStore);
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const playerStore = usePlayerStore();
@@ -18,7 +21,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const activePanel = ref(ActivePanel.Info);
 
   const onPlayerInput = (input: PlayerInput) => {
-    if (handleShowMessageInput(input)) return;
+    if (handleShowMessageInput(input, scene.value)) return;
     else if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };
