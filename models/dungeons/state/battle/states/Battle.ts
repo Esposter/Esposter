@@ -17,7 +17,6 @@ export const Battle: State<StateName> = {
      * 8. Brief pause
      * 9. Repeat the steps above for the other monster if necessary
      */
-
     const itemStore = useItemStore();
     const { itemUsed } = storeToRefs(itemStore);
 
