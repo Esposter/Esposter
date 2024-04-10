@@ -5,11 +5,11 @@ import { dayjs } from "@/services/dayjs";
 import { useDialogStore } from "@/store/dungeons/dialog";
 
 interface InputPromptCursorProps {
-  height: number;
+  y: number;
   scale?: number;
 }
 
-const { height, scale = 1 } = defineProps<InputPromptCursorProps>();
+const { y, scale = 1 } = defineProps<InputPromptCursorProps>();
 const dialogStore = useDialogStore();
 const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVisible } = storeToRefs(dialogStore);
 </script>
@@ -29,9 +29,9 @@ const { inputPromptCursorX, inputPromptCursorDisplayWidth, isInputPromptCursorVi
         duration: dayjs.duration(0.5, 'seconds').asMilliseconds(),
         repeat: -1,
         y: {
-          from: height,
-          start: height,
-          to: height + 6,
+          from: y,
+          start: y,
+          to: y + 6,
         },
       },
     }"

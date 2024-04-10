@@ -17,7 +17,8 @@ const { controls } = storeToRefs(gameStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
 const infoPanelStore = useInfoPanelStore();
-const { infoDialogMessage } = storeToRefs(infoPanelStore);
+const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
+const rectangleHeight = 65;
 const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
 
 watch(
@@ -37,7 +38,7 @@ watch(
       :configuration="{
         origin: 0,
         width: 867,
-        height: 65,
+        height: rectangleHeight,
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
       }"
@@ -50,6 +51,8 @@ watch(
         text: infoDialogMessage.text,
         style: MenuTextStyle,
       }"
+      @update:display-width="(value: typeof infoTextDisplayWidth) => (infoTextDisplayWidth = value)"
     />
+    <DungeonsUIInputPromptCursor :y="rectangleHeight / 2 - 3" />
   </Container>
 </template>

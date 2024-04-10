@@ -32,6 +32,6 @@ const { line1DialogMessage, line1TextDisplayWidth, line2Text } = storeToRefs(inf
         style: DialogTextStyle,
       }"
     />
-    <DungeonsUIInputPromptCursor :height="480" />
+    <DungeonsUIInputPromptCursor :y="480" />
   </template>
 </template>

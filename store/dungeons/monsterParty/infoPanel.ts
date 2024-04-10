@@ -9,17 +9,22 @@ export const useInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", 
   const { scene } = storeToRefs(phaserStore);
   const dialogStore = useDialogStore();
   const { updateQueuedMessagesAndShowMessage } = dialogStore;
-  const { infoDialogMessage } = useDialogMessage("info");
+  const { inputPromptCursorDisplayWidth } = storeToRefs(dialogStore);
+  const { infoDialogMessage, infoTextDisplayWidth } = useDialogMessage("info");
+  const inputPromptCursorX = computed(
+    () => (infoTextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7,
+  );
   const showMessages = (messages: string[], onComplete?: () => void) => {
     updateQueuedMessagesAndShowMessage(
       scene.value.scene.get<SceneWithPlugins>(SceneKey.MonsterParty),
-      new DialogTarget({ message: infoDialogMessage }),
+      new DialogTarget({ message: infoDialogMessage, inputPromptCursorX }),
       messages.map((text) => ({ text })),
       onComplete,
     );
   };
   return {
     infoDialogMessage,
+    infoTextDisplayWidth,
     showMessages,
   };
 });

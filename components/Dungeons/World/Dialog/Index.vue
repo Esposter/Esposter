@@ -44,6 +44,6 @@ watch(isDialogVisible, (newIsDialogVisible) => {
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />
     <DungeonsWorldDialogText :dialog-message="dialogMessage" />
-    <DungeonsUIInputPromptCursor :height="DIALOG_HEIGHT - 24" :scale="1.25" />
+    <DungeonsUIInputPromptCursor :y="DIALOG_HEIGHT - 24" :scale="1.25" />
   </Container>
 </template>
