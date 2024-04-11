@@ -26,7 +26,7 @@ watch(
   (newCancelButtonActive) => {
     // We will keep info text as a ref as it can be set by other things
     // e.g. when using items
-    infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu" : "Choose a monster";
+    infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : "Choose a monster.";
   },
   { immediate: true },
 );
