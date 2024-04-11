@@ -5,6 +5,7 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -14,6 +15,11 @@ const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
+// It's unfortunate, but we have to access the internals
+// when we handle confirm inputs since we don't know where it comes from
+// i.e. it could be from this info container or from clicking the monster panel
+const dialogStore = useDialogStore();
+const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
 const infoPanelStore = useInfoPanelStore();
@@ -42,7 +48,11 @@ watch(
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
       }"
-      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
+      @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
+        () => {
+          if (isWaitingForPlayerSpecialInput) controls.setInput(PlayerSpecialInput.Confirm);
+        }
+      "
     />
     <Text
       :configuration="{

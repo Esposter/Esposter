@@ -123,6 +123,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     inputPromptCursorX,
     inputPromptCursorDisplayWidth,
     isInputPromptCursorVisible,
+    isWaitingForPlayerSpecialInput,
     handleShowMessageInput,
     updateQueuedMessagesAndShowMessage,
     showMessageNoInputRequired,
