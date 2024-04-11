@@ -5,8 +5,8 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useItemStore } from "@/store/dungeons/battle/item";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import type { EventEmitter } from "eventemitter3";
 
@@ -27,21 +27,21 @@ export const ItemAttempt: State<StateName> = {
     const { sceneKey } = storeToRefs(phaserStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const itemStore = useItemStore();
-    const { itemUsed } = storeToRefs(itemStore);
+    const actionStore = useActionStore();
+    const { itemUsed } = storeToRefs(actionStore);
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const { launchScene, removeScene } = usePreviousScene(sceneKey.value);
 
     usePhaserListener("useItem", (item, sceneKey) => {
       const { switchToPreviousScene } = usePreviousScene(sceneKey);
-      itemUsed.value = item;
       // We assume here that you can only use an item in a separate scene
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
       removeScene(SceneKey.Inventory);
       switchToPreviousScene();
       showMessages([`You used ${item.name} on ${activeMonster.value.name}.`], () => {
+        itemUsed.value = item;
         battleStateMachine.setState(StateName.EnemyInput);
       });
     });

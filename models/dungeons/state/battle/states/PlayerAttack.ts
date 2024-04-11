@@ -4,6 +4,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
+import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
@@ -19,6 +20,8 @@ export const PlayerAttack: State<StateName> = {
     const { activeMonster, attackOptionGrid } = storeToRefs(playerStore);
     const enemyStore = useEnemyStore();
     const { takeDamage } = enemyStore;
+    const actionStore = useActionStore();
+    const { hasPlayerAttacked } = storeToRefs(actionStore);
     // We won't use computed here because we've locked in our attack now
     const attack = attackOptionGrid.value.value;
     if (!attack) return;
@@ -27,6 +30,7 @@ export const PlayerAttack: State<StateName> = {
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
         useAttackAnimation(attack.id, true, () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
+            hasPlayerAttacked.value = true;
             battleStateMachine.setState(StateName.PlayerPostAttackCheck);
           });
         });

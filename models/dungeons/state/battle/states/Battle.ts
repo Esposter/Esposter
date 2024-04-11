@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useItemStore } from "@/store/dungeons/battle/item";
+import { useActionStore } from "@/store/dungeons/battle/action";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
@@ -17,12 +17,16 @@ export const Battle: State<StateName> = {
      * 8. Brief pause
      * 9. Repeat the steps above for the other monster if necessary
      */
-    const itemStore = useItemStore();
-    const { itemUsed } = storeToRefs(itemStore);
+    const actionStore = useActionStore();
+    const { itemUsed, isFleeAttempted } = storeToRefs(actionStore);
 
     if (itemUsed.value) {
-      battleStateMachine.setState(StateName.EnemyAttack);
       itemUsed.value = undefined;
-    } else battleStateMachine.setState(StateName.PlayerAttack);
+      battleStateMachine.setState(StateName.EnemyAttack);
+    } else if (isFleeAttempted.value) {
+      isFleeAttempted.value = false;
+      battleStateMachine.setState(StateName.EnemyAttack);
+    } else if (Math.random() < 0.5) battleStateMachine.setState(StateName.EnemyAttack);
+    else battleStateMachine.setState(StateName.PlayerAttack);
   },
 };

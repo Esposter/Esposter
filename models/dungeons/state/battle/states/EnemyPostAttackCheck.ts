@@ -1,6 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -11,6 +12,15 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const { showMessages } = battleDialogStore;
     const playerStore = usePlayerStore();
     const { activeMonster, isActiveMonsterFainted } = storeToRefs(playerStore);
+    const actionStore = useActionStore();
+    const { hasPlayerAttacked, hasEnemyAttacked } = storeToRefs(actionStore);
+
+    if (!hasPlayerAttacked.value) {
+      battleStateMachine.setState(StateName.PlayerAttack);
+      return;
+    }
+
+    hasPlayerAttacked.value = false;
 
     if (isActiveMonsterFainted.value) {
       useMonsterDeathTween(false, () => {
@@ -18,6 +28,7 @@ export const EnemyPostAttackCheck: State<StateName> = {
           [`${activeMonster.value.name} has fainted!`, "You have no more monsters, escaping to safety..."],
           () => {
             battleStateMachine.setState(StateName.Finished);
+            hasEnemyAttacked.value = false;
           },
         );
       });
@@ -25,5 +36,6 @@ export const EnemyPostAttackCheck: State<StateName> = {
     }
 
     battleStateMachine.setState(StateName.PlayerInput);
+    hasEnemyAttacked.value = false;
   },
 };
