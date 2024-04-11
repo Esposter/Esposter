@@ -1,5 +1,5 @@
+import { MIGRATIONS_FOLDER_PATH } from "@/db/constants";
 import { defineConfig } from "drizzle-kit";
-import { MIGRATIONS_FOLDER_PATH } from "./db/constants";
 
 export default defineConfig({
   schema: "db/schema",
