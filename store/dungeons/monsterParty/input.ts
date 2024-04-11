@@ -16,7 +16,7 @@ export const useInputStore = defineStore("dungeons/monsterParty/input", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { optionGrid, activeMonsterIndex, activeMonster } = storeToRefs(monsterPartySceneStore);
   const itemStore = useItemStore();
-  const { selectedItemIndex, selectedItem, onUseItemComplete } = storeToRefs(itemStore);
+  const { selectedItemIndex, selectedItem } = storeToRefs(itemStore);
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);

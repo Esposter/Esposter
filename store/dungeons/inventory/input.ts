@@ -1,3 +1,4 @@
+import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -11,7 +12,7 @@ export const useInputStore = defineStore("dungeons/inventory/input", () => {
   const inventorySceneStore = useInventorySceneStore();
   const { itemOptionGrid } = storeToRefs(inventorySceneStore);
   const itemStore = useItemStore();
-  const { selectedItemIndex, onUnuseItemComplete } = storeToRefs(itemStore);
+  const { selectedItemIndex } = storeToRefs(itemStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
@@ -44,7 +45,7 @@ export const useInputStore = defineStore("dungeons/inventory/input", () => {
 
   const onCancel = () => {
     switchToPreviousScene();
-    onUnuseItemComplete.value?.();
+    phaserEventEmitter.emit("unuseItem");
   };
 
   return {
