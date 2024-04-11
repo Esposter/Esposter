@@ -1,7 +1,7 @@
 import { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 
 export class DialogTarget {
-  id: string = crypto.randomUUID();
+  id = crypto.randomUUID();
   message = ref(new DialogMessage());
   inputPromptCursorX: MaybeRef<number> = ref(0);
 
