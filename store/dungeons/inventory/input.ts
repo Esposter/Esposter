@@ -5,7 +5,6 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { useItemStore as useInventoryItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
-import { useItemStore as useMonsterPartyItemStore } from "@/store/dungeons/monsterParty/item";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
@@ -14,10 +13,8 @@ export const useInputStore = defineStore("dungeons/inventory/input", () => {
   const { sceneKey } = storeToRefs(phaserStore);
   const inventorySceneStore = useInventorySceneStore();
   const { itemOptionGrid } = storeToRefs(inventorySceneStore);
-  const monsterPartyItemStore = useMonsterPartyItemStore();
-  const { selectedItemIndex } = storeToRefs(monsterPartyItemStore);
   const inventoryItemStore = useInventoryItemStore();
-  const { itemUsed, onUnuseItemComplete, onUseItemComplete } = storeToRefs(inventoryItemStore);
+  const { selectedItemIndex, itemUsed, onUnuseItemComplete, onUseItemComplete } = storeToRefs(inventoryItemStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {

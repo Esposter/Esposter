@@ -4,7 +4,6 @@ import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useItemStore as useInventoryItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useItemStore as useMonsterPartyItemStore } from "@/store/dungeons/monsterParty/item";
 
 export abstract class AItemResolver {
   // @TODO: Ideally if we had es decorators we would be able to look up the class
@@ -38,10 +37,8 @@ export abstract class AItemResolver {
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();
     const { inventory } = storeToRefs(inventorySceneStore);
-    const monsterPartyItemStore = useMonsterPartyItemStore();
-    const { selectedItemIndex } = storeToRefs(monsterPartyItemStore);
     const inventoryItemStore = useInventoryItemStore();
-    const { itemUsed } = storeToRefs(inventoryItemStore);
+    const { selectedItemIndex, itemUsed } = storeToRefs(inventoryItemStore);
 
     item.value.quantity--;
     if (item.value.quantity === 0) inventory.value.splice(selectedItemIndex.value, 1);
