@@ -1,4 +1,3 @@
-import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
@@ -14,29 +13,17 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const playerStore = usePlayerStore();
     const { activeMonster, isActiveMonsterFainted, optionGrid } = storeToRefs(playerStore);
     const actionStore = useActionStore();
-    const { hasPlayerAttacked, hasEnemyAttacked } = storeToRefs(actionStore);
+    const { attackStatePriorityMap } = storeToRefs(actionStore);
 
-    if (optionGrid.value.value === PlayerOption.Fight && !hasPlayerAttacked.value) {
-      battleStateMachine.setState(StateName.PlayerAttack);
-      return;
-    }
-
-    hasPlayerAttacked.value = false;
-
-    if (isActiveMonsterFainted.value) {
+    if (isActiveMonsterFainted.value)
       useMonsterDeathTween(false, () => {
         showMessages(
           [`${activeMonster.value.name} has fainted!`, "You have no more monsters, escaping to safety..."],
           () => {
             battleStateMachine.setState(StateName.Finished);
-            hasEnemyAttacked.value = false;
           },
         );
       });
-      return;
-    }
-
-    battleStateMachine.setState(StateName.PlayerInput);
-    hasEnemyAttacked.value = false;
+    else battleStateMachine.setState(attackStatePriorityMap.value[StateName.EnemyPostAttackCheck]);
   },
 };

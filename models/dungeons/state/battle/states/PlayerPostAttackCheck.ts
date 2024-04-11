@@ -13,26 +13,15 @@ export const PlayerPostAttackCheck: State<StateName> = {
     const enemyStore = useEnemyStore();
     const { activeMonster, isActiveMonsterFainted } = storeToRefs(enemyStore);
     const actionStore = useActionStore();
-    const { hasPlayerAttacked, hasEnemyAttacked } = storeToRefs(actionStore);
-
-    if (!hasEnemyAttacked.value) {
-      battleStateMachine.setState(StateName.EnemyAttack);
-      return;
-    }
-
-    hasEnemyAttacked.value = false;
+    const { attackStatePriorityMap } = storeToRefs(actionStore);
 
     if (isActiveMonsterFainted.value) {
       useMonsterDeathTween(true, () => {
         showMessages([`Wild ${activeMonster.value.name} has fainted!`, "You have gained some experience."], () => {
           battleStateMachine.setState(StateName.Finished);
-          hasPlayerAttacked.value = false;
         });
       });
       return;
-    }
-
-    battleStateMachine.setState(StateName.PlayerInput);
-    hasPlayerAttacked.value = false;
+    } else battleStateMachine.setState(attackStatePriorityMap.value[StateName.PlayerPostAttackCheck]);
   },
 };

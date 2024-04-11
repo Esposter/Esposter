@@ -2,6 +2,7 @@ import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { useActionStore } from "@/store/dungeons/battle/action";
 import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 export const Battle: State<StateName> = {
@@ -20,8 +21,15 @@ export const Battle: State<StateName> = {
      */
     const playerStore = usePlayerStore();
     const { optionGrid } = storeToRefs(playerStore);
+    const actionStore = useActionStore();
+    const { attackStatePriorityMap } = storeToRefs(actionStore);
 
-    if (optionGrid.value.value === PlayerOption.Fight && Math.random() < 0.5)
+    attackStatePriorityMap.value = useAttackStatePriorityMap();
+
+    if (
+      optionGrid.value.value === PlayerOption.Fight &&
+      attackStatePriorityMap.value[StateName.Battle] === StateName.PlayerAttack
+    )
       battleStateMachine.setState(StateName.PlayerAttack);
     else battleStateMachine.setState(StateName.EnemyAttack);
   },
