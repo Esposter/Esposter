@@ -18,12 +18,18 @@ export const ItemAttempt: State<StateName> = {
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const itemStore = useItemStore();
     const { onUnuseItemComplete, onUseItemComplete } = storeToRefs(itemStore);
-    const { launchScene } = usePreviousScene(sceneKey.value);
+    const { launchScene, removeScene } = usePreviousScene(sceneKey.value);
 
     onUnuseItemComplete.value = () => {
       battleStateMachine.setState(StateName.PlayerInput);
     };
-    onUseItemComplete.value = (item) => {
+    onUseItemComplete.value = (item, sceneKey) => {
+      const { switchToPreviousScene } = usePreviousScene(sceneKey);
+      // We assume here that you can only use an item in a separate scene
+      // other than inventory, and that once you've used an item in battle
+      // you cannot use another item, so we remove the inventory scene
+      removeScene(SceneKey.Inventory);
+      switchToPreviousScene();
       showMessages([`You used ${item.name} on ${activeMonster.value.name}.`], () => {
         battleStateMachine.setState(StateName.EnemyInput);
       });

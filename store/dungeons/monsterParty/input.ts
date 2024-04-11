@@ -16,7 +16,7 @@ export const useInputStore = defineStore("dungeons/monsterParty/input", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { optionGrid, activeMonsterIndex, activeMonster } = storeToRefs(monsterPartySceneStore);
   const itemStore = useItemStore();
-  const { selectedItemIndex, selectedItem } = storeToRefs(itemStore);
+  const { selectedItemIndex, selectedItem, onUseItemComplete } = storeToRefs(itemStore);
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
@@ -36,7 +36,7 @@ export const useInputStore = defineStore("dungeons/monsterParty/input", () => {
           launchScene(SceneKey.MonsterDetails);
         } else {
           activeMonsterIndex.value = optionGrid.value.index;
-          useItem(selectedItem, activeMonster);
+          useItem(selectedItem, activeMonster, SceneKey.MonsterParty);
         }
         return;
       case PlayerSpecialInput.Cancel:

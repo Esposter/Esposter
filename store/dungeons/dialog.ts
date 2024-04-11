@@ -18,8 +18,10 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   // that the player can go through and we have to wait for their input so we need to be able
   // to access the dialog when the player has inputted a value
   let dialogTarget: DialogTarget;
-  const queuedMessages = ref<DialogMessage[]>([]);
-  const queuedOnComplete = ref<() => void>();
+  let queuedMessages: DialogMessage[];
+  // We need a map of onComplete hooks based on the dialog target id
+  // to allow for recursive onComplete hook calls and cleaning them up later
+  const queuedOnCompleteMap = new Map<string, () => void>();
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
@@ -39,44 +41,48 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     messages: DialogMessage[],
     onComplete?: () => void,
   ) => {
-    queuedMessages.value = messages;
-    queuedOnComplete.value = onComplete;
     dialogTarget = target;
-    showMessage(scene);
+    queuedMessages = messages;
+    if (onComplete) queuedOnCompleteMap.set(dialogTarget.id, onComplete);
+    showMessage(scene, dialogTarget);
   };
-
-  const showMessage = (scene: SceneWithPlugins) => {
+  // By default, this will show the message of what's last been set
+  // but because we allow recursive calls that may show messages in other
+  // dialog targets, we need to also allow being able to specify them
+  const showMessage = (scene: SceneWithPlugins, target = dialogTarget) => {
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
-    dialogTarget.reset();
+    target.reset();
     // Tell other components like the dialog that we're ready to show our message
     phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
 
-    const message = queuedMessages.value.shift();
+    const message = queuedMessages.shift();
     if (!message) {
-      queuedOnComplete.value?.();
-      queuedOnComplete.value = undefined;
+      const queuedOnComplete = queuedOnCompleteMap.get(target.id);
+      if (!queuedOnComplete) return;
+      queuedOnComplete();
+      queuedOnCompleteMap.delete(target.id);
       return;
     }
 
     if (isSkipAnimations.value) {
-      dialogTarget.setMessage(message);
-      showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
+      target.setMessage(message);
+      showInputPromptCursor(unref(target.inputPromptCursorX));
       isWaitingForPlayerSpecialInput.value = true;
       return;
     }
 
     const targetText = computed({
-      get: () => dialogTarget.message.value.text,
+      get: () => target.message.value.text,
       set: (newText) => {
-        dialogTarget.message.value.text = newText;
+        target.message.value.text = newText;
       },
     });
-    dialogTarget.message.value.title = message.title;
+    target.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
     useAnimateText(scene, targetText, message.text, {
       onComplete: () => {
-        showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
+        showInputPromptCursor(unref(target.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
         isQueuedMessagesAnimationPlaying.value = false;
       },
