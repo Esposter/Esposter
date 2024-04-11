@@ -1,7 +1,6 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 
 export const FleeAttempt: State<StateName> = {
@@ -9,10 +8,6 @@ export const FleeAttempt: State<StateName> = {
   onEnter: () => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const actionStore = useActionStore();
-    const { isFleeAttempted } = storeToRefs(actionStore);
-
-    isFleeAttempted.value = true;
 
     if (Math.random() < 0.5) {
       showMessages(["You failed to run away..."], () => {

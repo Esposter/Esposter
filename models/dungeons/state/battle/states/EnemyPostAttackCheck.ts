@@ -1,3 +1,4 @@
+import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
@@ -11,11 +12,11 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const playerStore = usePlayerStore();
-    const { activeMonster, isActiveMonsterFainted } = storeToRefs(playerStore);
+    const { activeMonster, isActiveMonsterFainted, optionGrid } = storeToRefs(playerStore);
     const actionStore = useActionStore();
     const { hasPlayerAttacked, hasEnemyAttacked } = storeToRefs(actionStore);
 
-    if (!hasPlayerAttacked.value) {
+    if (optionGrid.value.value === PlayerOption.Fight && !hasPlayerAttacked.value) {
       battleStateMachine.setState(StateName.PlayerAttack);
       return;
     }

@@ -1,7 +1,8 @@
+import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useActionStore } from "@/store/dungeons/battle/action";
+import { usePlayerStore } from "@/store/dungeons/battle/player";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
@@ -17,16 +18,11 @@ export const Battle: State<StateName> = {
      * 8. Brief pause
      * 9. Repeat the steps above for the other monster if necessary
      */
-    const actionStore = useActionStore();
-    const { itemUsed, isFleeAttempted } = storeToRefs(actionStore);
+    const playerStore = usePlayerStore();
+    const { optionGrid } = storeToRefs(playerStore);
 
-    if (itemUsed.value) {
-      itemUsed.value = undefined;
-      battleStateMachine.setState(StateName.EnemyAttack);
-    } else if (isFleeAttempted.value) {
-      isFleeAttempted.value = false;
-      battleStateMachine.setState(StateName.EnemyAttack);
-    } else if (Math.random() < 0.5) battleStateMachine.setState(StateName.EnemyAttack);
-    else battleStateMachine.setState(StateName.PlayerAttack);
+    if (optionGrid.value.value === PlayerOption.Fight && Math.random() < 0.5)
+      battleStateMachine.setState(StateName.PlayerAttack);
+    else battleStateMachine.setState(StateName.EnemyAttack);
   },
 };

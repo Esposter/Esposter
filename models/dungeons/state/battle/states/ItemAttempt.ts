@@ -5,7 +5,6 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import type { EventEmitter } from "eventemitter3";
@@ -27,8 +26,6 @@ export const ItemAttempt: State<StateName> = {
     const { sceneKey } = storeToRefs(phaserStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const actionStore = useActionStore();
-    const { itemUsed } = storeToRefs(actionStore);
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const { launchScene, removeScene } = usePreviousScene(sceneKey.value);
@@ -41,7 +38,6 @@ export const ItemAttempt: State<StateName> = {
       removeScene(SceneKey.Inventory);
       switchToPreviousScene();
       showMessages([`You used ${item.name} on ${activeMonster.value.name}.`], () => {
-        itemUsed.value = item;
         battleStateMachine.setState(StateName.EnemyInput);
       });
     });
