@@ -10,7 +10,8 @@ import { z } from "zod";
 
 export interface Monster {
   id: string;
-  name: MonsterName;
+  monsterName: MonsterName;
+  name: string;
   asset: Asset;
   stats: Stats;
   currentLevel: number;
@@ -20,7 +21,8 @@ export interface Monster {
 
 export const monsterSchema = z.object({
   id: z.string().uuid(),
-  name: monsterNameSchema,
+  monsterName: monsterNameSchema,
+  name: z.string().min(1),
   asset: assetSchema,
   stats: statsSchema,
   currentLevel: z.number().int().positive(),

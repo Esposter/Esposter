@@ -1,4 +1,4 @@
 import { attacks } from "@/assets/dungeons/data/attacks";
 import type { AttackId } from "@/models/dungeons/attack/AttackId";
 
-export const getAttack = (attackId: AttackId) => attacks.find((a) => a.id === attackId);
+export const getAttack = (attackId: AttackId) => attacks.find((a) => a.id === attackId)!;
