@@ -64,11 +64,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
-      case PlayerSpecialInput.Confirm: {
-        const selectedSettingsOption = optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y });
-        if (selectedSettingsOption === SettingsOption.Close) fadeSwitchToScene(SceneKey.Title);
+      case PlayerSpecialInput.Confirm:
+        if (selectedSettingsOption.value === SettingsOption.Close) fadeSwitchToScene(SceneKey.Title);
         return;
-      }
       case PlayerSpecialInput.Cancel:
         fadeSwitchToScene(SceneKey.Title);
         return;
