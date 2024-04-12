@@ -8,6 +8,7 @@ const { optionGrid } = storeToRefs(settingsSceneStore);
 
 <template>
   <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
+    <DungeonsSettingsMenuContentClickableRow :row-index="rowIndex" />
     <DungeonsSettingsMenuContentText
       v-for="(text, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
