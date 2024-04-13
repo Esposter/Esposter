@@ -1,25 +1,11 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { MonsterName } from "@/models/dungeons/monster/MonsterName";
+import { getMonster } from "@/services/dungeons/monster/getMonster";
 import type { Position } from "grid-engine";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
-  const activeMonster = ref<Monster>({
-    id: MonsterName.Carnodusk,
-    name: MonsterName.Carnodusk,
-    asset: {
-      key: ImageKey.Carnodusk,
-    },
-    stats: {
-      maxHp: 25,
-      baseAttack: 5,
-    },
-    currentLevel: 5,
-    currentHp: 25,
-    attackIds: [AttackId.IceShard],
-  });
+  const activeMonster = ref<Monster>({ id: crypto.randomUUID(), ...getMonster(MonsterName.Carnodusk) });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);
   const initialMonsterPosition: Position = { x: -100, y: 144 };
   const monsterPosition = ref({ ...initialMonsterPosition });
