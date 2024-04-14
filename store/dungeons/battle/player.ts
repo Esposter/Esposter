@@ -3,17 +3,17 @@ import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { PlayerOptionGrid } from "@/services/dungeons/battle/menu/PlayerOptionGrid";
-import { useGameStore } from "@/store/dungeons/game";
+import { usePlayerStore } from "@/store/dungeons/player";
 import type { Position } from "grid-engine";
 
-export const usePlayerStore = defineStore("dungeons/battle/player", () => {
-  const gameStore = useGameStore();
-  const { save } = storeToRefs(gameStore);
+export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
+  const playerStore = usePlayerStore();
+  const { player } = storeToRefs(playerStore);
   const activeMonsterIndex = ref(0);
   const activeMonster = computed({
-    get: () => save.value.player.monsters[activeMonsterIndex.value],
+    get: () => player.value.monsters[activeMonsterIndex.value],
     set: (newActiveMonster) => {
-      save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
+      player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
   const isActiveMonsterFainted = computed(() => activeMonster.value.currentHp <= 0);

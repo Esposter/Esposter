@@ -4,7 +4,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const BringOutMonster: State<StateName> = {
   name: StateName.BringOutMonster,
@@ -13,8 +13,8 @@ export const BringOutMonster: State<StateName> = {
     const { scene } = storeToRefs(phaserStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
-    const playerStore = usePlayerStore();
-    const { activeMonster } = storeToRefs(playerStore);
+    const battlePlayerStore = useBattlePlayerStore();
+    const { activeMonster } = storeToRefs(battlePlayerStore);
 
     useMonsterAppearTween(false, () => {
       useMonsterInfoContainerAppearTween(false);

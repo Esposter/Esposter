@@ -11,13 +11,13 @@ import {
 import { getPanelTextPosition } from "@/services/dungeons/battle/menu/getPanelTextPosition";
 import { BLANK_VALUE } from "@/services/dungeons/constants";
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
-const playerStore = usePlayerStore();
-const { attackOptionGrid } = storeToRefs(playerStore);
+const battlePlayerStore = useBattlePlayerStore();
+const { attackOptionGrid } = storeToRefs(battlePlayerStore);
 </script>
 
 <template>

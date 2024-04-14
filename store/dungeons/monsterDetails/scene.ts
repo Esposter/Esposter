@@ -4,14 +4,14 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { useGameStore } from "@/store/dungeons/game";
+import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
-  const gameStore = useGameStore();
-  const { save } = storeToRefs(gameStore);
+  const playerStore = usePlayerStore();
+  const { player } = storeToRefs(playerStore);
   const monsterIndex = ref(0);
-  const monster = computed(() => save.value.player.monsters[monsterIndex.value]);
+  const monster = computed(() => player.value.monsters[monsterIndex.value]);
   const attacks = computed(() => monster.value.attackIds.map(getAttack));
   const attackNames = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.name));
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);

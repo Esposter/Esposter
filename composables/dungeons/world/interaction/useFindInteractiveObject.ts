@@ -1,6 +1,6 @@
 import type { InteractableDirectionMap } from "@/services/dungeons/world/InteractiveObjectPositionComparator";
 import { InteractiveObjectPositionComparator } from "@/services/dungeons/world/InteractiveObjectPositionComparator";
-import { usePlayerStore } from "@/store/dungeons/world/player";
+import { usePlayerStore } from "@/store/dungeons/player";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 // We have to assume that only the unit position is passed in

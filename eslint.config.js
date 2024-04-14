@@ -60,7 +60,6 @@ export default withNuxt(
         },
       ],
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "off",
     },
   })
   .override("nuxt/vue/rules", {
@@ -70,5 +69,6 @@ export default withNuxt(
       "vue/no-v-text-v-html-on-component": "off",
       "vue/multi-word-component-names": "off",
       "vue/valid-template-root": "off",
+      "@typescript-eslint/no-unused-vars": "off",
     },
   });

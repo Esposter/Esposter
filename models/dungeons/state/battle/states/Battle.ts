@@ -3,7 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useActionStore } from "@/store/dungeons/battle/action";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
@@ -19,8 +19,8 @@ export const Battle: State<StateName> = {
      * 8. Brief pause
      * 9. Repeat the steps above for the other monster if necessary
      */
-    const playerStore = usePlayerStore();
-    const { optionGrid } = storeToRefs(playerStore);
+    const battlePlayerStore = useBattlePlayerStore();
+    const { optionGrid } = storeToRefs(battlePlayerStore);
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 

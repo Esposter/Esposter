@@ -2,7 +2,7 @@ import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 export const PlayerInput: State<StateName> = {
@@ -10,8 +10,8 @@ export const PlayerInput: State<StateName> = {
   onEnter: () => {
     const battleSceneStore = useBattleSceneStore();
     const { activePanel } = storeToRefs(battleSceneStore);
-    const playerStore = usePlayerStore();
-    const { activeMonster } = storeToRefs(playerStore);
+    const battlePlayerStore = useBattlePlayerStore();
+    const { activeMonster } = storeToRefs(battlePlayerStore);
     const infoPanelStore = useInfoPanelStore();
     const { line1DialogMessage, line2Text } = storeToRefs(infoPanelStore);
 

@@ -1,8 +1,8 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { getOppositeDirection } from "@/services/dungeons/getOppositeDirection";
+import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { usePlayerStore } from "@/store/dungeons/world/player";
 
 export const useInteractWithNpc = (): boolean => {
   const phaserStore = usePhaserStore();

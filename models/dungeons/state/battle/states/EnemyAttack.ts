@@ -7,7 +7,7 @@ import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachin
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const EnemyAttack: State<StateName> = {
   name: StateName.EnemyAttack,
@@ -16,8 +16,8 @@ export const EnemyAttack: State<StateName> = {
     const { scene } = storeToRefs(phaserStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
-    const playerStore = usePlayerStore();
-    const { takeDamage } = playerStore;
+    const battlePlayerStore = useBattlePlayerStore();
+    const { takeDamage } = battlePlayerStore;
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
     const attack = getAttack(

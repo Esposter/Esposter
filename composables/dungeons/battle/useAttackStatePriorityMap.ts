@@ -1,9 +1,9 @@
 import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const useAttackStatePriorityMap = () => {
-  const playerStore = usePlayerStore();
+  const playerStore = useBattlePlayerStore();
   const { optionGrid } = storeToRefs(playerStore);
 
   if (optionGrid.value.value !== PlayerOption.Fight)

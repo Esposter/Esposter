@@ -29,11 +29,11 @@ export abstract class AItemResolver {
     return true;
   }
 
-  validate(item: Ref<Item>, target: Ref<Monster>): boolean {
+  validate(_item: Ref<Item>, _target: Ref<Monster>): boolean {
     return true;
   }
 
-  handleItem(item: Ref<Item>, target: Ref<Monster>, sceneKey: SceneKey): void {}
+  handleItem(_item: Ref<Item>, _target: Ref<Monster>, _sceneKey: SceneKey): void {}
 
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();

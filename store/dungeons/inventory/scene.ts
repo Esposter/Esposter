@@ -1,15 +1,15 @@
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Item } from "@/models/dungeons/item/Item";
-import { useGameStore } from "@/store/dungeons/game";
+import { usePlayerStore } from "@/store/dungeons/player";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
-  const gameStore = useGameStore();
-  const { save } = storeToRefs(gameStore);
+  const playerStore = usePlayerStore();
+  const { player } = storeToRefs(playerStore);
   const inventory = computed({
-    get: () => save.value.player.inventory,
+    get: () => player.value.inventory,
     set: (newInventory) => {
-      save.value.player.inventory = newInventory;
+      player.value.inventory = newInventory;
     },
   });
   const itemOptionGrid = ref() as Ref<Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]>>;

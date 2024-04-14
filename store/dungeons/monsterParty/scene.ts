@@ -2,15 +2,15 @@ import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/monsterParty/constants";
-import { useGameStore } from "@/store/dungeons/game";
+import { usePlayerStore } from "@/store/dungeons/player";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
-  const gameStore = useGameStore();
-  const { save } = storeToRefs(gameStore);
+  const playerStore = usePlayerStore();
+  const { player } = storeToRefs(playerStore);
   const monsters = computed({
-    get: () => save.value.player.monsters,
+    get: () => player.value.monsters,
     set: (newMonsters) => {
-      save.value.player.monsters = newMonsters;
+      player.value.monsters = newMonsters;
     },
   });
   const monstersGrid = computed(() => {
@@ -31,9 +31,9 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   const activeMonsterIndex = ref(0);
   const activeMonster = computed({
-    get: () => save.value.player.monsters[activeMonsterIndex.value],
+    get: () => player.value.monsters[activeMonsterIndex.value],
     set: (newActiveMonster) => {
-      save.value.player.monsters[activeMonsterIndex.value] = newActiveMonster;
+      player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
 

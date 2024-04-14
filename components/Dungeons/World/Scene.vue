@@ -9,7 +9,11 @@ import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getAllInputResolvers } from "@/services/dungeons/world/getAllInputResolvers";
 import { useGameStore } from "@/store/dungeons/game";
+import { usePlayerStore } from "@/store/dungeons/player";
+import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
+import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import type { Cameras } from "phaser";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
@@ -19,14 +23,29 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldSceneStore = useWorldSceneStore();
 const { tilemap } = storeToRefs(worldSceneStore);
+const worldDialogStore = useWorldDialogStore();
+const { showMessages } = worldDialogStore;
+const playerStore = usePlayerStore();
+const { isPlayerFainted } = storeToRefs(playerStore);
+const worldPlayerStore = useWorldPlayerStore();
+const { respawn, healParty } = worldPlayerStore;
 const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
+  if (isPlayerFainted.value) respawn();
   useCreateTilemap(TilemapKey.Home);
   useReadNpcList();
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
-  fadeIn(dayjs.duration(1, "second").asMilliseconds());
+  fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0, (_camera: Cameras.Scene2D.Camera, progress: number) => {
+    if (!(progress === 1 && isPlayerFainted.value)) return;
+
+    healParty();
+    showMessages([
+      { title: "???", text: "It looks like your team put up quite a fight..." },
+      { title: "???", text: "I went ahead and healed them up for you." },
+    ]);
+  });
 };
 
 const update = async (scene: SceneWithPlugins) => {

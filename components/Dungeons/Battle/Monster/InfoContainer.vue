@@ -6,7 +6,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 interface InfoContainerProps {
   isEnemy: boolean;
@@ -16,7 +16,7 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
-const store = isEnemy ? useEnemyStore() : usePlayerStore();
+const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));

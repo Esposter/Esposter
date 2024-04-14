@@ -8,13 +8,13 @@ import { monsterSchema } from "@/models/dungeons/monster/Monster";
 import { MonsterName } from "@/models/dungeons/monster/MonsterName";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getMonster } from "@/services/dungeons/monster/getMonster";
-import type { Position } from "grid-engine";
+import { INITIAL_POSITION } from "@/services/dungeons/world/home/constants";
 import { Direction } from "grid-engine";
 import { z } from "zod";
 
 export class Player {
-  position: Position = { x: 6, y: 21 };
-  direction: Direction = Direction.DOWN;
+  position = INITIAL_POSITION;
+  direction = Direction.DOWN;
   monsters: Monster[] = [
     {
       id: crypto.randomUUID(),

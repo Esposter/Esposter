@@ -3,7 +3,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 interface MonsterProps {
   // By default, this will be the player
@@ -13,7 +13,7 @@ interface MonsterProps {
 const { isEnemy } = defineProps<MonsterProps>();
 const phaserStore = usePhaserStore();
 const { sceneKey } = storeToRefs(phaserStore);
-const store = isEnemy ? useEnemyStore() : usePlayerStore();
+const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
 

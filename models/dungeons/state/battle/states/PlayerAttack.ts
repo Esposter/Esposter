@@ -6,7 +6,7 @@ import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachin
 import { calculateDamage } from "@/services/dungeons/battle/calculateDamage";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
@@ -15,8 +15,8 @@ export const PlayerAttack: State<StateName> = {
     const { scene } = storeToRefs(phaserStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
-    const playerStore = usePlayerStore();
-    const { activeMonster, attackOptionGrid } = storeToRefs(playerStore);
+    const battlePlayerStore = useBattlePlayerStore();
+    const { activeMonster, attackOptionGrid } = storeToRefs(battlePlayerStore);
     const enemyStore = useEnemyStore();
     const { takeDamage } = enemyStore;
     // We won't use computed here because we've locked in our attack now

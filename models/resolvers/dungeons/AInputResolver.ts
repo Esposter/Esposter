@@ -5,11 +5,15 @@ export abstract class AInputResolver {
   // This is named "handleInputPre" instead of "handlePreInput"
   // because we're still handling the input and won't proceed to
   // call "handleInput" if it successfully handles the input
-  handleInputPre(justDownInput: PlayerInput, input: PlayerInput, scene: SceneWithPlugins): boolean | Promise<boolean> {
+  handleInputPre(
+    _justDownInput: PlayerInput,
+    _input: PlayerInput,
+    _scene: SceneWithPlugins,
+  ): boolean | Promise<boolean> {
     return false;
   }
 
-  handleInput(justDownInput: PlayerInput, input: PlayerInput, scene: SceneWithPlugins): boolean | Promise<boolean> {
+  handleInput(_justDownInput: PlayerInput, _input: PlayerInput, _scene: SceneWithPlugins): boolean | Promise<boolean> {
     return false;
   }
 }

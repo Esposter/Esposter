@@ -1,11 +1,11 @@
 import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useMonsterAppearTween = (isEnemy: boolean, onComplete?: () => void) => {
-  const store = isEnemy ? useEnemyStore() : usePlayerStore();
+  const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
   const { monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);

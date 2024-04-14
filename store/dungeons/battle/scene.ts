@@ -6,7 +6,7 @@ import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
-import { usePlayerStore } from "@/store/dungeons/battle/player";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
@@ -16,8 +16,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { scene } = storeToRefs(phaserStore);
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
-  const playerStore = usePlayerStore();
-  const { optionGrid, attackOptionGrid } = storeToRefs(playerStore);
+  const battlePlayerStore = useBattlePlayerStore();
+  const { optionGrid, attackOptionGrid } = storeToRefs(battlePlayerStore);
   const activePanel = ref(ActivePanel.Info);
 
   const onPlayerInput = (input: PlayerInput) => {
@@ -31,8 +31,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
       case PlayerSpecialInput.Confirm:
         if (activePanel.value === ActivePanel.Option) onChoosePlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
-          const playerStore = usePlayerStore();
-          const { attackOptionGrid } = storeToRefs(playerStore);
+          const battlePlayerStore = useBattlePlayerStore();
+          const { attackOptionGrid } = storeToRefs(battlePlayerStore);
           if (attackOptionGrid.value.value) battleStateMachine.setState(StateName.EnemyInput);
         }
         return;
