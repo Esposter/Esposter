@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onStopped } from "@/lib/phaser/hooks/onStopped";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 
-const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
 const npcStore = useNpcStore();
 const { resetCursorPaginationData } = npcStore;
 const { npcList } = storeToRefs(npcStore);
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onStopped(() => {
   resetCursorPaginationData();
 });
 </script>

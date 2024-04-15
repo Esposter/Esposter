@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
+import { onStopped } from "@/lib/phaser/hooks/onStopped";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { Character } from "@/models/dungeons/world/Character";
 import type { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
@@ -38,7 +38,7 @@ const {
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const phaserStore = usePhaserStore();
-const { scene, sceneKey } = storeToRefs(phaserStore);
+const { scene } = storeToRefs(phaserStore);
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -50,13 +50,13 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onStopped((scene) => {
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
-  scene.value.gridEngine.removeCharacter(characterId);
+  scene.gridEngine.removeCharacter(characterId);
 });
 </script>
 
