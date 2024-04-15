@@ -2,11 +2,9 @@
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Character } from "@/models/dungeons/world/Character";
 import type { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
-import type { GameObjects } from "phaser";
 import type { Subscription } from "rxjs";
 import { filter } from "rxjs";
 
@@ -20,7 +18,7 @@ export interface CharacterProps {
   onMovementStopped?: Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0];
   onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
   onPositionChangeFinished?: Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0];
-  onComplete?: (sprite: GameObjects.Sprite) => void;
+  onComplete?: SpriteProps["onComplete"];
 }
 
 const {
@@ -37,8 +35,6 @@ const {
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -64,7 +60,7 @@ onShutdown((scene) => {
   <Sprite
     :configuration="{ flipX, ...spriteConfiguration }"
     :on-complete="
-      (sprite) => {
+      (scene, sprite) => {
         scene.gridEngine.addCharacter({
           id: characterId,
           sprite,
@@ -103,7 +99,7 @@ onShutdown((scene) => {
           .subscribe(({ direction: newDirection }) => {
             direction = newDirection;
           });
-        onComplete?.(sprite);
+        onComplete?.(scene, sprite);
       }
     "
   />

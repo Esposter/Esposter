@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
@@ -9,8 +8,6 @@ import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
@@ -51,7 +48,7 @@ onShutdown((scene) => {
       }
     "
     :on-complete="
-      (newSprite) => {
+      (scene, newSprite) => {
         sprite = newSprite;
         scene.cameras.main.startFollow(sprite, true);
         scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);

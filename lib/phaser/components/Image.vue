@@ -9,7 +9,7 @@ import type { GameObjects } from "phaser";
 
 export interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "texture">;
-  onComplete?: (image: GameObjects.Image) => void;
+  onComplete?: (scene: ReturnType<typeof useInjectScene>, image: GameObjects.Image) => void;
 }
 
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
@@ -21,7 +21,7 @@ const emit = defineEmits<ImageEmits>();
 const scene = useInjectScene();
 const image = ref(scene.add.image(x ?? 0, y ?? 0, texture, frame)) as Ref<GameObjects.Image>;
 useInitializeGameObject(image, configuration, emit, ImageSetterMap);
-onComplete.value?.(image.value);
+onComplete.value?.(scene, image.value);
 </script>
 
 <template></template>

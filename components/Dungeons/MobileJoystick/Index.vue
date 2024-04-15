@@ -46,7 +46,7 @@ onShutdown(() => {
       depth: Number.MAX_SAFE_INTEGER,
     }"
     :on-complete="
-      (image) => {
+      (_scene, image) => {
         base = image;
       }
     "
@@ -59,7 +59,7 @@ onShutdown(() => {
       depth: Number.MAX_SAFE_INTEGER,
     }"
     :on-complete="
-      (image) => {
+      (_scene, image) => {
         thumb = image;
       }
     "

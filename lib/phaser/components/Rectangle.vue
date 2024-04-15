@@ -8,7 +8,7 @@ import type { GameObjects } from "phaser";
 
 interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;
-  onComplete?: (rectangle: GameObjects.Rectangle) => void;
+  onComplete?: (scene: ReturnType<typeof useInjectScene>, rectangle: GameObjects.Rectangle) => void;
 }
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
@@ -20,7 +20,7 @@ const emit = defineEmits<RectangleEmits>();
 const scene = useInjectScene();
 const rectangle = ref(scene.add.rectangle(x, y, width, height, fillColor, alpha)) as Ref<GameObjects.Rectangle>;
 useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
-onComplete.value?.(rectangle.value);
+onComplete.value?.(scene, rectangle.value);
 </script>
 
 <template></template>

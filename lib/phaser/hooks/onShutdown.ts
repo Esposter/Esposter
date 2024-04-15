@@ -7,7 +7,7 @@ import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
 
 export const onShutdown = (listener: (scene: SceneWithPlugins) => void) => {
   const phaserStore = usePhaserStore();
-  const { game } = storeToRefs(phaserStore);
+  const { game, sceneKey } = storeToRefs(phaserStore);
 
   if (!game.value) throw new NotInitializedError(GameObjectType.Game);
   else if (game.value.scene.scenes.length !== Object.keys(SceneKey).length)
@@ -19,6 +19,6 @@ export const onShutdown = (listener: (scene: SceneWithPlugins) => void) => {
     );
 
   const sceneStore = useSceneStore();
-  const { shutdownListeners } = storeToRefs(sceneStore);
-  shutdownListeners.value.push(listener);
+  const { shutdownListenersMap } = storeToRefs(sceneStore);
+  shutdownListenersMap.value[sceneKey.value].push(listener);
 };

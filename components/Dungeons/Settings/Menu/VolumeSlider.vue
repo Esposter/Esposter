@@ -63,8 +63,8 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
       fillColor: 0xff2222,
     }"
     :on-complete="
-      (rectangle) => {
-        volumeSlider = useSlider(rectangle, {
+      (scene, rectangle) => {
+        volumeSlider = useSlider(scene, rectangle, {
           endPoints: [
             { x: VOLUME_SLIDER_START_X, y: baseY + 17 },
             { x: VOLUME_SLIDER_END_X, y: baseY + 17 },

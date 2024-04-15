@@ -9,7 +9,7 @@ import type { GameObjects } from "phaser";
 
 export interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;
-  onComplete?: (sprite: GameObjects.Sprite) => void;
+  onComplete?: (scene: ReturnType<typeof useInjectScene>, sprite: GameObjects.Sprite) => void;
 }
 
 interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
@@ -21,7 +21,7 @@ const emit = defineEmits<SpriteEmits>();
 const scene = useInjectScene();
 const sprite = ref(scene.add.sprite(x ?? 0, y ?? 0, texture, frame)) as Ref<GameObjects.Sprite>;
 useInitializeGameObject(sprite, configuration, emit, SpriteSetterMap);
-onComplete.value?.(sprite.value);
+onComplete.value?.(scene, sprite.value);
 </script>
 
 <template></template>

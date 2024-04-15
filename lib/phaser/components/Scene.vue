@@ -28,7 +28,7 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
-const { shutdownListeners } = storeToRefs(sceneStore);
+const { shutdownListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -66,8 +66,8 @@ onMounted(() => {
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
   provide(InjectionKeyMap.Scene, newScene);
   newScene.events.once(Scenes.Events.SHUTDOWN, () => {
-    for (const shutdownListener of shutdownListeners.value) shutdownListener(newScene);
-    shutdownListeners.value = [];
+    for (const shutdownListener of shutdownListenersMap.value[sceneKey]) shutdownListener(newScene);
+    shutdownListenersMap.value[sceneKey] = [];
     emit("shutdown", newScene);
   });
 
