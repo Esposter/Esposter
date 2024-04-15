@@ -4,6 +4,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
@@ -32,7 +33,10 @@ const { respawn, healParty } = worldPlayerStore;
 const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
+  useDungeonsBackgroundMusic(SoundKey.AndTheJourneyBegins);
+
   if (isPlayerFainted.value) respawn();
+
   useCreateTilemap(TilemapKey.Home);
   useReadNpcList();
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
@@ -59,7 +63,6 @@ const update = async (scene: SceneWithPlugins) => {
 };
 
 usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
-  tilemap.value.destroy();
   scene.value.cameras.main.removeBounds();
   scene.value.cameras.main.setZoom(1);
 });
