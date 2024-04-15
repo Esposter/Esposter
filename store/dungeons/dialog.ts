@@ -52,6 +52,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   const showMessage = (scene: SceneWithPlugins, target = dialogTarget) => {
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
+    target.reset();
 
     const message = queuedMessages.shift();
     if (!message) {
@@ -62,7 +63,6 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       return;
     }
 
-    target.reset();
     // Tell other components like the dialog that we're ready to show our message
     phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
 
