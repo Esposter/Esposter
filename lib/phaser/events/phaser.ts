@@ -1,10 +1,10 @@
-import type { BEFORE_DESTROY_SCENE_EVENT_KEY, SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import type { BEFORE_STOP_SCENE_EVENT_KEY, SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { Item } from "@/models/dungeons/item/Item";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import EventEmitter from "eventemitter3";
 
 type SceneEventKeys =
-  `${typeof BEFORE_DESTROY_SCENE_EVENT_KEY | typeof SHOW_MESSAGE_SCENE_EVENT_KEY}${keyof typeof SceneKey}`;
+  `${typeof BEFORE_STOP_SCENE_EVENT_KEY | typeof SHOW_MESSAGE_SCENE_EVENT_KEY}${keyof typeof SceneKey}`;
 type SceneEvents = {
   [P in SceneEventKeys]: () => void;
 };

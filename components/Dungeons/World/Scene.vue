@@ -2,7 +2,7 @@
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
@@ -62,7 +62,7 @@ const update = async (scene: SceneWithPlugins) => {
   for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input, scene)) return;
 };
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
+usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.World}`, () => {
   scene.value.cameras.main.removeBounds();
   scene.value.cameras.main.setZoom(1);
 });

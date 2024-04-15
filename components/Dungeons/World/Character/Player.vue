@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
@@ -22,7 +22,7 @@ const frame =
   PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
     .standing;
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   scene.value.cameras.main.stopFollow();
 });
 </script>

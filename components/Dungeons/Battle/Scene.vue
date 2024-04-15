@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
@@ -14,7 +14,7 @@ const { controls } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.Battle}`, () => {
+usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.Battle}`, () => {
   battleStateMachine.setState(null);
 });
 </script>

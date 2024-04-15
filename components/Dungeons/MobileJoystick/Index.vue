@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
@@ -32,7 +32,7 @@ watch([base, thumb], ([newBase, newThumb]) => {
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
 });
 
-usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.MobileJoystick}`, () => {
+usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.MobileJoystick}`, () => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.destroy();
 });

@@ -1,5 +1,5 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Game } from "phaser";
@@ -31,8 +31,8 @@ export const usePhaserStore = defineStore("phaser", () => {
     // Cleanup old scene resources
     const oldSceneKey = sceneKey.value;
     if (oldSceneKey) {
-      phaserEventEmitter.emit(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${oldSceneKey}`);
-      if (scene.value.scene.isActive()) game.value.scene.sleep(oldSceneKey);
+      phaserEventEmitter.emit(`${BEFORE_STOP_SCENE_EVENT_KEY}${oldSceneKey}`);
+      if (scene.value.scene.isActive()) game.value.scene.stop(oldSceneKey);
     }
 
     sceneKey.value = newSceneKey;

@@ -1,5 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { CreateTilemapAssetsMap } from "@/models/dungeons/tilemap/CreateTilemapAssetsMap";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
@@ -20,7 +20,7 @@ export const useCreateTilemap = (tilemapKey: TilemapKey) => {
     numberOfDirections: 8,
   });
 
-  useScenePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+  useScenePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
     tilemap.value.destroy();
   });
 };
