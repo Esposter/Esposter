@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/world/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
 
-const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldDialogStore = useWorldDialogStore();
@@ -19,7 +16,7 @@ const worldView = useWorldView();
 const x = ref(worldView.value.x + DIALOG_PADDING);
 const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);
 
-usePhaserListener(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onShowMessage(() => {
   isDialogVisible.value = true;
 });
 
