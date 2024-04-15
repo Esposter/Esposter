@@ -15,7 +15,7 @@ export const onShutdown = (listener: (scene: SceneWithPlugins) => void) => {
       `
       onShutdown has been incorrectly called when all the scenes in the game have not been initialized yet.
       If you have called onShutdown on a root scene component that renders <Scene /> from the vue-phaser library,
-      please use the @shutdown event emitter instead.`,
+      please use the @shutdown event emitter instead with <Scene @shutdown="(scene) => {...}" />.`,
     );
 
   const sceneStore = useSceneStore();
