@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { onStopped } from "@/lib/phaser/hooks/onStopped";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
@@ -31,7 +31,7 @@ watch([base, thumb], ([newBase, newThumb]) => {
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
 });
 
-onStopped(() => {
+onShutdown(() => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.destroy();
 });

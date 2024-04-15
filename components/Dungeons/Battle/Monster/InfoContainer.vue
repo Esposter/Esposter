@@ -2,7 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { onStopped } from "@/lib/phaser/hooks/onStopped";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
@@ -21,7 +21,7 @@ const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 
-onStopped(() => {
+onShutdown(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
 });
 </script>

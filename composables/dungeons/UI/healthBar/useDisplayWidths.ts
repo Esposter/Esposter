@@ -36,7 +36,7 @@ export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, di
       )
         return;
       totalMiddleDisplayWidth.value = toValue(totalDisplayWidth) - (newLeftCapDisplayWidth + newRightCapDisplayWidth);
-      // After all our display widths have been initialised, sync the proper values to the UI
+      // After all our display widths have been initialized, sync the proper values to the UI
       syncDisplayWidths(displayWidth.value);
     },
   );

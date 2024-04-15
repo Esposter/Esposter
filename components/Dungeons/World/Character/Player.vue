@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
@@ -10,7 +10,7 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 
 const phaserStore = usePhaserStore();
-const { scene, sceneKey } = storeToRefs(phaserStore);
+const { scene } = storeToRefs(phaserStore);
 const worldSceneStore = useWorldSceneStore();
 const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
@@ -22,8 +22,8 @@ const frame =
   PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
     .standing;
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
-  scene.value.cameras.main.stopFollow();
+onShutdown((scene) => {
+  scene.cameras.main.stopFollow();
 });
 </script>
 

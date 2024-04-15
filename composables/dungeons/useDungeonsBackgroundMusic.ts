@@ -1,4 +1,4 @@
-import { onStopped } from "@/lib/phaser/hooks/onStopped";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { useSoundStore } from "@/store/dungeons/sound";
 
@@ -8,7 +8,7 @@ export const useDungeonsBackgroundMusic = (soundKey: SoundKey) => {
 
   backgroundMusicSoundKey.value = soundKey;
 
-  onStopped(() => {
+  onShutdown(() => {
     backgroundMusicSoundKey.value = undefined;
   });
 };

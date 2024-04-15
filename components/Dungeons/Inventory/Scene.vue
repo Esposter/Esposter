@@ -3,7 +3,6 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { useInputStore } from "@/store/dungeons/inventory/input";
 
@@ -14,7 +13,7 @@ const { onPlayerInput } = inputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Inventory" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
+  <Scene :scene-key="SceneKey.Inventory" @update="onPlayerInput(controls.getInput(true))">
     <Image
       :configuration="{
         origin: 0,

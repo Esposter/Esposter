@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { NineSliceConfiguration } from "@/lib/phaser/models/configuration/NineSliceConfiguration";
 import type { NineSliceEventEmitsOptions } from "@/lib/phaser/models/emit/NineSliceEventEmitsOptions";
-import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { NineSliceSetterMap } from "@/lib/phaser/util/setterMap/NineSliceSetterMap";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
 
@@ -20,9 +18,7 @@ const props = defineProps<NineSliceProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight } = configuration.value;
 const emit = defineEmits<NineSliceEmits>();
-const scene = inject<SceneWithPlugins>(InjectionKeyMap.Scene);
-if (!scene) throw new NotInitializedError("Scene");
-
+const scene = useInjectScene();
 const nineslice = ref(
   scene.add.nineslice(x ?? 0, y ?? 0, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight),
 ) as Ref<GameObjects.NineSlice>;

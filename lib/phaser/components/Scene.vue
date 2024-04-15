@@ -7,6 +7,7 @@ import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
+import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
 import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
@@ -21,12 +22,13 @@ const emit = defineEmits<{
   preload: [SceneWithPlugins];
   create: [SceneWithPlugins];
   update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
+  shutdown: [SceneWithPlugins];
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
-const { stopListeners } = storeToRefs(sceneStore);
+const { shutdownListeners } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -59,20 +61,21 @@ const NewScene = class extends SceneWithPlugins {
 };
 
 onMounted(() => {
-  if (!game.value) throw new NotInitializedError("Game");
-  const newScene = game.value.scene.add(sceneKey, NewScene);
+  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
+  const newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
   provide(InjectionKeyMap.Scene, newScene);
   newScene.events.once(Scenes.Events.SHUTDOWN, () => {
-    for (const stopListener of stopListeners.value) stopListener(newScene as SceneWithPlugins);
-    stopListeners.value = [];
+    for (const shutdownListener of shutdownListeners.value) shutdownListener(newScene);
+    shutdownListeners.value = [];
+    emit("shutdown", newScene);
   });
 
   if (autoStart) switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
-  if (!game.value) throw new NotInitializedError("Game");
+  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
   game.value.scene.remove(sceneKey);
 });
 </script>

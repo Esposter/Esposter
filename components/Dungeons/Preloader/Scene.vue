@@ -11,7 +11,7 @@ import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
@@ -67,7 +67,7 @@ const create = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Preloader" auto-start :cls="SceneWithPlugins" @preload="preload" @create="create">
+  <Scene :scene-key="SceneKey.Preloader" auto-start @preload="preload" @create="create">
     <Rectangle
       :configuration="{
         x,

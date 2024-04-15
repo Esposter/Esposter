@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
 import type { ImageEventEmitsOptions } from "@/lib/phaser/models/emit/ImageEventEmitsOptions";
-import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
 
@@ -20,9 +18,7 @@ const props = defineProps<ImageProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<ImageEmits>();
-const scene = inject<SceneWithPlugins>(InjectionKeyMap.Scene);
-if (!scene) throw new NotInitializedError("Scene");
-
+const scene = useInjectScene();
 const image = ref(scene.add.image(x ?? 0, y ?? 0, texture, frame)) as Ref<GameObjects.Image>;
 useInitializeGameObject(image, configuration, emit, ImageSetterMap);
 onComplete.value?.(image.value);

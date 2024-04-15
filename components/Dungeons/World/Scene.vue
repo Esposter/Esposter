@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { onStopped } from "@/lib/phaser/hooks/onStopped";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getAllInputResolvers } from "@/services/dungeons/world/getAllInputResolvers";
 import { useGameStore } from "@/store/dungeons/game";
@@ -56,14 +55,14 @@ const update = async (scene: SceneWithPlugins) => {
   for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input, scene)) return;
 };
 
-onStopped((scene) => {
+const shutdown = async (scene: SceneWithPlugins) => {
   scene.cameras.main.removeBounds();
   scene.cameras.main.setZoom(1);
-});
+};
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.World" :cls="SceneWithPlugins" @create="create" @update="update">
+  <Scene :scene-key="SceneKey.World" @create="create" @update="update" @shutdown="shutdown">
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />
     <DungeonsWorldForeground />

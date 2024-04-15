@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { onStopped } from "@/lib/phaser/hooks/onStopped";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Character } from "@/models/dungeons/world/Character";
 import type { GridEngine, Position } from "grid-engine";
@@ -50,7 +50,7 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 
-onStopped((scene) => {
+onShutdown((scene) => {
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
