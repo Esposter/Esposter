@@ -15,7 +15,7 @@ export const useScenePhaserListener = <TEvent extends EventEmitter.EventNames<Ph
     phaserEventEmitter.on(event, listener);
   });
 
-  scene.value.events.once(Scenes.Events.SLEEP, () => {
+  scene.value.events.once(Scenes.Events.SHUTDOWN, () => {
     phaserEventEmitter.off(event, listener);
   });
 };
