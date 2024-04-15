@@ -3,6 +3,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
@@ -17,7 +18,12 @@ const { onPlayerInput } = titleSceneStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Title" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
+  <Scene
+    :scene-key="SceneKey.Title"
+    :cls="SceneWithPlugins"
+    @create="useDungeonsBackgroundMusic(SoundKey.TitleTheme)"
+    @update="onPlayerInput(controls.getInput(true))"
+  >
     <Image
       :configuration="{
         origin: 0,

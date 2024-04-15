@@ -2,6 +2,7 @@
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { BEFORE_DESTROY_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
@@ -22,7 +23,12 @@ usePhaserListener(`${BEFORE_DESTROY_SCENE_EVENT_KEY}${SceneKey.Battle}`, () => {
   <Scene
     :scene-key="SceneKey.Battle"
     :cls="SceneWithPlugins"
-    @create="() => battleStateMachine.setState(StateName.Intro)"
+    @create="
+      () => {
+        useDungeonsBackgroundMusic(SoundKey.DecisiveBattle);
+        battleStateMachine.setState(StateName.Intro);
+      }
+    "
     @update="
       () => {
         battleStateMachine.update();
