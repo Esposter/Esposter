@@ -5,14 +5,14 @@ import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 
 export const onShowMessage = (listener: (scene: ReturnType<typeof useInjectScene>) => void) => {
-  const parentScene = useInjectScene();
+  const scene = useInjectScene();
   const wrappedListener = () => {
-    listener(parentScene);
+    listener(scene);
   };
 
-  phaserEventEmitter.on(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${parentScene.scene.key as SceneKey}`, wrappedListener);
+  phaserEventEmitter.on(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`, wrappedListener);
 
   onShutdown(() => {
-    phaserEventEmitter.off(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${parentScene.scene.key as SceneKey}`, wrappedListener);
-  });
+    phaserEventEmitter.off(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`, wrappedListener);
+  }, scene.scene.key);
 };
