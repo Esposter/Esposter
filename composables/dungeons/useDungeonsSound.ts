@@ -19,14 +19,18 @@ export const useDungeonsSound = (soundKey: SoundKey, options?: Except<Types.Soun
   watch(
     () => settings.value.Sound,
     (newSoundSetting) => {
-      if (newSoundSetting === SoundSetting.On && autoStopped.value && options?.loop) {
-        autoStopped.value = false;
-        scene.value.sound.play(soundKey);
+      const sound = scene.value.sound.get(soundKey);
+
+      if (newSoundSetting === SoundSetting.Off) {
+        if (!sound.isPlaying) return;
+        else if (options?.loop) sound.pause();
+        else sound.stop();
+        autoStopped.value = true;
         return;
       }
 
-      scene.value.sound.stopByKey(soundKey);
-      autoStopped.value = true;
+      autoStopped.value = false;
+      if (options?.loop) sound.resume();
     },
   );
 
