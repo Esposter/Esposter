@@ -11,7 +11,7 @@ export const useSoundStore = defineStore("dungeons/sound", () => {
     if (oldBackgroundMusicSoundKey) scene.value.sound.stopByKey(oldBackgroundMusicSoundKey);
     if (!newBackgroundMusicSoundKey || allPlayingSounds.some((s) => s.key === newBackgroundMusicSoundKey)) return;
 
-    const { play } = useDungeonsSound(newBackgroundMusicSoundKey);
+    const { play } = useDungeonsSound(newBackgroundMusicSoundKey, { loop: true });
     play();
   });
 
