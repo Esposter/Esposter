@@ -1,9 +1,9 @@
 export enum SettingsOption {
   "Text Speed" = "Text Speed",
-  "Animations" = "Animations",
+  Animations = "Animations",
   "Battle Style" = "Battle Style",
-  "Sound" = "Sound",
-  "Volume" = "Volume",
+  Sound = "Sound",
+  VolumePercentage = "Volume",
   "Theme Mode" = "Theme Mode",
-  "Close" = "Close",
+  Close = "Close",
 }

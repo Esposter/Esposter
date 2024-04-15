@@ -12,7 +12,7 @@ export const InitialSettings = {
   [SettingsOption.Animations]: AnimationsSetting.On,
   [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
   [SettingsOption.Sound]: SoundSetting.On,
-  [SettingsOption.Volume]: IS_DEVELOPMENT ? 0 : 100,
+  [SettingsOption.VolumePercentage]: IS_DEVELOPMENT ? 0 : 100,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
 };
 export type Settings = typeof InitialSettings;
@@ -22,6 +22,6 @@ export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
-  [SettingsOption.Volume]: z.number().int().nonnegative().max(100),
+  [SettingsOption.VolumePercentage]: z.number().int().nonnegative().max(100),
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,
 }) satisfies z.ZodType<Settings>;

@@ -10,7 +10,7 @@ const grid = [
   [SettingsOption.Animations, AnimationsSetting.On, AnimationsSetting.Off],
   [SettingsOption["Battle Style"], BattleStyleSetting.Set, BattleStyleSetting.Shift],
   [SettingsOption.Sound, SoundSetting.On, SoundSetting.Off],
-  [SettingsOption.Volume],
+  [SettingsOption.VolumePercentage],
   [SettingsOption["Theme Mode"]],
   [SettingsOption.Close],
 ] as const;

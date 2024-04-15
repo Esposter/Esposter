@@ -13,16 +13,16 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
-  const volume = computed(() => settings.value[SettingsOption.Volume]);
+  const volumePercentage = computed(() => settings.value[SettingsOption.VolumePercentage]);
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
-  const setVolume = async (value: number, isUpdateSlider = true) => {
-    if (!(value >= 0 && value <= 100)) throw new Error(`Invalid volume: ${value}`);
-    await setSettings(SettingsOption.Volume, value);
+  const setVolume = async (volumePercentage: number, isUpdateSlider = true) => {
+    if (!(volumePercentage >= 0 && volumePercentage <= 100)) throw new Error(`Invalid volume: ${volumePercentage}`);
+    await setSettings(SettingsOption.VolumePercentage, volumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
-    volumeSlider.value.value = value / 100;
+    volumeSlider.value.value = volumePercentage / 100;
   };
   const updateVolume = async (direction: Direction, delta: number) => {
     volumeDelta.value += delta / dayjs.duration(1, "second").asMilliseconds();
@@ -35,20 +35,19 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     volumeIncrementCooldown.value -= incrementSpeed;
     if (volumeIncrementCooldown.value > 0) return;
 
-    const volume = settings.value[SettingsOption.Volume];
-    const newVolume =
-      direction === Direction.LEFT && volume > 0
-        ? Math.max(volume - increment, 0)
-        : direction === Direction.RIGHT && volume < 100
-          ? Math.min(volume + increment, 100)
+    const newVolumePercentage =
+      direction === Direction.LEFT && volumePercentage.value > 0
+        ? Math.max(volumePercentage.value - increment, 0)
+        : direction === Direction.RIGHT && volumePercentage.value < 100
+          ? Math.min(volumePercentage.value + increment, 100)
           : null;
-    if (newVolume === null) return;
-    await setVolume(newVolume);
+    if (newVolumePercentage === null) return;
+    await setVolume(newVolumePercentage);
     volumeIncrementCooldown.value += increment;
   };
   const isUpdateVolume = (input: PlayerInput, settingsOption: SettingsOption): input is Direction => {
     const isUpdateVolume =
-      settingsOption === SettingsOption.Volume && (input === Direction.LEFT || input === Direction.RIGHT);
+      settingsOption === SettingsOption.VolumePercentage && (input === Direction.LEFT || input === Direction.RIGHT);
     // We can do a little bit of magic here if we're not updating the volume
     // and reset the volume delta metadata if it's not 0 since we know that the user
     // has lifted the input direction key
@@ -59,12 +58,12 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     return isUpdateVolume;
   };
 
-  watch(volume, (newVolume) => {
-    scene.value.sound.setVolume(newVolume);
+  watch(volumePercentage, (newVolumePercentage) => {
+    scene.value.sound.setVolume(newVolumePercentage / 100);
   });
 
   return {
-    volume,
+    volumePercentage,
     volumeSlider,
     setVolume,
     updateVolume,

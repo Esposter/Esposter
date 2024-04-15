@@ -23,11 +23,11 @@ const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
-const { volume, volumeSlider } = storeToRefs(volumeStore);
+const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
 const baseY = computed(
   () =>
     INITIAL_SETTINGS_POSITION.y +
-    SETTINGS_POSITION_INCREMENT.y * (optionGrid.value.getPosition(SettingsOption.Volume)?.y ?? 0),
+    SETTINGS_POSITION_INCREMENT.y * (optionGrid.value.getPosition(SettingsOption.VolumePercentage)?.y ?? 0),
 );
 const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
   x: INITIAL_SETTINGS_VALUE_POSITION.x,
@@ -69,7 +69,7 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
             { x: VOLUME_SLIDER_START_X, y: baseY + 17 },
             { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
           ],
-          value: volume / 100,
+          value: volumePercentage / 100,
           // We want the sliding of the volume cursor to be smooth
           // so it will only be handled by the plugin instead of our store
           valuechangeCallback: (newValue) => setVolume(Math.floor(newValue * 100), false),
@@ -81,7 +81,7 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
         if (!volumeSlider) return;
         // We just need to sync the slider to the valid volume value
         // once the user has finished deciding on the volume of the game
-        volumeSlider.value = volume / 100;
+        volumeSlider.value = volumePercentage / 100;
       }
     "
   />
@@ -89,7 +89,7 @@ const onSliderBarClick = ({ x }: Input.Pointer) => {
     :configuration="{
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y: baseY,
-      text: `${volume}%`,
+      text: `${volumePercentage}%`,
       style: MenuTextStyle,
     }"
   />

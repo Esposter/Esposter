@@ -12,8 +12,8 @@ export const useDungeonsSound = (soundKey: SoundKey, options?: Except<Types.Soun
   const settingsStore = useSettingsStore();
   const { settings } = storeToRefs(settingsStore);
   const volumeStore = useVolumeStore();
-  const { volume: baseVolume } = storeToRefs(volumeStore);
-  const volume = computed(() => baseVolume.value / 100);
+  const { volumePercentage } = storeToRefs(volumeStore);
+  const volume = computed(() => volumePercentage.value / 100);
 
   watch(
     () => settings.value.Sound,
