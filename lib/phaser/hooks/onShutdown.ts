@@ -14,7 +14,7 @@ export const onShutdown = (listener: (scene: SceneWithPlugins) => void) => {
     throw new Error(
       `
       onShutdown has been incorrectly called when all the scenes in the game have not been initialized yet.
-      If you have called onShutdown on a root scene component that renders <Scene /> from the vue-phaser library,
+      If you have called onShutdown in a root scene component that renders <Scene /> from the vue-phaser library,
       please call onShutdown in the event emitters provided by <Scene /> instead.`,
     );
 
