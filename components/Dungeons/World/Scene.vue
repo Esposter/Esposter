@@ -30,7 +30,7 @@ const create = (scene: SceneWithPlugins) => {
 
   if (isPlayerFainted.value) respawn();
 
-  useCreateTilemap(TilemapKey.Home);
+  useCreateTilemap(scene, TilemapKey.Home);
   useReadNpcList();
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
