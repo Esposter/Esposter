@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -11,13 +10,11 @@ interface MonsterProps {
 }
 
 const { isEnemy } = defineProps<MonsterProps>();
-const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onShutdown(() => {
   monsterPosition.value = { ...initialMonsterPosition };
 });
 </script>

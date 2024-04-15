@@ -5,7 +5,6 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
@@ -20,7 +19,6 @@ const { onPlayerInput } = titleSceneStore;
 <template>
   <Scene
     :scene-key="SceneKey.Title"
-    :cls="SceneWithPlugins"
     @create="useDungeonsBackgroundMusic(SoundKey.TitleTheme)"
     @update="onPlayerInput(controls.getInput(true))"
   >

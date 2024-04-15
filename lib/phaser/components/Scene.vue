@@ -1,46 +1,49 @@
-<script setup lang="ts" generic="TScene extends Constructor<Scene>">
+<script setup lang="ts">
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useSceneStore } from "@/lib/phaser/store/phaser/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
-import type { Constructor } from "@/util/types/Constructor";
-import type { Scene } from "phaser";
-import { Cameras } from "phaser";
+import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
+import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
   sceneKey: SceneKey;
   autoStart?: true;
-  cls: TScene;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { sceneKey, autoStart, cls } = defineProps<SceneProps>();
+const { sceneKey, autoStart } = defineProps<SceneProps>();
 const emit = defineEmits<{
-  init: [InstanceType<TScene>];
-  preload: [InstanceType<TScene>];
-  create: [InstanceType<TScene>];
-  update: [InstanceType<TScene>, ...Parameters<InstanceType<TScene>["update"]>];
+  init: [SceneWithPlugins];
+  preload: [SceneWithPlugins];
+  create: [SceneWithPlugins];
+  update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
+  shutdown: [SceneWithPlugins];
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
+const sceneStore = useSceneStore();
+const { shutdownListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { isActive: isInputActive } = storeToRefs(inputStore);
 const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || parallelSceneKeys.value.includes(sceneKey));
-const NewScene = class extends cls {
-  init(this: InstanceType<TScene>) {
+const NewScene = class extends SceneWithPlugins {
+  init(this: SceneWithPlugins) {
     emit("init", this);
   }
 
-  preload(this: InstanceType<TScene>) {
+  preload(this: SceneWithPlugins) {
     emit("preload", this);
   }
 
-  create(this: InstanceType<TScene>) {
+  create(this: SceneWithPlugins) {
     emit("create", this);
     if (!isInputActive.value) isInputActive.value = true;
 
@@ -52,22 +55,27 @@ const NewScene = class extends cls {
     });
   }
 
-  update(this: InstanceType<TScene>, ...args: Parameters<InstanceType<TScene>["update"]>) {
+  update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
   }
 };
 
 onMounted(() => {
-  if (!game.value) throw new NotInitializedError("Game");
-  const newScene = game.value.scene.add(sceneKey, NewScene);
+  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
+  const newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
   provide(InjectionKeyMap.Scene, newScene);
+  newScene.events.once(Scenes.Events.SHUTDOWN, () => {
+    for (const shutdownListener of shutdownListenersMap.value[sceneKey]) shutdownListener(newScene);
+    shutdownListenersMap.value[sceneKey] = [];
+    emit("shutdown", newScene);
+  });
 
   if (autoStart) switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
-  if (!game.value) throw new NotInitializedError("Game");
+  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
   game.value.scene.remove(sceneKey);
 });
 </script>

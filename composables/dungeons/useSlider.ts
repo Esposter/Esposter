@@ -1,13 +1,13 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 
-export const useSlider = (...args: Parameters<SliderPlugin["add"]>) => {
-  const phaserStore = usePhaserStore();
-  const { scene, sceneKey } = storeToRefs(phaserStore);
-  const slider = scene.value.sliderPlugin.add(...args);
-  usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+export const useSlider = (scene: SceneWithPlugins, ...args: Parameters<SliderPlugin["add"]>) => {
+  const slider = scene.sliderPlugin.add(...args);
+
+  onShutdown(() => {
     slider.destroy();
   });
+
   return slider;
 };

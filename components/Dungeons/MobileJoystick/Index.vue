@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
@@ -32,7 +31,7 @@ watch([base, thumb], ([newBase, newThumb]) => {
   controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
 });
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.MobileJoystick}`, () => {
+onShutdown(() => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.destroy();
 });
@@ -47,7 +46,7 @@ usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.MobileJoystick}`, ()
       depth: Number.MAX_SAFE_INTEGER,
     }"
     :on-complete="
-      (image) => {
+      (_scene, image) => {
         base = image;
       }
     "
@@ -60,7 +59,7 @@ usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.MobileJoystick}`, ()
       depth: Number.MAX_SAFE_INTEGER,
     }"
     :on-complete="
-      (image) => {
+      (_scene, image) => {
         thumb = image;
       }
     "

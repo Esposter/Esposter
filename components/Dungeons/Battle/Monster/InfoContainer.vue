@@ -2,8 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
@@ -14,8 +13,6 @@ interface InfoContainerProps {
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
-const phaserStore = usePhaserStore();
-const { sceneKey } = storeToRefs(phaserStore);
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
@@ -24,7 +21,7 @@ const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onShutdown(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
 });
 </script>

@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { Character } from "@/models/dungeons/world/Character";
 import type { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
-import type { GameObjects } from "phaser";
 import type { Subscription } from "rxjs";
 import { filter } from "rxjs";
 
@@ -20,7 +18,7 @@ export interface CharacterProps {
   onMovementStopped?: Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0];
   onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
   onPositionChangeFinished?: Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0];
-  onComplete?: (sprite: GameObjects.Sprite) => void;
+  onComplete?: SpriteProps["onComplete"];
 }
 
 const {
@@ -37,8 +35,6 @@ const {
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
-const phaserStore = usePhaserStore();
-const { scene, sceneKey } = storeToRefs(phaserStore);
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -50,13 +46,13 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
+onShutdown((scene) => {
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
-  scene.value.gridEngine.removeCharacter(characterId);
+  scene.gridEngine.removeCharacter(characterId);
 });
 </script>
 
@@ -64,7 +60,7 @@ usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
   <Sprite
     :configuration="{ flipX, ...spriteConfiguration }"
     :on-complete="
-      (sprite) => {
+      (scene, sprite) => {
         scene.gridEngine.addCharacter({
           id: characterId,
           sprite,
@@ -103,7 +99,7 @@ usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${sceneKey.value}`, () => {
           .subscribe(({ direction: newDirection }) => {
             direction = newDirection;
           });
-        onComplete?.(sprite);
+        onComplete?.(scene, sprite);
       }
     "
   />

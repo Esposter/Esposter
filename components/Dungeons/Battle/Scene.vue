@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { BEFORE_STOP_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
@@ -13,16 +11,11 @@ const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
-
-usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.Battle}`, () => {
-  battleStateMachine.setState(null);
-});
 </script>
 
 <template>
   <Scene
     :scene-key="SceneKey.Battle"
-    :cls="SceneWithPlugins"
     @create="
       () => {
         useDungeonsBackgroundMusic(SoundKey.DecisiveBattle);
@@ -33,6 +26,11 @@ usePhaserListener(`${BEFORE_STOP_SCENE_EVENT_KEY}${SceneKey.Battle}`, () => {
       () => {
         battleStateMachine.update();
         onPlayerInput(controls.getInput());
+      }
+    "
+    @shutdown="
+      () => {
+        battleStateMachine.setState(null);
       }
     "
   >

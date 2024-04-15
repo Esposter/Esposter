@@ -5,7 +5,6 @@ import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 
@@ -17,7 +16,7 @@ const { monster } = storeToRefs(monsterDetailsSceneStore);
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterDetails" :cls="SceneWithPlugins" @update="onPlayerInput(controls.getInput(true))">
+  <Scene :scene-key="SceneKey.MonsterDetails" @update="onPlayerInput(controls.getInput(true))">
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
