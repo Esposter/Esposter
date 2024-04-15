@@ -14,23 +14,29 @@ export const useDungeonsSound = (soundKey: SoundKey, options?: Except<Types.Soun
   const volumeStore = useVolumeStore();
   const { volumePercentage } = storeToRefs(volumeStore);
   const volume = computed(() => volumePercentage.value / 100);
+  const autoStopped = ref(false);
 
   watch(
     () => settings.value.Sound,
     (newSoundSetting) => {
-      if (newSoundSetting === SoundSetting.On) return;
+      if (newSoundSetting === SoundSetting.On && autoStopped.value && options?.loop) {
+        autoStopped.value = false;
+        scene.value.sound.play(soundKey);
+        return;
+      }
+
       scene.value.sound.stopByKey(soundKey);
+      autoStopped.value = true;
     },
   );
 
   return {
     play: () => {
-      if (settings.value.Sound !== SoundSetting.On) return;
-      scene.value.sound.play(soundKey, { ...options, volume: volume.value });
+      if (settings.value.Sound === SoundSetting.On)
+        scene.value.sound.play(soundKey, { ...options, volume: volume.value });
     },
     stop: () => {
-      if (settings.value.Sound !== SoundSetting.On) return;
-      scene.value.sound.stopByKey(soundKey);
+      if (settings.value.Sound === SoundSetting.On) scene.value.sound.stopByKey(soundKey);
     },
   };
 };
