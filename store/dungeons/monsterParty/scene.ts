@@ -24,7 +24,10 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   watch(
     monstersGrid,
     (newMonstersGrid) => {
-      optionGrid.value = new Grid([...newMonstersGrid, Array(COLUMN_SIZE).fill(PlayerSpecialInput.Cancel)], true);
+      optionGrid.value = new Grid(
+        [...newMonstersGrid, Array(newMonstersGrid[0]?.length ?? 0).fill(PlayerSpecialInput.Cancel)],
+        true,
+      );
     },
     { immediate: true },
   );
