@@ -79,11 +79,14 @@ onShutdown((scene) => {
             .movementStopped()
             .pipe(filter(({ charId }) => charId === characterId))
             .subscribe(onMovementStopped);
-        if (onPositionChangeStarted)
-          subscriptionPositionChangeStarted = scene.gridEngine
-            .positionChangeStarted()
-            .pipe(filter(({ charId }) => charId === characterId))
-            .subscribe(onPositionChangeStarted);
+        subscriptionPositionChangeStarted = scene.gridEngine
+          .positionChangeStarted()
+          .pipe(filter(({ charId }) => charId === characterId))
+          .subscribe((positionChange) => {
+            const { charId } = positionChange;
+            direction = scene.gridEngine.getFacingDirection(charId);
+            onPositionChangeStarted?.(positionChange);
+          });
         subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
           .pipe(filter(({ charId }) => charId === characterId))
