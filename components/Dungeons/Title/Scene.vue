@@ -19,7 +19,7 @@ const { onPlayerInput } = titleSceneStore;
 <template>
   <Scene
     :scene-key="SceneKey.Title"
-    @create="useDungeonsBackgroundMusic(SoundKey.TitleTheme)"
+    @create="(scene) => useDungeonsBackgroundMusic(SoundKey.TitleTheme, scene.scene.key)"
     @update="onPlayerInput(controls.getInput(true))"
   >
     <Image
