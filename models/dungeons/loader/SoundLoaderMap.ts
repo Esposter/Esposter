@@ -1,11 +1,11 @@
 import textBlip from "@/assets/dungeons/sound/textBlip.mp3";
-import andTheJourneyBegins from "@/assets/dungeons/thirdParty/leohpaz/andTheJourneyBegins.wav";
 import claw from "@/assets/dungeons/thirdParty/leohpaz/claw.wav";
-import decisiveBattle from "@/assets/dungeons/thirdParty/leohpaz/decisiveBattle.wav";
-import titleTheme from "@/assets/dungeons/thirdParty/leohpaz/titleTheme.wav";
-import flee from "@/assets/dungeons/thirdParty/xDeviruchi/flee.wav";
-import iceExplosion from "@/assets/dungeons/thirdParty/xDeviruchi/iceExplosion.wav";
-import stepGrass from "@/assets/dungeons/thirdParty/xDeviruchi/stepGrass.wav";
+import flee from "@/assets/dungeons/thirdParty/leohpaz/flee.wav";
+import iceExplosion from "@/assets/dungeons/thirdParty/leohpaz/iceExplosion.wav";
+import stepGrass from "@/assets/dungeons/thirdParty/leohpaz/stepGrass.wav";
+import andTheJourneyBegins from "@/assets/dungeons/thirdParty/xDeviruchi/andTheJourneyBegins.wav";
+import decisiveBattle from "@/assets/dungeons/thirdParty/xDeviruchi/decisiveBattle.wav";
+import titleTheme from "@/assets/dungeons/thirdParty/xDeviruchi/titleTheme.wav";
 import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
