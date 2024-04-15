@@ -45,6 +45,7 @@ export const useInputStore = defineStore("dungeons/inventory/input", () => {
 
   const onCancel = () => {
     switchToPreviousScene();
+    selectedItemIndex.value = -1;
     phaserEventEmitter.emit("unuseItem");
   };
 
