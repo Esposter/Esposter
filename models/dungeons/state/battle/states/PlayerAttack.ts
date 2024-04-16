@@ -25,7 +25,7 @@ export const PlayerAttack: State<StateName> = {
 
     showMessageNoInputRequired(`${activeMonster.value.name} used ${attack.name}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-        useAttackAnimation(attack.id, true, () => {
+        useAttackAnimation(attack, true, () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
             battleStateMachine.setState(StateName.PlayerPostAttackCheck);
           });

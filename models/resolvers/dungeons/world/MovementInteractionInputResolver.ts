@@ -1,15 +1,22 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { isMovingDirection } from "@/services/dungeons/input/isMovingDirection";
+import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export class MovementInteractionInputResolver extends AInputResolver {
   handleInput(justDownInput: PlayerInput, input: PlayerInput, scene: SceneWithPlugins) {
-    const playerStore = useWorldPlayerStore();
-    const { isMoving } = storeToRefs(playerStore);
+    const worldSceneStore = useWorldSceneStore();
+    const { encounterLayer } = storeToRefs(worldSceneStore);
+    const playerStore = usePlayerStore();
+    const { player } = storeToRefs(playerStore);
+    const worldPlayerStore = useWorldPlayerStore();
+    const { isMoving } = storeToRefs(worldPlayerStore);
 
     useMoveNpcList(scene);
 
@@ -19,6 +26,10 @@ export class MovementInteractionInputResolver extends AInputResolver {
       return true;
     } else if (isMovingDirection(input)) {
       scene.gridEngine.move(CharacterId.Player, input);
+      if (encounterLayer.value.getTileAt(player.value.position.x, player.value.position.y)) {
+        const { play } = useDungeonsSoundEffect(SoundEffectKey.StepGrass);
+        play();
+      }
       return true;
     }
 
