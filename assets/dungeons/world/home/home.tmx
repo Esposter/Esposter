@@ -37,6 +37,9 @@
   </properties>
   <image source="../../tilesets/Encounter.png" trans="ff00ff" width="64" height="64"/>
  </tileset>
+ <tileset firstgid="208" name="HouseInterior" tilewidth="64" tileheight="64" tilecount="120" columns="12">
+  <image source="../../thirdParty/axulart/tilesets/HouseInterior.png" width="768" height="640"/>
+ </tileset>
  <layer id="3" name="Ground" width="20" height="34" locked="1">
   <data encoding="csv">
 188,186,188,187,188,188,188,185,188,188,186,186,188,186,188,188,187,188,188,188,
