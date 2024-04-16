@@ -1,4 +1,8 @@
-export const useReadData = async (unauthedReader: () => void, authedReader: () => Promise<void>, csr?: true) => {
+export const useReadData = async (
+  unauthedReader: () => void,
+  authedReader: () => Promise<void>,
+  isClientSideRendered?: true,
+) => {
   const { status } = useAuth();
   watch(status, async (newStatus) => {
     if (newStatus === "authenticated") await authedReader();
@@ -7,6 +11,6 @@ export const useReadData = async (unauthedReader: () => void, authedReader: () =
 
   if (status.value === "authenticated") await authedReader();
   // We'll assume that not being authenticated means that we will read from local storage for data
-  // If it's already client-side rendered (csr) then we do not need to add onMounted
-  else if (status.value === "unauthenticated") csr ? unauthedReader() : onMounted(unauthedReader);
+  // If it's already client-side rendered then we do not need to add onMounted
+  else if (status.value === "unauthenticated") isClientSideRendered ? unauthedReader() : onMounted(unauthedReader);
 };
