@@ -1,9 +1,21 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import type { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
+import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useSoundStore = defineStore("dungeons/sound", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
+  const settingsStore = useSettingsStore();
+  const { settings } = storeToRefs(settingsStore);
+
+  watch(
+    () => settings.value.Sound,
+    (newSoundSetting) => {
+      scene.value.sound.setMute(newSoundSetting === SoundSetting.On);
+    },
+  );
+
   const backgroundMusicKey = ref<BackgroundMusicKey>();
 
   watch(backgroundMusicKey, (newBackgroundMusicKey, oldBackgroundMusicKey) => {
