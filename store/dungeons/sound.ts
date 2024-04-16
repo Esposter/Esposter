@@ -1,19 +1,19 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import type { SoundKey } from "@/models/dungeons/keys/SoundKey";
+import type { SoundKey } from "@/models/dungeons/keys/sound/SoundKey";
 
 export const useSoundStore = defineStore("dungeons/sound", () => {
   const phaserStore = usePhaserStore();
   const { scene } = storeToRefs(phaserStore);
-  const backgroundMusicSoundKey = ref<SoundKey>();
+  const backgroundMusicKey = ref<SoundKey>();
 
-  watch(backgroundMusicSoundKey, (newBackgroundMusicSoundKey, oldBackgroundMusicSoundKey) => {
+  watch(backgroundMusicKey, (newBackgroundMusicKey, oldBackgroundMusicKey) => {
     const allPlayingSounds = scene.value.sound.getAllPlaying();
-    if (oldBackgroundMusicSoundKey) scene.value.sound.stopByKey(oldBackgroundMusicSoundKey);
-    if (!newBackgroundMusicSoundKey || allPlayingSounds.some((s) => s.key === newBackgroundMusicSoundKey)) return;
+    if (oldBackgroundMusicKey) scene.value.sound.stopByKey(oldBackgroundMusicKey);
+    if (!newBackgroundMusicKey || allPlayingSounds.some((s) => s.key === newBackgroundMusicKey)) return;
 
-    const { play } = useDungeonsSound(newBackgroundMusicSoundKey, { loop: true });
+    const { play } = useDungeonsSound(newBackgroundMusicKey, { loop: true });
     play();
   });
 
-  return { backgroundMusicSoundKey };
+  return { backgroundMusicKey };
 });

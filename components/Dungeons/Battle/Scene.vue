@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SoundKey } from "@/models/dungeons/keys/SoundKey";
+import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
@@ -18,7 +18,7 @@ const { onPlayerInput } = battleSceneStore;
     :scene-key="SceneKey.Battle"
     @create="
       (scene) => {
-        useDungeonsBackgroundMusic(SoundKey.DecisiveBattle, scene.scene.key);
+        useDungeonsBackgroundMusic(BackgroundMusicKey.DecisiveBattle, scene.scene.key);
         battleStateMachine.setState(StateName.Intro);
       }
     "

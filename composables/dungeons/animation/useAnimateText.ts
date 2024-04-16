@@ -1,4 +1,4 @@
-import { SoundKey } from "@/models/dungeons/keys/SoundKey";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Scene } from "phaser";
 
 export const useAnimateText = (
@@ -10,7 +10,7 @@ export const useAnimateText = (
     onComplete?: () => void;
   },
 ) => {
-  const { play, stop } = useDungeonsSound(SoundKey.TextBlip, { loop: true });
+  const { play, stop } = useDungeonsSound(SoundEffectKey.TextBlip, { loop: true });
   const textDelay = useTextDelay(configuration?.delay);
   const textSections = text.split(/(\S|\s+)/).filter(Boolean);
   let i = 0;

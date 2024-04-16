@@ -58,9 +58,13 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     return isUpdateVolume;
   };
 
-  watch(volumePercentage, (newVolumePercentage) => {
-    scene.value.sound.setVolume(newVolumePercentage / 100);
-  });
+  watch(
+    volumePercentage,
+    (newVolumePercentage) => {
+      scene.value.sound.setVolume(newVolumePercentage / 100);
+    },
+    { immediate: true },
+  );
 
   return {
     volumePercentage,

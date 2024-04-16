@@ -2,8 +2,8 @@
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SoundKey } from "@/models/dungeons/keys/SoundKey";
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
+import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getAllInputResolvers } from "@/services/dungeons/world/getAllInputResolvers";
@@ -26,7 +26,7 @@ const { respawn, healParty } = worldPlayerStore;
 const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
-  useDungeonsBackgroundMusic(SoundKey.AndTheJourneyBegins, scene.scene.key);
+  useDungeonsBackgroundMusic(BackgroundMusicKey.AndTheJourneyBegins, scene.scene.key);
 
   if (isPlayerFainted.value) respawn();
 
