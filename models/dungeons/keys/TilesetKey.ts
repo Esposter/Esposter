@@ -4,6 +4,7 @@ export const TilesetKey = {
   BasicPlains: "BasicPlains",
   BeachAndCaves: "BeachAndCaves",
   House: "House",
+  HouseInterior: "HouseInterior",
 
   Bushes: "Bushes",
   Collision: "Collision",

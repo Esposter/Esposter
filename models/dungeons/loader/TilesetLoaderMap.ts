@@ -1,6 +1,7 @@
 import basicPlains from "@/assets/dungeons/thirdParty/axulart/tilesets/BasicPlains.png";
 import beachAndCaves from "@/assets/dungeons/thirdParty/axulart/tilesets/BeachAndCaves.png";
 import house from "@/assets/dungeons/thirdParty/axulart/tilesets/House.png";
+import houseInterior from "@/assets/dungeons/thirdParty/axulart/tilesets/HouseInterior.png";
 import bushes from "@/assets/dungeons/tilesets/Bushes.png";
 import collision from "@/assets/dungeons/tilesets/Collision.png";
 import encounter from "@/assets/dungeons/tilesets/Encounter.png";
@@ -14,6 +15,7 @@ export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => L
   [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlains),
   [TilesetKey.BeachAndCaves]: (scene) => scene.load.image(TilesetKey.BeachAndCaves, beachAndCaves),
   [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, house),
+  [TilesetKey.HouseInterior]: (scene) => scene.load.image(TilesetKey.HouseInterior, houseInterior),
 
   [TilesetKey.Bushes]: (scene) => scene.load.image(TilesetKey.Bushes, bushes),
   [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),
