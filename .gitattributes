@@ -25,7 +25,7 @@
 *.html text diff=html
 *.inc text
 *.ini text
-*.js text
+*.js text eol=lf
 *.json text
 *.jsx text
 *.less text
