@@ -13,10 +13,68 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 6,
+            "members": [
+                {
+                    "name": "faintLocation",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "id",
+                    "type": "int",
+                    "value": -1
+                }
+            ],
+            "name": "AreaMetadata",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 7,
+            "members": [
+                {
+                    "name": "area",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Encounter",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 2,
             "members": [
                 {
                     "name": "frame",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "id",
                     "type": "string",
                     "value": ""
                 },
@@ -44,6 +102,20 @@
                 "wangcolor",
                 "wangset"
             ]
+        },
+        {
+            "id": 11,
+            "name": "NpcAction",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "None",
+                "Trade",
+                "Item",
+                "Heal",
+                "Battle"
+            ],
+            "valuesAsFlags": false
         },
         {
             "id": 3,
@@ -98,6 +170,69 @@
                 "wangcolor",
                 "wangset",
                 "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+                {
+                    "name": "connectsTo",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "id",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "isBuilding",
+                    "type": "bool",
+                    "value": false
+                }
+            ],
+            "name": "Entrance",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "id",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "itemId",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Item",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
             ]
         }
     ]
