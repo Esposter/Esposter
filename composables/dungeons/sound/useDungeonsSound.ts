@@ -9,33 +9,20 @@ export const useDungeonsSound = (soundKey: SoundKey, options?: Types.Sound.Sound
   const { scene } = storeToRefs(phaserStore);
   const settingsStore = useSettingsStore();
   const { settings } = storeToRefs(settingsStore);
-  const autoStopped = ref(false);
 
   watch(
     () => settings.value.Sound,
     (newSoundSetting) => {
-      const sound = scene.value.sound.get(soundKey);
-
-      if (newSoundSetting === SoundSetting.Off) {
-        if (!sound.isPlaying) return;
-        else if (options?.loop) sound.pause();
-        else sound.stop();
-        autoStopped.value = true;
-        return;
-      }
-
-      autoStopped.value = false;
-      if (options?.loop) sound.resume();
+      scene.value.sound.setMute(newSoundSetting === SoundSetting.On);
     },
   );
 
   return {
     play: () => {
-      if (settings.value.Sound === SoundSetting.On)
-        scene.value.sound.play(soundKey, { ...options, volume: options?.volume ?? 1 });
+      scene.value.sound.play(soundKey, { ...options, volume: options?.volume ?? 1 });
     },
     stop: () => {
-      if (settings.value.Sound === SoundSetting.On) scene.value.sound.stopByKey(soundKey);
+      scene.value.sound.stopByKey(soundKey);
     },
   };
 };
