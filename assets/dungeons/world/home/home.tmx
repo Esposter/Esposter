@@ -4,10 +4,10 @@
   <export target="tilemap.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="BasicPlains" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../../axulart/tilesets/BasicPlains.png" width="512" height="512"/>
+  <image source="../../thirdParty/axulart/tilesets/BasicPlains.png" width="512" height="512"/>
  </tileset>
  <tileset firstgid="65" name="BeachAndCaves" tilewidth="64" tileheight="64" tilecount="120" columns="15">
-  <image source="../../axulart/tilesets/BeachAndCaves.png" width="960" height="512"/>
+  <image source="../../thirdParty/axulart/tilesets/BeachAndCaves.png" width="960" height="512"/>
  </tileset>
  <tileset firstgid="185" name="Grass" tilewidth="64" tileheight="64" tilecount="4" columns="2">
   <image source="../../tilesets/Grass.png" width="128" height="128"/>
@@ -28,7 +28,7 @@
   <image source="../../tilesets/Encounter.png" width="64" height="64"/>
  </tileset>
  <tileset firstgid="195" name="House" tilewidth="64" tileheight="64" tilecount="12" columns="4">
-  <image source="../../axulart/tilesets/House.png" width="256" height="192"/>
+  <image source="../../thirdParty/axulart/tilesets/House.png" width="256" height="192"/>
  </tileset>
  <tileset firstgid="207" name="NpcPaths" class="Npc" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <properties>
@@ -523,7 +523,7 @@
     <properties>
      <property name="frame" value="0"/>
      <property name="messages" value="You can save your game from the menu.::To open the menu, press the ENTER key."/>
-     <property name="movementPattern" propertytype="NpcMovement" value="Idle"/>
+     <property name="movementPattern" value="Idle"/>
     </properties>
    </object>
   </objectgroup>
@@ -533,7 +533,7 @@
     <properties>
      <property name="frame" value="20"/>
      <property name="messages" value="Make sure you read the signposts for helpful tips!"/>
-     <property name="movementPattern" propertytype="NpcMovement" value="Clockwise"/>
+     <property name="movementPattern" value="Clockwise"/>
     </properties>
    </object>
    <object id="8" name="7" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64"/>
