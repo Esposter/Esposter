@@ -8,6 +8,7 @@ export const TilesetKey = {
   Bushes: "Bushes",
   Collision: "Collision",
   Encounter: "Encounter",
+  Entrance: "Entrance",
   Grass: "Grass",
 } as const satisfies Record<string, string> & {
   // TilesetKey uses the same namespace as ImageKey
