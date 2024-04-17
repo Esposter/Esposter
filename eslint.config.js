@@ -7,7 +7,12 @@ import withNuxt from "./.nuxt/eslint.config.mjs";
 export default withNuxt(
   tseslint.config({
     files: ["*.ts"],
-    extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
+    extends: [
+      // Remove @typescript-eslint plugin to avoid redefine error
+      // since nuxt will handle defining this plugin
+      ...tseslint.configs.strictTypeChecked.map((c) => ({ ...c, plugins: {} })),
+      ...tseslint.configs.stylisticTypeChecked.map((c) => ({ ...c, plugins: {} })),
+    ],
     languageOptions: {
       parserOptions: {
         project: ".nuxt/tsconfig.json",

@@ -55,7 +55,7 @@
     "tsx": "^4.7.2",
     "type-fest": "^4.15.0",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.6.0",
+    "typescript-eslint": "^7.7.0",
     "unocss": "^0.59.3",
     "unplugin-fonts": "^1.1.1",
     "vite": "^5.2.9",
