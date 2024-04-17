@@ -1,8 +1,8 @@
 import withNuxt from "./.nuxt/eslint.config.mjs";
 import nuxtPlugin from "./eslint/nuxtPlugin.js";
-import typescriptOverrides from "./eslint/overrides/typescript.js";
-import vueOverrides from "./eslint/overrides/vue.js";
-import typescript from "./eslint/typescript.js";
+import typescriptRulesOverrides from "./eslint/overrides/typescriptRules.js";
+import vueRulesOverrides from "./eslint/overrides/vueRules.js";
+import typescriptRules from "./eslint/typescriptRules.js";
 
 export default withNuxt(nuxtPlugin).overrides({
   "nuxt/typescript/rules": {
@@ -11,7 +11,12 @@ export default withNuxt(nuxtPlugin).overrides({
         project: ".nuxt/tsconfig.json",
       },
     },
-    ...Object.assign({}, typescript, typescriptOverrides),
+    rules: {
+      ...typescriptRules,
+      ...typescriptRulesOverrides,
+    },
   },
-  "nuxt/vue/rules": vueOverrides,
+  "nuxt/vue/rules": {
+    rules: vueRulesOverrides,
+  },
 });

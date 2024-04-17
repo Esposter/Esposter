@@ -1,8 +1,8 @@
 import withNuxt from "./.nuxt/eslint.config.mjs";
 import nuxtPlugin from "./eslint/nuxtPlugin.js";
-import typescriptOverrides from "./eslint/overrides/typescript.js";
-import vueOverrides from "./eslint/overrides/vue.js";
-import typescript from "./eslint/typescript.js";
+import typescriptRulesOverrides from "./eslint/overrides/typescriptRules.js";
+import vueRulesOverrides from "./eslint/overrides/vueRules.js";
+import typescriptRules from "./eslint/typescriptRules.js";
 /**
  * Unfortunately, running all typescript-eslint rules in vue files is so slow, it's unrealistic to put it in CI/CD,
  * so we have a light version that lints the extra typescript-eslint rules only in ts files so we can use it in CI/CD
@@ -14,8 +14,12 @@ export default withNuxt(nuxtPlugin, {
       project: ".nuxt/tsconfig.json",
     },
   },
-  ...typescript,
+  rules: typescriptRules,
 }).overrides({
-  "nuxt/typescript/rules": typescriptOverrides,
-  "nuxt/vue/rules": vueOverrides,
+  "nuxt/typescript/rules": {
+    rules: typescriptRulesOverrides,
+  },
+  "nuxt/vue/rules": {
+    rules: vueRulesOverrides,
+  },
 });
