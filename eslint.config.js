@@ -5,6 +5,15 @@ import tseslint from "typescript-eslint";
 import withNuxt from "./.nuxt/eslint.config.mjs";
 
 export default withNuxt(
+  {
+    plugins: {
+      import: pluginImport,
+    },
+    rules: {
+      "import/consistent-type-specifier-style": "error",
+      eqeqeq: "error",
+    },
+  },
   tseslint.config({
     files: ["*.ts"],
     extends: [
@@ -43,13 +52,8 @@ export default withNuxt(
   unocss,
   eslintPluginPrettierRecommended,
   {
-    plugins: {
-      import: pluginImport,
-    },
     rules: {
-      "import/consistent-type-specifier-style": "error",
       curly: ["error", "multi"],
-      eqeqeq: "error",
     },
   },
 )
