@@ -11,7 +11,7 @@ interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;
 }
 
-type ContainerEmits = ContainerEventEmitsOptions;
+interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const props = withDefaults(defineProps<ContainerProps>(), { configuration: () => ({}) });
