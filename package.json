@@ -25,7 +25,6 @@
   },
   "scriptsComments": {
     "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
-    "lint:all": "Unfortunately, running all typescript-eslint rules in vue files is so slow, it's unrealistic to put it in CI/CD, so it will just be a custom command we run once in a while for cleanups",
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
   },
   "devDependencies": {
