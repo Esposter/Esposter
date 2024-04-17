@@ -56,8 +56,8 @@ export default withNuxt(
       curly: ["error", "multi"],
     },
   },
-)
-  .override("nuxt/typescript/rules", {
+).overrides({
+  "nuxt/typescript/rules": {
     rules: {
       "@typescript-eslint/ban-types": [
         "error",
@@ -70,8 +70,8 @@ export default withNuxt(
       ],
       "@typescript-eslint/no-explicit-any": "off",
     },
-  })
-  .override("nuxt/vue/rules", {
+  },
+  "nuxt/vue/rules": {
     rules: {
       "vue/no-unused-vars": "off",
       "vue/no-v-html": "off",
@@ -80,4 +80,5 @@ export default withNuxt(
       "vue/valid-template-root": "off",
       "@typescript-eslint/no-unused-vars": "off",
     },
-  });
+  },
+});
