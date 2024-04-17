@@ -20,9 +20,10 @@ const width = 200;
 const height = 200;
 
 onMounted(() => {
-  const canvas = document.querySelector(`#${id}`) as HTMLCanvasElement;
+  const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
+  if (!canvas) return;
   const scene = new Scene();
-  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
+  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
   let light: Light;
 
   const gltfLoader = new GLTFLoader();
@@ -73,8 +74,9 @@ onMounted(() => {
 
   const clock = new Clock();
   const animate = () => {
+    if (!gem) return;
     const elapsedTime = clock.getElapsedTime();
-    if (gem) gem.rotation.y = 1.1 * elapsedTime;
+    gem.rotation.y = 1.1 * elapsedTime;
     controls.update();
     renderer.render(scene, camera);
     window.requestAnimationFrame(animate);

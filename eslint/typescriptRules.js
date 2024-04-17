@@ -3,27 +3,44 @@ import tseslint from "typescript-eslint";
 export default {
   ...Object.assign(
     {},
-    ...tseslint.configs.strictTypeChecked.map((c) => c.rules ?? {}),
-    ...tseslint.configs.stylisticTypeChecked.map((c) => c.rules ?? {}),
+    ...tseslint.configs.strictTypeChecked.map((c) => {
+      const rules = c.rules ?? {};
+      delete rules["@typescript-eslint/no-base-to-string"];
+      delete rules["@typescript-eslint/no-redundant-type-constituents"];
+      delete rules["@typescript-eslint/no-unsafe-argument"];
+      delete rules["@typescript-eslint/no-unsafe-assignment"];
+      delete rules["@typescript-eslint/no-unsafe-call"];
+      delete rules["@typescript-eslint/no-unsafe-enum-comparison"];
+      delete rules["@typescript-eslint/no-unsafe-member-access"];
+      delete rules["@typescript-eslint/no-unsafe-return"];
+      delete rules["@typescript-eslint/no-unused-vars"];
+      delete rules["@typescript-eslint/prefer-reduce-type-parameter"];
+      delete rules["@typescript-eslint/unbound-method"];
+      // Rules we actually want to keep for ts files but conflict with vue files in the script setup section
+      delete rules["@typescript-eslint/restrict-plus-operands"];
+      delete rules["@typescript-eslint/restrict-template-expressions"];
+      // Computationally expensive
+      delete rules["@typescript-eslint/no-confusing-void-expression"];
+      delete rules["@typescript-eslint/no-floating-promises"];
+      delete rules["@typescript-eslint/no-misused-promises"];
+      delete rules["@typescript-eslint/no-unnecessary-condition"];
+      return rules;
+    }),
+    ...tseslint.configs.stylisticTypeChecked.map((c) => {
+      const rules = c.rules ?? {};
+      delete rules["@typescript-eslint/no-empty-function"];
+      delete rules["@typescript-eslint/no-empty-interface"];
+      return rules;
+    }),
   ),
   "@typescript-eslint/consistent-type-exports": "error",
-  "@typescript-eslint/naming-convention": [
-    "error",
-    {
-      selector: "variable",
-      format: ["strictCamelCase", "UPPER_CASE"],
-      types: ["boolean", "number", "string", "array"],
-    },
-  ],
-  "@typescript-eslint/no-base-to-string": "off",
-  "@typescript-eslint/no-redundant-type-constituents": "off",
-  "@typescript-eslint/no-unsafe-argument": "off",
-  "@typescript-eslint/no-unsafe-assignment": "off",
-  "@typescript-eslint/no-unsafe-call": "off",
-  "@typescript-eslint/no-unsafe-enum-comparison": "off",
-  "@typescript-eslint/no-unsafe-member-access": "off",
-  "@typescript-eslint/no-unsafe-return": "off",
-  "@typescript-eslint/prefer-reduce-type-parameter": "off",
-  "@typescript-eslint/restrict-template-expressions": "off",
-  "@typescript-eslint/unbound-method": "off",
+  // Computationally expensive
+  // "@typescript-eslint/naming-convention": [
+  //   "error",
+  //   {
+  //     selector: "variable",
+  //     format: ["strictCamelCase", "UPPER_CASE"],
+  //     types: ["boolean", "number", "string", "array"],
+  //   },
+  // ],
 };

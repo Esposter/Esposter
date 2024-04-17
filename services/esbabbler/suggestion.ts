@@ -1,4 +1,5 @@
 import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
+import type { OnKeyDown } from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 import type { MentionOptions } from "@tiptap/extension-mention";
 import { VueRenderer } from "@tiptap/vue-3";
@@ -53,7 +54,7 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        return Boolean((component.ref as InstanceType<typeof MentionList> | null)?.onKeyDown(props));
+        return Boolean((component.ref?.onKeyDown as OnKeyDown)(props));
       },
 
       onExit() {

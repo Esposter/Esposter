@@ -7,7 +7,8 @@ const errorMessage = computed(() => {
   const error = editFormRef.value?.errors[0];
   if (!error) return "";
 
-  const element = document.querySelector(`label[for="${error.id}"]`) as HTMLLabelElement;
+  const element = document.querySelector(`label[for="${error.id}"]`);
+  if (!element) return "";
   return `${element.textContent}: ${editFormRef.value?.errors[0]?.errorMessages[0]}`;
 });
 </script>

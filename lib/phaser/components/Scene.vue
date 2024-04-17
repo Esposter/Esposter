@@ -59,9 +59,10 @@ const NewScene = class extends SceneWithPlugins {
     emit("update", this, ...args);
   }
 };
-let newScene: SceneWithPlugins;
+let newScene: SceneWithPlugins | null = null;
 
 const shutdownListener = () => {
+  if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
   for (const shutdownListener of shutdownListenersMap.value[sceneKey]) shutdownListener(newScene);
   shutdownListenersMap.value[sceneKey] = [];
   emit("shutdown", newScene);
@@ -69,7 +70,7 @@ const shutdownListener = () => {
 
 onMounted(() => {
   if (!game.value) throw new NotInitializedError(GameObjectType.Game);
-  newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins;
+  newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins | null;
   if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
   provide(InjectionKeyMap.Scene, newScene);
   newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
@@ -79,6 +80,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (!game.value) throw new NotInitializedError(GameObjectType.Game);
+  else if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
   newScene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.value.scene.remove(sceneKey);
 });

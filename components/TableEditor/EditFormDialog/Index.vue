@@ -11,8 +11,8 @@ const { editFormRef, editFormDialog, isFullScreenDialog } = storeToRefs(tableEdi
 watch(editFormDialog, (newEditFormDialog) => {
   // Hack resetting the item so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
-  window.setTimeout(async () => {
-    if (!newEditFormDialog) await resetItem();
+  window.setTimeout(() => {
+    if (!newEditFormDialog) void resetItem();
   }, 300);
 });
 </script>

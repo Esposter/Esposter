@@ -6,12 +6,14 @@ interface MessageMentionListProps {
   command: (props: Record<string, unknown>) => void;
 }
 
+export type OnKeyDown = typeof onKeyDown;
+
 const { items, command } = defineProps<MessageMentionListProps>();
 const { infoOpacity10 } = useColors();
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
   const item = items[index];
-  if (item) command({ id: item.id, label: item.name });
+  command({ id: item.id, label: item.name });
 };
 const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
   if (event.key === "ArrowUp") {

@@ -178,7 +178,9 @@ onMounted(() => {
   moveCards();
 });
 
-onUnmounted(() => clearInterval(moveCardsTimer.value));
+onUnmounted(() => {
+  clearInterval(moveCardsTimer.value);
+});
 
 // If cards update then we want to refresh the entire display back to the first step.
 watch(
