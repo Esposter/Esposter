@@ -55,7 +55,7 @@ const update = async (scene: SceneWithPlugins) => {
   for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input, scene)) return;
 };
 
-const shutdown = async (scene: SceneWithPlugins) => {
+const shutdown = (scene: SceneWithPlugins) => {
   scene.cameras.main.removeBounds();
   scene.cameras.main.setZoom(1);
 };

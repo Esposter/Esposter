@@ -37,7 +37,7 @@ const preload = (scene: SceneWithPlugins) => {
   x.value = width / 2;
   y.value = height / 2;
 
-  scene.load.on("progress", async (value: number) => {
+  scene.load.on("progress", (value: number) => {
     progressBarWidth.value = progressBarMaxWidth.value * value;
     percentageText.value = `${parseInt((value * 100).toString())}%`;
   });
@@ -46,7 +46,9 @@ const preload = (scene: SceneWithPlugins) => {
     assetText.value = `Loading asset: ${prettifyName(file.key)}`;
   });
 
-  scene.load.on("complete", () => switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title));
+  scene.load.on("complete", () => {
+    switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
+  });
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);

@@ -32,12 +32,20 @@ const items = computed(() => {
   if (!isCreator.value) return [];
 
   const result: Item[] = [];
-  result.unshift({ title: "Edit Message", icon: "mdi-pencil", onClick: () => emit("update:update-mode", true) });
+  result.unshift({
+    title: "Edit Message",
+    icon: "mdi-pencil",
+    onClick: () => {
+      emit("update:update-mode", true);
+    },
+  });
   result.push({
     title: "Delete Message",
     icon: "mdi-delete",
     color: "error",
-    onClick: () => emit("update:delete-mode", true),
+    onClick: () => {
+      emit("update:delete-mode", true);
+    },
   });
   return result;
 });

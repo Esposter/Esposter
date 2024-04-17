@@ -11,7 +11,7 @@ interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;
 }
 
-interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
+type ContainerEmits = ContainerEventEmitsOptions;
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const props = withDefaults(defineProps<ContainerProps>(), { configuration: () => ({}) });
@@ -20,7 +20,7 @@ const { x, y, children } = configuration.value;
 const emit = defineEmits<ContainerEmits>();
 const scene = useInjectScene();
 const container = ref(scene.add.container(x, y, children)) as Ref<GameObjects.Container>;
-useInitializeGameObject(container, configuration as Ref<Partial<ContainerConfiguration>>, emit, ContainerSetterMap);
+useInitializeGameObject(container, configuration, emit, ContainerSetterMap);
 provide(InjectionKeyMap.ParentContainer, container.value);
 </script>
 

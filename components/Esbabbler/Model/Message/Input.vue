@@ -13,7 +13,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        sendMessage(this.editor);
+        void sendMessage(this.editor);
         return true;
       },
     };

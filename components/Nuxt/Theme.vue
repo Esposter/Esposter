@@ -8,12 +8,13 @@ const theme = useGlobalTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME);
 theme.name.value = themeCookie.value ?? ThemeMode.light;
 
-watch(theme.name, async () => {
+watch(theme.name, () => {
   const x = performance.now();
   for (let i = 0; i++ < 1e7; (i << 9) & ((9 % 9) * 9 + 9));
   if (performance.now() - x > 10) return;
 
-  const el = document.getElementById("__nuxt") as HTMLElement;
+  const el = document.getElementById("__nuxt");
+  if (!el) return;
   const copy = el.cloneNode(true) as HTMLElement;
   copy.classList.add("app-copy");
   const rect = el.getBoundingClientRect();

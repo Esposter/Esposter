@@ -14,12 +14,12 @@ const { editItem } = tableEditorStore;
 const { tableEditorType } = storeToRefs(tableEditorStore);
 const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.value));
 
-onMounted(() => {
+onMounted(async () => {
   const itemType = route.query[ITEM_TYPE_QUERY_PARAM_KEY];
   for (const type of Object.values(TableEditorType)) if (type === itemType) tableEditorType.value = itemType;
 
   const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
-  if (typeof itemId === "string" && uuidValidateV4(itemId)) editItem(itemId);
+  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem(itemId);
 });
 </script>
 

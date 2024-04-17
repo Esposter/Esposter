@@ -14,15 +14,8 @@ export default withNuxt(
       eqeqeq: "error",
     },
   },
-  unocss,
-  eslintPluginPrettierRecommended,
   {
-    rules: {
-      curly: ["error", "multi"],
-    },
-  },
-).overrides({
-  "nuxt/typescript/rules": {
+    files: ["*.ts"],
     languageOptions: {
       parserOptions: {
         project: ".nuxt/tsconfig.json",
@@ -34,15 +27,7 @@ export default withNuxt(
         ...tseslint.configs.strictTypeChecked.map((c) => c.rules ?? {}),
         ...tseslint.configs.stylisticTypeChecked.map((c) => c.rules ?? {}),
       ),
-      "@typescript-eslint/ban-types": [
-        "error",
-        {
-          types: {
-            Omit: "Use `Except` instead",
-            Function: false,
-          },
-        },
-      ],
+
       "@typescript-eslint/consistent-type-exports": "error",
       "@typescript-eslint/naming-convention": [
         "error",
@@ -53,7 +38,6 @@ export default withNuxt(
         },
       ],
       "@typescript-eslint/no-base-to-string": "off",
-      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-redundant-type-constituents": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
@@ -64,6 +48,28 @@ export default withNuxt(
       "@typescript-eslint/prefer-reduce-type-parameter": "off",
       "@typescript-eslint/restrict-template-expressions": "off",
       "@typescript-eslint/unbound-method": "off",
+    },
+  },
+  unocss,
+  eslintPluginPrettierRecommended,
+  {
+    rules: {
+      curly: ["error", "multi"],
+    },
+  },
+).overrides({
+  "nuxt/typescript/rules": {
+    rules: {
+      "@typescript-eslint/ban-types": [
+        "error",
+        {
+          types: {
+            Omit: "Use `Except` instead",
+            Function: false,
+          },
+        },
+      ],
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   "nuxt/vue/rules": {

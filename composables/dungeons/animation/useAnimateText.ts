@@ -19,7 +19,7 @@ export const useAnimateText = (
   scene.time.addEvent({
     delay: textDelay.value,
     repeat: textSections.length - 1,
-    callback: async () => {
+    callback: () => {
       const textSection = textSections[i];
       targetText.value += textSection;
       i++;

@@ -43,7 +43,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        onUpdateMessage(this.editor);
+        void onUpdateMessage(this.editor);
         return true;
       },
       Esc: () => {

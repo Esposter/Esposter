@@ -36,12 +36,12 @@ const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() 
   originY: 0.5,
   width: VOLUME_SLIDER_BAR_WIDTH,
 }));
-const onSliderBarClick = ({ x }: Input.Pointer) => {
-  if (!volumeSlider) return;
+const onSliderBarClick = async ({ x }: Input.Pointer) => {
+  if (!volumeSlider.value) return;
 
   const volumeSliderWidth = VOLUME_SLIDER_END_X - VOLUME_SLIDER_START_X;
   const selectedVolumeSliderWidth = x - (MENU_HORIZONTAL_PADDING + VOLUME_SLIDER_START_X + VOLUME_SLIDER_WIDTH / 2);
-  setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
+  await setVolume(Math.floor((selectedVolumeSliderWidth / volumeSliderWidth) * 100));
 };
 </script>
 
