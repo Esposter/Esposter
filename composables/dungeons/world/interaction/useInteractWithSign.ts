@@ -1,5 +1,5 @@
+import { SignObjectProperty } from "@/generated/tiled/propertyTypes/class/SignObjectProperty";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
-import { SignObjectProperty } from "@/models/dungeons/world/home/SignObjectProperty";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { SetRequired } from "@/util/types/SetRequired";

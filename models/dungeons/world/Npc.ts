@@ -1,5 +1,5 @@
+import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
 import type { Character } from "@/models/dungeons/world/Character";
-import type { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";
 import type { Except } from "@/util/types/Except";
 import type { Position } from "grid-engine";
 // Npc position will be computed based on path[pathIndex]

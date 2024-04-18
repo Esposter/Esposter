@@ -1,5 +1,5 @@
+import { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";
 import { getNextDirection } from "@/services/dungeons/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";

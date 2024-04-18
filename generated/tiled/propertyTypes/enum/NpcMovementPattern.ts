@@ -1,4 +1,4 @@
 export enum NpcMovementPattern {
-  Idle = "Idle",
   Clockwise = "Clockwise",
+  Idle = "Idle",
 }

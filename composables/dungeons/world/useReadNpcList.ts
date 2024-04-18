@@ -1,10 +1,10 @@
+import { NpcObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcObjectProperty";
+import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
+import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import type { Npc } from "@/models/dungeons/world/Npc";
-import type { NpcMovementPattern } from "@/models/dungeons/world/home/NpcMovementPattern";
-import { NpcObjectProperty } from "@/models/dungeons/world/home/NpcObjectProperty";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
-import { ObjectType } from "@/models/dungeons/world/home/ObjectType";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
 import { findTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
