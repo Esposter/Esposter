@@ -115,7 +115,7 @@ importers:
         version: 0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.4)
+        version: 0.5.1(drizzle-orm@0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.5)
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.23(typescript@5.4.5))
@@ -222,8 +222,8 @@ importers:
         specifier: ^8.16.0
         version: 8.16.0
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: ^3.22.5
+        version: 3.22.5
     devDependencies:
       '@nuxt/eslint':
         specifier: ^0.3.8
@@ -7450,8 +7450,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+  zod@3.22.5:
+    resolution: {integrity: sha512-HqnGsCdVZ2xc0qWPLdO25WnseXThh0kEYKIdV5F/hTHO75hNZFp8thxSeHhiPrHZKrFTo1SOgkAj9po5bexZlw==}
 
 snapshots:
 
@@ -11829,7 +11829,7 @@ snapshots:
       json-diff: 0.9.0
       minimatch: 7.4.6
       semver: 7.6.0
-      zod: 3.22.4
+      zod: 3.22.5
     transitivePeerDependencies:
       - supports-color
 
@@ -11838,10 +11838,10 @@ snapshots:
       '@opentelemetry/api': 1.8.0
       postgres: 3.4.4
 
-  drizzle-zod@0.5.1(drizzle-orm@0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.4):
+  drizzle-zod@0.5.1(drizzle-orm@0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.5):
     dependencies:
       drizzle-orm: 0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4)
-      zod: 3.22.4
+      zod: 3.22.5
 
   duplexer@0.1.2: {}
 
@@ -16055,4 +16055,4 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.5.2
 
-  zod@3.22.4: {}
+  zod@3.22.5: {}
