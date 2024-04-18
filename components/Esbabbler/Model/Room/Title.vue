@@ -44,8 +44,8 @@ onClickOutside(titleRef, () => {
       density="compact"
       font-bold
       hide-details
-      text-xl
       autofocus
+      text-xl
       @keydown.enter="onUpdateRoom"
     />
     <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">

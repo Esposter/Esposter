@@ -30,7 +30,7 @@ const inviteLink = computed(() =>
       </v-card-title>
       <v-card-text px-0="!">
         <div mb-2>Send a room invite link to a friend</div>
-        <v-text-field v-model="inviteLink" variant="filled" readonly hide-details>
+        <v-text-field v-model="inviteLink" variant="filled" hide-details readonly>
           <template #append-inner>
             <StyledClipboardButton :source="inviteLink" />
           </template>

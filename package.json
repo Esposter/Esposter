@@ -18,6 +18,7 @@
     "lint": "cross-env TIMING=1 eslint --config eslint.light.config.js .",
     "lint:fix": "cross-env TIMING=1 eslint --config eslint.light.config.js --fix .",
     "lint:all": "cross-env TIMING=1 eslint .",
+    "lint:all:fix": "cross-env TIMING=1 eslint --fix .",
     "db:run": "tsx --tsconfig ./.nuxt/tsconfig.json node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm run db:run generate:pg",
     "db:studio": "pnpm run db:run studio",

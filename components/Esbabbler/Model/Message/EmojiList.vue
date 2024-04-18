@@ -34,10 +34,10 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       flex
       items-center
       shadow-md
-      w-fit
-      px-2
       cursor-pointer
       z-1
+      w-fit
+      px-2
       @click="
         isReacted
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
