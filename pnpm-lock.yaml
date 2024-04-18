@@ -117,8 +117,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(drizzle-orm@0.30.8(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.4)
       emoji-mart-vue-fast:
-        specifier: ^15.0.1
-        version: 15.0.1(vue@3.4.23(typescript@5.4.5))
+        specifier: ^15.0.2
+        version: 15.0.2(vue@3.4.23(typescript@5.4.5))
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -1025,10 +1025,6 @@ packages:
 
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
-
-  '@babel/runtime@7.24.0':
-    resolution: {integrity: sha512-Chk32uHMg6TnQdvw2e9IlqPpFX/6NLuK0Ys2PqLb7/gL5uFn9mXvK715FGLlOLQrcO4qIkNHkvPGktzzXexsFw==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.24.1':
     resolution: {integrity: sha512-+BIznRzyqBf+2wCTxcKE3wDjfGeCoVE61KSHGpkzqrLi8qxqFwBeUFyId2cxkTmm55fzDGnm0+yCxaxygrLUnQ==}
@@ -3914,8 +3910,8 @@ packages:
   electron-to-chromium@1.4.708:
     resolution: {integrity: sha512-iWgEEvREL4GTXXHKohhh33+6Y8XkPI5eHihDmm8zUk5Zo7HICEW+wI/j5kJ2tbuNUCXJ/sNXa03ajW635DiJXA==}
 
-  emoji-mart-vue-fast@15.0.1:
-    resolution: {integrity: sha512-FcBio4MZsad+IwbaD2+1/obaK7W0F8EXlVXOXKgNCICaxkJD5WnA5bAtSXR0+FSBrMWz7DCAOqOojm7EapZ1eg==}
+  emoji-mart-vue-fast@15.0.2:
+    resolution: {integrity: sha512-q7VaE6yRrlQd+jpHPToh1XnIatgACkQjBj0vQ7uNaWrbVsKlhZaOsqZVoegT5IZt5XkYoR2x4MHMNep/BJP9rw==}
     peerDependencies:
       vue: '>2.0.0'
 
@@ -8337,10 +8333,6 @@ snapshots:
 
   '@babel/regjsgen@0.8.0': {}
 
-  '@babel/runtime@7.24.0':
-    dependencies:
-      regenerator-runtime: 0.14.1
-
   '@babel/runtime@7.24.1':
     dependencies:
       regenerator-runtime: 0.14.1
@@ -11865,9 +11857,9 @@ snapshots:
 
   electron-to-chromium@1.4.708: {}
 
-  emoji-mart-vue-fast@15.0.1(vue@3.4.23(typescript@5.4.5)):
+  emoji-mart-vue-fast@15.0.2(vue@3.4.23(typescript@5.4.5)):
     dependencies:
-      '@babel/runtime': 7.24.0
+      '@babel/runtime': 7.24.4
       core-js: 3.36.0
       vue: 3.4.23(typescript@5.4.5)
 
