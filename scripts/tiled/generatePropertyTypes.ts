@@ -40,11 +40,11 @@ const getEnumString = (name: string, members: string[]) =>
 for (const propertyType of tiledProject.propertyTypes as PropertyTypes)
   if (propertyType.type === PropertyType.class) {
     const { name, type, members } = propertyType;
-    const enumName = `${name}ObjectProperty`;
+    const memberName = `${name}ObjectProperty`;
     await outputFile(
-      `${directory}/${type}/${enumName}.ts`,
+      `${directory}/${type}/${memberName}.ts`,
       getEnumString(
-        enumName,
+        memberName,
         members.map((m) => m.name),
       ),
     );
