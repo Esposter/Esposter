@@ -43,7 +43,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span class="text-subtitle-2 text-grey" pl-2>
+          <span class="text-grey text-subtitle-2" pl-2>
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
@@ -60,8 +60,8 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
-          top--6
           right-0
+          top--6
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >

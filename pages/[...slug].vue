@@ -25,15 +25,15 @@ onMounted(() => {
       :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND_PATH})` }"
       h-full
       flex
-      flex-col
       justify-center
+      flex-col
       items-center
       bg-center
       bg-cover
       bg-black
     >
       <div flex flex-col items-center z-1 mt-25>
-        <div class="text-#ddd" text-center text-5xl>Lost in space?</div>
+        <div text="#ddd" text-center text-5xl>Lost in space?</div>
         <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
           <StyledButton>Go back home</StyledButton>
         </NuxtInvisibleLink>
