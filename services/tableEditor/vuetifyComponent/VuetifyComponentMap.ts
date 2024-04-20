@@ -4,7 +4,7 @@ import * as components from "vuetify/components";
 
 type KebabCasedPropertiesDeepVuetifyComponents = KebabCasedPropertiesDeep<typeof components>;
 export type VuetifyComponentMap = {
-  [Property in keyof KebabCasedPropertiesDeepVuetifyComponents]: KebabCasedPropertiesDeepVuetifyComponents[Property];
+  [P in keyof KebabCasedPropertiesDeepVuetifyComponents]: KebabCasedPropertiesDeepVuetifyComponents[P];
 };
 
 export const VuetifyComponentMap = Object.entries(components).reduce<Record<string, Component>>(

@@ -9,7 +9,7 @@ import type { Except } from "@/util/types/Except";
 import { z } from "zod";
 
 type TableEditorTypes = {
-  [Property in keyof typeof TableEditorType]: TableEditor<Item>;
+  [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
 export class TableEditorConfiguration implements TableEditorTypes {
