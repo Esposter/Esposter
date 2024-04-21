@@ -1,12 +1,12 @@
 import type { AzureEntity, CompositeKey } from "@/models/azure";
-import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import { Operation } from "@/models/shared/Operation";
+import type { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
-export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeKey extends EntityTypeKey = "Item">(
+export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeKey extends AzureEntityType>(
   itemList: Ref<TItem[]>,
-  entityTypeKey: TEntityTypeKey = "Item" as TEntityTypeKey,
+  entityTypeKey: TEntityTypeKey,
 ) => {
   const pushItemList = (...items: TItem[]) => {
     itemList.value.push(...items);

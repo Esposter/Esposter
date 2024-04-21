@@ -6,6 +6,6 @@ export const useObjectLayer = (objectLayer: ObjectLayer) => {
   const worldSceneStore = useWorldSceneStore();
   const { tilemap } = storeToRefs(worldSceneStore);
   const layer = tilemap.value.getObjectLayer(objectLayer);
-  if (!layer) throw new NotFoundError("Object Layer", objectLayer);
+  if (!layer) throw new NotFoundError(useObjectLayer.name, objectLayer);
   return layer;
 };
