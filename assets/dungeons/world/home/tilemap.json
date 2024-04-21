@@ -503,6 +503,13 @@
          "locked":true,
          "name":"Encounter",
          "opacity":0.7,
+         "properties":[
+                {
+                 "name":"area",
+                 "propertytype":"Area",
+                 "type":"string",
+                 "value":"Grass"
+                }],
          "type":"tilelayer",
          "visible":true,
          "width":20,
@@ -940,14 +947,14 @@
          "name":"NpcPaths",
          "properties":[
                 {
-                 "name":"NpcSpawnPointObject",
-                 "type":"object",
-                 "value":0
-                }, 
-                {
-                 "name":"is_spawn_point",
+                 "name":"isSpawnPoint",
                  "type":"bool",
                  "value":false
+                }, 
+                {
+                 "name":"npcSpawnPointObject",
+                 "type":"object",
+                 "value":0
                 }],
          "spacing":0,
          "tilecount":1,

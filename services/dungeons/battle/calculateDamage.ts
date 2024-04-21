@@ -1,3 +1,3 @@
-import { generateRandomNumber } from "@/util/math/random/generateNumber";
+import { generateRandomNumber } from "@/util/math/random/generateRandomNumber";
 
-export const calculateDamage = (attack: number) => Math.ceil(generateRandomNumber(0.85, 1.01) * attack);
+export const calculateDamage = (attack: number) => Math.ceil(generateRandomNumber(1.01, 0.85) * attack);

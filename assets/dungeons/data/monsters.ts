@@ -7,9 +7,9 @@ import type { Except } from "@/util/types/Except";
 
 const baseMonsters: Except<Monster, "id" | "name">[] = [
   {
-    monsterName: MonsterName.Iguanignite,
+    monsterName: MonsterName.Aquavalor,
     asset: {
-      key: ImageKey.Iguanignite,
+      key: ImageKey.Aquavalor,
     },
     stats: {
       maxHp: 25,
@@ -17,7 +17,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.Slash],
+    attackIds: [AttackId.IceShard],
   },
   {
     monsterName: MonsterName.Carnodusk,
@@ -31,6 +31,45 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     currentLevel: 5,
     currentHp: 25,
     attackIds: [AttackId.IceShard],
+  },
+  {
+    monsterName: MonsterName.Frostsaber,
+    asset: {
+      key: ImageKey.Frostsaber,
+    },
+    stats: {
+      maxHp: 25,
+      baseAttack: 5,
+    },
+    currentLevel: 5,
+    currentHp: 25,
+    attackIds: [AttackId.IceShard],
+  },
+  {
+    monsterName: MonsterName.Ignivolt,
+    asset: {
+      key: ImageKey.Ignivolt,
+    },
+    stats: {
+      maxHp: 25,
+      baseAttack: 5,
+    },
+    currentLevel: 5,
+    currentHp: 25,
+    attackIds: [AttackId.IceShard],
+  },
+  {
+    monsterName: MonsterName.Iguanignite,
+    asset: {
+      key: ImageKey.Iguanignite,
+    },
+    stats: {
+      maxHp: 25,
+      baseAttack: 5,
+    },
+    currentLevel: 5,
+    currentHp: 25,
+    attackIds: [AttackId.Slash],
   },
 ];
 

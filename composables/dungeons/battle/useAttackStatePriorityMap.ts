@@ -1,6 +1,7 @@
 import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
 
 export const useAttackStatePriorityMap = () => {
   const playerStore = useBattlePlayerStore();
@@ -12,7 +13,7 @@ export const useAttackStatePriorityMap = () => {
       [StateName.PlayerPostAttackCheck]: null,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,
     };
-  else if (Math.random() < 0.5)
+  else if (generateRandomBoolean())
     return {
       [StateName.Battle]: StateName.PlayerAttack,
       [StateName.PlayerPostAttackCheck]: StateName.EnemyAttack,

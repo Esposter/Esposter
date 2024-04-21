@@ -32,8 +32,8 @@
  </tileset>
  <tileset firstgid="207" name="NpcPaths" class="Npc" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <properties>
-   <property name="NpcSpawnPointObject" type="object" value="0"/>
-   <property name="is_spawn_point" type="bool" value="false"/>
+   <property name="isSpawnPoint" type="bool" value="false"/>
+   <property name="npcSpawnPointObject" type="object" value="0"/>
   </properties>
   <image source="../../tilesets/Encounter.png" trans="ff00ff" width="64" height="64"/>
  </tileset>
@@ -424,6 +424,9 @@
 </data>
  </layer>
  <layer id="15" name="Encounter" class="Encounter" width="20" height="34" locked="1" opacity="0.7">
+  <properties>
+   <property name="area" propertytype="Area" value="Grass"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -4,7 +4,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 // We have to assume that only the unit position is passed in
-export const useFindInteractiveObject = <T extends Position>(
+export const useGetInteractiveObject = <T extends Position>(
   objects: T[],
   interactableDirectionMap: InteractableDirectionMap = {
     [Direction.UP]: true,

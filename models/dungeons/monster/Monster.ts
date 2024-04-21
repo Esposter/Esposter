@@ -6,17 +6,22 @@ import type { MonsterName } from "@/models/dungeons/monster/MonsterName";
 import { monsterNameSchema } from "@/models/dungeons/monster/MonsterName";
 import type { Stats } from "@/models/dungeons/monster/Stats";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
+import { getMonsterDetails } from "@/services/dungeons/monster/getMonsterDetails";
 import { z } from "zod";
 
-export interface Monster {
-  id: string;
-  monsterName: MonsterName;
-  name: string;
-  asset: Asset;
-  stats: Stats;
-  currentLevel: number;
-  currentHp: number;
-  attackIds: Attack["id"][];
+export class Monster {
+  id: string = crypto.randomUUID();
+  monsterName!: MonsterName;
+  name!: string;
+  asset!: Asset;
+  stats!: Stats;
+  currentLevel!: number;
+  currentHp!: number;
+  attackIds!: Attack["id"][];
+
+  constructor(monsterName: MonsterName) {
+    Object.assign(this, getMonsterDetails(monsterName));
+  }
 }
 
 export const monsterSchema = z.object({

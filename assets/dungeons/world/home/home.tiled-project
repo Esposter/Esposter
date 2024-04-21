@@ -16,7 +16,8 @@
             "storageType": "string",
             "type": "enum",
             "values": [
-                "Grass"
+                "Grass",
+                "Water"
             ],
             "valuesAsFlags": false
         },

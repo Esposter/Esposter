@@ -3,6 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
+import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
 
 export const FleeAttempt: State<StateName> = {
   name: StateName.FleeAttempt,
@@ -10,7 +11,7 @@ export const FleeAttempt: State<StateName> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
 
-    if (Math.random() < 0.5) {
+    if (generateRandomBoolean()) {
       showMessages(["You failed to run away..."], () => {
         battleStateMachine.setState(StateName.EnemyInput);
       });

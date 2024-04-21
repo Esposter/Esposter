@@ -6,7 +6,7 @@ import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import type { Npc } from "@/models/dungeons/world/Npc";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
-import { findTiledObjectProperty } from "@/services/dungeons/tilemap/findTiledObjectProperty";
+import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
@@ -37,21 +37,15 @@ export const useReadNpcList = () => {
       npcPath[parseInt(name)] = useObjectUnitPosition({ x, y });
     }
 
-    const frameTiledObjectProperty = findTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);
-    if (!frameTiledObjectProperty) continue;
-
-    const messagesTiledObjectProperty = findTiledObjectProperty<string>(
+    const frameTiledObjectProperty = getTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);
+    const messagesTiledObjectProperty = getTiledObjectProperty<string>(
       npcObject.properties,
       NpcObjectProperty.messages,
     );
-    if (!messagesTiledObjectProperty) continue;
-
-    const movementPatternTiledObjectProperty = findTiledObjectProperty<NpcMovementPattern>(
+    const movementPatternTiledObjectProperty = getTiledObjectProperty<NpcMovementPattern>(
       npcObject.properties,
       NpcObjectProperty.movementPattern,
     );
-    if (!movementPatternTiledObjectProperty) continue;
-
     const frame = parseInt(frameTiledObjectProperty.value);
     const messages = messagesTiledObjectProperty.value.split(MESSAGE_SEPARATOR);
     const movementPattern = movementPatternTiledObjectProperty.value;

@@ -13,7 +13,7 @@ export const useInteractWithNpc = (): boolean => {
   const { player } = storeToRefs(playerStore);
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
-  const npc = useFindInteractiveObject(
+  const npc = useGetInteractiveObject(
     npcList.value.map(({ path, pathIndex, ...rest }) => ({ ...path[pathIndex], ...rest })),
   );
   if (!npc) return false;

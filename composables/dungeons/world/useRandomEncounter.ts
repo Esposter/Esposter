@@ -1,12 +1,17 @@
 import { EncounterObjectProperty } from "@/generated/tiled/propertyTypes/class/EncounterObjectProperty";
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { findTiledObjectProperty } from "@/services/dungeons/tilemap/findTiledObjectProperty";
+import { Monster } from "@/models/dungeons/monster/Monster";
+import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
+import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/world/constants";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
+import { pickRandomValue } from "@/util/math/random/pickRandomValue";
 
 export const useRandomEncounter = () => {
   const gameStore = useGameStore();
@@ -20,18 +25,21 @@ export const useRandomEncounter = () => {
   stepsSinceLastEncounter.value++;
 
   const encounterChance = stepsSinceLastEncounter.value / MAX_STEPS_BEFORE_NEXT_ENCOUNTER;
-  const isEncounter = Math.random() < encounterChance;
+  const isEncounter = generateRandomBoolean(encounterChance);
   if (!isEncounter) return;
 
+  const enemyStore = useEnemyStore();
+  const { activeMonster } = storeToRefs(enemyStore);
   const worldSceneStore = useWorldSceneStore();
   const { encounterLayer } = storeToRefs(worldSceneStore);
-  const areaTiledObjectProperty = findTiledObjectProperty<Area>(
+  const areaTiledObjectProperty = getTiledObjectProperty<Area>(
     encounterLayer.value.layer.properties,
     EncounterObjectProperty.area,
   );
-  if (!areaTiledObjectProperty) return;
-
-  console.log(areaTiledObjectProperty);
+  const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
+  const randomMonsterName = pickRandomValue(encounterArea.monsterNames);
+  const randomMonster = new Monster(randomMonsterName);
   stepsSinceLastEncounter.value = 0;
+  activeMonster.value = randomMonster;
   fadeSwitchToScene(SceneKey.Battle, 2000);
 };

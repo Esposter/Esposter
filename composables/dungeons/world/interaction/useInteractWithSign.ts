@@ -18,7 +18,7 @@ export const useInteractWithSign = (): boolean => {
     objects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
   }
 
-  const sign = useFindInteractiveObject(objects, {
+  const sign = useGetInteractiveObject(objects, {
     [Direction.UP]: true,
     [Direction.DOWN]: false,
     [Direction.LEFT]: false,
