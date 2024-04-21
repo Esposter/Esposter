@@ -37,8 +37,8 @@ export const useRandomEncounter = () => {
     EncounterObjectProperty.area,
   );
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
-  const randomMonsterName = pickRandomValue(encounterArea.monsterNames);
-  const randomMonster = new Monster(randomMonsterName);
+  const randomMonsterKey = pickRandomValue(encounterArea.monsterKeys);
+  const randomMonster = new Monster(randomMonsterKey);
   stepsSinceLastEncounter.value = 0;
   activeMonster.value = randomMonster;
   fadeSwitchToScene(SceneKey.Battle, 2000);

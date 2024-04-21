@@ -1,8 +1,8 @@
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
-import type { MonsterName } from "@/models/dungeons/monster/MonsterName";
+import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 
 export interface EncounterArea {
   id: Area;
   name: string;
-  monsterNames: MonsterName[];
+  monsterKeys: MonsterKey[];
 }

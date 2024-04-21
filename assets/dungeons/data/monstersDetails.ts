@@ -1,13 +1,13 @@
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import { MonsterName } from "@/models/dungeons/monster/MonsterName";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "@/util/types/Except";
 
-const baseMonsters: Except<Monster, "id" | "name">[] = [
+const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
   {
-    monsterName: MonsterName.Aquavalor,
+    key: MonsterKey.Aquavalor,
     asset: {
       key: ImageKey.Aquavalor,
     },
@@ -20,7 +20,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     attackIds: [AttackId.IceShard],
   },
   {
-    monsterName: MonsterName.Carnodusk,
+    key: MonsterKey.Carnodusk,
     asset: {
       key: ImageKey.Carnodusk,
     },
@@ -33,7 +33,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     attackIds: [AttackId.IceShard],
   },
   {
-    monsterName: MonsterName.Frostsaber,
+    key: MonsterKey.Frostsaber,
     asset: {
       key: ImageKey.Frostsaber,
     },
@@ -46,7 +46,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     attackIds: [AttackId.IceShard],
   },
   {
-    monsterName: MonsterName.Ignivolt,
+    key: MonsterKey.Ignivolt,
     asset: {
       key: ImageKey.Ignivolt,
     },
@@ -59,7 +59,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
     attackIds: [AttackId.IceShard],
   },
   {
-    monsterName: MonsterName.Iguanignite,
+    key: MonsterKey.Iguanignite,
     asset: {
       key: ImageKey.Iguanignite,
     },
@@ -73,7 +73,7 @@ const baseMonsters: Except<Monster, "id" | "name">[] = [
   },
 ];
 
-export const monsters: Except<Monster, "id">[] = baseMonsters.map((ba) => ({
-  ...ba,
-  name: prettifyName(ba.monsterName),
+export const monstersDetails: Except<Monster, "id">[] = baseMonstersDetails.map((bmd) => ({
+  ...bmd,
+  name: prettifyName(bmd.key),
 }));
