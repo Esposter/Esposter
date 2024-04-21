@@ -6,8 +6,10 @@ import { useSceneStore } from "@/lib/phaser/store/phaser/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
+import { Operation } from "@/models/shared/Operation";
 import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
@@ -71,7 +73,7 @@ const shutdownListener = () => {
 onMounted(() => {
   if (!game.value) throw new NotInitializedError(GameObjectType.Game);
   newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins | null;
-  if (!newScene) throw new Error(`New scene: "${sceneKey}" could not be created`);
+  if (!newScene) throw new InvalidOperationError(Operation.Create, GameObjectType.Scene, `key: ${sceneKey}`);
   provide(InjectionKeyMap.Scene, newScene);
   newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
 

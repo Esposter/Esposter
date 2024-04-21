@@ -4,6 +4,7 @@ import { sessions } from "@/db/schema/sessions";
 import { users } from "@/db/schema/users";
 import { verificationTokens } from "@/db/schema/verificationTokens";
 import { NotFoundError } from "@/models/error/NotFoundError";
+import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { omit } from "@/util/omit";
 import type { Adapter } from "@auth/core/adapters";
@@ -32,7 +33,7 @@ export const DrizzleAdapter: Adapter = {
         .innerJoin(users, eq(users.id, sessions.userId))
     )[0],
   updateUser: async (input) => {
-    if (!input.id) throw new Error("No user id");
+    if (!input.id) throw new NotInitializedError("User id");
     return (await db.update(users).set(input).where(eq(users.id, input.id)).returning())[0];
   },
   updateSession: async (input) =>

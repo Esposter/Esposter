@@ -1,3 +1,5 @@
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
+import { Operation } from "@/models/shared/Operation";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useCreateTileset = (tilesetKey: string) => {
@@ -5,6 +7,6 @@ export const useCreateTileset = (tilesetKey: string) => {
   const { tilemap } = storeToRefs(worldSceneStore);
   // We will enforce that the tileset name should exactly match the tileset key
   const tileset = tilemap.value.addTilesetImage(tilesetKey);
-  if (!tileset) throw new Error(`Could not create tileset image, key: ${tilesetKey}`);
+  if (!tileset) throw new InvalidOperationError(Operation.Create, useCreateTileset.name, `key: ${tilesetKey}`);
   return tileset;
 };

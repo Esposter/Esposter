@@ -1,6 +1,8 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
+import { Operation } from "@/models/shared/Operation";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/ease/step";
@@ -18,7 +20,8 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
   const setVolume = async (volumePercentage: number, isUpdateSlider = true) => {
-    if (!(volumePercentage >= 0 && volumePercentage <= 100)) throw new Error(`Invalid volume: ${volumePercentage}`);
+    if (!(volumePercentage >= 0 && volumePercentage <= 100))
+      throw new InvalidOperationError(Operation.Update, "Volume", `percentage: ${volumePercentage}`);
     await setSettings(SettingsOption.VolumePercentage, volumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;

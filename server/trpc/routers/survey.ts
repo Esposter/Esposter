@@ -2,7 +2,9 @@ import { db } from "@/db";
 import type { Survey } from "@/db/schema/surveys";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
+import { Operation } from "@/models/shared/Operation";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
@@ -80,7 +82,11 @@ export const surveyRouter = router({
       if (rest.model !== survey.model) {
         rest.modelVersion++;
         if (rest.modelVersion <= survey.modelVersion)
-          throw new Error("Cannot update survey model with old model version");
+          throw new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Survey,
+            "cannot update survey model with old model version",
+          );
       }
 
       const updatedSurvey = (await db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(Boolean);
@@ -103,7 +109,11 @@ export const surveyRouter = router({
 
     rest.publishVersion++;
     if (rest.publishVersion <= survey.publishVersion)
-      throw new Error("Cannot update survey publish with old publish version");
+      throw new InvalidOperationError(
+        Operation.Update,
+        DatabaseEntityType.Survey,
+        "cannot update survey publish with old publish version",
+      );
 
     await db.update(surveys).set(rest).where(eq(surveys.id, id));
 

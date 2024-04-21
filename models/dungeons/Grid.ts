@@ -1,3 +1,5 @@
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
+import { Operation } from "@/models/shared/Operation";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
@@ -25,7 +27,8 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   }
 
   getValue({ x, y }: Position) {
-    if (x > this.getColumnSize(y)) throw new Error(`Invalid position: { x: ${x}, y: ${y} }`);
+    if (x > this.getColumnSize(y))
+      throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
     return this.grid[y][x];
   }
 
@@ -34,7 +37,8 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   }
 
   getColumnSize(rowIndex: number) {
-    if (rowIndex > this.rowSize - 1) throw new Error(`Invalid row index: ${rowIndex}`);
+    if (rowIndex > this.rowSize - 1)
+      throw new InvalidOperationError(Operation.Read, this.constructor.name, `row index: ${rowIndex}`);
     return this.grid[rowIndex].length;
   }
 
