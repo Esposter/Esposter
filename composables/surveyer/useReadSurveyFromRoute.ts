@@ -7,7 +7,10 @@ export const useReadSurveyFromRoute = async () => {
   const surveyId = route.params.id as string;
   const survey = await $client.survey.readSurvey.query(surveyId);
   if (!survey)
-    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.Survey) });
+    throw createError({
+      statusCode: 404,
+      statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.Survey, surveyId),
+    });
 
   return survey;
 };

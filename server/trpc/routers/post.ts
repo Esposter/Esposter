@@ -1,6 +1,8 @@
 import { db } from "@/db";
 import type { Post, PostWithRelations } from "@/db/schema/posts";
 import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
+import { NotFoundError } from "@/models/error/NotFoundError";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -96,7 +98,7 @@ export const postRouter = router({
     .input(createCommentInputSchema)
     .mutation<PostWithRelations | null>(async ({ input, ctx }) => {
       const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
-      if (!parentPost) throw new Error("Cannot find parent post");
+      if (!parentPost) throw new NotFoundError(`Parent ${DatabaseEntityType.Post}`, input.parentId);
 
       const newComment = await db.transaction(async (tx) => {
         const createdAt = new Date();
@@ -130,7 +132,8 @@ export const postRouter = router({
       const post = await db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
       });
-      if (!post) throw new Error("Cannot find post, you might be trying to update a comment");
+      if (!post)
+        throw new NotFoundError(DatabaseEntityType.Post, `${posts.id}, you might be trying to update a comment`);
 
       const updatedPost = (
         await db

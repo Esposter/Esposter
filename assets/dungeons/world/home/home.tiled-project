@@ -56,8 +56,9 @@
             "members": [
                 {
                     "name": "area",
-                    "type": "int",
-                    "value": 0
+                    "propertyType": "Area",
+                    "type": "string",
+                    "value": "Grass"
                 }
             ],
             "name": "Encounter",
@@ -70,7 +71,8 @@
                 "tile",
                 "tileset",
                 "wangcolor",
-                "wangset"
+                "wangset",
+                "project"
             ]
         },
         {

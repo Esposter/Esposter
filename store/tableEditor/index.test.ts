@@ -80,7 +80,7 @@ describe("Table Editor Store", () => {
     expect(tableEditor.value.items[0].name).not.toStrictEqual(updatedName);
 
     await editItem(newItem.id);
-    if (!editedItem.value) throw new Error("save update item");
+    if (!editedItem.value) throw new Error();
     editedItem.value.name = updatedName;
     await save();
 

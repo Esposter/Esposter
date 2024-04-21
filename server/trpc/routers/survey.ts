@@ -2,6 +2,8 @@ import { db } from "@/db";
 import type { Survey } from "@/db/schema/surveys";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
+import { NotFoundError } from "@/models/error/NotFoundError";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
@@ -73,7 +75,7 @@ export const surveyRouter = router({
       const survey = await db.query.surveys.findFirst({
         where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
       });
-      if (!survey) throw new Error("Cannot find survey");
+      if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
 
       if (rest.model !== survey.model) {
         rest.modelVersion++;
@@ -97,7 +99,7 @@ export const surveyRouter = router({
     const survey = await db.query.surveys.findFirst({
       where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
     });
-    if (!survey) throw new Error("Cannot find survey");
+    if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
 
     rest.publishVersion++;
     if (rest.publishVersion <= survey.publishVersion)

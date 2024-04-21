@@ -1,6 +1,6 @@
 import type { AzureEntity, CompositeKey } from "@/models/azure";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
-import { Operation } from "@/models/shared/pagination/Operation";
+import { Operation } from "@/models/shared/Operation";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
@@ -25,20 +25,20 @@ export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeK
   };
   return {
     [`${uncapitalize(entityTypeKey)}List`]: itemList,
-    [`${Operation.push}${entityTypeKey}List`]: pushItemList,
-    [`${Operation.create}${entityTypeKey}`]: createItem,
-    [`${Operation.update}${entityTypeKey}`]: updateItem,
-    [`${Operation.delete}${entityTypeKey}`]: deleteItem,
+    [`${uncapitalize(Operation.Push)}${entityTypeKey}List`]: pushItemList,
+    [`${uncapitalize(Operation.Create)}${entityTypeKey}`]: createItem,
+    [`${uncapitalize(Operation.Update)}${entityTypeKey}`]: updateItem,
+    [`${uncapitalize(Operation.Delete)}${entityTypeKey}`]: deleteItem,
   } as {
     [P in OperationDataKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}List`
       ? typeof itemList
-      : P extends `${Operation.push}${TEntityTypeKey}List`
+      : P extends `${Uncapitalize<Operation.Push>}${TEntityTypeKey}List`
         ? typeof pushItemList
-        : P extends `${Operation.create}${TEntityTypeKey}`
+        : P extends `${Uncapitalize<Operation.Create>}${TEntityTypeKey}`
           ? typeof createItem
-          : P extends `${Operation.update}${TEntityTypeKey}`
+          : P extends `${Uncapitalize<Operation.Update>}${TEntityTypeKey}`
             ? typeof updateItem
-            : P extends `${Operation.delete}${TEntityTypeKey}`
+            : P extends `${Uncapitalize<Operation.Delete>}${TEntityTypeKey}`
               ? typeof deleteItem
               : never;
   };

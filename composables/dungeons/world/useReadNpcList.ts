@@ -6,7 +6,7 @@ import { CharacterId } from "@/models/dungeons/world/CharacterId";
 import type { Npc } from "@/models/dungeons/world/Npc";
 import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/constants";
-import { findTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { findTiledObjectProperty } from "@/services/dungeons/tilemap/findTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";

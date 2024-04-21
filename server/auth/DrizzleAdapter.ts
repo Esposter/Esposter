@@ -3,6 +3,8 @@ import { accounts } from "@/db/schema/accounts";
 import { sessions } from "@/db/schema/sessions";
 import { users } from "@/db/schema/users";
 import { verificationTokens } from "@/db/schema/verificationTokens";
+import { NotFoundError } from "@/models/error/NotFoundError";
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { omit } from "@/util/omit";
 import type { Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
@@ -75,7 +77,7 @@ export const DrizzleAdapter: Adapter = {
           .returning()
       )[0];
     } catch (err) {
-      throw new Error("No verification token found");
+      throw new NotFoundError(DatabaseEntityType.VerificationToken, `${params.identifier}, token: ${params.token}`);
     }
   },
   deleteUser: async (id) => (await db.delete(users).where(eq(users.id, id)).returning())[0],

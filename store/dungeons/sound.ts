@@ -12,8 +12,9 @@ export const useSoundStore = defineStore("dungeons/sound", () => {
   watch(
     () => settings.value.Sound,
     (newSoundSetting) => {
-      scene.value.sound.setMute(newSoundSetting === SoundSetting.On);
+      scene.value.sound.setMute(newSoundSetting === SoundSetting.Off);
     },
+    { immediate: true },
   );
 
   const backgroundMusicKey = ref<BackgroundMusicKey>();
