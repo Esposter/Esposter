@@ -106,7 +106,7 @@
     "dayjs": "^1.11.10",
     "dedent": "^1.5.3",
     "deep-equal": "^2.2.3",
-    "drizzle-orm": "^0.30.8",
+    "drizzle-orm": "^0.30.9",
     "drizzle-zod": "^0.5.1",
     "emoji-mart-vue-fast": "^15.0.2",
     "eventemitter3": "^5.0.1",
