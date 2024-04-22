@@ -1,7 +1,7 @@
 import { NpcObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcObjectProperty";
 import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
 import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
-import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
@@ -53,7 +53,7 @@ export const useReadNpcList = () => {
     npcList.push({
       id: `${CharacterId.Npc}${npcObject.name}`,
       name: npcObject.name,
-      asset: { key: SpritesheetKey.Npc, frame },
+      asset: { key: AssetKey.Npc, frame },
       walkingAnimationMapping: {
         up: {
           leftFoot: frame + 6,

@@ -1,6 +1,6 @@
-import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
+import { AttackId } from "@/models/dungeons/attack/AttackId";
 
-export const AttackComponentMap: Record<AttackKey, Component> = {
-  [AttackKey.Slash]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/Slash.vue")),
-  [AttackKey.IceShard]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/IceShard.vue")),
+export const AttackComponentMap: Record<AttackId, Component> = {
+  [AttackId.Slash]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/Slash.vue")),
+  [AttackId.IceShard]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/IceShard.vue")),
 };

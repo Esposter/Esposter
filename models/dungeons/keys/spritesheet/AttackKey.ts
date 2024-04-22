@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { AttackId } from "@/models/dungeons/attack/AttackId";
+import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
 
-export enum AttackKey {
-  IceShard = "IceShard",
+enum BaseAttackKey {
   IceShardStart = "IceShardStart",
-  Slash = "Slash",
 }
 
-export const attackKeySchema = z.nativeEnum(AttackKey) satisfies z.ZodType<AttackKey>;
+export const AttackKey = mergeObjectsStrict(AttackId, BaseAttackKey);
+export type AttackKey = AttackId | BaseAttackKey;
