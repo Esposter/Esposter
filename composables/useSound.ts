@@ -3,7 +3,7 @@ import type { PlayOptions } from "@/models/sound/PlayOptions";
 import { dayjs } from "@/services/dayjs";
 import { Howl } from "howler";
 
-const cache: Record<string, Howl | null> = {};
+const cache = new Map<string, Howl>();
 
 export const useSound = (
   url: MaybeRef<string>,
@@ -19,36 +19,20 @@ export const useSound = (
     if (autoplay) isPlaying.value = true;
   }
 
-  onMounted(() => {
-    const src = unref(url);
-    let howl = cache[src];
-    if (howl) {
-      sound.value = howl;
-      return;
-    }
-
-    howl = new Howl({
-      src,
-      volume: unref(volume),
-      rate: unref(rate),
-      onload: handleLoad,
-      ...rest,
-    });
-    cache[src] = sound.value = howl;
-  });
-
   watch(
     () => unref(url),
     ([src]) => {
-      let howl = cache[src];
+      let howl = cache.get(src);
       if (howl) {
         sound.value = howl;
         return;
       }
 
       howl = new Howl({ src, volume: unref(volume), rate: unref(rate), onload: handleLoad, ...rest });
-      cache[src] = sound.value = howl;
+      sound.value = howl;
+      cache.set(src, sound.value);
     },
+    { immediate: true, flush: "post" },
   );
 
   watch(
