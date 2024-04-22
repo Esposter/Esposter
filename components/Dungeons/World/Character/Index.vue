@@ -9,7 +9,7 @@ import type { Subscription } from "rxjs";
 import { filter } from "rxjs";
 
 export interface CharacterProps {
-  characterId: Character["id"];
+  id: Character["id"];
   spriteConfiguration: SpriteProps["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
@@ -22,7 +22,7 @@ export interface CharacterProps {
 }
 
 const {
-  characterId,
+  id,
   spriteConfiguration,
   walkingAnimationMapping,
   singleSidedSpritesheetDirection,
@@ -52,7 +52,7 @@ onShutdown((scene) => {
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
-  scene.gridEngine.removeCharacter(characterId);
+  scene.gridEngine.removeCharacter(id);
 });
 </script>
 
@@ -62,7 +62,7 @@ onShutdown((scene) => {
     :on-complete="
       (scene, sprite) => {
         scene.gridEngine.addCharacter({
-          id: characterId,
+          id,
           sprite,
           walkingAnimationMapping,
           startPosition: position,
@@ -72,16 +72,16 @@ onShutdown((scene) => {
         if (onMovementStarted)
           subscriptionMovementStarted = scene.gridEngine
             .movementStarted()
-            .pipe(filter(({ charId }) => charId === characterId))
+            .pipe(filter(({ charId }) => charId === id))
             .subscribe(onMovementStarted);
         if (onMovementStopped)
           subscriptionMovementStopped = scene.gridEngine
             .movementStopped()
-            .pipe(filter(({ charId }) => charId === characterId))
+            .pipe(filter(({ charId }) => charId === id))
             .subscribe(onMovementStopped);
         subscriptionPositionChangeStarted = scene.gridEngine
           .positionChangeStarted()
-          .pipe(filter(({ charId }) => charId === characterId))
+          .pipe(filter(({ charId }) => charId === id))
           .subscribe((positionChange) => {
             const { charId } = positionChange;
             direction = scene.gridEngine.getFacingDirection(charId);
@@ -89,7 +89,7 @@ onShutdown((scene) => {
           });
         subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
-          .pipe(filter(({ charId }) => charId === characterId))
+          .pipe(filter(({ charId }) => charId === id))
           .subscribe((positionChange) => {
             const { charId, enterTile } = positionChange;
             position = enterTile;
@@ -98,7 +98,7 @@ onShutdown((scene) => {
           });
         subscriptionDirectionChanged = scene.gridEngine
           .directionChanged()
-          .pipe(filter(({ charId }) => charId === characterId))
+          .pipe(filter(({ charId }) => charId === id))
           .subscribe(({ direction: newDirection }) => {
             direction = newDirection;
           });

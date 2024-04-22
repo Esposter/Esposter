@@ -26,9 +26,9 @@ onShutdown((scene) => {
 
 <template>
   <DungeonsWorldCharacter
+    :id="CharacterId.Player"
     v-model:position="player.position"
     v-model:direction="player.direction"
-    :character-id="CharacterId.Player"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"
     :walking-animation-mapping="PlayerWalkingAnimationMapping"
     :on-movement-started="

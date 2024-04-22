@@ -14,10 +14,10 @@ onShutdown(() => {
 <template>
   <DungeonsWorldCharacterNpc
     v-for="({ id, asset, path, pathIndex, walkingAnimationMapping, singleSidedSpritesheetDirection }, index) in npcList"
+    :id
     :key="id"
     v-model:direction="npcList[index].direction"
     v-model:is-moving="npcList[index].isMoving"
-    :character-id="id"
     :asset="asset"
     :path="path"
     :path-index="pathIndex"
