@@ -12,8 +12,7 @@ export const applyBuildingAdditiveNorEffects = (
     const targets = buildingAdditiveNorEffect.configuration.targets ?? [];
 
     for (const boughtBuilding of boughtBuildings)
-      if (!targets.includes(boughtBuilding.name))
-        resultPower += buildingAdditiveNorEffect.value * boughtBuilding.amount;
+      if (!targets.includes(boughtBuilding.id)) resultPower += buildingAdditiveNorEffect.value * boughtBuilding.amount;
   }
 
   return resultPower;

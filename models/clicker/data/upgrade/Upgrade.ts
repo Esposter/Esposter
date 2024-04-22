@@ -1,12 +1,12 @@
-import type { UpgradeName } from "@/models/clicker/data/UpgradeName";
 import type { Effect } from "@/models/clicker/data/effect/Effect";
 import { effectSchema } from "@/models/clicker/data/effect/Effect";
 import type { UnlockCondition } from "@/models/clicker/data/unlockCondition/UnlockCondition";
 import { unlockConditionSchema } from "@/models/clicker/data/unlockCondition/UnlockCondition";
+import type { UpgradeId } from "@/models/clicker/data/upgrade/UpgradeId";
 import { z } from "zod";
 
-export interface Upgrade<TName = UpgradeName> {
-  name: TName;
+export interface Upgrade<TId = UpgradeId> {
+  id: TId;
   description: string;
   flavorDescription: string;
   price: number;
@@ -14,11 +14,9 @@ export interface Upgrade<TName = UpgradeName> {
   unlockConditions: UnlockCondition[];
 }
 
-export const createUpgradeSchema = <TNameSchema extends z.ZodTypeAny = z.ZodType<UpgradeName>>(
-  nameSchema: TNameSchema,
-) =>
+export const createUpgradeSchema = <TIdSchema extends z.ZodTypeAny = z.ZodType<UpgradeId>>(idSchema: TIdSchema) =>
   z.object({
-    name: nameSchema,
+    id: idSchema,
     description: z.string().min(1),
     flavorDescription: z.string().min(1),
     price: z.number(),

@@ -27,10 +27,10 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
 <template>
   <!-- We can assume that buildings will always be displayed in store section for better UX -->
   <ClickerModelItemMenu
+    :id="building.id"
     :type="ItemType.Building"
     :is-affordable="isAffordable"
     :menu-props="{ location: 'right center' }"
-    :name="building.name"
     :flavor-description="displayFlavorDescription"
     :price="buildingPrice"
     :amount="boughtBuildingAmount"

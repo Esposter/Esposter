@@ -1,9 +1,9 @@
 import { buildings } from "@/assets/clicker/data/buildings";
-import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursor";
-import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandma";
+import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursorUpgrades";
+import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandmaUpgrades";
 import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";

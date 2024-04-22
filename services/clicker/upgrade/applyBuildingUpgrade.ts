@@ -1,5 +1,5 @@
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { applyUpgrades } from "@/services/clicker/upgrade/applyUpgrades";
 
 export const applyBuildingUpgrade = (
@@ -9,7 +9,7 @@ export const applyBuildingUpgrade = (
 ) =>
   applyUpgrades(
     building.baseValue,
-    (u) => u.effects.some((e) => e.targets.includes(building.name)),
+    (u) => u.effects.some((e) => e.targets.includes(building.id)),
     boughtUpgrades,
     boughtBuildings,
   ) * building.amount;

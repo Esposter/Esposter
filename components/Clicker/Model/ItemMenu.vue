@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ItemType } from "@/models/clicker/data/ItemType";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import type { ItemType } from "@/models/clicker/data/ItemType";
+import { Target } from "@/models/clicker/data/Target";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
@@ -9,52 +10,50 @@ import { VMenu } from "vuetify/components";
 
 type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["$props"] } & Pick<
   Upgrade | BuildingWithStats,
-  "name"
+  "id"
 > &
   Pick<Upgrade, "flavorDescription" | "price"> &
   Partial<Pick<Upgrade, "description">> &
   Partial<Pick<BuildingWithStats, "amount">>;
 
-const { type, isAffordable, menuProps, name, description, flavorDescription, price, amount } =
+const { type, isAffordable, menuProps, id, description, flavorDescription, price, amount } =
   defineProps<ItemMenuProps>();
 const slots = defineSlots<{
   "append-text"?: (props: Record<string, never>) => unknown;
   action?: (props: Record<string, never>) => unknown;
 }>();
 const { error } = useColors();
-
 const descriptionHtml = computed(() => (description ? marked.parse(description) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`));
 const displayPrice = computed(() => formatNumberLong(price));
-
 const buildingIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name];
+  return images[id];
 });
 const menuIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name];
+  return images[id];
 });
 const upgradeIcon = computed(() => {
   const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
   const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
-  return images[name];
+  return images[id];
 });
 </script>
 
 <template>
   <v-menu :close-on-content-click="false" :="menuProps">
     <template #activator="{ props: activatorProps }">
-      <v-list-item :title="name" select-none :="activatorProps">
+      <v-list-item :title="id" select-none :="activatorProps">
         <template #prepend>
           <v-img
             mr-1
             width="2rem"
             height="2rem"
-            :src="type === ItemType.Building ? buildingIcon : upgradeIcon"
-            :alt="name"
+            :src="type === Target.Building ? buildingIcon : upgradeIcon"
+            :alt="id"
           />
         </template>
         <v-list-item-subtitle op="100!" flex="!" items-center>
@@ -71,9 +70,9 @@ const upgradeIcon = computed(() => {
     <StyledCard>
       <v-card-title flex="!" font-bold>
         <div>
-          <v-img width="2rem" height="2rem" :src="type === ItemType.Building ? menuIcon : upgradeIcon" :alt="name" />
+          <v-img width="2rem" height="2rem" :src="type === Target.Building ? menuIcon : upgradeIcon" :alt="id" />
         </div>
-        {{ name }}
+        {{ id }}
       </v-card-title>
       <v-card-text>
         <div v-if="description" pb-4 v-html="descriptionHtml" />

@@ -1,9 +1,9 @@
 import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerType";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
-import { createUpgradeSchema } from "@/models/clicker/data/Upgrade";
-import { upgradeNameSchema } from "@/models/clicker/data/UpgradeName";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
 import { buildingWithStatsSchema } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
+import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Except } from "@/util/types/Except";
 import { z } from "zod";
@@ -32,7 +32,7 @@ export const gameSchema = z
     id: z.string().uuid(),
     type: clickerTypeSchema,
     noPoints: z.number(),
-    boughtUpgrades: z.array(createUpgradeSchema(upgradeNameSchema)),
+    boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;

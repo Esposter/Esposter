@@ -1,12 +1,11 @@
-import { ItemType } from "@/models/clicker/data/ItemType";
 import { Target } from "@/models/clicker/data/Target";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
-import { CursorUpgradeName } from "@/models/clicker/data/UpgradeName";
 import { EffectType } from "@/models/clicker/data/effect/EffectType";
+import { CursorUpgradeId } from "@/models/clicker/data/upgrade/CursorUpgradeId";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 
-export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
+export const cursorUpgrades: Upgrade<CursorUpgradeId>[] = [
   {
-    name: CursorUpgradeName["Reinforced Index Finger"],
+    id: CursorUpgradeId["Reinforced Index Finger"],
     description: "The mouse and cursors are **twice** as efficient.",
     flavorDescription: "prod prod",
     price: 1e2,
@@ -19,10 +18,10 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 1 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 1 }],
   },
   {
-    name: CursorUpgradeName["Carpal Tunnel Prevention Cream"],
+    id: CursorUpgradeId["Carpal Tunnel Prevention Cream"],
     description: "The mouse and cursors are **twice** as efficient.",
     flavorDescription: "it... it hurts to click...",
     price: 5e2,
@@ -35,10 +34,10 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 1 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 1 }],
   },
   {
-    name: CursorUpgradeName.Ambidextrous,
+    id: CursorUpgradeId.Ambidextrous,
     description: "The mouse and cursors are **twice** as efficient.",
     flavorDescription: "Look ma, both hands!",
     price: 1e4,
@@ -51,10 +50,10 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 10 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 10 }],
   },
   {
-    name: CursorUpgradeName["Thousand Fingers"],
+    id: CursorUpgradeId["Thousand Fingers"],
     description: "The mouse and cursors gain **+0.1** cookies for each non-cursor object owned.",
     flavorDescription: "clickity",
     price: 1e5,
@@ -68,176 +67,176 @@ export const cursorUpgrades: Upgrade<CursorUpgradeName>[] = [
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 25 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 25 }],
   },
   {
-    name: CursorUpgradeName["Million Fingers"],
+    id: CursorUpgradeId["Million Fingers"],
     description: "Multiplies the gain from Thousand fingers by **5**.",
     flavorDescription: "clickityclickity",
     price: 1e7,
     effects: [
       {
         value: 5,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 50 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 50 }],
   },
   {
-    name: CursorUpgradeName["Billion Fingers"],
+    id: CursorUpgradeId["Billion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **10**.",
     flavorDescription: "clickityclickityclickity",
     price: 1e8,
     effects: [
       {
         value: 10,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 100 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 100 }],
   },
   {
-    name: CursorUpgradeName["Trillion Fingers"],
+    id: CursorUpgradeId["Trillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "clickityclickityclickityclickity",
     price: 1e9,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 150 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 150 }],
   },
   {
-    name: CursorUpgradeName["Quadrillion Fingers"],
+    id: CursorUpgradeId["Quadrillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "clickityclickityclickityclickityclick",
     price: 1e10,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 200 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 200 }],
   },
   {
-    name: CursorUpgradeName["Quintillion Fingers"],
+    id: CursorUpgradeId["Quintillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "man, just go click click click click click, it's real easy, man.",
     price: 1e13,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 250 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 250 }],
   },
   {
-    name: CursorUpgradeName["Sextillion Fingers"],
+    id: CursorUpgradeId["Sextillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "sometimes things just click",
     price: 1e16,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 300 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 300 }],
   },
   {
-    name: CursorUpgradeName["Septillion Fingers"],
+    id: CursorUpgradeId["Septillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "[cursory flavor text]",
     price: 1e19,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 350 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 350 }],
   },
   {
-    name: CursorUpgradeName["Octillion Fingers"],
+    id: CursorUpgradeId["Octillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "Turns out you **can** quite put your finger on it.",
     price: 1e22,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 400 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 400 }],
   },
   {
-    name: CursorUpgradeName["Nonillion Fingers"],
+    id: CursorUpgradeId["Nonillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "Only for the freakiest handshakes.",
     price: 1e25,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 450 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 450 }],
   },
   {
-    name: CursorUpgradeName["Decillion Fingers"],
+    id: CursorUpgradeId["Decillion Fingers"],
     description: "Multiplies the gain from Thousand fingers by **20**.",
     flavorDescription: "If you still can't quite put your finger on it, you must not be trying very hard.",
     price: 1e28,
     effects: [
       {
         value: 20,
-        targets: [Target["Thousand Fingers"]],
+        targets: [CursorUpgradeId["Thousand Fingers"]],
         configuration: {
           type: EffectType.Multiplicative,
-          itemType: ItemType.Upgrade,
+          itemType: Target.Upgrade,
         },
       },
     ],
-    unlockConditions: [{ target: Target.Cursor, amount: 500 }],
+    unlockConditions: [{ type: Target.Building, id: Target.Cursor, amount: 500 }],
   },
 ];

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Sound } from "@/models/clicker/Sound";
 import { ItemType } from "@/models/clicker/data/ItemType";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
@@ -23,10 +23,10 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
 
 <template>
   <ClickerModelItemMenu
+    :id="upgrade.id"
     :type="ItemType.Upgrade"
     :is-affordable="isAffordable"
     :menu-props="{ location: isBought ? 'left center' : 'right center' }"
-    :name="upgrade.name"
     :description="displayDescription"
     :flavor-description="displayFlavorDescription"
     :price="upgrade.price"

@@ -1,6 +1,6 @@
-import { ItemType } from "@/models/clicker/data/ItemType";
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import { Target } from "@/models/clicker/data/Target";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { applyEffects } from "@/services/clicker/effect/applyEffects";
 import { applyUpgradeEffects } from "@/services/clicker/effect/applyUpgradeEffects";
 
@@ -17,7 +17,7 @@ export const applyUpgrades = (
         bu,
         // We're looking for a special type of "Upgrade Effect"
         // which enhances the effects of upgrades
-        allEffects.filter((e) => e.configuration.itemType === ItemType.Upgrade && e.targets.includes(bu.name)),
+        allEffects.filter((e) => e.configuration.itemType === Target.Upgrade && e.targets.includes(bu.id)),
         boughtBuildings,
       ),
     )

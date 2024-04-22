@@ -11,8 +11,8 @@ export const useBuildingStatsTimer = () => {
   const { game } = storeToRefs(gameStore);
   const buildingStore = useBuildingStore();
   const { getBoughtBuildingPower } = buildingStore;
-  const boughtBuildingPowers = computed<{ name: Target; power: number }[]>(() =>
-    game.value.boughtBuildings.map((b) => ({ name: b.name, power: getBoughtBuildingPower(b) })),
+  const boughtBuildingPowers = computed<{ id: Target; power: number }[]>(() =>
+    game.value.boughtBuildings.map((b) => ({ id: b.id, power: getBoughtBuildingPower(b) })),
   );
   const buildingStatsTimers = ref<number[]>([]);
 
@@ -21,7 +21,7 @@ export const useBuildingStatsTimer = () => {
     buildingPowers: typeof boughtBuildingPowers.value,
   ) => {
     for (const boughtBuilding of boughtBuildings) {
-      const buildingPower = buildingPowers.find((b) => b.name === boughtBuilding.name);
+      const buildingPower = buildingPowers.find((b) => b.id === boughtBuilding.id);
       if (!buildingPower) return;
 
       buildingStatsTimers.value.push(

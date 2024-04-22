@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Upgrade } from "@/models/clicker/data/Upgrade";
+import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 
 interface UpgradeListGroupProps {
   upgrades: Upgrade[];
@@ -24,7 +24,7 @@ const hasUpgrades = computed(() => upgrades.length > 0);
     </template>
     <ClickerModelUpgradeListItem
       v-for="upgrade in upgrades"
-      :key="upgrade.name"
+      :key="upgrade.id"
       :upgrade="upgrade"
       :is-bought="isBought"
     />
