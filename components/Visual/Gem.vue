@@ -74,9 +74,8 @@ onMounted(() => {
 
   const clock = new Clock();
   const animate = () => {
-    if (!gem) return;
     const elapsedTime = clock.getElapsedTime();
-    gem.rotation.y = 1.1 * elapsedTime;
+    if (gem) gem.rotation.y = 1.1 * elapsedTime;
     controls.update();
     renderer.render(scene, camera);
     window.requestAnimationFrame(animate);
