@@ -15,7 +15,7 @@ import { PlayerPostAttackCheck } from "@/models/dungeons/state/battle/states/Pla
 import { PreBattleInfo } from "@/models/dungeons/state/battle/states/PreBattleInfo";
 import { SwitchAttempt } from "@/models/dungeons/state/battle/states/SwitchAttempt";
 
-const StateRecord: Record<StateName, State<StateName>> = {
+export const StateMap = {
   [StateName.Intro]: Intro,
   [StateName.PreBattleInfo]: PreBattleInfo,
   [StateName.BringOutMonster]: BringOutMonster,
@@ -30,8 +30,4 @@ const StateRecord: Record<StateName, State<StateName>> = {
   [StateName.SwitchAttempt]: SwitchAttempt,
   [StateName.ItemAttempt]: ItemAttempt,
   [StateName.FleeAttempt]: FleeAttempt,
-};
-
-export const StateMap = new Map<StateName, State<StateName>>(
-  Object.entries(StateRecord) as [[StateName, State<StateName>]],
-);
+} as const satisfies Record<StateName, State<StateName>>;
