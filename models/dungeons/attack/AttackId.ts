@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export enum AttackId {
-  IceShard = "IceShard",
+  "Ice Shard" = "Ice Shard",
   Slash = "Slash",
 }
 

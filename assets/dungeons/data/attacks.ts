@@ -1,12 +1,10 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import { prettifyName } from "@/util/text/prettifyName";
-import type { Except } from "@/util/types/Except";
 
-const baseAttacks: Except<Attack, "name">[] = [
+export const attacks: Attack[] = [
   {
-    id: AttackId.IceShard,
+    id: AttackId["Ice Shard"],
     soundEffectKey: SoundEffectKey.IceExplosion,
   },
   {
@@ -14,8 +12,3 @@ const baseAttacks: Except<Attack, "name">[] = [
     soundEffectKey: SoundEffectKey.Claw,
   },
 ];
-
-export const attacks: Attack[] = baseAttacks.map((ba) => ({
-  ...ba,
-  name: prettifyName(ba.id),
-}));

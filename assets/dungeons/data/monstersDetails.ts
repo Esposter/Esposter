@@ -17,7 +17,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackId["Ice Shard"]],
   },
   {
     key: MonsterKey.Carnodusk,
@@ -30,7 +30,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackId["Ice Shard"]],
   },
   {
     key: MonsterKey.Frostsaber,
@@ -43,7 +43,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackId["Ice Shard"]],
   },
   {
     key: MonsterKey.Ignivolt,
@@ -56,7 +56,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackId["Ice Shard"]],
   },
   {
     key: MonsterKey.Iguanignite,
