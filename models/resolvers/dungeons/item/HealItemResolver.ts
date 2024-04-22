@@ -19,10 +19,10 @@ export class HealItemResolver extends AItemResolver {
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
     if (target.value.currentHp === 0) {
-      infoDialogMessage.value.text = `Cannot heal fainted ${activeMonster.value.name}`;
+      infoDialogMessage.value.text = `Cannot heal fainted ${activeMonster.value.id}`;
       return false;
     } else if (target.value.currentHp === target.value.stats.maxHp) {
-      infoDialogMessage.value.text = `${activeMonster.value.name} is already fully healed`;
+      infoDialogMessage.value.text = `${activeMonster.value.id} is already fully healed`;
       return false;
     }
 
@@ -38,7 +38,7 @@ export class HealItemResolver extends AItemResolver {
     const newHp = Math.min(oldHp + item.value.effect.value, target.value.stats.maxHp);
 
     target.value.currentHp = newHp;
-    showMessages([`Healed ${activeMonster.value.name} by ${newHp - oldHp} HP.`], () => {
+    showMessages([`Healed ${activeMonster.value.id} by ${newHp - oldHp} HP.`], () => {
       phaserEventEmitter.emit("useItem", item.value, sceneKey);
     });
   }

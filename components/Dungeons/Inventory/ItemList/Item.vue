@@ -60,7 +60,7 @@ const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREM
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
         y,
-        text: item.name,
+        text: item.id,
         style: MenuTextStyle,
       }"
     />

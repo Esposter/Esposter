@@ -24,7 +24,7 @@ export const EnemyAttack: State<StateName> = {
     const randomAttackId = pickRandomValue(activeMonster.value.attackIds);
     const randomAttack = getAttack(randomAttackId);
 
-    showMessageNoInputRequired(`Enemy ${activeMonster.value.name} used ${randomAttack.name}.`, () =>
+    showMessageNoInputRequired(`Enemy ${activeMonster.value.id} used ${randomAttackId}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
         useAttackAnimation(randomAttack, false, () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {

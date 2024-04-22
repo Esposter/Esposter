@@ -6,7 +6,6 @@ import { z } from "zod";
 
 export interface Item {
   id: ItemId;
-  name: string;
   description: string;
   quantity: number;
   effect: ItemEffect;
@@ -14,7 +13,6 @@ export interface Item {
 
 export const itemSchema = z.object({
   id: itemIdSchema,
-  name: z.string().min(1),
   description: z.string().min(1),
   quantity: z.number().int().positive(),
   effect: itemEffectSchema,

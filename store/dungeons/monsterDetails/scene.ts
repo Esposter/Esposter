@@ -13,7 +13,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   const monsterIndex = ref(0);
   const monster = computed(() => player.value.monsters[monsterIndex.value]);
   const attacks = computed(() => monster.value.attackIds.map(getAttack));
-  const attackNames = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.name));
+  const attackNameList = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.id));
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
 
   const onPlayerInput = (justDownInput: PlayerInput) => {
@@ -36,7 +36,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   return {
     monsterIndex,
     monster,
-    attackNames,
+    attackNameList,
     onPlayerInput,
   };
 });

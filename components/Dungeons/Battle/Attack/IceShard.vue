@@ -3,7 +3,7 @@ import { useAnimations } from "@/lib/phaser/composables/useAnimations";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
-import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
 import { Animations } from "phaser";
 
 const { isToEnemy } = defineProps<AttackProps>();
@@ -11,37 +11,36 @@ const isActive = defineModel<boolean>("isActive", { required: true });
 const emit = defineEmits<{ complete: [] }>();
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);
-const playAnimationKey = usePlayAnimation(SpritesheetKey["Ice Shard Start"], isActive, emit);
+const playAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
 const animations = useAnimations([
   {
-    key: SpritesheetKey["Ice Shard"],
-    frames: scene.value.anims.generateFrameNumbers(SpritesheetKey["Ice Shard"]),
+    key: AttackKey["Ice Shard"],
+    frames: scene.value.anims.generateFrameNumbers(AttackKey["Ice Shard"]),
     frameRate: 16,
     repeat: 0,
     delay: 0,
   },
   {
-    key: SpritesheetKey["Ice Shard Start"],
-    frames: scene.value.anims.generateFrameNumbers(SpritesheetKey["Ice Shard Start"]),
+    key: AttackKey["Ice Shard Start"],
+    frames: scene.value.anims.generateFrameNumbers(AttackKey["Ice Shard Start"]),
     frameRate: 16,
     repeat: 0,
     delay: 0,
   },
 ]);
+const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["Ice Shard Start"]}`;
 </script>
 
 <template>
   <DungeonsBattleAttack
     v-model:is-active="isActive"
-    :spritesheet-key="SpritesheetKey["Ice Shard"]"
+    :spritesheet-key="AttackKey['Ice Shard']"
     :animations
     :play-animation-key="playAnimationKey"
     :is-to-enemy="isToEnemy"
     :configuration="{
       type: AttackGameObjectType.Sprite,
     }"
-    Shard Start"]}`]="
-      playAnimationKey = SpritesheetKey[" Shard"] "
-    @[`${animations.Events.ANIMATION_COMPLETE_KEY}${SpritesheetKey["IceIce
+    @[onCompleteKey]="playAnimationKey = AttackKey['Ice Shard']"
   />
 </template>

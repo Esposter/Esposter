@@ -37,7 +37,7 @@ export const ItemAttempt: State<StateName> = {
       // you cannot use another item, so we remove the inventory scene
       removeScene(SceneKey.Inventory);
       switchToPreviousScene();
-      showMessages([`You used ${item.name} on ${activeMonster.value.name}.`], () => {
+      showMessages([`You used ${item.id} on ${activeMonster.value.id}.`], () => {
         battleStateMachine.setState(StateName.EnemyInput);
       });
     });

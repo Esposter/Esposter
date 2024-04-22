@@ -38,7 +38,7 @@ const { attackOptionGrid } = storeToRefs(battlePlayerStore);
         v-model:grid="attackOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
         :position="getPanelTextPosition(rowIndex, columnIndex)"
-        :text="attack?.name ?? BLANK_VALUE"
+        :text="attack?.id ?? BLANK_VALUE"
       />
     </template>
     <DungeonsUIInputCursor

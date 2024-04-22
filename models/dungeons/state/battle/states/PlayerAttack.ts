@@ -23,7 +23,7 @@ export const PlayerAttack: State<StateName> = {
     const attack = attackOptionGrid.value.value;
     if (!attack) return;
 
-    showMessageNoInputRequired(`${activeMonster.value.name} used ${attack.name}.`, () =>
+    showMessageNoInputRequired(`${activeMonster.value.id} used ${attack.id}.`, () =>
       scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
         useAttackAnimation(attack, true, () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {

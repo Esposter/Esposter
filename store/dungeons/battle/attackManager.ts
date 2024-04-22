@@ -1,7 +1,7 @@
-import type { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
+import type { AttackId } from "@/models/dungeons/attack/AttackId";
 
 export const useAttackManagerStore = defineStore("dungeons/battle/attackManager", () => {
-  const attackId = ref<AttackKey>();
+  const attackId = ref<AttackId>();
   const isToEnemy = ref<boolean>();
   const isActive = ref(false);
   const onComplete = ref<() => void>();

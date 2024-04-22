@@ -22,7 +22,7 @@ export abstract class AItemResolver {
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
     if (item.value.quantity === 0) {
-      infoDialogMessage.value.text = `No more ${item.value.name} available.`;
+      infoDialogMessage.value.text = `No more ${item.value.id} available.`;
       return false;
     }
 

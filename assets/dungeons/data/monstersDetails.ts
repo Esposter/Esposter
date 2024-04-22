@@ -2,10 +2,9 @@ import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "@/util/types/Except";
 
-const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
+export const monstersDetails: Except<Monster, "id">[] = [
   {
     key: MonsterKey.Aquavalor,
     asset: {
@@ -72,8 +71,3 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     attackIds: [AttackId.Slash],
   },
 ];
-
-export const monstersDetails: Except<Monster, "id">[] = baseMonstersDetails.map((bmd) => ({
-  ...bmd,
-  name: prettifyName(bmd.key),
-}));

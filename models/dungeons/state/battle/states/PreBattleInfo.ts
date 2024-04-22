@@ -14,7 +14,7 @@ export const PreBattleInfo: State<StateName> = {
 
     useMonsterAppearTween(true, () => {
       useMonsterInfoContainerAppearTween(true);
-      showMessages([`A wild ${activeMonster.value.name} has appeared!`], () => {
+      showMessages([`A wild ${activeMonster.value.id} has appeared!`], () => {
         battleStateMachine.setState(StateName.BringOutMonster);
       });
     });
