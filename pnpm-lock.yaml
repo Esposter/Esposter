@@ -115,7 +115,7 @@ importers:
         version: 0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.5)
+        version: 0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.0)
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.23(typescript@5.4.5))
@@ -222,8 +222,8 @@ importers:
         specifier: ^8.16.0
         version: 8.16.0
       zod:
-        specifier: ^3.22.5
-        version: 3.22.5
+        specifier: ^3.23.0
+        version: 3.23.0
     devDependencies:
       '@nuxt/eslint':
         specifier: ^0.3.8
@@ -310,8 +310,8 @@ importers:
         specifier: ^4.7.2
         version: 4.7.2
       type-fest:
-        specifier: ^4.15.0
-        version: 4.15.0
+        specifier: ^4.16.0
+        version: 4.16.0
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -6766,8 +6766,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.15.0:
-    resolution: {integrity: sha512-tB9lu0pQpX5KJq54g+oHOLumOx+pMep4RaM6liXh2PKmVRFF+/vAtUP0ZaJ0kOySfVNjF6doBWPHhBhISKdlIA==}
+  type-fest@4.16.0:
+    resolution: {integrity: sha512-z7Rf5PXxIhbI6eJBTwdqe5bO02nUUmctq4WqviFSstBAWV0YNtEQRhEnZw73WJ8sZOqgFG6Jdl8gYZu7NBJZnA==}
     engines: {node: '>=16'}
 
   type@2.7.2:
@@ -7355,7 +7355,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -7469,8 +7468,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.22.5:
-    resolution: {integrity: sha512-HqnGsCdVZ2xc0qWPLdO25WnseXThh0kEYKIdV5F/hTHO75hNZFp8thxSeHhiPrHZKrFTo1SOgkAj9po5bexZlw==}
+  zod@3.23.0:
+    resolution: {integrity: sha512-OFLT+LTocvabn6q76BTwVB0hExEBS0IduTr3cqZyMqEDbOnYmcU+y0tUAYbND4uwclpBGi4I4UUBGzylWpjLGA==}
 
 snapshots:
 
@@ -8963,10 +8962,10 @@ snapshots:
 
   '@hono/node-server@1.11.0': {}
 
-  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.22.5)':
+  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.23.0)':
     dependencies:
       hono: 4.2.5
-      zod: 3.22.5
+      zod: 3.23.0
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -11844,7 +11843,7 @@ snapshots:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       '@hono/node-server': 1.11.0
-      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.22.5)
+      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.23.0)
       camelcase: 7.0.1
       chalk: 5.3.0
       commander: 9.5.0
@@ -11858,7 +11857,7 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.0
       superjson: 2.2.1
-      zod: 3.22.5
+      zod: 3.23.0
     transitivePeerDependencies:
       - supports-color
 
@@ -11867,10 +11866,10 @@ snapshots:
       '@opentelemetry/api': 1.8.0
       postgres: 3.4.4
 
-  drizzle-zod@0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.22.5):
+  drizzle-zod@0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.0):
     dependencies:
       drizzle-orm: 0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4)
-      zod: 3.22.5
+      zod: 3.23.0
 
   duplexer@0.1.2: {}
 
@@ -15187,7 +15186,7 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.15.0: {}
+  type-fest@4.16.0: {}
 
   type@2.7.2: {}
 
@@ -16086,4 +16085,4 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.5.2
 
-  zod@3.22.5: {}
+  zod@3.23.0: {}
