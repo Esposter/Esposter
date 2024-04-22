@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum GrandmaUpgradeId {
   "Forwards From Grandma" = "Forwards From Grandma",
   "Steel-plated Rolling Pins" = "Steel-plated Rolling Pins",
@@ -16,5 +14,3 @@ export enum GrandmaUpgradeId {
   "Visits" = "Visits",
   "Kitchen Cabinets" = "Kitchen Cabinets",
 }
-
-export const grandmaUpgradeIdSchema = z.nativeEnum(GrandmaUpgradeId) satisfies z.ZodType<GrandmaUpgradeId>;

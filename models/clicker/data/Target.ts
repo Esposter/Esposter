@@ -5,6 +5,6 @@ import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
 import { z } from "zod";
 
 export const Target = mergeObjectsStrict(ItemType, UpgradeId, BuildingId);
-export type Target = keyof typeof Target;
+export type Target = ItemType | UpgradeId | BuildingId;
 
 export const targetSchema = z.nativeEnum(Target) satisfies z.ZodType<Target>;

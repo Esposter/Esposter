@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum CursorUpgradeId {
   "Reinforced Index Finger" = "Reinforced Index Finger",
   "Carpal Tunnel Prevention Cream" = "Carpal Tunnel Prevention Cream",
@@ -16,5 +14,3 @@ export enum CursorUpgradeId {
   "Nonillion Fingers" = "Nonillion Fingers",
   "Decillion Fingers" = "Decillion Fingers",
 }
-
-export const cursorUpgradeIdSchema = z.nativeEnum(CursorUpgradeId) satisfies z.ZodType<CursorUpgradeId>;
