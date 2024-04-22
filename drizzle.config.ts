@@ -1,4 +1,5 @@
 import { MIGRATIONS_FOLDER_PATH } from "@/db/constants";
+import { env } from "@/env.server";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -6,6 +7,6 @@ export default defineConfig({
   out: MIGRATIONS_FOLDER_PATH,
   driver: "pg",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL,
+    connectionString: env.DATABASE_URL,
   },
 });

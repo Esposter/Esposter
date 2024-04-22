@@ -1,4 +1,6 @@
 import { NuxtAuthHandler } from "#auth";
+import { env as serverEnv } from "@/env.server";
+import { env as sharedEnv } from "@/env.shared";
 import { RoutePath } from "@/models/router/RoutePath";
 import { DrizzleAdapter } from "@/server/auth/DrizzleAdapter";
 import type { AuthConfig } from "@auth/core";
@@ -8,25 +10,23 @@ import GithubProvider from "@auth/core/providers/github";
 import GoogleProvider from "@auth/core/providers/google";
 import type { Session } from "@auth/core/types";
 
-const runtimeConfig = useRuntimeConfig();
-
 export const authOptions: AuthConfig = {
-  secret: runtimeConfig.auth.secret,
+  secret: serverEnv.AUTH_SECRET,
   adapter: DrizzleAdapter,
   providers: [
     FacebookProvider({
-      clientId: runtimeConfig.public.facebook.clientId,
-      clientSecret: runtimeConfig.facebook.clientSecret,
+      clientId: sharedEnv.FACEBOOK_CLIENT_ID,
+      clientSecret: serverEnv.FACEBOOK_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
     GithubProvider({
-      clientId: runtimeConfig.github.clientId,
-      clientSecret: runtimeConfig.github.clientSecret,
+      clientId: serverEnv.GITHUB_CLIENT_ID,
+      clientSecret: serverEnv.GITHUB_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
     GoogleProvider({
-      clientId: runtimeConfig.google.clientId,
-      clientSecret: runtimeConfig.google.clientSecret,
+      clientId: serverEnv.GOOGLE_CLIENT_ID,
+      clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
   ],
@@ -42,4 +42,4 @@ export const authOptions: AuthConfig = {
   },
 };
 
-export default NuxtAuthHandler(authOptions, runtimeConfig);
+export default NuxtAuthHandler(authOptions, useRuntimeConfig());

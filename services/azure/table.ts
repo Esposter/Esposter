@@ -1,3 +1,4 @@
+import { env } from "@/env.server";
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
 import { dayjs } from "@/services/dayjs";
@@ -8,12 +9,10 @@ import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import { TableClient } from "@azure/data-tables";
 import { plainToInstance } from "class-transformer";
 
-const runtimeConfig = useRuntimeConfig();
-
 export const getTableClient = async <TAzureTable extends AzureTable>(
   tableName: TAzureTable,
 ): Promise<CustomTableClient<AzureTableEntityMap[TAzureTable]>> => {
-  const tableClient = TableClient.fromConnectionString(runtimeConfig.azure.storageAccountConnectionString, tableName);
+  const tableClient = TableClient.fromConnectionString(env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING, tableName);
   try {
     await tableClient.createTable();
     return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;

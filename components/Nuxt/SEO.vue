@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { env as clientEnv } from "@/env.client";
+import { env as sharedEnv } from "@/env.shared";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/services/esposter/constants";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
 const { surface } = useColors();
-const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
 useServerSeoMeta({
   description: SITE_DESCRIPTION,
-  fbAppId: runtimeConfig.public.facebook.clientId,
+  fbAppId: sharedEnv.FACEBOOK_CLIENT_ID,
   ogTitle: SITE_NAME,
   ogDescription: SITE_DESCRIPTION,
-  ogUrl: runtimeConfig.public.baseUrl,
+  ogUrl: clientEnv.NUXT_PUBLIC_BASE_URL,
   ogType: "website",
   ogImage: logoImageUrl,
   ogImageAlt: SITE_NAME,
@@ -20,7 +21,7 @@ useServerSeoMeta({
   ogImageHeight: 200,
   ogSiteName: SITE_NAME,
   twitterCard: "summary_large_image",
-  twitterSite: runtimeConfig.public.baseUrl,
+  twitterSite: clientEnv.NUXT_PUBLIC_BASE_URL,
   applicationName: SITE_NAME,
   themeColor: surface,
   appleMobileWebAppCapable: "yes",

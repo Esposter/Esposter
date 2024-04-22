@@ -1,11 +1,12 @@
 import type { NuxtConfig } from "nuxt/schema";
+import { env } from "../env.client";
 
 export const app: NuxtConfig["app"] = {
   head: {
     link: [
       {
         rel: "canonical",
-        href: process.env.BASE_URL,
+        href: env.NUXT_PUBLIC_BASE_URL,
       },
       {
         rel: "icon",

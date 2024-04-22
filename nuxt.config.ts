@@ -7,11 +7,13 @@ import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
-import { runtimeConfig } from "./configuration/runtimeConfig";
 import { typescript } from "./configuration/typescript";
 import { unfonts } from "./configuration/unfonts";
 import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
+import "./env.client";
+import "./env.server";
+import "./env.shared";
 
 export default defineNuxtConfig({
   alias,
@@ -20,7 +22,6 @@ export default defineNuxtConfig({
   experimental,
   imports,
   nitro,
-  runtimeConfig,
   typescript,
   vite,
 

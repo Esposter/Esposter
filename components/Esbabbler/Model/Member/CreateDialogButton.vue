@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import { env } from "@/env.client";
 import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 const { $client } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
-const runtimeConfig = useRuntimeConfig();
 const dialog = ref(false);
 const inviteCode = ref(
   currentRoomId.value ? await $client.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : "",
 );
 const inviteLink = computed(() =>
-  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
+  inviteCode.value ? `${env.NUXT_PUBLIC_BASE_URL}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
 </script>
 
