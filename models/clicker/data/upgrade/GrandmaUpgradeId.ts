@@ -11,6 +11,6 @@ export enum GrandmaUpgradeId {
   "Timeproof Hair Dyes" = "Timeproof Hair Dyes",
   "Good Manners" = "Good Manners",
   "Generation Degeneration" = "Generation Degeneration",
-  "Visits" = "Visits",
+  Visits = "Visits",
   "Kitchen Cabinets" = "Kitchen Cabinets",
 }
