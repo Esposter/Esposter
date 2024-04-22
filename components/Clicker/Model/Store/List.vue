@@ -10,7 +10,7 @@ const upgradeStore = useUpgradeStore();
 const { initializeUpgradeList } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);
 const buildingStore = useBuildingStore();
-const { initializeBuildingList } = buildingStore;
+const { initializeBuildingMap } = buildingStore;
 const { buildingList } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
@@ -18,11 +18,8 @@ const unlockedStoreUpgrades = computed(() =>
     .toSorted((a, b) => a.price - b.price),
 );
 
-const upgrades = await $client.clicker.readUpgrades.query();
-initializeUpgradeList(upgrades);
-
-const buildings = await $client.clicker.readBuildings.query();
-initializeBuildingList(buildings);
+initializeUpgradeList(await $client.clicker.readUpgrades.query());
+initializeBuildingMap(await $client.clicker.readBuildingMap.query());
 </script>
 
 <template>

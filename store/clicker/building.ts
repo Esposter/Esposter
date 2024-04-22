@@ -1,3 +1,4 @@
+import type { BuildingMap } from "@/assets/clicker/data/BuildingMap";
 import type { Building } from "@/models/clicker/data/building/Building";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
 import { formatNumberLong } from "@/services/clicker/format";
@@ -14,9 +15,12 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const { decrementPoints } = pointStore;
   const clickerItemProperties = useClickerItemProperties();
 
-  const buildingList = ref<Building[]>([]);
-  const initializeBuildingList = (buildings: Building[]) => {
-    buildingList.value = buildings;
+  const buildingMap = ref<typeof BuildingMap>();
+  const buildingList = computed<Building[]>(() =>
+    buildingMap.value ? Object.entries(buildingMap.value).map(([id, buildingData]) => ({ id, ...buildingData })) : [],
+  );
+  const initializeBuildingMap = (newBuildingMap: typeof BuildingMap) => {
+    buildingMap.value = newBuildingMap;
   };
 
   const allBuildingPower = computed(() =>
@@ -67,7 +71,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   return {
     buildingList,
-    initializeBuildingList,
+    initializeBuildingMap,
     allBuildingPower,
     getBoughtBuildingPower,
     getBoughtBuildingAmount,

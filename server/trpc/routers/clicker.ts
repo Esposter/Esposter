@@ -1,4 +1,4 @@
-import { buildings } from "@/assets/clicker/data/buildings";
+import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
 import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursorUpgrades";
 import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandmaUpgrades";
 import { AzureContainer } from "@/models/azure/blob";
@@ -13,7 +13,7 @@ import { streamToText } from "@/util/text/streamToText";
 
 export const clickerRouter = router({
   readUpgrades: rateLimitedProcedure.query<Upgrade[]>(() => [...cursorUpgrades, ...grandmaUpgrades] as Upgrade[]),
-  readBuildings: rateLimitedProcedure.query(() => buildings),
+  readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
   readGame: authedProcedure.query<Game>(async ({ ctx }) => {
     try {
       const containerClient = await getContainerClient(AzureContainer.ClickerAssets);

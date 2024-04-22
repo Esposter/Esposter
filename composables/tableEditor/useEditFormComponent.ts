@@ -10,7 +10,8 @@ export const useEditFormComponent = <T extends string>(itemType: T) => {
   let editFormComponent: Component | null = null;
 
   for (const [filepath, component] of editFormComponentFilepathEntries)
-    if (filepath.includes(`${tableEditorType.value}/Item/${itemType}`)) editFormComponent = component;
+    if (typeof filepath === "string" && filepath.includes(`${tableEditorType.value}/Item/${itemType}`))
+      editFormComponent = component;
 
   return editFormComponent;
 };
