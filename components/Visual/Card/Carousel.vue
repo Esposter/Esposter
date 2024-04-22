@@ -1,6 +1,6 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
-import BaseCard from "@/components/Visual/BaseCard.vue";
+import CardBase from "@/components/Visual/Card/Base.vue";
 import type { Card } from "@/models/visual/Card";
 import { dayjs } from "@/services/dayjs";
 import type { Component } from "vue";
@@ -20,7 +20,7 @@ const {
   maxShownCards = 5,
   // Ratio of how much shorter the next card is
   cardScaleYRatioLoss = 0.05,
-  cardTemplate = BaseCard,
+  cardTemplate = CardBase,
 } = defineProps<VisualCardCarouselProps>();
 
 /**
