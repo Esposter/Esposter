@@ -1,11 +1,11 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
-import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
+import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
+import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
-import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
+import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";

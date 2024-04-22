@@ -1,5 +1,5 @@
 import type { Asset } from "@/models/dungeons/Asset";
-import type { CharacterId } from "@/models/dungeons/world/CharacterId";
+import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { ItemMetadata } from "@/models/shared/ItemMetadata";
 import type { Direction, Position, WalkingAnimationMapping } from "grid-engine";
 

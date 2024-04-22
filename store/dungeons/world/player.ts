@@ -1,4 +1,4 @@
-import { INITIAL_POSITION } from "@/services/dungeons/world/home/constants";
+import { INITIAL_POSITION } from "@/services/dungeons/scene/world/home/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { Direction } from "grid-engine";
 import type { GameObjects } from "phaser";

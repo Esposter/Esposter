@@ -2,7 +2,7 @@
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
-import type { Character } from "@/models/dungeons/world/Character";
+import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import type { Subscription } from "rxjs";

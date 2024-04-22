@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Game from "@/lib/phaser/components/Game.vue";
-import { SceneKeyMap } from "@/services/dungeons/SceneKeyMap";
+import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
 import { AUTO, Scale } from "phaser";

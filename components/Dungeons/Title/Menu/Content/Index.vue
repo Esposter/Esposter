@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/title/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerTitleMenuOption } from "@/models/dungeons/title/menu/PlayerTitleMenuOption";
+import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/title/menu/constants";
+import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/scene/title/menu/constants";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
 const titleSceneStore = useTitleSceneStore();

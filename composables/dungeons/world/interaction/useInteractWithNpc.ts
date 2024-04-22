@@ -1,5 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { getOppositeDirection } from "@/services/dungeons/getOppositeDirection";
+import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useNpcStore } from "@/store/dungeons/world/npc";

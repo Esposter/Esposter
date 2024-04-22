@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
-import { MENU_HORIZONTAL_PADDING, MENU_VERTICAL_PADDING } from "@/services/dungeons/settings/constants";
+import { MENU_HORIZONTAL_PADDING, MENU_VERTICAL_PADDING } from "@/services/dungeons/scene/settings/constants";
 </script>
 
 <template>

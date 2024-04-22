@@ -1,4 +1,4 @@
-import { MenuOptionGrid } from "@/services/dungeons/world/MenuOptionGrid";
+import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
 import type { Tilemaps } from "phaser";
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {

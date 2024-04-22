@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AttackComponentMap } from "@/services/dungeons/battle/attack/AttackComponentMap";
+import { AttackComponentMap } from "@/services/dungeons/scene/battle/attack/AttackComponentMap";
 import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 
 const attackManagerStore = useAttackManagerStore();

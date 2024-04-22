@@ -3,9 +3,9 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { JOYSTICK_RADIUS } from "@/services/dungeons/joystick/constants";
-import { getJoystickX } from "@/services/dungeons/joystick/getJoystickX";
-import { getJoystickY } from "@/services/dungeons/joystick/getJoystickY";
+import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
+import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
+import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import { useGameStore } from "@/store/dungeons/game";
 import { Input } from "phaser";
 

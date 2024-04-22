@@ -6,7 +6,7 @@ import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
-import { getAllInputResolvers } from "@/services/dungeons/world/getAllInputResolvers";
+import { getAllInputResolvers } from "@/services/dungeons/scene/world/getAllInputResolvers";
 import { useGameStore } from "@/store/dungeons/game";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";

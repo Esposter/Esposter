@@ -3,7 +3,11 @@ import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { INITIAL_SETTINGS_POSITION, MENU_HEIGHT, MENU_VERTICAL_PADDING } from "@/services/dungeons/settings/constants";
+import {
+  INITIAL_SETTINGS_POSITION,
+  MENU_HEIGHT,
+  MENU_VERTICAL_PADDING,
+} from "@/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const phaserStore = usePhaserStore();

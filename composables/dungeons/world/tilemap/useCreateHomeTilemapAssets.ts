@@ -1,6 +1,6 @@
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { LayerId } from "@/models/dungeons/world/home/LayerId";
-import { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
+import { LayerId } from "@/models/dungeons/scene/world/home/LayerId";
+import { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 

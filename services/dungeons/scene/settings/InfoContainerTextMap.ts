@@ -1,4 +1,4 @@
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 
 export const InfoContainerTextMap = {
   [SettingsOption["Text Speed"]]: "Choose one of three text display speeds.",

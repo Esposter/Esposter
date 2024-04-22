@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Nineslice from "@/lib/phaser/components/Nineslice.vue";
-import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/constants";
+import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/UI/constants";
 
 interface GlassPanelNineSliceProps {
   width: number;

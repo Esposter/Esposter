@@ -1,4 +1,4 @@
-import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/settings/constants";
+import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
 import { computed } from "vue";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {

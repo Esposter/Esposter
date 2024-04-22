@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { CharacterId } from "@/models/dungeons/world/CharacterId";
-import { PlayerWalkingAnimationMapping } from "@/services/dungeons/world/constants";
+import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";

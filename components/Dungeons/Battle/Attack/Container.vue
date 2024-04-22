@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
-import { getAttackPosition } from "@/services/dungeons/battle/attack/getAttackPosition";
+import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
 
 interface ContainerProps {
   isToEnemy: boolean;

@@ -1,4 +1,4 @@
-import type { ObjectLayer } from "@/models/dungeons/world/home/ObjectLayer";
+import type { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 

@@ -3,7 +3,7 @@ import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSet
 import { BattleStyleSetting } from "@/models/dungeons/data/settings/BattleStyleSetting";
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { TextSpeedSetting } from "@/models/dungeons/data/settings/TextSpeedSetting";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 
 const grid = [
   [SettingsOption["Text Speed"], TextSpeedSetting.Slow, TextSpeedSetting.Mid, TextSpeedSetting.Fast],

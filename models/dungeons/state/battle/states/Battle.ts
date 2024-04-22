@@ -1,7 +1,7 @@
-import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
+import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/battle/battleStateMachine";
+import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 

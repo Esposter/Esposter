@@ -3,7 +3,7 @@ import { BattleStyleSetting, battleStyleSettingSchema } from "@/models/dungeons/
 import { SoundSetting, soundSettingSchema } from "@/models/dungeons/data/settings/SoundSetting";
 import { TextSpeedSetting, textSpeedSettingSchema } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { ThemeModeSetting, themeModeSettingSchema } from "@/models/dungeons/data/settings/ThemeModeSetting";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { z } from "zod";
 

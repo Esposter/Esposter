@@ -1,7 +1,7 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
-import { DIALOG_WIDTH } from "@/services/dungeons/world/constants";
+import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 
 export const useWorldDialogStore = defineStore("dungeons/world/dialog", () => {

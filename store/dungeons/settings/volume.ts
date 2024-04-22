@@ -1,6 +1,6 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
 import { dayjs } from "@/services/dayjs";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MENU_HEIGHT } from "@/services/dungeons/settings/constants";
+import { MENU_HEIGHT } from "@/services/dungeons/scene/settings/constants";
 
 const width = useSettingsMenuWidth();
 </script>

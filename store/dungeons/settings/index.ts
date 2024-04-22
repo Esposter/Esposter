@@ -1,5 +1,5 @@
 import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 

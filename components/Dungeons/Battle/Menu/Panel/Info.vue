@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
+import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 

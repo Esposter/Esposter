@@ -2,7 +2,7 @@ import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
+import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";

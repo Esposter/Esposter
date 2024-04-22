@@ -6,7 +6,7 @@ import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_PADDING,
-} from "@/services/dungeons/inventory/constants";
+} from "@/services/dungeons/scene/inventory/constants";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
 const inventorySceneStore = useInventorySceneStore();

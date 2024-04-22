@@ -1,5 +1,5 @@
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
-import { TextSpeedDelayMap } from "@/services/dungeons/settings/TextSpeedDelayMap";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { TextSpeedDelayMap } from "@/services/dungeons/scene/settings/TextSpeedDelayMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useTextDelay = (delay?: number) => {

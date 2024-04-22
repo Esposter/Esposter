@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { MENU_DEPTH, MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/world/constants";
-import { getMenuHeight } from "@/services/dungeons/world/getMenuHeight";
+import { MENU_DEPTH, MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { getMenuHeight } from "@/services/dungeons/scene/world/getMenuHeight";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();

@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/inventory/styles/MenuTextStyle"
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { MENU_PADDING } from "@/services/dungeons/inventory/constants";
+import { MENU_PADDING } from "@/services/dungeons/scene/inventory/constants";
 
 const panelWidth = 240;
 const panelHeight = 64;

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { ActivePanel } from "@/models/dungeons/battle/menu/ActivePanel";
+import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
+import { getGridKey } from "@/services/dungeons/getGridKey";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_HEIGHT,
   MENU_PADDING,
-} from "@/services/dungeons/battle/menu/constants";
-import { getPanelTextPosition } from "@/services/dungeons/battle/menu/getPanelTextPosition";
-import { getGridKey } from "@/services/dungeons/getGridKey";
+} from "@/services/dungeons/scene/battle/menu/constants";
+import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 

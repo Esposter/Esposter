@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import { dayjs } from "@/services/dayjs";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/title/menu/constants";
+import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
 const titleSceneStore = useTitleSceneStore();

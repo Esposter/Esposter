@@ -2,13 +2,13 @@
 import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
-} from "@/services/dungeons/settings/constants";
+} from "@/services/dungeons/scene/settings/constants";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";

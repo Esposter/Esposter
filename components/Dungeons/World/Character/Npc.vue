@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CharacterProps } from "@/components/Dungeons/World/Character/Index.vue";
-import type { Npc } from "@/models/dungeons/world/Npc";
+import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { Direction } from "grid-engine";
 
 interface NpcProps {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";

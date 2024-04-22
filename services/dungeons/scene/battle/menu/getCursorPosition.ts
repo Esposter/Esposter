@@ -1,4 +1,4 @@
-import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/battle/menu/constants";
+import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/battle/menu/constants";
 import type { Position } from "grid-engine";
 
 export const getCursorPosition = (rowIndex: number, columnIndex: number): Position => ({

@@ -3,12 +3,12 @@ import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
-} from "@/services/dungeons/settings/constants";
+} from "@/services/dungeons/scene/settings/constants";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Direction } from "grid-engine";

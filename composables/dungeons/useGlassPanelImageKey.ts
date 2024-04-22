@@ -1,4 +1,4 @@
-import { ThemeModeGlassPanelImageKeyMap } from "@/services/dungeons/settings/ThemeModeGlassPanelImageKeyMap";
+import { ThemeModeGlassPanelImageKeyMap } from "@/services/dungeons/scene/settings/ThemeModeGlassPanelImageKeyMap";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 
 export const useGlassPanelImageKey = () => {

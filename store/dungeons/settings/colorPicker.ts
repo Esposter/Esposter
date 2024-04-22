@@ -1,6 +1,6 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { mod } from "@/util/math/mod";
 import { Direction } from "grid-engine";

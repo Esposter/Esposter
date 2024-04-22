@@ -1,5 +1,5 @@
 import type { Theme } from "@/models/dungeons/theme/Theme";
-import { ThemeModeColorsMap } from "@/services/dungeons/settings/ThemeModeColorsMap";
+import { ThemeModeColorsMap } from "@/services/dungeons/scene/settings/ThemeModeColorsMap";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 
 type DungeonsColors = {

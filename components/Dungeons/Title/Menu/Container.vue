@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/title/menu/constants";
+import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/scene/title/menu/constants";
 
 const phaserStore = usePhaserStore();
 const { scene } = storeToRefs(phaserStore);

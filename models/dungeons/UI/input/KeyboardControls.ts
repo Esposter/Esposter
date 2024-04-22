@@ -3,7 +3,7 @@ import type { Controls } from "@/models/dungeons/UI/input/Controls";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
-import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
+import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 import type { Types } from "phaser";
 import { Input } from "phaser";

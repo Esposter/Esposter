@@ -1,4 +1,4 @@
-import type { Npc } from "@/models/dungeons/world/Npc";
+import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 

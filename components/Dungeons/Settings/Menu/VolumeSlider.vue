@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
-import { SettingsOption } from "@/models/dungeons/settings/SettingsOption";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -14,7 +14,7 @@ import {
   VOLUME_SLIDER_HEIGHT,
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
-} from "@/services/dungeons/settings/constants";
+} from "@/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";

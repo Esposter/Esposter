@@ -1,7 +1,7 @@
 import { BaseControls } from "@/models/dungeons/UI/input/BaseControls";
 import type { BaseCursorKeys } from "@/models/dungeons/UI/input/BaseCursorKeys";
 import type { Controls } from "@/models/dungeons/UI/input/Controls";
-import { mapCursorKeysToDirection } from "@/services/dungeons/input/mapCursorKeysToDirection";
+import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 
 export class JoystickControls extends BaseControls implements Controls {

@@ -6,7 +6,7 @@ import { ItemId } from "@/models/dungeons/item/ItemId";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
-import { INITIAL_POSITION } from "@/services/dungeons/world/home/constants";
+import { INITIAL_POSITION } from "@/services/dungeons/scene/world/home/constants";
 import { Direction } from "grid-engine";
 import { z } from "zod";
 

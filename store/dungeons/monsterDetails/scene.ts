@@ -1,9 +1,9 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { isPlayerSpecialInput } from "@/services/dungeons/input/isPlayerSpecialInput";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 

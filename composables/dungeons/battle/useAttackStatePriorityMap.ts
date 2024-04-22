@@ -1,4 +1,4 @@
-import { PlayerOption } from "@/models/dungeons/battle/menu/PlayerOption";
+import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
