@@ -2,7 +2,7 @@
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { Row } from "@/models/user/ProfileCard/Row";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
-import type { UpdateUserInput } from "@/models/user/UpdateUserInput";
+import type { UpdateUserInput } from "@/server/trpc/routers/user";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
 import deepEqual from "deep-equal";
@@ -29,7 +29,7 @@ const profileCardRows = computed<Record<keyof UpdateUserInput, Row>>(() => {
 });
 const profileCardRowValues = computed(() =>
   Object.entries(profileCardRows.value).reduce((acc, [prop, row]) => {
-    acc[prop as keyof UpdateUserInput] = row.value;
+    acc[prop] = row.value;
     return acc;
   }, {} as UpdateUserInput),
 );
