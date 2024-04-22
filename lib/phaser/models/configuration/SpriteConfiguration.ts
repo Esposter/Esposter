@@ -13,8 +13,8 @@ import type { TransformConfiguration } from "@/lib/phaser/models/configuration/c
 import type { VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
 import type { AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
-import type { Except } from "@/util/types/Except";
 import type { Types } from "phaser";
+import type { Except } from "type-fest";
 
 export type SpriteConfiguration = Except<
   Types.GameObjects.Sprite.SpriteConfig,

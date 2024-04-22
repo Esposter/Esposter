@@ -1,6 +1,6 @@
 import type { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import type { Except } from "@/util/types/Except";
 import type { Types } from "phaser";
+import type { Except } from "type-fest";
 
 export const useDungeonsSoundEffect = (
   soundEffectKey: SoundEffectKey,

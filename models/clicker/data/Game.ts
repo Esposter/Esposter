@@ -5,7 +5,7 @@ import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import type { Except } from "@/util/types/Except";
+import type { Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {

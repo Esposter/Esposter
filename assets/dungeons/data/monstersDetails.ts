@@ -2,7 +2,7 @@ import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import type { Except } from "@/util/types/Except";
+import type { Except } from "type-fest";
 
 export const monstersDetails: Except<Monster, "id">[] = [
   {

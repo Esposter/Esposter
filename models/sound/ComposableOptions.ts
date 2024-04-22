@@ -1,5 +1,5 @@
-import type { Except } from "@/util/types/Except";
 import type { HowlOptions } from "howler";
+import type { Except } from "type-fest";
 import type { MaybeRef } from "vue";
 
 export type ComposableOptions = {

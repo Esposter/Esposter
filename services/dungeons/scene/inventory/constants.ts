@@ -1,5 +1,5 @@
-import type { Except } from "@/util/types/Except";
 import type { Position } from "grid-engine";
+import type { Except } from "type-fest";
 
 export const MENU_PADDING = 4;
 export const CONTENT_MENU_WIDTH = 700;

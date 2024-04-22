@@ -4,8 +4,8 @@ import type { ScrollFactorConfiguration } from "@/lib/phaser/models/configuratio
 import type { TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import type { VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
-import type { Except } from "@/util/types/Except";
 import type { GameObjects, Types } from "phaser";
+import type { Except } from "type-fest";
 
 export type ZoneConfiguration = Except<Types.GameObjects.Zone.ZoneConfig, keyof Types.GameObjects.GameObjectConfig> & {
   displayWidth: GameObjects.Zone["displayWidth"];

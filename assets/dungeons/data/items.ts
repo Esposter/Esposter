@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import { ItemId } from "@/models/dungeons/item/ItemId";
-import type { Except } from "@/util/types/Except";
+import type { Except } from "type-fest";
 
 export const items: Except<Item, "quantity">[] = [
   {

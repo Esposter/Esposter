@@ -2,8 +2,8 @@ import { SignObjectProperty } from "@/generated/tiled/propertyTypes/class/SignOb
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import type { SetRequired } from "@/util/types/SetRequired";
 import { Direction } from "grid-engine";
+import type { SetRequired } from "type-fest";
 import type { ArrayElement } from "type-fest/source/internal";
 
 export const useInteractWithSign = (): boolean => {

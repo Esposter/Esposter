@@ -5,7 +5,7 @@ import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import type { Except } from "@/util/types/Except";
+import type { Except } from "type-fest";
 import { z } from "zod";
 
 type TableEditorTypes = {

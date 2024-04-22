@@ -1,4 +1,4 @@
-import type { Constructor } from "@/util/types/Constructor";
+import type { Constructor } from "type-fest";
 import { z } from "zod";
 
 export interface ItemMetadata {

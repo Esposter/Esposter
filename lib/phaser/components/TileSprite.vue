@@ -4,8 +4,8 @@ import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { TileSpriteConfiguration } from "@/lib/phaser/models/configuration/TileSpriteConfiguration";
 import type { TileSpriteEventEmitsOptions } from "@/lib/phaser/models/emit/TileSpriteEventEmitsOptions";
 import { TileSpriteSetterMap } from "@/lib/phaser/util/setterMap/TileSpriteSetterMap";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 export interface TileSpriteProps {
   configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;

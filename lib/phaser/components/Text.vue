@@ -5,8 +5,8 @@ import type { TextConfiguration } from "@/lib/phaser/models/configuration/TextCo
 import type { TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
 import { FontKey } from "@/models/dungeons/keys/FontKey";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 interface TextProps {
   configuration: SetRequired<Partial<TextConfiguration>, "text">;
