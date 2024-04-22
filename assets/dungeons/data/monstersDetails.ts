@@ -1,6 +1,6 @@
-import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
+import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "@/util/types/Except";
@@ -17,7 +17,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackKey.IceShard],
   },
   {
     key: MonsterKey.Carnodusk,
@@ -30,7 +30,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackKey.IceShard],
   },
   {
     key: MonsterKey.Frostsaber,
@@ -43,7 +43,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackKey.IceShard],
   },
   {
     key: MonsterKey.Ignivolt,
@@ -56,7 +56,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.IceShard],
+    attackIds: [AttackKey.IceShard],
   },
   {
     key: MonsterKey.Iguanignite,
@@ -69,7 +69,7 @@ const baseMonstersDetails: Except<Monster, "id" | "name">[] = [
     },
     currentLevel: 5,
     currentHp: 25,
-    attackIds: [AttackId.Slash],
+    attackIds: [AttackKey.Slash],
   },
 ];
 

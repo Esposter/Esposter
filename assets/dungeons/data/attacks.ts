@@ -1,16 +1,16 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
-import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "@/util/types/Except";
 
 const baseAttacks: Except<Attack, "name">[] = [
   {
-    id: AttackId.IceShard,
+    id: AttackKey.IceShard,
     soundEffectKey: SoundEffectKey.IceExplosion,
   },
   {
-    id: AttackId.Slash,
+    id: AttackKey.Slash,
     soundEffectKey: SoundEffectKey.Claw,
   },
 ];
