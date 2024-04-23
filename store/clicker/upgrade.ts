@@ -4,6 +4,7 @@ import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const gameStore = useGameStore();
@@ -11,9 +12,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
-  const upgradeList = computed<Upgrade[]>(() =>
-    upgradeMap.value ? Object.entries(upgradeMap.value).map(([id, upgradeData]) => ({ id, ...upgradeData })) : [],
-  );
+  const upgradeList = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
   const initializeUpgradeMap = (newUpgradeMap: typeof UpgradeMap) => {
     upgradeMap.value = newUpgradeMap;
   };

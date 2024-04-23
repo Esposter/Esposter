@@ -10,7 +10,7 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
+import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -67,7 +67,7 @@ export const postRouter = router({
 
       const resultPosts: PostWithRelations[] = await db.query.posts.findMany({
         where,
-        orderBy: convertSortByToSql(posts, sortBy),
+        orderBy: parseSortByToSql(posts, sortBy),
         limit: limit + 1,
         with: PostRelations,
       });
