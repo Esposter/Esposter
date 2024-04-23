@@ -1,9 +1,7 @@
 import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
-import { cursorUpgrades } from "@/assets/clicker/data/upgrades/cursorUpgrades";
-import { grandmaUpgrades } from "@/assets/clicker/data/upgrades/grandmaUpgrades";
+import { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
 import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { router } from "@/server/trpc";
 import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
@@ -12,7 +10,7 @@ import { jsonDateParse } from "@/util/jsonDateParse";
 import { streamToText } from "@/util/text/streamToText";
 
 export const clickerRouter = router({
-  readUpgrades: rateLimitedProcedure.query<Upgrade[]>(() => [...cursorUpgrades, ...grandmaUpgrades] as Upgrade[]),
+  readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
   readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
   readGame: authedProcedure.query<Game>(async ({ ctx }) => {
     try {

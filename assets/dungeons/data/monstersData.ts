@@ -4,7 +4,7 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
-export const monstersDetails: Except<Monster, "id">[] = [
+export const monstersData: Except<Monster, "id">[] = [
   {
     key: MonsterKey.Aquavalor,
     asset: {

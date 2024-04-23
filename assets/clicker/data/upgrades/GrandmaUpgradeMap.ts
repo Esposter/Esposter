@@ -2,10 +2,10 @@ import { Target } from "@/models/clicker/data/Target";
 import { EffectType } from "@/models/clicker/data/effect/EffectType";
 import { GrandmaUpgradeId } from "@/models/clicker/data/upgrade/GrandmaUpgradeId";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { Except } from "type-fest";
 
-export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
-  {
-    id: GrandmaUpgradeId["Forwards From Grandma"],
+export const GrandmaUpgradeMap = {
+  [GrandmaUpgradeId["Forwards From Grandma"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "RE:RE:thought you'd get a kick out of this ;))",
     price: 1e3,
@@ -20,8 +20,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 1 }],
   },
-  {
-    id: GrandmaUpgradeId["Steel-plated Rolling Pins"],
+  [GrandmaUpgradeId["Steel-plated Rolling Pins"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "Just what you kneaded.",
     price: 5e3,
@@ -36,8 +35,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 5 }],
   },
-  {
-    id: GrandmaUpgradeId["Lubricated Dentures"],
+  [GrandmaUpgradeId["Lubricated Dentures"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "squish",
     price: 5e4,
@@ -52,8 +50,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 25 }],
   },
-  {
-    id: GrandmaUpgradeId["Prune Juice"],
+  [GrandmaUpgradeId["Prune Juice"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "Gets me going.",
     price: 5e6,
@@ -68,8 +65,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 50 }],
   },
-  {
-    id: GrandmaUpgradeId["Double-thick Glasses"],
+  [GrandmaUpgradeId["Double-thick Glasses"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "Oh... so THAT's what I've been making.",
     price: 5e8,
@@ -84,8 +80,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 100 }],
   },
-  {
-    id: GrandmaUpgradeId["Aging Agents"],
+  [GrandmaUpgradeId["Aging Agents"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       "Counter-intuitively, grandmas have the uncanny ability to become more powerful the older they get.",
@@ -101,8 +96,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 150 }],
   },
-  {
-    id: GrandmaUpgradeId["Xtreme Walkers"],
+  [GrandmaUpgradeId["Xtreme Walkers"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: 'Complete with flame decals and a little horn that goes "toot".',
     price: 5e13,
@@ -117,8 +111,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 200 }],
   },
-  {
-    id: GrandmaUpgradeId["The Unbridling"],
+  [GrandmaUpgradeId["The Unbridling"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "It might be a classic tale of bad parenting, but let's see where grandma is going with this.",
     price: 5e16,
@@ -133,8 +126,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 250 }],
   },
-  {
-    id: GrandmaUpgradeId["Reverse Dementia"],
+  [GrandmaUpgradeId["Reverse Dementia"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription: "Extremely unsettling, and somehow even worse than the regular kind.",
     price: 5e19,
@@ -149,8 +141,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 300 }],
   },
-  {
-    id: GrandmaUpgradeId["Timeproof Hair Dyes"],
+  [GrandmaUpgradeId["Timeproof Hair Dyes"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       "Why do they always have those strange wispy pink dos? What do they know about candy floss that we don't?",
@@ -166,8 +157,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 350 }],
   },
-  {
-    id: GrandmaUpgradeId["Good Manners"],
+  [GrandmaUpgradeId["Good Manners"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       'Apparently these ladies are much more amiable if you take the time to learn their strange, ancient customs, which seem to involve saying "please" and "thank you" and staring at the sun with bulging eyes while muttering eldritch curses under your breath.',
@@ -183,8 +173,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 400 }],
   },
-  {
-    id: GrandmaUpgradeId["Generation Degeneration"],
+  [GrandmaUpgradeId["Generation Degeneration"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       "Genetic testing shows that most of your grandmas are infected with a strange degenerative disease that only seems to further their powers; the more time passes, the older they get. This should concern you.",
@@ -200,8 +189,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 450 }],
   },
-  {
-    id: GrandmaUpgradeId.Visits,
+  [GrandmaUpgradeId.Visits]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       "In an extensive double-blind study (sample size: 12 millions), your researchers have found evidence that grandmas are up to twice as productive if you just come by and say hi once in a while. It's nice to check up on your grans! (Do not under any circumstances ingest any tea or tea-like substances the grandmas may offer you.).",
@@ -217,8 +205,7 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 500 }],
   },
-  {
-    id: GrandmaUpgradeId["Kitchen Cabinets"],
+  [GrandmaUpgradeId["Kitchen Cabinets"]]: {
     description: "Grandmas are **twice** as efficient.",
     flavorDescription:
       "A grandma's kitchen cabinet is a befuddling place. Through lesser-studied aggregating instincts, grandmas will tend to gradually fill all nearby cabinets with various sorts of things, such as curious coconut snacks or dietetic powders. By contract, these are legally yours, which opens up exciting opportunities for your substance investigation department.",
@@ -234,4 +221,4 @@ export const grandmaUpgrades: Upgrade<GrandmaUpgradeId>[] = [
     ],
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 550 }],
   },
-];
+} as const satisfies Record<GrandmaUpgradeId, Except<Upgrade<GrandmaUpgradeId>, "id">>;
