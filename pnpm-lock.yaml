@@ -230,7 +230,7 @@ importers:
         version: 0.3.9(eslint@9.1.1)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.17.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.11.28)(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.1.1)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.13.0)(sass@1.75.0)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.5.0))(rollup@4.13.0)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))
       '@nuxt/test-utils':
         specifier: ^3.12.1
-        version: 3.12.1(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
+        version: 3.12.1(@vue/test-utils@2.4.5)(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -267,6 +267,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^1.5.0
         version: 1.5.0(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))
+      '@vue/test-utils':
+        specifier: ^2.4.5
+        version: 2.4.5
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -1942,6 +1945,9 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
+  '@one-ini/wasm@0.1.1':
+    resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
+
   '@opentelemetry/api@1.8.0':
     resolution: {integrity: sha512-I/s6F7yKUDdtMsoBWXJe8Qz40Tui5vsuKCWJEWVL+5q9sSWRzzx6v2KeNsOBEwd94j0eWkpWCH4yB6rZg9Mf0w==}
     engines: {node: '>=8.0.0'}
@@ -2993,6 +2999,9 @@ packages:
   '@vue/shared@3.4.23':
     resolution: {integrity: sha512-wBQ0gvf+SMwsCQOyusNw/GoXPV47WGd1xB5A1Pgzy0sQ3Bi5r5xm3n+92y3gCnB3MWqnRDdvfkRGxhKtbBRNgg==}
 
+  '@vue/test-utils@2.4.5':
+    resolution: {integrity: sha512-oo2u7vktOyKUked36R93NB7mg2B+N7Plr8lxp2JBGwr18ch6EggFjixSCdIVVLkT6Qr0z359Xvnafc9dcKyDUg==}
+
   '@vuepic/vue-datepicker@8.4.0':
     resolution: {integrity: sha512-Twgvqwd5GrQf3JT2DvAQ/Ku0+sM51zsH1OkQKoRwYqJyF+EugItS8I0CveYmcI3Gbu92RZ9C3DMutvkaiuDzAQ==}
     engines: {node: '>=18.12.0'}
@@ -3452,6 +3461,10 @@ packages:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
 
+  commander@10.0.1:
+    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
+    engines: {node: '>=14'}
+
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -3490,6 +3503,9 @@ packages:
 
   confbox@0.1.3:
     resolution: {integrity: sha512-eH3ZxAihl1PhKfpr4VfEN6/vUd87fmgb6JkldHgg/YR6aEBhW63qUDgzP2Y6WM0UumdsYp5H3kibalXAdHfbgg==}
+
+  config-chain@1.1.13:
+    resolution: {integrity: sha512-qj+f8APARXHrM0hraqXYb2/bOVSV4PvJQlNZ/DVj0QrmNM2q2euizkeuVckQ57J+W0mRH6Hvi+k50M4Jul2VRQ==}
 
   consola@3.2.3:
     resolution: {integrity: sha512-I5qxpzLv+sJhTVEoLYNcTW+bThDCPsit0vLNKShZx6rLtpilNpmmeTPaeqJb9ZE9dV3DGaeby6Vuhrw38WjeyQ==}
@@ -3964,6 +3980,11 @@ packages:
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  editorconfig@1.0.4:
+    resolution: {integrity: sha512-L9Qe08KWTlqYMVvMcTIvMAdl1cDUubzRNYL+WfA4bLDMHe4nemKkpmYzkznE1FwLKu0EEmy6obgQKzMJrg4x9Q==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -4983,6 +5004,15 @@ packages:
   jose@5.2.3:
     resolution: {integrity: sha512-KUXdbctm1uHVL8BYhnyHkgp3zDX5KW8ZhAKVFEfUbU2P8Alpzjb+48hHvjOdQIyPshoblhzsuqOwEEAbtHVirA==}
 
+  js-beautify@1.15.1:
+    resolution: {integrity: sha512-ESjNzSlt/sWE8sciZH8kBF8BPlwXPwhR6pWKAw8bw4Bwj+iZcnKW6ONWUutJ7eObuBZQpiIb8S7OYspWrKt7rA==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -5306,6 +5336,10 @@ packages:
   minimatch@7.4.6:
     resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==}
     engines: {node: '>=10'}
+
+  minimatch@9.0.1:
+    resolution: {integrity: sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==}
+    engines: {node: '>=16 || 14 >=14.17'}
 
   minimatch@9.0.3:
     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
@@ -6080,6 +6114,9 @@ packages:
 
   prosemirror-view@1.33.1:
     resolution: {integrity: sha512-62qkYgSJIkwIMMCpuGuPzc52DiK1Iod6TWoIMxP4ja6BTD4yO8kCUL64PZ/WhH/dJ9fW0CDO39FhH1EMyhUFEg==}
+
+  proto-list@1.2.4:
+    resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
 
   protocols@2.0.1:
     resolution: {integrity: sha512-/XJ368cyBJ7fzLMwLKv1e4vLxOju2MNAIokcr7meSaNcVbWz/CPcW22cP04mwxOErdA5mwjA8Q6w/cdAQxVn7Q==}
@@ -7231,6 +7268,9 @@ packages:
       codemirror: 6.x
       vue: 3.x
 
+  vue-component-type-helpers@2.0.14:
+    resolution: {integrity: sha512-DInfgOyXlMyliyqAAD9frK28tTfch0+tMi4qoWJcZlRxUf+NFAtraJBnAsKLep+FOyLMiajkhfyEb3xLK08i7w==}
+
   vue-demi@0.14.7:
     resolution: {integrity: sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==}
     engines: {node: '>=12'}
@@ -7405,7 +7445,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -9573,7 +9612,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/test-utils@3.12.1(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))':
+  '@nuxt/test-utils@3.12.1(@vue/test-utils@2.4.5)(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))':
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.13.0)
       '@nuxt/schema': 3.11.2(rollup@4.13.0)
@@ -9599,10 +9638,11 @@ snapshots:
       unenv: 1.9.0
       unplugin: 1.10.1
       vite: 5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2)
-      vitest-environment-nuxt: 1.0.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
+      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.5)(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
       vue: 3.4.23(typescript@5.4.5)
       vue-router: 4.3.2(vue@3.4.23(typescript@5.4.5))
     optionalDependencies:
+      '@vue/test-utils': 2.4.5
       happy-dom: 14.7.1
       vitest: 1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2)
     transitivePeerDependencies:
@@ -9669,6 +9709,8 @@ snapshots:
       - vls
       - vti
       - vue-tsc
+
+  '@one-ini/wasm@0.1.1': {}
 
   '@opentelemetry/api@1.8.0': {}
 
@@ -11027,6 +11069,11 @@ snapshots:
 
   '@vue/shared@3.4.23': {}
 
+  '@vue/test-utils@2.4.5':
+    dependencies:
+      js-beautify: 1.15.1
+      vue-component-type-helpers: 2.0.14
+
   '@vuepic/vue-datepicker@8.4.0(vue@3.4.23(typescript@5.4.5))':
     dependencies:
       date-fns: 3.6.0
@@ -11589,6 +11636,8 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
+  commander@10.0.1: {}
+
   commander@2.20.3: {}
 
   commander@7.2.0: {}
@@ -11616,6 +11665,11 @@ snapshots:
   concat-map@0.0.1: {}
 
   confbox@0.1.3: {}
+
+  config-chain@1.1.13:
+    dependencies:
+      ini: 1.3.8
+      proto-list: 1.2.4
 
   consola@3.2.3: {}
 
@@ -12011,6 +12065,13 @@ snapshots:
   earcut@2.2.4: {}
 
   eastasianwidth@0.2.0: {}
+
+  editorconfig@1.0.4:
+    dependencies:
+      '@one-ini/wasm': 0.1.1
+      commander: 10.0.1
+      minimatch: 9.0.1
+      semver: 7.6.0
 
   ee-first@1.1.1: {}
 
@@ -13241,6 +13302,16 @@ snapshots:
 
   jose@5.2.3: {}
 
+  js-beautify@1.15.1:
+    dependencies:
+      config-chain: 1.1.13
+      editorconfig: 1.0.4
+      glob: 10.3.10
+      js-cookie: 3.0.5
+      nopt: 7.2.0
+
+  js-cookie@3.0.5: {}
+
   js-tokens@4.0.0: {}
 
   js-tokens@8.0.3: {}
@@ -13542,6 +13613,10 @@ snapshots:
       brace-expansion: 2.0.1
 
   minimatch@7.4.6:
+    dependencies:
+      brace-expansion: 2.0.1
+
+  minimatch@9.0.1:
     dependencies:
       brace-expansion: 2.0.1
 
@@ -14519,6 +14594,8 @@ snapshots:
       prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
+
+  proto-list@1.2.4: {}
 
   protocols@2.0.1: {}
 
@@ -15749,9 +15826,9 @@ snapshots:
       sass: 1.75.0
       terser: 5.29.2
 
-  vitest-environment-nuxt@1.0.0(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5)):
+  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.5)(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5)):
     dependencies:
-      '@nuxt/test-utils': 3.12.1(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
+      '@nuxt/test-utils': 3.12.1(@vue/test-utils@2.4.5)(h3@1.11.1)(happy-dom@14.7.1)(rollup@4.13.0)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vitest@1.5.0(@types/node@20.11.28)(happy-dom@14.7.1)(sass@1.75.0)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)))(vue@3.4.23(typescript@5.4.5))
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -15839,6 +15916,8 @@ snapshots:
       '@codemirror/view': 6.26.3
       codemirror: 6.0.1(@lezer/common@1.2.1)
       vue: 3.4.23(typescript@5.4.5)
+
+  vue-component-type-helpers@2.0.14: {}
 
   vue-demi@0.14.7(vue@3.4.23(typescript@5.4.5)):
     dependencies:

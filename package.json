@@ -44,6 +44,7 @@
     "@unocss/nuxt": "^0.59.4",
     "@vite-pwa/nuxt": "^0.6.0",
     "@vitest/coverage-v8": "^1.5.0",
+    "@vue/test-utils": "^2.4.5",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.20.17",
     "eslint": "^9.1.1",
