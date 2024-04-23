@@ -2,11 +2,11 @@ import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import type { Except } from "type-fest";
 
-export const monstersData: Except<Monster, "id">[] = [
-  {
-    key: MonsterKey.Aquavalor,
+const MonstersDataMap = {
+  [MonsterKey.Aquavalor]: {
     asset: {
       key: AssetKey.Aquavalor,
     },
@@ -18,8 +18,7 @@ export const monstersData: Except<Monster, "id">[] = [
     currentHp: 25,
     attackIds: [AttackId["Ice Shard"]],
   },
-  {
-    key: MonsterKey.Carnodusk,
+  [MonsterKey.Carnodusk]: {
     asset: {
       key: AssetKey.Carnodusk,
     },
@@ -31,8 +30,7 @@ export const monstersData: Except<Monster, "id">[] = [
     currentHp: 25,
     attackIds: [AttackId["Ice Shard"]],
   },
-  {
-    key: MonsterKey.Frostsaber,
+  [MonsterKey.Frostsaber]: {
     asset: {
       key: AssetKey.Frostsaber,
     },
@@ -44,8 +42,7 @@ export const monstersData: Except<Monster, "id">[] = [
     currentHp: 25,
     attackIds: [AttackId["Ice Shard"]],
   },
-  {
-    key: MonsterKey.Ignivolt,
+  [MonsterKey.Ignivolt]: {
     asset: {
       key: AssetKey.Ignivolt,
     },
@@ -57,8 +54,7 @@ export const monstersData: Except<Monster, "id">[] = [
     currentHp: 25,
     attackIds: [AttackId["Ice Shard"]],
   },
-  {
-    key: MonsterKey.Iguanignite,
+  [MonsterKey.Iguanignite]: {
     asset: {
       key: AssetKey.Iguanignite,
     },
@@ -70,4 +66,6 @@ export const monstersData: Except<Monster, "id">[] = [
     currentHp: 25,
     attackIds: [AttackId.Slash],
   },
-];
+} as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
+
+export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key");
