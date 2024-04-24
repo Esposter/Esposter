@@ -26,8 +26,8 @@ onMounted(() => {
       h-full
       flex
       justify-center
-      flex-col
       items-center
+      flex-col
       bg-center
       bg-cover
       bg-black
