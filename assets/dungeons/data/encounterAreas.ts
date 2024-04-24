@@ -8,9 +8,10 @@ import type { Except } from "type-fest";
 export const EncounterAreaMap = {
   [Area.Grass]: {
     encounterableMonsters: [
-      { key: MonsterKey.Aquavalor, weight: 3 },
-      { key: MonsterKey.Carnodusk, weight: 5 },
-      { key: MonsterKey.Frostsaber, weight: 2 },
+      { key: MonsterKey.Aquavalor, weight: 45 },
+      { key: MonsterKey.Carnodusk, weight: 40 },
+      { key: MonsterKey.Frostsaber, weight: 10 },
+      { key: MonsterKey.Ignivolt, weight: 25 },
     ],
   },
 } as const satisfies Record<Area, Except<EncounterArea<BaseEncounterableMonster>, "id">>;
