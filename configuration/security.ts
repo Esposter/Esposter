@@ -1,14 +1,12 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 export const security: NuxtConfig["security"] = {
-  corsHandler: {
-    origin: [process.env.AZURE_BLOB_URL],
-  },
   csrf: true,
   headers: {
     contentSecurityPolicy: {
-      "img-src": ["'self'", "data:", "blob:"],
+      "img-src": ["'self'", "data:", "blob:", process.env.AZURE_BLOB_URL],
       "script-src-attr": ["'unsafe-inline'"],
     },
+    crossOriginEmbedderPolicy: "unsafe-none",
   },
 };
