@@ -165,8 +165,8 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
       rate-limiter-flexible:
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: ^5.0.1
+        version: 5.0.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -6232,8 +6232,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  rate-limiter-flexible@5.0.0:
-    resolution: {integrity: sha512-ivCyLBwPtR5IRrz+aZnztVwX16ZK3iAjdlW21I/vjHq56at5Zb8eIefDzODg8R7hwPOHpBtb6Pj9Zdmn0nRb8g==}
+  rate-limiter-flexible@5.0.1:
+    resolution: {integrity: sha512-jJknrgKcdeo8RnvdLk5Q2kZP3Wp699ZC2RmFYmPWpor+UutrpC6AJuQpDTGvt0ClzDimnx7BL4okKxZ0kCsQbQ==}
 
   rc9@2.1.1:
     resolution: {integrity: sha512-lNeOl38Ws0eNxpO3+wD1I9rkHGQyj1NU1jlzv4go2CtEnEQEUfqnIvZG7W+bC/aXdJ27n5x/yUjb6RoT9tko+Q==}
@@ -7534,6 +7534,7 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -14903,7 +14904,7 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  rate-limiter-flexible@5.0.0: {}
+  rate-limiter-flexible@5.0.1: {}
 
   rc9@2.1.1:
     dependencies:

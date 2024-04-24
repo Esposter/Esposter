@@ -126,7 +126,7 @@
     "phaser3-rex-plugins": "^1.80.2",
     "pinia": "^2.1.7",
     "postgres": "^3.4.4",
-    "rate-limiter-flexible": "^5.0.0",
+    "rate-limiter-flexible": "^5.0.1",
     "rxjs": "^7.8.1",
     "sql-highlight": "^4.4.2",
     "superjson": "^2.2.1",
