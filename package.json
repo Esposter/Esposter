@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.3.9",
+    "@nuxt/fonts": "^0.6.1",
     "@nuxt/test-utils": "^3.12.1",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
@@ -64,7 +65,6 @@
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.7.1",
     "unocss": "^0.59.4",
-    "unplugin-fonts": "^1.1.1",
     "vite": "^5.2.10",
     "vitest": "^1.5.0",
     "vue-tsc": "^1.8.27",

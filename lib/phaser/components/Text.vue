@@ -20,7 +20,7 @@ const { x, y, text, style } = configuration.value;
 const emit = defineEmits<TextEmits>();
 const scene = useInjectScene();
 const textGameObject = ref(
-  scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey["Kenney-Future-Narrow"], ...style }),
+  scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey.KenneyFutureNarrow, ...style }),
 ) as Ref<GameObjects.Text>;
 useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 </script>
