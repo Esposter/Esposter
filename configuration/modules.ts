@@ -8,6 +8,7 @@ export const modules: NuxtConfig["modules"] = [
   "@unocss/nuxt",
   "@vite-pwa/nuxt",
   "@vueuse/nuxt",
+  "nuxt-security",
   "unplugin-fonts/nuxt",
   "vuetify-nuxt-module",
 ];
