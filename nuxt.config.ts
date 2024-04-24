@@ -8,6 +8,7 @@ import { modules } from "./configuration/modules";
 import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
+import { security } from "./configuration/security";
 import { typescript } from "./configuration/typescript";
 import { unfonts } from "./configuration/unfonts";
 import { unocss } from "./configuration/unocss";
@@ -27,6 +28,7 @@ export default defineNuxtConfig({
   modules,
   authJs,
   pwa,
+  security,
   unfonts,
   unocss,
 });
