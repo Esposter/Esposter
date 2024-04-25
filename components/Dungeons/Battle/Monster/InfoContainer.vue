@@ -33,7 +33,7 @@ onShutdown(() => {
       :configuration="{
         x: 30,
         y: 20,
-        text: activeMonster.id,
+        text: activeMonster.key,
         style: {
           color: '#7e3d3f',
           fontSize: 32,

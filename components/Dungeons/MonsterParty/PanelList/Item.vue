@@ -52,7 +52,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
       :configuration="{
         x: 162,
         y: 36,
-        text: monster.id,
+        text: monster.key,
         style: {
           color: 'white',
           fontSize: 30,
