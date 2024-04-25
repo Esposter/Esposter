@@ -17,7 +17,7 @@ export const PlayerPostAttackCheck: State<StateName> = {
 
     if (isActiveMonsterFainted.value) {
       useMonsterDeathTween(true, () => {
-        showMessages([`Wild ${activeMonster.value.id} has fainted!`, "You have gained some experience."], () => {
+        showMessages([`Wild ${activeMonster.value.key} has fainted!`, "You have gained some experience."], () => {
           battleStateMachine.setState(StateName.Finished);
         });
       });

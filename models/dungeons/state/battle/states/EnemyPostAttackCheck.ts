@@ -18,7 +18,7 @@ export const EnemyPostAttackCheck: State<StateName> = {
     if (isActiveMonsterFainted.value)
       useMonsterDeathTween(false, () => {
         showMessages(
-          [`${activeMonster.value.id} has fainted!`, "You have no more monsters, escaping to safety..."],
+          [`${activeMonster.value.key} has fainted!`, "You have no more monsters, escaping to safety..."],
           () => {
             battleStateMachine.setState(StateName.Finished);
           },

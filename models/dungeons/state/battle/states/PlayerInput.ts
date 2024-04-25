@@ -17,7 +17,7 @@ export const PlayerInput: State<StateName> = {
 
     activePanel.value = ActivePanel.Option;
     line1DialogMessage.value.text = "What should";
-    line2Text.value = `${activeMonster.value.id} do next?`;
+    line2Text.value = `${activeMonster.value.key} do next?`;
   },
   onExit: () => {
     const infoPanelStore = useInfoPanelStore();
