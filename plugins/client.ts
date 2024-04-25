@@ -20,16 +20,13 @@ export default defineNuxtPlugin(() => {
     splitLink({
       condition: (op) => op.type === "subscription",
       true: (() => {
-        if (getIsServer()) return httpBatchLink({ url });
+        if (getIsServer()) return httpBatchLink({ url, headers });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
         return wsLink({ client: wsClient });
       })(),
-      false: httpBatchLink({
-        url,
-        headers,
-      }),
+      false: httpBatchLink({ url, headers }),
     }),
   ];
   const client = createTRPCNuxtClient<AppRouter>({ links, transformer: superjson });
