@@ -7,7 +7,6 @@ export const useReadDungeonsGame = async () => {
   const { $client } = useNuxtApp();
   const gameStore = useGameStore();
   const { game } = storeToRefs(gameStore);
-
   await useReadData(
     () => {
       const dungeonsStoreJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);

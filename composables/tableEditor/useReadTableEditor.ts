@@ -7,7 +7,6 @@ export const useReadTableEditor = async () => {
   const { $client } = useNuxtApp();
   const tableEditorStore = useTableEditorStore()();
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
-
   await useReadData(
     () => {
       const tableEditorStoreJson = localStorage.getItem(TABLE_EDITOR_LOCAL_STORAGE_KEY);
