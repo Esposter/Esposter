@@ -10,7 +10,6 @@ import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 export default defineNuxtPlugin(() => {
   const url = useClientUrl();
   const headers = useRequestHeaders();
-  const { csrf } = useCsrf();
   const links: TRPCLink<AppRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
@@ -29,7 +28,7 @@ export default defineNuxtPlugin(() => {
       })(),
       false: httpBatchLink({
         url,
-        headers: { ...headers, "csrf-token": csrf },
+        headers,
       }),
     }),
   ];
