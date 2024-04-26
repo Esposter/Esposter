@@ -340,8 +340,8 @@ importers:
         specifier: ^1.8.27
         version: 1.8.27(typescript@5.4.5)
       vuetify-nuxt-module:
-        specifier: ^0.13.3
-        version: 0.13.3(rollup@4.13.0)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vue@3.4.25(typescript@5.4.5))
+        specifier: ^0.13.4
+        version: 0.13.4(rollup@4.13.0)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vue@3.4.25(typescript@5.4.5))
 
 packages:
 
@@ -7373,8 +7373,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.13.3:
-    resolution: {integrity: sha512-IhBy2AmvyJp2VfHkdpVGLqS5mWFBurzOLfmF+BzE5Y8e+Yhp8fszZXF41xKx7msCcU9tDHkMe7RTrt7ygxy+Aw==}
+  vuetify-nuxt-module@0.13.4:
+    resolution: {integrity: sha512-tGUF9CJBKhbtQaHpn4owAUXYFOUXpzuHtweN12neeOArBiaF6xHjWkVH/TA1d7wf5A5lqTOwHhmP2zlpZv2Jbw==}
 
   vuetify@3.5.17:
     resolution: {integrity: sha512-/Veklxxyu/l63q7QQOqJZeZukIKI2sBxY7FKMDcNup2KSGMjyjT+oYXy1DOdl7wlU3c3fKGQMFHqVWb0HDsyDw==}
@@ -16180,7 +16180,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  vuetify-nuxt-module@0.13.3(rollup@4.13.0)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vue@3.4.25(typescript@5.4.5)):
+  vuetify-nuxt-module@0.13.4(rollup@4.13.0)(typescript@5.4.5)(vite@5.2.10(@types/node@20.11.28)(sass@1.75.0)(terser@5.29.2))(vue@3.4.25(typescript@5.4.5)):
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.13.0)
       defu: 6.1.4
