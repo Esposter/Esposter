@@ -102,8 +102,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.2.1)
       dayjs:
-        specifier: ^1.11.10
-        version: 1.11.10
+        specifier: ^1.11.11
+        version: 1.11.11
       dedent:
         specifier: ^1.5.3
         version: 1.5.3
@@ -3726,8 +3726,8 @@ packages:
   date-fns@3.6.0:
     resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
-  dayjs@1.11.10:
-    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
+  dayjs@1.11.11:
+    resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
 
   db0@0.1.4:
     resolution: {integrity: sha512-Ft6eCwONYxlwLjBXSJxw0t0RYtA5gW9mq8JfBXn9TtC0nDPlqePAhpv9v4g9aONBi6JI1OXHTKKkUYGd+BOrCA==}
@@ -12012,7 +12012,7 @@ snapshots:
 
   date-fns@3.6.0: {}
 
-  dayjs@1.11.10: {}
+  dayjs@1.11.11: {}
 
   db0@0.1.4(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4)):
     optionalDependencies:
