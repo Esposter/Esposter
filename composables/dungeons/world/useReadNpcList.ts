@@ -4,7 +4,6 @@ import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/Np
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
-import { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/tilemap/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
@@ -17,7 +16,7 @@ export const useReadNpcList = () => {
   const { tilemap } = storeToRefs(worldSceneStore);
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
-  const npcLayerNames = tilemap.value.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectLayer.Npc));
+  const npcLayerNames = tilemap.value.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectType.Npc));
   const npcList: Npc[] = [];
 
   for (const npcLayerName of npcLayerNames) {
