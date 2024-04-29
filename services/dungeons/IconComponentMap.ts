@@ -5,10 +5,6 @@ const ComponentMap: Record<string, Component> = {
   DungeonGate,
 };
 
-export const IconComponentMap = Object.entries(ComponentMap).reduce<Record<string, Component>>(
-  (acc, [name, component]) => {
-    acc[toKebabCase(name)] = component;
-    return acc;
-  },
-  {},
+export const IconComponentMap = new Map(
+  Object.entries(ComponentMap).map(([name, component]) => [toKebabCase(name), component]),
 );
