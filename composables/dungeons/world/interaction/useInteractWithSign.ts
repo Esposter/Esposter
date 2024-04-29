@@ -3,6 +3,7 @@ import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectP
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
+import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { ArrayElement } from "type-fest/source/internal";
 
@@ -11,14 +12,14 @@ export const useInteractWithSign = (): boolean => {
   const { signLayer } = storeToRefs(worldSceneStore);
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
-  const objects: SetRequired<ArrayElement<typeof signLayer.value.objects>, "x" | "y">[] = [];
+  const signObjects: SetRequired<ArrayElement<typeof signLayer.value.objects>, keyof Position>[] = [];
 
   for (const { x, y, ...rest } of signLayer.value.objects) {
     if (!(x && y)) continue;
-    objects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
+    signObjects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
   }
 
-  const sign = useGetInteractiveObject(objects, {
+  const sign = useGetInteractiveObject(signObjects, {
     [Direction.UP]: true,
     [Direction.DOWN]: false,
     [Direction.LEFT]: false,

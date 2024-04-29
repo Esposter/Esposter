@@ -1,6 +1,6 @@
+import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { LayerId } from "@/models/dungeons/scene/world/home/LayerId";
-import { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -8,7 +8,7 @@ export const useCreateHomeTilemapAssets = () => {
   const settingsStore = useSettingsStore();
   const { debugTileLayerAlpha } = storeToRefs(settingsStore);
   const worldSceneStore = useWorldSceneStore();
-  const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
+  const { encounterLayer, signLayer, chestLayer } = storeToRefs(worldSceneStore);
   const basicPlainsTileset = useCreateTileset(TilesetKey.BasicPlains);
   const beachAndCavesTileset = useCreateTileset(TilesetKey.BeachAndCaves);
   const houseCreateTileset = useCreateTileset(TilesetKey.House);
@@ -28,5 +28,6 @@ export const useCreateHomeTilemapAssets = () => {
   useCreateLayer(LayerId.Foreground, [basicPlainsTileset, houseCreateTileset]);
   encounterLayer.value = useCreateLayer(LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
   useCreateLayer(LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
-  signLayer.value = useObjectLayer(ObjectLayer.Sign);
+  signLayer.value = useObjectLayer(ObjectType.Sign);
+  chestLayer.value = useObjectLayer(ObjectType.Chest);
 };
