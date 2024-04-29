@@ -3,7 +3,7 @@ import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { itemIdSchema } from "@/models/dungeons/item/ItemId";
 import { z } from "zod";
 
-interface IChest extends Record<Exclude<ChestObjectProperty, ChestObjectProperty.id>, unknown> {}
+interface IChest extends Record<ChestObjectProperty, unknown> {}
 
 export class Chest implements IChest {
   itemId = ItemId.Potion;

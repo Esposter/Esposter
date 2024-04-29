@@ -505,13 +505,11 @@
  <objectgroup id="24" name="Chest" offsetx="-256" offsety="-128">
   <object id="26" type="Chest" gid="230" x="1024" y="1856" width="64" height="64">
    <properties>
-    <property name="id" type="int" value="1"/>
     <property name="itemId" propertytype="ItemId" value="Potion"/>
    </properties>
   </object>
   <object id="28" type="Chest" gid="230" x="320" y="768" width="64" height="64">
    <properties>
-    <property name="id" type="int" value="2"/>
     <property name="itemId" propertytype="ItemId" value="Potion"/>
    </properties>
   </object>
