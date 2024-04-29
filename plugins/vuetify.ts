@@ -5,8 +5,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     vuetifyOptions.icons = {
       sets: {
         custom: {
-          component: (props) =>
-            h(props.tag, [h(IconComponentMap.get(props.icon as string) ?? "", { class: "v-icon__svg" })]),
+          component: (props) => h(props.tag, [h(IconComponentMap[props.icon as string], { class: "v-icon__svg" })]),
         },
       },
     };
