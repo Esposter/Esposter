@@ -81,11 +81,11 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0(@tiptap/core@2.3.0(@tiptap/pm@2.3.0))(@tiptap/pm@2.3.0)(vue@3.4.25(typescript@5.4.5))
       '@trpc/client':
-        specifier: ^10.45.2
-        version: 10.45.2(@trpc/server@10.45.2)
+        specifier: 11.0.0-rc.359
+        version: 11.0.0-rc.359(@trpc/server@11.0.0-rc.359)
       '@trpc/server':
-        specifier: ^10.45.2
-        version: 10.45.2
+        specifier: 11.0.0-rc.359
+        version: 11.0.0-rc.359
       '@vuepic/vue-datepicker':
         specifier: ^8.4.0
         version: 8.4.0(vue@3.4.25(typescript@5.4.5))
@@ -202,7 +202,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: ^0.10.21
-        version: 0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
+        version: 0.10.21(@trpc/client@11.0.0-rc.359(@trpc/server@11.0.0-rc.359))(@trpc/server@11.0.0-rc.359)(ofetch@1.3.4)
       vue:
         specifier: ^3.4.25
         version: 3.4.25(typescript@5.4.5)
@@ -2476,13 +2476,13 @@ packages:
       '@tiptap/pm': ^2.0.0
       vue: ^3.0.0
 
-  '@trpc/client@10.45.2':
-    resolution: {integrity: sha512-ykALM5kYWTLn1zYuUOZ2cPWlVfrXhc18HzBDyRhoPYN0jey4iQHEFSEowfnhg1RvYnrAVjNBgHNeSAXjrDbGwg==}
+  '@trpc/client@11.0.0-rc.359':
+    resolution: {integrity: sha512-IhSeFUNFKZRahA+2iYXJxxiq84f7AzB0vWu2Kznor7Jav0DOhlHWgygu0DPkzzMpMQk/zP9y3u7WatrFrCV8DA==}
     peerDependencies:
-      '@trpc/server': 10.45.2
+      '@trpc/server': 11.0.0-rc.359+3bb71110f
 
-  '@trpc/server@10.45.2':
-    resolution: {integrity: sha512-wOrSThNNE4HUnuhJG6PfDRp4L2009KDVxsd+2VYH8ro6o/7/jwYZ8Uu5j+VaW+mOmc8EHerHzGcdbGNQSAUPgg==}
+  '@trpc/server@11.0.0-rc.359':
+    resolution: {integrity: sha512-V2gIKmFfLpZNrdW4zyfq5XmDctA+bwcoNoNO9CvnDv7Oo9rOU9rvKAYSpKYTXbDS/JJJQ7OhKfuqbw0OXJX2WA==}
 
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
@@ -10334,11 +10334,11 @@ snapshots:
       '@tiptap/pm': 2.3.0
       vue: 3.4.25(typescript@5.4.5)
 
-  '@trpc/client@10.45.2(@trpc/server@10.45.2)':
+  '@trpc/client@11.0.0-rc.359(@trpc/server@11.0.0-rc.359)':
     dependencies:
-      '@trpc/server': 10.45.2
+      '@trpc/server': 11.0.0-rc.359
 
-  '@trpc/server@10.45.2': {}
+  '@trpc/server@11.0.0-rc.359': {}
 
   '@trysound/sax@0.2.0': {}
 
@@ -15564,10 +15564,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  trpc-nuxt@0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4):
+  trpc-nuxt@0.10.21(@trpc/client@11.0.0-rc.359(@trpc/server@11.0.0-rc.359))(@trpc/server@11.0.0-rc.359)(ofetch@1.3.4):
     dependencies:
-      '@trpc/client': 10.45.2(@trpc/server@10.45.2)
-      '@trpc/server': 10.45.2
+      '@trpc/client': 11.0.0-rc.359(@trpc/server@11.0.0-rc.359)
+      '@trpc/server': 11.0.0-rc.359
       h3: 1.11.1
       ofetch: 1.3.4
       ohash: 1.1.3
