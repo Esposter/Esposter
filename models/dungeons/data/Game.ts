@@ -6,7 +6,7 @@ import type { Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {
-  id = crypto.randomUUID() as string;
+  id: string = crypto.randomUUID();
   saves: Save[] = [];
   settings = InitialSettings;
 

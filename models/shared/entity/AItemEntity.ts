@@ -4,7 +4,7 @@ import { z } from "zod";
 export type AItemEntity = typeof AItemEntity.prototype;
 export const AItemEntity = applyItemMetadataMixin(
   class ItemEntity {
-    id = crypto.randomUUID() as string;
+    id: string = crypto.randomUUID();
   },
 );
 

@@ -9,7 +9,7 @@ import type { Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {
-  id = crypto.randomUUID() as string;
+  id: string = crypto.randomUUID();
   type = ClickerType.Default;
   noPoints = 0;
   boughtUpgrades: Upgrade[] = [];
