@@ -1,4 +1,4 @@
-export enum ItemObjectProperty {
+export enum ChestObjectProperty {
   id = "id",
   itemId = "itemId",
 }

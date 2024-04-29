@@ -565,7 +565,7 @@
         {
          "draworder":"topdown",
          "id":24,
-         "name":"Item",
+         "name":"Chest",
          "objects":[
                 {
                  "gid":230,
@@ -585,7 +585,7 @@
                          "value":"Potion"
                         }],
                  "rotation":0,
-                 "type":"Item",
+                 "type":"Chest",
                  "visible":true,
                  "width":64,
                  "x":1024,
@@ -609,7 +609,7 @@
                          "value":"Potion"
                         }],
                  "rotation":0,
-                 "type":"Item",
+                 "type":"Chest",
                  "visible":true,
                  "width":64,
                  "x":320,

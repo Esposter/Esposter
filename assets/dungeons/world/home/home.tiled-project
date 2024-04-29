@@ -126,7 +126,7 @@
                     "value": "Potion"
                 }
             ],
-            "name": "Item",
+            "name": "Chest",
             "type": "class",
             "useAs": [
                 "property",

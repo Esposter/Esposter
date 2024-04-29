@@ -2,7 +2,7 @@ export enum ObjectType {
   AreaMetadata = "AreaMetadata",
   Encounter = "Encounter",
   Entrance = "Entrance",
-  Item = "Item",
+  Chest = "Chest",
   Npc = "Npc",
   NpcPath = "NpcPath",
   Sign = "Sign",

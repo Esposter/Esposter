@@ -1,5 +1,5 @@
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
-import { outputFile } from "fs-extra/esm";
+import { outputFile, remove } from "fs-extra/esm";
 import { readFile } from "node:fs/promises";
 
 enum PropertyType {
@@ -36,6 +36,8 @@ const getEnumString = (name: string, members: string[]) =>
   members.length === 0
     ? `export enum ${name} {}\n`
     : [`export enum ${name} {`, members.map((m) => `  ${m} = "${m}",`).join("\n"), "}\n"].join("\n");
+
+await remove(directory);
 
 for (const propertyType of tiledProject.propertyTypes as PropertyTypes)
   if (propertyType.type === PropertyType.class) {
