@@ -8,7 +8,7 @@ const { game } = storeToRefs(gameStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
 const clickerItemProperties = useClickerItemProperties();
-const displayNoPointsHtml = computed(() => formatNumberLong(game.value.noPoints, 3).replace(/\s/, "<br/>"));
+const displayNoPointsHtml = computed(() => formatNumberLong(game.value.noPoints, 3).replaceAll(/\s/g, "<br/>"));
 const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 
