@@ -563,6 +563,67 @@
          "y":0
         }, 
         {
+         "draworder":"topdown",
+         "id":24,
+         "name":"Item",
+         "objects":[
+                {
+                 "gid":230,
+                 "height":64,
+                 "id":26,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"itemId",
+                         "propertytype":"ItemId",
+                         "type":"string",
+                         "value":"Potion"
+                        }],
+                 "rotation":0,
+                 "type":"Item",
+                 "visible":true,
+                 "width":64,
+                 "x":1024,
+                 "y":1856
+                }, 
+                {
+                 "gid":230,
+                 "height":64,
+                 "id":28,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"itemId",
+                         "propertytype":"ItemId",
+                         "type":"string",
+                         "value":"Potion"
+                        }],
+                 "rotation":0,
+                 "type":"Item",
+                 "visible":true,
+                 "width":64,
+                 "x":320,
+                 "y":768
+                }],
+         "offsetx":-256,
+         "offsety":-128,
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "class":"Sign",
          "draworder":"topdown",
          "id":21,
@@ -821,8 +882,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":24,
- "nextobjectid":26,
+ "nextlayerid":25,
+ "nextobjectid":29,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

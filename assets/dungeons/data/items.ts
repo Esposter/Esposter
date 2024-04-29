@@ -1,6 +1,6 @@
+import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import type { Item } from "@/models/dungeons/item/Item";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
-import { ItemId } from "@/models/dungeons/item/ItemId";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import type { Except } from "type-fest";
 

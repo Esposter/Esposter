@@ -1,5 +1,5 @@
 import { items } from "@/assets/dungeons/data/items";
-import type { ItemId } from "@/models/dungeons/item/ItemId";
+import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { NotFoundError } from "@/models/error/NotFoundError";
 
 export const getItem = (itemId: ItemId) => {

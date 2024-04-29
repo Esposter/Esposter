@@ -121,8 +121,9 @@
                 },
                 {
                     "name": "itemId",
-                    "type": "int",
-                    "value": 0
+                    "propertyType": "ItemId",
+                    "type": "string",
+                    "value": "Potion"
                 }
             ],
             "name": "Item",
@@ -137,6 +138,16 @@
                 "wangcolor",
                 "wangset"
             ]
+        },
+        {
+            "id": 13,
+            "name": "ItemId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Potion"
+            ],
+            "valuesAsFlags": false
         },
         {
             "color": "#ffa0a0a4",

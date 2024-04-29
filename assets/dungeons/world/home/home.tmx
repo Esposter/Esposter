@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="24" nextobjectid="26">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="25" nextobjectid="29">
  <editorsettings>
   <export target="tilemap.json" format="json"/>
  </editorsettings>
@@ -502,6 +502,20 @@
 189,189,189,189,189,0,0,189,189,189,189,189,189,189,189,189,189,189,189,189
 </data>
  </layer>
+ <objectgroup id="24" name="Item" offsetx="-256" offsety="-128">
+  <object id="26" type="Item" gid="230" x="1024" y="1856" width="64" height="64">
+   <properties>
+    <property name="id" type="int" value="1"/>
+    <property name="itemId" propertytype="ItemId" value="Potion"/>
+   </properties>
+  </object>
+  <object id="28" type="Item" gid="230" x="320" y="768" width="64" height="64">
+   <properties>
+    <property name="id" type="int" value="2"/>
+    <property name="itemId" propertytype="ItemId" value="Potion"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="21" name="Sign" class="Sign" locked="1">
   <object id="15" type="Sign" gid="70" x="704" y="1344" width="64" height="64">
    <properties>
