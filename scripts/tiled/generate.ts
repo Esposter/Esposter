@@ -6,6 +6,7 @@ import { remove } from "@/scripts/tiled/util/remove";
 import { jsonDateParse } from "@/util/jsonDateParse";
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { readFile } from "node:fs/promises";
+import type { TMXTiledMap } from "tmx-map-parser";
 import { tmx } from "tmx-map-parser";
 
 await remove();
@@ -15,6 +16,6 @@ for (const tilemapKey of Object.values(TilemapKey)) {
   const tiledProject: TiledProject = jsonDateParse(await readFile(`${filePath}.tiled-project`, "utf-8"));
   await generatePropertyTypes(tiledProject.propertyTypes);
 
-  const tilemap = await tmx(await readFile(`${filePath}.tmx`, "utf-8"));
-  await generateLayerName(tilemap);
+  const tilemap = (await tmx(await readFile(`${filePath}.tmx`, "utf-8"))) as TMXTiledMap;
+  await generateLayerName(tilemap.layers);
 }
