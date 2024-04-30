@@ -10,11 +10,11 @@ export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
   for (const propertyType of propertyTypes)
     if (propertyType.type === PropertyType.class) {
       const { name, type, members } = propertyType;
-      const memberName = `${name}ObjectProperty`;
+      const enumName = `${name}ObjectProperty`;
       await outputFile(
-        `${directory}/${type}/${memberName}.ts`,
+        `${directory}/${type}/${enumName}.ts`,
         getEnumString(
-          memberName,
+          enumName,
           members.map((m) => m.name),
         ),
       );
@@ -24,6 +24,6 @@ export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
       await outputFile(`${directory}/${type}/${name}.ts`, getEnumString(name, values));
     }
 
-  const memberName = "ObjectType";
-  await outputFile(`${directory}/${PropertyType.class}/${memberName}.ts`, getEnumString(memberName, classObjectTypes));
+  const enumName = "ObjectType";
+  await outputFile(`${directory}/${PropertyType.class}/${enumName}.ts`, getEnumString(enumName, classObjectTypes));
 };

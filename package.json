@@ -139,6 +139,7 @@
     "three": "^0.164.1",
     "three-globe": "^2.31.0",
     "tippy.js": "^6.3.7",
+    "tmx-map-parser": "^1.3.1",
     "trpc-nuxt": "^0.10.21",
     "vue": "^3.4.26",
     "vue-codemirror": "^6.1.1",

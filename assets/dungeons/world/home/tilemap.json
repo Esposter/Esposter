@@ -574,11 +574,6 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"id",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
                          "name":"itemId",
                          "propertytype":"ItemId",
                          "type":"string",
@@ -597,11 +592,6 @@
                  "id":28,
                  "name":"",
                  "properties":[
-                        {
-                         "name":"id",
-                         "type":"int",
-                         "value":2
-                        }, 
                         {
                          "name":"itemId",
                          "propertytype":"ItemId",
