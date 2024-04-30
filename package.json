@@ -148,7 +148,7 @@
     "vuetify": "^3.5.17",
     "worker-timers": "^7.1.7",
     "ws": "^8.17.0",
-    "zod": "^3.23.4"
+    "zod": "^3.23.5"
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released",

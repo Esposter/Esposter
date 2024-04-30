@@ -115,7 +115,7 @@ importers:
         version: 0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.4)
+        version: 0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.5)
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.26(typescript@5.4.5))
@@ -225,8 +225,8 @@ importers:
         specifier: ^8.17.0
         version: 8.17.0
       zod:
-        specifier: ^3.23.4
-        version: 3.23.4
+        specifier: ^3.23.5
+        version: 3.23.5
     devDependencies:
       '@nuxt/eslint':
         specifier: ^0.3.10
@@ -7588,6 +7588,7 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -7714,8 +7715,8 @@ packages:
     resolution: {integrity: sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==}
     engines: {node: '>=0.2.0'}
 
-  zod@3.23.4:
-    resolution: {integrity: sha512-/AtWOKbBgjzEYYQRNfoGKHObgfAZag6qUJX1VbHo2PRBgS+wfWagEY2mizjfyAPcGesrJOcx/wcl0L9WnVrHFw==}
+  zod@3.23.5:
+    resolution: {integrity: sha512-fkwiq0VIQTksNNA131rDOsVJcns0pfVUjHzLrNBiF/O/Xxb5lQyEXkhZWcJ7npWsYlvs+h0jFWXXy4X46Em1JA==}
 
 snapshots:
 
@@ -9216,10 +9217,10 @@ snapshots:
 
   '@hono/node-server@1.11.0': {}
 
-  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.23.4)':
+  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.23.5)':
     dependencies:
       hono: 4.2.5
-      zod: 3.23.4
+      zod: 3.23.5
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -12375,7 +12376,7 @@ snapshots:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       '@hono/node-server': 1.11.0
-      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.23.4)
+      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.23.5)
       camelcase: 7.0.1
       chalk: 5.3.0
       commander: 9.5.0
@@ -12389,7 +12390,7 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.0
       superjson: 2.2.1
-      zod: 3.23.4
+      zod: 3.23.5
     transitivePeerDependencies:
       - supports-color
 
@@ -12398,10 +12399,10 @@ snapshots:
       '@opentelemetry/api': 1.8.0
       postgres: 3.4.4
 
-  drizzle-zod@0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.4):
+  drizzle-zod@0.5.1(drizzle-orm@0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.5):
     dependencies:
       drizzle-orm: 0.30.9(@opentelemetry/api@1.8.0)(postgres@3.4.4)
-      zod: 3.23.4
+      zod: 3.23.5
 
   duplexer@0.1.2: {}
 
@@ -16742,4 +16743,4 @@ snapshots:
 
   zlib@1.0.5: {}
 
-  zod@3.23.4: {}
+  zod@3.23.5: {}
