@@ -6,7 +6,7 @@ import { capitalize } from "vue";
 
 const directory = "layers";
 
-export const generateLayerName = async (layers: TMXLayer[]) => {
+export const generateLayers = async (layers: TMXLayer[]) => {
   for (const layerType of Object.values(LayerType)) {
     const enumName = `${capitalize(layerType)}Name`;
     await outputFile(

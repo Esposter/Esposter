@@ -1,5 +1,5 @@
 import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
-import { generateLayerName } from "@/scripts/tiled/generateLayerName";
+import { generateLayers } from "@/scripts/tiled/generateLayers";
 import { generatePropertyTypes } from "@/scripts/tiled/generatePropertyTypes";
 import type { TiledProject } from "@/scripts/tiled/models/TiledProject";
 import { remove } from "@/scripts/tiled/util/remove";
@@ -17,5 +17,5 @@ for (const tilemapKey of Object.values(TilemapKey)) {
   await generatePropertyTypes(tiledProject.propertyTypes);
 
   const tilemap = (await tmx(await readFile(`${filePath}.tmx`, "utf-8"))) as TMXTiledMap;
-  await generateLayerName(tilemap.layers);
+  await generateLayers(tilemap.layers);
 }
