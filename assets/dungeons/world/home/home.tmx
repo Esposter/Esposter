@@ -31,11 +31,11 @@
   <image source="../../thirdParty/axulart/tilesets/House.png" width="256" height="192"/>
  </tileset>
  <tileset firstgid="207" name="NpcPaths" class="Npc" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../../tilesets/Encounter.png" trans="ff00ff" width="64" height="64"/>
   <properties>
    <property name="isSpawnPoint" type="bool" value="false"/>
    <property name="npcSpawnPointObject" type="object" value="0"/>
   </properties>
-  <image source="../../tilesets/Encounter.png" trans="ff00ff" width="64" height="64"/>
  </tileset>
  <tileset firstgid="208" name="HouseInterior" tilewidth="64" tileheight="64" tilecount="120" columns="12">
   <image source="../../thirdParty/axulart/tilesets/HouseInterior.png" width="768" height="640"/>

@@ -11,11 +11,18 @@ import { tmx } from "tmx-map-parser";
 
 await remove();
 
-for (const tilemapKey of Object.values(TilemapKey)) {
-  const filePath = `assets/dungeons/world/${uncapitalize(tilemapKey)}/${uncapitalize(tilemapKey)}`;
-  const tiledProject: TiledProject = jsonDateParse(await readFile(`${filePath}.tiled-project`, "utf-8"));
-  await generatePropertyTypes(tiledProject.propertyTypes);
-
-  const tilemap = (await tmx(await readFile(`${filePath}.tmx`, "utf-8"))) as TMXTiledMap;
-  await generateLayers(tilemap.layers);
-}
+await Promise.all(
+  Object.values(TilemapKey).flatMap((k) => {
+    const filePath = `assets/dungeons/world/${uncapitalize(k)}/${uncapitalize(k)}`;
+    return [
+      (async () => {
+        const tilemap = (await tmx(await readFile(`${filePath}.tmx`, "utf-8"))) as TMXTiledMap;
+        await generateLayers(tilemap.layers);
+      })(),
+      (async () => {
+        const tiledProject: TiledProject = jsonDateParse(await readFile(`${filePath}.tiled-project`, "utf-8"));
+        await generatePropertyTypes(tiledProject.propertyTypes);
+      })(),
+    ];
+  }),
+);
