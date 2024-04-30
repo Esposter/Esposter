@@ -1,4 +1,4 @@
-export enum LayerId {
+export enum LayerName {
   Ground = "Ground",
   Building = "Building",
   Water = "Water",

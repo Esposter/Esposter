@@ -1,6 +1,6 @@
 import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { LayerId } from "@/models/dungeons/scene/world/home/LayerId";
+import { LayerName } from "@/models/dungeons/scene/world/home/LayerName";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -16,18 +16,18 @@ export const useCreateHomeTilemapAssets = () => {
   const collisionTileset = useCreateTileset(TilesetKey.Collision);
   const encounterTileset = useCreateTileset(TilesetKey.Encounter);
   const grassTileset = useCreateTileset(TilesetKey.Grass);
-  useCreateLayer(LayerId.Ground, [basicPlainsTileset, grassTileset]);
-  useCreateLayer(LayerId.Building, houseCreateTileset);
-  useCreateLayer(LayerId.Water, beachAndCavesTileset);
-  useCreateLayer(LayerId.Decoration, [basicPlainsTileset, bushesTileset]);
-  useCreateLayer(LayerId.Sign, basicPlainsTileset);
-  useCreateLayer(LayerId.TreeBottom, basicPlainsTileset);
-  useCreateLayer(LayerId.TreeTop, basicPlainsTileset);
-  useCreateLayer(LayerId.Fence, basicPlainsTileset);
-  useCreateLayer(LayerId.Boulder, basicPlainsTileset);
-  useCreateLayer(LayerId.Foreground, [basicPlainsTileset, houseCreateTileset]);
-  encounterLayer.value = useCreateLayer(LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
-  useCreateLayer(LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
+  useCreateLayer(LayerName.Ground, [basicPlainsTileset, grassTileset]);
+  useCreateLayer(LayerName.Building, houseCreateTileset);
+  useCreateLayer(LayerName.Water, beachAndCavesTileset);
+  useCreateLayer(LayerName.Decoration, [basicPlainsTileset, bushesTileset]);
+  useCreateLayer(LayerName.Sign, basicPlainsTileset);
+  useCreateLayer(LayerName.TreeBottom, basicPlainsTileset);
+  useCreateLayer(LayerName.TreeTop, basicPlainsTileset);
+  useCreateLayer(LayerName.Fence, basicPlainsTileset);
+  useCreateLayer(LayerName.Boulder, basicPlainsTileset);
+  useCreateLayer(LayerName.Foreground, [basicPlainsTileset, houseCreateTileset]);
+  encounterLayer.value = useCreateLayer(LayerName.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
+  useCreateLayer(LayerName.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
   signLayer.value = useObjectLayer(ObjectType.Sign);
   chestLayer.value = useObjectLayer(ObjectType.Chest);
 };
