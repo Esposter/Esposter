@@ -156,8 +156,8 @@ importers:
         specifier: ^3.80.1
         version: 3.80.1
       phaser3-rex-plugins:
-        specifier: ^1.80.2
-        version: 1.80.2(encoding@0.1.13)
+        specifier: ^1.80.3
+        version: 1.80.3(encoding@0.1.13)
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.4.5)(vue@3.4.26(typescript@5.4.5))
@@ -1040,10 +1040,6 @@ packages:
 
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
-
-  '@babel/runtime@7.24.1':
-    resolution: {integrity: sha512-+BIznRzyqBf+2wCTxcKE3wDjfGeCoVE61KSHGpkzqrLi8qxqFwBeUFyId2cxkTmm55fzDGnm0+yCxaxygrLUnQ==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.24.4':
     resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
@@ -5909,8 +5905,8 @@ packages:
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  phaser3-rex-plugins@1.80.2:
-    resolution: {integrity: sha512-ZPA4c47WQRU6rqLdlOFizGU+ljtP4C2blhcpbYSsNMqNRHD7o8vRBEzEhl8w6CMGvcy+eVoA6v10cyL4eIZARw==}
+  phaser3-rex-plugins@1.80.3:
+    resolution: {integrity: sha512-j/z588woCzkByrr+n1NiH4we1eDGnO/zzdO3S9XgE9b65MMA3phUUcx9GHuLvH1nWTGc025W0xG0bSFv7ekDSw==}
 
   phaser@3.80.1:
     resolution: {integrity: sha512-VQGAWoDOkEpAWYkI+PUADv5Ql+SM0xpLuAMBJHz9tBcOLqjJ2wd8bUhxJgOqclQlLTg97NmMd9MhS75w16x1Cw==}
@@ -8600,10 +8596,6 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.24.1(@babel/core@7.24.4)
 
   '@babel/regjsgen@0.8.0': {}
-
-  '@babel/runtime@7.24.1':
-    dependencies:
-      regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.24.4':
     dependencies:
@@ -13394,7 +13386,7 @@ snapshots:
 
   i18next@22.5.1:
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
 
   iconv-lite@0.6.3:
     dependencies:
@@ -14666,7 +14658,7 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  phaser3-rex-plugins@1.80.2(encoding@0.1.13):
+  phaser3-rex-plugins@1.80.3(encoding@0.1.13):
     dependencies:
       eventemitter3: 3.1.2
       i18next: 22.5.1

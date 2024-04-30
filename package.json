@@ -125,7 +125,7 @@
     "omit-deep-lodash": "^1.1.7",
     "pathe": "^1.1.2",
     "phaser": "^3.80.1",
-    "phaser3-rex-plugins": "^1.80.2",
+    "phaser3-rex-plugins": "^1.80.3",
     "pinia": "^2.1.7",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.4",
