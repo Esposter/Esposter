@@ -56,4 +56,5 @@ for (const propertyType of tiledProject.propertyTypes as PropertyTypes)
     await outputFile(`${directory}/${type}/${name}.ts`, getEnumString(name, values));
   }
 
-await outputFile(`${directory}/${PropertyType.class}/ObjectType.ts`, getEnumString("ObjectType", classObjectTypes));
+const memberName = "ObjectType";
+await outputFile(`${directory}/${PropertyType.class}/${memberName}.ts`, getEnumString(memberName, classObjectTypes));
