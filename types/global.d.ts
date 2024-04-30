@@ -8,6 +8,6 @@ declare global {
   interface ObjectConstructor {
     entries<T extends object>(o: T): Entries<T>;
 
-    fromEntries<T extends readonly [PropertyKey, any]>(entries: Iterable<T>): { [K in T as T[0]]: T[1] };
+    fromEntries<T extends readonly [PropertyKey, unknown]>(entries: Iterable<T>): { [K in T as T[0]]: T[1] };
   }
 }

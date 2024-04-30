@@ -9,7 +9,7 @@ import type { SetupContext } from "vue";
 export const useInitializeGameObject = <
   TConfiguration extends object,
   TGameObject extends GameObjects.GameObject,
-  TEmitsOptions extends Record<string, any[]>,
+  TEmitsOptions extends Record<string, unknown[]>,
 >(
   gameObject: Ref<TGameObject>,
   configuration: Ref<TConfiguration>,

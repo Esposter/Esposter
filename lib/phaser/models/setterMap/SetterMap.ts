@@ -3,7 +3,7 @@ import type { SetupContext } from "vue";
 export type SetterMap<
   TConfiguration extends object,
   TGameObject extends object,
-  TEmitsOptions extends Record<string, any[]>,
+  TEmitsOptions extends Record<string, unknown[]>,
 > = {
   [P in keyof TConfiguration]?: (
     gameObject: TGameObject,
