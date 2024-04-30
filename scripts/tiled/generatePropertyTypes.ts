@@ -3,8 +3,9 @@ import type { PropertyTypes } from "@/scripts/tiled/models/PropertyTypes";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { getEnumString } from "@/scripts/util/getEnumString";
 
+const directory = "propertyTypes";
+
 export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
-  const directory = "propertyTypes";
   const classObjectTypes: string[] = [];
 
   for (const propertyType of propertyTypes)

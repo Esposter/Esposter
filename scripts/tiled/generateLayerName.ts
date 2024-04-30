@@ -4,9 +4,9 @@ import { getEnumString } from "@/scripts/util/getEnumString";
 import type { TMXLayer } from "tmx-map-parser";
 import { capitalize } from "vue";
 
-export const generateLayerName = async (layers: TMXLayer[]) => {
-  const directory = "layers";
+const directory = "layers";
 
+export const generateLayerName = async (layers: TMXLayer[]) => {
   for (const layerType of Object.values(LayerType)) {
     const enumName = `${capitalize(layerType)}Name`;
     await outputFile(
