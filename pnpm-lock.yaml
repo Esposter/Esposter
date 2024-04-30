@@ -180,8 +180,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
       survey-core:
-        specifier: ^1.10.1
-        version: 1.10.1
+        specifier: ^1.10.2
+        version: 1.10.2
       survey-creator-core:
         specifier: ^1.10.2
         version: 1.10.2
@@ -189,8 +189,8 @@ importers:
         specifier: ^1.10.2
         version: 1.10.2(vue@3.4.26(typescript@5.4.5))
       survey-vue3-ui:
-        specifier: ^1.10.1
-        version: 1.10.1(vue@3.4.26(typescript@5.4.5))
+        specifier: ^1.10.2
+        version: 1.10.2(vue@3.4.26(typescript@5.4.5))
       three:
         specifier: ^0.164.1
         version: 0.164.1
@@ -6762,9 +6762,6 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@1.10.1:
-    resolution: {integrity: sha512-E7wYgB1rkq/AM50kDVMwC1ptEsOOTi1TZcYk1wCYGsLZK++vn1yCGzGS0k3UN14BETYIPLFBJE6Wxy+Qy0Wp7Q==}
-
   survey-core@1.10.2:
     resolution: {integrity: sha512-EszikpODkThTHQwvUABJfreiI+I8koE1gHAV5hDsXuLGQ+Iw7lewIUI16+sjoqxjKhq2M5TnaGe3DfOI/kDSSg==}
 
@@ -6782,8 +6779,8 @@ packages:
     peerDependencies:
       vue: ^3.2.41
 
-  survey-vue3-ui@1.10.1:
-    resolution: {integrity: sha512-whSYVGp8UN2gxtWEUhCVojyNtYmjTxR4aiWu/5zknQ5KjfJYm8jfoq4hm0iO5B/3v8jr1rF6YfdSPd3g3Oo4wQ==}
+  survey-vue3-ui@1.10.2:
+    resolution: {integrity: sha512-zhIngCIBTC+WwPCEHnuF0Aa38TGsLD327TifaEIPG1t0xS2FWf3TB32Fa2pArMhwG5DeuGey1aj3GtS4MftKHg==}
     peerDependencies:
       vue: ^3.2.41
 
@@ -15580,8 +15577,6 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@1.10.1: {}
-
   survey-core@1.10.2: {}
 
   survey-creator-core@1.10.2:
@@ -15592,14 +15587,14 @@ snapshots:
     dependencies:
       survey-core: 1.10.2
       survey-creator-core: 1.10.2
-      survey-vue3-ui: 1.10.1(vue@3.4.26(typescript@5.4.5))
+      survey-vue3-ui: 1.10.2(vue@3.4.26(typescript@5.4.5))
       vue: 3.4.26(typescript@5.4.5)
     transitivePeerDependencies:
       - ace-builds
 
-  survey-vue3-ui@1.10.1(vue@3.4.26(typescript@5.4.5)):
+  survey-vue3-ui@1.10.2(vue@3.4.26(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.1
+      survey-core: 1.10.2
       vue: 3.4.26(typescript@5.4.5)
 
   svg-tags@1.0.0: {}
