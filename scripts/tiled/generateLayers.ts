@@ -1,7 +1,7 @@
+import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import { LayerType } from "@/scripts/tiled/models/LayerType";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { getEnumString } from "@/scripts/util/getEnumString";
-import type { TMXLayer } from "tmx-map-parser";
 import { capitalize } from "vue";
 
 const directory = "layers";
