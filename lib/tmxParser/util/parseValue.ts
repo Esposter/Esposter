@@ -3,7 +3,7 @@ export const parseValue = (value: string) => {
   if (value === "false") return false;
   if (/^[+-]?\d+(\.\d+)?$/g.test(value)) {
     const parsedValue = parseFloat(value);
-    return !isNaN(parsedValue) ? parsedValue : value;
+    return isNaN(parsedValue) ? value : parsedValue;
   }
   return value;
 };

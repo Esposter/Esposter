@@ -1,15 +1,9 @@
-import { isDataUrl } from "@/lib/tmxParser/util/isDataUrl";
 import { parseValue } from "@/lib/tmxParser/util/parseValue";
+import parseDataUrl from "data-urls";
 import { parseStringPromise } from "xml2js";
 
 export const parseXmlString = async (xmlString: string) => {
-  let xml = xmlString;
-
-  if (isDataUrl(xmlString)) {
-    const response = await fetch(xmlString);
-    xml = await response.text();
-  }
-
+  const xml = parseDataUrl(xmlString) ?? xmlString;
   return parseStringPromise(xml, {
     explicitChildren: true,
     preserveChildrenOrder: true,
