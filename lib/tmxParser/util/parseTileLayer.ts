@@ -30,7 +30,7 @@ export const parseTileLayer = async (
   );
   const { _, $, tile } = data[0];
   /* XML Deprecated */
-  if (tile) newLayer.data = tile.map(({ $ }: TMXNode<TMXObject>) => $?.gid || 0);
+  if (tile) newLayer.data = tile.map(({ $ }: TMXNode<TMXObject>) => $?.gid ?? 0);
   else {
     /* CSV, BASE64 */
     const { encoding, compression }: { encoding: Encoding; compression: Compression | null | undefined } = $;
