@@ -97,4 +97,5 @@ export default defineVuetifyConfiguration({
   directives: true,
   theme,
   defaults,
+  labComponents: true,
 });
