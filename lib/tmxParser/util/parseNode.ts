@@ -19,7 +19,7 @@ export const parseNode = (
     case NodeType.ImageLayer:
     case NodeType.Objectgroup:
       return parseLayer(node as TMXNode<TMXLayer>);
+    default:
+      return null;
   }
-
-  return null;
 };

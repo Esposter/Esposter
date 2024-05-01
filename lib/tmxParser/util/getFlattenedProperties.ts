@@ -4,7 +4,7 @@ import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
 export const getFlattenedProperties = (properties: TMXNode<unknown>["properties"] | undefined) => ({
   ...properties?.map(({ property }) => ({
     ...property.map(({ $: { name, value }, _ }) => ({
-      [name]: value || _,
+      [name]: value ?? _,
     })),
   })),
 });
