@@ -1,7 +1,7 @@
 import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import { LayerType } from "@/scripts/tiled/models/LayerType";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
-import { getEnumString } from "@/scripts/util/getEnumString";
+import { generateEnumString } from "@/scripts/util/generateEnumString";
 import { capitalize } from "vue";
 
 const directory = "layers";
@@ -11,7 +11,7 @@ export const generateLayers = async (layers: TMXLayer[]) => {
     const enumName = `${capitalize(layerType)}Name`;
     await outputFile(
       `${directory}/${enumName}.ts`,
-      getEnumString(
+      generateEnumString(
         enumName,
         layers.filter(({ type }) => type === layerType).map((l) => l.name),
       ),

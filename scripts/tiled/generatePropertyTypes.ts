@@ -1,7 +1,7 @@
 import { PropertyType } from "@/scripts/tiled/models/PropertyType";
 import type { PropertyTypes } from "@/scripts/tiled/models/PropertyTypes";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
-import { getEnumString } from "@/scripts/util/getEnumString";
+import { generateEnumString } from "@/scripts/util/generateEnumString";
 
 const directory = "propertyTypes";
 
@@ -14,7 +14,7 @@ export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
       const enumName = `${name}ObjectProperty`;
       await outputFile(
         `${directory}/${type}/${enumName}.ts`,
-        getEnumString(
+        generateEnumString(
           enumName,
           members.map((m) => m.name),
         ),
@@ -22,9 +22,9 @@ export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
       classObjectTypes.push(name);
     } else if (propertyType.type === PropertyType.enum) {
       const { name, type, values } = propertyType;
-      await outputFile(`${directory}/${type}/${name}.ts`, getEnumString(name, values));
+      await outputFile(`${directory}/${type}/${name}.ts`, generateEnumString(name, values));
     }
 
   const enumName = "ObjectType";
-  await outputFile(`${directory}/${PropertyType.class}/${enumName}.ts`, getEnumString(enumName, classObjectTypes));
+  await outputFile(`${directory}/${PropertyType.class}/${enumName}.ts`, generateEnumString(enumName, classObjectTypes));
 };
