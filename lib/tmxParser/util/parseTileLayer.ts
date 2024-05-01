@@ -29,10 +29,10 @@ export const parseTileLayer = async (
     ...getAttributes(node.$),
   );
   const { _, $, tile } = data[0];
-  /* XML Deprecated */
+  // Xml Deprecated
   if (tile) newLayer.data = tile.map(({ $ }: TMXNode<TMXObject>) => $?.gid ?? 0);
   else {
-    /* CSV, BASE64 */
+    // Csv, Base64
     const { encoding, compression }: { encoding: Encoding; compression: Compression | null | undefined } = $;
     const layerData = _.trim();
 
