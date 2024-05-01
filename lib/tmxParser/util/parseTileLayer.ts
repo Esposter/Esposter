@@ -17,7 +17,6 @@ export const parseTileLayer = async (
   translateFlips: boolean,
 ): Promise<TMXLayer> => {
   const { data, properties } = node;
-
   if (!Array.isArray(data)) throw new Error("TMXLayer data corrupted!");
 
   const newLayer = Object.assign(
@@ -29,7 +28,6 @@ export const parseTileLayer = async (
     },
     ...getAttributes(node.$),
   );
-
   const { _, $, tile } = data[0];
   /* XML Deprecated */
   if (tile) newLayer.data = tile.map(({ $ }: TMXNode<TMXObject>) => $?.gid || 0);
@@ -43,7 +41,7 @@ export const parseTileLayer = async (
         newLayer.data = layerData.split(",");
         break;
       case Encoding.Base64: {
-        const buffer = new Buffer(layerData, encoding);
+        const buffer = Buffer.from(layerData, encoding);
         switch (compression) {
           case Compression.Gzip:
           case Compression.Zlib:
@@ -62,7 +60,7 @@ export const parseTileLayer = async (
             newLayer.data = unpackTileBytes(buffer, expectedCount);
             break;
           default:
-            throw new Error(`unsupported compression: ${compression}`);
+            exhaustiveGuard(compression);
         }
         break;
       }
@@ -70,11 +68,13 @@ export const parseTileLayer = async (
         exhaustiveGuard(encoding);
     }
   }
-  newLayer.data.map((gid: number, i: number) => {
-    if (translateFlips) {
+
+  if (translateFlips)
+    for (let i = 0; i < newLayer.data.length; i++) {
+      const gid = newLayer.data[i];
       newLayer.flips[i] = getFlips(gid);
       newLayer.data[i] = getTileId(gid);
-    } else newLayer.data[i] = gid;
-  });
+    }
+
   return newLayer;
 };
