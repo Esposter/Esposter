@@ -17,8 +17,7 @@ export const useInteractWithObject = (): boolean => {
       objects.push({ ...useObjectUnitPosition({ x, y }), ...rest });
     }
 
-    ObjectInteractionEffectMap[objectgroupName](objects);
-    return true;
+    if (ObjectInteractionEffectMap[objectgroupName](objects)) return true;
   }
 
   return false;
