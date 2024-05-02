@@ -6,7 +6,7 @@ import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { monsterKeySchema } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Stats } from "@/models/dungeons/monster/Stats";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
-import { getMonsterDetails } from "@/services/dungeons/monster/getMonsterDetails";
+import { getMonsterData } from "@/services/dungeons/monster/getMonsterData";
 import { z } from "zod";
 
 export class Monster {
@@ -19,7 +19,7 @@ export class Monster {
   attackIds!: AttackId[];
 
   constructor(key: MonsterKey) {
-    Object.assign(this, getMonsterDetails(key));
+    Object.assign(this, getMonsterData(key));
   }
 }
 

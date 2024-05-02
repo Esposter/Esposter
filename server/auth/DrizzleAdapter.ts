@@ -78,7 +78,7 @@ export const DrizzleAdapter: Adapter = {
           .returning()
       )[0];
     } catch (err) {
-      throw new NotFoundError(DatabaseEntityType.VerificationToken, `${params.identifier}, token: ${params.token}`);
+      throw new NotFoundError(DatabaseEntityType.VerificationToken, `id: ${params.identifier}, token: ${params.token}`);
     }
   },
   deleteUser: async (id) => (await db.delete(users).where(eq(users.id, id)).returning())[0],

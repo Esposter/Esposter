@@ -17,7 +17,7 @@ export const useInitializeGameObjectEvents = () => {
   const unsubscribes = ref<(() => void)[]>([]);
   const initializeGameObjectEvents = <
     TGameObject extends GameObjects.GameObject,
-    TEmitsOptions extends Record<string, any[]>,
+    TEmitsOptions extends Record<string, unknown[]>,
   >(
     gameObject: TGameObject,
     emit: SetupContext<TEmitsOptions>["emit"],

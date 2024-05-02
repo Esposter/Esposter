@@ -1,7 +1,8 @@
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
-import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
+import type { BaseEncounterableMonster } from "@/models/dungeons/area/BaseEncounterableMonster";
+import type { EncounterableMonster } from "@/models/dungeons/area/EncounterableMonster";
 
-export interface EncounterArea {
+export interface EncounterArea<T extends BaseEncounterableMonster = EncounterableMonster> {
   id: Area;
-  monsterKeys: MonsterKey[];
+  encounterableMonsters: T[];
 }

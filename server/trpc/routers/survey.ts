@@ -11,7 +11,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
-import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
+import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, desc, eq } from "drizzle-orm";
 import type { z } from "zod";
@@ -49,7 +49,7 @@ export const surveyRouter = router({
     .query(async ({ input: { offset, limit, sortBy }, ctx }) => {
       const resultSurveys = await db.query.surveys.findMany({
         where: (surveys) => eq(surveys.creatorId, ctx.session.user.id),
-        orderBy: sortBy.length > 0 ? convertSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
+        orderBy: sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
         offset,
         limit: limit + 1,
       });

@@ -11,7 +11,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
-import { pickRandomValue } from "@/util/math/random/pickRandomValue";
+import { pickWeightedRandomValue } from "@/util/math/random/pickWeightedRandomValues";
 
 export const useRandomEncounter = () => {
   const gameStore = useGameStore();
@@ -37,8 +37,8 @@ export const useRandomEncounter = () => {
     EncounterObjectProperty.area,
   );
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
-  const randomMonsterKey = pickRandomValue(encounterArea.monsterKeys);
-  const randomMonster = new Monster(randomMonsterKey);
+  const randomEncounterableMonster = pickWeightedRandomValue(encounterArea.encounterableMonsters);
+  const randomMonster = new Monster(randomEncounterableMonster.key);
   stepsSinceLastEncounter.value = 0;
   activeMonster.value = randomMonster;
   fadeSwitchToScene(SceneKey.Battle, 2000);

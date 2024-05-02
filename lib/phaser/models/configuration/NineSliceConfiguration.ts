@@ -9,8 +9,8 @@ import type { TextureConfiguration } from "@/lib/phaser/models/configuration/com
 import type { TransformConfiguration } from "@/lib/phaser/models/configuration/components/TransformConfiguration";
 import type { VisibleConfiguration } from "@/lib/phaser/models/configuration/components/VisibleConfiguration";
 import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/global/GlobalConfiguration";
-import type { Except } from "@/util/types/Except";
 import type { Types } from "phaser";
+import type { Except } from "type-fest";
 
 export type NineSliceConfiguration = Except<
   Types.GameObjects.NineSlice.NineSliceConfig,

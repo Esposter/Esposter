@@ -6,6 +6,15 @@ import { dayjs } from "@/services/dayjs";
 import type { MeshPhongMaterial } from "three";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import type { ArrayElement } from "type-fest/source/internal";
+
+type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
+
+type Airport = ArrayElement<(typeof airportHistory)["airports"]>;
+
+interface FeatureCollection {
+  properties: Record<string, string>;
+}
 
 const id = "globe";
 const { width } = useWindowSize();
@@ -64,7 +73,7 @@ onMounted(async () => {
     .atmosphereColor("#3a228a")
     .atmosphereAltitude(0.25)
     .hexPolygonColor((e) => {
-      if (["KGZ", "KOR", "THA", "RUS", "UZB", "IDN", "KAZ", "MYS"].includes((e as any).properties.ISO_A3))
+      if (["KGZ", "KOR", "THA", "RUS", "UZB", "IDN", "KAZ", "MYS"].includes((e as FeatureCollection).properties.ISO_A3))
         return "rgba(255,255,255, 1)";
       else return "rgba(255,255,255, 0.7)";
     });
@@ -74,19 +83,19 @@ onMounted(async () => {
   setTimeout(() => {
     globe
       .arcsData(flightHistory.flights)
-      .arcColor((e: any) => (e.status ? "#9cff00" : "#ff4000"))
-      .arcAltitude((e: any) => e.arcAlt)
-      .arcStroke((e: any) => (e.status ? 0.5 : 0.3))
+      .arcColor((e: unknown) => ((e as Flight).status ? "#9cff00" : "#ff4000"))
+      .arcAltitude((e) => (e as Flight).arcAlt)
+      .arcStroke((e) => ((e as Flight).status ? 0.5 : 0.3))
       .arcDashLength(0.9)
       .arcDashGap(4)
       .arcDashAnimateTime(dayjs.duration(1, "second").asMilliseconds())
       .arcsTransitionDuration(dayjs.duration(1, "second").asMilliseconds())
-      .arcDashInitialGap((e: any) => e.order * 1)
+      .arcDashInitialGap((e) => (e as Flight).order * 1)
       .labelsData(airportHistory.airports)
       .labelColor(() => "#ffcb21")
-      .labelDotOrientation((e: any) => (e.text === "ALA" ? "top" : "right"))
+      .labelDotOrientation((e) => ((e as Airport).text === "ALA" ? "top" : "right"))
       .labelDotRadius(0.3)
-      .labelSize((e: any) => e.size)
+      .labelSize((e) => (e as Airport).size)
       .labelText("city")
       .labelResolution(6)
       .labelAltitude(0.01)

@@ -4,8 +4,8 @@ import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
 import type { ImageEventEmitsOptions } from "@/lib/phaser/models/emit/ImageEventEmitsOptions";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 export interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "texture">;

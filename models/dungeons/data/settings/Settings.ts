@@ -14,7 +14,7 @@ export const InitialSettings = {
   [SettingsOption.Sound]: SoundSetting.On,
   [SettingsOption.VolumePercentage]: IS_DEVELOPMENT ? 0 : 100,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
-};
+} satisfies Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
 export type Settings = typeof InitialSettings;
 
 export const settingsSchema = z.object({

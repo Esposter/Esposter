@@ -64,3 +64,10 @@ await useReadDungeonsGame();
     </Game>
   </NuxtLayout>
 </template>
+
+<style scoped lang="scss">
+// Have nuxt fonts generate the font-face for phaser to use
+:root {
+  font-family: "KenneyFutureNarrow";
+}
+</style>

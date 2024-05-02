@@ -13,7 +13,7 @@ import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
+import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { generateCode } from "@/util/math/random/generateCode";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
@@ -89,7 +89,7 @@ export const roomRouter = router({
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ input: { cursor, limit, sortBy }, ctx }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
     if (cursor) void query.where(getCursorWhere(rooms, cursor, sortBy));
-    void query.orderBy(...convertSortByToSql(rooms, sortBy));
+    void query.orderBy(...parseSortByToSql(rooms, sortBy));
 
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);
@@ -158,7 +158,7 @@ export const roomRouter = router({
         .from(users)
         .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id), eq(usersToRooms.roomId, roomId)))
         .where(where)
-        .orderBy(...convertSortByToSql(users, sortBy))
+        .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
       const resultUsers = joinedUsers.map((ju) => ju.User);
       return getCursorPaginationData(resultUsers, limit, sortBy);

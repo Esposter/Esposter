@@ -6,7 +6,7 @@ import type { SetupContext, WatchStopHandle } from "vue";
 export const useInitializeGameObjectSetters = <
   TConfiguration extends object,
   TGameObject extends GameObjects.GameObject,
-  TEmitsOptions extends Record<string, any[]>,
+  TEmitsOptions extends Record<string, unknown[]>,
 >(
   configuration: Ref<TConfiguration>,
   gameObject: Ref<TGameObject>,

@@ -6,6 +6,7 @@ import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUp
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
+import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { getInitials } from "@/util/text/getInitials";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
@@ -16,9 +17,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerItemProperties = useClickerItemProperties();
 
   const buildingMap = ref<typeof BuildingMap>();
-  const buildingList = computed<Building[]>(() =>
-    buildingMap.value ? Object.entries(buildingMap.value).map(([id, buildingData]) => ({ id, ...buildingData })) : [],
-  );
+  const buildingList = computed<Building[]>(() => (buildingMap.value ? parseDictionaryToArray(buildingMap.value) : []));
   const initializeBuildingMap = (newBuildingMap: typeof BuildingMap) => {
     buildingMap.value = newBuildingMap;
   };

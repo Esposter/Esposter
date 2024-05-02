@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
@@ -44,7 +45,11 @@ onShutdown((scene) => {
     :on-position-change-finished="
       ({ enterTile }) => {
         const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
-        if (tile) useRandomEncounter();
+        if (tile) {
+          const { play } = useDungeonsSoundEffect(SoundEffectKey.StepGrass);
+          play();
+          useRandomEncounter();
+        }
       }
     "
     :on-complete="

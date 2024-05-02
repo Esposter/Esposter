@@ -16,8 +16,7 @@
             "storageType": "string",
             "type": "enum",
             "values": [
-                "Grass",
-                "Water"
+                "Grass"
             ],
             "valuesAsFlags": false
         },
@@ -38,6 +37,31 @@
                 }
             ],
             "name": "AreaMetadata",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "itemId",
+                    "propertyType": "ItemId",
+                    "type": "string",
+                    "value": "Potion"
+                }
+            ],
+            "name": "Chest",
             "type": "class",
             "useAs": [
                 "property",
@@ -111,33 +135,14 @@
             ]
         },
         {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 9,
-            "members": [
-                {
-                    "name": "id",
-                    "type": "int",
-                    "value": 0
-                },
-                {
-                    "name": "itemId",
-                    "type": "int",
-                    "value": 0
-                }
+            "id": 13,
+            "name": "ItemId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Potion"
             ],
-            "name": "Item",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset"
-            ]
+            "valuesAsFlags": false
         },
         {
             "color": "#ffa0a0a4",

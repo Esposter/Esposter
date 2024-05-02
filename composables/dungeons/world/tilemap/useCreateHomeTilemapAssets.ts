@@ -1,6 +1,6 @@
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { LayerId } from "@/models/dungeons/scene/world/home/LayerId";
-import { ObjectLayer } from "@/models/dungeons/scene/world/home/ObjectLayer";
+import { LayerName } from "@/generated/tiled/layers/LayerName";
+import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
+import { LayerNameTilesetKeysMap } from "@/services/dungeons/tilemap/LayerNameTilesetKeysMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -8,25 +8,15 @@ export const useCreateHomeTilemapAssets = () => {
   const settingsStore = useSettingsStore();
   const { debugTileLayerAlpha } = storeToRefs(settingsStore);
   const worldSceneStore = useWorldSceneStore();
-  const { encounterLayer, signLayer } = storeToRefs(worldSceneStore);
-  const basicPlainsTileset = useCreateTileset(TilesetKey.BasicPlains);
-  const beachAndCavesTileset = useCreateTileset(TilesetKey.BeachAndCaves);
-  const houseCreateTileset = useCreateTileset(TilesetKey.House);
-  const bushesTileset = useCreateTileset(TilesetKey.Bushes);
-  const collisionTileset = useCreateTileset(TilesetKey.Collision);
-  const encounterTileset = useCreateTileset(TilesetKey.Encounter);
-  const grassTileset = useCreateTileset(TilesetKey.Grass);
-  useCreateLayer(LayerId.Ground, [basicPlainsTileset, grassTileset]);
-  useCreateLayer(LayerId.Building, houseCreateTileset);
-  useCreateLayer(LayerId.Water, beachAndCavesTileset);
-  useCreateLayer(LayerId.Decoration, [basicPlainsTileset, bushesTileset]);
-  useCreateLayer(LayerId.Sign, basicPlainsTileset);
-  useCreateLayer(LayerId.TreeBottom, basicPlainsTileset);
-  useCreateLayer(LayerId.TreeTop, basicPlainsTileset);
-  useCreateLayer(LayerId.Fence, basicPlainsTileset);
-  useCreateLayer(LayerId.Boulder, basicPlainsTileset);
-  useCreateLayer(LayerId.Foreground, [basicPlainsTileset, houseCreateTileset]);
-  encounterLayer.value = useCreateLayer(LayerId.Encounter, encounterTileset).setAlpha(debugTileLayerAlpha.value);
-  useCreateLayer(LayerId.Collision, collisionTileset).setAlpha(debugTileLayerAlpha.value);
-  signLayer.value = useObjectLayer(ObjectLayer.Sign);
+  const { encounterLayer, objectLayerMap } = storeToRefs(worldSceneStore);
+
+  for (const [layerName, tilesetKeys] of Object.entries(LayerNameTilesetKeysMap)) {
+    const tilesets = tilesetKeys.map((k) => useCreateTileset(k));
+    const layer = useCreateLayer(layerName, tilesets);
+    if (layerName === LayerName.Encounter) encounterLayer.value = layer.setAlpha(debugTileLayerAlpha.value);
+    else if (layerName === LayerName.Collision) layer.setAlpha(debugTileLayerAlpha.value);
+  }
+
+  for (const objectgroupName of Object.values(ObjectgroupName))
+    objectLayerMap.value[objectgroupName] = useObjectLayer(objectgroupName);
 };

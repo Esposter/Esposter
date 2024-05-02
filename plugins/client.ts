@@ -9,6 +9,7 @@ import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
   const url = useClientUrl();
+  const headers = useRequestHeaders();
   const links: TRPCLink<AppRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
@@ -19,13 +20,13 @@ export default defineNuxtPlugin(() => {
     splitLink({
       condition: (op) => op.type === "subscription",
       true: (() => {
-        if (getIsServer()) return httpBatchLink({ url });
+        if (getIsServer()) return httpBatchLink({ url, headers });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
         return wsLink({ client: wsClient });
       })(),
-      false: httpBatchLink({ url }),
+      false: httpBatchLink({ url, headers }),
     }),
   ];
   const client = createTRPCNuxtClient<AppRouter>({ links, transformer: superjson });

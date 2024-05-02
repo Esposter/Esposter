@@ -1,4 +1,4 @@
-import type { Constructor } from "@/util/types/Constructor";
+import type { Constructor } from "type-fest";
 
 export const getComponent = (type: Constructor<unknown>) => {
   switch (type) {

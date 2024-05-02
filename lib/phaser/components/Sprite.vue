@@ -4,8 +4,8 @@ import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
 import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 export interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;

@@ -1,7 +1,7 @@
 import type { Building } from "@/models/clicker/data/building/Building";
 import { BuildingId } from "@/models/clicker/data/building/BuildingId";
 import { compileVariable } from "@/services/clicker/compiler/compileVariable";
-import type { Except } from "@/util/types/Except";
+import type { Except } from "type-fest";
 
 export const BuildingMap = {
   [BuildingId.Cursor]: {

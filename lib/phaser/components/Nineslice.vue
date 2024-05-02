@@ -4,8 +4,8 @@ import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { NineSliceConfiguration } from "@/lib/phaser/models/configuration/NineSliceConfiguration";
 import type { NineSliceEventEmitsOptions } from "@/lib/phaser/models/emit/NineSliceEventEmitsOptions";
 import { NineSliceSetterMap } from "@/lib/phaser/util/setterMap/NineSliceSetterMap";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 export interface NineSliceProps {
   configuration: SetRequired<Partial<NineSliceConfiguration>, "texture">;

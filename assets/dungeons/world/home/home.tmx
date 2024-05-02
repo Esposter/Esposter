@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="24" nextobjectid="26">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="26" nextobjectid="30">
  <editorsettings>
   <export target="tilemap.json" format="json"/>
  </editorsettings>
@@ -475,7 +475,7 @@
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
-189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
+189,189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
 189,189,189,189,189,189,189,189,189,189,0,0,189,189,189,189,189,189,189,189,
 0,0,0,0,0,0,0,0,0,189,0,0,189,0,0,0,0,0,0,189,
 0,0,0,0,0,0,0,0,0,189,0,0,189,0,0,0,0,0,0,189,
@@ -492,7 +492,7 @@
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
 189,0,0,0,189,189,189,189,0,0,0,0,0,0,0,0,0,0,0,189,
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
-189,0,0,0,0,0,0,0,0,0,189,189,189,189,189,0,0,0,0,189,
+189,0,0,0,0,0,0,0,0,0,189,189,189,189,189,189,0,0,0,189,
 189,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,189,
 189,0,0,0,0,0,0,0,0,0,189,189,189,189,189,189,0,0,0,189,
 189,0,0,0,189,189,189,189,0,0,0,0,0,0,0,0,0,0,0,189,
@@ -502,6 +502,18 @@
 189,189,189,189,189,0,0,189,189,189,189,189,189,189,189,189,189,189,189,189
 </data>
  </layer>
+ <objectgroup id="24" name="Chest" locked="1" offsetx="-256" offsety="-128">
+  <object id="26" type="Chest" gid="230" x="1216" y="1856" width="64" height="64">
+   <properties>
+    <property name="itemId" propertytype="ItemId" value="Potion"/>
+   </properties>
+  </object>
+  <object id="28" type="Chest" gid="230" x="320" y="768" width="64" height="64">
+   <properties>
+    <property name="itemId" propertytype="ItemId" value="Potion"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="21" name="Sign" class="Sign" locked="1">
   <object id="15" type="Sign" gid="70" x="704" y="1344" width="64" height="64">
    <properties>

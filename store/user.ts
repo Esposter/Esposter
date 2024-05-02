@@ -9,7 +9,6 @@ export const useUserStore = defineStore("user", () => {
   const updateAuthUser = async (input: UpdateUserInput) => {
     const updatedAuthUser = await $client.user.updateUser.mutate(input);
     if (!updatedAuthUser) return;
-
     authUser.value = updatedAuthUser;
   };
 

@@ -4,8 +4,8 @@ import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
 import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
 import { ZoneSetterMap } from "@/lib/phaser/util/setterMap/ZoneSetterMap";
-import type { SetRequired } from "@/util/types/SetRequired";
 import type { GameObjects } from "phaser";
+import type { SetRequired } from "type-fest";
 
 interface ZoneProps {
   configuration: SetRequired<Partial<ZoneConfiguration>, "x" | "y" | "width" | "height">;

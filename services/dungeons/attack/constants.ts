@@ -1,5 +1,5 @@
-import type { Except } from "@/util/types/Except";
 import type { Position } from "grid-engine";
+import type { Except } from "type-fest";
 
 export const ATTACK_DISPLAY_LIMIT = 4;
 

@@ -1,12 +1,12 @@
 import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import type { VFormRef } from "@/models/vuetify/VFormRef";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import equal from "deep-equal";
 import type { UnwrapRef } from "vue";
+import type { VForm } from "vuetify/components";
 
 // @TODO: Vue cannot unwrap generic refs yet
 // https://github.com/vuejs/core/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+unwrap
@@ -18,12 +18,11 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const router = useRouter();
     const itemStore = useItemStore();
     const { createItem, updateItem, deleteItem } = itemStore;
-
     const tableEditorConfiguration = ref(new TableEditorConfiguration());
     const tableEditorType = ref(TableEditorType.TodoList);
     const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] });
     const searchQuery = ref("");
-    const editFormRef = ref<VFormRef>();
+    const editFormRef = ref<InstanceType<typeof VForm>>();
     const editFormDialog = ref(false);
     const editedItem = ref<TItem | null>(null);
     const editedIndex = ref(-1);

@@ -1,8 +1,8 @@
+import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { directionSchema } from "@/models/dungeons/data/player/Direction";
 import { inventorySchema } from "@/models/dungeons/data/player/Inventory";
 import { positionSchema } from "@/models/dungeons/data/player/Position";
 import type { Item } from "@/models/dungeons/item/Item";
-import { ItemId } from "@/models/dungeons/item/ItemId";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";

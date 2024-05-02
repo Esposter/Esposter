@@ -10,7 +10,7 @@ import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { convertSortByToSql } from "@/services/shared/pagination/sorting/convertSortByToSql";
+import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -30,7 +30,6 @@ export type CreatePostInput = z.infer<typeof createPostInputSchema>;
 
 const createCommentInputSchema = selectPostSchema
   .pick({ description: true })
-  // @TODO: https://github.com/colinhacks/zod/issues/2891
   .extend({ description: z.string().min(1) })
   .merge(z.object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.unwrap() }));
 export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
@@ -42,7 +41,6 @@ export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
 
 const updateCommentInputSchema = selectPostSchema
   .pick({ id: true, description: true })
-  // @TODO: https://github.com/colinhacks/zod/issues/2891
   .extend({ description: z.string().min(1) });
 export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
 
@@ -67,7 +65,7 @@ export const postRouter = router({
 
       const resultPosts: PostWithRelations[] = await db.query.posts.findMany({
         where,
-        orderBy: convertSortByToSql(posts, sortBy),
+        orderBy: parseSortByToSql(posts, sortBy),
         limit: limit + 1,
         with: PostRelations,
       });

@@ -7,7 +7,7 @@ const { $client } = useNuxtApp();
 const gameStore = useGameStore();
 const { game } = storeToRefs(gameStore);
 const upgradeStore = useUpgradeStore();
-const { initializeUpgradeList } = upgradeStore;
+const { initializeUpgradeMap } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);
 const buildingStore = useBuildingStore();
 const { initializeBuildingMap } = buildingStore;
@@ -18,7 +18,7 @@ const unlockedStoreUpgrades = computed(() =>
     .toSorted((a, b) => a.price - b.price),
 );
 
-initializeUpgradeList(await $client.clicker.readUpgrades.query());
+initializeUpgradeMap(await $client.clicker.readUpgradeMap.query());
 initializeBuildingMap(await $client.clicker.readBuildingMap.query());
 </script>
 

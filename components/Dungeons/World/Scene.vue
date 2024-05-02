@@ -65,6 +65,7 @@ const shutdown = (scene: SceneWithPlugins) => {
   <Scene :scene-key="SceneKey.World" @create="create" @update="update" @shutdown="shutdown">
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />
+    <DungeonsWorldChestLayer />
     <DungeonsWorldForeground />
     <DungeonsWorldDialog />
     <DungeonsWorldMenu />

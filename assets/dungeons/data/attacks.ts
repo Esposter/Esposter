@@ -1,14 +1,16 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import type { Except } from "type-fest";
 
-export const attacks: Attack[] = [
-  {
-    id: AttackId["Ice Shard"],
+const AttackMap = {
+  [AttackId["Ice Shard"]]: {
     soundEffectKey: SoundEffectKey.IceExplosion,
   },
-  {
-    id: AttackId.Slash,
+  [AttackId.Slash]: {
     soundEffectKey: SoundEffectKey.Claw,
   },
-];
+} as const satisfies Record<AttackId, Except<Attack, "id">>;
+
+export const attacks: Attack[] = parseDictionaryToArray(AttackMap);

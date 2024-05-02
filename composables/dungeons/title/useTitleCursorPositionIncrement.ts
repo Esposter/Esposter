@@ -1,6 +1,6 @@
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-import type { Except } from "@/util/types/Except";
 import type { Position } from "grid-engine";
+import type { Except } from "type-fest";
 
 export const useTitleCursorPositionIncrement = (): Ref<Except<Position, "x">> => {
   const titleSceneStore = useTitleSceneStore();
