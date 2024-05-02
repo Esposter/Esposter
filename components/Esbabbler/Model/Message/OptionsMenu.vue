@@ -6,7 +6,7 @@ import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
   message: MessageEntity;
-  isHovering?: boolean;
+  isHovering?: boolean | null;
   hoverProps?: Record<string, unknown>;
 }
 

@@ -216,8 +216,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(vue@3.4.26(typescript@5.4.5))
       vuetify:
-        specifier: ^3.6.1
-        version: 3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
+        specifier: ^3.6.3
+        version: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
       worker-timers:
         specifier: ^7.1.7
         version: 7.1.7
@@ -7492,8 +7492,8 @@ packages:
   vuetify-nuxt-module@0.13.5:
     resolution: {integrity: sha512-sqlDB+e/cHoKSjLQZ5Vl4pV+SpM47TcTfna9oajb8q+RFogPdN1nUlYDyQF5LPNaLKvcInK7CPTCRjv6+2WRxA==}
 
-  vuetify@3.6.1:
-    resolution: {integrity: sha512-fzcY9LNuLZUwXG4XyklkGJwFv/ejQaERAgE5e+U5M9dtbF9ZRs56mGi2uqOhQOv6o+vbikpHZ/rfHfhb/XlO0g==}
+  vuetify@3.6.3:
+    resolution: {integrity: sha512-OBYYJYnNeUYA7kwrv8Rag1EBFbGWAQxJpp0s98U2KQ6SPU7MzzcrvNn7t69vcDbj7mR7Dcf9/jvFapfranXZvA==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
@@ -7624,7 +7624,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -11431,11 +11430,11 @@ snapshots:
       date-fns: 3.6.0
       vue: 3.4.26(typescript@5.4.5)
 
-  '@vuetify/loader-shared@2.0.3(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)))':
+  '@vuetify/loader-shared@2.0.3(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)))':
     dependencies:
       upath: 2.0.1
       vue: 3.4.26(typescript@5.4.5)
-      vuetify: 3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
+      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
 
   '@vueuse/core@10.9.0(vue@3.4.26(typescript@5.4.5))':
     dependencies:
@@ -16289,14 +16288,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.1):
+  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.3):
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)))
+      '@vuetify/loader-shared': 2.0.3(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)))
       debug: 4.3.4
       upath: 2.0.1
       vite: 5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2)
       vue: 3.4.26(typescript@5.4.5)
-      vuetify: 3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
+      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
     transitivePeerDependencies:
       - supports-color
 
@@ -16464,8 +16463,8 @@ snapshots:
       perfect-debounce: 1.0.0
       ufo: 1.5.3
       unconfig: 0.3.13
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.1)
-      vuetify: 3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.3)
+      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5))
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -16475,12 +16474,12 @@ snapshots:
       - vue-i18n
       - webpack-plugin-vuetify
 
-  vuetify@3.6.1(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)):
+  vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.4.5)):
     dependencies:
       vue: 3.4.26(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.1)
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.76.0)(terser@5.29.2))(vue@3.4.26(typescript@5.4.5))(vuetify@3.6.3)
 
   w3c-keyname@2.2.8: {}
 
