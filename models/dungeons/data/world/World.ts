@@ -5,7 +5,7 @@ import type { z } from "zod";
 
 export const InitialWorld = {
   [TilemapKey.Home]: new WorldData(),
-} satisfies Record<TilemapKey, WorldData>;
+} as const satisfies Record<TilemapKey, WorldData>;
 export type World = typeof InitialWorld;
 
 export const worldSchema = zodStrictRecord(tilemapKeySchema, worldDataSchema) satisfies z.ZodType<World>;

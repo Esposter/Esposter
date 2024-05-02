@@ -3,7 +3,7 @@ import { InitialWorld, worldSchema } from "@/models/dungeons/data/world/World";
 import { z } from "zod";
 
 export class Save {
-  world = InitialWorld;
+  world = structuredClone(InitialWorld);
   player = new Player();
 }
 

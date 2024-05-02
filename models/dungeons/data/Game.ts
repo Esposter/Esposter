@@ -8,7 +8,7 @@ import { z } from "zod";
 class BaseGame {
   id: string = crypto.randomUUID();
   saves: Save[] = [];
-  settings = InitialSettings;
+  settings = structuredClone(InitialSettings);
 
   constructor(init?: Partial<BaseGame>) {
     Object.assign(this, init);
