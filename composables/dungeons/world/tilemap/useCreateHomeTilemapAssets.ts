@@ -8,7 +8,7 @@ export const useCreateHomeTilemapAssets = () => {
   const settingsStore = useSettingsStore();
   const { debugTileLayerAlpha } = storeToRefs(settingsStore);
   const worldSceneStore = useWorldSceneStore();
-  const { encounterLayer, signLayer, chestLayer } = storeToRefs(worldSceneStore);
+  const { encounterLayer, objectLayerMap } = storeToRefs(worldSceneStore);
 
   for (const [layerName, tilesetKeys] of Object.entries(LayerNameTilesetKeysMap)) {
     const tilesets = tilesetKeys.map((k) => useCreateTileset(k));
@@ -17,9 +17,6 @@ export const useCreateHomeTilemapAssets = () => {
     else if (layerName === LayerName.Collision) layer.setAlpha(debugTileLayerAlpha.value);
   }
 
-  for (const objectgroupName of Object.values(ObjectgroupName)) {
-    const objectLayer = useObjectLayer(objectgroupName);
-    if (objectgroupName === ObjectgroupName.Sign) signLayer.value = objectLayer;
-    else if (objectgroupName === ObjectgroupName.Chest) chestLayer.value = objectLayer;
-  }
+  for (const objectgroupName of Object.values(ObjectgroupName))
+    objectLayerMap.value[objectgroupName] = useObjectLayer(objectgroupName);
 };

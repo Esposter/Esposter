@@ -1,3 +1,4 @@
+import type { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { WorldData } from "@/models/dungeons/data/world/WorldData";
 import type { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
@@ -11,8 +12,7 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const tilemap = ref() as Ref<Tilemaps.Tilemap>;
   const tilemapKey = ref() as Ref<TilemapKey>;
   const encounterLayer = ref() as Ref<Tilemaps.TilemapLayer>;
-  const signLayer = ref() as Ref<Tilemaps.ObjectLayer>;
-  const chestLayer = ref() as Ref<Tilemaps.ObjectLayer>;
+  const objectLayerMap = ref({} as Record<ObjectgroupName, Tilemaps.ObjectLayer>);
   const isMenuVisible = ref(false);
   const menuOptionGrid = ref(MenuOptionGrid);
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
@@ -20,8 +20,7 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
     tilemap,
     tilemapKey,
     encounterLayer,
-    signLayer,
-    chestLayer,
+    objectLayerMap,
     isMenuVisible,
     menuOptionGrid,
     worldData,

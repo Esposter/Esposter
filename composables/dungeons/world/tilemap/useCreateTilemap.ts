@@ -1,3 +1,4 @@
+import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { Chest } from "@/models/dungeons/data/world/Chest";
 import type { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
@@ -10,17 +11,17 @@ import type { Tilemaps } from "phaser";
 
 export const useCreateTilemap = (scene: SceneWithPlugins, key: TilemapKey) => {
   const worldSceneStore = useWorldSceneStore();
-  const { tilemap, tilemapKey, chestLayer, worldData } = storeToRefs(worldSceneStore);
+  const { tilemap, tilemapKey, objectLayerMap, worldData } = storeToRefs(worldSceneStore);
 
   tilemapKey.value = key;
   tilemap.value = scene.make.tilemap({ key: tilemapKey.value });
   CreateTilemapAssetsMap[tilemapKey.value]();
 
-  for (const { x, y } of chestLayer.value.objects) {
+  for (const { x, y } of objectLayerMap.value[ObjectgroupName.Chest].objects) {
     if (!(x && y)) continue;
     // Chests are rendered separately outside of the tilemap as images
     // so we don't need to convert to the unit position
-    const position = useObjectPixelPosition({ x, y });
+    const position = useObjectUnitPosition({ x, y });
     const chestId = getChestId(position);
     if (worldData.value.chestMap.has(chestId)) continue;
     else worldData.value.chestMap.set(chestId, new Chest());

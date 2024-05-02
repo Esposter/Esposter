@@ -1,1 +1,1 @@
-export const useInteractions = () => useInteractWithNpc() || useInteractWithSign();
+export const useInteractions = () => useInteractWithNpc() || useInteractWithObject();

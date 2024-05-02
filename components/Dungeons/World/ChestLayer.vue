@@ -6,7 +6,7 @@ import { getChestPosition } from "@/services/dungeons/chest/getChestPosition";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
-const { worldData } = storeToRefs(worldSceneStore);
+const { tilemap, worldData } = storeToRefs(worldSceneStore);
 const chestEntries = computed(() =>
   [...worldData.value.chestMap.entries()].map(([id, chest]) => [getChestPosition(id), chest] as const),
 );
@@ -16,6 +16,12 @@ const chestEntries = computed(() =>
   <Image
     v-for="[position, chest] in chestEntries"
     :key="getChestId(position)"
-    :configuration="{ ...position, origin: 0, texture: TilesetKey.HouseInterior, frame: 22 }"
+    :configuration="{
+      x: position.x * tilemap.tileWidth,
+      y: position.y * tilemap.tileHeight,
+      origin: 0,
+      texture: TilesetKey.HouseInterior,
+      frame: 22,
+    }"
   />
 </template>
