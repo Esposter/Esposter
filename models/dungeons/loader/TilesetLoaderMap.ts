@@ -15,7 +15,8 @@ export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => L
   [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlains),
   [TilesetKey.BeachAndCaves]: (scene) => scene.load.image(TilesetKey.BeachAndCaves, beachAndCaves),
   [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, house),
-  [TilesetKey.HouseInterior]: (scene) => scene.load.image(TilesetKey.HouseInterior, houseInterior),
+  [TilesetKey.HouseInterior]: (scene) =>
+    scene.load.spritesheet(TilesetKey.HouseInterior, houseInterior, { frameWidth: 64, frameHeight: 64 }),
 
   [TilesetKey.Bushes]: (scene) => scene.load.image(TilesetKey.Bushes, bushes),
   [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collision),

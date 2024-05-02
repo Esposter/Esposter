@@ -4,24 +4,26 @@ import type { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { CreateTilemapAssetsMap } from "@/models/dungeons/tilemap/CreateTilemapAssetsMap";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
-import { getChestKey } from "@/services/dungeons/getChestKey";
+import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Tilemaps } from "phaser";
 
-export const useCreateTilemap = (scene: SceneWithPlugins, tilemapKey: TilemapKey) => {
+export const useCreateTilemap = (scene: SceneWithPlugins, key: TilemapKey) => {
   const worldSceneStore = useWorldSceneStore();
-  const { world, tilemap, chestLayer } = storeToRefs(worldSceneStore);
+  const { tilemap, tilemapKey, chestLayer, worldData } = storeToRefs(worldSceneStore);
 
-  tilemap.value = scene.make.tilemap({ key: tilemapKey });
-  CreateTilemapAssetsMap[tilemapKey]();
+  tilemapKey.value = key;
+  tilemap.value = scene.make.tilemap({ key: tilemapKey.value });
+  CreateTilemapAssetsMap[tilemapKey.value]();
 
   for (const { x, y } of chestLayer.value.objects) {
     if (!(x && y)) continue;
-
-    const unitPosition = useObjectUnitPosition({ x, y });
-    const chestKey = getChestKey(unitPosition);
-    if (world.value[tilemapKey].chestMap.has(chestKey)) continue;
-    else world.value[tilemapKey].chestMap.set(chestKey, new Chest());
+    // Chests are rendered separately outside of the tilemap as images
+    // so we don't need to convert to the unit position
+    const position = useObjectPixelPosition({ x, y });
+    const chestId = getChestId(position);
+    if (worldData.value.chestMap.has(chestId)) continue;
+    else worldData.value.chestMap.set(chestId, new Chest());
   }
 
   scene.gridEngine.create(tilemap.value as Tilemaps.Tilemap, {
