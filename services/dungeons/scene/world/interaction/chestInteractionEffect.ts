@@ -1,10 +1,9 @@
 import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
-import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
-import { NotFoundError } from "@/models/error/NotFoundError";
 import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { getItem } from "@/services/dungeons/item/getItem";
+import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -19,11 +18,7 @@ export const chestInteractionEffect: Effect = (chestObjects) => {
   const { showMessages } = worldDialogStore;
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
-  const itemIdTiledObjectProperty = (chestObject.properties as TiledObjectProperty<ItemId>[]).find(
-    (p) => p.name === ChestObjectProperty.itemId,
-  );
-  if (!itemIdTiledObjectProperty) throw new NotFoundError(chestInteractionEffect.name, ChestObjectProperty.itemId);
-
+  const itemIdTiledObjectProperty = getTiledObjectProperty<ItemId>(chestObject.properties, ChestObjectProperty.itemId);
   const chestId = getChestId(chestObject);
   const chest = worldData.value.chestMap.get(chestId);
   if (!chest || chest.isOpened) {
