@@ -20,8 +20,9 @@ const chestEntries = computed(() =>
       x: position.x * tilemap.tileWidth,
       y: position.y * tilemap.tileHeight,
       origin: 0,
-      texture: TilesetKey.HouseInterior,
-      frame: 22,
+      texture: TilesetKey.Dungeon,
+      frame: 627,
+      scale: 4,
     }"
   />
 </template>

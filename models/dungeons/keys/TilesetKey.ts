@@ -9,6 +9,7 @@ export const TilesetKey = {
 
   Bushes: "Bushes",
   Collision: "Collision",
+  Dungeon: "Dungeon",
   Encounter: "Encounter",
   Entrance: "Entrance",
   Grass: "Grass",
