@@ -1,8 +1,8 @@
 export enum NodeType {
   EditorSettings = "editorsettings",
   Group = "group",
-  ImageLayer = "imagelayer",
   Image = "image",
+  ImageLayer = "imagelayer",
   Layer = "layer",
   Objectgroup = "objectgroup",
   Properties = "properties",
