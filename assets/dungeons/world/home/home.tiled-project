@@ -101,40 +101,6 @@
             ]
         },
         {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
-            "id": 8,
-            "members": [
-                {
-                    "name": "connectsTo",
-                    "type": "string",
-                    "value": ""
-                },
-                {
-                    "name": "id",
-                    "type": "string",
-                    "value": ""
-                },
-                {
-                    "name": "isBuilding",
-                    "type": "bool",
-                    "value": false
-                }
-            ],
-            "name": "Entrance",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset"
-            ]
-        },
-        {
             "id": 13,
             "name": "ItemId",
             "storageType": "string",
