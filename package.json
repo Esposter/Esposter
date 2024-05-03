@@ -52,7 +52,7 @@
     "cross-env": "^7.0.3",
     "data-urls": "^5.0.0",
     "drizzle-kit": "^0.20.17",
-    "eslint": "^9.1.1",
+    "eslint": "^9.2.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import-x": "^0.5.0",
     "eslint-plugin-prettier": "^5.1.3",
