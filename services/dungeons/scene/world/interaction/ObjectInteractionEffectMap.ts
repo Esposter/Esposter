@@ -5,5 +5,6 @@ import { signInteractionEffect } from "@/services/dungeons/scene/world/interacti
 
 export const ObjectInteractionEffectMap = {
   [ObjectgroupName.Chest]: chestInteractionEffect,
+  [ObjectgroupName.SceneTransition]: () => false,
   [ObjectgroupName.Sign]: signInteractionEffect,
 } as const satisfies Record<ObjectgroupName, Effect>;
