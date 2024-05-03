@@ -1,5 +1,6 @@
 import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { getItem } from "@/services/dungeons/item/getItem";
@@ -30,6 +31,9 @@ export const chestInteractionEffect: Effect = (chestObjects) => {
   if (item) item.quantity++;
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;
+
+  const { play } = useDungeonsSoundEffect(SoundEffectKey.OpenChest);
+  play();
   showMessages([{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
   return true;
 };

@@ -1,3 +1,4 @@
+import openChest from "@/assets/dungeons/sound/openChest.mp3";
 import textBlip from "@/assets/dungeons/sound/textBlip.mp3";
 import claw from "@/assets/dungeons/thirdParty/leohpaz/claw.wav";
 import flee from "@/assets/dungeons/thirdParty/leohpaz/flee.wav";
@@ -12,5 +13,6 @@ export const SoundEffectLoaderMap: Record<SoundEffectKey, (scene: SceneWithPlugi
   [SoundEffectKey.Flee]: (scene) => scene.load.audio(SoundEffectKey.Flee, flee),
   [SoundEffectKey.IceExplosion]: (scene) => scene.load.audio(SoundEffectKey.IceExplosion, iceExplosion),
   [SoundEffectKey.StepGrass]: (scene) => scene.load.audio(SoundEffectKey.StepGrass, stepGrass),
+  [SoundEffectKey.OpenChest]: (scene) => scene.load.audio(SoundEffectKey.OpenChest, openChest),
   [SoundEffectKey.TextBlip]: (scene) => scene.load.audio(SoundEffectKey.TextBlip, textBlip),
 };
