@@ -152,7 +152,7 @@
     "vuetify": "^3.6.3",
     "worker-timers": "^7.1.7",
     "ws": "^8.17.0",
-    "zod": "^3.23.5"
+    "zod": "^3.23.6"
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released",
