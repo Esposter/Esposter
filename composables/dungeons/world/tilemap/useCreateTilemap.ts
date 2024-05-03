@@ -19,8 +19,7 @@ export const useCreateTilemap = (scene: SceneWithPlugins, key: TilemapKey) => {
 
   for (const { x, y } of objectLayerMap.value[ObjectgroupName.Chest].objects) {
     if (!(x && y)) continue;
-    // Chests are rendered separately outside of the tilemap as images
-    // so we don't need to convert to the unit position
+
     const position = useObjectUnitPosition({ x, y });
     const chestId = getChestId(position);
     if (worldData.value.chestMap.has(chestId)) continue;
