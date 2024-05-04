@@ -34,7 +34,6 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
           tmxTiledMap.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as string]: n.$ })) };
           break;
         case NodeType.Tileset:
-          console.log(node);
           tmxTiledMap.tilesets.push(parseTileset(node as unknown as TMXNode<TMXTileset>));
           break;
         case NodeType.Group:
