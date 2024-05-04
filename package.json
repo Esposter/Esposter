@@ -150,7 +150,7 @@
     "vue-router": "^4.3.2",
     "vue-waypoint": "^4.3.0",
     "vuetify": "^3.6.3",
-    "worker-timers": "^7.1.7",
+    "worker-timers": "^7.1.8",
     "ws": "^8.17.0",
     "zod": "^3.23.6"
   },
