@@ -9,15 +9,18 @@ import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectP
 
 export const parseObjectData = (node: TMXNode<TMXObject>): TMXObject => {
   const { $, properties, polygon, text } = node;
+  const objectData: Record<string, unknown> = {};
+
+  if (Array.isArray(polygon))
+    objectData.points = polygon[0].$.points.split(" ").map((point: { split: (arg0: string) => [string, string] }) => {
+      const [x, y] = point.split(",");
+      return [parseFloat(x), parseFloat(y)];
+    });
+
   const object = Object.assign(
     {
+      ...objectData,
       shape: getObjectShape(node),
-      ...(Array.isArray(polygon) && {
-        points: polygon[0].$.points.split(" ").map((point: { split: (arg0: string) => [string, string] }) => {
-          const [x, y] = point.split(",");
-          return [parseFloat(x), parseFloat(y)];
-        }),
-      }),
       ...getFlattenedProperties(properties),
     },
     ...getAttributes($),

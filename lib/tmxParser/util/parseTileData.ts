@@ -6,18 +6,12 @@ import { parseObjectData } from "@/lib/tmxParser/util/parseObjectData";
 
 export const parseTileData = (node: TMXNode<TMXTile>): TMXTile => {
   const { $, animation, objectgroup } = node;
-  const obj = Array.isArray(objectgroup) && objectgroup[0].object;
-  return Object.assign(
-    {
-      ...(Array.isArray(animation) && {
-        animation: {
-          frames: animation[0].frame.map(({ $ }: TMXNode<TMXObject>) => Object.assign({}, ...getAttributes($))),
-        },
-      }),
-      ...(Array.isArray(obj) && {
-        objects: obj.map((o: TMXNode<TMXObject>) => parseObjectData(o)),
-      }),
-    },
-    ...getAttributes($),
-  );
+  const tileData: Record<string, unknown> = {};
+  if (Array.isArray(animation))
+    tileData.animation = {
+      frames: animation[0].frame.map(({ $ }: TMXNode<TMXObject>) => Object.assign({}, ...getAttributes($))),
+    };
+  if (Array.isArray(objectgroup) && Array.isArray(objectgroup[0].object))
+    tileData.objects = objectgroup[0].object.map((o: TMXNode<TMXObject>) => parseObjectData(o));
+  return Object.assign(tileData, ...getAttributes($));
 };

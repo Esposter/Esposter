@@ -1,5 +1,6 @@
 import { NodeType } from "@/lib/tmxParser/models/NodeType";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
+import type { TMXTile } from "@/lib/tmxParser/models/tmx/TMXTile";
 import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
 import { isExternalTileset } from "@/lib/tmxParser/util/isExternalTileset";
@@ -17,7 +18,7 @@ export const parseTileset = (node: TMXNode<TMXTileset>): TMXTileset => {
     if (nodeType !== NodeType.Image) continue;
 
     const image = Object.assign({}, ...getAttributes(childNode.$));
-    const tiles = Array.isArray(tile) && tile.map((t) => parseTileData(t));
+    const tiles = (tile as TMXNode<TMXTile>[] | undefined)?.map((t) => parseTileData(t)) ?? [];
     return Object.assign({}, ...getAttributes($), { image, tiles });
   }
 
