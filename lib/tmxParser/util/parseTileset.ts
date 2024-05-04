@@ -1,22 +1,26 @@
 import { NodeType } from "@/lib/tmxParser/models/NodeType";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
+import type { TMXTile } from "@/lib/tmxParser/models/tmx/TMXTile";
 import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
-import { isEmbeddedTileset } from "@/lib/tmxParser/util/isEmbeddedTileset";
-import { parseTileData } from "@/lib/tmxParser/util/parseTileData";
+import { isExternalTileset } from "@/lib/tmxParser/util/isExternalTileset";
+import { parseTile } from "@/lib/tmxParser/util/parseTile";
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
+import { Operation } from "@/models/shared/Operation";
 
 export const parseTileset = (node: TMXNode<TMXTileset>): TMXTileset => {
   const { $, $$, tile } = node;
 
-  if (isEmbeddedTileset($))
-    for (const childNode of $$) {
-      const nodeType = childNode["#name"] as NodeType;
-      if (nodeType !== NodeType.Image) continue;
+  if (isExternalTileset($)) return Object.assign({}, ...getAttributes($));
 
-      const image = Object.assign({}, ...getAttributes(childNode.$));
-      const tiles = Array.isArray(tile) && tile.map((t) => parseTileData(t));
-      return Object.assign({}, ...getAttributes($), { image, tiles });
-    }
+  for (const childNode of $$) {
+    const nodeType = childNode["#name"] as NodeType;
+    if (nodeType !== NodeType.Image) continue;
 
-  return Object.assign({}, ...getAttributes($));
+    const image = Object.assign({}, ...getAttributes(childNode.$));
+    const tiles = (tile as TMXNode<TMXTile>[] | undefined)?.map((t) => parseTile(t)) ?? [];
+    return Object.assign({}, ...getAttributes($), { image, tiles });
+  }
+
+  throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);
 };

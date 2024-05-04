@@ -6,6 +6,8 @@ import type { z } from "zod";
 
 export const InitialWorld = {
   [TilemapKey.Home]: new WorldData(),
+  [TilemapKey.HomeBuilding1]: new WorldData(),
+  [TilemapKey.HomeBuilding2]: new WorldData(),
 } as const satisfies Record<TilemapKey, WorldData>;
 export type World = typeof InitialWorld;
 

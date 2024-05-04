@@ -121,11 +121,6 @@
                     "value": ""
                 },
                 {
-                    "name": "id",
-                    "type": "string",
-                    "value": ""
-                },
-                {
                     "name": "messages",
                     "type": "string",
                     "value": ""
@@ -225,9 +220,37 @@
             "storageType": "string",
             "type": "enum",
             "values": [
-                "Home"
+                "Home",
+                "HomeBuilding1",
+                "HomeBuilding2"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 15,
+            "members": [
+                {
+                    "name": "tilemapKey",
+                    "propertyType": "TilemapKey",
+                    "type": "string",
+                    "value": "Home"
+                }
+            ],
+            "name": "Teleport",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
         }
     ]
 }

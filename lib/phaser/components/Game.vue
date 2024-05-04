@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Types } from "phaser";
 import { Game } from "phaser";
@@ -27,6 +28,7 @@ const readyListener = () => {
 };
 
 onMounted(() => {
+  registerTiledJSONExternalLoader();
   game.value = new Game({ ...configuration, parent: canvasRoot.value });
   game.value.events.on("ready", readyListener);
 });

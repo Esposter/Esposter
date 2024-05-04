@@ -20,7 +20,8 @@
   },
   "files.associations": {
     ".env": "env",
-    ".env.example": "env"
+    ".env.example": "env",
+    ".tsx": "xml"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.experimental.useFlatConfig": true

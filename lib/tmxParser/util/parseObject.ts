@@ -1,25 +1,24 @@
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
 import type { TMXObject } from "@/lib/tmxParser/models/tmx/TMXObject";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
-import { getFlattenedProperties } from "@/lib/tmxParser/util/getFlattenedProperties";
 import { getFlips } from "@/lib/tmxParser/util/getFlips";
 import { getObjectShape } from "@/lib/tmxParser/util/getObjectShape";
 import { getTileId } from "@/lib/tmxParser/util/getTileId";
+import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 
-export const parseObjectData = (node: TMXNode<TMXObject>): TMXObject => {
-  const { $, properties, polygon, text } = node;
+export const parseObject = (node: TMXNode<TMXObject>): TMXObject => {
+  const { $, polygon, text, properties } = node;
+  const objectData: Record<string, unknown> = {};
+
+  if (Array.isArray(polygon))
+    objectData.points = polygon[0].$.points.split(" ").map((point: { split: (arg0: string) => [string, string] }) => {
+      const [x, y] = point.split(",");
+      return [parseFloat(x), parseFloat(y)];
+    });
+
   const object = Object.assign(
-    {
-      shape: getObjectShape(node),
-      ...(Array.isArray(polygon) && {
-        points: polygon[0].$.points.split(" ").map((point: { split: (arg0: string) => [string, string] }) => {
-          const [x, y] = point.split(",");
-          return [parseFloat(x), parseFloat(y)];
-        }),
-      }),
-      ...getFlattenedProperties(properties),
-    },
+    { ...objectData, shape: getObjectShape(node), properties: parseProperties(properties) },
     ...getAttributes($),
   );
 
