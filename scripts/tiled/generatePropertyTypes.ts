@@ -1,14 +1,18 @@
 import { PropertyType } from "@/scripts/tiled/models/PropertyType";
-import type { PropertyTypes } from "@/scripts/tiled/models/PropertyTypes";
+import type { TiledProject } from "@/scripts/tiled/models/TiledProject";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
+import { jsonDateParse } from "@/util/jsonDateParse";
+import { readFile } from "node:fs/promises";
 
+const filePath = "assets/dungeons/world/index.tiled-project";
 const directory = "propertyTypes";
 
-export const generatePropertyTypes = async (propertyTypes: PropertyTypes) => {
+export const generatePropertyTypes = async () => {
+  const tiledProject: TiledProject = jsonDateParse(await readFile(`${filePath}.tiled-project`, "utf-8"));
   const classObjectTypes: string[] = [];
 
-  for (const propertyType of propertyTypes)
+  for (const propertyType of tiledProject.propertyTypes)
     if (propertyType.type === PropertyType.class) {
       const { name, type, members } = propertyType;
       const enumName = `${name}ObjectProperty`;
