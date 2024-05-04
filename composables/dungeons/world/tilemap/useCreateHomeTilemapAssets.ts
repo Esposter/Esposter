@@ -1,4 +1,4 @@
-import { LayerName } from "@/generated/tiled/layers/LayerName";
+import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { LayerNameTilesetKeysMap } from "@/services/dungeons/tilemap/LayerNameTilesetKeysMap";
 import { useSettingsStore } from "@/store/dungeons/settings";

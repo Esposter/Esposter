@@ -1,5 +1,5 @@
 export enum ObjectgroupName {
-  SceneTransition = "SceneTransition",
+  Door = "Door",
   Chest = "Chest",
   Sign = "Sign",
 }

@@ -218,6 +218,16 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "id": 14,
+            "name": "TilemapKey",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Home"
+            ],
+            "valuesAsFlags": false
         }
     ]
 }

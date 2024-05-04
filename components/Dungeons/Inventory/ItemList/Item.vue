@@ -5,9 +5,9 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Item } from "@/models/dungeons/item/Item";
 import {
-CONTENT_MENU_WIDTH,
-CURSOR_POSITION_INCREMENT,
-INITIAL_CURSOR_POSITION,
+  CONTENT_MENU_WIDTH,
+  CURSOR_POSITION_INCREMENT,
+  INITIAL_CURSOR_POSITION,
 } from "@/services/dungeons/scene/inventory/constants";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { parsePixel } from "@/util/parsePixel";

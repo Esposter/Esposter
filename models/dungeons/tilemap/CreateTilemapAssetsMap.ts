@@ -1,4 +1,4 @@
-import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 
 export const CreateTilemapAssetsMap: Record<TilemapKey, () => void> = {
   [TilemapKey.Home]: useCreateHomeTilemapAssets,

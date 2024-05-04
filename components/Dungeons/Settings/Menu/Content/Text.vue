@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";

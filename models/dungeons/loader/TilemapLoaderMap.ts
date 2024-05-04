@@ -1,5 +1,5 @@
 import home from "@/assets/dungeons/scene/world/home/tilemap.json";
-import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
 

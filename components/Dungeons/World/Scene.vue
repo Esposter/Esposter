@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";

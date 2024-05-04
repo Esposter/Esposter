@@ -20,7 +20,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   const expectedCount = tmxTiledMap.width * tmxTiledMap.height * 4;
 
   await Promise.all(
-    $$.map(async (node, index: number) => {
+    $$.map(async (node) => {
       const nodeType = node["#name"] as NodeType;
       switch (nodeType) {
         case NodeType.Properties:
@@ -40,11 +40,14 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         case NodeType.ImageLayer:
         case NodeType.Layer:
         case NodeType.Objectgroup:
-          tmxTiledMap.layers[index] = (await parseNode(
-            node as unknown as TMXNode<TMXLayer> | TMXNode<TMXLayerGroup>,
-            expectedCount,
-            translateFlips,
-          )) as TMXLayer;
+          {
+            const layer = await parseNode(
+              node as unknown as TMXNode<TMXLayer> | TMXNode<TMXLayerGroup>,
+              expectedCount,
+              translateFlips,
+            );
+            tmxTiledMap.layers.push(layer);
+          }
           break;
         case NodeType.Image:
           break;

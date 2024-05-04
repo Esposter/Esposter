@@ -1,7 +1,7 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
+import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { Chest } from "@/models/dungeons/data/world/Chest";
-import type { TilemapKey } from "@/models/dungeons/keys/TilemapKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { CreateTilemapAssetsMap } from "@/models/dungeons/tilemap/CreateTilemapAssetsMap";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";

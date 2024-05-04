@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/settings/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";

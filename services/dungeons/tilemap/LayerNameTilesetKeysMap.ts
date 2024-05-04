@@ -1,4 +1,4 @@
-import { LayerName } from "@/generated/tiled/layers/LayerName";
+import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 
 export const LayerNameTilesetKeysMap = {

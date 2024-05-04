@@ -5,11 +5,11 @@ import { generateEnumString } from "@/scripts/util/generateEnumString";
 import { jsonDateParse } from "@/util/jsonDateParse";
 import { readFile } from "node:fs/promises";
 
-const filePath = "assets/dungeons/world/index.tiled-project";
+const filePath = "assets/dungeons/scene/world/index.tiled-project";
 const directory = "propertyTypes";
 
 export const generatePropertyTypes = async () => {
-  const tiledProject: TiledProject = jsonDateParse(await readFile(`${filePath}.tiled-project`, "utf-8"));
+  const tiledProject: TiledProject = jsonDateParse(await readFile(filePath, "utf-8"));
   const classObjectTypes: string[] = [];
 
   for (const propertyType of tiledProject.propertyTypes)
