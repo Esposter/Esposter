@@ -1,4 +1,4 @@
-import { Utils } from "phaser";
+import { isPlainObject } from "@/util/isPlainObject";
 import { z } from "zod";
 
 export const zodStrictRecord = <K extends z.ZodType<string | number | symbol>, V extends z.ZodTypeAny>(
@@ -7,7 +7,7 @@ export const zodStrictRecord = <K extends z.ZodType<string | number | symbol>, V
 ) =>
   z.custom<Record<z.infer<K>, z.infer<V>>>(
     (input) =>
-      Utils.Objects.IsPlainObject(input) &&
+      isPlainObject(input) &&
       Object.entries(input).every(([key, value]) => zKey.safeParse(key).success && zValue.safeParse(value).success),
     "zodStrictRecord: error",
   );

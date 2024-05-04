@@ -6,12 +6,12 @@ import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { ID_SEPARATOR } from "@/util/id/constants";
+import { isPlainObject } from "@/util/isPlainObject";
 import { parseXmlString } from "@/util/parseXmlString";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
 
 const GetFastValue = Utils.Objects.GetFastValue;
-const IsPlainObject = Utils.Objects.IsPlainObject;
 const JSONFile = Loader.FileTypes.JSONFile;
 const MultiFile = Loader.MultiFile;
 
@@ -27,10 +27,9 @@ export class TiledJSONExternalFile extends MultiFile {
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
-    const objectKey = key as object;
-    if (IsPlainObject(objectKey)) {
-      const configuration = objectKey;
-      key = GetFastValue(configuration, "key");
+    if (isPlainObject(key)) {
+      const configuration = key;
+      key = GetFastValue(configuration, "key") as string;
       tilemapURL = GetFastValue(configuration, "url");
       tilemapXhrSettings = GetFastValue(configuration, "xhrSettings");
       path = GetFastValue(configuration, "path");
@@ -38,9 +37,8 @@ export class TiledJSONExternalFile extends MultiFile {
       tilesetXhrSettings = GetFastValue(configuration, "tilesetXhrSettings");
     }
 
-    const stringKey = key as string;
-    const tilemapFile = new JSONFile(loader, stringKey, tilemapURL, tilemapXhrSettings);
-    super(loader, "tilemapJSON", stringKey, [tilemapFile]);
+    const tilemapFile = new JSONFile(loader, key, tilemapURL, tilemapXhrSettings);
+    super(loader, "tilemapJSON", key, [tilemapFile]);
 
     this.config.path = path;
     this.config.baseURL = baseURL;
