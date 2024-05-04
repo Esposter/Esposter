@@ -1,15 +1,4 @@
-import type { TMXImage } from "@/lib/tmxParser/models/tmx/TMXImage";
-import type { TMXTile } from "@/lib/tmxParser/models/tmx/TMXTile";
+import type { TMXEmbeddedTileset } from "@/lib/tmxParser/models/tmx/TMXEmbeddedTileset";
+import type { TMXExternalTileset } from "@/lib/tmxParser/models/tmx/TMXExternalTileset";
 
-export interface TMXTileset {
-  columns: number;
-  firstgid: number;
-  name: string;
-  image: TMXImage;
-  spacing?: number;
-  margin?: number;
-  tilecount: number;
-  tileheight: number;
-  tilewidth: number;
-  tiles: TMXTile[];
-}
+export type TMXTileset = TMXEmbeddedTileset | TMXExternalTileset;

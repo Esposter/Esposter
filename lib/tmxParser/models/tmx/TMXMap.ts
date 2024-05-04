@@ -1,7 +1,7 @@
-import type { BaseTMXTiledMap } from "@/lib/tmxParser/models/tmx/BaseTMXTiledMap";
+import type { TMXBaseTiledMap } from "@/lib/tmxParser/models/tmx/TMXBaseTiledMap";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
 
-export interface TMXMap extends TMXNode<BaseTMXTiledMap> {
+export interface TMXMap extends TMXNode<TMXBaseTiledMap> {
   editorsettings: Record<string, unknown>[];
   tileset: Record<string, unknown>[];
   layer: Record<string, unknown>[];

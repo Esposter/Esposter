@@ -1,4 +1,4 @@
-export class BaseTMXTiledMap {
+export class TMXBaseTiledMap {
   version = 0;
   tiledversion = "";
   orientation = "";

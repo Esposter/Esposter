@@ -3,6 +3,7 @@ import { parseTmx } from "@/lib/tmxParser/parseTmx";
 import { DIRECTORY } from "@/scripts/tiled/layers/constants";
 import { generateLayerNames } from "@/scripts/tiled/layers/generateLayerNames";
 import { LayerType } from "@/scripts/tiled/models/LayerType";
+import { getTilemapDirectory } from "@/scripts/util/getTilemapDirectory";
 import { readFile } from "node:fs/promises";
 
 export const generateLayers = async () => {
@@ -10,7 +11,9 @@ export const generateLayers = async () => {
   const objectgroupNameMembers = new Set<string>();
 
   for (const tilemapKey of Object.values(TilemapKey)) {
-    const tilemap = await parseTmx(await readFile(`assets/dungeons/scene/world/${tilemapKey}/index.tmx`, "utf-8"));
+    const tilemap = await parseTmx(
+      await readFile(`assets/dungeons/scene/world/${getTilemapDirectory(tilemapKey)}/index.tmx`, "utf-8"),
+    );
 
     for (const layerType of Object.values(LayerType)) {
       if (layerType === LayerType.objectgroup) {
@@ -38,7 +41,7 @@ export const generateLayers = async () => {
 
   const promises: Promise<void>[] = [];
   for (const [tilemapKey, layerMembersMap] of tilemapLayerMembersMap.entries()) {
-    const directory = `${DIRECTORY}/${tilemapKey}`;
+    const directory = `${DIRECTORY}/${getTilemapDirectory(tilemapKey)}`;
     for (const [layerType, layerMembers] of layerMembersMap.entries())
       promises.push(generateLayerNames(directory, layerType, layerMembers));
   }

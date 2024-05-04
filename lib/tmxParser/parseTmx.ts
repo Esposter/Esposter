@@ -1,9 +1,9 @@
 import { NodeType } from "@/lib/tmxParser/models/NodeType";
-import { ParsedTMXTiledMap } from "@/lib/tmxParser/models/tmx/ParsedTMXTiledMap";
 import type { TMX } from "@/lib/tmxParser/models/tmx/TMX";
 import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import type { TMXLayerGroup } from "@/lib/tmxParser/models/tmx/TMXLayerGroup";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
+import { TMXParsedTiledMap } from "@/lib/tmxParser/models/tmx/TMXParsedTiledMap";
 import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
 import { parseNode } from "@/lib/tmxParser/util/parseNode";
@@ -12,11 +12,11 @@ import { parseXmlString } from "@/lib/tmxParser/util/parseXmlString";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 
-export const parseTmx = async (xmlString: string, translateFlips = false): Promise<ParsedTMXTiledMap> => {
+export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsedTiledMap> => {
   const {
     map: { $, $$ },
   } = (await parseXmlString(xmlString)) as TMX;
-  const tmxTiledMap = new ParsedTMXTiledMap(Object.assign({}, ...getAttributes($)));
+  const tmxTiledMap = new TMXParsedTiledMap(Object.assign({}, ...getAttributes($)));
   const expectedCount = tmxTiledMap.width * tmxTiledMap.height * 4;
 
   await Promise.all(
