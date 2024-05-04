@@ -1,8 +1,8 @@
-import aquavalor from "@/assets/dungeons/battle/monsters/aquavalor.png";
-import carnodusk from "@/assets/dungeons/battle/monsters/carnodusk.png";
-import frostsaber from "@/assets/dungeons/battle/monsters/frostsaber.png";
-import ignivolt from "@/assets/dungeons/battle/monsters/ignivolt.png";
-import iguanignite from "@/assets/dungeons/battle/monsters/iguanignite.png";
+import aquavalor from "@/assets/dungeons/scene/battle/monsters/aquavalor.png";
+import carnodusk from "@/assets/dungeons/scene/battle/monsters/carnodusk.png";
+import frostsaber from "@/assets/dungeons/scene/battle/monsters/frostsaber.png";
+import ignivolt from "@/assets/dungeons/scene/battle/monsters/ignivolt.png";
+import iguanignite from "@/assets/dungeons/scene/battle/monsters/iguanignite.png";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";

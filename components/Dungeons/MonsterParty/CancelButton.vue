@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ButtonTextStyle } from "@/assets/dungeons/monsterParty/styles/ButtonTextStyle";
+import { ButtonTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/ButtonTextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";

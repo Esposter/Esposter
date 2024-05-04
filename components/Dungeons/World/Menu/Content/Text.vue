@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/world/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/world/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import {
-  INITIAL_MENU_CURSOR_POSITION,
-  MENU_CURSOR_POSITION_INCREMENT,
+INITIAL_MENU_CURSOR_POSITION,
+MENU_CURSOR_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/world/constants";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Input } from "phaser";

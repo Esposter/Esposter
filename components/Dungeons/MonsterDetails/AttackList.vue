@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MonsterAttackTextStyle } from "@/assets/dungeons/monsterDetails/styles/MonsterAttackTextStyle";
+import { MonsterAttackTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MonsterAttackTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 

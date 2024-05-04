@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/monsterDetails/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";

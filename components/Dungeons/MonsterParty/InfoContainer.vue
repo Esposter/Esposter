@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/monsterParty/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
