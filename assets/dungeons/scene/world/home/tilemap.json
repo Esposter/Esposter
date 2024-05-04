@@ -919,7 +919,7 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/thirdParty\/axulart\/tilesets\/BasicPlains.png",
+         "image":"..\/..\/..\/thirdParty\/axulart\/tilesets\/BasicPlains.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -932,7 +932,7 @@
         {
          "columns":15,
          "firstgid":65,
-         "image":"..\/..\/thirdParty\/axulart\/tilesets\/BeachAndCaves.png",
+         "image":"..\/..\/..\/thirdParty\/axulart\/tilesets\/BeachAndCaves.png",
          "imageheight":512,
          "imagewidth":960,
          "margin":0,
@@ -945,7 +945,7 @@
         {
          "columns":2,
          "firstgid":185,
-         "image":"..\/..\/tilesets\/Grass.png",
+         "image":"..\/..\/..\/tilesets\/Grass.png",
          "imageheight":128,
          "imagewidth":128,
          "margin":0,
@@ -958,7 +958,7 @@
         {
          "columns":1,
          "firstgid":189,
-         "image":"..\/..\/tilesets\/Collision.png",
+         "image":"..\/..\/..\/tilesets\/Collision.png",
          "imageheight":64,
          "imagewidth":64,
          "margin":0,
@@ -981,7 +981,7 @@
         {
          "columns":2,
          "firstgid":190,
-         "image":"..\/..\/tilesets\/Bushes.png",
+         "image":"..\/..\/..\/tilesets\/Bushes.png",
          "imageheight":128,
          "imagewidth":128,
          "margin":0,
@@ -994,7 +994,7 @@
         {
          "columns":1,
          "firstgid":194,
-         "image":"..\/..\/tilesets\/Encounter.png",
+         "image":"..\/..\/..\/tilesets\/Encounter.png",
          "imageheight":64,
          "imagewidth":64,
          "margin":0,
@@ -1014,7 +1014,7 @@
         {
          "columns":4,
          "firstgid":195,
-         "image":"..\/..\/thirdParty\/axulart\/tilesets\/House.png",
+         "image":"..\/..\/..\/thirdParty\/axulart\/tilesets\/House.png",
          "imageheight":192,
          "imagewidth":256,
          "margin":0,
@@ -1028,7 +1028,7 @@
          "class":"Npc",
          "columns":1,
          "firstgid":207,
-         "image":"..\/..\/tilesets\/Encounter.png",
+         "image":"..\/..\/..\/tilesets\/Encounter.png",
          "imageheight":64,
          "imagewidth":64,
          "margin":0,
@@ -1053,7 +1053,7 @@
         {
          "columns":12,
          "firstgid":208,
-         "image":"..\/..\/thirdParty\/axulart\/tilesets\/HouseInterior.png",
+         "image":"..\/..\/..\/thirdParty\/axulart\/tilesets\/HouseInterior.png",
          "imageheight":640,
          "imagewidth":768,
          "margin":0,
@@ -1066,7 +1066,7 @@
         {
          "columns":3,
          "firstgid":328,
-         "image":"..\/..\/tilesets\/Entrance.png",
+         "image":"..\/..\/..\/tilesets\/Entrance.png",
          "imageheight":64,
          "imagewidth":192,
          "margin":0,
