@@ -8,7 +8,7 @@ import type { TMXProperties } from "@/lib/tmxParser/models/tmx/TMXProperties";
 
 export interface TMXLayer extends TMXBaseLayer {
   data?: TMXNode<{ tile: TMXNode<TMXObject>[]; encoding: Encoding; compression?: Compression | null }>[];
-  objects?: TMXObject[];
-  image?: TMXImage;
-  properties: TMXProperties;
+  object?: TMXNode<TMXObject>[];
+  image?: TMXNode<TMXImage>[];
+  properties?: TMXProperties;
 }

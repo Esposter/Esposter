@@ -8,5 +8,5 @@ export interface TMXTile {
   animation?: Record<string, TMXNode<TMXObject>[]>[];
   objectgroup?: Record<string, TMXNode<TMXObject>[]>[];
   probability?: number;
-  properties: TMXProperties;
+  properties?: TMXProperties;
 }

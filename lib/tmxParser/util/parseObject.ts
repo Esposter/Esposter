@@ -1,10 +1,10 @@
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
 import type { TMXObject } from "@/lib/tmxParser/models/tmx/TMXObject";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
-import { getFlattenedProperties } from "@/lib/tmxParser/util/getFlattenedProperties";
 import { getFlips } from "@/lib/tmxParser/util/getFlips";
 import { getObjectShape } from "@/lib/tmxParser/util/getObjectShape";
 import { getTileId } from "@/lib/tmxParser/util/getTileId";
+import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 
 export const parseObject = (node: TMXNode<TMXObject>): TMXObject => {
@@ -18,7 +18,7 @@ export const parseObject = (node: TMXNode<TMXObject>): TMXObject => {
     });
 
   const object = Object.assign(
-    { ...objectData, shape: getObjectShape(node), ...getFlattenedProperties(properties) },
+    { ...objectData, shape: getObjectShape(node), properties: parseProperties(properties) },
     ...getAttributes($),
   );
 

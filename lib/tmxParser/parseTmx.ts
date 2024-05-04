@@ -11,7 +11,8 @@ import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { parseXmlString } from "@/util/parseXmlString";
-
+// We will try and match phaser's transform when exporting tmx => json tilemaps
+// but also support extra functionality like using external tilesets
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsedTiledMap> => {
   const {
     map: { $, $$ },

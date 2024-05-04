@@ -4,9 +4,9 @@ import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
 import type { TMXParsedLayer } from "@/lib/tmxParser/models/tmx/TMXParsedLayer";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
-import { getFlattenedProperties } from "@/lib/tmxParser/util/getFlattenedProperties";
 import { getFlips } from "@/lib/tmxParser/util/getFlips";
 import { getTileId } from "@/lib/tmxParser/util/getTileId";
+import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
 import { unpackTileBytes } from "@/lib/tmxParser/util/unpackTileBytes";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { gunzip, inflate } from "zlib";
@@ -17,14 +17,14 @@ export const parseTileLayer = async (
   translateFlips: boolean,
 ): Promise<TMXParsedLayer> => {
   const { data, properties } = node;
-  if (!Array.isArray(data)) throw new Error("TMXLayer data corrupted!");
+  if (!data) throw new Error("TMXLayer data corrupted!");
 
   const newLayer = Object.assign(
     {
       ...(translateFlips ? { flips: [] } : {}),
       type: node["#name"],
       visible: 1,
-      ...getFlattenedProperties(properties),
+      properties: parseProperties(properties),
     },
     ...getAttributes(node.$),
   );

@@ -6,5 +6,5 @@ export interface TMXLayerGroup {
   type: string;
   name: string;
   layers: TMXLayer[];
-  properties: TMXProperties;
+  properties?: TMXProperties;
 }

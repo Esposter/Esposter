@@ -13,5 +13,5 @@ export interface TMXObject {
   x: number;
   y: number;
   flips?: TMXFlips;
-  properties: TMXProperties;
+  properties?: TMXProperties;
 }
