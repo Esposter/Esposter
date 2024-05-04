@@ -38,7 +38,7 @@ export const parseTileLayer = async (
 
     switch (encoding) {
       case Encoding.Csv:
-        newLayer.data = layerData.split(",");
+        newLayer.data = layerData.split(",").map((d) => parseInt(d));
         break;
       case Encoding.Base64: {
         const buffer = Buffer.from(layerData, encoding);
