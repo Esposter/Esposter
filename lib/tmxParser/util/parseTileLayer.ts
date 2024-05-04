@@ -70,10 +70,9 @@ export const parseTileLayer = async (
   }
 
   if (translateFlips)
-    for (let i = 0; i < newLayer.data.length; i++) {
-      const gid = newLayer.data[i];
-      newLayer.flips[i] = getFlips(gid);
-      newLayer.data[i] = getTileId(gid);
+    for (const [index, gid] of (newLayer.data as number[]).entries()) {
+      newLayer.flips[index] = getFlips(gid);
+      newLayer.data[index] = getTileId(gid);
     }
 
   return newLayer;

@@ -8,9 +8,9 @@ import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
 import { parseNode } from "@/lib/tmxParser/util/parseNode";
 import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
-import { parseXmlString } from "@/lib/tmxParser/util/parseXmlString";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { parseXmlString } from "@/util/parseXmlString";
 
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsedTiledMap> => {
   const {
@@ -34,6 +34,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
           tmxTiledMap.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as string]: n.$ })) };
           break;
         case NodeType.Tileset:
+          console.log(node);
           tmxTiledMap.tilesets.push(parseTileset(node as unknown as TMXNode<TMXTileset>));
           break;
         case NodeType.Group:

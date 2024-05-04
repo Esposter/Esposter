@@ -15,12 +15,12 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
   };
   const updateThemeModeSetting = async (direction: Direction) => {
     const themeModeSettings = Object.values(ThemeModeSetting);
-    for (let i = 0; i < themeModeSettings.length; i++)
-      if (themeModeSettings[i] === themeModeSetting.value) {
+    for (const [index, setting] of themeModeSettings.entries())
+      if (setting === themeModeSetting.value) {
         if (direction === Direction.LEFT)
-          await setThemeModeSetting(themeModeSettings[mod(i - 1, themeModeSettings.length)]);
+          await setThemeModeSetting(themeModeSettings[mod(index - 1, themeModeSettings.length)]);
         else if (direction === Direction.RIGHT)
-          await setThemeModeSetting(themeModeSettings[(i + 1) % themeModeSettings.length]);
+          await setThemeModeSetting(themeModeSettings[(index + 1) % themeModeSettings.length]);
         return;
       }
   };
