@@ -1,5 +1,6 @@
 import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
+import type { TMXEmbeddedTileset } from "@/lib/tmxParser/models/tmx/TMXEmbeddedTileset";
 import type { TMXExternalTileset } from "@/lib/tmxParser/models/tmx/TMXExternalTileset";
 import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
@@ -105,11 +106,13 @@ export class TiledJSONExternalFile extends MultiFile {
       if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
 
       const responseData = await parseXmlString(response);
-      const tilesetData = parseTileset(responseData.tileset);
+      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTileset;
       const index = tilesetFile.tilesetIndex;
       tilemapFile.data.tilesets[index] = {
         ...tilemapFile.data.tilesets[index],
         ...tilesetData,
+        imagewidth: tilesetData.image.width,
+        imageheight: tilesetData.image.height,
         // Avoid throwing in tilemap creator
         source: undefined,
       };
