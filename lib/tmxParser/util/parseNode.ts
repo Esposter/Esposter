@@ -2,6 +2,7 @@ import { NodeType } from "@/lib/tmxParser/models/NodeType";
 import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import type { TMXLayerGroup } from "@/lib/tmxParser/models/tmx/TMXLayerGroup";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
+import type { TMXParsedLayer } from "@/lib/tmxParser/models/tmx/TMXParsedLayer";
 import { parseGroup } from "@/lib/tmxParser/util/parseGroup";
 import { parseLayer } from "@/lib/tmxParser/util/parseLayer";
 import { parseTileLayer } from "@/lib/tmxParser/util/parseTileLayer";
@@ -12,7 +13,7 @@ export const parseNode = (
   node: TMXNode<TMXLayer> | TMXNode<TMXLayerGroup>,
   expectedCount: number,
   translateFlips: boolean,
-): Promise<TMXLayer | TMXLayerGroup> | TMXLayer => {
+): Promise<TMXParsedLayer | TMXLayerGroup> | TMXParsedLayer => {
   const nodeType = node["#name"] as NodeType;
 
   switch (nodeType) {

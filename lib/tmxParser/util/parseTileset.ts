@@ -4,7 +4,7 @@ import type { TMXTile } from "@/lib/tmxParser/models/tmx/TMXTile";
 import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
 import { isExternalTileset } from "@/lib/tmxParser/util/isExternalTileset";
-import { parseTileData } from "@/lib/tmxParser/util/parseTileData";
+import { parseTile } from "@/lib/tmxParser/util/parseTile";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
 
@@ -18,9 +18,9 @@ export const parseTileset = (node: TMXNode<TMXTileset>): TMXTileset => {
     if (nodeType !== NodeType.Image) continue;
 
     const image = Object.assign({}, ...getAttributes(childNode.$));
-    const tiles = (tile as TMXNode<TMXTile>[] | undefined)?.map((t) => parseTileData(t)) ?? [];
+    const tiles = (tile as TMXNode<TMXTile>[] | undefined)?.map((t) => parseTile(t)) ?? [];
     return Object.assign({}, ...getAttributes($), { image, tiles });
   }
 
-  throw new InvalidOperationError(Operation.Read, parseTileset.name, node.properties.toString());
+  throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);
 };

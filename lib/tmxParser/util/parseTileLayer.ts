@@ -2,7 +2,7 @@ import { Compression } from "@/lib/tmxParser/models/Compression";
 import { Encoding } from "@/lib/tmxParser/models/Encoding";
 import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
 import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
-import type { TMXObject } from "@/lib/tmxParser/models/tmx/TMXObject";
+import type { TMXParsedLayer } from "@/lib/tmxParser/models/tmx/TMXParsedLayer";
 import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
 import { getFlattenedProperties } from "@/lib/tmxParser/util/getFlattenedProperties";
 import { getFlips } from "@/lib/tmxParser/util/getFlips";
@@ -15,7 +15,7 @@ export const parseTileLayer = async (
   node: TMXNode<TMXLayer>,
   expectedCount: number,
   translateFlips: boolean,
-): Promise<TMXLayer> => {
+): Promise<TMXParsedLayer> => {
   const { data, properties } = node;
   if (!Array.isArray(data)) throw new Error("TMXLayer data corrupted!");
 
@@ -30,11 +30,11 @@ export const parseTileLayer = async (
   );
   const { _, $, tile } = data[0];
   // Xml Deprecated
-  if (tile) newLayer.data = tile.map(({ $ }: TMXNode<TMXObject>) => $?.gid ?? 0);
+  if (tile) newLayer.data = tile.map(({ $ }) => $.gid);
   else {
     // Csv, Base64
-    const { encoding, compression }: { encoding: Encoding; compression: Compression | null | undefined } = $;
-    const layerData = _.trim();
+    const { encoding, compression } = $;
+    const layerData = (_ as string).trim();
 
     switch (encoding) {
       case Encoding.Csv:

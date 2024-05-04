@@ -7,8 +7,8 @@ import { getObjectShape } from "@/lib/tmxParser/util/getObjectShape";
 import { getTileId } from "@/lib/tmxParser/util/getTileId";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 
-export const parseObjectData = (node: TMXNode<TMXObject>): TMXObject => {
-  const { $, properties, polygon, text } = node;
+export const parseObject = (node: TMXNode<TMXObject>): TMXObject => {
+  const { $, polygon, text, properties } = node;
   const objectData: Record<string, unknown> = {};
 
   if (Array.isArray(polygon))
@@ -18,11 +18,7 @@ export const parseObjectData = (node: TMXNode<TMXObject>): TMXObject => {
     });
 
   const object = Object.assign(
-    {
-      ...objectData,
-      shape: getObjectShape(node),
-      ...getFlattenedProperties(properties),
-    },
+    { ...objectData, shape: getObjectShape(node), ...getFlattenedProperties(properties) },
     ...getAttributes($),
   );
 
