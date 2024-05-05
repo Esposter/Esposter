@@ -32,13 +32,6 @@ const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3))
   </NuxtLayout>
 </template>
 
-<style lang="scss">
-// Disable selecting text for better UX when clicking
-.v-main {
-  user-select: none;
-}
-</style>
-
 <style scoped lang="scss">
 :deep(.v-list-group__items > .v-list-item) {
   padding-inline-start: 1rem !important;
