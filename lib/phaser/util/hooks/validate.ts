@@ -3,7 +3,7 @@ import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
 import type { Game } from "phaser";
 
-export const validateHook = (game: object | null, hookName: string) => {
+export const validate = (game: object | null, hookName: string) => {
   if (!game) throw new NotInitializedError(GameObjectType.Game);
   else if ((game as Game).scene.scenes.length !== Object.keys(SceneKey).length)
     throw new Error(

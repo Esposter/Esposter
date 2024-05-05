@@ -5,7 +5,6 @@ import { useSoundStore } from "@/store/dungeons/sound";
 export const useDungeonsBackgroundMusic = (key: BackgroundMusicKey, sceneKey: string) => {
   const soundStore = useSoundStore();
   const { backgroundMusicKey } = storeToRefs(soundStore);
-
   backgroundMusicKey.value = key;
 
   onShutdown(() => {
