@@ -1,36 +1,32 @@
-import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
-import type { TMXObject } from "@/lib/tmxParser/models/tmx/TMXObject";
-import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
-import { getFlips } from "@/lib/tmxParser/util/getFlips";
-import { getObjectShape } from "@/lib/tmxParser/util/getObjectShape";
-import { getTileId } from "@/lib/tmxParser/util/getTileId";
+import type { TMXObjectNode } from "@/lib/tmxParser/models/tmx/node/TMXObjectNode";
+import type { TMXObjectParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXObjectParsed";
+import { parseFlips } from "@/lib/tmxParser/util/parseFlips";
+import { parseObjectShape } from "@/lib/tmxParser/util/parseObjectShape";
 import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
-import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
+import { parseTileId } from "@/lib/tmxParser/util/parseTileId";
 
-export const parseObject = (node: TMXNode<TMXObject>): TMXObject => {
+export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   const { $, polygon, text, properties } = node;
-  const objectData: Record<string, unknown> = {};
+  const object = structuredClone($) as TMXObjectParsed;
+  object.shape = parseObjectShape(node);
 
-  if (Array.isArray(polygon))
-    objectData.points = polygon[0].$.points.split(" ").map((point: { split: (arg0: string) => [string, string] }) => {
+  if (properties) object.properties = parseProperties(properties);
+
+  if (polygon)
+    object.points = polygon[0].$.points.split(" ").map((point) => {
       const [x, y] = point.split(",");
       return [parseFloat(x), parseFloat(y)];
     });
 
-  const object = Object.assign(
-    { ...objectData, shape: getObjectShape(node), properties: parseProperties(properties) },
-    ...getAttributes($),
-  );
-
-  if (Array.isArray(text)) {
-    const textNode = text[0] as TMXNode<TiledObjectProperty<string>>;
+  if (text) {
+    const textNode = text[0];
     object.text = textNode._;
     object.properties = Object.assign({}, object.properties, textNode.$);
   }
 
   if (object.gid) {
-    object.flips = getFlips(object.gid);
-    object.gid = getTileId(object.gid);
+    object.flips = parseFlips(object.gid);
+    object.gid = parseTileId(object.gid);
   }
 
   return object;

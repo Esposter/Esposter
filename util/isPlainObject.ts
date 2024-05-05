@@ -6,7 +6,7 @@ export const isPlainObject = (object: unknown): object is object => {
   if (
     !object ||
     typeof object !== "object" ||
-    Object.hasOwnProperty.call(object, "nodeType") ||
+    Object.hasOwnProperty.call(object, "TMXNodeType") ||
     Object.hasOwnProperty.call(object, "window")
   )
     return false;

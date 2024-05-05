@@ -1,16 +1,15 @@
-import type { TMXLayerGroup } from "@/lib/tmxParser/models/tmx/TMXLayerGroup";
-import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
-import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
+import type { TMXLayerGroupNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerGroupNode";
+import type { TMXLayerGroupParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXLayerGroupParsed";
 import { parseNode } from "@/lib/tmxParser/util/parseNode";
-import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
 
 export const parseGroup = async (
-  node: TMXNode<TMXLayerGroup>,
+  node: TMXLayerGroupNode,
   expectedCount: number,
   translateFlips: boolean,
-): Promise<TMXLayerGroup> => {
-  const { $, $$, properties } = node;
-  const group: Record<string, unknown> = { type: node["#name"] };
+): Promise<TMXLayerGroupParsed> => {
+  const { $, $$ } = node;
+  const group = structuredClone($) as TMXLayerGroupParsed;
+  group.type = node["#name"] as string;
   if ($$) group.layers = await Promise.all($$.map((l) => parseNode(l, expectedCount, translateFlips)));
-  return Object.assign({ ...group, properties: parseProperties(properties) }, ...getAttributes($));
+  return group;
 };

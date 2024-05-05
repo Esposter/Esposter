@@ -1,7 +1,7 @@
 import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
-import type { TMXEmbeddedTileset } from "@/lib/tmxParser/models/tmx/TMXEmbeddedTileset";
-import type { TMXExternalTileset } from "@/lib/tmxParser/models/tmx/TMXExternalTileset";
+import type { TMXEmbeddedTilesetParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXEmbeddedTilesetParsed";
+import type { TMXExternalTilesetParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXExternalTilesetParsed";
 import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
@@ -54,7 +54,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
     if (file.type === "json" && Object.prototype.hasOwnProperty.call(file.data, "tilesets")) {
       //  Inspect the data for the files to now load
-      const tilesets = file.data.tilesets as TMXExternalTileset[];
+      const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
       const config = this.config;
       const loader = this.loader;
       const currentBaseURL = loader.baseURL;
@@ -106,7 +106,7 @@ export class TiledJSONExternalFile extends MultiFile {
       if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
 
       const responseData = await parseXmlString(response);
-      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTileset;
+      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
       tilemapFile.data.tilesets[index] = {
         ...tilemapFile.data.tilesets[index],

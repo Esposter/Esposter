@@ -1,25 +1,25 @@
-import { NodeType } from "@/lib/tmxParser/models/NodeType";
-import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
-import type { TMXTile } from "@/lib/tmxParser/models/tmx/TMXTile";
-import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
-import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
+import type { TMXEmbeddedTilesetNode } from "@/lib/tmxParser/models/tmx/node/TMXEmbeddedTilesetNode";
+import { TMXNodeType } from "@/lib/tmxParser/models/tmx/node/TMXNodeType";
+import type { TMXTilesetNode } from "@/lib/tmxParser/models/tmx/node/TMXTilesetNode";
+import type { TMXTilesetParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXTilesetParsed";
+import type { TMXImageShared } from "@/lib/tmxParser/models/tmx/shared/TMXImageShared";
 import { isExternalTileset } from "@/lib/tmxParser/util/isExternalTileset";
 import { parseTile } from "@/lib/tmxParser/util/parseTile";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
 
-export const parseTileset = (node: TMXNode<TMXTileset>): TMXTileset => {
-  const { $, $$, tile } = node;
+export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
+  if (isExternalTileset(node.$)) return structuredClone(node.$);
 
-  if (isExternalTileset($)) return Object.assign({}, ...getAttributes($));
+  const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
 
-  for (const childNode of $$) {
-    const nodeType = childNode["#name"] as NodeType;
-    if (nodeType !== NodeType.Image) continue;
+  for (const childNode of $$ ?? []) {
+    const tmxNodeType = childNode["#name"] as TMXNodeType;
+    if (tmxNodeType !== TMXNodeType.Image) continue;
 
-    const image = Object.assign({}, ...getAttributes(childNode.$));
-    const tiles = (tile as TMXNode<TMXTile>[] | undefined)?.map((t) => parseTile(t)) ?? [];
-    return Object.assign({}, ...getAttributes($), { image, tiles });
+    const image = structuredClone(childNode.$ as TMXImageShared);
+    const tiles = tile?.map((t) => parseTile(t)) ?? [];
+    return { ...$, image, tiles };
   }
 
   throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);

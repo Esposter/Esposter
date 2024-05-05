@@ -11,13 +11,13 @@ export const generateLayers = async () => {
   const objectgroupNameMembers = new Set<string>();
 
   for (const tilemapKey of Object.values(TilemapKey)) {
-    const tilemap = await parseTmx(
+    const tmx = await parseTmx(
       await readFile(`assets/dungeons/scene/world/${getTilemapDirectory(tilemapKey)}/index.tmx`, "utf-8"),
     );
 
     for (const layerType of Object.values(LayerType)) {
       if (layerType === LayerType.objectgroup) {
-        for (const layer of tilemap.layers) {
+        for (const layer of tmx.map.layers) {
           if (layer.type !== layerType) continue;
           objectgroupNameMembers.add(layer.name);
         }
@@ -25,7 +25,7 @@ export const generateLayers = async () => {
       }
 
       const members = new Set<string>();
-      for (const layer of tilemap.layers) {
+      for (const layer of tmx.map.layers) {
         if (layer.type !== layerType) continue;
         members.add(layer.name);
       }

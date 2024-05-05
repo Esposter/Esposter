@@ -1,7 +1,7 @@
-import type { TMXParsedProperties } from "@/lib/tmxParser/models/tmx/TMXParsedProperties";
-import type { TMXProperties } from "@/lib/tmxParser/models/tmx/TMXProperties";
+import type { TMXPropertyNode } from "@/lib/tmxParser/models/tmx/node/TMXPropertyNode";
+import type { TMXPropertiesParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXPropertiesParsed";
 
-export const parseProperties = (properties: TMXProperties | undefined): TMXParsedProperties | undefined =>
+export const parseProperties = (properties?: { property: TMXPropertyNode[] }[]): TMXPropertiesParsed | undefined =>
   properties
     ? properties.map(({ property }) => {
         const { $, _ } = property[0];

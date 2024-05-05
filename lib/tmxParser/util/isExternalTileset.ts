@@ -1,4 +1,6 @@
-import type { TMXExternalTileset } from "@/lib/tmxParser/models/tmx/TMXExternalTileset";
-import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
+import type { TMXEmbeddedTilesetShared } from "@/lib/tmxParser/models/tmx/shared/TMXEmbeddedTilesetShared";
+import type { TMXExternalTilesetShared } from "@/lib/tmxParser/models/tmx/shared/TMXExternalTilesetShared";
 
-export const isExternalTileset = (tileset: TMXTileset): tileset is TMXExternalTileset => "source" in tileset;
+export const isExternalTileset = (
+  tileset: TMXEmbeddedTilesetShared | TMXExternalTilesetShared,
+): tileset is TMXExternalTilesetShared => "source" in tileset;
