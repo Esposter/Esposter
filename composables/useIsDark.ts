@@ -1,3 +1,4 @@
-import { useTheme } from "vuetify";
-
-export const useIsDark = () => computed(() => useTheme().global.current.value.dark);
+export const useIsDark = () => {
+  const globalTheme = useGlobalTheme();
+  return computed(() => globalTheme.current.value.dark);
+};
