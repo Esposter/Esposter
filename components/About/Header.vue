@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { VUEJS_LOGO_UWU_PATH } from "@/services/esposter/constants";
+
 const isDark = useIsDark();
 const { smAndDown } = useDisplay();
 </script>
 
 <template>
-  <div text-center>
+  <div flex flex-col items-center text-center>
     <div font-900 leading-tight font-inter :class="{ accent: isDark }" :text="smAndDown ? '5xl' : '7xl'">
       The
       <span :class="{ accent: !isDark }">Progressive</span>
@@ -12,7 +14,8 @@ const { smAndDown } = useDisplay();
       JavaScript Application
     </div>
     <br />
-    <div class="text-grey" text-2xl>An approachable, performant and versatile javascript application.</div>
+    <div class="text-grey" text-2xl>An approachable, performant and versatile javascript application powered by</div>
+    <v-img id="uwu" width="100%" max-width="45rem" :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
   </div>
 </template>
 

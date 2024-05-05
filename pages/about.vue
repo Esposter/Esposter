@@ -20,7 +20,7 @@ const cardType = ref(CardType.Marquee);
           <AboutHeader />
         </v-col>
       </v-row>
-      <v-row pt-12>
+      <v-row>
         <v-col>
           <AboutContent />
         </v-col>
