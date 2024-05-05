@@ -5,7 +5,7 @@ const { smAndDown } = useDisplay();
 
 <template>
   <div text-center>
-    <div font-900 leading-tight :class="{ accent: isDark }" :text="smAndDown ? '5xl' : '7xl'">
+    <div font-900 leading-tight font-inter :class="{ accent: isDark }" :text="smAndDown ? '5xl' : '7xl'">
       The
       <span :class="{ accent: !isDark }">Progressive</span>
       <br />

@@ -13,7 +13,7 @@ const { xs, sm } = useDisplay();
   <StyledCard
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
     flex="!"
-    font="Montserrat!"
+    font-montserrat="!"
     font-bold
     justify-center
     items-center
