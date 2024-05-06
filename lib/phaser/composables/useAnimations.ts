@@ -1,15 +1,16 @@
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
-export const useAnimations = (configurations: AnimationConfiguration["animations"]) => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
-  const animations = ref(configurations);
+export const useAnimations = (
+  createConfigurations: (scene: SceneWithPlugins) => AnimationConfiguration["animations"],
+) => {
+  const animations = ref<AnimationConfiguration["animations"]>();
 
-  onUnmounted(() => {
-    for (const { key } of configurations) {
+  onShutdown((scene) => {
+    for (const { key } of createConfigurations(scene)) {
       if (!key) continue;
-      scene.value.anims.remove(key);
+      scene.anims.remove(key);
     }
   });
 

@@ -3,16 +3,14 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuT
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
+import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 // It's unfortunate, but we have to access the internals
@@ -26,6 +24,11 @@ const infoPanelStore = useInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
 const rectangleHeight = 65;
 const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
+const y = ref<number>();
+
+onCreate((scene) => {
+  y.value = scene.scale.height - 69;
+});
 
 watch(
   cancelButtonActive,
@@ -39,7 +42,7 @@ watch(
 </script>
 
 <template>
-  <Container :configuration="{ x: 4, y: scene.scale.height - 69 }">
+  <Container :configuration="{ x: 4, y }">
     <Rectangle
       :configuration="{
         origin: 0,

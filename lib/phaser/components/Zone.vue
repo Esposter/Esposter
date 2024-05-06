@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
 import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
 import { ZoneSetterMap } from "@/lib/phaser/util/setterMap/ZoneSetterMap";
@@ -17,9 +17,12 @@ const props = defineProps<ZoneProps>();
 const { configuration } = toRefs(props);
 const { x, y, width, height } = configuration.value;
 const emit = defineEmits<ZoneEmits>();
-const scene = useInjectScene();
-const zone = ref(scene.add.zone(x, y, width, height)) as Ref<GameObjects.Zone>;
+const zone = ref() as Ref<GameObjects.Zone>;
 useInitializeGameObject(zone, configuration, emit, ZoneSetterMap);
+
+onCreate((scene) => {
+  zone.value = scene.add.zone(x, y, width, height);
+});
 </script>
 
 <template></template>

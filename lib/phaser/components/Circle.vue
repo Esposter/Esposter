@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { ArcConfiguration } from "@/lib/phaser/models/configuration/ArcConfiguration";
 import type { ArcEventEmitsOptions } from "@/lib/phaser/models/emit/ArcEventEmitsOptions";
 import { ArcSetterMap } from "@/lib/phaser/util/setterMap/ArcSetterMap";
@@ -16,9 +16,12 @@ const props = defineProps<CircleProps>();
 const { configuration } = toRefs(props);
 const { x, y, radius, fillColor, alpha } = configuration.value;
 const emit = defineEmits<CircleEmits>();
-const scene = useInjectScene();
-const circle = ref(scene.add.circle(x, y, radius, fillColor, alpha)) as Ref<GameObjects.Arc>;
+const circle = ref() as Ref<GameObjects.Arc>;
 useInitializeGameObject(circle, configuration, emit, ArcSetterMap);
+
+onCreate((scene) => {
+  circle.value = scene.add.circle(x, y, radius, fillColor, alpha);
+});
 </script>
 
 <template></template>

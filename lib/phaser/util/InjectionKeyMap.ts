@@ -1,4 +1,5 @@
 export const InjectionKeyMap = {
-  Scene: Symbol("Scene"),
+  Game: Symbol("Game"),
+  SceneKey: Symbol("SceneKey"),
   ParentContainer: Symbol("ParentContainer"),
 } as const satisfies Record<string, symbol>;

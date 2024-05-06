@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useInjectGame } from "@/lib/phaser/composables/useInjectGame";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { Types } from "phaser";
 import { Game } from "phaser";
 import type { Except } from "type-fest";
@@ -16,8 +17,6 @@ interface GameProps {
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
-const phaserStore = usePhaserStore();
-const { game } = storeToRefs(phaserStore);
 const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
 
@@ -29,15 +28,15 @@ const readyListener = () => {
 
 onMounted(() => {
   registerTiledJSONExternalLoader();
-  game.value = new Game({ ...configuration, parent: canvasRoot.value });
-  game.value.events.on("ready", readyListener);
+  const game = new Game({ ...configuration, parent: canvasRoot.value });
+  game.events.on("ready", readyListener);
+  provide(InjectionKeyMap.Game, game);
 });
 
 onUnmounted(() => {
-  if (!game.value) return;
-  game.value.events.off("ready", readyListener);
-  game.value.destroy(true);
-  game.value = null;
+  const game = useInjectGame();
+  game.events.off("ready", readyListener);
+  game.destroy(true);
 });
 </script>
 

@@ -17,8 +17,8 @@ const { onPlayerInput } = battleSceneStore;
   <Scene
     :scene-key="SceneKey.Battle"
     @create="
-      (scene) => {
-        useDungeonsBackgroundMusic(BackgroundMusicKey.DecisiveBattle, scene.scene.key);
+      () => {
+        useDungeonsBackgroundMusic(BackgroundMusicKey.DecisiveBattle);
         battleStateMachine.setState(StateName.Intro);
       }
     "

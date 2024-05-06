@@ -1,25 +1,28 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { useGameStore } from "@/store/dungeons/game";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const titleSceneStore = useTitleSceneStore();
 const { onPlayerInput } = titleSceneStore;
+const x = ref<number>();
 </script>
 
 <template>
   <Scene
     :scene-key="SceneKey.Title"
-    @create="(scene) => useDungeonsBackgroundMusic(BackgroundMusicKey.Title, scene.scene.key)"
+    @create="
+      (scene) => {
+        useDungeonsBackgroundMusic(BackgroundMusicKey.Title);
+        x = scene.scale.width / 2;
+      }
+    "
     @update="onPlayerInput(controls.getInput(true))"
   >
     <Image
@@ -31,7 +34,7 @@ const { onPlayerInput } = titleSceneStore;
     />
     <Image
       :configuration="{
-        x: scene.scale.width / 2,
+        x,
         y: 150,
         texture: ImageKey.TitleTextBackground,
         scale: 0.25,
@@ -40,7 +43,7 @@ const { onPlayerInput } = titleSceneStore;
     />
     <Image
       :configuration="{
-        x: scene.scale.width / 2,
+        x,
         y: 150,
         texture: ImageKey.TitleText,
         scale: 0.55,

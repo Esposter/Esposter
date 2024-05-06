@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
@@ -9,14 +9,17 @@ import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useGameStore } from "@/store/dungeons/game";
 import { Input } from "phaser";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
-const y = computed(() => scene.value.scale.height - MENU_HEIGHT - MENU_PADDING);
-const width = computed(() => scene.value.scale.width - MENU_PADDING * 2);
+const y = ref<number>();
+const width = ref<number>();
+
+onCreate((scene) => {
+  y.value = scene.scale.height - MENU_HEIGHT - MENU_PADDING;
+  width.value = scene.scale.width - MENU_PADDING * 2;
+});
 
 onShowMessage(() => {
   activePanel.value = ActivePanel.Info;

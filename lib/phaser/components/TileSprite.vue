@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { TileSpriteConfiguration } from "@/lib/phaser/models/configuration/TileSpriteConfiguration";
 import type { TileSpriteEventEmitsOptions } from "@/lib/phaser/models/emit/TileSpriteEventEmitsOptions";
 import { TileSpriteSetterMap } from "@/lib/phaser/util/setterMap/TileSpriteSetterMap";
@@ -17,11 +17,12 @@ const props = defineProps<TileSpriteProps>();
 const { configuration } = toRefs(props);
 const { x, y, width, height, texture, frame } = configuration.value;
 const emit = defineEmits<TileSpriteEmits>();
-const scene = useInjectScene();
-const tileSprite = ref(
-  scene.add.tileSprite(x ?? 0, y ?? 0, width ?? 0, height ?? 0, texture, frame),
-) as Ref<GameObjects.TileSprite>;
+const tileSprite = ref() as Ref<GameObjects.TileSprite>;
 useInitializeGameObject(tileSprite, configuration, emit, TileSpriteSetterMap);
+
+onCreate((scene) => {
+  tileSprite.value = scene.add.tileSprite(x ?? 0, y ?? 0, width ?? 0, height ?? 0, texture, frame);
+});
 </script>
 
 <template></template>

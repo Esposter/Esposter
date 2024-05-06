@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
 import type { TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import { TextSetterMap } from "@/lib/phaser/util/setterMap/TextSetterMap";
@@ -18,11 +18,12 @@ const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);
 const { x, y, text, style } = configuration.value;
 const emit = defineEmits<TextEmits>();
-const scene = useInjectScene();
-const textGameObject = ref(
-  scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey.KenneyFutureNarrow, ...style }),
-) as Ref<GameObjects.Text>;
+const textGameObject = ref() as Ref<GameObjects.Text>;
 useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
+
+onCreate((scene) => {
+  textGameObject.value = scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey.KenneyFutureNarrow, ...style });
+});
 </script>
 
 <template></template>

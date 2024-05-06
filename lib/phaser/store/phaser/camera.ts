@@ -1,21 +1,26 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Cameras } from "phaser";
 
 export const useCameraStore = defineStore("phaser/camera", () => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
   const inputStore = useInputStore();
   const { isActive } = storeToRefs(inputStore);
   const isFading = ref(false);
-  const fadeIn = (...args: Parameters<typeof scene.value.cameras.main.fadeIn>) => {
+  const fadeIn = (
+    scene: SceneWithPlugins,
+    ...args: Parameters<InstanceType<(typeof Cameras)["Scene2D"]["Camera"]>["fadeIn"]>
+  ) => {
     isFading.value = true;
     isActive.value = false;
-    scene.value.cameras.main.fadeIn(...args);
+    scene.cameras.main.fadeIn(...args);
   };
-  const fadeOut = (...args: Parameters<typeof scene.value.cameras.main.fadeOut>) => {
+  const fadeOut = (
+    scene: SceneWithPlugins,
+    ...args: Parameters<InstanceType<(typeof Cameras)["Scene2D"]["Camera"]>["fadeOut"]>
+  ) => {
     isFading.value = true;
     isActive.value = false;
-    scene.value.cameras.main.fadeOut(...args);
+    scene.cameras.main.fadeOut(...args);
   };
   return {
     isFading,
