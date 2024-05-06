@@ -14,7 +14,7 @@ export const useCreateTilemap = (scene: SceneWithPlugins, key: TilemapKey) => {
   const { tilemap, tilemapKey, objectLayerMap, worldData } = storeToRefs(worldSceneStore);
 
   tilemapKey.value = key;
-  tilemap.value = scene.make.tilemap({ key: tilemapKey.value });
+  tilemap.value = scene.add.tilemap(tilemapKey.value);
   CreateTilemapAssetsMap[tilemapKey.value]();
 
   for (const { x, y } of objectLayerMap.value[ObjectgroupName.Chest].objects) {
