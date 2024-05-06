@@ -3,9 +3,9 @@ import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { Chest } from "@/models/dungeons/data/world/Chest";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { CreateTilemapAssetsMap } from "@/models/dungeons/tilemap/CreateTilemapAssetsMap";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
 import { getChestId } from "@/services/dungeons/chest/getChestId";
+import { CreateTilemapAssetsMap } from "@/services/dungeons/tilemap/CreateTilemapAssetsMap";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Tilemaps } from "phaser";
 
