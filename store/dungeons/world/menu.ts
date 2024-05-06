@@ -2,6 +2,7 @@ import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useGameStore } from "@/store/dungeons/game";
@@ -20,22 +21,22 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const { showMessages } = worldDialogStore;
   const { launchScene } = usePreviousScene(sceneKey.value);
 
-  const onPlayerInput = async (justDownInput: PlayerInput) => {
+  const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Monsters:
-          launchScene(SceneKey.MonsterParty);
+          launchScene(scene, SceneKey.MonsterParty);
           return;
         case MenuOption.Inventory:
-          launchScene(SceneKey.Inventory);
+          launchScene(scene, SceneKey.Inventory);
           return;
         case MenuOption.Save:
           await saveData();
-          showMessages([{ text: "Game has been saved." }]);
+          showMessages(scene, [{ text: "Game has been saved." }]);
           return;
         case MenuOption.Exit:
           isMenuVisible.value = false;
-          fadeSwitchToScene(SceneKey.Title);
+          fadeSwitchToScene(scene, SceneKey.Title);
           return;
         default:
           exhaustiveGuard(menuOptionGrid.value.value);

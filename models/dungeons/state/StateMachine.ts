@@ -1,6 +1,8 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { State } from "@/models/dungeons/state/State";
 
 export class StateMachine<TStateName extends string> {
+  scene!: SceneWithPlugins;
   stateMap: Record<TStateName, State<TStateName>>;
   currentState: State<TStateName | null> = { name: null };
   isChangingState = false;
@@ -33,9 +35,9 @@ export class StateMachine<TStateName extends string> {
     }
 
     this.isChangingState = true;
-    this.currentState.onExit?.();
+    this.currentState.onExit?.(this.scene);
     this.currentState = state;
-    this.currentState.onEnter?.();
+    this.currentState.onEnter?.(this.scene);
     this.isChangingState = false;
   }
 }

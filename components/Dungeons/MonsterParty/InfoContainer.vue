@@ -3,13 +3,13 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuT
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useGameStore } from "@/store/dungeons/game";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
-import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);

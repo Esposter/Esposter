@@ -3,6 +3,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { Save } from "@/models/dungeons/data/Save";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
@@ -29,24 +30,24 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     { immediate: true },
   );
 
-  const onPlayerInput = (justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
+    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
-  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (optionGrid.value.value) {
         case PlayerTitleMenuOption["New Game"]:
           save.value = new Save();
-          fadeSwitchToScene(SceneKey.World);
+          fadeSwitchToScene(scene, SceneKey.World);
           return;
         case PlayerTitleMenuOption.Continue:
           save.value = game.value.saves[0];
-          fadeSwitchToScene(SceneKey.World);
+          fadeSwitchToScene(scene, SceneKey.World);
           return;
         case PlayerTitleMenuOption.Settings:
-          fadeSwitchToScene(SceneKey.Settings);
+          fadeSwitchToScene(scene, SceneKey.Settings);
           return;
         default:
           exhaustiveGuard(optionGrid.value.value);

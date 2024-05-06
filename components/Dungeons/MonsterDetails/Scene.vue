@@ -16,7 +16,7 @@ const { monster } = storeToRefs(monsterDetailsSceneStore);
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterDetails" @update="onPlayerInput(controls.getInput(true))">
+  <Scene :scene-key="SceneKey.MonsterDetails" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text

@@ -1,13 +1,20 @@
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
-import { useSoundStore } from "@/store/dungeons/sound";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
-export const useDungeonsBackgroundMusic = (key: BackgroundMusicKey) => {
-  const soundStore = useSoundStore();
-  const { backgroundMusicKey } = storeToRefs(soundStore);
-  backgroundMusicKey.value = key;
+let backgroundMusicKey: BackgroundMusicKey | null = null;
+
+export const useDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: BackgroundMusicKey) => {
+  const allPlayingSounds = scene.sound.getAllPlaying();
+  if (backgroundMusicKey) scene.sound.stopByKey(backgroundMusicKey);
+  if (!key || allPlayingSounds.some((s) => s.key === key)) return;
+
+  const { play } = useDungeonsSound(scene, key, { loop: true });
+  play();
+  backgroundMusicKey = key;
 
   onShutdown(() => {
-    backgroundMusicKey.value = undefined;
+    if (backgroundMusicKey) scene.sound.stopByKey(backgroundMusicKey);
+    backgroundMusicKey = null;
   });
 };

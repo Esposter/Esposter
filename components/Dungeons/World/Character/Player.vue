@@ -43,12 +43,12 @@ onShutdown((scene) => {
       }
     "
     :on-position-change-finished="
-      ({ enterTile }) => {
+      (scene, { enterTile }) => {
         const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
         if (tile) {
-          const { play } = useDungeonsSoundEffect(SoundEffectKey.StepGrass);
+          const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
           play();
-          useRandomEncounter();
+          useRandomEncounter(scene);
         }
       }
     "

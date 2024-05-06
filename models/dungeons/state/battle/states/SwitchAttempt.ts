@@ -5,10 +5,10 @@ import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 
 export const SwitchAttempt: State<StateName> = {
   name: StateName.SwitchAttempt,
-  onEnter: () => {
+  onEnter: (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    showMessages(["You have no other monsters in your party..."], () => {
+    showMessages(scene, ["You have no other monsters in your party..."], () => {
       battleStateMachine.setState(StateName.PlayerInput);
     });
   },

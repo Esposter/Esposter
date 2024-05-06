@@ -24,7 +24,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
-  const handleShowMessageInput = (input: PlayerInput, scene: SceneWithPlugins) => {
+  const handleShowMessageInput = (scene: SceneWithPlugins, input: PlayerInput) => {
     if (isQueuedMessagesAnimationPlaying.value) return true;
     else if (isWaitingForPlayerSpecialInput.value) {
       if (input === PlayerSpecialInput.Confirm) showMessage(scene);

@@ -17,15 +17,16 @@ const { onPlayerInput } = battleSceneStore;
   <Scene
     :scene-key="SceneKey.Battle"
     @create="
-      () => {
-        useDungeonsBackgroundMusic(BackgroundMusicKey.DecisiveBattle);
+      (scene) => {
+        useDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
+        battleStateMachine.scene = scene;
         battleStateMachine.setState(StateName.Intro);
       }
     "
     @update="
-      () => {
+      (scene) => {
         battleStateMachine.update();
-        onPlayerInput(controls.getInput());
+        onPlayerInput(scene, controls.getInput());
       }
     "
     @shutdown="

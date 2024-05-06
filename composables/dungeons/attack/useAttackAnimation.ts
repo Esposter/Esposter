@@ -1,17 +1,20 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useAttackAnimation = (attack: Attack, isToEnemy: boolean, onComplete?: () => void) => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+export const useAttackAnimation = (
+  scene: SceneWithPlugins,
+  attack: Attack,
+  isToEnemy: boolean,
+  onComplete?: () => void,
+) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  const { play } = useDungeonsSoundEffect(attack.soundEffectKey);
+  const { play } = useDungeonsSoundEffect(scene, attack.soundEffectKey);
 
-  scene.value.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
+  scene.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
     play();
   });
 

@@ -19,11 +19,11 @@ const x = ref<number>();
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {
-        useDungeonsBackgroundMusic(BackgroundMusicKey.Title);
+        useDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
         x = scene.scale.width / 2;
       }
     "
-    @update="onPlayerInput(controls.getInput(true))"
+    @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
   >
     <Image
       :configuration="{

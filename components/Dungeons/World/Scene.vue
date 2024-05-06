@@ -25,21 +25,28 @@ const { respawn, healParty } = worldPlayerStore;
 const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
-  useDungeonsBackgroundMusic(BackgroundMusicKey.AndTheJourneyBegins);
+  useDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
 
   if (isPlayerFainted.value) respawn();
 
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
-  fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0, (_camera: Cameras.Scene2D.Camera, progress: number) => {
-    if (!(progress === 1 && isPlayerFainted.value)) return;
+  fadeIn(
+    scene,
+    dayjs.duration(1, "second").asMilliseconds(),
+    0,
+    0,
+    0,
+    (_camera: Cameras.Scene2D.Camera, progress: number) => {
+      if (!(progress === 1 && isPlayerFainted.value)) return;
 
-    healParty();
-    showMessages([
-      { title: "???", text: "It looks like your team put up quite a fight..." },
-      { title: "???", text: "I went ahead and healed them up for you." },
-    ]);
-  });
+      healParty();
+      showMessages(scene, [
+        { title: "???", text: "It looks like your team put up quite a fight..." },
+        { title: "???", text: "I went ahead and healed them up for you." },
+      ]);
+    },
+  );
 };
 
 const update = async (scene: SceneWithPlugins) => {
@@ -47,9 +54,9 @@ const update = async (scene: SceneWithPlugins) => {
   const input = controls.value.getInput();
 
   for (const inputResolver of inputResolvers)
-    if (await inputResolver.handleInputPre(justDownInput, input, scene)) return;
+    if (await inputResolver.handleInputPre(scene, justDownInput, input)) return;
 
-  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(justDownInput, input, scene)) return;
+  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(scene, justDownInput, input)) return;
 };
 
 const shutdown = (scene: SceneWithPlugins) => {

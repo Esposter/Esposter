@@ -1,16 +1,12 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { SoundKey } from "@/models/dungeons/keys/sound/SoundKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Types } from "phaser";
 
-export const useDungeonsSound = (soundKey: SoundKey, options?: Types.Sound.SoundConfig) => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
-  return {
-    play: () => {
-      scene.value.sound.play(soundKey, { ...options, volume: options?.volume ?? 1 });
-    },
-    stop: () => {
-      scene.value.sound.stopByKey(soundKey);
-    },
-  };
-};
+export const useDungeonsSound = (scene: SceneWithPlugins, soundKey: SoundKey, options?: Types.Sound.SoundConfig) => ({
+  play: () => {
+    scene.sound.play(soundKey, { ...options, volume: options?.volume ?? 1 });
+  },
+  stop: () => {
+    scene.sound.stopByKey(soundKey);
+  },
+});

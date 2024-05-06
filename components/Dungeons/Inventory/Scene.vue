@@ -13,7 +13,7 @@ const { onPlayerInput } = inputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Inventory" @update="onPlayerInput(controls.getInput(true))">
+  <Scene :scene-key="SceneKey.Inventory" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
     <Image
       :configuration="{
         origin: 0,

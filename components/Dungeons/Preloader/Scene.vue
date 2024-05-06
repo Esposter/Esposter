@@ -59,7 +59,7 @@ const preload = (scene: SceneWithPlugins) => {
 const create = (scene: SceneWithPlugins) => {
   if (isMobile()) {
     controls.value = new JoystickControls();
-    launchParallelScene(SceneKey.MobileJoystick);
+    launchParallelScene(scene, SceneKey.MobileJoystick);
     return;
   }
 

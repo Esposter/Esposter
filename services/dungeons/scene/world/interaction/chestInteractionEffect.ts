@@ -9,7 +9,7 @@ import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
-export const chestInteractionEffect: Effect = (chestObjects) => {
+export const chestInteractionEffect: Effect = (scene, chestObjects) => {
   const chestObject = useGetInteractiveObject(chestObjects);
   if (!chestObject) return false;
 
@@ -23,7 +23,7 @@ export const chestInteractionEffect: Effect = (chestObjects) => {
   const chestId = getChestId(chestObject);
   const chest = worldData.value.chestMap.get(chestId);
   if (!chest || chest.isOpened) {
-    showMessages([{ text: "There is nothing left in the chest." }]);
+    showMessages(scene, [{ text: "There is nothing left in the chest." }]);
     return true;
   }
 
@@ -32,8 +32,8 @@ export const chestInteractionEffect: Effect = (chestObjects) => {
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;
 
-  const { play } = useDungeonsSoundEffect(SoundEffectKey.OpenChest);
+  const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.OpenChest);
   play();
-  showMessages([{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
+  showMessages(scene, [{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
   return true;
 };

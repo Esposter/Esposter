@@ -4,9 +4,9 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
-const dimensions = useSettingsCursorDimensions(() => optionGrid.value.position.y);
+const { width, ...configuration } = useSettingsCursorDimensions(() => optionGrid.value.position.y);
 </script>
 
 <template>
-  <Rectangle :configuration="{ ...dimensions, strokeStyle: [4, 0xe4434a] }" />
+  <Rectangle :configuration="{ width, ...configuration, strokeStyle: [4, 0xe4434a] }" />
 </template>

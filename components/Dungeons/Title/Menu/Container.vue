@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/scene/title/menu/constants";
-import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
 const x = ref<number>();
 

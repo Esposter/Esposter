@@ -11,7 +11,7 @@ const { onPlayerInput } = inputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterParty" @update="(scene) => onPlayerInput(controls.getInput(true), scene)">
+  <Scene :scene-key="SceneKey.MonsterParty" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
     <DungeonsMonsterPartyBackground />
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />

@@ -1,6 +1,6 @@
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
-import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
 export const useRectangleCameraMask = (onComplete?: () => void) => {
   const settingsStore = useSettingsStore();
