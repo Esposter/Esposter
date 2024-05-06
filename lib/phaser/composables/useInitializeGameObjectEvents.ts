@@ -14,7 +14,7 @@ export const useInitializeGameObjectEvents = () => {
   const gameObjectEvents = Object.keys(GameObjectEventMap).filter((key) =>
     events.includes(key),
   ) as (keyof typeof GameObjectEventMap)[];
-  const unsubscribes = ref<(() => void)[]>([]);
+  const unsubscribes: (() => void)[] = [];
   const initializeGameObjectEvents = <
     TGameObject extends GameObjects.GameObject,
     TEmitsOptions extends Record<string, unknown[]>,
@@ -38,14 +38,14 @@ export const useInitializeGameObjectEvents = () => {
       if (gameObjectEvent === "clickoutside") {
         const clickOutside = new ClickOutside(gameObject);
         clickOutside.on(gameObjectEvent, eventListener);
-        unsubscribes.value.push(() => {
+        unsubscribes.push(() => {
           clickOutside.off(gameObjectEvent, eventListener);
         });
         continue;
       }
 
       gameObject.on(gameObjectEvent, eventListener);
-      unsubscribes.value.push(() => {
+      unsubscribes.push(() => {
         gameObject.off(gameObjectEvent, eventListener);
       });
     }

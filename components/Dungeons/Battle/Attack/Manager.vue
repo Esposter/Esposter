@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { AttackComponentMap } from "@/services/dungeons/scene/battle/attack/AttackComponentMap";
-import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
+import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 
 const attackManagerStore = useAttackManagerStore();
-const { attackId, isToEnemy, isActive, onComplete } = storeToRefs(attackManagerStore);
+const { attackId, isToEnemy, isActive } = storeToRefs(attackManagerStore);
 </script>
 
 <template>
@@ -14,8 +14,8 @@ const { attackId, isToEnemy, isActive, onComplete } = storeToRefs(attackManagerS
     :is-to-enemy="isToEnemy"
     @complete="
       () => {
-        const callback = onComplete;
-        attackId = isToEnemy = onComplete = undefined;
+        const callback = ExternalAttackManagerStore.onComplete;
+        attackId = isToEnemy = ExternalAttackManagerStore.onComplete = undefined;
         callback?.();
       }
     "

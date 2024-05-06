@@ -1,7 +1,7 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { dayjs } from "@/services/dayjs";
-import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
+import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useAttackAnimation = (attack: Attack, isToEnemy: boolean, onComplete?: () => void) => {
@@ -22,8 +22,8 @@ export const useAttackAnimation = (attack: Attack, isToEnemy: boolean, onComplet
 
   const attackManagerStore = useAttackManagerStore();
   const refs = storeToRefs(attackManagerStore);
+  ExternalAttackManagerStore.onComplete = onComplete;
   refs.attackId.value = attack.id;
   refs.isToEnemy.value = isToEnemy;
-  refs.onComplete.value = onComplete;
   refs.isActive.value = true;
 };
