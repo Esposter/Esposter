@@ -22,14 +22,15 @@ export const usePhaserStore = defineStore("phaser", () => {
     if (isSameScene(newSceneKey)) return;
 
     const game = useGame();
-    // Cleanup old scene resources
     const oldSceneKey = sceneKey.value;
-    if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
-
     sceneKey.value = newSceneKey;
     // We need to wait until all the vue components for the new scene have been rendered
     // and the hooks have all been executed before we can tell phaser to start the new scene
-    nextTick(() => game.scene.start(newSceneKey));
+    nextTick(() => {
+      // Cleanup old scene resources
+      if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
+      game.scene.start(newSceneKey);
+    });
   };
 
   const parallelSceneKeys = ref<SceneKey[]>([]);
