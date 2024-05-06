@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { useGameStore } from "@/store/dungeons/game";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 </script>

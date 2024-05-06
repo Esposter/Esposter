@@ -3,13 +3,13 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/Men
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { useGameStore } from "@/store/dungeons/game";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { monster } = storeToRefs(monsterDetailsSceneStore);

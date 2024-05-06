@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
@@ -9,7 +10,6 @@ import {
   SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
-import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
@@ -21,8 +21,8 @@ interface ContentTextProps {
 }
 
 const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const settingsSceneStore = useSettingsSceneStore();

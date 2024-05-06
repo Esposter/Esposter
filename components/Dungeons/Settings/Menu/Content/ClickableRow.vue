@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
 
@@ -11,8 +11,8 @@ interface ContentTextProps {
 }
 
 const { rowIndex } = defineProps<ContentTextProps>();
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
 const onGridClick = useOnGridClick(

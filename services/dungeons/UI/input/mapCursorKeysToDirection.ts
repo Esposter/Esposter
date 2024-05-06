@@ -1,4 +1,4 @@
-import type { BaseCursorKeys } from "@/models/dungeons/UI/input/BaseCursorKeys";
+import type { BaseCursorKeys } from "@/lib/phaser/models/input/BaseCursorKeys";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 

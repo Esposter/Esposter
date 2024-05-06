@@ -1,5 +1,5 @@
-import { BaseControls } from "@/models/dungeons/UI/input/BaseControls";
-import type { Controls } from "@/models/dungeons/UI/input/Controls";
+import { BaseControls } from "@/lib/phaser/models/input/BaseControls";
+import type { Controls } from "@/lib/phaser/models/input/Controls";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { NotInitializedError } from "@/models/error/NotInitializedError";

@@ -1,6 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import type { Controls } from "@/models/dungeons/UI/input/Controls";
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -35,9 +34,6 @@ export const useGameStore = defineStore("dungeons/game", () => {
     await saveGame();
   };
 
-  // We can assume that this will always exist because
-  // we will create the controls in the preloader scene
-  const controls = ref() as Ref<Controls>;
   const fadeSwitchToScene = (scene: SceneWithPlugins, sceneKey: SceneKey, msDuration = 500) => {
     fadeOut(scene, dayjs.duration(msDuration, "milliseconds").asMilliseconds());
     scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
@@ -45,5 +41,5 @@ export const useGameStore = defineStore("dungeons/game", () => {
     });
   };
 
-  return { game, saveGame, save, saveData, controls, fadeSwitchToScene };
+  return { game, saveGame, save, saveData, fadeSwitchToScene };
 });

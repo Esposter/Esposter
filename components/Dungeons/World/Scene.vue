@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getAllInputResolvers } from "@/services/dungeons/scene/world/getAllInputResolvers";
-import { useGameStore } from "@/store/dungeons/game";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
@@ -14,8 +14,8 @@ import type { Cameras } from "phaser";
 
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 const playerStore = usePlayerStore();

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useGameStore } from "@/store/dungeons/game";
-import { useInputStore } from "@/store/dungeons/monsterParty/input";
+import { useMonsterPartyInputStore } from "@/store/dungeons/monsterParty/input";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const inputStore = useInputStore();
-const { onPlayerInput } = inputStore;
+const { controls } = storeToRefs(inputStore);
+const monsterPartyInputStore = useMonsterPartyInputStore();
+const { onPlayerInput } = monsterPartyInputStore;
 </script>
 
 <template>

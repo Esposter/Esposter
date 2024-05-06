@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useGame } from "@/lib/phaser/composables/useGame";
+import { JoystickControls } from "@/lib/phaser/models/input/JoystickControls";
+import { KeyboardControls } from "@/lib/phaser/models/input/KeyboardControls";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
@@ -7,8 +9,9 @@ import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { ExternalSceneStore } from "@/lib/phaser/store/phaser/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import isMobile from "is-mobile";
 import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
@@ -26,13 +29,13 @@ const emit = defineEmits<{
   shutdown: [SceneWithPlugins];
 }>();
 const phaserStore = usePhaserStore();
-const { isSameScene, switchToScene } = phaserStore;
+const { isSameScene, switchToScene, launchParallelScene } = phaserStore;
 const { parallelSceneKeys } = storeToRefs(phaserStore);
 const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
-const { isActive: isInputActive } = storeToRefs(inputStore);
+const { controls, isActive: isInputActive } = storeToRefs(inputStore);
 let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
@@ -52,6 +55,11 @@ const NewScene = class extends SceneWithPlugins {
   }
 
   create(this: SceneWithPlugins) {
+    if (isMobile()) {
+      controls.value = new JoystickControls();
+      launchParallelScene(this, SceneKey.MobileJoystick);
+    } else controls.value = new KeyboardControls(this);
+
     emit("create", this);
     if (!isInputActive.value) isInputActive.value = true;
 
