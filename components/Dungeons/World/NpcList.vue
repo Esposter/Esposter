@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 
 const npcStore = useNpcStore();
 const { resetCursorPaginationData } = npcStore;
 const { npcList } = storeToRefs(npcStore);
+
+onCreate(() => {
+  useReadNpcList();
+});
 
 onShutdown(() => {
   resetCursorPaginationData();

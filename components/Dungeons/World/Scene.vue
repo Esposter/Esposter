@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
@@ -30,8 +29,6 @@ const create = (scene: SceneWithPlugins) => {
 
   if (isPlayerFainted.value) respawn();
 
-  useCreateTilemap(scene, TilemapKey.Home);
-  useReadNpcList();
   scene.cameras.main.setBounds(0, 0, 1280, 2176);
   scene.cameras.main.setZoom(0.8);
   fadeIn(dayjs.duration(1, "second").asMilliseconds(), 0, 0, 0, (_camera: Cameras.Scene2D.Camera, progress: number) => {
@@ -63,6 +60,7 @@ const shutdown = (scene: SceneWithPlugins) => {
 
 <template>
   <Scene :scene-key="SceneKey.World" @create="create" @update="update" @shutdown="shutdown">
+    <DungeonsWorldMap />
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />
     <DungeonsWorldChestLayer />

@@ -10,16 +10,18 @@ interface TilemapProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration, onComplete } = defineProps<TilemapProps>();
 const scene = useInjectScene();
-const tilemap = ref<Tilemaps.Tilemap>();
+const tilemap = ref(scene.make.tilemap(configuration)) as Ref<Tilemaps.Tilemap>;
 
 watch(
   () => configuration.key,
-  () => {
-    if (tilemap.value) tilemap.value.destroy();
-    tilemap.value = scene.make.tilemap(configuration);
-    onComplete?.(scene, tilemap.value);
+  (newKey) => {
+    const oldTilemap = tilemap.value;
+    if (newKey) {
+      tilemap.value = scene.make.tilemap(configuration);
+      onComplete?.(scene, tilemap.value);
+    }
+    oldTilemap.destroy();
   },
-  { immediate: true },
 );
 </script>
 

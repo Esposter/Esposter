@@ -30,7 +30,7 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
-const { shutdownListenersMap } = storeToRefs(sceneStore);
+const { createListenersMap, shutdownListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -55,6 +55,9 @@ const NewScene = class extends SceneWithPlugins {
     scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       isFading.value = false;
     });
+
+    for (const createListener of createListenersMap.value[sceneKey]) createListener(newScene);
+    createListenersMap.value[sceneKey] = [];
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {

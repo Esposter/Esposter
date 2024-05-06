@@ -1,26 +1,33 @@
-import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
-import { DEBUG_TILE_LAYER_ALPHA } from "@/services/dungeons/tilemap/constants";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
+import { Chest } from "@/models/dungeons/data/world/Chest";
+import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
+import { getChestId } from "@/services/dungeons/chest/getChestId";
+import { CreateTilemapMetadataMap } from "@/services/dungeons/tilemap/CreateTilemapMetadataMap";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Tilemaps } from "phaser";
 
-export const useCreateTilemapAssets = <TLayerName extends object>(layerNameEnum: TLayerName) => {
+export const useCreateTilemapAssets = (map: Tilemaps.Tilemap) => {
   const worldSceneStore = useWorldSceneStore();
-  const { encounterLayer, objectLayerMap } = storeToRefs(worldSceneStore);
+  const { tilemap, objectLayerMap, worldData } = storeToRefs(worldSceneStore);
 
-  for (const layerName of Object.values(layerNameEnum)) {
-    const tilesets: Tilemaps.Tileset[] = [];
-    for (const tilesetKey of Object.values(TilesetKey)) {
-      const tileset = useCreateTileset(tilesetKey);
-      if (!tileset) continue;
-      tilesets.push(tileset);
-    }
-    const layer = useCreateLayer(layerName, tilesets);
-    if (layerName === LayerName.Encounter) encounterLayer.value = layer.setAlpha(DEBUG_TILE_LAYER_ALPHA);
-    else if (layerName === LayerName.Collision) layer.setAlpha(DEBUG_TILE_LAYER_ALPHA);
+  tilemap.value = map;
+  CreateTilemapMetadataMap[worldData.value.tilemapKey]();
+
+  for (const { x, y } of objectLayerMap.value[ObjectgroupName.Chest].objects) {
+    if (!(x && y)) continue;
+
+    const position = useObjectUnitPosition({ x, y });
+    const chestId = getChestId(position);
+    if (worldData.value.chestMap.has(chestId)) continue;
+    else worldData.value.chestMap.set(chestId, new Chest());
   }
 
-  for (const objectgroupName of Object.values(ObjectgroupName))
-    objectLayerMap.value[objectgroupName] = useObjectLayer(objectgroupName);
+  onCreate((scene) => {
+    scene.gridEngine.create(tilemap.value as Tilemaps.Tilemap, {
+      characters: [],
+      collisionTilePropertyName: TileProperty.Collision,
+      numberOfDirections: 8,
+    });
+  });
 };

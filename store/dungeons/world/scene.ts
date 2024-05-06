@@ -18,7 +18,6 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
   return {
     tilemap,
-    tilemapKey,
     encounterLayer,
     objectLayerMap,
     isMenuVisible,
