@@ -19,13 +19,14 @@ const { configuration } = toRefs(props);
 const { x, y, children } = configuration.value;
 const emit = defineEmits<ContainerEmits>();
 const container = ref<GameObjects.Container | undefined>();
-provide(InjectionKeyMap.ParentContainer, container.value);
 
 onCreate((scene) => {
   container.value = scene.add.container(x, y, children);
 });
 
 useInitializeGameObject(container, configuration, emit, ContainerSetterMap);
+
+provide(InjectionKeyMap.ParentContainer, container);
 </script>
 
 <template>

@@ -28,11 +28,11 @@ export const useInitializeGameObject = <
   // the vue provide / inject api as this context should not be shared across every component,
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
-  const parentContainer = inject<GameObjects.Container | null>(InjectionKeyMap.ParentContainer, null);
+  const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
 
   onCreate((scene) => {
     if (!gameObject.value) throw new NotInitializedError(onCreate.name);
-    if (parentContainer) pushGameObject(parentContainer, configuration.value, gameObject.value);
+    if (parentContainer) pushGameObject(parentContainer.value, configuration.value, gameObject.value);
     for (const setter of setters) setter(gameObject.value);
     initializeGameObjectEvents(gameObject.value, emit, scene);
   });
