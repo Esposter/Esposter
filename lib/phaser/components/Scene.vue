@@ -30,7 +30,7 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
-const { createListenersMap, shutdownListenersMap } = storeToRefs(sceneStore);
+const { preloadListenersMap, createListenersMap, shutdownListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -43,7 +43,12 @@ const NewScene = class extends SceneWithPlugins {
   }
 
   preload(this: SceneWithPlugins) {
+    if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
+
     emit("preload", this);
+
+    for (const preloadListener of preloadListenersMap.value[sceneKey]) preloadListener(newScene);
+    preloadListenersMap.value[sceneKey] = [];
   }
 
   create(this: SceneWithPlugins) {
