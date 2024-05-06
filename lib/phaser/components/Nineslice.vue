@@ -18,7 +18,6 @@ const { configuration } = toRefs(props);
 const { x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight } = configuration.value;
 const emit = defineEmits<NineSliceEmits>();
 const nineslice = ref() as Ref<GameObjects.NineSlice>;
-useInitializeGameObject(nineslice, configuration, emit, NineSliceSetterMap);
 
 onCreate((scene) => {
   nineslice.value = scene.add.nineslice(
@@ -34,6 +33,8 @@ onCreate((scene) => {
     bottomHeight,
   );
 });
+
+useInitializeGameObject(nineslice, configuration, emit, NineSliceSetterMap);
 </script>
 
 <template></template>

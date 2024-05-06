@@ -20,12 +20,13 @@ const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<SpriteEmits>();
 const sprite = ref() as Ref<GameObjects.Sprite>;
-useInitializeGameObject(sprite, configuration, emit, SpriteSetterMap);
 
 onCreate((scene) => {
   sprite.value = scene.add.sprite(x ?? 0, y ?? 0, texture, frame);
   onComplete.value?.(scene, sprite.value);
 });
+
+useInitializeGameObject(sprite, configuration, emit, SpriteSetterMap);
 </script>
 
 <template></template>

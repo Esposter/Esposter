@@ -19,12 +19,13 @@ const { configuration, onComplete } = toRefs(props);
 const { x, y, width, height, fillColor, alpha } = configuration.value;
 const emit = defineEmits<RectangleEmits>();
 const rectangle = ref() as Ref<GameObjects.Rectangle>;
-useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
 
 onCreate((scene) => {
   rectangle.value = scene.add.rectangle(x, y, width, height, fillColor, alpha);
   onComplete.value?.(scene, rectangle.value);
 });
+
+useInitializeGameObject(rectangle, configuration, emit, RectangleSetterMap);
 </script>
 
 <template></template>

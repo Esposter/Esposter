@@ -27,7 +27,9 @@ const emit = defineEmits<{
 }>();
 const game = useInjectGame();
 const phaserStore = usePhaserStore();
-const { switchToScene } = phaserStore;
+const { isSameScene, switchToScene } = phaserStore;
+const { parallelSceneKeys } = storeToRefs(phaserStore);
+const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -36,7 +38,6 @@ let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
-
     const newScene = getScene(game, sceneKey);
     const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
     for (const initListener of initListenersMap[sceneKey]) initListener(newScene);
@@ -45,7 +46,6 @@ const NewScene = class extends SceneWithPlugins {
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
-
     const newScene = getScene(game, sceneKey);
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
     for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(newScene);
@@ -71,7 +71,6 @@ const NewScene = class extends SceneWithPlugins {
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
-
     const newScene = getScene(game, sceneKey);
     const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
     for (const updateListener of updateListenersMap[sceneKey]) updateListener(newScene);
@@ -90,7 +89,6 @@ const shutdownListener = () => {
 onMounted(() => {
   newScene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
-
   if (autoStart) switchToScene(sceneKey);
 });
 
@@ -104,5 +102,5 @@ provide(InjectionKeyMap.SceneKey, sceneKey);
 </script>
 
 <template>
-  <slot />
+  <slot v-if="isActive" />
 </template>

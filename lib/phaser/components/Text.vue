@@ -19,11 +19,12 @@ const { configuration } = toRefs(props);
 const { x, y, text, style } = configuration.value;
 const emit = defineEmits<TextEmits>();
 const textGameObject = ref() as Ref<GameObjects.Text>;
-useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 
 onCreate((scene) => {
   textGameObject.value = scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey.KenneyFutureNarrow, ...style });
 });
+
+useInitializeGameObject(textGameObject, configuration, emit, TextSetterMap);
 </script>
 
 <template></template>

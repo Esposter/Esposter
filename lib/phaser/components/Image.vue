@@ -20,12 +20,13 @@ const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<ImageEmits>();
 const image = ref() as Ref<GameObjects.Image>;
-useInitializeGameObject(image, configuration, emit, ImageSetterMap);
 
 onCreate((scene) => {
   image.value = scene.add.image(x ?? 0, y ?? 0, texture, frame);
   onComplete.value?.(scene, image.value);
 });
+
+useInitializeGameObject(image, configuration, emit, ImageSetterMap);
 </script>
 
 <template></template>

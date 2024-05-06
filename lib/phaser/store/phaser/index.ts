@@ -1,30 +1,22 @@
+import { useInjectGame } from "@/lib/phaser/composables/useInjectGame";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  // @NOTE: A very weird bug will occur here with setInteractive input priority
-  // if the game is a ref >:C
-  let baseGame: Game | null = null;
-  const game = computed({
-    get: () => baseGame,
-    set: (newGame: Game | null) => {
-      baseGame = newGame;
-    },
-  });
-
   const sceneKey = ref<SceneKey | null>(null);
   // When we access the scene key from outside components, it should already be initialized
   const exposedSceneKey = sceneKey as Ref<SceneKey>;
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
   const switchToScene = (newSceneKey: SceneKey) => {
-    if (!game.value || isSameScene(newSceneKey)) return;
+    if (isSameScene(newSceneKey)) return;
+
+    const game = useInjectGame();
     // Cleanup old scene resources
     const oldSceneKey = sceneKey.value;
-    if (oldSceneKey && game.value.scene.isActive(oldSceneKey)) game.value.scene.stop(oldSceneKey);
+    if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
 
     sceneKey.value = newSceneKey;
-    game.value.scene.start(newSceneKey);
+    game.scene.start(newSceneKey);
   };
 
   const parallelSceneKeys = ref<SceneKey[]>([]);
@@ -46,7 +38,6 @@ export const usePhaserStore = defineStore("phaser", () => {
   };
 
   return {
-    game,
     sceneKey: exposedSceneKey,
     isSameScene,
     switchToScene,

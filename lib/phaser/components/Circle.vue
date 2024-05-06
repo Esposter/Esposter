@@ -17,11 +17,12 @@ const { configuration } = toRefs(props);
 const { x, y, radius, fillColor, alpha } = configuration.value;
 const emit = defineEmits<CircleEmits>();
 const circle = ref() as Ref<GameObjects.Arc>;
-useInitializeGameObject(circle, configuration, emit, ArcSetterMap);
 
 onCreate((scene) => {
   circle.value = scene.add.circle(x, y, radius, fillColor, alpha);
 });
+
+useInitializeGameObject(circle, configuration, emit, ArcSetterMap);
 </script>
 
 <template></template>
