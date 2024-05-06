@@ -3,14 +3,14 @@ import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const worldDialogStore = useWorldDialogStore();
 const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
 const x = ref<number>();

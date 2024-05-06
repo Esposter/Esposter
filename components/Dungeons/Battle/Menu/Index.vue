@@ -2,15 +2,15 @@
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { useGameStore } from "@/store/dungeons/game";
 import { Input } from "phaser";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const y = ref<number>();

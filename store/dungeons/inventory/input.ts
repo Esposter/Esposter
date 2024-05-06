@@ -9,7 +9,7 @@ import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
-export const useInputStore = defineStore("dungeons/inventory/input", () => {
+export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
   const inventorySceneStore = useInventorySceneStore();
   const { itemOptionGrid } = storeToRefs(inventorySceneStore);
   const itemStore = useItemStore();

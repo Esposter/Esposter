@@ -4,15 +4,15 @@ import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
+import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useGameStore } from "@/store/dungeons/game";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 // It's unfortunate, but we have to access the internals
 // when we handle confirm inputs since we don't know where it comes from
 // i.e. it could be from this info container or from clicking the monster panel
