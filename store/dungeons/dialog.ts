@@ -4,7 +4,6 @@ import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
@@ -64,7 +63,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     // Tell other components like the dialog that we're ready to show our message
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key}`);
 
     if (isSkipAnimations.value) {
       target.setMessage(message);
@@ -97,7 +96,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     onComplete?: () => void,
   ) => {
     target.reset();
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`);
+    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key}`);
 
     if (isSkipAnimations.value) {
       target.setMessage(message);

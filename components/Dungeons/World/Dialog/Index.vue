@@ -7,24 +7,22 @@ import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/ser
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
+import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
 const gameStore = useGameStore();
 const { controls } = storeToRefs(gameStore);
 const worldDialogStore = useWorldDialogStore();
 const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
-const worldView = useWorldView();
-const x = ref(worldView.value.x + DIALOG_PADDING);
-const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);
+const x = ref<number>();
+const y = ref<number>();
+
+onCreate((scene) => {
+  x.value = scene.cameras.main.worldView.x + DIALOG_PADDING;
+  y.value = scene.cameras.main.worldView.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4;
+});
 
 onShowMessage(() => {
   isDialogVisible.value = true;
-});
-
-watch(isDialogVisible, (newIsDialogVisible) => {
-  if (!newIsDialogVisible) return;
-
-  x.value = worldView.value.x + DIALOG_PADDING;
-  y.value = worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4;
 });
 </script>
 

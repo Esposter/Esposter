@@ -4,20 +4,18 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { MENU_DEPTH, MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/scene/world/constants";
 import { getMenuHeight } from "@/services/dungeons/scene/world/getMenuHeight";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { onCreate } from "~/lib/phaser/hooks/onCreate";
 
 const worldSceneStore = useWorldSceneStore();
 const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
 const { primary, border } = useDungeonsColors();
-const worldView = useWorldView();
-const x = ref(worldView.value.right - MENU_PADDING * 2 - MENU_WIDTH);
-const y = ref(worldView.value.top + MENU_PADDING * 2);
 const menuHeight = computed(() => getMenuHeight(menuOptionGrid.value.rowSize));
+const x = ref<number>();
+const y = ref<number>();
 
-watch(isMenuVisible, (newIsMenuVisible) => {
-  if (!newIsMenuVisible) return;
-
-  x.value = worldView.value.right - MENU_PADDING * 2 - MENU_WIDTH;
-  y.value = worldView.value.top + MENU_PADDING * 2;
+onCreate((scene) => {
+  x.value = scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH;
+  y.value = scene.cameras.main.worldView.top + MENU_PADDING * 2;
 });
 </script>
 

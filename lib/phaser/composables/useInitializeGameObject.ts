@@ -1,13 +1,10 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
-import { useInjectGame } from "@/lib/phaser/composables/useInjectGame";
-import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
-import { getScene } from "@/lib/phaser/util/getScene";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
 
@@ -25,8 +22,6 @@ export const useInitializeGameObject = <
   const { pushGameObject } = parentContainerStore;
   const setters = useInitializeGameObjectSetters(configuration, gameObject, emit, setterMap);
   const { initializeGameObjectEvents, unsubscribes } = useInitializeGameObjectEvents();
-  const game = useInjectGame();
-  const sceneKey = useInjectSceneKey();
   // This is only used to track if the current gameObject we are rendering
   // is in a parent container and append to it if it exists. We need to use
   // the vue provide / inject api as this context should not be shared across every component,
@@ -34,10 +29,10 @@ export const useInitializeGameObject = <
   // We can do this because phaser containers can only contain gameObjects one level deep
   const parentContainer = inject<GameObjects.Container | null>(InjectionKeyMap.ParentContainer, null);
 
-  onCreate(() => {
+  onCreate((scene) => {
     if (parentContainer) pushGameObject(parentContainer, configuration.value, gameObject.value);
     for (const setter of setters) setter(gameObject.value);
-    initializeGameObjectEvents(gameObject.value, emit, getScene(game, sceneKey));
+    initializeGameObjectEvents(gameObject.value, emit, scene);
   });
 
   onShutdown(() => {
