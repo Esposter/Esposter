@@ -1,7 +1,7 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
 import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
-import { onPreload } from "@/lib/phaser/hooks/onPreload";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
@@ -25,7 +25,7 @@ export const useInitializeGameObject = <
   const { initializeGameObjectEvents, unsubscribes } = useInitializeGameObjectEvents();
   pushGameObject(configuration.value, gameObject.value);
 
-  onPreload(() => {
+  onCreate(() => {
     for (const setter of setters) setter(gameObject.value);
     initializeGameObjectEvents(gameObject.value, emit, scene);
   }, scene.scene.key);

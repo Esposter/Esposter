@@ -1,33 +1,19 @@
+import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
+import type { ListenersMap } from "@/lib/phaser/models/lifecycle/ListenersMap";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
 export const useSceneStore = defineStore("phaser/scene", () => {
-  const preloadListenersMap = ref(
-    Object.values(SceneKey).reduce(
+  const lifeCycleListenersMap = ref(
+    Object.values(Lifecycle).reduce(
       (acc, curr) => {
-        acc[curr] = [];
+        acc[curr] = Object.values(SceneKey).reduce((acc, curr) => {
+          acc[curr] = [];
+          return acc;
+        }, {} as ListenersMap);
         return acc;
       },
-      {} as Record<SceneKey, ((scene: SceneWithPlugins) => void)[]>,
+      {} as Record<Lifecycle, ListenersMap>,
     ),
   );
-  const createListenersMap = ref(
-    Object.values(SceneKey).reduce(
-      (acc, curr) => {
-        acc[curr] = [];
-        return acc;
-      },
-      {} as Record<SceneKey, ((scene: SceneWithPlugins) => void)[]>,
-    ),
-  );
-  const shutdownListenersMap = ref(
-    Object.values(SceneKey).reduce(
-      (acc, curr) => {
-        acc[curr] = [];
-        return acc;
-      },
-      {} as Record<SceneKey, ((scene: SceneWithPlugins) => void)[]>,
-    ),
-  );
-  return { preloadListenersMap, createListenersMap, shutdownListenersMap };
+  return { lifeCycleListenersMap };
 });

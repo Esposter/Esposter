@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
 import { useInputStore } from "@/lib/phaser/store/phaser/input";
@@ -30,7 +31,7 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { game, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
-const { preloadListenersMap, createListenersMap, shutdownListenersMap } = storeToRefs(sceneStore);
+const { lifeCycleListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
@@ -39,7 +40,13 @@ const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value
 let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
+    if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
+
     emit("init", this);
+
+    const initListenersMap = lifeCycleListenersMap.value[Lifecycle.Init];
+    for (const initListener of initListenersMap[sceneKey]) initListener(newScene);
+    initListenersMap[sceneKey] = [];
   }
 
   preload(this: SceneWithPlugins) {
@@ -47,8 +54,10 @@ const NewScene = class extends SceneWithPlugins {
 
     emit("preload", this);
 
-    for (const preloadListener of preloadListenersMap.value[sceneKey]) preloadListener(newScene);
-    preloadListenersMap.value[sceneKey] = [];
+    const preloadListenersMap = lifeCycleListenersMap.value[Lifecycle.Preload];
+    console.log(preloadListenersMap);
+    for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(newScene);
+    preloadListenersMap[sceneKey] = [];
   }
 
   create(this: SceneWithPlugins) {
@@ -64,19 +73,28 @@ const NewScene = class extends SceneWithPlugins {
       isFading.value = false;
     });
 
-    for (const createListener of createListenersMap.value[sceneKey]) createListener(newScene);
-    createListenersMap.value[sceneKey] = [];
+    const createListenersMap = lifeCycleListenersMap.value[Lifecycle.Create];
+    for (const createListener of createListenersMap[sceneKey]) createListener(newScene);
+    createListenersMap[sceneKey] = [];
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
+    if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
+
     emit("update", this, ...args);
+
+    const updateListenersMap = lifeCycleListenersMap.value[Lifecycle.Update];
+    for (const updateListener of updateListenersMap[sceneKey]) updateListener(newScene);
+    updateListenersMap[sceneKey] = [];
   }
 };
 
 const shutdownListener = () => {
   if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
-  for (const shutdownListener of shutdownListenersMap.value[sceneKey]) shutdownListener(newScene);
-  shutdownListenersMap.value[sceneKey] = [];
+
+  const shutdownListenersMap = lifeCycleListenersMap.value[Lifecycle.Shutdown];
+  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
+  shutdownListenersMap[sceneKey] = [];
   emit("shutdown", newScene);
 };
 
