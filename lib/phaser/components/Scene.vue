@@ -28,14 +28,15 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
-const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
+const { game, parallelSceneKeys } = storeToRefs(phaserStore);
 const sceneStore = useSceneStore();
 const { createListenersMap, shutdownListenersMap } = storeToRefs(sceneStore);
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { isActive: isInputActive } = storeToRefs(inputStore);
-const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || parallelSceneKeys.value.includes(sceneKey));
+const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
+let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
@@ -46,13 +47,15 @@ const NewScene = class extends SceneWithPlugins {
   }
 
   create(this: SceneWithPlugins) {
+    if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
+
     emit("create", this);
     if (!isInputActive.value) isInputActive.value = true;
 
-    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+    newScene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
       isFading.value = false;
     });
-    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+    newScene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       isFading.value = false;
     });
 
@@ -64,7 +67,6 @@ const NewScene = class extends SceneWithPlugins {
     emit("update", this, ...args);
   }
 };
-let newScene: SceneWithPlugins | null = null;
 
 const shutdownListener = () => {
   if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
