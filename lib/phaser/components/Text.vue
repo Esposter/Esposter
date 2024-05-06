@@ -18,7 +18,7 @@ const props = defineProps<TextProps>();
 const { configuration } = toRefs(props);
 const { x, y, text, style } = configuration.value;
 const emit = defineEmits<TextEmits>();
-const textGameObject = ref() as Ref<GameObjects.Text>;
+const textGameObject = ref<GameObjects.Text>();
 
 onCreate((scene) => {
   textGameObject.value = scene.add.text(x ?? 0, y ?? 0, text, { fontFamily: FontKey.KenneyFutureNarrow, ...style });

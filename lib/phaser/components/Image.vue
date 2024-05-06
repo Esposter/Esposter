@@ -19,7 +19,7 @@ const props = defineProps<ImageProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<ImageEmits>();
-const image = ref() as Ref<GameObjects.Image>;
+const image = ref<GameObjects.Image>();
 
 onCreate((scene) => {
   image.value = scene.add.image(x ?? 0, y ?? 0, texture, frame);

@@ -1,7 +1,7 @@
+import type { HookArgs } from "@/lib/phaser/models/lifecycle/HookArgs";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { pushListener } from "@/lib/phaser/util/hooks/pushListener";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
-export const onShutdown = (listener: (scene: SceneWithPlugins) => void) => {
-  pushListener(Lifecycle.Shutdown, listener);
+export const onShutdown = (...args: HookArgs) => {
+  pushListener(Lifecycle.Shutdown, ...args);
 };

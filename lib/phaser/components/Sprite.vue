@@ -19,7 +19,7 @@ const props = defineProps<SpriteProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, texture, frame } = configuration.value;
 const emit = defineEmits<SpriteEmits>();
-const sprite = ref() as Ref<GameObjects.Sprite>;
+const sprite = ref<GameObjects.Sprite>();
 
 onCreate((scene) => {
   sprite.value = scene.add.sprite(x ?? 0, y ?? 0, texture, frame);

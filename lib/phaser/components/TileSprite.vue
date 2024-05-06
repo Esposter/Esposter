@@ -17,7 +17,7 @@ const props = defineProps<TileSpriteProps>();
 const { configuration } = toRefs(props);
 const { x, y, width, height, texture, frame } = configuration.value;
 const emit = defineEmits<TileSpriteEmits>();
-const tileSprite = ref() as Ref<GameObjects.TileSprite>;
+const tileSprite = ref<GameObjects.TileSprite>();
 
 onCreate((scene) => {
   tileSprite.value = scene.add.tileSprite(x ?? 0, y ?? 0, width ?? 0, height ?? 0, texture, frame);

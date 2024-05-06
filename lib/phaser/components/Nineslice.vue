@@ -17,7 +17,7 @@ const props = defineProps<NineSliceProps>();
 const { configuration } = toRefs(props);
 const { x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight } = configuration.value;
 const emit = defineEmits<NineSliceEmits>();
-const nineslice = ref() as Ref<GameObjects.NineSlice>;
+const nineslice = ref<GameObjects.NineSlice>();
 
 onCreate((scene) => {
   nineslice.value = scene.add.nineslice(

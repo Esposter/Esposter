@@ -18,7 +18,7 @@ const props = defineProps<RectangleProps>();
 const { configuration, onComplete } = toRefs(props);
 const { x, y, width, height, fillColor, alpha } = configuration.value;
 const emit = defineEmits<RectangleEmits>();
-const rectangle = ref() as Ref<GameObjects.Rectangle>;
+const rectangle = ref<GameObjects.Rectangle>();
 
 onCreate((scene) => {
   rectangle.value = scene.add.rectangle(x, y, width, height, fillColor, alpha);

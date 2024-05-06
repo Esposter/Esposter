@@ -16,5 +16,5 @@ export const useDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: Backgro
   onShutdown(() => {
     if (backgroundMusicKey) scene.sound.stopByKey(backgroundMusicKey);
     backgroundMusicKey = null;
-  });
+  }, scene.scene.key);
 };

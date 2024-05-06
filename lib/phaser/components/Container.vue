@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<ContainerProps>(), { configuration: () =>
 const { configuration } = toRefs(props);
 const { x, y, children } = configuration.value;
 const emit = defineEmits<ContainerEmits>();
-const container = ref() as Ref<GameObjects.Container>;
+const container = ref<GameObjects.Container | undefined>();
 provide(InjectionKeyMap.ParentContainer, container.value);
 
 onCreate((scene) => {

@@ -16,7 +16,7 @@ const props = defineProps<CircleProps>();
 const { configuration } = toRefs(props);
 const { x, y, radius, fillColor, alpha } = configuration.value;
 const emit = defineEmits<CircleEmits>();
-const circle = ref() as Ref<GameObjects.Arc>;
+const circle = ref<GameObjects.Arc>();
 
 onCreate((scene) => {
   circle.value = scene.add.circle(x, y, radius, fillColor, alpha);

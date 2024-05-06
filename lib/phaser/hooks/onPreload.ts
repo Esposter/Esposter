@@ -1,7 +1,7 @@
+import type { HookArgs } from "@/lib/phaser/models/lifecycle/HookArgs";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { pushListener } from "@/lib/phaser/util/hooks/pushListener";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
-export const onPreload = (listener: (scene: SceneWithPlugins) => void) => {
-  pushListener(Lifecycle.Preload, listener);
+export const onPreload = (...args: HookArgs) => {
+  pushListener(Lifecycle.Preload, ...args);
 };

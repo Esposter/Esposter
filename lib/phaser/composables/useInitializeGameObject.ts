@@ -5,6 +5,7 @@ import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
+import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
 
@@ -13,7 +14,7 @@ export const useInitializeGameObject = <
   TGameObject extends GameObjects.GameObject,
   TEmitsOptions extends Record<string, unknown[]>,
 >(
-  gameObject: Ref<TGameObject>,
+  gameObject: Ref<TGameObject | undefined>,
   configuration: Ref<TConfiguration>,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<NoInfer<TConfiguration>, TGameObject, TEmitsOptions>,
@@ -30,12 +31,14 @@ export const useInitializeGameObject = <
   const parentContainer = inject<GameObjects.Container | null>(InjectionKeyMap.ParentContainer, null);
 
   onCreate((scene) => {
+    if (!gameObject.value) throw new NotInitializedError(onCreate.name);
     if (parentContainer) pushGameObject(parentContainer, configuration.value, gameObject.value);
     for (const setter of setters) setter(gameObject.value);
     initializeGameObjectEvents(gameObject.value, emit, scene);
   });
 
   onShutdown(() => {
+    if (!gameObject.value) throw new NotInitializedError(onShutdown.name);
     for (const unsubscribe of unsubscribes) unsubscribe();
     gameObject.value.destroy();
   });

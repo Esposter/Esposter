@@ -17,7 +17,7 @@ const props = defineProps<ZoneProps>();
 const { configuration } = toRefs(props);
 const { x, y, width, height } = configuration.value;
 const emit = defineEmits<ZoneEmits>();
-const zone = ref() as Ref<GameObjects.Zone>;
+const zone = ref<GameObjects.Zone>();
 
 onCreate((scene) => {
   zone.value = scene.add.zone(x, y, width, height);

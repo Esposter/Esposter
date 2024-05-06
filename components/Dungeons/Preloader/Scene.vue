@@ -13,6 +13,7 @@ import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useGameStore } from "@/store/dungeons/game";
+import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
 import isMobile from "is-mobile";
 import type { Loader } from "phaser";
@@ -46,7 +47,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("complete", () => {
-    // switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
+    switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
   });
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
