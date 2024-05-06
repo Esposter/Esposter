@@ -1,4 +1,3 @@
-import { useInjectGame } from "@/lib/phaser/composables/useInjectGame";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { getScene } from "@/lib/phaser/util/getScene";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
@@ -65,14 +64,12 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   };
 
   watch([sceneKey, () => settings.value.Sound], ([newSceneKey, newSound]) => {
-    const game = useInjectGame();
-    const scene = getScene(game, newSceneKey);
+    const scene = getScene(newSceneKey);
     scene.sound.setMute(newSound === SoundSetting.Off);
   });
 
   watch([sceneKey, volumePercentage], ([newSceneKey, newVolumePercentage]) => {
-    const game = useInjectGame();
-    const scene = getScene(game, newSceneKey);
+    const scene = getScene(newSceneKey);
     scene.sound.setVolume(newVolumePercentage / 100);
   });
 

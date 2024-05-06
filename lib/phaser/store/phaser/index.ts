@@ -1,7 +1,6 @@
-import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
+import { useGame } from "@/lib/phaser/composables/useGame";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import type { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
@@ -20,15 +19,15 @@ export const usePhaserStore = defineStore("phaser", () => {
   const exposedSceneKey = sceneKey as Ref<SceneKey>;
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
   const switchToScene = (newSceneKey: SceneKey) => {
-    if (!game.value) throw new NotInitializedError(InjectionKeyMap.Game.description ?? "");
-    else if (isSameScene(newSceneKey)) return;
+    if (isSameScene(newSceneKey)) return;
 
+    const game = useGame();
     // Cleanup old scene resources
     const oldSceneKey = sceneKey.value;
-    if (oldSceneKey && game.value.scene.isActive(oldSceneKey)) game.value.scene.stop(oldSceneKey);
+    if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
 
     sceneKey.value = newSceneKey;
-    game.value.scene.start(newSceneKey);
+    game.scene.start(newSceneKey);
   };
 
   const parallelSceneKeys = ref<SceneKey[]>([]);

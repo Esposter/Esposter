@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useInjectGame } from "@/lib/phaser/composables/useInjectGame";
+import { useGame } from "@/lib/phaser/composables/useGame";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
@@ -25,7 +25,6 @@ const emit = defineEmits<{
   update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
   shutdown: [SceneWithPlugins];
 }>();
-const game = useInjectGame();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { parallelSceneKeys } = storeToRefs(phaserStore);
@@ -38,7 +37,7 @@ let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
-    const newScene = getScene(game, sceneKey);
+    const newScene = getScene(sceneKey);
     const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
     for (const initListener of initListenersMap[sceneKey]) initListener(newScene);
     initListenersMap[sceneKey] = [];
@@ -46,7 +45,7 @@ const NewScene = class extends SceneWithPlugins {
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
-    const newScene = getScene(game, sceneKey);
+    const newScene = getScene(sceneKey);
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
     for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(newScene);
     preloadListenersMap[sceneKey] = [];
@@ -56,7 +55,7 @@ const NewScene = class extends SceneWithPlugins {
     emit("create", this);
     if (!isInputActive.value) isInputActive.value = true;
 
-    const newScene = getScene(game, sceneKey);
+    const newScene = getScene(sceneKey);
     newScene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
       isFading.value = false;
     });
@@ -71,7 +70,7 @@ const NewScene = class extends SceneWithPlugins {
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
-    const newScene = getScene(game, sceneKey);
+    const newScene = getScene(sceneKey);
     const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
     for (const updateListener of updateListenersMap[sceneKey]) updateListener(newScene);
     updateListenersMap[sceneKey] = [];
@@ -79,7 +78,7 @@ const NewScene = class extends SceneWithPlugins {
 };
 
 const shutdownListener = () => {
-  const newScene = getScene(game, sceneKey);
+  const newScene = getScene(sceneKey);
   const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
   for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
   shutdownListenersMap[sceneKey] = [];
@@ -87,13 +86,15 @@ const shutdownListener = () => {
 };
 
 onMounted(() => {
+  const game = useGame();
   newScene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
-  const newScene = getScene(game, sceneKey);
+  const game = useGame();
+  const newScene = getScene(sceneKey);
   newScene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);
 });
