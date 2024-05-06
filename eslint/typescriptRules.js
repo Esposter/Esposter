@@ -20,7 +20,6 @@ export default {
       delete rules["@typescript-eslint/restrict-plus-operands"];
       delete rules["@typescript-eslint/restrict-template-expressions"];
       // Computationally expensive
-      delete rules["@typescript-eslint/no-confusing-void-expression"];
       delete rules["@typescript-eslint/no-floating-promises"];
       delete rules["@typescript-eslint/no-misused-promises"];
       delete rules["@typescript-eslint/no-unnecessary-condition"];

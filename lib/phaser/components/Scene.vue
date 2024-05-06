@@ -53,7 +53,6 @@ const NewScene = class extends SceneWithPlugins {
     emit("preload", this);
 
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
-    console.log(toRaw(preloadListenersMap).Preloader);
     for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(newScene);
     preloadListenersMap[sceneKey] = [];
   }

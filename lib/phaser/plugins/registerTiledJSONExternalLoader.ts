@@ -5,7 +5,7 @@ import { Loader } from "phaser";
 
 const FileTypesManager = Loader.FileTypesManager;
 
-export const registerTiledJSONExternalLoader = () =>
+export const registerTiledJSONExternalLoader = () => {
   FileTypesManager.register(
     TILEMAP_TILED_JSON_EXTERNAL_KEY,
     function (this: Loader.LoaderPlugin, ...args: TupleSlice<ConstructorParameters<typeof TiledJSONExternalFile>, 1>) {
@@ -34,3 +34,4 @@ export const registerTiledJSONExternalLoader = () =>
       return this;
     },
   );
+};
