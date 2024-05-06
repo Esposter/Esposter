@@ -4,7 +4,13 @@ import { LayerName as HomeLayerName } from "@/generated/tiled/layers/Home/LayerN
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 
 export const CreateTilemapMetadataMap = {
-  [TilemapKey.Home]: () => useCreateTilemapMetadata(HomeLayerName),
-  [TilemapKey.HomeBuilding1]: () => useCreateTilemapMetadata(HomeBuilding1LayerName),
-  [TilemapKey.HomeBuilding2]: () => useCreateTilemapMetadata(HomeBuilding2LayerName),
+  [TilemapKey.Home]: () => {
+    useCreateTilemapMetadata(HomeLayerName);
+  },
+  [TilemapKey.HomeBuilding1]: () => {
+    useCreateTilemapMetadata(HomeBuilding1LayerName);
+  },
+  [TilemapKey.HomeBuilding2]: () => {
+    useCreateTilemapMetadata(HomeBuilding2LayerName);
+  },
 } as const satisfies Record<TilemapKey, () => void>;
