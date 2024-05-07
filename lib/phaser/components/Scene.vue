@@ -9,7 +9,7 @@ import { ExternalSceneStore } from "@/lib/phaser/store/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
@@ -58,7 +58,9 @@ const NewScene = class extends SceneWithPlugins {
 
   create(this: SceneWithPlugins) {
     emit("create", this);
-    useInitializeControls(this);
+    // MobileJoystick is an always active parallel scene
+    // that we don't transition require controls specifically for
+    if (this.scene.key !== SceneKey.MobileJoystick) useInitializeControls(this);
     if (!isInputActive.value) isInputActive.value = true;
 
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
