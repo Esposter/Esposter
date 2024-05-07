@@ -15,18 +15,20 @@ export interface ImageProps {
 
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
-const props = defineProps<ImageProps>();
-const { configuration, onComplete } = toRefs(props);
-const { x, y, texture, frame } = configuration.value;
+const { configuration, onComplete } = defineProps<ImageProps>();
 const emit = defineEmits<ImageEmits>();
-const image = ref<GameObjects.Image>();
 
-onCreate((scene) => {
-  image.value = scene.add.image(x ?? 0, y ?? 0, texture, frame);
-  onComplete.value?.(scene, image.value);
-});
-
-useInitializeGameObject(image, configuration, emit, ImageSetterMap);
+useInitializeGameObject(
+  (scene) => {
+    const { x, y, texture, frame } = configuration;
+    const image = scene.add.image(x ?? 0, y ?? 0, texture, frame);
+    onComplete?.(scene, image);
+    return image;
+  },
+  () => configuration,
+  emit,
+  ImageSetterMap,
+);
 </script>
 
 <template></template>

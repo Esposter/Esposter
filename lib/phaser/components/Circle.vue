@@ -12,17 +12,18 @@ interface CircleProps {
 
 interface CircleEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
-const props = defineProps<CircleProps>();
-const { configuration } = toRefs(props);
-const { x, y, radius, fillColor, alpha } = configuration.value;
+const { configuration } = defineProps<CircleProps>();
 const emit = defineEmits<CircleEmits>();
-const circle = ref<GameObjects.Arc>();
 
-onCreate((scene) => {
-  circle.value = scene.add.circle(x, y, radius, fillColor, alpha);
-});
-
-useInitializeGameObject(circle, configuration, emit, ArcSetterMap);
+useInitializeGameObject(
+  (scene) => {
+    const { x, y, radius, fillColor, alpha } = configuration;
+    return scene.add.circle(x, y, radius, fillColor, alpha);
+  },
+  () => configuration,
+  emit,
+  ArcSetterMap,
+);
 </script>
 
 <template></template>

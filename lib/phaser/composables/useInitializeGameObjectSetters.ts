@@ -1,5 +1,3 @@
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { getUpdateEvent } from "@/lib/phaser/util/emit/getUpdateEvent";
 import type { GameObjects } from "phaser";
@@ -10,16 +8,15 @@ export const useInitializeGameObjectSetters = <
   TGameObject extends GameObjects.GameObject,
   TEmitsOptions extends Record<string, unknown[]>,
 >(
-  configuration: Ref<TConfiguration>,
-  gameObject: Ref<TGameObject | undefined>,
+  configuration: () => TConfiguration,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
 ) => {
-  const setters: ((gameObject: TGameObject) => void)[] = [];
-  const watchStopHandlers: WatchStopHandle[] = [];
+  const setterStopHandlers: WatchStopHandle[] = [];
+  const initializeGameObjectSetters = (gameObject: TGameObject) => {
+    const setters: ((gameObject: TGameObject) => void)[] = [];
 
-  onCreate(() => {
-    for (const [key, value] of Object.entries(configuration.value) as [
+    for (const [key, value] of Object.entries(toValue(configuration)) as [
       keyof TConfiguration,
       TConfiguration[keyof TConfiguration],
     ][]) {
@@ -33,23 +30,19 @@ export const useInitializeGameObjectSetters = <
         else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
       });
 
-      watchStopHandlers.push(
+      setterStopHandlers.push(
         watch(
-          () => configuration.value[key],
+          () => toValue(configuration)[key],
           (newValue) => {
-            if (!gameObject.value) return;
-            setter(gameObject.value, emit)(newValue);
+            setter(gameObject, emit)(newValue);
             emit(getUpdateEvent(key as string), newValue);
           },
-          { deep: typeof configuration.value[key] === "object" },
+          { deep: typeof toValue(configuration)[key] === "object" },
         ),
       );
     }
-  });
 
-  onShutdown(() => {
-    for (const watchStopHandler of watchStopHandlers) watchStopHandler();
-  });
-
-  return setters;
+    for (const setter of setters) setter(gameObject);
+  };
+  return { initializeGameObjectSetters, setterStopHandlers };
 };

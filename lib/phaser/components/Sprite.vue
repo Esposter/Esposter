@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
 import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
@@ -15,18 +14,20 @@ export interface SpriteProps {
 
 interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
 
-const props = defineProps<SpriteProps>();
-const { configuration, onComplete } = toRefs(props);
-const { x, y, texture, frame } = configuration.value;
+const { configuration, onComplete } = defineProps<SpriteProps>();
 const emit = defineEmits<SpriteEmits>();
-const sprite = ref<GameObjects.Sprite>();
 
-onCreate((scene) => {
-  sprite.value = scene.add.sprite(x ?? 0, y ?? 0, texture, frame);
-  onComplete.value?.(scene, sprite.value);
-});
-
-useInitializeGameObject(sprite, configuration, emit, SpriteSetterMap);
+useInitializeGameObject(
+  (scene) => {
+    const { x, y, texture, frame } = configuration;
+    const sprite = scene.add.sprite(x ?? 0, y ?? 0, texture, frame);
+    onComplete?.(scene, sprite);
+    return sprite;
+  },
+  () => configuration,
+  emit,
+  SpriteSetterMap,
+);
 </script>
 
 <template></template>
