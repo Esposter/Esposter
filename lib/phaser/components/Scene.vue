@@ -113,7 +113,6 @@ onMounted(() => {
 const { trigger: initializeSound } = watchTriggerable(
   () => settings.value.Sound,
   (newSound) => {
-    console.log(newSound);
     const scene = getScene(sceneKey);
     scene.sound.setMute(newSound === SoundSetting.Off);
   },
