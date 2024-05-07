@@ -20,7 +20,6 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   const removeScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     const index = previousSceneKeys.value.indexOf(sceneKey);
     if (index === -1) return;
-
     previousSceneKeys.value.splice(index, 1)[0];
     removeParallelScene(scene, sceneKey);
   };
