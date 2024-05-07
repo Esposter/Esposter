@@ -40,17 +40,15 @@ let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
-    const newScene = getScene(sceneKey);
     const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
-    for (const initListener of initListenersMap[sceneKey]) initListener(newScene);
+    for (const initListener of initListenersMap[sceneKey]) initListener(this);
     initListenersMap[sceneKey] = [];
   }
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
-    const newScene = getScene(sceneKey);
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
-    for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(newScene);
+    for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(this);
     preloadListenersMap[sceneKey] = [];
   }
 
@@ -63,29 +61,33 @@ const NewScene = class extends SceneWithPlugins {
     emit("create", this);
     if (!isInputActive.value) isInputActive.value = true;
 
-    const newScene = getScene(sceneKey);
-    newScene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+    this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
       isFading.value = false;
     });
-    newScene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+    this.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       isFading.value = false;
     });
 
     const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
-    for (const createListener of createListenersMap[sceneKey]) createListener(newScene);
+    for (const createListener of createListenersMap[sceneKey]) createListener(this);
     createListenersMap[sceneKey] = [];
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
-    const newScene = getScene(sceneKey);
     const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
-    for (const updateListener of updateListenersMap[sceneKey]) updateListener(newScene);
-    updateListenersMap[sceneKey] = [];
+    for (const updateListener of updateListenersMap[sceneKey]) updateListener(this);
+
+    const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
+    for (const nextTickListener of nextTickListenersMap[sceneKey]) nextTickListener(this);
+    nextTickListenersMap[sceneKey] = [];
   }
 };
 
 const shutdownListener = () => {
+  const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
+  updateListenersMap[sceneKey] = [];
+
   const newScene = getScene(sceneKey);
   const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
   for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
