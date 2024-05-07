@@ -27,7 +27,10 @@ export const useAnimateText = (
 
       if (i === textSections.length) {
         stop();
-        configuration?.onComplete?.();
+        // Run the hook after vue's rendering cycle has caught up with phaser
+        nextTick(() => {
+          configuration?.onComplete?.();
+        });
       }
     },
   });
