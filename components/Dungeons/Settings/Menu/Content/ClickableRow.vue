@@ -22,9 +22,9 @@ const onGridClick = useOnGridClick(
     if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
   },
 );
-const { width, ...configuration } = useSettingsCursorDimensions(() => rowIndex);
+const { y, width, ...configuration } = useSettingsCursorDimensions(() => rowIndex);
 </script>
 
 <template>
-  <Rectangle :configuration="{ width, ...configuration }" @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick" />
+  <Rectangle :configuration="{ y, width, ...configuration }" @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick" />
 </template>

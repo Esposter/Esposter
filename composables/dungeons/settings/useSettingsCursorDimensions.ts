@@ -5,7 +5,7 @@ export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) 
   const width = ref<number>();
   return {
     x: INITIAL_SETTINGS_POSITION.x / 2,
-    y: INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * toValue(rowIndex) - 3,
+    y: computed(() => INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * toValue(rowIndex) - 3),
     origin: 0,
     width,
     height: SETTINGS_POSITION_INCREMENT.y - 15,
