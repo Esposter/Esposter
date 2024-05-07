@@ -47,6 +47,7 @@ const animations = createAnimationConfigurations ? useAnimations(createAnimation
       animations,
       playAnimationKey,
     }"
+    immediate
     @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`]="
       {
         isActive = false;

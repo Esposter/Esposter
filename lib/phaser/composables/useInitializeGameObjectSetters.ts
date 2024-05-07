@@ -14,6 +14,7 @@ export const useInitializeGameObjectSetters = <
   configuration: () => TConfiguration,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
+  immediate?: true,
 ) => {
   const sceneKey = useInjectSceneKey();
   const setters: ((gameObject: TGameObject) => void)[] = [];
@@ -37,10 +38,15 @@ export const useInitializeGameObjectSetters = <
       watch(
         () => toValue(configuration)[key],
         (newValue) => {
-          onNextTick(() => {
+          const updater = () => {
             setter(toValue(gameObject), emit)(newValue);
             emit(getUpdateEvent(key as string), newValue);
-          }, sceneKey);
+          };
+          if (immediate) updater();
+          else
+            onNextTick(() => {
+              updater();
+            }, sceneKey);
         },
         { deep: typeof toValue(configuration)[key] === "object" },
       ),

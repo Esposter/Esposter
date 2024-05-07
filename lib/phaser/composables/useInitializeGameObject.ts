@@ -1,9 +1,11 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
+import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
@@ -17,6 +19,9 @@ export const useInitializeGameObject = <
   configuration: () => TConfiguration,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<NoInfer<TConfiguration>, TGameObject, TEmitsOptions>,
+  // We may want to create gameObjects e.g. Sprites for attacks on the fly
+  // without being tied to the scene's lifecycle
+  immediate?: true,
 ) => {
   let gameObject: TGameObject;
   const parentContainerStore = useParentContainerStore();
@@ -26,6 +31,7 @@ export const useInitializeGameObject = <
     configuration,
     emit,
     setterMap,
+    immediate,
   );
   const { initializeGameObjectEvents, eventStopHandlers } = useInitializeGameObjectEvents();
   // This is only used to track if the current gameObject we are rendering
@@ -34,14 +40,27 @@ export const useInitializeGameObject = <
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
   const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
-  // We actually can't use onCreate hook here because we can have dynamic gameObjects
-  // based on vue refs that render after the scene create lifecycle
-  onNextTick((scene) => {
+  const initializeGameObject = (scene: SceneWithPlugins) => {
     gameObject = create(scene);
     initializeGameObjectSetters(gameObject);
     initializeGameObjectEvents(gameObject, emit, scene);
-    if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
-  });
+  };
+
+  if (immediate) {
+    const sceneKey = useInjectSceneKey();
+    const scene = getScene(sceneKey);
+    initializeGameObject(scene);
+    onNextTick(() => {
+      if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
+    });
+  }
+  // We actually can't use onCreate hook here because we can have dynamic gameObjects
+  // based on vue refs that render after the scene create lifecycle
+  else
+    onNextTick((scene) => {
+      initializeGameObject(scene);
+      if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
+    });
 
   onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
