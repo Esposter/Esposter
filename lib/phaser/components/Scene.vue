@@ -9,8 +9,11 @@ import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { ExternalSceneStore } from "@/lib/phaser/store/phaser/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
+import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { useSettingsStore } from "@/store/dungeons/settings";
+import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import isMobile from "is-mobile";
 import { Cameras, Scenes } from "phaser";
 
@@ -36,6 +39,10 @@ const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { controls, isActive: isInputActive } = storeToRefs(inputStore);
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
+const volumeStore = useVolumeStore();
+const { volumePercentage } = storeToRefs(volumeStore);
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
@@ -97,8 +104,24 @@ const shutdownListener = () => {
 onMounted(() => {
   const game = useGame();
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
+  initializeSound();
+  initializeVolume();
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
+});
+
+const { trigger: initializeSound } = watchTriggerable(
+  () => settings.value.Sound,
+  (newSound) => {
+    console.log(newSound);
+    const scene = getScene(sceneKey);
+    scene.sound.setMute(newSound === SoundSetting.Off);
+  },
+);
+
+const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVolumePercentage) => {
+  const scene = getScene(sceneKey);
+  scene.sound.setVolume(newVolumePercentage / 100);
 });
 
 onUnmounted(() => {

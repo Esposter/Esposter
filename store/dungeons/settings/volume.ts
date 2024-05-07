@@ -1,7 +1,4 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { getScene } from "@/lib/phaser/util/getScene";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
@@ -12,8 +9,6 @@ import { Direction } from "grid-engine";
 import type Slider from "phaser3-rex-plugins/plugins/slider";
 
 export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
-  const phaserStore = usePhaserStore();
-  const { sceneKey } = storeToRefs(phaserStore);
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
@@ -62,16 +57,6 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     }
     return isUpdateVolume;
   };
-
-  watch([sceneKey, () => settings.value.Sound], ([newSceneKey, newSound]) => {
-    const scene = getScene(newSceneKey);
-    scene.sound.setMute(newSound === SoundSetting.Off);
-  });
-
-  watch([sceneKey, volumePercentage], ([newSceneKey, newVolumePercentage]) => {
-    const scene = getScene(newSceneKey);
-    scene.sound.setVolume(newVolumePercentage / 100);
-  });
 
   return {
     volumePercentage,
