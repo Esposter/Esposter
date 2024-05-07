@@ -1,5 +1,7 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 export interface State<TStateName extends string | null> {
   name: TStateName;
-  onEnter?: () => void;
-  onExit?: () => void;
+  onEnter?: (scene: SceneWithPlugins) => void;
+  onExit?: (scene: SceneWithPlugins) => void;
 }

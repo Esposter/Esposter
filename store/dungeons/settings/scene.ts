@@ -1,6 +1,7 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
@@ -53,8 +54,13 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
-  const onPlayerInput = async (justDownInput: PlayerInput, input: PlayerInput, delta: number) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+  const onPlayerInput = async (
+    scene: SceneWithPlugins,
+    justDownInput: PlayerInput,
+    input: PlayerInput,
+    delta: number,
+  ) => {
+    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
     else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
@@ -62,13 +68,13 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     else optionGrid.value.move(justDownInput);
   };
 
-  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (selectedSettingsOption.value === SettingsOption.Close) fadeSwitchToScene(SceneKey.Title);
+        if (selectedSettingsOption.value === SettingsOption.Close) fadeSwitchToScene(scene, SceneKey.Title);
         return;
       case PlayerSpecialInput.Cancel:
-        fadeSwitchToScene(SceneKey.Title);
+        fadeSwitchToScene(scene, SceneKey.Title);
         return;
       case PlayerSpecialInput.Enter:
         return;

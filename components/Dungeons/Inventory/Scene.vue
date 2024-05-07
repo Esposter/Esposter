@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { useGameStore } from "@/store/dungeons/game";
-import { useInputStore } from "@/store/dungeons/inventory/input";
+import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
 const inputStore = useInputStore();
-const { onPlayerInput } = inputStore;
+const { controls } = storeToRefs(inputStore);
+const inventoryInputStore = useInventoryInputStore();
+const { onPlayerInput } = inventoryInputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Inventory" @update="onPlayerInput(controls.getInput(true))">
+  <Scene :scene-key="SceneKey.Inventory" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
     <Image
       :configuration="{
         origin: 0,

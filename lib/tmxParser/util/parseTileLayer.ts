@@ -46,12 +46,12 @@ export const parseTileLayer = async (
           case Compression.Zlib:
             {
               const decompress = compression === Compression.Gzip ? gunzip : inflate;
-              layer.data = await new Promise((resolve, reject) =>
+              layer.data = await new Promise((resolve, reject) => {
                 decompress(buffer, (err, buf) => {
                   if (err) reject(err);
                   resolve(unpackTileBytes(buf, expectedCount));
-                }),
-              );
+                });
+              });
             }
             break;
           case null:

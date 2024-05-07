@@ -5,35 +5,35 @@ import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/tilemap/constants";
+import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
+import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
 export const useReadNpcList = () => {
-  const worldSceneStore = useWorldSceneStore();
-  const { tilemap } = storeToRefs(worldSceneStore);
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
-  const npcLayerNames = tilemap.value.getObjectLayerNames().filter((layerName) => layerName.includes(ObjectType.Npc));
+  const npcLayerNames = ExternalWorldSceneStore.tilemap
+    .getObjectLayerNames()
+    .filter((layerName) => layerName.includes(ObjectType.Npc));
   const npcList: Npc[] = [];
 
   for (const npcLayerName of npcLayerNames) {
-    const npcLayer = tilemap.value.getObjectLayer(npcLayerName);
-    if (!npcLayer) continue;
-
+    const npcLayer = getObjectLayer(npcLayerName);
     const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
     if (!(npcObject?.x && npcObject.y)) continue;
 
     const npcPathObjects = npcLayer.objects.filter((obj) => obj.type === ObjectType.NpcPath);
     const npcPath: Record<number, Position> = {
-      0: useObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
+      0: getObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
     };
 
     for (const { name, x, y } of npcPathObjects) {
       if (!(x && y)) continue;
-      npcPath[parseInt(name)] = useObjectUnitPosition({ x, y });
+      npcPath[parseInt(name)] = getObjectUnitPosition({ x, y });
     }
 
     const frameTiledObjectProperty = getTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);

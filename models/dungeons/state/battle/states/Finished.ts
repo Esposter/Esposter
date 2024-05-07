@@ -5,9 +5,9 @@ import { useGameStore } from "@/store/dungeons/game";
 
 export const Finished: State<StateName> = {
   name: StateName.Finished,
-  onEnter: () => {
+  onEnter: (scene) => {
     const gameStore = useGameStore();
     const { fadeSwitchToScene } = gameStore;
-    fadeSwitchToScene(SceneKey.World);
+    fadeSwitchToScene(scene, SceneKey.World);
   },
 };

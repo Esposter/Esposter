@@ -1,4 +1,3 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
@@ -12,9 +11,7 @@ import { pickRandomValue } from "@/util/math/random/pickRandomValue";
 
 export const EnemyAttack: State<StateName> = {
   name: StateName.EnemyAttack,
-  onEnter: () => {
-    const phaserStore = usePhaserStore();
-    const { scene } = storeToRefs(phaserStore);
+  onEnter: (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
@@ -24,9 +21,9 @@ export const EnemyAttack: State<StateName> = {
     const randomAttackId = pickRandomValue(activeMonster.value.attackIds);
     const randomAttack = getAttack(randomAttackId);
 
-    showMessageNoInputRequired(`Enemy ${activeMonster.value.key} used ${randomAttackId}.`, () =>
-      scene.value.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-        useAttackAnimation(randomAttack, false, () => {
+    showMessageNoInputRequired(scene, `Enemy ${activeMonster.value.key} used ${randomAttackId}.`, () =>
+      scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
+        useAttackAnimation(scene, randomAttack, false, () => {
           takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
             battleStateMachine.setState(StateName.EnemyPostAttackCheck);
           });

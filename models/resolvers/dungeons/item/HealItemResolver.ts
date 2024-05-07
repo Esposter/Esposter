@@ -1,8 +1,8 @@
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import type { Item } from "@/models/dungeons/item/Item";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -29,7 +29,7 @@ export class HealItemResolver extends AItemResolver {
     return true;
   }
 
-  handleItem(item: Ref<Item>, target: Ref<Monster>, sceneKey: SceneKey) {
+  handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const infoPanelStore = useInfoPanelStore();
@@ -38,8 +38,8 @@ export class HealItemResolver extends AItemResolver {
     const newHp = Math.min(oldHp + item.value.effect.value, target.value.stats.maxHp);
 
     target.value.currentHp = newHp;
-    showMessages([`Healed ${activeMonster.value.key} by ${newHp - oldHp} HP.`], () => {
-      phaserEventEmitter.emit("useItem", item.value, sceneKey);
+    showMessages(scene, [`Healed ${activeMonster.value.key} by ${newHp - oldHp} HP.`], () => {
+      phaserEventEmitter.emit("useItem", item.value, scene.scene.key);
     });
   }
 }

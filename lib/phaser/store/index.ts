@@ -1,3 +1,4 @@
+import { useGame } from "@/lib/phaser/composables/useGame";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Game } from "phaser";
@@ -14,48 +15,42 @@ export const usePhaserStore = defineStore("phaser", () => {
   });
 
   const sceneKey = ref<SceneKey | null>(null);
-  // When we access the scene key from outside components, it should already be initialized
-  const exposedSceneKey = sceneKey as Ref<SceneKey>;
-  // We will create the scene in the game and ensure that the scene will always exist
-  // for the child components by using v-if for the scene value
-  const scene = computed(() => {
-    if (!game.value) return;
-    if (!sceneKey.value) return;
-    return game.value.scene.getScene<SceneWithPlugins>(sceneKey.value);
-  }) as ComputedRef<SceneWithPlugins>;
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
   const switchToScene = (newSceneKey: SceneKey) => {
-    if (!game.value || isSameScene(newSceneKey)) return;
-    // Cleanup old scene resources
-    const oldSceneKey = sceneKey.value;
-    if (oldSceneKey && game.value.scene.isActive(oldSceneKey)) game.value.scene.stop(oldSceneKey);
+    if (isSameScene(newSceneKey)) return;
 
+    const game = useGame();
+    const oldSceneKey = sceneKey.value;
     sceneKey.value = newSceneKey;
-    game.value.scene.start(newSceneKey);
+    // We need to wait until all the vue components for the new scene have been rendered
+    // and the hooks have all been executed before we can tell phaser to start the new scene
+    nextTick(() => {
+      // Cleanup old scene resources
+      if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);
+      game.scene.start(newSceneKey);
+    });
   };
 
   const parallelSceneKeys = ref<SceneKey[]>([]);
-  const launchParallelScene = (sceneKey: SceneKey) => {
+  const launchParallelScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     if (parallelSceneKeys.value.includes(sceneKey)) return;
-    scene.value.scene.bringToTop(sceneKey);
+
+    scene.scene.bringToTop(sceneKey);
     // Mobile controls should always be the first to render
-    if (parallelSceneKeys.value.includes(SceneKey.MobileJoystick))
-      scene.value.scene.bringToTop(SceneKey.MobileJoystick);
-    scene.value.scene.launch(sceneKey);
+    if (parallelSceneKeys.value.includes(SceneKey.MobileJoystick)) scene.scene.bringToTop(SceneKey.MobileJoystick);
+    scene.scene.launch(sceneKey);
     parallelSceneKeys.value.push(sceneKey);
   };
-  const removeParallelScene = (sceneKey: SceneKey) => {
+  const removeParallelScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     const index = parallelSceneKeys.value.indexOf(sceneKey);
     if (index === -1) return;
 
     const parallelSceneKey = parallelSceneKeys.value.splice(index, 1)[0];
-    scene.value.scene.stop(parallelSceneKey);
+    scene.scene.stop(parallelSceneKey);
   };
 
   return {
     game,
-    sceneKey: exposedSceneKey,
-    scene,
     isSameScene,
     switchToScene,
     parallelSceneKeys,

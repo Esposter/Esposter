@@ -4,8 +4,8 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 
 export const Intro: State<StateName> = {
   name: StateName.Intro,
-  onEnter: () => {
-    useRectangleCameraMask(() => {
+  onEnter: (scene) => {
+    useRectangleCameraMask(scene, () => {
       battleStateMachine.setState(StateName.PreBattleInfo);
     });
   },

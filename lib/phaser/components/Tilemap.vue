@@ -1,25 +1,44 @@
 <script setup lang="ts">
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
+import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { getScene } from "@/lib/phaser/util/getScene";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
 
 interface TilemapProps {
   configuration: Types.Tilemaps.TilemapConfig;
-  onComplete?: (scene: ReturnType<typeof useInjectScene>, tilemap: Tilemaps.Tilemap) => void;
+  onComplete?: (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration, onComplete } = defineProps<TilemapProps>();
-const scene = useInjectScene();
+const sceneKey = useInjectSceneKey();
 const tilemap = ref<Tilemaps.Tilemap>();
+
+onCreate((newScene) => {
+  tilemap.value = newScene.make.tilemap(configuration);
+  onComplete?.(newScene, tilemap.value);
+});
+
+onShutdown(() => {
+  if (!tilemap.value) return;
+  tilemap.value.destroy();
+});
 
 watch(
   () => configuration.key,
-  () => {
-    if (tilemap.value) tilemap.value.destroy();
-    tilemap.value = scene.make.tilemap(configuration);
-    onComplete?.(scene, tilemap.value);
+  (newKey) => {
+    const scene = getScene(sceneKey);
+    const oldTilemap = tilemap.value;
+
+    if (newKey) {
+      tilemap.value = scene.make.tilemap(configuration);
+      onComplete?.(scene, tilemap.value);
+    } else tilemap.value = undefined;
+
+    if (oldTilemap) oldTilemap.destroy();
   },
-  { immediate: true },
 );
 </script>
 

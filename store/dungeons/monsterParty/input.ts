@@ -10,7 +10,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
-export const useInputStore = defineStore("dungeons/monsterParty/input", () => {
+export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
@@ -21,26 +21,26 @@ export const useInputStore = defineStore("dungeons/monsterParty/input", () => {
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
-  const onPlayerInput = (justDownInput: PlayerInput, scene: SceneWithPlugins) => {
-    if (handleShowMessageInput(justDownInput, scene)) return;
-    else if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(justDownInput);
+  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
+    if (handleShowMessageInput(scene, justDownInput)) return;
+    else if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
-  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene();
+        if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene(scene);
         else if (selectedItemIndex.value === -1) {
           monsterIndex.value = optionGrid.value.index;
-          launchScene(SceneKey.MonsterDetails);
+          launchScene(scene, SceneKey.MonsterDetails);
         } else {
           activeMonsterIndex.value = optionGrid.value.index;
-          useItem(selectedItem, activeMonster, SceneKey.MonsterParty);
+          useItem(scene, selectedItem, activeMonster);
         }
         return;
       case PlayerSpecialInput.Cancel:
-        switchToPreviousScene();
+        switchToPreviousScene(scene);
         return;
       case PlayerSpecialInput.Enter:
         return;

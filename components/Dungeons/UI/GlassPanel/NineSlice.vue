@@ -3,8 +3,8 @@ import Nineslice from "@/lib/phaser/components/Nineslice.vue";
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/UI/constants";
 
 interface GlassPanelNineSliceProps {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }
 
 const { width, height } = defineProps<GlassPanelNineSliceProps>();

@@ -1,6 +1,6 @@
-import { BaseControls } from "@/models/dungeons/UI/input/BaseControls";
-import type { BaseCursorKeys } from "@/models/dungeons/UI/input/BaseCursorKeys";
-import type { Controls } from "@/models/dungeons/UI/input/Controls";
+import { BaseControls } from "@/lib/phaser/models/input/BaseControls";
+import type { BaseCursorKeys } from "@/lib/phaser/models/input/BaseCursorKeys";
+import type { Controls } from "@/lib/phaser/models/input/Controls";
 import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 

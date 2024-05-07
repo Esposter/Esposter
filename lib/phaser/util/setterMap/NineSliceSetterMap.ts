@@ -16,6 +16,14 @@ import type { GameObjects } from "phaser";
 
 export const NineSliceSetterMap: SetterMap<NineSliceConfiguration, GameObjects.NineSlice, NineSliceEventEmitsOptions> =
   {
+    width: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSize(value, gameObject.height);
+    },
+    height: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSize(gameObject.width, value);
+    },
     ...AlphaSingleSetterMap,
     ...BlendModeSetterMap,
     ...DepthSetterMap,

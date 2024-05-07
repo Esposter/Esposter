@@ -1,8 +1,9 @@
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import type { Scene } from "phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
 
 export const useAnimateText = (
-  scene: Scene,
+  scene: SceneWithPlugins,
   targetText: Ref<string>,
   text: string,
   configuration?: {
@@ -10,7 +11,7 @@ export const useAnimateText = (
     onComplete?: () => void;
   },
 ) => {
-  const { play, stop } = useDungeonsSound(SoundEffectKey.TextBlip, { loop: true });
+  const { play, stop } = getDungeonsSound(scene, SoundEffectKey.TextBlip, { loop: true });
   const textDelay = useTextDelay(configuration?.delay);
   const textSections = text.split(/(\S|\s+)/).filter(Boolean);
   let i = 0;
@@ -26,7 +27,10 @@ export const useAnimateText = (
 
       if (i === textSections.length) {
         stop();
-        configuration?.onComplete?.();
+        // Run the hook after vue's rendering cycle has caught up with phaser
+        nextTick(() => {
+          configuration?.onComplete?.();
+        });
       }
     },
   });

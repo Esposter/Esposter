@@ -7,7 +7,7 @@ export const useSlider = (scene: SceneWithPlugins, ...args: Parameters<SliderPlu
 
   onShutdown(() => {
     slider.destroy();
-  });
+  }, scene.scene.key);
 
   return slider;
 };

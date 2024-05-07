@@ -1,4 +1,4 @@
-import type { BaseCursorKeys } from "@/models/dungeons/UI/input/BaseCursorKeys";
+import type { BaseCursorKeys } from "@/lib/phaser/models/input/BaseCursorKeys";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 
 export interface Controls {

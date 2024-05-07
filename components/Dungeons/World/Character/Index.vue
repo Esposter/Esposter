@@ -2,11 +2,17 @@
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import type { Subscription } from "rxjs";
 import { filter } from "rxjs";
+
+type MovementStarted = NonNullable<Parameters<ReturnType<GridEngine["movementStarted"]>["subscribe"]>[0]>;
+type MovementStopped = NonNullable<Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0]>;
+type PositionChangeStarted = NonNullable<Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0]>;
+type PositionChangeFinished = NonNullable<Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0]>;
 
 export interface CharacterProps {
   id: Character["id"];
@@ -14,10 +20,16 @@ export interface CharacterProps {
   walkingAnimationMapping: Character["walkingAnimationMapping"];
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
   speed?: number;
-  onMovementStarted?: Parameters<ReturnType<GridEngine["movementStarted"]>["subscribe"]>[0];
-  onMovementStopped?: Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0];
-  onPositionChangeStarted?: Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0];
-  onPositionChangeFinished?: Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0];
+  onMovementStarted?: (scene: SceneWithPlugins, ...args: Parameters<MovementStarted>) => ReturnType<MovementStarted>;
+  onMovementStopped?: (scene: SceneWithPlugins, ...args: Parameters<MovementStopped>) => ReturnType<MovementStopped>;
+  onPositionChangeStarted?: (
+    scene: SceneWithPlugins,
+    ...args: Parameters<PositionChangeStarted>
+  ) => ReturnType<PositionChangeStarted>;
+  onPositionChangeFinished?: (
+    scene: SceneWithPlugins,
+    ...args: Parameters<PositionChangeFinished>
+  ) => ReturnType<PositionChangeFinished>;
   onComplete?: SpriteProps["onComplete"];
 }
 
@@ -69,23 +81,29 @@ onShutdown((scene) => {
           facingDirection: direction,
           speed,
         });
-        if (onMovementStarted)
+        if (onMovementStarted) {
+          const f = onMovementStarted;
           subscriptionMovementStarted = scene.gridEngine
             .movementStarted()
             .pipe(filter(({ charId }) => charId === id))
-            .subscribe(onMovementStarted);
-        if (onMovementStopped)
+            .subscribe((movement) => f(scene, movement));
+        }
+
+        if (onMovementStopped) {
+          const f = onMovementStopped;
           subscriptionMovementStopped = scene.gridEngine
             .movementStopped()
             .pipe(filter(({ charId }) => charId === id))
-            .subscribe(onMovementStopped);
+            .subscribe((movement) => f(scene, movement));
+        }
+
         subscriptionPositionChangeStarted = scene.gridEngine
           .positionChangeStarted()
           .pipe(filter(({ charId }) => charId === id))
           .subscribe((positionChange) => {
             const { charId } = positionChange;
             direction = scene.gridEngine.getFacingDirection(charId);
-            onPositionChangeStarted?.(positionChange);
+            onPositionChangeStarted?.(scene, positionChange);
           });
         subscriptionPositionChangeFinished = scene.gridEngine
           .positionChangeFinished()
@@ -94,7 +112,7 @@ onShutdown((scene) => {
             const { charId, enterTile } = positionChange;
             position = enterTile;
             direction = scene.gridEngine.getFacingDirection(charId);
-            onPositionChangeFinished?.(positionChange);
+            onPositionChangeFinished?.(scene, positionChange);
           });
         subscriptionDirectionChanged = scene.gridEngine
           .directionChanged()

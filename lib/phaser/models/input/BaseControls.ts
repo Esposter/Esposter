@@ -1,4 +1,4 @@
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useInputStore } from "@/lib/phaser/store/input";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 
 export abstract class BaseControls {

@@ -1,18 +1,21 @@
-import { useInjectScene } from "@/lib/phaser/composables/useInjectScene";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { onPreload } from "@/lib/phaser/hooks/onPreload";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import type { HookArgs } from "@/lib/phaser/models/lifecycle/HookArgs";
 import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
-export const onShowMessage = (listener: (scene: ReturnType<typeof useInjectScene>) => void) => {
-  const scene = useInjectScene();
-  const wrappedListener = () => {
+export const onShowMessage = (...args: HookArgs) => {
+  const [listener, sceneKey] = args;
+  const wrappedListener = (scene: SceneWithPlugins) => () => {
     listener(scene);
   };
 
-  phaserEventEmitter.on(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`, wrappedListener);
+  onPreload((scene) => {
+    phaserEventEmitter.on(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey ?? scene.scene.key}`, wrappedListener(scene));
+  }, sceneKey);
 
-  onShutdown(() => {
-    phaserEventEmitter.off(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key as SceneKey}`, wrappedListener);
-  }, scene.scene.key);
+  onShutdown((scene) => {
+    phaserEventEmitter.off(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${sceneKey ?? scene.scene.key}`, wrappedListener(scene));
+  }, sceneKey);
 };

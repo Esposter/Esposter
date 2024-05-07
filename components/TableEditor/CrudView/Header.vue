@@ -17,7 +17,7 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       <TableEditorTypeSelect />
       <div pt-4 flex items-center>
         <TableEditorSearchBar />
-        <v-divider mx-4="!" thickness="2" inset vertical />
+        <v-divider mx-4="!" thickness="2" vertical inset />
         <TableEditorCreateItemButton />
         <slot name="append-header" />
       </div>

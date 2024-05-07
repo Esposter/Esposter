@@ -11,13 +11,15 @@ export const AnimationSetterMap = {
     if (!(configurations && configurations.length > 0)) return;
 
     for (const configuration of configurations) {
-      if (!configuration.key || gameObject.scene.anims.exists(configuration.key)) continue;
-      else if (!gameObject.scene.anims.create(configuration))
-        throw new InvalidOperationError(Operation.Create, "Animation", `key: ${configuration.key}`);
+      if (!configuration.key) continue;
       const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
       gameObject.once(event, () => {
         emit(event);
       });
+
+      if (gameObject.scene.anims.exists(configuration.key)) continue;
+      else if (!gameObject.scene.anims.create(configuration))
+        throw new InvalidOperationError(Operation.Create, "Animation", configuration.key);
     }
   },
   playAnimationKey: (gameObject) => (value) => {
