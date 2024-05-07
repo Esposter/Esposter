@@ -23,6 +23,7 @@ export const useInitializeGameObject = <
   const parentContainerStore = useParentContainerStore();
   const { pushGameObject } = parentContainerStore;
   const { initializeGameObjectSetters, setterStopHandlers } = useInitializeGameObjectSetters(
+    () => gameObject,
     configuration,
     emit,
     setterMap,

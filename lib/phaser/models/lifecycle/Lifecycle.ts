@@ -4,4 +4,5 @@ export enum Lifecycle {
   Create = "Create",
   Update = "Update",
   Shutdown = "Shutdown",
+  NextTick = "NextTick",
 }
