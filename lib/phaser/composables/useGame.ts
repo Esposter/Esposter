@@ -1,4 +1,4 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { usePhaserStore } from "@/lib/phaser/store";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { Game } from "phaser";
 

@@ -2,7 +2,7 @@
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { usePhaserStore } from "@/lib/phaser/store";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";

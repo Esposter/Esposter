@@ -1,5 +1,5 @@
 import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { usePhaserStore } from "@/lib/phaser/store";
 import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";

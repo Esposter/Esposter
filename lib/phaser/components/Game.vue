@@ -2,7 +2,7 @@
 import { useGame } from "@/lib/phaser/composables/useGame";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { usePhaserStore } from "@/lib/phaser/store";
 import type { Types } from "phaser";
 import { Game } from "phaser";
 import type { Except } from "type-fest";

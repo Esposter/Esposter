@@ -3,7 +3,7 @@ import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInit
 import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
+import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";

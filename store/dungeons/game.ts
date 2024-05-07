@@ -1,5 +1,5 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
+import { usePhaserStore } from "@/lib/phaser/store";
+import { useCameraStore } from "@/lib/phaser/store/camera";
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";

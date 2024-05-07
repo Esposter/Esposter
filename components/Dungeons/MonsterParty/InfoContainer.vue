@@ -4,7 +4,7 @@ import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";

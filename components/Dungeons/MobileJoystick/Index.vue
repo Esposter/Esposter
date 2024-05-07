@@ -2,7 +2,7 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";

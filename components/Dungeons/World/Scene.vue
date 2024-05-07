@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Scene from "@/lib/phaser/components/Scene.vue";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
+import { useCameraStore } from "@/lib/phaser/store/camera";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";

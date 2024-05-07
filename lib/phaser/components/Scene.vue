@@ -2,10 +2,10 @@
 import { useGame } from "@/lib/phaser/composables/useGame";
 import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
-import { ExternalSceneStore } from "@/lib/phaser/store/phaser/scene";
+import { usePhaserStore } from "@/lib/phaser/store";
+import { useCameraStore } from "@/lib/phaser/store/camera";
+import { useInputStore } from "@/lib/phaser/store/input";
+import { ExternalSceneStore } from "@/lib/phaser/store/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
