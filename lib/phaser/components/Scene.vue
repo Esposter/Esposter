@@ -59,7 +59,7 @@ const NewScene = class extends SceneWithPlugins {
   create(this: SceneWithPlugins) {
     emit("create", this);
     // MobileJoystick is an always active parallel scene
-    // that we don't transition require controls specifically for
+    // that we don't require controls specifically for
     if (this.scene.key !== SceneKey.MobileJoystick) useInitializeControls(this);
     if (!isInputActive.value) isInputActive.value = true;
 
