@@ -4,6 +4,7 @@ import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { getItem } from "@/services/dungeons/item/getItem";
+import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
@@ -32,8 +33,7 @@ export const chestInteractionEffect: Effect = (scene, chestObjects) => {
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;
 
-  const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.OpenChest);
-  play();
+  playDungeonsSoundEffect(scene, SoundEffectKey.OpenChest);
   showMessages(scene, [{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
   return true;
 };

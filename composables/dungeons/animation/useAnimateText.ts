@@ -10,7 +10,7 @@ export const useAnimateText = (
     onComplete?: () => void;
   },
 ) => {
-  const { play, stop } = useDungeonsSound(scene, SoundEffectKey.TextBlip, { loop: true });
+  const { play, stop } = getDungeonsSound(scene, SoundEffectKey.TextBlip, { loop: true });
   const textDelay = useTextDelay(configuration?.delay);
   const textSections = text.split(/(\S|\s+)/).filter(Boolean);
   let i = 0;

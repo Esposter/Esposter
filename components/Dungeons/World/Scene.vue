@@ -25,7 +25,7 @@ const { respawn, healParty } = worldPlayerStore;
 const inputResolvers = getAllInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
-  useDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
+  playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
 
   if (isPlayerFainted.value) respawn();
 

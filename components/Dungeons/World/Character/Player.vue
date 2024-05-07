@@ -4,6 +4,7 @@ import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
+import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -44,8 +45,7 @@ onShutdown((scene) => {
       (scene, { enterTile }) => {
         const tile = ExternalWorldSceneStore.encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
         if (tile) {
-          const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
-          play();
+          playDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
           useRandomEncounter(scene);
         }
       }

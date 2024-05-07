@@ -19,7 +19,7 @@ const x = ref<number>();
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {
-        useDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
+        playDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
         x = scene.scale.width / 2;
       }
     "

@@ -2,6 +2,7 @@ import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
 
@@ -18,9 +19,8 @@ export const FleeAttempt: State<StateName> = {
       return;
     }
 
-    const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.Flee);
     showMessages(scene, ["You got away safely!"], () => {
-      play();
+      playDungeonsSoundEffect(scene, SoundEffectKey.Flee);
       battleStateMachine.setState(StateName.Finished);
     });
   },
