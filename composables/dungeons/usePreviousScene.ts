@@ -1,4 +1,6 @@
+import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSceneStore } from "@/store/dungeons/scene";
@@ -25,9 +27,11 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   };
 
   const switchToPreviousScene = (scene: SceneWithPlugins) => {
-    if (previousSceneKeys.value.length === 0) return;
     const previousSceneKey = previousSceneKeys.value.pop();
+    if (!previousSceneKey) return;
+    const previousScene = getScene(previousSceneKey);
     removeParallelScene(scene, currentSceneKey);
+    useInitializeControls(previousScene);
     scene.scene.resume(previousSceneKey);
   };
 
