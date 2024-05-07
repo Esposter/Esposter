@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
 import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -16,12 +15,9 @@ const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
 const x = ref<number>();
 const y = ref<number>();
 
-onCreate((scene) => {
+onShowMessage((scene) => {
   x.value = scene.cameras.main.worldView.x + DIALOG_PADDING;
   y.value = scene.cameras.main.worldView.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4;
-});
-
-onShowMessage(() => {
   isDialogVisible.value = true;
 });
 </script>
