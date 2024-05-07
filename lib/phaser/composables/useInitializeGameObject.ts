@@ -1,7 +1,6 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
 import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
@@ -44,7 +43,7 @@ export const useInitializeGameObject = <
     if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
   });
 
-  onShutdown(() => {
+  onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
     for (const eventStopHandler of eventStopHandlers) eventStopHandler();
     if (gameObject) gameObject.destroy();
