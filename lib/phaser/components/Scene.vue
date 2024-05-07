@@ -41,15 +41,15 @@ const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
     const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
-    for (const initListener of initListenersMap[sceneKey]) initListener(this);
-    initListenersMap[sceneKey] = [];
+    for (const initListener of initListenersMap[this.scene.key]) initListener(this);
+    initListenersMap[this.scene.key] = [];
   }
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
-    for (const preloadListener of preloadListenersMap[sceneKey]) preloadListener(this);
-    preloadListenersMap[sceneKey] = [];
+    for (const preloadListener of preloadListenersMap[this.scene.key]) preloadListener(this);
+    preloadListenersMap[this.scene.key] = [];
   }
 
   create(this: SceneWithPlugins) {
@@ -69,18 +69,18 @@ const NewScene = class extends SceneWithPlugins {
     });
 
     const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
-    for (const createListener of createListenersMap[sceneKey]) createListener(this);
-    createListenersMap[sceneKey] = [];
+    for (const createListener of createListenersMap[this.scene.key]) createListener(this);
+    createListenersMap[this.scene.key] = [];
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
     const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
-    for (const updateListener of updateListenersMap[sceneKey]) updateListener(this);
+    for (const updateListener of updateListenersMap[this.scene.key]) updateListener(this);
 
     const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
-    for (const nextTickListener of nextTickListenersMap[sceneKey]) nextTickListener(this);
-    nextTickListenersMap[sceneKey] = [];
+    for (const nextTickListener of nextTickListenersMap[this.scene.key]) nextTickListener(this);
+    nextTickListenersMap[this.scene.key] = [];
   }
 };
 
