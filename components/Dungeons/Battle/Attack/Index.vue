@@ -42,10 +42,10 @@ const animations = createAnimationConfigurations ? useAnimations(createAnimation
       ...position,
       texture: spritesheetKey,
       frame,
-      animations,
-      playAnimationKey,
       scale: 4,
       flipX: !isToEnemy,
+      animations,
+      playAnimationKey,
     }"
     @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`]="
       {
