@@ -36,7 +36,6 @@ const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { controls, isActive: isInputActive } = storeToRefs(inputStore);
-let newScene: SceneWithPlugins | null = null;
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
@@ -97,15 +96,15 @@ const shutdownListener = () => {
 
 onMounted(() => {
   const game = useGame();
-  newScene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
-  newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
+  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
   const game = useGame();
-  const newScene = getScene(sceneKey);
-  newScene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
+  const scene = getScene(sceneKey);
+  scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);
 });
 
