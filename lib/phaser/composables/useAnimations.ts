@@ -11,17 +11,16 @@ export const useAnimations = (
   createConfigurations: (scene: SceneWithPlugins) => Types.Animations.Animation[],
   immediate?: true,
 ) => {
+  const animations = ref<Types.Animations.Animation[]>([]);
+
   if (immediate) {
     const sceneKey = useInjectSceneKey();
     const scene = getScene(sceneKey);
-    return createConfigurations(scene);
-  }
-
-  const animations = ref<Types.Animations.Animation[]>([]);
-
-  onNextTick((scene) => {
     animations.value = createConfigurations(scene);
-  });
+  } else
+    onNextTick((scene) => {
+      animations.value = createConfigurations(scene);
+    });
 
   onShutdown((scene) => {
     for (const { key } of animations.value) {
