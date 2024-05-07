@@ -1,5 +1,6 @@
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
 
 export const useAnimateText = (
   scene: SceneWithPlugins,

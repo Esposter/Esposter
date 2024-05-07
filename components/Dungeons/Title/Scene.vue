@@ -5,6 +5,7 @@ import { useInputStore } from "@/lib/phaser/store/phaser/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
+import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
 const inputStore = useInputStore();

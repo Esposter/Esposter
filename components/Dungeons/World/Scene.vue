@@ -7,6 +7,7 @@ import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusic
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getAllInputResolvers } from "@/services/dungeons/scene/world/getAllInputResolvers";
+import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
