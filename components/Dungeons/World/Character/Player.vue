@@ -6,11 +6,9 @@ import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 
-const worldSceneStore = useWorldSceneStore();
-const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);
 const worldPlayerStore = useWorldPlayerStore();
@@ -44,7 +42,7 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
-        const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
+        const tile = ExternalWorldSceneStore.encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
         if (tile) {
           const { play } = useDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
           play();

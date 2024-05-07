@@ -4,24 +4,24 @@ import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
 import { useGameStore } from "@/store/dungeons/game";
 import type { Tilemaps } from "phaser";
 
+// We will create the tilemap and its metadata in the world scene vue component
+export const ExternalWorldSceneStore = {
+  tilemap: null as unknown as Tilemaps.Tilemap,
+  encounterLayer: null as unknown as Tilemaps.TilemapLayer,
+  objectLayerMap: {} as Record<ObjectgroupName, Tilemaps.ObjectLayer>,
+};
+
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const gameStore = useGameStore();
   const { save } = storeToRefs(gameStore);
-  // We will create the tilemap and its metadata in the world scene vue component
-  const tilemap = ref() as Ref<Tilemaps.Tilemap>;
-  const encounterLayer = ref() as Ref<Tilemaps.TilemapLayer>;
-  const objectLayerMap = ref({} as Record<ObjectgroupName, Tilemaps.ObjectLayer>);
-  const isMenuVisible = ref(false);
-  const menuOptionGrid = ref(MenuOptionGrid);
   const tilemapKey = computed(() => save.value.tilemapKey);
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
+  const isMenuVisible = ref(false);
+  const menuOptionGrid = ref(MenuOptionGrid);
   return {
-    tilemap,
-    encounterLayer,
-    objectLayerMap,
-    isMenuVisible,
-    menuOptionGrid,
     tilemapKey,
     worldData,
+    isMenuVisible,
+    menuOptionGrid,
   };
 });

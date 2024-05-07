@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
 
@@ -11,13 +13,12 @@ interface TilemapProps {
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration, onComplete } = defineProps<TilemapProps>();
-const scene = ref() as Ref<SceneWithPlugins>;
+const sceneKey = useInjectSceneKey();
 const tilemap = ref<Tilemaps.Tilemap>();
 
 onCreate((newScene) => {
-  scene.value = newScene;
-  tilemap.value = scene.value.make.tilemap(configuration);
-  onComplete?.(scene.value, tilemap.value);
+  tilemap.value = newScene.make.tilemap(configuration);
+  onComplete?.(newScene, tilemap.value);
 });
 
 onShutdown(() => {
@@ -28,11 +29,12 @@ onShutdown(() => {
 watch(
   () => configuration.key,
   (newKey) => {
+    const scene = getScene(sceneKey);
     const oldTilemap = tilemap.value;
 
     if (newKey) {
-      tilemap.value = scene.value.make.tilemap(configuration);
-      onComplete?.(scene.value, tilemap.value);
+      tilemap.value = scene.make.tilemap(configuration);
+      onComplete?.(scene, tilemap.value);
     } else tilemap.value = undefined;
 
     if (oldTilemap) oldTilemap.destroy();
