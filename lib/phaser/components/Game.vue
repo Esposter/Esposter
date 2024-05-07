@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { useGame } from "@/lib/phaser/composables/useGame";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
 import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Types } from "phaser";
 import { Game } from "phaser";
 import type { Except } from "type-fest";
-import { useGame } from "../composables/useGame";
 
 interface GameProps {
   // We're gonna stop people from being stupid and adding scenes like this

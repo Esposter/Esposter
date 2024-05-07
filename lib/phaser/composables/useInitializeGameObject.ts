@@ -28,20 +28,18 @@ export const useInitializeGameObject = <
     setterMap,
   );
   const { initializeGameObjectEvents, eventStopHandlers } = useInitializeGameObjectEvents();
+  // This is only used to track if the current gameObject we are rendering
+  // is in a parent container and append to it if it exists. We need to use
+  // the vue provide / inject api as this context should not be shared across every component,
+  // only the components through the current rendering tree that it belongs to
+  // We can do this because phaser containers can only contain gameObjects one level deep
+  const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
 
   onCreate((scene) => {
-    // This is only used to track if the current gameObject we are rendering
-    // is in a parent container and append to it if it exists. We need to use
-    // the vue provide / inject api as this context should not be shared across every component,
-    // only the components through the current rendering tree that it belongs to
-    // We can do this because phaser containers can only contain gameObjects one level deep
-    const parentContainer = inject<GameObjects.Container | null>(InjectionKeyMap.ParentContainer, null);
-    // Create the gameObject after parentContainer has been injected
-    // as this gameObject itself may be a new parentContainer
     gameObject = create(scene);
     initializeGameObjectSetters(gameObject);
     initializeGameObjectEvents(gameObject, emit, scene);
-    if (parentContainer) pushGameObject(parentContainer, toValue(configuration), gameObject);
+    if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
   });
 
   onShutdown(() => {
