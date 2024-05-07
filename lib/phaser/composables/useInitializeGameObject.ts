@@ -1,6 +1,6 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
+import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/phaser/parentContainer";
@@ -35,8 +35,9 @@ export const useInitializeGameObject = <
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
   const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
-
-  onCreate((scene) => {
+  // We actually can't use onCreate hook here because we can have dynamic gameObjects
+  // based on vue refs that render after the scene create lifecycle
+  onNextTick((scene) => {
     gameObject = create(scene);
     initializeGameObjectSetters(gameObject);
     initializeGameObjectEvents(gameObject, emit, scene);
@@ -46,6 +47,6 @@ export const useInitializeGameObject = <
   onShutdown(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
     for (const eventStopHandler of eventStopHandlers) eventStopHandler();
-    gameObject.destroy();
+    if (gameObject) gameObject.destroy();
   });
 };
