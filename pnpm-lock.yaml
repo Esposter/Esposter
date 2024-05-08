@@ -118,7 +118,7 @@ importers:
         version: 0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.6)
+        version: 0.5.1(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.7)
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.27(typescript@5.4.5))
@@ -183,17 +183,17 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
       survey-core:
-        specifier: ^1.10.2
-        version: 1.10.2
+        specifier: ^1.10.3
+        version: 1.10.3
       survey-creator-core:
         specifier: ^1.10.3
-        version: 1.10.3(survey-core@1.10.2)
+        version: 1.10.3(survey-core@1.10.3)
       survey-creator-vue:
         specifier: ^1.10.3
-        version: 1.10.3(survey-core@1.10.2)(survey-creator-core@1.10.3(survey-core@1.10.2))(survey-vue3-ui@1.10.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+        version: 1.10.3(survey-core@1.10.3)(survey-creator-core@1.10.3(survey-core@1.10.3))(survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       survey-vue3-ui:
-        specifier: ^1.10.2
-        version: 1.10.2(vue@3.4.27(typescript@5.4.5))
+        specifier: ^1.10.3
+        version: 1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5))
       three:
         specifier: ^0.164.1
         version: 0.164.1
@@ -219,8 +219,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(vue@3.4.27(typescript@5.4.5))
       vuetify:
-        specifier: ^3.6.3
-        version: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^3.6.4
+        version: 3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
       webfontloader:
         specifier: ^1.6.28
         version: 1.6.28
@@ -237,8 +237,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5
       zod:
-        specifier: ^3.23.6
-        version: 3.23.6
+        specifier: ^3.23.7
+        version: 3.23.7
     devDependencies:
       '@nuxt/eslint':
         specifier: ^0.3.10
@@ -6795,8 +6795,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@1.10.2:
-    resolution: {integrity: sha512-EszikpODkThTHQwvUABJfreiI+I8koE1gHAV5hDsXuLGQ+Iw7lewIUI16+sjoqxjKhq2M5TnaGe3DfOI/kDSSg==}
+  survey-core@1.10.3:
+    resolution: {integrity: sha512-C7erRVrcLobpPdCrVn0vuzKpjkAL+RvPR77sTQxzwdb8Zu4mzrVw6B4+Nhr+P9ckEHUhsDHtzlsyZQyGEHKDYA==}
 
   survey-creator-core@1.10.3:
     resolution: {integrity: sha512-dNyzdGOlz9l6cGoHpW1tePTzsKXIApuxprZmCTZ5yYpRSZH18RP0g4d7wNVHUqRiqB5u/EyRCPQUaU3QHXTBxg==}
@@ -6816,9 +6816,10 @@ packages:
       survey-vue3-ui: 1.10.3
       vue: ^3.2.41
 
-  survey-vue3-ui@1.10.2:
-    resolution: {integrity: sha512-zhIngCIBTC+WwPCEHnuF0Aa38TGsLD327TifaEIPG1t0xS2FWf3TB32Fa2pArMhwG5DeuGey1aj3GtS4MftKHg==}
+  survey-vue3-ui@1.10.3:
+    resolution: {integrity: sha512-T2BRKCDdTjkGcSeXjfZKvEwt0IHQhZ10608QGr1tuBnBxq2Blkqhq3DmrBrW474t0YBWkVvzy6qZRisLIQZo7w==}
     peerDependencies:
+      survey-core: 1.10.3
       vue: ^3.2.41
 
   svg-tags@1.0.0:
@@ -7498,8 +7499,8 @@ packages:
   vuetify-nuxt-module@0.13.5:
     resolution: {integrity: sha512-sqlDB+e/cHoKSjLQZ5Vl4pV+SpM47TcTfna9oajb8q+RFogPdN1nUlYDyQF5LPNaLKvcInK7CPTCRjv6+2WRxA==}
 
-  vuetify@3.6.3:
-    resolution: {integrity: sha512-OBYYJYnNeUYA7kwrv8Rag1EBFbGWAQxJpp0s98U2KQ6SPU7MzzcrvNn7t69vcDbj7mR7Dcf9/jvFapfranXZvA==}
+  vuetify@3.6.4:
+    resolution: {integrity: sha512-H0s+VQAuFDIaqJaxaYv3DuJoSlThMfIJX5l06sGkxk9YDMxiEjE4ABT58fTAZGdPMF/TzMXtTHbRNCHes0UaHQ==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
@@ -7630,6 +7631,7 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -7756,8 +7758,8 @@ packages:
     resolution: {integrity: sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==}
     engines: {node: '>=0.2.0'}
 
-  zod@3.23.6:
-    resolution: {integrity: sha512-RTHJlZhsRbuA8Hmp/iNL7jnfc4nZishjsanDAfEY1QpDQZCahUp3xDzl+zfweE9BklxMUcgBgS1b7Lvie/ZVwA==}
+  zod@3.23.7:
+    resolution: {integrity: sha512-NBeIoqbtOiUMomACV/y+V3Qfs9+Okr18vR5c/5pHClPpufWOrsx8TENboDPe265lFdfewX2yBtNTLPvnmCxwog==}
 
 snapshots:
 
@@ -9260,10 +9262,10 @@ snapshots:
 
   '@hono/node-server@1.11.0': {}
 
-  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.23.6)':
+  '@hono/zod-validator@0.2.1(hono@4.2.5)(zod@3.23.7)':
     dependencies:
       hono: 4.2.5
-      zod: 3.23.6
+      zod: 3.23.7
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -11412,11 +11414,11 @@ snapshots:
       date-fns: 3.6.0
       vue: 3.4.27(typescript@5.4.5)
 
-  '@vuetify/loader-shared@2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
+  '@vuetify/loader-shared@2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
     dependencies:
       upath: 2.0.1
       vue: 3.4.27(typescript@5.4.5)
-      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vuetify: 3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
 
   '@vueuse/core@10.9.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
@@ -12411,7 +12413,7 @@ snapshots:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       '@hono/node-server': 1.11.0
-      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.23.6)
+      '@hono/zod-validator': 0.2.1(hono@4.2.5)(zod@3.23.7)
       camelcase: 7.0.1
       chalk: 5.3.0
       commander: 9.5.0
@@ -12425,7 +12427,7 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.0
       superjson: 2.2.1
-      zod: 3.23.6
+      zod: 3.23.7
     transitivePeerDependencies:
       - supports-color
 
@@ -12434,10 +12436,10 @@ snapshots:
       '@opentelemetry/api': 1.8.0
       postgres: 3.4.4
 
-  drizzle-zod@0.5.1(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.6):
+  drizzle-zod@0.5.1(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.7):
     dependencies:
       drizzle-orm: 0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4)
-      zod: 3.23.6
+      zod: 3.23.7
 
   duplexer@0.1.2: {}
 
@@ -15620,22 +15622,22 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@1.10.2: {}
+  survey-core@1.10.3: {}
 
-  survey-creator-core@1.10.3(survey-core@1.10.2):
+  survey-creator-core@1.10.3(survey-core@1.10.3):
     dependencies:
-      survey-core: 1.10.2
+      survey-core: 1.10.3
 
-  survey-creator-vue@1.10.3(survey-core@1.10.2)(survey-creator-core@1.10.3(survey-core@1.10.2))(survey-vue3-ui@1.10.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  survey-creator-vue@1.10.3(survey-core@1.10.3)(survey-creator-core@1.10.3(survey-core@1.10.3))(survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.2
-      survey-creator-core: 1.10.3(survey-core@1.10.2)
-      survey-vue3-ui: 1.10.2(vue@3.4.27(typescript@5.4.5))
+      survey-core: 1.10.3
+      survey-creator-core: 1.10.3(survey-core@1.10.3)
+      survey-vue3-ui: 1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5))
       vue: 3.4.27(typescript@5.4.5)
 
-  survey-vue3-ui@1.10.2(vue@3.4.27(typescript@5.4.5)):
+  survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.2
+      survey-core: 1.10.3
       vue: 3.4.27(typescript@5.4.5)
 
   svg-tags@1.0.0: {}
@@ -16268,14 +16270,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.3):
+  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.4):
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
+      '@vuetify/loader-shared': 2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
       debug: 4.3.4
       upath: 2.0.1
       vite: 5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2)
       vue: 3.4.27(typescript@5.4.5)
-      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vuetify: 3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - supports-color
 
@@ -16443,8 +16445,8 @@ snapshots:
       perfect-debounce: 1.0.0
       ufo: 1.5.3
       unconfig: 0.3.13
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.3)
-      vuetify: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.4)
+      vuetify: 3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -16454,12 +16456,12 @@ snapshots:
       - vue-i18n
       - webpack-plugin-vuetify
 
-  vuetify@3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)):
+  vuetify@3.6.4(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       vue: 3.4.27(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.3)
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.11.28)(sass@1.77.0)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.4)
 
   w3c-keyname@2.2.8: {}
 
@@ -16782,4 +16784,4 @@ snapshots:
 
   zlib@1.0.5: {}
 
-  zod@3.23.6: {}
+  zod@3.23.7: {}

@@ -8,12 +8,13 @@ import type { GameObjects } from "phaser";
 
 interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;
+  immediate?: true;
   onComplete?: (scene: SceneWithPlugins, rectangle: GameObjects.Rectangle) => void;
 }
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
-const { configuration, onComplete } = defineProps<RectangleProps>();
+const { configuration, immediate, onComplete } = defineProps<RectangleProps>();
 const emit = defineEmits<RectangleEmits>();
 
 useInitializeGameObject(
@@ -26,6 +27,7 @@ useInitializeGameObject(
   () => configuration,
   emit,
   RectangleSetterMap,
+  immediate,
 );
 </script>
 

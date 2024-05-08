@@ -66,6 +66,7 @@ const preload = (scene: SceneWithPlugins) => {
         height: progressBarHeight,
         fillColor: 0xffffff,
       }"
+      immediate
     />
     <Rectangle
       :configuration="{
@@ -76,6 +77,7 @@ const preload = (scene: SceneWithPlugins) => {
         fillColor: 0x222222,
         alpha: 0.8,
       }"
+      immediate
     />
     <Text
       :configuration="{
@@ -85,6 +87,7 @@ const preload = (scene: SceneWithPlugins) => {
         text: percentageText,
         style: { fontSize: 24 },
       }"
+      immediate
     />
     <Text
       :configuration="{
@@ -94,6 +97,7 @@ const preload = (scene: SceneWithPlugins) => {
         text: assetText,
         style: { fontSize: 24 },
       }"
+      immediate
     />
   </Scene>
 </template>

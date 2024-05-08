@@ -68,6 +68,6 @@ await useReadDungeonsGame();
 <style scoped lang="scss">
 @font-face {
   font-family: "KenneyFutureNarrow";
-  src: local("KenneyFutureNarrow"), url("/fonts/KenneyFutureNarrow.ttf"), format(ttf);
+  src: local("KenneyFutureNarrow"), url("/fonts/KenneyFutureNarrow.woff2"), format(woff2);
 }
 </style>

@@ -8,11 +8,12 @@ import type { SetRequired } from "type-fest";
 
 interface TextProps {
   configuration: SetRequired<Partial<TextConfiguration>, "text">;
+  immediate?: true;
 }
 
 interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 
-const { configuration } = defineProps<TextProps>();
+const { configuration, immediate } = defineProps<TextProps>();
 const emit = defineEmits<TextEmits>();
 
 useInitializeGameObject(
@@ -23,6 +24,7 @@ useInitializeGameObject(
   () => configuration,
   emit,
   TextSetterMap,
+  immediate,
 );
 </script>
 
