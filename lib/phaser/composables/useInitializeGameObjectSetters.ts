@@ -1,9 +1,9 @@
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { getUpdateEvent } from "@/lib/phaser/util/emit/getUpdateEvent";
 import type { GameObjects } from "phaser";
 import type { SetupContext, WatchStopHandle } from "vue";
+import { onNextTick } from "../hooks/onNextTick";
 
 export const useInitializeGameObjectSetters = <
   TConfiguration extends object,

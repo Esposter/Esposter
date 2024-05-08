@@ -1,11 +1,11 @@
 import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
+import { getInitializeGameObjectLifecycleHook } from "@/lib/phaser/util/hooks/getInitializeGameObjectLifecycleHook";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
@@ -40,6 +40,8 @@ export const useInitializeGameObject = <
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
   const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
+  const sceneKey = useInjectSceneKey();
+  const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
   const initializeGameObject = (scene: SceneWithPlugins) => {
     gameObject = create(scene);
     initializeGameObjectSetters(gameObject);
@@ -47,17 +49,13 @@ export const useInitializeGameObject = <
   };
 
   if (immediate) {
-    const sceneKey = useInjectSceneKey();
     const scene = getScene(sceneKey);
     initializeGameObject(scene);
-    onNextTick(() => {
+    lifecycleHook(() => {
       if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
     });
-  }
-  // We actually can't use onCreate hook here because we can have dynamic gameObjects
-  // based on vue refs that render after the scene create lifecycle
-  else
-    onNextTick((scene) => {
+  } else
+    lifecycleHook((scene) => {
       initializeGameObject(scene);
       if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
     });
