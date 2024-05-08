@@ -19,7 +19,7 @@ export const useInitializeGameObject = <
   configuration: () => TConfiguration,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<NoInfer<TConfiguration>, TGameObject, TEmitsOptions>,
-  // We may want to create gameObjects e.g. Sprites for attacks on the fly
+  // We may want to create gameObjects e.g. Sprites for attacks immediately
   // without being tied to the scene's lifecycle
   immediate?: true,
 ) => {
@@ -51,14 +51,15 @@ export const useInitializeGameObject = <
   if (immediate) {
     const scene = getScene(sceneKey);
     initializeGameObject(scene);
-    lifecycleHook(() => {
-      if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
-    });
   } else
     lifecycleHook((scene) => {
       initializeGameObject(scene);
-      if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
     });
+  // The parent container may not be immediately created in comparison to this gameObject
+  // so we still need to push the gameObject after the parentContainer's lifecycle hook is run
+  lifecycleHook(() => {
+    if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
+  });
 
   onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
