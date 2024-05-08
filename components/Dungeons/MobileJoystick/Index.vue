@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
-import { usePhaserStore } from "@/lib/phaser/store";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { getScene } from "@/lib/phaser/util/getScene";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
@@ -11,26 +11,29 @@ import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
-const phaserStore = usePhaserStore();
-const { rootSceneKey } = storeToRefs(phaserStore);
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const virtualJoystick = ref<VirtualJoystick>();
 const base = ref<GameObjects.Image>();
 const thumb = ref<GameObjects.Image>();
+const sceneKey = useInjectSceneKey();
 
 watch([base, thumb], ([newBase, newThumb]) => {
   if (!(newBase && newThumb)) return;
 
-  const rootScene = getScene(rootSceneKey.value);
-  virtualJoystick.value = rootScene.virtualJoystickPlugin.add(rootScene, {
+  const scene = getScene(sceneKey);
+  virtualJoystick.value = scene.virtualJoystickPlugin.add(scene, {
     x: getJoystickX(),
-    y: getJoystickY(rootScene),
+    y: getJoystickY(scene),
     radius: JOYSTICK_RADIUS,
     base: newBase,
     thumb: newThumb,
   });
-  controls.value.cursorKeys = virtualJoystick.value.createCursorKeys();
+});
+
+watch([virtualJoystick, controls], ([newVirtualJoystick, newControls]) => {
+  if (!newVirtualJoystick) return;
+  newControls.cursorKeys = newVirtualJoystick.createCursorKeys();
 });
 
 onShutdown(() => {

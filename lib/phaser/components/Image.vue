@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import type { ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
 import type { ImageEventEmitsOptions } from "@/lib/phaser/models/emit/ImageEventEmitsOptions";
 import { ImageSetterMap } from "@/lib/phaser/util/setterMap/ImageSetterMap";
