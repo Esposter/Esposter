@@ -21,7 +21,7 @@ const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 
-onShutdown(() => {
+onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
 });
 </script>

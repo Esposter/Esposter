@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -14,7 +13,7 @@ const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
 
-onShutdown(() => {
+onUnmounted(() => {
   monsterPosition.value = { ...initialMonsterPosition };
 });
 </script>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
@@ -21,11 +20,6 @@ onCreate((newScene) => {
   onComplete?.(newScene, tilemap.value);
 });
 
-onShutdown(() => {
-  if (!tilemap.value) return;
-  tilemap.value.destroy();
-});
-
 watch(
   () => configuration.key,
   (newKey) => {
@@ -40,6 +34,11 @@ watch(
     if (oldTilemap) oldTilemap.destroy();
   },
 );
+
+onUnmounted(() => {
+  if (!tilemap.value) return;
+  tilemap.value.destroy();
+});
 </script>
 
 <template>

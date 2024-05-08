@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { getScene } from "@/lib/phaser/util/getScene";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
@@ -36,7 +35,7 @@ watch([virtualJoystick, controls], ([newVirtualJoystick, newControls]) => {
   newControls.cursorKeys = newVirtualJoystick.createCursorKeys();
 });
 
-onShutdown(() => {
+onUnmounted(() => {
   if (!virtualJoystick.value) return;
   virtualJoystick.value.destroy();
 });
