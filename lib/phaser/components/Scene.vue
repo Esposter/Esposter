@@ -58,17 +58,8 @@ const NewScene = class extends SceneWithPlugins {
 
   create(this: SceneWithPlugins) {
     emit("create", this);
-    // MobileJoystick is an always active parallel scene
-    // that we don't require controls specifically for
-    if (this.scene.key !== SceneKey.MobileJoystick) useInitializeControls(this);
-    if (!isInputActive.value) isInputActive.value = true;
-
-    this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-      isFading.value = false;
-    });
-    this.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      isFading.value = false;
-    });
+    // MobileJoystick is an always active side scene
+    if (this.scene.key !== SceneKey.MobileJoystick) initializeRootScene(this);
 
     const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
     for (const createListener of createListenersMap[this.scene.key]) createListener(this);
@@ -84,6 +75,19 @@ const NewScene = class extends SceneWithPlugins {
     for (const nextTickListener of nextTickListenersMap[this.scene.key]) nextTickListener(this);
     nextTickListenersMap[this.scene.key] = [];
   }
+};
+
+const initializeRootScene = (scene: SceneWithPlugins) => {
+  useInitializeControls(scene);
+
+  if (!isInputActive.value) isInputActive.value = true;
+
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+    isFading.value = false;
+  });
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+    isFading.value = false;
+  });
 };
 
 const shutdownListener = () => {
