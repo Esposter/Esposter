@@ -1,5 +1,5 @@
 import { createContext } from "@/server/trpc/context";
-import { appRouter } from "@/server/trpc/routers";
+import { trpcRouter } from "@/server/trpc/routers";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import type { Server } from "node:http";
 import { WebSocketServer } from "ws";
@@ -12,7 +12,7 @@ export default defineEventHandler((event) => {
   if (!server) return;
 
   const wss = new WebSocketServer({ server });
-  const handler = applyWSSHandler({ wss, router: appRouter, createContext });
+  const handler = applyWSSHandler({ wss, router: trpcRouter, createContext });
 
   wss.on("connection", (ws) => {
     console.log(`Connection opened, client size: ${wss.clients.size}`);

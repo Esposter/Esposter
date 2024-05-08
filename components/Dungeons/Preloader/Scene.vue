@@ -3,6 +3,7 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store";
+import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
@@ -13,6 +14,7 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Loader } from "phaser";
+import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
@@ -30,6 +32,8 @@ const preload = (scene: SceneWithPlugins) => {
   const { width, height } = scene.cameras.main;
   x.value = width / 2;
   y.value = height / 2;
+  // We need to preload the fonts so phaser can properly use them
+  load({ custom: { families: [FontKey.KenneyFutureNarrow] } });
 
   scene.load.on("progress", (value: number) => {
     progressBarWidth.value = progressBarMaxWidth.value * value;

@@ -221,6 +221,9 @@ importers:
       vuetify:
         specifier: ^3.6.3
         version: 3.6.3(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      webfontloader:
+        specifier: ^1.6.28
+        version: 1.6.28
       worker-timers:
         specifier: ^7.1.8
         version: 7.1.8
@@ -273,6 +276,9 @@ importers:
       '@types/three':
         specifier: ^0.164.0
         version: 0.164.0
+      '@types/webfontloader':
+        specifier: ^1.6.38
+        version: 1.6.38
       '@types/ws':
         specifier: ^8.5.10
         version: 8.5.10
@@ -2610,6 +2616,9 @@ packages:
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
+
+  '@types/webfontloader@1.6.38':
+    resolution: {integrity: sha512-kUaF72Fv202suFx6yBrwXqeVRMx7hGtJTesyESZgn9sEPCUeDXm2p0SiyS1MTqW74nQP4p7JyrOCwZ7pNFns4w==}
 
   '@types/webidl-conversions@7.0.3':
     resolution: {integrity: sha512-CiJJvcRtIgzadHCYXw7dqEnMNRjhGZlYK05Mj9OyktqV8uVT8fD2BFOB7S1uwBE3Kj2Z+4UyPmFw/Ixgw/LAlA==}
@@ -7621,7 +7630,6 @@ packages:
 
   workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
-    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
 
   workbox-navigation-preload@7.0.0:
     resolution: {integrity: sha512-juWCSrxo/fiMz3RsvDspeSLGmbgC0U9tKqcUPZBCf35s64wlaLXyn2KdHHXVQrb2cqF7I0Hc9siQalainmnXJA==}
@@ -10573,6 +10581,8 @@ snapshots:
       '@types/node': 20.11.28
 
   '@types/web-bluetooth@0.0.20': {}
+
+  '@types/webfontloader@1.6.38': {}
 
   '@types/webidl-conversions@7.0.3': {}
 

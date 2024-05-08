@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
+import Text from "@/lib/phaser/components/Text.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
@@ -8,11 +9,14 @@ import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusic
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
+const buildVersion = await useBuildVersion();
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const titleSceneStore = useTitleSceneStore();
 const { onPlayerInput } = titleSceneStore;
 const x = ref<number>();
+const versionX = ref<number>();
+const versionY = ref<number>();
 </script>
 
 <template>
@@ -22,6 +26,8 @@ const x = ref<number>();
       (scene) => {
         playDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
         x = scene.scale.width / 2;
+        versionX = scene.scale.width - 150;
+        versionY = scene.scale.height - 50;
       }
     "
     @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
@@ -52,5 +58,13 @@ const x = ref<number>();
       }"
     />
     <DungeonsTitleMenuContainer />
+    <Text
+      :configuration="{
+        x: versionX,
+        y: versionY,
+        text: `ver: ${buildVersion}`,
+        style: { color: 'white', fontSize: 24 },
+      }"
+    />
   </Scene>
 </template>
