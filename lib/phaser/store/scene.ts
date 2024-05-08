@@ -13,4 +13,11 @@ export const ExternalSceneStore = {
     },
     {} as Record<Lifecycle, ListenersMap>,
   ),
+  sceneReadyMap: Object.values(SceneKey).reduce(
+    (acc, curr) => {
+      acc[curr] = false;
+      return acc;
+    },
+    {} as Record<SceneKey, boolean>,
+  ),
 };

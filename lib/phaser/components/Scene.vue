@@ -90,6 +90,10 @@ const initializeRootScene = (scene: SceneWithPlugins) => {
   });
 };
 
+const readyListener = () => {
+  ExternalSceneStore.sceneReadyMap[sceneKey] = true;
+};
+
 const shutdownListener = () => {
   const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
   updateListenersMap[sceneKey] = [];
@@ -99,6 +103,8 @@ const shutdownListener = () => {
   for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
   shutdownListenersMap[sceneKey] = [];
   emit("shutdown", newScene);
+
+  ExternalSceneStore.sceneReadyMap[sceneKey] = false;
 };
 
 onMounted(() => {
@@ -106,7 +112,8 @@ onMounted(() => {
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   initializeSound();
   initializeVolume();
-  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  scene.events.once(Scenes.Events.READY, readyListener);
+  scene.events.once(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
@@ -125,8 +132,6 @@ const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVol
 
 onUnmounted(() => {
   const game = useGame();
-  const scene = getScene(sceneKey);
-  scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);
 });
 
