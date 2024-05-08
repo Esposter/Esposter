@@ -15,6 +15,8 @@ export const usePhaserStore = defineStore("phaser", () => {
   });
 
   const sceneKey = ref<SceneKey | null>(null);
+  // When we access the root scene key from outside components, it should already be initialized
+  const rootSceneKey = sceneKey as Ref<SceneKey>;
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
   const switchToScene = (newSceneKey: SceneKey) => {
     if (isSameScene(newSceneKey)) return;
@@ -51,6 +53,7 @@ export const usePhaserStore = defineStore("phaser", () => {
 
   return {
     game,
+    rootSceneKey,
     isSameScene,
     switchToScene,
     parallelSceneKeys,

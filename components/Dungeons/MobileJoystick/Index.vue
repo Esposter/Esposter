@@ -1,33 +1,31 @@
 <script setup lang="ts">
 import Image from "@/lib/phaser/components/Image.vue";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { usePhaserStore } from "@/lib/phaser/store";
 import { useInputStore } from "@/lib/phaser/store/input";
+import { getScene } from "@/lib/phaser/util/getScene";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
+const phaserStore = usePhaserStore();
+const { rootSceneKey } = storeToRefs(phaserStore);
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const virtualJoystick = ref<VirtualJoystick>();
-const scene = ref<SceneWithPlugins>();
 const base = ref<GameObjects.Image>();
 const thumb = ref<GameObjects.Image>();
 
-onCreate((newScene) => {
-  scene.value = newScene;
-});
+watch([base, thumb], ([newBase, newThumb]) => {
+  if (!(newBase && newThumb)) return;
 
-watch([scene, base, thumb], ([newScene, newBase, newThumb]) => {
-  if (!(newScene && newBase && newThumb)) return;
-
-  virtualJoystick.value = newScene.virtualJoystickPlugin.add(newScene, {
+  const rootScene = getScene(rootSceneKey.value);
+  virtualJoystick.value = rootScene.virtualJoystickPlugin.add(rootScene, {
     x: getJoystickX(),
-    y: getJoystickY(newScene),
+    y: getJoystickY(rootScene),
     radius: JOYSTICK_RADIUS,
     base: newBase,
     thumb: newThumb,
