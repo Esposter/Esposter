@@ -1,5 +1,5 @@
-import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import type { OnKeyDown } from "@/components/Esbabbler/Model/Message/MentionList.vue";
+import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 import type { MentionOptions } from "@tiptap/extension-mention";
 import { VueRenderer } from "@tiptap/vue-3";
