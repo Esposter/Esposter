@@ -51,10 +51,7 @@ export const useInitializeGameObject = <
   if (immediate) {
     const scene = getScene(sceneKey);
     initializeGameObject(scene);
-  } else
-    lifecycleHook((scene) => {
-      initializeGameObject(scene);
-    });
+  } else lifecycleHook(initializeGameObject);
   // The parent container may not be immediately created in comparison to this gameObject
   // so we still need to push the gameObject after the parentContainer's lifecycle hook is run
   lifecycleHook(() => {
