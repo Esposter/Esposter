@@ -3,15 +3,9 @@ import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/Telep
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { Direction } from "grid-engine";
 
-export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
-  const teleportObject = useGetInteractiveObject(teleportObjects, {
-    [Direction.UP]: true,
-    [Direction.DOWN]: false,
-    [Direction.LEFT]: false,
-    [Direction.RIGHT]: false,
-  });
+export const doorInteractionEffect: Effect = (_scene, teleportObjects) => {
+  const teleportObject = useGetInteractiveObject(teleportObjects);
   if (!teleportObject) return false;
 
   const teleportTargetTiledObjectProperty = getTiledObjectProperty<TeleportTarget>(
