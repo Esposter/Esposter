@@ -14,5 +14,5 @@ const depth = computed(() => (sprite.value ? sprite.value.depth + 1 : 0));
 </script>
 
 <template>
-  <Image v-if="foregroundTexture" :configuration="{ origin: 0, texture, depth }" />
+  <Image v-if="texture" :configuration="{ origin: 0, texture, depth }" />
 </template>
