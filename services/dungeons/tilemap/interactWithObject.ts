@@ -16,7 +16,7 @@ export const interactWithObject = (scene: SceneWithPlugins): boolean => {
       objects.push({ ...getObjectUnitPosition({ x, y }), ...rest });
     }
 
-    if (ObjectInteractionEffectMap[objectgroupName](scene, objects)) return true;
+    if (ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
   }
 
   return false;

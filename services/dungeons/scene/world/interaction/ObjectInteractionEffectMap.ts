@@ -4,8 +4,8 @@ import { chestInteractionEffect } from "@/services/dungeons/scene/world/interact
 import { doorInteractionEffect } from "@/services/dungeons/scene/world/interaction/doorInteractionEffect";
 import { signInteractionEffect } from "@/services/dungeons/scene/world/interaction/signInteractionEffect";
 
-export const ObjectInteractionEffectMap = {
+export const ObjectInteractionEffectMap: Partial<Record<ObjectgroupName, Effect>> = {
   [ObjectgroupName.Chest]: chestInteractionEffect,
   [ObjectgroupName.Door]: doorInteractionEffect,
   [ObjectgroupName.Sign]: signInteractionEffect,
-} as const satisfies Record<ObjectgroupName, Effect>;
+};
