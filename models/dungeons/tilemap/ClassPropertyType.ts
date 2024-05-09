@@ -1,5 +1,5 @@
+import type { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
-import type { PropertyType } from "@/scripts/tiled/models/PropertyType";
 
 export interface ClassPropertyType {
   id: number;
@@ -7,6 +7,6 @@ export interface ClassPropertyType {
   type: PropertyType.class;
   color: string;
   drawFill: boolean;
-  members: TiledObjectProperty<unknown>[];
+  members: TiledObjectProperty[];
   useAs: string[];
 }

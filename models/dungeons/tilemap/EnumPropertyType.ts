@@ -1,4 +1,4 @@
-import type { PropertyType } from "@/scripts/tiled/models/PropertyType";
+import type { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 
 export interface EnumPropertyType {
   id: number;

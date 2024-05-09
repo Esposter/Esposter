@@ -14,7 +14,12 @@ export const ExternalWorldSceneStore = {
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const gameStore = useGameStore();
   const { save } = storeToRefs(gameStore);
-  const tilemapKey = computed(() => save.value.tilemapKey);
+  const tilemapKey = computed({
+    get: () => save.value.tilemapKey,
+    set: (newTilemapKey) => {
+      save.value.tilemapKey = newTilemapKey;
+    },
+  });
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
   const isMenuVisible = ref(false);
   const menuOptionGrid = ref(MenuOptionGrid);
