@@ -215,27 +215,22 @@
             ]
         },
         {
-            "id": 14,
-            "name": "TilemapKey",
-            "storageType": "string",
-            "type": "enum",
-            "values": [
-                "Home",
-                "HomeBuilding1",
-                "HomeBuilding2"
-            ],
-            "valuesAsFlags": false
-        },
-        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 15,
             "members": [
                 {
-                    "name": "tilemapKey",
-                    "propertyType": "TilemapKey",
+                    "name": "id",
+                    "propertyType": "TeleportId",
                     "type": "string",
-                    "value": "Home"
+                    "value": "1"
+                },
+                {
+                    "name": "target",
+                    "propertyType": "TeleportTarget",
+                    "type": "class",
+                    "value": {
+                    }
                 }
             ],
             "name": "Teleport",
@@ -251,6 +246,61 @@
                 "wangset",
                 "project"
             ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 18,
+            "members": [
+                {
+                    "name": "id",
+                    "propertyType": "TeleportId",
+                    "type": "string",
+                    "value": "1"
+                },
+                {
+                    "name": "tilemapKey",
+                    "propertyType": "TilemapKey",
+                    "type": "string",
+                    "value": "Home"
+                }
+            ],
+            "name": "TeleportTarget",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 14,
+            "name": "TilemapKey",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Home",
+                "HomeBuilding1",
+                "HomeBuilding2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 16,
+            "name": "TeleportId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "1",
+                "2"
+            ],
+            "valuesAsFlags": false
         }
     ]
 }

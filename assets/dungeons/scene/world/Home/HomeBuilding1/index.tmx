@@ -76,6 +76,16 @@
 </data>
  </layer>
  <objectgroup id="7" name="Door" locked="1">
-  <object id="2" gid="126" x="320" y="576" width="64" height="64"/>
+  <object id="2" gid="126" x="320" y="576" width="64" height="64">
+   <properties>
+    <property name="id" propertytype="TeleportId" value="1"/>
+    <property name="target" type="class" propertytype="TeleportTarget">
+     <properties>
+      <property name="id" propertytype="TeleportId" value="1"/>
+      <property name="tilemapKey" propertytype="TilemapKey" value="Home"/>
+     </properties>
+    </property>
+   </properties>
+  </object>
  </objectgroup>
 </map>

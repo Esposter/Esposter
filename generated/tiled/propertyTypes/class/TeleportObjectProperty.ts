@@ -1,3 +1,4 @@
 export enum TeleportObjectProperty {
-  tilemapKey = "tilemapKey",
+  id = "id",
+  target = "target",
 }
