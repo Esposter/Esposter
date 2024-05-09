@@ -30,7 +30,7 @@
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
   },
   "devDependencies": {
-    "@nuxt/eslint": "^0.3.10",
+    "@nuxt/eslint": "^0.3.12",
     "@nuxt/fonts": "^0.7.0",
     "@nuxt/test-utils": "^3.12.1",
     "@types/data-urls": "^3.0.4",
