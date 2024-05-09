@@ -72,7 +72,7 @@ const shutdown = (scene: SceneWithPlugins) => {
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />
     <DungeonsWorldChestLayer />
-    <DungeonsWorldForeground />
+    <DungeonsWorldMapForeground />
     <DungeonsWorldDialog />
     <DungeonsWorldMenu />
   </Scene>
