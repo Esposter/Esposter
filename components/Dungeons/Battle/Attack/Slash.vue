@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useAnimations } from "@/lib/phaser/composables/useAnimations";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
@@ -8,18 +6,7 @@ import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKe
 const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const emit = defineEmits<{ complete: [] }>();
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
-const animations = useAnimations([
-  {
-    key: SpritesheetKey.Slash,
-    frames: scene.value.anims.generateFrameNumbers(SpritesheetKey.Slash),
-    frameRate: 16,
-    repeat: 0,
-    delay: 0,
-  },
-]);
 </script>
 
 <template>
@@ -27,32 +14,42 @@ const animations = useAnimations([
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :animations
-      :play-animation-key="playAnimationKey"
       :is-to-enemy="isToEnemy"
       :configuration="{
         type: AttackGameObjectType.Container,
       }"
+      :create-animation-configurations="
+        (scene) => [
+          {
+            key: SpritesheetKey.Slash,
+            frames: scene.anims.generateFrameNumbers(SpritesheetKey.Slash),
+            frameRate: 16,
+            repeat: 0,
+            delay: 0,
+          },
+        ]
+      "
+      :play-animation-key="playAnimationKey"
     />
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :play-animation-key="playAnimationKey"
       :is-to-enemy="isToEnemy"
       :configuration="{
         type: AttackGameObjectType.Container,
         position: { x: 30 },
       }"
+      :play-animation-key="playAnimationKey"
     />
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :play-animation-key="playAnimationKey"
       :is-to-enemy="isToEnemy"
       :configuration="{
         type: AttackGameObjectType.Container,
         position: { x: -30 },
       }"
+      :play-animation-key="playAnimationKey"
     />
   </DungeonsBattleAttackContainer>
 </template>

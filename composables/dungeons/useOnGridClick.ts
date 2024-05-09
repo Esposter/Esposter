@@ -1,6 +1,6 @@
+import { useInputStore } from "@/lib/phaser/store/input";
 import type { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useGameStore } from "@/store/dungeons/game";
 import deepEqual from "deep-equal";
 import type { Position } from "grid-engine";
 
@@ -9,8 +9,8 @@ export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[]
   position: MaybeRefOrGetter<Position>,
   onConfirm?: () => void,
 ) => {
-  const gameStore = useGameStore();
-  const { controls } = storeToRefs(gameStore);
+  const inputStore = useInputStore();
+  const { controls } = storeToRefs(inputStore);
   const defaultOnConfirm = () => {
     controls.value.setInput(PlayerSpecialInput.Confirm);
   };

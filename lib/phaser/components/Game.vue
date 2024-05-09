@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useGame } from "@/lib/phaser/composables/useGame";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
+import { usePhaserStore } from "@/lib/phaser/store";
 import type { Types } from "phaser";
 import { Game } from "phaser";
 import type { Except } from "type-fest";
@@ -16,7 +18,7 @@ interface GameProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
-const { game } = storeToRefs(phaserStore);
+const { game: storeGame } = storeToRefs(phaserStore);
 const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
 
@@ -27,15 +29,16 @@ const readyListener = () => {
 };
 
 onMounted(() => {
-  game.value = new Game({ ...configuration, parent: canvasRoot.value });
-  game.value.events.on("ready", readyListener);
+  registerTiledJSONExternalLoader();
+  storeGame.value = new Game({ ...configuration, parent: canvasRoot.value });
+  storeGame.value.events.on("ready", readyListener);
 });
 
 onUnmounted(() => {
-  if (!game.value) return;
-  game.value.events.off("ready", readyListener);
-  game.value.destroy(true);
-  game.value = null;
+  const game = useGame();
+  game.events.off("ready", readyListener);
+  game.destroy(true);
+  storeGame.value = null;
 });
 </script>
 

@@ -19,7 +19,7 @@ const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3))
       <ClickerModelStoreHeader pt-4 />
       <ClickerModelStoreList />
     </template>
-    <v-container flex justify-center h-full flex-col items-center>
+    <v-container h-full flex justify-center flex-col items-center>
       <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />
@@ -31,13 +31,6 @@ const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3))
     </template>
   </NuxtLayout>
 </template>
-
-<style lang="scss">
-// Disable selecting text for better UX when clicking
-.v-main {
-  user-select: none;
-}
-</style>
 
 <style scoped lang="scss">
 :deep(.v-list-group__items > .v-list-item) {

@@ -6,14 +6,14 @@ export abstract class AInputResolver {
   // because we're still handling the input and won't proceed to call "handleInput"
   // if "handleInputPre" successfully handles the input first
   handleInputPre(
+    _scene: SceneWithPlugins,
     _justDownInput: PlayerInput,
     _input: PlayerInput,
-    _scene: SceneWithPlugins,
   ): boolean | Promise<boolean> {
     return false;
   }
 
-  handleInput(_justDownInput: PlayerInput, _input: PlayerInput, _scene: SceneWithPlugins): boolean | Promise<boolean> {
+  handleInput(_scene: SceneWithPlugins, _justDownInput: PlayerInput, _input: PlayerInput): boolean | Promise<boolean> {
     return false;
   }
 }

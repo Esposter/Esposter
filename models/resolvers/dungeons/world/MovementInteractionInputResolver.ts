@@ -7,7 +7,7 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 
 export class MovementInteractionInputResolver extends AInputResolver {
-  handleInput(justDownInput: PlayerInput, input: PlayerInput, scene: SceneWithPlugins) {
+  handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput) {
     const worldPlayerStore = useWorldPlayerStore();
     const { isMoving } = storeToRefs(worldPlayerStore);
 
@@ -15,7 +15,7 @@ export class MovementInteractionInputResolver extends AInputResolver {
 
     if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return true;
     else if (justDownInput === PlayerSpecialInput.Confirm) {
-      useInteractions();
+      useInteractions(scene);
       return true;
     } else if (isMovingDirection(input)) {
       scene.gridEngine.move(CharacterId.Player, input);

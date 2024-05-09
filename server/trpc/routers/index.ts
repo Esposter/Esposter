@@ -1,4 +1,5 @@
 import { router } from "@/server/trpc";
+import { appRouter } from "@/server/trpc/routers/app";
 import { clickerRouter } from "@/server/trpc/routers/clicker";
 import { dungeonsRouter } from "@/server/trpc/routers/dungeons";
 import { likeRouter } from "@/server/trpc/routers/like";
@@ -10,7 +11,8 @@ import { surveyRouter } from "@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@/server/trpc/routers/tableEditor";
 import { userRouter } from "@/server/trpc/routers/user";
 
-export const appRouter = router({
+export const trpcRouter = router({
+  app: appRouter,
   clicker: clickerRouter,
   dungeons: dungeonsRouter,
   emoji: emojiRouter,
@@ -23,4 +25,4 @@ export const appRouter = router({
   user: userRouter,
 });
 
-export type AppRouter = typeof appRouter;
+export type TrpcRouter = typeof trpcRouter;

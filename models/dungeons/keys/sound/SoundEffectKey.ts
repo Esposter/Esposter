@@ -5,6 +5,7 @@ export enum SoundEffectKey {
   Flee = "Flee",
   IceExplosion = "IceExplosion",
   StepGrass = "StepGrass",
+  OpenChest = "OpenChest",
   TextBlip = "TextBlip",
 }
 

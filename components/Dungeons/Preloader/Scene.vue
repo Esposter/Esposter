@@ -2,9 +2,8 @@
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { JoystickControls } from "@/models/dungeons/UI/input/JoystickControls";
-import { KeyboardControls } from "@/models/dungeons/UI/input/KeyboardControls";
+import { usePhaserStore } from "@/lib/phaser/store";
+import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
@@ -12,16 +11,13 @@ import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { useGameStore } from "@/store/dungeons/game";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
-import isMobile from "is-mobile";
 import type { Loader } from "phaser";
+import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
-const { switchToScene, launchParallelScene } = phaserStore;
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const { switchToScene } = phaserStore;
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -36,6 +32,8 @@ const preload = (scene: SceneWithPlugins) => {
   const { width, height } = scene.cameras.main;
   x.value = width / 2;
   y.value = height / 2;
+  // We need to preload the fonts so phaser can properly use them
+  load({ custom: { families: [FontKey.KenneyFutureNarrow] } });
 
   scene.load.on("progress", (value: number) => {
     progressBarWidth.value = progressBarMaxWidth.value * value;
@@ -56,20 +54,10 @@ const preload = (scene: SceneWithPlugins) => {
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
   for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
 };
-
-const create = (scene: SceneWithPlugins) => {
-  if (isMobile()) {
-    controls.value = new JoystickControls();
-    launchParallelScene(SceneKey.MobileJoystick);
-    return;
-  }
-
-  controls.value = new KeyboardControls(scene);
-};
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Preloader" auto-start @preload="preload" @create="create">
+  <Scene :scene-key="SceneKey.Preloader" auto-start @preload="preload">
     <Rectangle
       :configuration="{
         x,
@@ -78,6 +66,7 @@ const create = (scene: SceneWithPlugins) => {
         height: progressBarHeight,
         fillColor: 0xffffff,
       }"
+      immediate
     />
     <Rectangle
       :configuration="{
@@ -88,6 +77,7 @@ const create = (scene: SceneWithPlugins) => {
         fillColor: 0x222222,
         alpha: 0.8,
       }"
+      immediate
     />
     <Text
       :configuration="{
@@ -97,6 +87,7 @@ const create = (scene: SceneWithPlugins) => {
         text: percentageText,
         style: { fontSize: 24 },
       }"
+      immediate
     />
     <Text
       :configuration="{
@@ -106,6 +97,7 @@ const create = (scene: SceneWithPlugins) => {
         text: assetText,
         style: { fontSize: 24 },
       }"
+      immediate
     />
   </Scene>
 </template>

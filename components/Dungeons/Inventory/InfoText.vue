@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/inventory/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const inventorySceneStore = useInventorySceneStore();
 const { itemOptionGrid } = storeToRefs(inventorySceneStore);
 const text = computed(() =>
@@ -15,6 +13,11 @@ const text = computed(() =>
     ? "Close your bag and go back to adventuring!"
     : itemOptionGrid.value.value.description,
 );
+const wordWrapWidth = ref<number>();
+
+onCreate((scene) => {
+  wordWrapWidth.value = scene.scale.width - WORD_PADDING;
+});
 </script>
 
 <template>
@@ -23,7 +26,7 @@ const text = computed(() =>
       x: 25,
       y: 420,
       text,
-      style: { ...MenuTextStyle, color: 'white', wordWrap: { width: scene.scale.width - WORD_PADDING } },
+      style: { ...MenuTextStyle, color: 'white', wordWrap: { width: wordWrapWidth } },
     }"
   />
 </template>

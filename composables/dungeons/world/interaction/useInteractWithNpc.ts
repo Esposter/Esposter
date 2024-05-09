@@ -1,12 +1,10 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 
-export const useInteractWithNpc = (): boolean => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+export const useInteractWithNpc = (scene: SceneWithPlugins): boolean => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const playerStore = usePlayerStore();
@@ -18,7 +16,10 @@ export const useInteractWithNpc = (): boolean => {
   );
   if (!npc) return false;
 
-  scene.value.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
-  showMessages(npc.messages.map((text) => ({ title: npc.name, text })));
+  scene.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
+  showMessages(
+    scene,
+    npc.messages.map((text) => ({ title: npc.name, text })),
+  );
   return true;
 };

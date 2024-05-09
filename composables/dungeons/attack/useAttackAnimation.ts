@@ -1,18 +1,20 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
-import { useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
+import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
+import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useAttackAnimation = (attack: Attack, isToEnemy: boolean, onComplete?: () => void) => {
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
+export const useAttackAnimation = (
+  scene: SceneWithPlugins,
+  attack: Attack,
+  isToEnemy: boolean,
+  onComplete?: () => void,
+) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  const { play } = useDungeonsSoundEffect(attack.soundEffectKey);
-
-  scene.value.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
-    play();
+  scene.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
+    playDungeonsSoundEffect(scene, attack.soundEffectKey);
   });
 
   if (isSkipAnimations.value) {
@@ -22,8 +24,8 @@ export const useAttackAnimation = (attack: Attack, isToEnemy: boolean, onComplet
 
   const attackManagerStore = useAttackManagerStore();
   const refs = storeToRefs(attackManagerStore);
+  ExternalAttackManagerStore.onComplete = onComplete;
   refs.attackId.value = attack.id;
   refs.isToEnemy.value = isToEnemy;
-  refs.onComplete.value = onComplete;
   refs.isActive.value = true;
 };

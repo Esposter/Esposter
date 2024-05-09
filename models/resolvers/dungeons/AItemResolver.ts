@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
@@ -33,7 +33,7 @@ export abstract class AItemResolver {
     return true;
   }
 
-  handleItem(_item: Ref<Item>, _target: Ref<Monster>, _sceneKey: SceneKey): void {}
+  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _target: Ref<Monster>): void {}
 
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();

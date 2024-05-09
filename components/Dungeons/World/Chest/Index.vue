@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { useAnimations } from "@/lib/phaser/composables/useAnimations";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
 import type { Chest } from "@/models/dungeons/data/world/Chest";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import type { Position } from "grid-engine";
@@ -12,16 +11,14 @@ interface ChestProps {
 }
 
 const { position, chest } = defineProps<ChestProps>();
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
 const startFrame = 18 * 32 + 19;
 const endFrame = 18 * 32 + 21;
 // Reactivity will be handled by animations
 const frame = chest.isOpened ? endFrame : startFrame;
-const animations = useAnimations([
+const animations = useAnimations((scene) => [
   {
     key: TilesetKey.Dungeon,
-    frames: scene.value.anims.generateFrameNumbers(TilesetKey.Dungeon, { start: startFrame, end: endFrame }),
+    frames: scene.anims.generateFrameNumbers(TilesetKey.Dungeon, { start: startFrame, end: endFrame }),
     frameRate: 16,
     repeat: 0,
     delay: 0,

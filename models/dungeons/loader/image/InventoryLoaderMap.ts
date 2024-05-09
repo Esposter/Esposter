@@ -1,5 +1,5 @@
-import background from "@/assets/dungeons/inventory/background.png";
-import bag from "@/assets/dungeons/inventory/bag.png";
+import background from "@/assets/dungeons/scene/inventory/background.png";
+import bag from "@/assets/dungeons/scene/inventory/bag.png";
 import { InventoryKey } from "@/models/dungeons/keys/image/InventoryKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";

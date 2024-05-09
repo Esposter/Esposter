@@ -1,58 +1,61 @@
-import { NodeType } from "@/lib/tmxParser/models/NodeType";
-import { ParsedTMXTiledMap } from "@/lib/tmxParser/models/tmx/ParsedTMXTiledMap";
-import type { TMX } from "@/lib/tmxParser/models/tmx/TMX";
-import type { TMXLayer } from "@/lib/tmxParser/models/tmx/TMXLayer";
-import type { TMXLayerGroup } from "@/lib/tmxParser/models/tmx/TMXLayerGroup";
-import type { TMXNode } from "@/lib/tmxParser/models/tmx/TMXNode";
-import type { TMXTileset } from "@/lib/tmxParser/models/tmx/TMXTileset";
-import { getAttributes } from "@/lib/tmxParser/util/getAttributes";
+import type { TMX } from "@/lib/tmxParser/models/tmx/node/TMX";
+import type { TMXLayerGroupNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerGroupNode";
+import type { TMXLayerNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerNode";
+import { TMXNodeType } from "@/lib/tmxParser/models/tmx/node/TMXNodeType";
+import type { TMXPropertyNode } from "@/lib/tmxParser/models/tmx/node/TMXPropertyNode";
+import type { TMXTilesetNode } from "@/lib/tmxParser/models/tmx/node/TMXTilesetNode";
+import { TMXMapParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXMapParsed";
+import type { TMXParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXParsed";
 import { parseNode } from "@/lib/tmxParser/util/parseNode";
 import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
-import { parseXmlString } from "@/lib/tmxParser/util/parseXmlString";
-import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import { exhaustiveGuard } from "@/util/exhaustiveGuard";
-
-export const parseTmx = async (xmlString: string, translateFlips = false): Promise<ParsedTMXTiledMap> => {
+import { parseXmlString } from "@/util/parseXmlString";
+// We will try and match phaser's transform when exporting tmx => json tilemaps
+// but also support extra functionality like using external tilesets
+export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {
   const {
     map: { $, $$ },
   } = (await parseXmlString(xmlString)) as TMX;
-  const tmxTiledMap = new ParsedTMXTiledMap(Object.assign({}, ...getAttributes($)));
-  const expectedCount = tmxTiledMap.width * tmxTiledMap.height * 4;
+  const tmxMapParsed = new TMXMapParsed(structuredClone($));
+  const expectedCount = tmxMapParsed.width * tmxMapParsed.height * 4;
 
   await Promise.all(
-    $$.map(async (node, index: number) => {
-      const nodeType = node["#name"] as NodeType;
-      switch (nodeType) {
-        case NodeType.Properties:
-          tmxTiledMap.properties = {
-            ...(node as unknown as TMXNode<TiledObjectProperty<unknown>>).$$.map(({ $: { name, value } }) => ({
-              [name]: value,
-            })),
+    $$.map(async (node) => {
+      const tmxNodeType = node["#name"] as TMXNodeType;
+      switch (tmxNodeType) {
+        case TMXNodeType.EditorSettings:
+          if (!node.$$) break;
+          tmxMapParsed.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
+          break;
+
+        case TMXNodeType.Group:
+        case TMXNodeType.ImageLayer:
+        case TMXNodeType.Layer:
+        case TMXNodeType.Objectgroup:
+          {
+            const layer = await parseNode(node as TMXLayerNode | TMXLayerGroupNode, expectedCount, translateFlips);
+            tmxMapParsed.layers.push(layer);
+          }
+          break;
+        case TMXNodeType.Properties:
+          if (!node.$$) break;
+          tmxMapParsed.properties = {
+            ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
           };
           break;
-        case NodeType.EditorSettings:
-          tmxTiledMap.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as string]: n.$ })) };
+        case TMXNodeType.Tileset:
+          tmxMapParsed.tilesets.push(parseTileset(node as TMXTilesetNode));
           break;
-        case NodeType.Tileset:
-          tmxTiledMap.tilesets.push(parseTileset(node as unknown as TMXNode<TMXTileset>));
-          break;
-        case NodeType.Group:
-        case NodeType.ImageLayer:
-        case NodeType.Layer:
-        case NodeType.Objectgroup:
-          tmxTiledMap.layers[index] = (await parseNode(
-            node as unknown as TMXNode<TMXLayer> | TMXNode<TMXLayerGroup>,
-            expectedCount,
-            translateFlips,
-          )) as TMXLayer;
-          break;
-        case NodeType.Image:
+        case TMXNodeType.Export:
+        case TMXNodeType.Image:
+        case TMXNodeType.Object:
+        case TMXNodeType.Property:
           break;
         default:
-          exhaustiveGuard(nodeType);
+          exhaustiveGuard(tmxNodeType);
       }
     }),
   );
 
-  return tmxTiledMap;
+  return { map: tmxMapParsed };
 };

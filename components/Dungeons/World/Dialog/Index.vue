@@ -2,29 +2,23 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
+import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
 
-const gameStore = useGameStore();
-const { controls } = storeToRefs(gameStore);
+const inputStore = useInputStore();
+const { controls } = storeToRefs(inputStore);
 const worldDialogStore = useWorldDialogStore();
 const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
-const worldView = useWorldView();
-const x = ref(worldView.value.x + DIALOG_PADDING);
-const y = ref(worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4);
+const x = ref<number>();
+const y = ref<number>();
 
-onShowMessage(() => {
+onShowMessage((scene) => {
+  x.value = scene.cameras.main.worldView.x + DIALOG_PADDING;
+  y.value = scene.cameras.main.worldView.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4;
   isDialogVisible.value = true;
-});
-
-watch(isDialogVisible, (newIsDialogVisible) => {
-  if (!newIsDialogVisible) return;
-
-  x.value = worldView.value.x + DIALOG_PADDING;
-  y.value = worldView.value.bottom - DIALOG_HEIGHT - DIALOG_PADDING / 4;
 });
 </script>
 

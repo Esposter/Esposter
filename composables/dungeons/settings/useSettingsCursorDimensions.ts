@@ -1,13 +1,13 @@
 import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
-import { computed } from "vue";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
-  const settingsMenuWidth = useSettingsMenuWidth();
-  return computed(() => ({
+  useSettingsMenuWidth((settingsMenuWidth) => (width.value = settingsMenuWidth - INITIAL_SETTINGS_POSITION.x));
+  const width = ref<number>();
+  return {
     x: INITIAL_SETTINGS_POSITION.x / 2,
-    y: INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * toValue(rowIndex) - 3,
+    y: computed(() => INITIAL_SETTINGS_POSITION.y + SETTINGS_POSITION_INCREMENT.y * toValue(rowIndex) - 3),
     origin: 0,
-    width: settingsMenuWidth.value - INITIAL_SETTINGS_POSITION.x,
+    width,
     height: SETTINGS_POSITION_INCREMENT.y - 15,
-  }));
+  };
 };

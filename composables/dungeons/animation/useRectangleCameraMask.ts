@@ -1,8 +1,8 @@
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
-export const useRectangleCameraMask = (onComplete?: () => void) => {
+export const useRectangleCameraMask = (scene: SceneWithPlugins, onComplete?: () => void) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) {
@@ -10,15 +10,13 @@ export const useRectangleCameraMask = (onComplete?: () => void) => {
     return;
   }
 
-  const phaserStore = usePhaserStore();
-  const { scene } = storeToRefs(phaserStore);
-  const { width, height } = scene.value.scale;
+  const { width, height } = scene.scale;
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);
-  const graphics = scene.value.add.graphics().fillRectShape(rectangleShape).setDepth(-1);
+  const graphics = scene.add.graphics().fillRectShape(rectangleShape).setDepth(-1);
   const mask = graphics.createGeometryMask();
 
-  scene.value.cameras.main.setMask(mask);
-  scene.value.tweens.add({
+  scene.cameras.main.setMask(mask);
+  scene.tweens.add({
     targets: rectangleShape,
     delay: 400,
     duration: 800,
@@ -39,7 +37,7 @@ export const useRectangleCameraMask = (onComplete?: () => void) => {
     },
     onComplete: () => {
       mask.destroy();
-      scene.value.cameras.main.clearMask();
+      scene.cameras.main.clearMask();
       onComplete?.();
     },
   });

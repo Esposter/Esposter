@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/world/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/world/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import {
   INITIAL_MENU_CURSOR_POSITION,

@@ -1,7 +1,6 @@
 import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useGameStore } from "@/store/dungeons/game";
-import { IS_DEVELOPMENT } from "@/util/environment/constants";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const gameStore = useGameStore();
@@ -24,12 +23,10 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
   };
   const isSkipAnimations = computed(() => settings.value[SettingsOption.Animations] === AnimationsSetting.Off);
   const isSkipEncounters = ref(false);
-  const debugTileLayerAlpha = ref(IS_DEVELOPMENT ? 0.7 : 0);
   return {
     settings,
     setSettings,
     isSkipAnimations,
     isSkipEncounters,
-    debugTileLayerAlpha,
   };
 });

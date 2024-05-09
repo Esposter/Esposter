@@ -5,14 +5,14 @@ import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 
 export class MessageInputResolver extends AInputResolver {
-  handleInputPre(justDownInput: PlayerInput, input: PlayerInput, scene: SceneWithPlugins) {
+  handleInputPre(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const dialogStore = useDialogStore();
     const { handleShowMessageInput } = dialogStore;
     const worldDialogStore = useWorldDialogStore();
     const { isDialogVisible } = storeToRefs(worldDialogStore);
 
     if (isDialogVisible.value) {
-      handleShowMessageInput(justDownInput, scene);
+      handleShowMessageInput(scene, justDownInput);
       return true;
     }
 

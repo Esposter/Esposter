@@ -1,3 +1,6 @@
 import { useTheme } from "vuetify";
 
-export const useGlobalTheme = () => useTheme().global;
+export const useGlobalTheme = () => {
+  const theme = useTheme();
+  return theme.global;
+};

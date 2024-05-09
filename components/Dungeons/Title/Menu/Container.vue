@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { MENU_BACKGROUND_WIDTH } from "@/services/dungeons/scene/title/menu/constants";
 
-const phaserStore = usePhaserStore();
-const { scene } = storeToRefs(phaserStore);
-const menuContainerX = computed(() => scene.value.scale.width / 2 - MENU_BACKGROUND_WIDTH / 2);
+const x = ref<number>();
+
+onCreate((scene) => {
+  x.value = (scene.scale.width - MENU_BACKGROUND_WIDTH) / 2;
+});
 </script>
 
 <template>
-  <Container
-    :configuration="{
-      x: menuContainerX,
-      y: 300,
-    }"
-  >
+  <Container :configuration="{ x, y: 300 }">
     <DungeonsTitleMenuBackgroundContainer />
     <DungeonsTitleMenuContent />
   </Container>

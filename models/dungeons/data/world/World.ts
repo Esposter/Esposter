@@ -1,10 +1,13 @@
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { WorldData, worldDataSchema } from "@/models/dungeons/data/world/WorldData";
-import { TilemapKey, tilemapKeySchema } from "@/models/dungeons/keys/TilemapKey";
+import { tilemapKeySchema } from "@/models/dungeons/keys/TilemapKey";
 import { zodStrictRecord } from "@/util/zod/zodStrictRecord";
 import type { z } from "zod";
 
 export const InitialWorld = {
   [TilemapKey.Home]: new WorldData(),
+  [TilemapKey.HomeBuilding1]: new WorldData(),
+  [TilemapKey.HomeBuilding2]: new WorldData(),
 } as const satisfies Record<TilemapKey, WorldData>;
 export type World = typeof InitialWorld;
 

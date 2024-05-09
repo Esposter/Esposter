@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { usePhaserStore } from "@/lib/phaser/store/phaser";
-import { useCameraStore } from "@/lib/phaser/store/phaser/camera";
-import { useInputStore } from "@/lib/phaser/store/phaser/input";
-import { useSceneStore } from "@/lib/phaser/store/phaser/scene";
+import { useGame } from "@/lib/phaser/composables/useGame";
+import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
+import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
+import { usePhaserStore } from "@/lib/phaser/store";
+import { useCameraStore } from "@/lib/phaser/store/camera";
+import { useInputStore } from "@/lib/phaser/store/input";
+import { ExternalSceneStore } from "@/lib/phaser/store/scene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { getScene } from "@/lib/phaser/util/getScene";
+import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
-import { GameObjectType } from "@/models/error/dungeons/GameObjectType";
-import { Operation } from "@/models/shared/Operation";
+import { useSettingsStore } from "@/store/dungeons/settings";
+import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
@@ -28,64 +31,114 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
-const { game, scene, parallelSceneKeys } = storeToRefs(phaserStore);
-const sceneStore = useSceneStore();
-const { shutdownListenersMap } = storeToRefs(sceneStore);
+const { parallelSceneKeys } = storeToRefs(phaserStore);
+const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
 const { isActive: isInputActive } = storeToRefs(inputStore);
-const isActive = computed(() => (scene.value && isSameScene(sceneKey)) || parallelSceneKeys.value.includes(sceneKey));
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
+const volumeStore = useVolumeStore();
+const { volumePercentage } = storeToRefs(volumeStore);
 const NewScene = class extends SceneWithPlugins {
   init(this: SceneWithPlugins) {
     emit("init", this);
+    const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
+    for (const initListener of initListenersMap[this.scene.key]) initListener(this);
+    initListenersMap[this.scene.key] = [];
   }
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
+    const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
+    for (const preloadListener of preloadListenersMap[this.scene.key]) preloadListener(this);
+    preloadListenersMap[this.scene.key] = [];
   }
 
   create(this: SceneWithPlugins) {
     emit("create", this);
-    if (!isInputActive.value) isInputActive.value = true;
+    // MobileJoystick is an always active side scene
+    if (this.scene.key !== SceneKey.MobileJoystick) initializeRootScene(this);
 
-    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-      isFading.value = false;
-    });
-    scene.value.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      isFading.value = false;
-    });
+    const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
+    for (const createListener of createListenersMap[this.scene.key]) createListener(this);
+    createListenersMap[this.scene.key] = [];
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
+    const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
+    for (const updateListener of updateListenersMap[this.scene.key]) updateListener(this);
+
+    const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
+    for (const nextTickListener of nextTickListenersMap[this.scene.key]) nextTickListener(this);
+    nextTickListenersMap[this.scene.key] = [];
   }
 };
-let newScene: SceneWithPlugins | null = null;
+
+const initializeRootScene = (scene: SceneWithPlugins) => {
+  useInitializeControls(scene);
+
+  if (!isInputActive.value) isInputActive.value = true;
+
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+    isFading.value = false;
+  });
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+    isFading.value = false;
+  });
+};
+
+const readyListener = () => {
+  ExternalSceneStore.sceneReadyMap[sceneKey] = true;
+};
 
 const shutdownListener = () => {
-  if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
-  for (const shutdownListener of shutdownListenersMap.value[sceneKey]) shutdownListener(newScene);
-  shutdownListenersMap.value[sceneKey] = [];
+  const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
+  updateListenersMap[sceneKey] = [];
+
+  const newScene = getScene(sceneKey);
+  const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
+  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
+  shutdownListenersMap[sceneKey] = [];
   emit("shutdown", newScene);
+
+  ExternalSceneStore.sceneReadyMap[sceneKey] = false;
 };
 
 onMounted(() => {
-  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
-  newScene = game.value.scene.add(sceneKey, NewScene) as SceneWithPlugins | null;
-  if (!newScene) throw new InvalidOperationError(Operation.Create, GameObjectType.Scene, `key: ${sceneKey}`);
-  provide(InjectionKeyMap.Scene, newScene);
-  newScene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
-
+  const game = useGame();
+  const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
+  initializeSound();
+  initializeVolume();
+  scene.events.on(Scenes.Events.READY, readyListener);
+  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
-onUnmounted(() => {
-  if (!game.value) throw new NotInitializedError(GameObjectType.Game);
-  else if (!newScene) throw new NotInitializedError(GameObjectType.Scene);
-  newScene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
-  game.value.scene.remove(sceneKey);
+const { trigger: initializeSound } = watchTriggerable(
+  () => settings.value.Sound,
+  (newSound) => {
+    const scene = getScene(sceneKey);
+    scene.sound.setMute(newSound === SoundSetting.Off);
+  },
+);
+
+const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVolumePercentage) => {
+  const scene = getScene(sceneKey);
+  scene.sound.setVolume(newVolumePercentage / 100);
 });
+
+onUnmounted(() => {
+  const game = useGame();
+  const scene = getScene(sceneKey);
+  scene.events.on(Scenes.Events.READY, readyListener);
+  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  game.scene.remove(sceneKey);
+});
+
+provide(InjectionKeyMap.SceneKey, sceneKey);
 </script>
 
 <template>

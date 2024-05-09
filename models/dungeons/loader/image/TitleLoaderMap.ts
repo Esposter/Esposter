@@ -1,6 +1,6 @@
-import titleScreenBackground from "@/assets/dungeons/title/screenBackground.png";
-import titleText from "@/assets/dungeons/title/text.png";
-import titleTextBackground from "@/assets/dungeons/title/textBackground.png";
+import titleScreenBackground from "@/assets/dungeons/scene/title/screenBackground.png";
+import titleText from "@/assets/dungeons/scene/title/text.png";
+import titleTextBackground from "@/assets/dungeons/scene/title/textBackground.png";
 import { TitleKey } from "@/models/dungeons/keys/image/TitleKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";

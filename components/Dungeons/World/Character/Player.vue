@@ -4,13 +4,12 @@ import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
+import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 
-const worldSceneStore = useWorldSceneStore();
-const { encounterLayer } = storeToRefs(worldSceneStore);
 const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);
 const worldPlayerStore = useWorldPlayerStore();
@@ -43,12 +42,11 @@ onShutdown((scene) => {
       }
     "
     :on-position-change-finished="
-      ({ enterTile }) => {
-        const tile = encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
+      (scene, { enterTile }) => {
+        const tile = ExternalWorldSceneStore.encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
         if (tile) {
-          const { play } = useDungeonsSoundEffect(SoundEffectKey.StepGrass);
-          play();
-          useRandomEncounter();
+          playDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
+          useRandomEncounter(scene);
         }
       }
     "

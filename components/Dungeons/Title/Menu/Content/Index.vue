@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MenuTextStyle } from "@/assets/dungeons/title/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/scene/title/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { getGridKey } from "@/services/dungeons/getGridKey";
