@@ -575,10 +575,20 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"tilemapKey",
-                         "propertytype":"TilemapKey",
+                         "name":"id",
+                         "propertytype":"TeleportId",
                          "type":"string",
-                         "value":"HomeBuilding2"
+                         "value":"2"
+                        }, 
+                        {
+                         "name":"target",
+                         "propertytype":"TeleportTarget",
+                         "type":"class",
+                         "value":
+                            {
+                             "id":"1",
+                             "tilemapKey":"HomeBuilding2"
+                            }
                         }],
                  "rotation":0,
                  "type":"",
@@ -594,10 +604,20 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"tilemapKey",
-                         "propertytype":"TilemapKey",
+                         "name":"id",
+                         "propertytype":"TeleportId",
                          "type":"string",
-                         "value":"HomeBuilding1"
+                         "value":"1"
+                        }, 
+                        {
+                         "name":"target",
+                         "propertytype":"TeleportTarget",
+                         "type":"class",
+                         "value":
+                            {
+                             "id":"1",
+                             "tilemapKey":"HomeBuilding1"
+                            }
                         }],
                  "rotation":0,
                  "type":"",

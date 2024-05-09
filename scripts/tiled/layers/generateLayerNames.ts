@@ -3,7 +3,7 @@ import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
 import { capitalize } from "vue";
 
-export const generateLayerNames = async (directory: string, layerType: LayerType, layerMembers: Set<string>) => {
+export const generateLayerNames = async (directory: string, layerType: LayerType, layerMembers: string[]) => {
   const enumName = `${capitalize(layerType)}Name`;
-  await outputFile(`${directory}/${enumName}.ts`, generateEnumString(enumName, [...layerMembers]));
+  await outputFile(`${directory}/${enumName}.ts`, generateEnumString(enumName, layerMembers));
 };

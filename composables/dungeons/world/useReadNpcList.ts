@@ -23,6 +23,8 @@ export const useReadNpcList = () => {
 
   for (const npcLayerName of npcLayerNames) {
     const npcLayer = getObjectLayer(npcLayerName);
+    if (!npcLayer) continue;
+
     const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
     if (!(npcObject?.x && npcObject.y)) continue;
 

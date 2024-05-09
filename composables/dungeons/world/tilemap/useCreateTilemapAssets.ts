@@ -15,7 +15,7 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
   ExternalWorldSceneStore.tilemap = tilemap;
   CreateTilemapMetadataMap[tilemapKey.value]();
 
-  for (const { x, y } of ExternalWorldSceneStore.objectLayerMap[ObjectgroupName.Chest].objects) {
+  for (const { x, y } of ExternalWorldSceneStore.objectLayerMap[ObjectgroupName.Chest]?.objects ?? []) {
     if (!(x && y)) continue;
 
     const position = getObjectUnitPosition({ x, y });

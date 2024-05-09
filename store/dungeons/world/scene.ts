@@ -8,7 +8,7 @@ import type { Tilemaps } from "phaser";
 export const ExternalWorldSceneStore = {
   tilemap: null as unknown as Tilemaps.Tilemap,
   encounterLayer: null as unknown as Tilemaps.TilemapLayer,
-  objectLayerMap: {} as Record<ObjectgroupName, Tilemaps.ObjectLayer>,
+  objectLayerMap: {} as Record<ObjectgroupName, Tilemaps.ObjectLayer | null>,
 };
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {

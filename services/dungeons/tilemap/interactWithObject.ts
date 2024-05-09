@@ -11,7 +11,7 @@ export const interactWithObject = (scene: SceneWithPlugins): boolean => {
   for (const objectgroupName of Object.values(ObjectgroupName)) {
     const objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[] = [];
 
-    for (const { x, y, ...rest } of ExternalWorldSceneStore.objectLayerMap[objectgroupName].objects) {
+    for (const { x, y, ...rest } of ExternalWorldSceneStore.objectLayerMap[objectgroupName]?.objects ?? []) {
       if (!(x && y)) continue;
       objects.push({ ...getObjectUnitPosition({ x, y }), ...rest });
     }

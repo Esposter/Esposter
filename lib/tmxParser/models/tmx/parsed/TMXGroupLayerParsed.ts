@@ -1,8 +1,8 @@
 import type { TMXLayerParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXLayerParsed";
 import type { TMXPropertiesParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXPropertiesParsed";
-import type { TMXLayerGroupShared } from "@/lib/tmxParser/models/tmx/shared/TMXLayerGroupShared";
+import type { TMXGroupLayerShared } from "@/lib/tmxParser/models/tmx/shared/TMXGroupLayerShared";
 
-export interface TMXLayerGroupParsed extends TMXLayerGroupShared {
+export interface TMXGroupLayerParsed extends TMXGroupLayerShared {
   layers: TMXLayerParsed[];
   properties?: TMXPropertiesParsed;
 }

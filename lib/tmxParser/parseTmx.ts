@@ -1,5 +1,5 @@
 import type { TMX } from "@/lib/tmxParser/models/tmx/node/TMX";
-import type { TMXLayerGroupNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerGroupNode";
+import type { TMXGroupLayerNode } from "@/lib/tmxParser/models/tmx/node/TMXGroupLayerNode";
 import type { TMXLayerNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerNode";
 import { TMXNodeType } from "@/lib/tmxParser/models/tmx/node/TMXNodeType";
 import type { TMXPropertyNode } from "@/lib/tmxParser/models/tmx/node/TMXPropertyNode";
@@ -33,7 +33,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         case TMXNodeType.Layer:
         case TMXNodeType.Objectgroup:
           {
-            const layer = await parseNode(node as TMXLayerNode | TMXLayerGroupNode, expectedCount, translateFlips);
+            const layer = await parseNode(node as TMXLayerNode | TMXGroupLayerNode, expectedCount, translateFlips);
             tmxMapParsed.layers.push(layer);
           }
           break;
