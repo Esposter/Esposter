@@ -82,19 +82,19 @@ onShutdown((scene) => {
           speed,
         });
         if (onMovementStarted) {
-          const f = onMovementStarted;
+          const fn = onMovementStarted;
           subscriptionMovementStarted = scene.gridEngine
             .movementStarted()
             .pipe(filter(({ charId }) => charId === id))
-            .subscribe((movement) => f(scene, movement));
+            .subscribe((movement) => fn(scene, movement));
         }
 
         if (onMovementStopped) {
-          const f = onMovementStopped;
+          const fn = onMovementStopped;
           subscriptionMovementStopped = scene.gridEngine
             .movementStopped()
             .pipe(filter(({ charId }) => charId === id))
-            .subscribe((movement) => f(scene, movement));
+            .subscribe((movement) => fn(scene, movement));
         }
 
         subscriptionPositionChangeStarted = scene.gridEngine
