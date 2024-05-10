@@ -1,10 +1,8 @@
 {
-  "id": "5277492d-79fa-4f32-b2e1-63f8da99ed1a",
-  "prevId": "8d6afcb6-6b17-4326-904f-578606f47303",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "Account": {
+    "public.Account": {
       "name": "Account",
       "schema": "",
       "columns": {
@@ -99,15 +97,15 @@
         "Account_userId_User_id_fk": {
           "name": "Account_userId_User_id_fk",
           "tableFrom": "Account",
-          "tableTo": "User",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -121,7 +119,7 @@
       },
       "uniqueConstraints": {}
     },
-    "Post": {
+    "public.Post": {
       "name": "Post",
       "schema": "",
       "columns": {
@@ -210,21 +208,21 @@
         "Post_creatorId_User_id_fk": {
           "name": "Post_creatorId_User_id_fk",
           "tableFrom": "Post",
-          "tableTo": "User",
           "columnsFrom": [
             "creatorId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Room": {
+    "public.Room": {
       "name": "Room",
       "schema": "",
       "columns": {
@@ -278,21 +276,21 @@
         "Room_creatorId_User_id_fk": {
           "name": "Room_creatorId_User_id_fk",
           "tableFrom": "Room",
-          "tableTo": "User",
           "columnsFrom": [
             "creatorId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Session": {
+    "public.Session": {
       "name": "Session",
       "schema": "",
       "columns": {
@@ -339,21 +337,21 @@
         "Session_userId_User_id_fk": {
           "name": "Session_userId_User_id_fk",
           "tableFrom": "Session",
-          "tableTo": "User",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Survey": {
+    "public.Survey": {
       "name": "Survey",
       "schema": "",
       "columns": {
@@ -434,21 +432,21 @@
         "Survey_creatorId_User_id_fk": {
           "name": "Survey_creatorId_User_id_fk",
           "tableFrom": "Survey",
-          "tableTo": "User",
           "columnsFrom": [
             "creatorId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Like": {
+    "public.Like": {
       "name": "Like",
       "schema": "",
       "columns": {
@@ -495,28 +493,28 @@
         "Like_userId_User_id_fk": {
           "name": "Like_userId_User_id_fk",
           "tableFrom": "Like",
-          "tableTo": "User",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "Like_postId_Post_id_fk": {
           "name": "Like_postId_Post_id_fk",
           "tableFrom": "Like",
-          "tableTo": "Post",
           "columnsFrom": [
             "postId"
           ],
+          "tableTo": "Post",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -530,7 +528,7 @@
       },
       "uniqueConstraints": {}
     },
-    "User": {
+    "public.User": {
       "name": "User",
       "schema": "",
       "columns": {
@@ -591,14 +589,14 @@
       "uniqueConstraints": {
         "User_email_unique": {
           "name": "User_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "UserToRoom": {
+    "public.UserToRoom": {
       "name": "UserToRoom",
       "schema": "",
       "columns": {
@@ -639,28 +637,28 @@
         "UserToRoom_userId_User_id_fk": {
           "name": "UserToRoom_userId_User_id_fk",
           "tableFrom": "UserToRoom",
-          "tableTo": "User",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "User",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "UserToRoom_roomId_Room_id_fk": {
           "name": "UserToRoom_roomId_Room_id_fk",
           "tableFrom": "UserToRoom",
-          "tableTo": "Room",
           "columnsFrom": [
             "roomId"
           ],
+          "tableTo": "Room",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -674,7 +672,7 @@
       },
       "uniqueConstraints": {}
     },
-    "VerificationToken": {
+    "public.VerificationToken": {
       "name": "VerificationToken",
       "schema": "",
       "columns": {
@@ -730,10 +728,10 @@
       "uniqueConstraints": {
         "VerificationToken_token_unique": {
           "name": "VerificationToken_token_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "token"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -741,8 +739,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "5277492d-79fa-4f32-b2e1-63f8da99ed1a",
+  "prevId": "8d6afcb6-6b17-4326-904f-578606f47303"
 }
