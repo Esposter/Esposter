@@ -36,7 +36,7 @@ const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
-const { isActive: isInputActive } = storeToRefs(inputStore);
+const { isInputActive } = storeToRefs(inputStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const volumeStore = useVolumeStore();
@@ -79,15 +79,17 @@ const NewScene = class extends SceneWithPlugins {
 
 const initializeRootScene = (scene: SceneWithPlugins) => {
   useInitializeControls(scene);
-
   if (!isInputActive.value) isInputActive.value = true;
+};
 
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-    isFading.value = false;
-  });
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-    isFading.value = false;
-  });
+const fadeInCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
+};
+
+const fadeOutCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
 };
 
 const readyListener = () => {
@@ -114,6 +116,8 @@ onMounted(() => {
   initializeVolume();
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
@@ -133,8 +137,10 @@ const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVol
 onUnmounted(() => {
   const game = useGame();
   const scene = getScene(sceneKey);
-  scene.events.on(Scenes.Events.READY, readyListener);
-  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  scene.events.off(Scenes.Events.READY, readyListener);
+  scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   game.scene.remove(sceneKey);
 });
 

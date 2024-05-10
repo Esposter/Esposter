@@ -6,8 +6,8 @@ export abstract class BaseControls {
 
   getInput() {
     const inputStore = useInputStore();
-    const { isActive } = storeToRefs(inputStore);
-    if (!isActive.value) return -1;
+    const { isInputActive } = storeToRefs(inputStore);
+    if (!isInputActive.value) return -1;
     const input = this.input;
     this.resetInput();
     return input;
@@ -15,8 +15,8 @@ export abstract class BaseControls {
 
   setInput(input: PlayerInput) {
     const inputStore = useInputStore();
-    const { isActive } = storeToRefs(inputStore);
-    if (!isActive.value) return;
+    const { isInputActive } = storeToRefs(inputStore);
+    if (!isInputActive.value) return;
     this.input = input;
   }
 
