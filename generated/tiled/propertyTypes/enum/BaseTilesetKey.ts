@@ -1,13 +1,13 @@
 export enum BaseTilesetKey {
   BasicPlains = "BasicPlains",
   BeachAndCaves = "BeachAndCaves",
-  Grass = "Grass",
-  Collision = "Collision",
   Bushes = "Bushes",
+  Collision = "Collision",
   Encounter = "Encounter",
-  House = "House",
-  NpcPaths = "NpcPaths",
-  HouseInterior = "HouseInterior",
   Entrance = "Entrance",
+  Grass = "Grass",
+  House = "House",
+  HouseInterior = "HouseInterior",
+  NpcPaths = "NpcPaths",
   Teleport = "Teleport",
 }

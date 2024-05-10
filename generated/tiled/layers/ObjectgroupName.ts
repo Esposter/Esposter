@@ -1,7 +1,7 @@
 export enum ObjectgroupName {
-  Door = "Door",
   Chest = "Chest",
-  Sign = "Sign",
-  "Npc/Smith" = "Npc/Smith",
+  Door = "Door",
   "Npc/John" = "Npc/John",
+  "Npc/Smith" = "Npc/Smith",
+  Sign = "Sign",
 }

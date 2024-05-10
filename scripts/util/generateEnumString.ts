@@ -5,6 +5,9 @@ export const generateEnumString = (name: string, properties: string[]) =>
     ? `export enum ${name} {}\n`
     : [
         `export enum ${name} {`,
-        properties.map((m) => `  ${generateEnumPropertyString(m)} = "${m}",`).join("\n"),
+        properties
+          .toSorted((a, b) => a.localeCompare(b))
+          .map((m) => `  ${generateEnumPropertyString(m)} = "${m}",`)
+          .join("\n"),
         "}\n",
       ].join("\n");

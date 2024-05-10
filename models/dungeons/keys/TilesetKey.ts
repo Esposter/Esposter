@@ -6,7 +6,7 @@ import { validateType } from "@/util/types/validateType";
 
 const ExtraTilesetKey = {
   Dungeon: "Dungeon",
-};
+} as const;
 
 export const TilesetKey = validateType<
   Record<string, string> & {
