@@ -25,7 +25,7 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
     }
   }
 
-  scene.gridEngine.create(tilemap, {
+  scene.gridEngine.create(ExternalWorldSceneStore.tilemap, {
     characters: [],
     collisionTilePropertyName: TileProperty.Collision,
     numberOfDirections: 8,
