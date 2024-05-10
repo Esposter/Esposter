@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
+import { getScene } from "@/lib/phaser/util/getScene";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { GridEngine, Position } from "grid-engine";
@@ -47,6 +48,7 @@ const {
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
+const sceneKey = useInjectSceneKey();
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -58,13 +60,14 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 
-onShutdown((scene) => {
+onUnmounted(() => {
+  const scene = getScene(sceneKey);
+  scene.gridEngine.removeCharacter(id);
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
   subscriptionPositionChangeFinished.value?.unsubscribe();
   subscriptionDirectionChanged.value?.unsubscribe();
-  scene.gridEngine.removeCharacter(id);
 });
 </script>
 
