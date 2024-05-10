@@ -1,4 +1,4 @@
 export interface ImportTypeLine {
-  members: string[];
+  properties: string[];
   src: string;
 }

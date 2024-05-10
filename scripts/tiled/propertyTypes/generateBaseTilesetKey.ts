@@ -5,16 +5,13 @@ import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
 
 export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
-  const tilesetKeyMembers = new Set<string>();
+  const tilesetKeys = new Set<string>();
 
   for (const { source } of tilesets) {
     const filename = source.substring(source.lastIndexOf("/") + 1);
-    tilesetKeyMembers.add(filename.substring(0, filename.indexOf(".")));
+    tilesetKeys.add(filename.substring(0, filename.indexOf(".")));
   }
 
   const enumName = "BaseTilesetKey";
-  await outputFile(
-    `${DIRECTORY}/${PropertyType.enum}/${enumName}.ts`,
-    generateEnumString(enumName, [...tilesetKeyMembers]),
-  );
+  await outputFile(`${DIRECTORY}/${PropertyType.enum}/${enumName}.ts`, generateEnumString(enumName, [...tilesetKeys]));
 };

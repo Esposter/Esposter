@@ -1,32 +1,32 @@
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { DIRECTORY } from "@/scripts/tiled/layers/constants";
-import { generateLayerMembers } from "@/scripts/tiled/layers/generateLayerMembers";
 import { generateLayerNames } from "@/scripts/tiled/layers/generateLayerNames";
+import { generateLayerNamesFile } from "@/scripts/tiled/layers/generateLayerNamesFile";
 import type { LayerData } from "@/scripts/tiled/models/LayerData";
 import { LayerType } from "@/scripts/tiled/models/LayerType";
 import { getTilemapDirectory } from "@/scripts/util/getTilemapDirectory";
 
 export const generateLayers = async (layersData: LayerData[]) => {
-  const tilemapLayerMembersMap = new Map<TilemapKey, string[]>();
-  const objectgroupNameMembers: string[] = [];
+  const tilemapLayerNamesMap = new Map<TilemapKey, string[]>();
+  const objectgroupNames: string[] = [];
 
   for (const { key, layers } of layersData) {
-    const layerNameMembers: string[] = [];
-    const result = generateLayerMembers(layers);
-    objectgroupNameMembers.push(...result.objectgroupNameMembers);
-    layerNameMembers.push(...result.layerNameMembers);
-    tilemapLayerMembersMap.set(key, layerNameMembers);
+    const layerNames: string[] = [];
+    const result = generateLayerNames(layers);
+    objectgroupNames.push(...result.objectgroupNames);
+    layerNames.push(...result.layerNames);
+    tilemapLayerNamesMap.set(key, layerNames);
   }
 
   const promises: Promise<void>[] = [];
-  for (const [tilemapKey, layerMembers] of tilemapLayerMembersMap.entries()) {
+  for (const [tilemapKey, layerNames] of tilemapLayerNamesMap.entries()) {
     const directory = `${DIRECTORY}/${getTilemapDirectory(tilemapKey)}`;
-    promises.push(generateLayerNames(directory, LayerType.layer, layerMembers));
+    promises.push(generateLayerNamesFile(directory, LayerType.layer, layerNames));
   }
   // We need to process object layers later and
   // merge object layers from all tilemaps together because:
   // 1. They MUST have the same behaviour across maps
   // 2. We should NOT be duplicating this behavioural code in our typescript code
-  promises.push(generateLayerNames(DIRECTORY, LayerType.objectgroup, [...new Set(objectgroupNameMembers)]));
+  promises.push(generateLayerNamesFile(DIRECTORY, LayerType.objectgroup, [...new Set(objectgroupNames)]));
   await Promise.all(promises);
 };

@@ -9,27 +9,27 @@ import { generateInterfaceString } from "@/scripts/util/generateInterfaceString"
 
 const ROOT_DIRECTORY_IMPORT_PATH = `@/${ROOT_DIRECTORY}/${DIRECTORY}`;
 
-export const generateClassString = (name: string, members: TiledObjectProperty[]) => {
+export const generateClassString = (name: string, properties: TiledObjectProperty[]) => {
   const importLines: ImportTypeLine[] = [];
   const interfaceProperties: InterfaceProperty[] = [];
 
-  for (const member of members) {
-    const { name, type } = member;
+  for (const property of properties) {
+    const { name, type } = property;
 
     if (type === PropertyType.class) {
-      const { propertyType } = member;
+      const { propertyType } = property;
       importLines.push({
-        members: [propertyType],
+        properties: [propertyType],
         src: `${ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.class}/${propertyType}`,
       });
       interfaceProperties.push({ name, type: propertyType });
       continue;
     }
     // If we can narrow our string type to the specific tiled enum, why not? c:
-    else if (type === PropertyType.string && member.propertyType) {
-      const { propertyType } = member;
+    else if (type === PropertyType.string && property.propertyType) {
+      const { propertyType } = property;
       importLines.push({
-        members: [propertyType],
+        properties: [propertyType],
         src: `${ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.enum}/${propertyType}`,
       });
       interfaceProperties.push({ name, type: propertyType });
