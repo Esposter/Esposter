@@ -3,17 +3,16 @@ import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { getScene } from "@/lib/phaser/util/getScene";
+import type { MovementStarted } from "@/models/dungeons/gridEngine/MovementStarted";
+import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopped";
+import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
+import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/PositionChangeStarted";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Character } from "@/models/dungeons/scene/world/Character";
-import type { GridEngine, Position } from "grid-engine";
+import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import type { Subscription } from "rxjs";
 import { filter } from "rxjs";
-
-type MovementStarted = NonNullable<Parameters<ReturnType<GridEngine["movementStarted"]>["subscribe"]>[0]>;
-type MovementStopped = NonNullable<Parameters<ReturnType<GridEngine["movementStopped"]>["subscribe"]>[0]>;
-type PositionChangeStarted = NonNullable<Parameters<ReturnType<GridEngine["positionChangeStarted"]>["subscribe"]>[0]>;
-type PositionChangeFinished = NonNullable<Parameters<ReturnType<GridEngine["positionChangeFinished"]>["subscribe"]>[0]>;
 
 export interface CharacterProps {
   id: Character["id"];
