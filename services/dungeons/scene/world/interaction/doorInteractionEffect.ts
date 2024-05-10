@@ -1,6 +1,7 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
+import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { NotFoundError } from "@/models/error/NotFoundError";
@@ -39,7 +40,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
 
       const playerStore = usePlayerStore();
       const { player } = storeToRefs(playerStore);
-      player.value.position = getPositionAfterDirectionMovement({ x, y }, player.value.direction);
+      phaserEventEmitter.emit("teleport", getPositionAfterDirectionMovement({ x, y }, player.value.direction));
     }
 
     fadeIn(scene);
