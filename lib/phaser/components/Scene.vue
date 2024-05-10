@@ -79,7 +79,11 @@ const NewScene = class extends SceneWithPlugins {
 
 const initializeRootScene = (scene: SceneWithPlugins) => {
   useInitializeControls(scene);
+
   if (!isInputActive.value) isInputActive.value = true;
+
+  initializeSoundSetting(scene, settings.value.Sound);
+  initializeVolumeSetting(scene, settings.value.Volume);
 };
 
 const fadeInCompleteListener = () => {
@@ -100,20 +104,25 @@ const shutdownListener = () => {
   const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
   updateListenersMap[sceneKey] = [];
 
-  const newScene = getScene(sceneKey);
+  const scene = getScene(sceneKey);
   const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
-  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
+  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(scene);
   shutdownListenersMap[sceneKey] = [];
-  emit("shutdown", newScene);
+  emit("shutdown", scene);
 
   ExternalSceneStore.sceneReadyMap[sceneKey] = false;
+};
+
+const initializeSoundSetting = (scene: SceneWithPlugins, soundSetting: SoundSetting) => {
+  scene.sound.setMute(soundSetting === SoundSetting.Off);
+};
+const initializeVolumeSetting = (scene: SceneWithPlugins, volumePercentage: number) => {
+  scene.sound.setVolume(volumePercentage / 100);
 };
 
 onMounted(() => {
   const game = useGame();
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
-  initializeSound();
-  initializeVolume();
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
@@ -121,17 +130,17 @@ onMounted(() => {
   if (autoStart) switchToScene(sceneKey);
 });
 
-const { trigger: initializeSound } = watchTriggerable(
+watch(
   () => settings.value.Sound,
-  (newSound) => {
+  (newSoundSetting) => {
     const scene = getScene(sceneKey);
-    scene.sound.setMute(newSound === SoundSetting.Off);
+    initializeSoundSetting(scene, newSoundSetting);
   },
 );
 
-const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVolumePercentage) => {
+watch(volumePercentage, (newVolumePercentage) => {
   const scene = getScene(sceneKey);
-  scene.sound.setVolume(newVolumePercentage / 100);
+  initializeVolumeSetting(scene, newVolumePercentage);
 });
 
 onUnmounted(() => {
