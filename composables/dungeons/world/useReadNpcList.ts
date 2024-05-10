@@ -4,39 +4,34 @@ import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/Np
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { MESSAGE_SEPARATOR } from "@/services/dungeons/tilemap/constants";
-import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
-import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
+import type { Tilemaps } from "phaser";
 
 export const useReadNpcList = () => {
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
-  const npcLayerNames = ExternalWorldSceneStore.tilemap
-    .getObjectLayerNames()
-    .filter((layerName) => layerName.includes(ObjectType.Npc));
   const npcList: Npc[] = [];
+  const npcLayerEntries = Object.entries(ExternalWorldSceneStore.objectLayerMap).filter(
+    ([layerName, objectLayer]) => layerName.includes(ObjectType.Npc) && objectLayer,
+  ) as [string, Tilemaps.ObjectLayer][];
 
-  for (const npcLayerName of npcLayerNames) {
-    const npcLayer = getObjectLayer(npcLayerName);
-    if (!npcLayer) continue;
+  for (const [, npcLayer] of npcLayerEntries) {
+    const npcLayerObjects = getObjects(npcLayer);
+    const npcObject = npcLayerObjects.find((obj) => obj.type === ObjectType.Npc);
+    if (!npcObject) continue;
 
-    const npcObject = npcLayer.objects.find((obj) => obj.type === ObjectType.Npc);
-    if (!(npcObject?.x && npcObject.y)) continue;
-
-    const npcPathObjects = npcLayer.objects.filter((obj) => obj.type === ObjectType.NpcPath);
+    const npcPathObjects = npcLayerObjects.filter((obj) => obj.type === ObjectType.NpcPath);
     const npcPath: Record<number, Position> = {
-      0: getObjectUnitPosition({ x: npcObject.x, y: npcObject.y }),
+      0: { x: npcObject.x, y: npcObject.y },
     };
 
-    for (const { name, x, y } of npcPathObjects) {
-      if (!(x && y)) continue;
-      npcPath[parseInt(name)] = getObjectUnitPosition({ x, y });
-    }
+    for (const { name, x, y } of npcPathObjects) npcPath[parseInt(name)] = { x, y };
 
     const frameTiledObjectProperty = getTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);
     const messagesTiledObjectProperty = getTiledObjectProperty<string>(
