@@ -1,3 +1,5 @@
+import { InvalidOperationError } from "@/models/error/InvalidOperationError";
+import { Operation } from "@/models/shared/Operation";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -80,7 +82,7 @@ describe("Table Editor Store", () => {
     expect(tableEditor.value.items[0].name).not.toStrictEqual(updatedName);
 
     await editItem(newItem.id);
-    if (!editedItem.value) throw new Error();
+    if (!editedItem.value) throw new InvalidOperationError(Operation.Update, editItem.name, newItem.id);
     editedItem.value.name = updatedName;
     await save();
 
