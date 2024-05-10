@@ -81,7 +81,7 @@
     <property name="id" propertytype="TeleportId" value="1"/>
     <property name="target" type="class" propertytype="TeleportTarget">
      <properties>
-      <property name="id" propertytype="TeleportId" value="1"/>
+      <property name="id" propertytype="TeleportId" value="2"/>
       <property name="tilemapKey" propertytype="TilemapKey" value="Home"/>
      </properties>
     </property>
