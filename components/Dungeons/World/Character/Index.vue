@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { getScene } from "@/lib/phaser/util/getScene";
 import type { MovementStarted } from "@/models/dungeons/gridEngine/MovementStarted";
 import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopped";
 import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
@@ -47,7 +45,6 @@ const {
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
-const sceneKey = useInjectSceneKey();
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -58,10 +55,9 @@ const subscriptionMovementStopped = ref<Subscription>();
 const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
-
+// We don't need to remove our character here from grid engine
+// since it will automatically be removed when we create a new tilemap
 onUnmounted(() => {
-  const scene = getScene(sceneKey);
-  scene.gridEngine.removeCharacter(id);
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();
   subscriptionPositionChangeStarted.value?.unsubscribe();
