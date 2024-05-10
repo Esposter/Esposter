@@ -52,7 +52,7 @@
     "@vitest/coverage-v8": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^7.0.3",
-    "drizzle-kit": "^0.21.0",
+    "drizzle-kit": "^0.21.1",
     "eslint": "^9.2.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import-x": "^0.5.0",
