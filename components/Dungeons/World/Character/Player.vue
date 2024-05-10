@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onPreload } from "@/lib/phaser/hooks/onPreload";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
@@ -6,18 +7,36 @@ import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
+import { Cameras } from "phaser";
 
 const playerStore = usePlayerStore();
-const { player } = storeToRefs(playerStore);
+const { player, isPlayerFainted } = storeToRefs(playerStore);
 const worldPlayerStore = useWorldPlayerStore();
+const { respawn, healParty } = worldPlayerStore;
 const { sprite, isMoving } = storeToRefs(worldPlayerStore);
+const worldDialogStore = useWorldDialogStore();
+const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
 const frame =
   PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
     .standing;
+
+onPreload((scene) => {
+  if (!isPlayerFainted.value) return;
+
+  respawn();
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+    healParty();
+    showMessages(scene, [
+      { title: "???", text: "It looks like your team put up quite a fight..." },
+      { title: "???", text: "I went ahead and healed them up for you." },
+    ]);
+  });
+});
 
 onShutdown((scene) => {
   scene.cameras.main.stopFollow();
