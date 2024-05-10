@@ -17,9 +17,8 @@ export const createTilemapMetadata = <TLayerName extends object>(layerNameEnum: 
       tilesets.push(tileset);
     }
     const layer = createLayer(layerName, tilesets);
-    if (layerName === LayerName.Encounter)
-      ExternalWorldSceneStore.encounterLayer = layer.setAlpha(DEBUG_TILE_LAYER_ALPHA);
-    else if (layerName === LayerName.Collision) layer.setAlpha(DEBUG_TILE_LAYER_ALPHA);
+    const debugLayerNames = [LayerName.Collision, LayerName.Encounter];
+    if (debugLayerNames.includes(layerName)) layer.setAlpha(DEBUG_TILE_LAYER_ALPHA);
   }
 
   for (const objectgroupName of Object.values(ObjectgroupName))
