@@ -84,6 +84,9 @@ const initializeRootScene = (scene: SceneWithPlugins) => {
 
   initializeSoundSetting(scene, settings.value.Sound);
   initializeVolumeSetting(scene, settings.value.Volume);
+
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
 };
 
 const fadeInCompleteListener = () => {
@@ -110,6 +113,9 @@ const shutdownListener = () => {
   shutdownListenersMap[sceneKey] = [];
   emit("shutdown", scene);
 
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
+
   ExternalSceneStore.sceneReadyMap[sceneKey] = false;
 };
 
@@ -125,8 +131,6 @@ onMounted(() => {
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
-  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
@@ -148,8 +152,6 @@ onUnmounted(() => {
   const scene = getScene(sceneKey);
   scene.events.off(Scenes.Events.READY, readyListener);
   scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   game.scene.remove(sceneKey);
 });
 
