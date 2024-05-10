@@ -9,7 +9,7 @@ import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsS
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
@@ -18,12 +18,15 @@ const { player, isPlayerFainted } = storeToRefs(playerStore);
 const worldPlayerStore = useWorldPlayerStore();
 const { respawn, healParty } = worldPlayerStore;
 const { sprite, isMoving } = storeToRefs(worldPlayerStore);
+const worldSceneStore = useWorldSceneStore();
+const { tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
 const frame =
   PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
     .standing;
+const isRenderable = ref(true);
 
 onPreload((scene) => {
   if (!isPlayerFainted.value) return;
@@ -37,6 +40,13 @@ onPreload((scene) => {
     ]);
   });
 });
+// We need to re-render the player whenever the tilemap changes
+// to notify grid engine to re-generate the player movements
+watch(tilemapKey, async () => {
+  isRenderable.value = false;
+  await nextTick();
+  isRenderable.value = true;
+});
 
 onShutdown((scene) => {
   scene.cameras.main.stopFollow();
@@ -45,6 +55,7 @@ onShutdown((scene) => {
 
 <template>
   <DungeonsWorldCharacter
+    v-if="isRenderable"
     :id="CharacterId.Player"
     v-model:position="player.position"
     v-model:direction="player.direction"
