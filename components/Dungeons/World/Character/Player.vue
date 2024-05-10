@@ -15,16 +15,16 @@ import { Cameras } from "phaser";
 
 const playerStore = usePlayerStore();
 const { player, isPlayerFainted } = storeToRefs(playerStore);
+const playerWalkingDirection = computed(() =>
+  player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction,
+);
 const worldPlayerStore = useWorldPlayerStore();
 const { respawn, healParty } = worldPlayerStore;
 const { sprite, isMoving } = storeToRefs(worldPlayerStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
-const frame = ref(
-  PlayerWalkingAnimationMapping[player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction]
-    .standing,
-);
+const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 const isRenderable = ref(true);
 
 onPreload((scene) => {
@@ -41,15 +41,12 @@ onPreload((scene) => {
 });
 
 usePhaserListener("teleport", async (position) => {
+  player.value.position = position;
+  frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
   // We need to re-render the player to notify grid engine
   // so it regenerates the player grid metadata
   isRenderable.value = false;
   await nextTick();
-  player.value.position = position;
-  frame.value =
-    PlayerWalkingAnimationMapping[
-      player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction
-    ].standing;
   isRenderable.value = true;
 });
 
