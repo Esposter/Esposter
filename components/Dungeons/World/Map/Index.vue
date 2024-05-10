@@ -11,7 +11,10 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
 const sceneKey = useInjectSceneKey();
-const initializeBounds = (scene: SceneWithPlugins) => scene.cameras.main.setBounds(0, 0, 1280, 2176);
+const initializeBounds = (scene: SceneWithPlugins) => {
+  if (tilemapKey.value === TilemapKey.Home) scene.cameras.main.setBounds(0, 0, 1280, 2176);
+  else scene.cameras.main.removeBounds();
+};
 
 onCreate((scene) => {
   initializeBounds(scene);
@@ -20,8 +23,7 @@ onCreate((scene) => {
 
 watch(tilemapKey, () => {
   const scene = getScene(sceneKey);
-  if (tilemapKey.value === TilemapKey.Home) initializeBounds(scene);
-  else scene.cameras.main.removeBounds();
+  initializeBounds(scene);
 });
 
 onShutdown((scene) => {
