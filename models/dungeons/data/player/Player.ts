@@ -11,7 +11,7 @@ import { Direction } from "grid-engine";
 import { z } from "zod";
 
 export class Player {
-  position = INITIAL_POSITION;
+  position = structuredClone(INITIAL_POSITION);
   direction = Direction.DOWN;
   monsters: Monster[] = [new Monster(MonsterKey.Iguanignite)];
   inventory: Item[] = [{ id: ItemId.Potion, quantity: 10 }].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
