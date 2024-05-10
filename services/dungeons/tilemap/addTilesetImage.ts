@@ -1,11 +1,12 @@
+import type { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import type { Tilemaps } from "phaser";
 
 const cache = new Map<TilesetKey, Tilemaps.Tileset>();
-
-export const addTilesetImage = (tilesetKey: TilesetKey) => {
+// Only our generated base tileset keys are used in all our tilemaps
+export const addTilesetImage = (tilesetKey: BaseTilesetKey) => {
   const tileset = cache.get(tilesetKey);
   if (tileset) return tileset;
   // We get warnings from phaser if we try specifying tileset keys that are not required by

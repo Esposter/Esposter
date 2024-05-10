@@ -1,6 +1,6 @@
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
 import { DEBUG_TILE_LAYER_ALPHA } from "@/services/dungeons/tilemap/constants";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
@@ -11,7 +11,7 @@ import type { Tilemaps } from "phaser";
 export const createTilemapMetadata = <TLayerName extends object>(layerNameEnum: TLayerName) => {
   for (const layerName of Object.values(layerNameEnum)) {
     const tilesets: Tilemaps.Tileset[] = [];
-    for (const tilesetKey of Object.values(TilesetKey)) {
+    for (const tilesetKey of Object.values(BaseTilesetKey)) {
       const tileset = addTilesetImage(tilesetKey);
       if (!tileset) continue;
       tilesets.push(tileset);
