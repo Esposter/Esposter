@@ -29,7 +29,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
     tilemapKey.value = teleportTargetTiledObjectProperty.value.tilemapKey;
     // Wait until vue's tilemap key watcher has loaded the new tilemap
     await nextTick();
-    const doorObjectLayer = ExternalWorldSceneStore.objectLayerMap[ObjectgroupName.Door];
+    const doorObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Door);
     if (!doorObjectLayer)
       throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
 

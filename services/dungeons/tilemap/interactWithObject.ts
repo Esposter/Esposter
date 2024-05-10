@@ -6,8 +6,9 @@ import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const interactWithObject = (scene: SceneWithPlugins): boolean => {
   for (const objectgroupName of Object.values(ObjectgroupName)) {
-    const objectLayer = ExternalWorldSceneStore.objectLayerMap[objectgroupName];
+    const objectLayer = ExternalWorldSceneStore.objectLayerMap.get(objectgroupName);
     if (!objectLayer) continue;
+
     const objects = getObjects(objectLayer);
     if (ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
   }

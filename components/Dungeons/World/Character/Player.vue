@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { onPreload } from "@/lib/phaser/hooks/onPreload";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
@@ -9,7 +10,7 @@ import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsS
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
@@ -21,6 +22,8 @@ const playerWalkingDirection = computed(() =>
 const worldPlayerStore = useWorldPlayerStore();
 const { respawn, healParty } = worldPlayerStore;
 const { sprite, isMoving } = storeToRefs(worldPlayerStore);
+const worldSceneStore = useWorldSceneStore();
+const { tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
@@ -75,11 +78,14 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
-        const tile = ExternalWorldSceneStore.encounterLayer.getTileAt(enterTile.x, enterTile.y, false);
-        if (tile) {
-          playDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
-          useRandomEncounter(scene);
-        }
+        const tile = ExternalWorldSceneStore.tilemapKeyLayerMap
+          .get(tilemapKey)
+          ?.get(LayerName.Encounter)
+          ?.getTileAt(enterTile.x, enterTile.y, false);
+        if (!tile) return;
+
+        playDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
+        useRandomEncounter(scene);
       }
     "
     :on-complete="

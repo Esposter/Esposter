@@ -11,17 +11,15 @@ import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
-import type { Tilemaps } from "phaser";
 
 export const useReadNpcList = () => {
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
   const npcList: Npc[] = [];
-  const npcLayerEntries = Object.entries(ExternalWorldSceneStore.objectLayerMap).filter(
-    ([layerName, objectLayer]) => layerName.includes(ObjectType.Npc) && objectLayer,
-  ) as [string, Tilemaps.ObjectLayer][];
 
-  for (const [, npcLayer] of npcLayerEntries) {
+  for (const [layerName, npcLayer] of ExternalWorldSceneStore.objectLayerMap.entries()) {
+    if (!(layerName.includes(ObjectType.Npc) && npcLayer)) continue;
+
     const npcLayerObjects = getObjects(npcLayer);
     const npcObject = npcLayerObjects.find((obj) => obj.type === ObjectType.Npc);
     if (!npcObject) continue;

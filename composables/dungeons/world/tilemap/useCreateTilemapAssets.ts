@@ -15,7 +15,7 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
   ExternalWorldSceneStore.tilemap = tilemap;
   CreateTilemapMetadataMap[tilemapKey.value](tilemapKey.value);
 
-  const chestObjectLayer = ExternalWorldSceneStore.objectLayerMap[ObjectgroupName.Chest];
+  const chestObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Chest);
   if (chestObjectLayer) {
     const chestObjects = getObjects(chestObjectLayer);
     for (const { x, y } of chestObjects) {
