@@ -3,7 +3,7 @@ import type { TiledProject } from "@/scripts/tiled/models/TiledProject";
 import { generateClassString } from "@/scripts/tiled/propertyTypes/generateClassString";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
-import { jsonDateParse } from "@/util/jsonDateParse";
+import { jsonDateParse } from "@/util/time/jsonDateParse";
 import { readFile } from "node:fs/promises";
 
 const filePath = "assets/dungeons/scene/world/index.tiled-project";

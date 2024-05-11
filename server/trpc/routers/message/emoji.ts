@@ -20,7 +20,7 @@ import {
 } from "@/services/azure/table";
 import { emojiEventEmitter } from "@/services/esbabbler/events/emoji";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { now } from "@/util/now";
+import { now } from "@/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

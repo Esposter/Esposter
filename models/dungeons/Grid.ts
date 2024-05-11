@@ -1,6 +1,6 @@
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 

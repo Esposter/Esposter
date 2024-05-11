@@ -2,7 +2,7 @@ import { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMove
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 
 export const useMoveNpcList = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();

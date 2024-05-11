@@ -1,7 +1,7 @@
 import { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
 import { validateType } from "@/util/types/validateType";
 
 const ExtraTilesetKey = {

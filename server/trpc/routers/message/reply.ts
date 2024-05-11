@@ -13,7 +13,7 @@ import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { replyEventEmitter } from "@/services/esbabbler/events/reply";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
-import { now } from "@/util/now";
+import { now } from "@/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

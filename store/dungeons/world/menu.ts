@@ -7,7 +7,7 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 
 export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const gameStore = useGameStore();

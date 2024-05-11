@@ -7,7 +7,7 @@ import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { ID_SEPARATOR } from "@/util/id/constants";
-import { isPlainObject } from "@/util/isPlainObject";
+import { isPlainObject } from "@/util/object/isPlainObject";
 import { parseXmlString } from "@/util/parseXmlString";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";

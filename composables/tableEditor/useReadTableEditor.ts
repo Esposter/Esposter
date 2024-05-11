@@ -1,7 +1,7 @@
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { jsonDateParse } from "@/util/jsonDateParse";
+import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const useReadTableEditor = async () => {
   const { $client } = useNuxtApp();

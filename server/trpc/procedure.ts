@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
 import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
-import { UUIDV4_REGEX } from "@/util/uuid/constants";
+import { UUIDV4_REGEX } from "@/util/id/uuid/constants";
 import { TRPCError } from "@trpc/server";
 import type { z } from "zod";
 

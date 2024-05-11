@@ -8,7 +8,7 @@ import { parseFlips } from "@/lib/tmxParser/util/parseFlips";
 import { parseProperties } from "@/lib/tmxParser/util/parseProperties";
 import { parseTileId } from "@/lib/tmxParser/util/parseTileId";
 import { unpackTileBytes } from "@/lib/tmxParser/util/unpackTileBytes";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 import { gunzip, inflate } from "zlib";
 
 const isTMXEmbeddedTilesetNode = (node: TMXEmbeddedTilesetNode | TMXDataNode): node is TMXEmbeddedTilesetNode =>
