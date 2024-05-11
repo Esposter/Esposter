@@ -4,11 +4,8 @@ import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export const playDungeonsSoundEffect = (
+export const getDungeonsSoundEffect = (
   scene: SceneWithPlugins,
   soundEffectKey: SoundEffectKey,
   options?: Except<Types.Sound.SoundConfig, "volume">,
-) => {
-  const { play } = getDungeonsSound(scene, soundEffectKey, { ...options, volume: 5 });
-  play();
-};
+) => getDungeonsSound(scene, soundEffectKey, { ...options, volume: 5 });
