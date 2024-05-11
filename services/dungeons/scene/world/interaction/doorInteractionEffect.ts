@@ -3,10 +3,12 @@ import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/Te
 import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
 import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { useCameraStore } from "@/lib/phaser/store/camera";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
+import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -25,6 +27,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const worldSceneStore = useWorldSceneStore();
   const { tilemapKey } = storeToRefs(worldSceneStore);
   fadeOut(scene);
+  getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
     tilemapKey.value = teleportTargetTiledObjectProperty.value.tilemapKey;
     // Wait until vue's tilemap key watcher has loaded the new tilemap
