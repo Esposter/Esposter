@@ -14,7 +14,7 @@ export const useAttackAnimation = (
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   scene.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
-    getDungeonsSoundEffect(scene, attack.soundEffectKey);
+    getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
   });
 
   if (isSkipAnimations.value) {

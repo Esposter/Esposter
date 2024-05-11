@@ -20,7 +20,7 @@ export const FleeAttempt: State<StateName> = {
     }
 
     showMessages(scene, ["You got away safely!"], () => {
-      getDungeonsSoundEffect(scene, SoundEffectKey.Flee);
+      getDungeonsSoundEffect(scene, SoundEffectKey.Flee).play();
       battleStateMachine.setState(StateName.Finished);
     });
   },

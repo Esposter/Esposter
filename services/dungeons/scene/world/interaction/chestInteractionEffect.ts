@@ -33,7 +33,7 @@ export const chestInteractionEffect: Effect = (scene, chestObjects) => {
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;
 
-  getDungeonsSoundEffect(scene, SoundEffectKey.OpenChest);
+  getDungeonsSoundEffect(scene, SoundEffectKey.OpenChest).play();
   showMessages(scene, [{ text: `You've obtained ${itemIdTiledObjectProperty.value}.` }]);
   return true;
 };

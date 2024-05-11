@@ -84,7 +84,7 @@ onShutdown((scene) => {
           ?.getTileAt(enterTile.x, enterTile.y, false);
         if (!tile) return;
 
-        getDungeonsSoundEffect(scene, SoundEffectKey.StepGrass);
+        getDungeonsSoundEffect(scene, SoundEffectKey.StepGrass).play();
         useRandomEncounter(scene);
       }
     "
