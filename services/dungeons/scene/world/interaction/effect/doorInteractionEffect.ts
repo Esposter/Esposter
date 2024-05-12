@@ -43,7 +43,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
 
       const playerStore = usePlayerStore();
       const { player } = storeToRefs(playerStore);
-      phaserEventEmitter.emit("teleport", getPositionAfterDirectionMovement({ x, y }, player.value.direction));
+      phaserEventEmitter.emit("playerTeleport", getPositionAfterDirectionMovement({ x, y }, player.value.direction));
     }
 
     fadeIn(scene);

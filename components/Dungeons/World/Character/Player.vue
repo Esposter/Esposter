@@ -42,8 +42,9 @@ onPreload((scene) => {
   });
 });
 
-usePhaserListener("teleport", (position) => {
+usePhaserListener("playerTeleport", (position, direction) => {
   player.value.position = position;
+  if (direction) player.value.direction = direction;
   frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
 });
 
