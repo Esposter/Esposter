@@ -107,6 +107,9 @@ const shutdownListener = () => {
   const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
   updateListenersMap[sceneKey] = [];
 
+  const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
+  nextTickListenersMap[sceneKey] = [];
+
   const scene = getScene(sceneKey);
   const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
   for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(scene);
