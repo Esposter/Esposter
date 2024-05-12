@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { usePhaserListener } from "@/lib/phaser/composables/usePhaserListener";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
+import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
@@ -27,6 +29,7 @@ const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
+const sceneKey = useInjectSceneKey();
 // We only care about the starting frame, so we don't want this to be reactive
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
@@ -44,9 +47,12 @@ onCreate((scene) => {
 });
 
 usePhaserListener("playerTeleport", (position, direction) => {
-  player.value.position = position;
-  if (direction) player.value.direction = direction;
-  frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
+  onNextTick((scene) => {
+    // We need to let the grid engine handle setting the player position instead
+    scene.gridEngine.setPosition(CharacterId.Player, position);
+    if (direction) player.value.direction = direction;
+    frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
+  }, sceneKey);
 });
 
 onShutdown((scene) => {
@@ -76,6 +82,7 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
+        console.log(enterTile.x);
         const tile = ExternalWorldSceneStore.tilemapKeyLayerMap
           .get(tilemapKey)
           ?.get(LayerName.Encounter)
