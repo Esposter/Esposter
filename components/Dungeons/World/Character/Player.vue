@@ -28,7 +28,6 @@ const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
-const isRenderable = ref(true);
 
 onPreload((scene) => {
   if (!isPlayerFainted.value) return;
@@ -43,14 +42,9 @@ onPreload((scene) => {
   });
 });
 
-usePhaserListener("teleport", async (position) => {
+usePhaserListener("teleport", (position) => {
   player.value.position = position;
   frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
-  // We need to re-render the player to notify grid engine
-  // so it regenerates the player grid metadata
-  isRenderable.value = false;
-  await nextTick();
-  isRenderable.value = true;
 });
 
 onShutdown((scene) => {
@@ -59,6 +53,8 @@ onShutdown((scene) => {
 </script>
 
 <template>
+  <!-- The character is keyed to the tilemap so grid engine knows to re-render the player
+    and regenerate the player grid metadata everytime the tilemap changes -->
   <DungeonsWorldCharacter
     :id="CharacterId.Player"
     :key="tilemapKey"
