@@ -60,8 +60,8 @@ onShutdown((scene) => {
 
 <template>
   <DungeonsWorldCharacter
-    v-if="isRenderable"
     :id="CharacterId.Player"
+    :key="tilemapKey"
     v-model:position="player.position"
     v-model:direction="player.direction"
     :sprite-configuration="{ texture: SpritesheetKey.Character, frame }"

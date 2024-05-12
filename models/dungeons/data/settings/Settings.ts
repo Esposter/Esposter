@@ -7,7 +7,7 @@ import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption"
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { z } from "zod";
 
-export const InitialSettings = {
+const InitialSettings = {
   [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
   [SettingsOption.Animations]: AnimationsSetting.On,
   [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
@@ -15,6 +15,7 @@ export const InitialSettings = {
   [SettingsOption.VolumePercentage]: IS_DEVELOPMENT ? 0 : 100,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
 } satisfies Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
+export const getInitialSettings = () => structuredClone(InitialSettings);
 export type Settings = typeof InitialSettings;
 
 export const settingsSchema = z.object({
