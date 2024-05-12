@@ -8,20 +8,20 @@ import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean"
 
 export const FleeAttempt: State<StateName> = {
   name: StateName.FleeAttempt,
-  onEnter: (scene) => {
+  onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
 
     if (generateRandomBoolean()) {
-      showMessages(scene, ["You failed to run away..."], () => {
-        battleStateMachine.setState(StateName.EnemyInput);
+      await showMessages(scene, ["You failed to run away..."], async () => {
+        await battleStateMachine.setState(StateName.EnemyInput);
       });
       return;
     }
 
-    showMessages(scene, ["You got away safely!"], () => {
+    await showMessages(scene, ["You got away safely!"], async () => {
       getDungeonsSoundEffect(scene, SoundEffectKey.Flee).play();
-      battleStateMachine.setState(StateName.Finished);
+      await battleStateMachine.setState(StateName.Finished);
     });
   },
 };

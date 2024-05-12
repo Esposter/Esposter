@@ -11,8 +11,8 @@ type SceneEvents = {
 
 export interface PhaserEvents extends SceneEvents {
   resize: () => void;
-  useItem: (item: Item, sceneKey: SceneKey) => void;
-  unuseItem: () => void;
+  useItem: (item: Item, sceneKey: SceneKey) => Promise<void>;
+  unuseItem: () => Promise<void>;
   playerTeleport: (position: Position, direction?: Direction) => void;
 }
 

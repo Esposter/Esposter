@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
-import { onPreload } from "@/lib/phaser/hooks/onPreload";
+import { usePhaserListener } from "@/lib/phaser/composables/usePhaserListener";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
@@ -29,13 +30,13 @@ const { showMessages } = worldDialogStore;
 // We only care about the starting frame, so we don't want this to be reactive
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
-onPreload((scene) => {
+onCreate((scene) => {
   if (!isPlayerFainted.value) return;
 
   respawn();
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
     healParty();
-    showMessages(scene, [
+    await showMessages(scene, [
       { title: "???", text: "It looks like your team put up quite a fight..." },
       { title: "???", text: "I went ahead and healed them up for you." },
     ]);

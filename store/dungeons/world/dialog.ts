@@ -9,8 +9,8 @@ export const useWorldDialogStore = defineStore("dungeons/world/dialog", () => {
   const { updateQueuedMessagesAndShowMessage } = dialogStore;
   const isDialogVisible = ref(false);
   const { dialogMessage } = useDialogMessage();
-  const showMessages = (scene: SceneWithPlugins, messages: DialogMessage[]) => {
-    updateQueuedMessagesAndShowMessage(
+  const showMessages = async (scene: SceneWithPlugins, messages: DialogMessage[]) => {
+    await updateQueuedMessagesAndShowMessage(
       scene,
       new DialogTarget({ message: dialogMessage, inputPromptCursorX: DIALOG_WIDTH - 16 }),
       messages,

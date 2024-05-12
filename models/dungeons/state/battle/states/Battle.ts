@@ -7,7 +7,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const Battle: State<StateName> = {
   name: StateName.Battle,
-  onEnter: () => {
+  onEnter: async () => {
     /**
      * 1. Show attack used
      * 2. Brief pause
@@ -30,7 +30,7 @@ export const Battle: State<StateName> = {
       optionGrid.value.value === PlayerOption.Fight &&
       attackStatePriorityMap.value[StateName.Battle] === StateName.PlayerAttack
     )
-      battleStateMachine.setState(StateName.PlayerAttack);
-    else battleStateMachine.setState(StateName.EnemyAttack);
+      await battleStateMachine.setState(StateName.PlayerAttack);
+    else await battleStateMachine.setState(StateName.EnemyAttack);
   },
 };

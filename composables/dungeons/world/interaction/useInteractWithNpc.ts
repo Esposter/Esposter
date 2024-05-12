@@ -4,7 +4,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 
-export const useInteractWithNpc = (scene: SceneWithPlugins): boolean => {
+export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boolean> => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const playerStore = usePlayerStore();
@@ -17,7 +17,7 @@ export const useInteractWithNpc = (scene: SceneWithPlugins): boolean => {
   if (!npc) return false;
 
   scene.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
-  showMessages(
+  await showMessages(
     scene,
     npc.messages.map((text) => ({ title: npc.name, text })),
   );

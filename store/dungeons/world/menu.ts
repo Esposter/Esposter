@@ -30,7 +30,7 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
           return;
         case MenuOption.Save:
           await saveData();
-          showMessages(scene, [{ text: "Game has been saved." }]);
+          await showMessages(scene, [{ text: "Game has been saved." }]);
           return;
         case MenuOption.Exit:
           isMenuVisible.value = false;

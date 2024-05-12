@@ -1,8 +1,9 @@
+import type { OnComplete } from "@/models/shared/OnComplete";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const useTakeDamage = (isEnemy: boolean) => {
-  return (damage: number, onComplete?: () => void) => {
+  return (damage: number, onComplete?: OnComplete) => {
     const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
     const { activeMonster } = storeToRefs(store);
 

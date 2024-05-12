@@ -4,7 +4,7 @@ import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObje
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Direction } from "grid-engine";
 
-export const signInteractionEffect: Effect = (scene, signObjects) => {
+export const signInteractionEffect: Effect = async (scene, signObjects) => {
   const signObject = useGetInteractiveObject(signObjects, {
     [Direction.UP]: true,
     [Direction.DOWN]: false,
@@ -16,6 +16,6 @@ export const signInteractionEffect: Effect = (scene, signObjects) => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const messageTiledObjectProperty = getTiledObjectProperty<string>(signObject.properties, SignObjectProperty.message);
-  showMessages(scene, [{ text: messageTiledObjectProperty.value }]);
+  await showMessages(scene, [{ text: messageTiledObjectProperty.value }]);
   return true;
 };

@@ -4,7 +4,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 
 export const EnemyInput: State<StateName> = {
   name: StateName.EnemyInput,
-  onEnter: () => {
-    battleStateMachine.setState(StateName.Battle);
+  onEnter: async () => {
+    await battleStateMachine.setState(StateName.Battle);
   },
 };

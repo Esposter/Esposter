@@ -1,12 +1,13 @@
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { OnComplete } from "@/models/shared/OnComplete";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
-export const useRectangleCameraMask = (scene: SceneWithPlugins, onComplete?: () => void) => {
+export const useRectangleCameraMask = async (scene: SceneWithPlugins, onComplete?: OnComplete) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) {
-    onComplete?.();
+    await onComplete?.();
     return;
   }
 
@@ -35,10 +36,10 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins, onComplete?: () 
     onUpdate: () => {
       graphics.clear().fillRectShape(rectangleShape);
     },
-    onComplete: () => {
+    onComplete: async () => {
       mask.destroy();
       scene.cameras.main.clearMask();
-      onComplete?.();
+      await onComplete?.();
     },
   });
 };

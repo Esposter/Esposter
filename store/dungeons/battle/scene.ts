@@ -18,20 +18,20 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { optionGrid, attackOptionGrid } = storeToRefs(battlePlayerStore);
   const activePanel = ref(ActivePanel.Info);
 
-  const onPlayerInput = (scene: SceneWithPlugins, input: PlayerInput) => {
-    if (handleShowMessageInput(scene, input)) return;
-    else if (isPlayerSpecialInput(input)) onPlayerSpecialInput(input);
+  const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
+    if (await handleShowMessageInput(scene, input)) return;
+    else if (isPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };
 
-  const onPlayerSpecialInput = (playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = async (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (activePanel.value === ActivePanel.Option) onChoosePlayerOption();
+        if (activePanel.value === ActivePanel.Option) await onChoosePlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
           const battlePlayerStore = useBattlePlayerStore();
           const { attackOptionGrid } = storeToRefs(battlePlayerStore);
-          if (attackOptionGrid.value.value) battleStateMachine.setState(StateName.EnemyInput);
+          if (attackOptionGrid.value.value) await battleStateMachine.setState(StateName.EnemyInput);
         }
         return;
       case PlayerSpecialInput.Cancel:
@@ -49,19 +49,19 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     else if (activePanel.value === ActivePanel.AttackOption) attackOptionGrid.value.move(direction);
   };
 
-  const onChoosePlayerOption = () => {
+  const onChoosePlayerOption = async () => {
     switch (optionGrid.value.value) {
       case PlayerOption.Fight:
         activePanel.value = ActivePanel.AttackOption;
         return;
       case PlayerOption.Switch:
-        battleStateMachine.setState(StateName.SwitchAttempt);
+        await battleStateMachine.setState(StateName.SwitchAttempt);
         return;
       case PlayerOption.Item:
-        battleStateMachine.setState(StateName.ItemAttempt);
+        await battleStateMachine.setState(StateName.ItemAttempt);
         return;
       case PlayerOption.Flee:
-        battleStateMachine.setState(StateName.FleeAttempt);
+        await battleStateMachine.setState(StateName.FleeAttempt);
         return;
       default:
         exhaustiveGuard(optionGrid.value.value);

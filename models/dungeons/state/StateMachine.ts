@@ -23,7 +23,7 @@ export class StateMachine<TStateName extends string> {
     this.setState(stateName);
   }
 
-  setState(stateName: TStateName | null) {
+  async setState(stateName: TStateName | null) {
     if (stateName === this.currentStateName) return;
 
     const state = stateName === null ? { name: null } : this.stateMap[stateName];
@@ -35,9 +35,9 @@ export class StateMachine<TStateName extends string> {
     }
 
     this.isChangingState = true;
-    this.currentState.onExit?.(this.scene);
+    await this.currentState.onExit?.(this.scene);
     this.currentState = state;
-    this.currentState.onEnter?.(this.scene);
+    await this.currentState.onEnter?.(this.scene);
     this.isChangingState = false;
   }
 }

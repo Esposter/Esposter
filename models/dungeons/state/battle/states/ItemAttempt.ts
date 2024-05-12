@@ -27,19 +27,19 @@ export const ItemAttempt: State<StateName> = {
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const { launchScene, removeScene } = usePreviousScene(scene.scene.key);
 
-    usePhaserListener("useItem", (item, sceneKey) => {
+    usePhaserListener("useItem", async (item, sceneKey) => {
       const { switchToPreviousScene } = usePreviousScene(sceneKey);
       // We assume here that you can only use an item in a separate scene
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
       removeScene(scene, SceneKey.Inventory);
       switchToPreviousScene(scene);
-      showMessages(scene, [`You used ${item.id} on ${activeMonster.value.key}.`], () => {
-        battleStateMachine.setState(StateName.EnemyInput);
+      await showMessages(scene, [`You used ${item.id} on ${activeMonster.value.key}.`], async () => {
+        await battleStateMachine.setState(StateName.EnemyInput);
       });
     });
-    usePhaserListener("unuseItem", () => {
-      battleStateMachine.setState(StateName.PlayerInput);
+    usePhaserListener("unuseItem", async () => {
+      await battleStateMachine.setState(StateName.PlayerInput);
     });
 
     launchScene(scene, SceneKey.Inventory);

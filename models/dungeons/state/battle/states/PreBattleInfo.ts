@@ -6,16 +6,16 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 
 export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
-  onEnter: (scene) => {
+  onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
 
-    useMonsterAppearTween(true, () => {
+    await useMonsterAppearTween(true, async () => {
       useMonsterInfoContainerAppearTween(true);
-      showMessages(scene, [`A wild ${activeMonster.value.key} has appeared!`], () => {
-        battleStateMachine.setState(StateName.BringOutMonster);
+      await showMessages(scene, [`A wild ${activeMonster.value.key} has appeared!`], async () => {
+        await battleStateMachine.setState(StateName.BringOutMonster);
       });
     });
   },

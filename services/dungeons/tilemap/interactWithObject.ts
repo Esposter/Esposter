@@ -4,13 +4,13 @@ import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 
-export const interactWithObject = (scene: SceneWithPlugins): boolean => {
+export const interactWithObject = async (scene: SceneWithPlugins): Promise<boolean> => {
   for (const objectgroupName of Object.values(ObjectgroupName)) {
     const objectLayer = ExternalWorldSceneStore.objectLayerMap.get(objectgroupName);
     if (!objectLayer) continue;
 
     const objects = getObjects(objectLayer);
-    if (ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
+    if (await ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
   }
 
   return false;
