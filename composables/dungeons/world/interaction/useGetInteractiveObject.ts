@@ -1,5 +1,5 @@
 import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
-import { InteractiveObjectPositionComparator } from "@/services/dungeons/scene/world/InteractiveObjectPositionComparator";
+import { InteractiveObjectPositionComparator } from "@/services/dungeons/scene/world/interaction/InteractiveObjectPositionComparator";
 import { usePlayerStore } from "@/store/dungeons/player";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";

@@ -1,4 +1,5 @@
 import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { directionSchema } from "@/models/dungeons/data/player/Direction";
 import { inventorySchema } from "@/models/dungeons/data/player/Inventory";
 import { positionSchema } from "@/models/dungeons/data/player/Position";
@@ -6,12 +7,12 @@ import type { Item } from "@/models/dungeons/item/Item";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
-import { INITIAL_POSITION } from "@/services/dungeons/scene/world/home/constants";
+import { TilemapInitialPositionMap } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
 import { Direction } from "grid-engine";
 import { z } from "zod";
 
 export class Player {
-  position = structuredClone(INITIAL_POSITION);
+  position = structuredClone(TilemapInitialPositionMap[TilemapKey.Home]);
   direction = Direction.DOWN;
   monsters: Monster[] = [new Monster(MonsterKey.Iguanignite)];
   inventory: Item[] = [{ id: ItemId.Potion, quantity: 10 }].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));

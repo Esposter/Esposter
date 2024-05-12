@@ -1,8 +1,8 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
-import { chestInteractionEffect } from "@/services/dungeons/scene/world/interaction/chestInteractionEffect";
-import { doorInteractionEffect } from "@/services/dungeons/scene/world/interaction/doorInteractionEffect";
-import { signInteractionEffect } from "@/services/dungeons/scene/world/interaction/signInteractionEffect";
+import { chestInteractionEffect } from "@/services/dungeons/scene/world/interaction/effect/chestInteractionEffect";
+import { doorInteractionEffect } from "@/services/dungeons/scene/world/interaction/effect/doorInteractionEffect";
+import { signInteractionEffect } from "@/services/dungeons/scene/world/interaction/effect/signInteractionEffect";
 
 export const ObjectInteractionEffectMap: Partial<Record<ObjectgroupName, Effect>> = {
   [ObjectgroupName.Chest]: chestInteractionEffect,

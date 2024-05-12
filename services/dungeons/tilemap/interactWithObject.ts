@@ -1,7 +1,7 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
-import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/ObjectInteractionEffectMap";
+import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const interactWithObject = (scene: SceneWithPlugins): boolean => {
