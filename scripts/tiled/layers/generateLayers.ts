@@ -4,7 +4,7 @@ import { generateLayerNames } from "@/scripts/tiled/layers/generateLayerNames";
 import { generateLayerNamesFile } from "@/scripts/tiled/layers/generateLayerNamesFile";
 import type { LayerData } from "@/scripts/tiled/models/LayerData";
 import { LayerType } from "@/scripts/tiled/models/LayerType";
-import { getTilemapDirectory } from "@/scripts/util/getTilemapDirectory";
+import { getTilemapDirectory } from "@/scripts/tiled/util/getTilemapDirectory";
 
 export const generateLayers = async (layersData: LayerData[]) => {
   const tilemapLayerNamesMap = new Map<TilemapKey, string[]>();
