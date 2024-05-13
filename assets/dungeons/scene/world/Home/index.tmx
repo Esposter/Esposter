@@ -541,16 +541,6 @@
    </object>
   </objectgroup>
   <objectgroup id="18" name="John" locked="1">
-   <object id="5" type="NpcPath" gid="194" x="960" y="1408" width="64" height="64">
-    <properties>
-     <property name="index" type="int" value="1"/>
-    </properties>
-   </object>
-   <object id="6" type="Npc" gid="194" x="896" y="1408" width="64" height="64">
-    <properties>
-     <property name="id" propertytype="NpcId" value="John"/>
-    </properties>
-   </object>
    <object id="8" type="NpcPath" gid="194" x="896" y="1472" width="64" height="64">
     <properties>
      <property name="index" type="int" value="7"/>
@@ -579,6 +569,16 @@
    <object id="13" type="NpcPath" gid="194" x="1024" y="1408" width="64" height="64">
     <properties>
      <property name="index" type="int" value="2"/>
+    </properties>
+   </object>
+   <object id="5" type="NpcPath" gid="194" x="960" y="1408" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="1"/>
+    </properties>
+   </object>
+   <object id="6" type="Npc" gid="194" x="896" y="1408" width="64" height="64">
+    <properties>
+     <property name="id" propertytype="NpcId" value="John"/>
     </properties>
    </object>
   </objectgroup>

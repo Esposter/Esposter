@@ -812,43 +812,6 @@
                         {
                          "gid":194,
                          "height":64,
-                         "id":5,
-                         "name":"",
-                         "properties":[
-                                {
-                                 "name":"index",
-                                 "type":"int",
-                                 "value":1
-                                }],
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":960,
-                         "y":1408
-                        }, 
-                        {
-                         "gid":194,
-                         "height":64,
-                         "id":6,
-                         "name":"",
-                         "properties":[
-                                {
-                                 "name":"id",
-                                 "propertytype":"NpcId",
-                                 "type":"string",
-                                 "value":"John"
-                                }],
-                         "rotation":0,
-                         "type":"Npc",
-                         "visible":true,
-                         "width":64,
-                         "x":896,
-                         "y":1408
-                        }, 
-                        {
-                         "gid":194,
-                         "height":64,
                          "id":8,
                          "name":"",
                          "properties":[
@@ -952,6 +915,43 @@
                          "visible":true,
                          "width":64,
                          "x":1024,
+                         "y":1408
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":5,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":1
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":960,
+                         "y":1408
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":6,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"id",
+                                 "propertytype":"NpcId",
+                                 "type":"string",
+                                 "value":"John"
+                                }],
+                         "rotation":0,
+                         "type":"Npc",
+                         "visible":true,
+                         "width":64,
+                         "x":896,
                          "y":1408
                         }],
                  "opacity":1,
