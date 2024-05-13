@@ -65,7 +65,7 @@
     "nuxt-security": "^1.4.3",
     "prettier": "^3.2.5",
     "sass": "^1.77.1",
-    "tsx": "^4.10.1",
+    "tsx": "^4.10.2",
     "type-fest": "^4.18.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.8.0",
