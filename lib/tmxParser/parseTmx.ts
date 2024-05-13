@@ -16,8 +16,8 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   const {
     map: { $, $$ },
   } = (await parseXmlString(xmlString)) as TMX;
-  const tmxMapParsed = new TMXMapParsed(structuredClone($));
-  const expectedCount = tmxMapParsed.width * tmxMapParsed.height * 4;
+  const map = new TMXMapParsed(structuredClone($));
+  const expectedCount = map.width * map.height * 4;
 
   await Promise.all(
     $$.map(async (node) => {
@@ -25,7 +25,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
       switch (tmxNodeType) {
         case TMXNodeType.EditorSettings:
           if (!node.$$) break;
-          tmxMapParsed.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
+          map.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
           break;
         case TMXNodeType.Group:
         case TMXNodeType.ImageLayer:
@@ -33,17 +33,17 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         case TMXNodeType.Objectgroup:
           {
             const layer = await parseNode(node as TMXLayerNode | TMXGroupLayerNode, expectedCount, translateFlips);
-            tmxMapParsed.layers.push(layer);
+            map.layers.push(layer);
           }
           break;
         case TMXNodeType.Properties:
           if (!node.$$) break;
-          tmxMapParsed.properties = {
+          map.properties = {
             ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
           };
           break;
         case TMXNodeType.Tileset:
-          tmxMapParsed.tilesets.push(parseTileset(node as TMXTilesetNode));
+          map.tilesets.push(parseTileset(node as TMXTilesetNode));
           break;
         case TMXNodeType.Export:
         case TMXNodeType.Image:
@@ -56,5 +56,5 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
     }),
   );
 
-  return { map: tmxMapParsed };
+  return { map };
 };

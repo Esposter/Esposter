@@ -18,6 +18,7 @@ export default tseslint.config(
   {
     rules: {
       curly: ["error", "multi"],
+      "object-shorthand": ["error", "always"],
     },
   },
 );
