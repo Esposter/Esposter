@@ -1,7 +1,5 @@
-import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
+import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
 
 export interface Npc {
-  frame: string;
-  messages: string;
-  movementPattern: NpcMovementPattern;
+  id: NpcId;
 }

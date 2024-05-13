@@ -1,1 +1,3 @@
-export interface NpcPath {}
+export interface NpcPath {
+  index: number;
+}

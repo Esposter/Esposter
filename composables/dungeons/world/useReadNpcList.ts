@@ -1,14 +1,16 @@
 import { NpcObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcObjectProperty";
+import { NpcPathObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
 import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
-import type { NpcMovementPattern } from "@/generated/tiled/propertyTypes/enum/NpcMovementPattern";
+import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
-import { ID_SEPARATOR } from "@/util/id/constants";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
@@ -29,21 +31,13 @@ export const useReadNpcList = () => {
       0: { x: npcObject.x, y: npcObject.y },
     };
 
-    for (const { name, x, y } of npcPathObjects) npcPath[parseInt(name)] = { x, y };
+    for (const { x, y, properties } of npcPathObjects) {
+      const indexTiledObjectProperty = getTiledObjectProperty<number>(properties, NpcPathObjectProperty.index);
+      npcPath[indexTiledObjectProperty.value] = { x, y };
+    }
 
-    const frameTiledObjectProperty = getTiledObjectProperty<string>(npcObject.properties, NpcObjectProperty.frame);
-    const messagesTiledObjectProperty = getTiledObjectProperty<string>(
-      npcObject.properties,
-      NpcObjectProperty.messages,
-    );
-    const movementPatternTiledObjectProperty = getTiledObjectProperty<NpcMovementPattern>(
-      npcObject.properties,
-      NpcObjectProperty.movementPattern,
-    );
-    const frame = parseInt(frameTiledObjectProperty.value);
-    const messages = messagesTiledObjectProperty.value.split(ID_SEPARATOR);
-    const movementPattern = movementPatternTiledObjectProperty.value;
-    const createdAt = new Date();
+    const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
+    const { id, frame, ...rest } = getNpc(idTiledObjectProperty.value);
     npcList.push({
       id: `${CharacterId.Npc}${npcObject.name}`,
       name: npcObject.name,
@@ -71,14 +65,11 @@ export const useReadNpcList = () => {
         },
       },
       singleSidedSpritesheetDirection: Direction.RIGHT,
-      messages,
       path: npcPath,
       pathIndex: 0,
-      movementPattern,
       isMoving: false,
-      createdAt,
-      updatedAt: createdAt,
-      deletedAt: null,
+      ...rest,
+      ...createItemMetadata(),
     });
   }
 

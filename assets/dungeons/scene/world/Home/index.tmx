@@ -534,30 +534,54 @@
   </object>
  </objectgroup>
  <group id="19" name="Npc" locked="1">
-  <objectgroup id="20" name="Smith">
-   <object id="25" name="Smith" type="Npc" gid="194" x="704" y="1920" width="64" height="64">
+  <objectgroup id="20" name="Smith" locked="1">
+   <object id="25" type="Npc" gid="194" x="704" y="1920" width="64" height="64">
     <properties>
-     <property name="frame" value="0"/>
-     <property name="messages" value="You can save your game from the menu.|To open the menu, press the ENTER key."/>
-     <property name="movementPattern" value="Idle"/>
+     <property name="id" propertytype="NpcId" value="Smith"/>
     </properties>
    </object>
   </objectgroup>
   <objectgroup id="18" name="John" locked="1">
-   <object id="5" name="1" type="NpcPath" gid="207" x="960" y="1408" width="64" height="64"/>
-   <object id="6" name="John" type="Npc" gid="207" x="896" y="1408" width="64" height="64">
+   <object id="5" type="NpcPath" gid="207" x="960" y="1408" width="64" height="64">
     <properties>
-     <property name="frame" value="20"/>
-     <property name="messages" value="Make sure you read the signposts for helpful tips!"/>
-     <property name="movementPattern" value="Clockwise"/>
+     <property name="index" type="int" value="1"/>
     </properties>
    </object>
-   <object id="8" name="7" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64"/>
-   <object id="9" name="6" type="NpcPath" gid="207" x="896" y="1536" width="64" height="64"/>
-   <object id="10" name="5" type="NpcPath" gid="207" x="960" y="1536" width="64" height="64"/>
-   <object id="11" name="4" type="NpcPath" gid="207" x="1024" y="1536" width="64" height="64"/>
-   <object id="12" name="3" type="NpcPath" gid="207" x="1024" y="1472" width="64" height="64"/>
-   <object id="13" name="2" type="NpcPath" gid="207" x="1024" y="1408" width="64" height="64"/>
+   <object id="6" type="Npc" gid="207" x="896" y="1408" width="64" height="64">
+    <properties>
+     <property name="id" propertytype="NpcId" value="John"/>
+    </properties>
+   </object>
+   <object id="8" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="7"/>
+    </properties>
+   </object>
+   <object id="9" type="NpcPath" gid="207" x="896" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="6"/>
+    </properties>
+   </object>
+   <object id="10" type="NpcPath" gid="207" x="960" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="11" type="NpcPath" gid="207" x="1024" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="4"/>
+    </properties>
+   </object>
+   <object id="12" type="NpcPath" gid="207" x="1024" y="1472" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="3"/>
+    </properties>
+   </object>
+   <object id="13" type="NpcPath" gid="207" x="1024" y="1408" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="2"/>
+    </properties>
+   </object>
   </objectgroup>
  </group>
 </map>

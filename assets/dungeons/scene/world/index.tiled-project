@@ -116,20 +116,10 @@
             "id": 2,
             "members": [
                 {
-                    "name": "frame",
+                    "name": "id",
+                    "propertyType": "NpcId",
                     "type": "string",
-                    "value": ""
-                },
-                {
-                    "name": "messages",
-                    "type": "string",
-                    "value": ""
-                },
-                {
-                    "name": "movementPattern",
-                    "propertyType": "NpcMovementPattern",
-                    "type": "string",
-                    "value": "Idle"
+                    "value": "John"
                 }
             ],
             "name": "Npc",
@@ -160,6 +150,17 @@
             "valuesAsFlags": false
         },
         {
+            "id": 19,
+            "name": "NpcId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "John",
+                "Smith"
+            ],
+            "valuesAsFlags": false
+        },
+        {
             "id": 3,
             "name": "NpcMovementPattern",
             "storageType": "string",
@@ -173,8 +174,13 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
-            "id": 1,
+            "id": 20,
             "members": [
+                {
+                    "name": "index",
+                    "type": "int",
+                    "value": 1
+                }
             ],
             "name": "NpcPath",
             "type": "class",
@@ -186,7 +192,8 @@
                 "tile",
                 "tileset",
                 "wangcolor",
-                "wangset"
+                "wangset",
+                "project"
             ]
         },
         {
@@ -248,6 +255,17 @@
             ]
         },
         {
+            "id": 16,
+            "name": "TeleportId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "1",
+                "2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
             "color": "#ffa0a0a4",
             "drawFill": true,
             "id": 18,
@@ -288,17 +306,6 @@
                 "Home",
                 "HomeBuilding1",
                 "HomeBuilding2"
-            ],
-            "valuesAsFlags": false
-        },
-        {
-            "id": 16,
-            "name": "TeleportId",
-            "storageType": "string",
-            "type": "enum",
-            "values": [
-                "1",
-                "2"
             ],
             "valuesAsFlags": false
         }

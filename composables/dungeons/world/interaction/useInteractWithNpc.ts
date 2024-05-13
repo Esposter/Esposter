@@ -1,3 +1,4 @@
+import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { usePlayerStore } from "@/store/dungeons/player";
@@ -17,9 +18,12 @@ export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boole
   if (!npc) return false;
 
   scene.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));
-  await showMessages(
-    scene,
-    npc.messages.map((text) => ({ title: npc.name, text })),
-  );
+  for (const effect of npc.effects)
+    if (effect.type === EffectType.Message)
+      await showMessages(
+        scene,
+        effect.messages.map((text) => ({ title: npc.name, text })),
+      );
+
   return true;
 };
