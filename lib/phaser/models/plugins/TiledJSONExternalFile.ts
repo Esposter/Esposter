@@ -82,7 +82,7 @@ export class TiledJSONExternalFile extends MultiFile {
         const tilesetFile = new TilesetFile(
           index,
           loader,
-          `${ID_SEPARATOR}TILESET${ID_SEPARATOR}${file.key}${ID_SEPARATOR}${relativePath}`,
+          `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
           relativePath,
           tilesetXhrSettings,
         );
