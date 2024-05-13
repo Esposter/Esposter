@@ -5,10 +5,10 @@ import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
-import { MESSAGE_SEPARATOR } from "@/services/dungeons/tilemap/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ID_SEPARATOR } from "@/util/id/constants";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
@@ -41,7 +41,7 @@ export const useReadNpcList = () => {
       NpcObjectProperty.movementPattern,
     );
     const frame = parseInt(frameTiledObjectProperty.value);
-    const messages = messagesTiledObjectProperty.value.split(MESSAGE_SEPARATOR);
+    const messages = messagesTiledObjectProperty.value.split(ID_SEPARATOR);
     const movementPattern = movementPatternTiledObjectProperty.value;
     const createdAt = new Date();
     npcList.push({

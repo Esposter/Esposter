@@ -538,7 +538,7 @@
    <object id="25" name="Smith" type="Npc" gid="194" x="704" y="1920" width="64" height="64">
     <properties>
      <property name="frame" value="0"/>
-     <property name="messages" value="You can save your game from the menu.::To open the menu, press the ENTER key."/>
+     <property name="messages" value="You can save your game from the menu.|To open the menu, press the ENTER key."/>
      <property name="movementPattern" value="Idle"/>
     </properties>
    </object>
