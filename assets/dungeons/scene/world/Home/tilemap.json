@@ -569,7 +569,7 @@
          "name":"Door",
          "objects":[
                 {
-                 "gid":331,
+                 "gid":330,
                  "height":64,
                  "id":33,
                  "name":"",
@@ -598,7 +598,7 @@
                  "y":1344
                 }, 
                 {
-                 "gid":331,
+                 "gid":330,
                  "height":64,
                  "id":34,
                  "name":"",
@@ -639,7 +639,7 @@
          "name":"Chest",
          "objects":[
                 {
-                 "gid":230,
+                 "gid":229,
                  "height":64,
                  "id":26,
                  "name":"",
@@ -658,7 +658,7 @@
                  "y":1856
                 }, 
                 {
-                 "gid":230,
+                 "gid":229,
                  "height":64,
                  "id":28,
                  "name":"",
@@ -810,7 +810,7 @@
                  "name":"John",
                  "objects":[
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":5,
                          "name":"",
@@ -828,7 +828,7 @@
                          "y":1408
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":6,
                          "name":"",
@@ -847,7 +847,7 @@
                          "y":1408
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":8,
                          "name":"",
@@ -865,7 +865,7 @@
                          "y":1472
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":9,
                          "name":"",
@@ -883,7 +883,7 @@
                          "y":1536
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":10,
                          "name":"",
@@ -901,7 +901,7 @@
                          "y":1536
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":11,
                          "name":"",
@@ -919,7 +919,7 @@
                          "y":1536
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":12,
                          "name":"",
@@ -937,7 +937,7 @@
                          "y":1472
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":13,
                          "name":"",
@@ -1005,18 +1005,14 @@
         }, 
         {
          "firstgid":207,
-         "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/NpcPaths.tsx"
-        }, 
-        {
-         "firstgid":208,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
         }, 
         {
-         "firstgid":328,
+         "firstgid":327,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
         }, 
         {
-         "firstgid":331,
+         "firstgid":330,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
         }],
  "tilewidth":64,

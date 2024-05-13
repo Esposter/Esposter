@@ -8,6 +8,5 @@ export enum BaseTilesetKey {
   Grass = "Grass",
   House = "House",
   HouseInterior = "HouseInterior",
-  NpcPaths = "NpcPaths",
   Teleport = "Teleport",
 }

@@ -82,7 +82,6 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
-        console.log(enterTile.x);
         const tile = ExternalWorldSceneStore.tilemapKeyLayerMap
           .get(tilemapKey)
           ?.get(LayerName.Encounter)

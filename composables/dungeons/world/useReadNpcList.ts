@@ -39,8 +39,8 @@ export const useReadNpcList = () => {
     const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
     const { id, frame, ...rest } = getNpc(idTiledObjectProperty.value);
     npcList.push({
-      id: `${CharacterId.Npc}${npcObject.name}`,
-      name: npcObject.name,
+      id: `${CharacterId.Npc}${id}`,
+      name: id,
       asset: { key: AssetKey.Npc, frame },
       walkingAnimationMapping: {
         up: {

@@ -24,8 +24,6 @@ export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => L
       frameWidth: 64,
       frameHeight: 64,
     }),
-  [TilesetKey.NpcPaths]: (scene) =>
-    scene.load.image(TilesetKey.NpcPaths, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Encounter}.png`),
   [TilesetKey.Teleport]: (scene) =>
     scene.load.image(TilesetKey.Teleport, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Teleport}.png`),
   [TilesetKey.Dungeon]: (scene) =>
