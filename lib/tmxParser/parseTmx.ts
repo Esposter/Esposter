@@ -27,7 +27,6 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
           if (!node.$$) break;
           tmxMapParsed.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
           break;
-
         case TMXNodeType.Group:
         case TMXNodeType.ImageLayer:
         case TMXNodeType.Layer:
