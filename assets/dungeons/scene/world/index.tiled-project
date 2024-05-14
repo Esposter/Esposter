@@ -156,7 +156,8 @@
             "type": "enum",
             "values": [
                 "John",
-                "Smith"
+                "Smith",
+                "Mum"
             ],
             "valuesAsFlags": false
         },

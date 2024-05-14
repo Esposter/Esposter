@@ -17,6 +17,15 @@ const NpcMap: Record<NpcId, PartialByKeys<Except<Npc, "id">, "frame" | "movement
       },
     ],
   },
+  [NpcId.Mum]: {
+    frame: 30,
+    effects: [
+      {
+        type: EffectType.Message,
+        messages: ["You should take a quick rest."],
+      },
+    ],
+  },
   [NpcId.Smith]: {
     effects: [
       {
