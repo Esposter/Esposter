@@ -1,14 +1,14 @@
-import type { TMXLayerGroupNode } from "@/lib/tmxParser/models/tmx/node/TMXLayerGroupNode";
-import type { TMXLayerGroupParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXLayerGroupParsed";
+import type { TMXGroupLayerNode } from "@/lib/tmxParser/models/tmx/node/TMXGroupLayerNode";
+import type { TMXGroupLayerParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXGroupLayerParsed";
 import { parseNode } from "@/lib/tmxParser/util/parseNode";
 
 export const parseGroup = async (
-  node: TMXLayerGroupNode,
+  node: TMXGroupLayerNode,
   expectedCount: number,
   translateFlips: boolean,
-): Promise<TMXLayerGroupParsed> => {
+): Promise<TMXGroupLayerParsed> => {
   const { $, $$ } = node;
-  const group = structuredClone($) as TMXLayerGroupParsed;
+  const group = structuredClone($) as TMXGroupLayerParsed;
   group.type = node["#name"] as string;
   if ($$) group.layers = await Promise.all($$.map((l) => parseNode(l, expectedCount, translateFlips)));
   return group;

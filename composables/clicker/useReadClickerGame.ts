@@ -1,8 +1,8 @@
 import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { useGameStore } from "@/store/clicker/game";
-import { jsonDateParse } from "@/util/jsonDateParse";
-import { omitDeep } from "@/util/omitDeep";
+import { omitDeep } from "@/util/object/omitDeep";
+import { jsonDateParse } from "@/util/time/jsonDateParse";
 import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
 import deepEqual from "deep-equal";
 

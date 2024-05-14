@@ -1,14 +1,17 @@
-import { INITIAL_POSITION } from "@/services/dungeons/scene/world/home/constants";
+import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { Direction } from "grid-engine";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { GameObjects } from "phaser";
 
 export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
+  const worldSceneStore = useWorldSceneStore();
+  const { tilemapKey } = storeToRefs(worldSceneStore);
   const respawn = () => {
-    player.value.position = INITIAL_POSITION;
-    player.value.direction = Direction.DOWN;
+    const { position, direction } = getInitialMetadata(tilemapKey.value);
+    phaserEventEmitter.emit("playerTeleport", position, direction);
   };
   const healParty = () => {
     for (const monster of player.value.monsters) monster.currentHp = monster.stats.maxHp;

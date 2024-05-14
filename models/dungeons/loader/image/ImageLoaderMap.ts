@@ -4,7 +4,7 @@ import { MonsterPartyLoaderMap } from "@/models/dungeons/loader/image/MonsterPar
 import { TitleLoaderMap } from "@/models/dungeons/loader/image/TitleLoaderMap";
 import { ImageLoaderMap as UIImageLoaderMap } from "@/models/dungeons/loader/image/UI/ImageLoaderMap";
 import { WorldLoaderMap } from "@/models/dungeons/loader/image/WorldLoaderMap";
-import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
 
 export const ImageLoaderMap = mergeObjectsStrict(
   BattleLoaderMap,

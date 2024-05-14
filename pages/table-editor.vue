@@ -4,7 +4,7 @@ import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/t
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { todoListItemCategoryDefinitions } from "@/services/tableEditor/todoList/itemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { uuidValidateV4 } from "@/util/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 
 await useReadTableEditor();
 useConfirmBeforeNavigation();

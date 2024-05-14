@@ -1,22 +1,16 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/ObjectInteractionEffectMap";
-import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
+import { getObjects } from "@/services/dungeons/scene/world/getObjects";
+import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
-import type { Position } from "grid-engine";
-import type { Types } from "phaser";
-import type { SetRequired } from "type-fest";
 
-export const interactWithObject = (scene: SceneWithPlugins): boolean => {
+export const interactWithObject = async (scene: SceneWithPlugins): Promise<boolean> => {
   for (const objectgroupName of Object.values(ObjectgroupName)) {
-    const objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[] = [];
+    const objectLayer = ExternalWorldSceneStore.objectLayerMap.get(objectgroupName);
+    if (!objectLayer) continue;
 
-    for (const { x, y, ...rest } of ExternalWorldSceneStore.objectLayerMap[objectgroupName].objects) {
-      if (!(x && y)) continue;
-      objects.push({ ...getObjectUnitPosition({ x, y }), ...rest });
-    }
-
-    if (ObjectInteractionEffectMap[objectgroupName](scene, objects)) return true;
+    const objects = getObjects(objectLayer);
+    if (await ObjectInteractionEffectMap[objectgroupName]?.(scene, objects)) return true;
   }
 
   return false;

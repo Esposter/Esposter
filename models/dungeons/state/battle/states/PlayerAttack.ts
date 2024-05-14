@@ -9,7 +9,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
-  onEnter: (scene) => {
+  onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
@@ -20,14 +20,14 @@ export const PlayerAttack: State<StateName> = {
     const attack = attackOptionGrid.value.value;
     if (!attack) return;
 
-    showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`, () =>
-      scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), () => {
-        useAttackAnimation(scene, attack, true, () => {
-          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), () => {
-            battleStateMachine.setState(StateName.PlayerPostAttackCheck);
+    await showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`, () => {
+      scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
+        await useAttackAnimation(scene, attack, true, () => {
+          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), async () => {
+            await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
           });
         });
-      }),
-    );
+      });
+    });
   },
 };

@@ -7,7 +7,7 @@ import { useDialogStore } from "@/store/dungeons/dialog";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
@@ -21,8 +21,8 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
-  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (handleShowMessageInput(scene, justDownInput)) return;
+  const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
+    if (await handleShowMessageInput(scene, justDownInput)) return;
     else if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };

@@ -1,0 +1,7 @@
+import type { Except, TupleToUnion } from "type-fest";
+
+export const omit = <T extends object, TKeys extends (keyof T)[]>(object: T, keys: TKeys) =>
+  Object.fromEntries(Object.entries(object).filter(([k]) => !keys.includes(k as keyof T))) as Except<
+    T,
+    TupleToUnion<TKeys>
+  >;

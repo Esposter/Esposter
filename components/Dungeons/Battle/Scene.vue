@@ -18,10 +18,10 @@ const { onPlayerInput } = battleSceneStore;
   <Scene
     :scene-key="SceneKey.Battle"
     @create="
-      (scene) => {
+      async (scene) => {
         playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
         battleStateMachine.scene = scene;
-        battleStateMachine.setState(StateName.Intro);
+        await battleStateMachine.setState(StateName.Intro);
       }
     "
     @update="
@@ -31,8 +31,8 @@ const { onPlayerInput } = battleSceneStore;
       }
     "
     @shutdown="
-      () => {
-        battleStateMachine.setState(null);
+      async () => {
+        await battleStateMachine.setState(null);
       }
     "
   >

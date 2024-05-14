@@ -29,7 +29,7 @@ const isValid = ref(true);
     <template #activator>
       <slot name="activator" :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
     </template>
-    <v-form v-model="isValid" @submit="(e) => e.preventDefault()">
+    <v-form v-model="isValid" @submit="({ preventDefault }) => preventDefault()">
       <StyledCard :card-props="cardProps">
         <slot />
         <v-card-actions>

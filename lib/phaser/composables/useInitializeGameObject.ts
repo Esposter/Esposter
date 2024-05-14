@@ -47,16 +47,23 @@ export const useInitializeGameObject = <
     initializeGameObjectSetters(gameObject);
     initializeGameObjectEvents(gameObject, emit, scene);
   };
+  const pushToParentContainer = () => {
+    if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
+  };
 
   if (immediate) {
     const scene = getScene(sceneKey);
     initializeGameObject(scene);
-  } else lifecycleHook(initializeGameObject);
-  // The parent container may not be immediately created in comparison to this gameObject
-  // so we still need to push the gameObject after the parentContainer's lifecycle hook is run
-  lifecycleHook(() => {
-    if (parentContainer) pushGameObject(parentContainer.value, toValue(configuration), gameObject);
-  });
+    // The parent container may not be immediately created in comparison to this gameObject
+    // so we still need to push the gameObject after the parentContainer's lifecycle hook is run
+    lifecycleHook(() => {
+      pushToParentContainer();
+    });
+  } else
+    lifecycleHook((scene) => {
+      initializeGameObject(scene);
+      pushToParentContainer();
+    });
 
   onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();

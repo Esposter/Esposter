@@ -4,7 +4,7 @@ import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { step } from "@/util/ease/step";
+import { step } from "@/util/math/ease/step";
 import { Direction } from "grid-engine";
 import type Slider from "phaser3-rex-plugins/plugins/slider";
 

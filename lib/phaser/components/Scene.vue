@@ -36,7 +36,7 @@ const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value
 const cameraStore = useCameraStore();
 const { isFading } = storeToRefs(cameraStore);
 const inputStore = useInputStore();
-const { isActive: isInputActive } = storeToRefs(inputStore);
+const { isInputActive } = storeToRefs(inputStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const volumeStore = useVolumeStore();
@@ -82,12 +82,21 @@ const initializeRootScene = (scene: SceneWithPlugins) => {
 
   if (!isInputActive.value) isInputActive.value = true;
 
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-    isFading.value = false;
-  });
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-    isFading.value = false;
-  });
+  initializeSoundSetting(scene, settings.value.Sound);
+  initializeVolumeSetting(scene, settings.value.Volume);
+
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
+};
+
+const fadeInCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
+};
+
+const fadeOutCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
 };
 
 const readyListener = () => {
@@ -98,43 +107,54 @@ const shutdownListener = () => {
   const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
   updateListenersMap[sceneKey] = [];
 
-  const newScene = getScene(sceneKey);
+  const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
+  nextTickListenersMap[sceneKey] = [];
+
+  const scene = getScene(sceneKey);
   const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
-  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(newScene);
+  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(scene);
   shutdownListenersMap[sceneKey] = [];
-  emit("shutdown", newScene);
+  emit("shutdown", scene);
+
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
 
   ExternalSceneStore.sceneReadyMap[sceneKey] = false;
+};
+
+const initializeSoundSetting = (scene: SceneWithPlugins, soundSetting: SoundSetting) => {
+  scene.sound.setMute(soundSetting === SoundSetting.Off);
+};
+const initializeVolumeSetting = (scene: SceneWithPlugins, volumePercentage: number) => {
+  scene.sound.setVolume(volumePercentage / 100);
 };
 
 onMounted(() => {
   const game = useGame();
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
-  initializeSound();
-  initializeVolume();
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) switchToScene(sceneKey);
 });
 
-const { trigger: initializeSound } = watchTriggerable(
+watch(
   () => settings.value.Sound,
-  (newSound) => {
+  (newSoundSetting) => {
     const scene = getScene(sceneKey);
-    scene.sound.setMute(newSound === SoundSetting.Off);
+    initializeSoundSetting(scene, newSoundSetting);
   },
 );
 
-const { trigger: initializeVolume } = watchTriggerable(volumePercentage, (newVolumePercentage) => {
+watch(volumePercentage, (newVolumePercentage) => {
   const scene = getScene(sceneKey);
-  scene.sound.setVolume(newVolumePercentage / 100);
+  initializeVolumeSetting(scene, newVolumePercentage);
 });
 
 onUnmounted(() => {
   const game = useGame();
   const scene = getScene(sceneKey);
-  scene.events.on(Scenes.Events.READY, readyListener);
-  scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
+  scene.events.off(Scenes.Events.READY, readyListener);
+  scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);
 });
 

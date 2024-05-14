@@ -6,7 +6,7 @@ import { verificationTokens } from "@/db/schema/verificationTokens";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { omit } from "@/util/omit";
+import { omit } from "@/util/object/omit";
 import type { Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
 

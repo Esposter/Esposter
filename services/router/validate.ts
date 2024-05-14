@@ -1,4 +1,4 @@
-import { uuidValidateV4 } from "@/util/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 import type { RouteLocationNormalized } from "vue-router";
 
 export const validate = (route: RouteLocationNormalized) => {

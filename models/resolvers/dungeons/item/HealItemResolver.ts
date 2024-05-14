@@ -29,7 +29,7 @@ export class HealItemResolver extends AItemResolver {
     return true;
   }
 
-  handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
+  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const infoPanelStore = useInfoPanelStore();
@@ -38,7 +38,7 @@ export class HealItemResolver extends AItemResolver {
     const newHp = Math.min(oldHp + item.value.effect.value, target.value.stats.maxHp);
 
     target.value.currentHp = newHp;
-    showMessages(scene, [`Healed ${activeMonster.value.key} by ${newHp - oldHp} HP.`], () => {
+    await showMessages(scene, [`Healed ${activeMonster.value.key} by ${newHp - oldHp} HP.`], () => {
       phaserEventEmitter.emit("useItem", item.value, scene.scene.key);
     });
   }

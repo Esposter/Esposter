@@ -1,10 +1,11 @@
 import { useTween } from "@/lib/phaser/composables/useTween";
+import type { OnComplete } from "@/models/shared/OnComplete";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useMonsterAppearTween = (isEnemy: boolean, onComplete?: () => void) => {
+export const useMonsterAppearTween = async (isEnemy: boolean, onComplete?: OnComplete) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
   const { monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
@@ -13,7 +14,7 @@ export const useMonsterAppearTween = (isEnemy: boolean, onComplete?: () => void)
 
   if (isSkipAnimations.value) {
     monsterPosition.value.x = xEnd;
-    onComplete?.();
+    await onComplete?.();
     return;
   }
 
@@ -25,8 +26,8 @@ export const useMonsterAppearTween = (isEnemy: boolean, onComplete?: () => void)
       start: monsterPosition.value.x,
       to: xEnd,
     },
-    onComplete: () => {
-      onComplete?.();
+    onComplete: async () => {
+      await onComplete?.();
     },
   });
 };

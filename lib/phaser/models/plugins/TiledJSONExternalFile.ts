@@ -7,7 +7,7 @@ import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { ID_SEPARATOR } from "@/util/id/constants";
-import { isPlainObject } from "@/util/isPlainObject";
+import { isPlainObject } from "@/util/object/isPlainObject";
 import { parseXmlString } from "@/util/parseXmlString";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
@@ -78,11 +78,11 @@ export class TiledJSONExternalFile extends MultiFile {
         const pathIndex = tileset.source.indexOf(publicString);
         if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
-        const relativePath = tileset.source.slice(pathIndex + publicString.length);
+        const relativePath = tileset.source.substring(pathIndex + publicString.length);
         const tilesetFile = new TilesetFile(
           index,
           loader,
-          `${ID_SEPARATOR}TILESET${ID_SEPARATOR}${file.key}${ID_SEPARATOR}${relativePath}`,
+          `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
           relativePath,
           tilesetXhrSettings,
         );

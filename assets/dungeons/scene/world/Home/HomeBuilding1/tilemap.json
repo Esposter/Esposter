@@ -129,6 +129,23 @@
                  "height":64,
                  "id":2,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"id",
+                         "propertytype":"TeleportId",
+                         "type":"string",
+                         "value":"1"
+                        }, 
+                        {
+                         "name":"target",
+                         "propertytype":"TeleportTarget",
+                         "type":"class",
+                         "value":
+                            {
+                             "id":"1",
+                             "tilemapKey":"Home"
+                            }
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

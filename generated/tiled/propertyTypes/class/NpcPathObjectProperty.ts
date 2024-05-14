@@ -1,1 +1,3 @@
-export enum NpcPathObjectProperty {}
+export enum NpcPathObjectProperty {
+  index = "index",
+}

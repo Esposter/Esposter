@@ -6,7 +6,7 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {

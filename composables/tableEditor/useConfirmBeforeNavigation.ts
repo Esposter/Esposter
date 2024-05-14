@@ -11,6 +11,8 @@ export const useConfirmBeforeNavigation = () => {
   useEventListener("beforeunload", (e) => {
     if (!isDirty.value) return;
     e.preventDefault();
-    e.returnValue = "";
+    // Even though the docs tell us that it's deprecated,
+    // this actually makes the window prompt for reloading pop up
+    e.returnValue = false;
   });
 };

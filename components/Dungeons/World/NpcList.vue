@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { useNpcStore } from "@/store/dungeons/world/npc";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
+const worldSceneStore = useWorldSceneStore();
+const { tilemapKey } = storeToRefs(worldSceneStore);
 const npcStore = useNpcStore();
 const { resetCursorPaginationData } = npcStore;
 const { npcList } = storeToRefs(npcStore);
 
-onCreate(() => {
+const { trigger } = watchTriggerable(tilemapKey, () => {
   useReadNpcList();
+});
+
+onCreate(() => {
+  trigger();
 });
 
 onUnmounted(() => {

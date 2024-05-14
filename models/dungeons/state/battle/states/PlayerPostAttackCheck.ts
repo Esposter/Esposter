@@ -7,7 +7,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 
 export const PlayerPostAttackCheck: State<StateName> = {
   name: StateName.PlayerPostAttackCheck,
-  onEnter: (scene) => {
+  onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const enemyStore = useEnemyStore();
@@ -16,16 +16,16 @@ export const PlayerPostAttackCheck: State<StateName> = {
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
     if (isActiveMonsterFainted.value) {
-      useMonsterDeathTween(true, () => {
-        showMessages(
+      await useMonsterDeathTween(true, async () => {
+        await showMessages(
           scene,
           [`Wild ${activeMonster.value.key} has fainted!`, "You have gained some experience."],
-          () => {
-            battleStateMachine.setState(StateName.Finished);
+          async () => {
+            await battleStateMachine.setState(StateName.Finished);
           },
         );
       });
       return;
-    } else battleStateMachine.setState(attackStatePriorityMap.value[StateName.PlayerPostAttackCheck]);
+    } else await battleStateMachine.setState(attackStatePriorityMap.value[StateName.PlayerPostAttackCheck]);
   },
 };

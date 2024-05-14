@@ -10,10 +10,9 @@
  <tileset firstgid="190" source="../../../../../public/tilesets/firstParty/Bushes.tsx"/>
  <tileset firstgid="194" source="../../../../../public/tilesets/firstParty/Encounter.tsx"/>
  <tileset firstgid="195" source="../../../../../public/tilesets/axulart/House.tsx"/>
- <tileset firstgid="207" source="../../../../../public/tilesets/firstParty/NpcPaths.tsx"/>
- <tileset firstgid="208" source="../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
- <tileset firstgid="328" source="../../../../../public/tilesets/firstParty/Entrance.tsx"/>
- <tileset firstgid="331" source="../../../../../public/tilesets/firstParty/Teleport.tsx"/>
+ <tileset firstgid="207" source="../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
+ <tileset firstgid="327" source="../../../../../public/tilesets/firstParty/Entrance.tsx"/>
+ <tileset firstgid="330" source="../../../../../public/tilesets/firstParty/Teleport.tsx"/>
  <layer id="3" name="Ground" width="20" height="34" locked="1">
   <data encoding="csv">
 188,186,188,187,188,188,188,185,188,188,186,186,188,186,188,188,187,188,188,188,
@@ -474,24 +473,36 @@
 </data>
  </layer>
  <objectgroup id="26" name="Door" locked="1">
-  <object id="33" gid="331" x="832" y="1344" width="64" height="64">
+  <object id="33" gid="330" x="832" y="1344" width="64" height="64">
    <properties>
-    <property name="tilemapKey" propertytype="TilemapKey" value="HomeBuilding2"/>
+    <property name="id" propertytype="TeleportId" value="2"/>
+    <property name="target" type="class" propertytype="TeleportTarget">
+     <properties>
+      <property name="id" propertytype="TeleportId" value="1"/>
+      <property name="tilemapKey" propertytype="TilemapKey" value="HomeBuilding2"/>
+     </properties>
+    </property>
    </properties>
   </object>
-  <object id="34" gid="331" x="384" y="1344" width="64" height="64">
+  <object id="34" gid="330" x="384" y="1344" width="64" height="64">
    <properties>
-    <property name="tilemapKey" propertytype="TilemapKey" value="HomeBuilding1"/>
+    <property name="id" propertytype="TeleportId" value="1"/>
+    <property name="target" type="class" propertytype="TeleportTarget">
+     <properties>
+      <property name="id" propertytype="TeleportId" value="1"/>
+      <property name="tilemapKey" propertytype="TilemapKey" value="HomeBuilding1"/>
+     </properties>
+    </property>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="24" name="Chest" locked="1" offsetx="-256" offsety="-128">
-  <object id="26" type="Chest" gid="230" x="1216" y="1856" width="64" height="64">
+  <object id="26" type="Chest" gid="229" x="1216" y="1856" width="64" height="64">
    <properties>
     <property name="itemId" propertytype="ItemId" value="Potion"/>
    </properties>
   </object>
-  <object id="28" type="Chest" gid="230" x="320" y="768" width="64" height="64">
+  <object id="28" type="Chest" gid="229" x="320" y="768" width="64" height="64">
    <properties>
     <property name="itemId" propertytype="ItemId" value="Potion"/>
    </properties>
@@ -522,30 +533,54 @@
   </object>
  </objectgroup>
  <group id="19" name="Npc" locked="1">
-  <objectgroup id="20" name="Smith">
-   <object id="25" name="Smith" type="Npc" gid="194" x="704" y="1920" width="64" height="64">
+  <objectgroup id="20" name="Smith" locked="1">
+   <object id="25" type="Npc" gid="194" x="704" y="1920" width="64" height="64">
     <properties>
-     <property name="frame" value="0"/>
-     <property name="messages" value="You can save your game from the menu.::To open the menu, press the ENTER key."/>
-     <property name="movementPattern" value="Idle"/>
+     <property name="id" propertytype="NpcId" value="Smith"/>
     </properties>
    </object>
   </objectgroup>
   <objectgroup id="18" name="John" locked="1">
-   <object id="5" name="1" type="NpcPath" gid="207" x="960" y="1408" width="64" height="64"/>
-   <object id="6" name="John" type="Npc" gid="207" x="896" y="1408" width="64" height="64">
+   <object id="8" type="NpcPath" gid="194" x="896" y="1472" width="64" height="64">
     <properties>
-     <property name="frame" value="20"/>
-     <property name="messages" value="Make sure you read the signposts for helpful tips!"/>
-     <property name="movementPattern" value="Clockwise"/>
+     <property name="index" type="int" value="7"/>
     </properties>
    </object>
-   <object id="8" name="7" type="NpcPath" gid="207" x="896" y="1472" width="64" height="64"/>
-   <object id="9" name="6" type="NpcPath" gid="207" x="896" y="1536" width="64" height="64"/>
-   <object id="10" name="5" type="NpcPath" gid="207" x="960" y="1536" width="64" height="64"/>
-   <object id="11" name="4" type="NpcPath" gid="207" x="1024" y="1536" width="64" height="64"/>
-   <object id="12" name="3" type="NpcPath" gid="207" x="1024" y="1472" width="64" height="64"/>
-   <object id="13" name="2" type="NpcPath" gid="207" x="1024" y="1408" width="64" height="64"/>
+   <object id="9" type="NpcPath" gid="194" x="896" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="6"/>
+    </properties>
+   </object>
+   <object id="10" type="NpcPath" gid="194" x="960" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="5"/>
+    </properties>
+   </object>
+   <object id="11" type="NpcPath" gid="194" x="1024" y="1536" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="4"/>
+    </properties>
+   </object>
+   <object id="12" type="NpcPath" gid="194" x="1024" y="1472" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="3"/>
+    </properties>
+   </object>
+   <object id="13" type="NpcPath" gid="194" x="1024" y="1408" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="2"/>
+    </properties>
+   </object>
+   <object id="5" type="NpcPath" gid="194" x="960" y="1408" width="64" height="64">
+    <properties>
+     <property name="index" type="int" value="1"/>
+    </properties>
+   </object>
+   <object id="6" type="Npc" gid="194" x="896" y="1408" width="64" height="64">
+    <properties>
+     <property name="id" propertytype="NpcId" value="John"/>
+    </properties>
+   </object>
   </objectgroup>
  </group>
 </map>

@@ -7,4 +7,4 @@ import type { SetRequired } from "type-fest";
 export type Effect = (
   scene: SceneWithPlugins,
   objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[],
-) => boolean;
+) => boolean | Promise<boolean>;

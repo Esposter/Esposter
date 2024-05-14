@@ -7,7 +7,7 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useGameStore } from "@/store/dungeons/game";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 
 export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const gameStore = useGameStore();
@@ -30,7 +30,7 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
           return;
         case MenuOption.Save:
           await saveData();
-          showMessages(scene, [{ text: "Game has been saved." }]);
+          await showMessages(scene, [{ text: "Game has been saved." }]);
           return;
         case MenuOption.Exit:
           isMenuVisible.value = false;

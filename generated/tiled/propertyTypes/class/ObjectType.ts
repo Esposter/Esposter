@@ -6,4 +6,5 @@ export enum ObjectType {
   NpcPath = "NpcPath",
   Sign = "Sign",
   Teleport = "Teleport",
+  TeleportTarget = "TeleportTarget",
 }

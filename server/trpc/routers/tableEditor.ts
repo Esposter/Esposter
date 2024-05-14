@@ -7,8 +7,8 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
-import { jsonDateParse } from "@/util/jsonDateParse";
 import { streamToText } from "@/util/text/streamToText";
+import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const tableEditorRouter = router({
   readTableEditor: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {

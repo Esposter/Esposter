@@ -569,16 +569,26 @@
          "name":"Door",
          "objects":[
                 {
-                 "gid":331,
+                 "gid":330,
                  "height":64,
                  "id":33,
                  "name":"",
                  "properties":[
                         {
-                         "name":"tilemapKey",
-                         "propertytype":"TilemapKey",
+                         "name":"id",
+                         "propertytype":"TeleportId",
                          "type":"string",
-                         "value":"HomeBuilding2"
+                         "value":"2"
+                        }, 
+                        {
+                         "name":"target",
+                         "propertytype":"TeleportTarget",
+                         "type":"class",
+                         "value":
+                            {
+                             "id":"1",
+                             "tilemapKey":"HomeBuilding2"
+                            }
                         }],
                  "rotation":0,
                  "type":"",
@@ -588,16 +598,26 @@
                  "y":1344
                 }, 
                 {
-                 "gid":331,
+                 "gid":330,
                  "height":64,
                  "id":34,
                  "name":"",
                  "properties":[
                         {
-                         "name":"tilemapKey",
-                         "propertytype":"TilemapKey",
+                         "name":"id",
+                         "propertytype":"TeleportId",
                          "type":"string",
-                         "value":"HomeBuilding1"
+                         "value":"1"
+                        }, 
+                        {
+                         "name":"target",
+                         "propertytype":"TeleportTarget",
+                         "type":"class",
+                         "value":
+                            {
+                             "id":"1",
+                             "tilemapKey":"HomeBuilding1"
+                            }
                         }],
                  "rotation":0,
                  "type":"",
@@ -619,7 +639,7 @@
          "name":"Chest",
          "objects":[
                 {
-                 "gid":230,
+                 "gid":229,
                  "height":64,
                  "id":26,
                  "name":"",
@@ -638,7 +658,7 @@
                  "y":1856
                 }, 
                 {
-                 "gid":230,
+                 "gid":229,
                  "height":64,
                  "id":28,
                  "name":"",
@@ -755,28 +775,20 @@
                 {
                  "draworder":"topdown",
                  "id":20,
+                 "locked":true,
                  "name":"Smith",
                  "objects":[
                         {
                          "gid":194,
                          "height":64,
                          "id":25,
-                         "name":"Smith",
+                         "name":"",
                          "properties":[
                                 {
-                                 "name":"frame",
+                                 "name":"id",
+                                 "propertytype":"NpcId",
                                  "type":"string",
-                                 "value":"0"
-                                }, 
-                                {
-                                 "name":"messages",
-                                 "type":"string",
-                                 "value":"You can save your game from the menu.::To open the menu, press the ENTER key."
-                                }, 
-                                {
-                                 "name":"movementPattern",
-                                 "type":"string",
-                                 "value":"Idle"
+                                 "value":"Smith"
                                 }],
                          "rotation":0,
                          "type":"Npc",
@@ -798,10 +810,124 @@
                  "name":"John",
                  "objects":[
                         {
-                         "gid":207,
+                         "gid":194,
+                         "height":64,
+                         "id":8,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":7
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":896,
+                         "y":1472
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":9,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":6
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":896,
+                         "y":1536
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":10,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":5
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":960,
+                         "y":1536
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":11,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":4
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":1024,
+                         "y":1536
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":12,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":3
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":1024,
+                         "y":1472
+                        }, 
+                        {
+                         "gid":194,
+                         "height":64,
+                         "id":13,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":2
+                                }],
+                         "rotation":0,
+                         "type":"NpcPath",
+                         "visible":true,
+                         "width":64,
+                         "x":1024,
+                         "y":1408
+                        }, 
+                        {
+                         "gid":194,
                          "height":64,
                          "id":5,
-                         "name":"1",
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"index",
+                                 "type":"int",
+                                 "value":1
+                                }],
                          "rotation":0,
                          "type":"NpcPath",
                          "visible":true,
@@ -810,103 +936,22 @@
                          "y":1408
                         }, 
                         {
-                         "gid":207,
+                         "gid":194,
                          "height":64,
                          "id":6,
-                         "name":"John",
+                         "name":"",
                          "properties":[
                                 {
-                                 "name":"frame",
+                                 "name":"id",
+                                 "propertytype":"NpcId",
                                  "type":"string",
-                                 "value":"20"
-                                }, 
-                                {
-                                 "name":"messages",
-                                 "type":"string",
-                                 "value":"Make sure you read the signposts for helpful tips!"
-                                }, 
-                                {
-                                 "name":"movementPattern",
-                                 "type":"string",
-                                 "value":"Clockwise"
+                                 "value":"John"
                                 }],
                          "rotation":0,
                          "type":"Npc",
                          "visible":true,
                          "width":64,
                          "x":896,
-                         "y":1408
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":8,
-                         "name":"7",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":896,
-                         "y":1472
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":9,
-                         "name":"6",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":896,
-                         "y":1536
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":10,
-                         "name":"5",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":960,
-                         "y":1536
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":11,
-                         "name":"4",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":1024,
-                         "y":1536
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":12,
-                         "name":"3",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":1024,
-                         "y":1472
-                        }, 
-                        {
-                         "gid":207,
-                         "height":64,
-                         "id":13,
-                         "name":"2",
-                         "rotation":0,
-                         "type":"NpcPath",
-                         "visible":true,
-                         "width":64,
-                         "x":1024,
                          "y":1408
                         }],
                  "opacity":1,
@@ -960,18 +1005,14 @@
         }, 
         {
          "firstgid":207,
-         "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/NpcPaths.tsx"
-        }, 
-        {
-         "firstgid":208,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
         }, 
         {
-         "firstgid":328,
+         "firstgid":327,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
         }, 
         {
-         "firstgid":331,
+         "firstgid":330,
          "source":"..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
         }],
  "tilewidth":64,

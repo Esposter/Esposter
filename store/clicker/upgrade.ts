@@ -3,8 +3,8 @@ import { Target } from "@/models/clicker/data/Target";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
-import { exhaustiveGuard } from "@/util/exhaustiveGuard";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const gameStore = useGameStore();

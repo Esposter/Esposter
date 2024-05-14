@@ -1,24 +1,25 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { OnComplete } from "@/models/shared/OnComplete";
 import { dayjs } from "@/services/dayjs";
-import { playDungeonsSoundEffect } from "@/services/dungeons/sound/playDungeonsSoundEffect";
+import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useAttackAnimation = (
+export const useAttackAnimation = async (
   scene: SceneWithPlugins,
   attack: Attack,
   isToEnemy: boolean,
-  onComplete?: () => void,
+  onComplete?: OnComplete,
 ) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   scene.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
-    playDungeonsSoundEffect(scene, attack.soundEffectKey);
+    getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
   });
 
   if (isSkipAnimations.value) {
-    onComplete?.();
+    await onComplete?.();
     return;
   }
 

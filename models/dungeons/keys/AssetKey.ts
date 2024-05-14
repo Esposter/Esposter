@@ -1,6 +1,6 @@
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { mergeObjectsStrict } from "@/util/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
 import { z } from "zod";
 
 export const AssetKey = mergeObjectsStrict(ImageKey, SpritesheetKey);
