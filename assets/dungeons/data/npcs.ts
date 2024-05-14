@@ -24,6 +24,16 @@ const NpcMap: Record<NpcId, PartialByKeys<Except<Npc, "id">, "frame" | "movement
         type: EffectType.Message,
         messages: ["You should take a quick rest."],
       },
+      {
+        type: EffectType.Heal,
+      },
+      {
+        type: EffectType.SceneFade,
+      },
+      {
+        type: EffectType.Message,
+        messages: ["Oh good! You and your monsters are looking great!"],
+      },
     ],
   },
   [NpcId.Smith]: {
