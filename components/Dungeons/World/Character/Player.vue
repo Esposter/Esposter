@@ -33,10 +33,10 @@ const sceneKey = useInjectSceneKey();
 // We only care about the starting frame, so we don't want this to be reactive
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
-onCreate((scene) => {
+onCreate(async (scene) => {
   if (!isPlayerFainted.value) return;
 
-  respawn();
+  await respawn();
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
     healParty();
     await showMessages(scene, [
@@ -48,7 +48,9 @@ onCreate((scene) => {
 
 usePhaserListener("playerTeleport", (position, direction) => {
   onNextTick((scene) => {
-    // We need to let the grid engine handle setting the player position instead
+    // Don't set player position manually and let grid engine set the player position
+    // This will help us detect errors if we're trying to teleport the player
+    // before the tilemap has been properly initialized when we're changing the tilemap key
     scene.gridEngine.setPosition(CharacterId.Player, position);
     if (direction) player.value.direction = direction;
     frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;

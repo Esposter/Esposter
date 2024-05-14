@@ -1,5 +1,4 @@
 export enum ObjectType {
-  AreaMetadata = "AreaMetadata",
   Chest = "Chest",
   Encounter = "Encounter",
   Npc = "Npc",

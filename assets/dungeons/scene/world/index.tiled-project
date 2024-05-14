@@ -23,35 +23,6 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
-            "id": 6,
-            "members": [
-                {
-                    "name": "faintLocation",
-                    "type": "string",
-                    "value": ""
-                },
-                {
-                    "name": "id",
-                    "type": "int",
-                    "value": -1
-                }
-            ],
-            "name": "AreaMetadata",
-            "type": "class",
-            "useAs": [
-                "property",
-                "map",
-                "layer",
-                "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset"
-            ]
-        },
-        {
-            "color": "#ffa0a0a4",
-            "drawFill": true,
             "id": 9,
             "members": [
                 {
