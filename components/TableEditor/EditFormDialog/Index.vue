@@ -25,7 +25,7 @@ watch(editFormDialog, (newEditFormDialog) => {
     persistent
     no-click-animation
   >
-    <v-form ref="editFormRef" contents @submit="(e) => e.preventDefault()">
+    <v-form ref="editFormRef" contents="!" @submit="({ preventDefault }) => preventDefault()">
       <StyledCard>
         <Header />
         <v-divider thickness="2" />

@@ -45,8 +45,8 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
   <v-form
     v-model="isValid"
     @submit="
-      async (e) => {
-        e.preventDefault();
+      async ({ preventDefault }) => {
+        preventDefault();
         await updateAuthUser(editedProfileCardRows);
         editMode = false;
       }

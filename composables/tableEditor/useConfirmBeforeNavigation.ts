@@ -8,9 +8,8 @@ export const useConfirmBeforeNavigation = () => {
     if (isDirty.value && !window.confirm("Changes that you made may not be saved.")) return false;
   });
 
-  useEventListener("beforeunload", (e) => {
+  useEventListener("beforeunload", ({ preventDefault }) => {
     if (!isDirty.value) return;
-    e.preventDefault();
-    e.returnValue = "";
+    preventDefault();
   });
 };
