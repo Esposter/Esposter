@@ -25,13 +25,12 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const cameraStore = useCameraStore();
   const { fadeIn, fadeOut } = cameraStore;
   const worldSceneStore = useWorldSceneStore();
-  const { tilemapKey } = storeToRefs(worldSceneStore);
+  const { switchToTilemap } = worldSceneStore;
   fadeOut(scene);
   getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-    tilemapKey.value = teleportTargetTiledObjectProperty.value.tilemapKey;
-    // Wait until vue's tilemap key watcher has loaded the new tilemap
-    await nextTick();
+    await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
+
     const doorObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Door);
     if (!doorObjectLayer)
       throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);

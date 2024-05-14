@@ -8,11 +8,9 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
   const worldSceneStore = useWorldSceneStore();
-  const { tilemapKey } = storeToRefs(worldSceneStore);
+  const { switchToTilemap } = worldSceneStore;
   const respawn = async () => {
-    tilemapKey.value = player.value.respawnLocation.tilemapKey;
-    // We need to let the player re-render first in the tilemap before we teleport it
-    await nextTick();
+    await switchToTilemap(player.value.respawnLocation.tilemapKey);
     phaserEventEmitter.emit("playerTeleport", structuredClone(toDeepRaw(player.value.respawnLocation.position)));
   };
   const healParty = () => {
