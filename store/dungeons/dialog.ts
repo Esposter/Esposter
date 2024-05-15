@@ -7,7 +7,6 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { sleep } from "@/util/sleep";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const settingsStore = useSettingsStore();
@@ -71,9 +70,10 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       const textDelay = useTextDelay();
       target.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
-      await sleep(textDelay.value);
-      showInputPromptCursor(unref(target.inputPromptCursorX));
-      isWaitingForPlayerSpecialInput.value = true;
+      scene.time.delayedCall(textDelay.value, () => {
+        showInputPromptCursor(unref(target.inputPromptCursorX));
+        isWaitingForPlayerSpecialInput.value = true;
+      });
       return;
     }
 

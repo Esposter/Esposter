@@ -7,7 +7,6 @@ import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { dayjs } from "@/services/dayjs";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { sleep } from "@/util/sleep";
 import { Cameras } from "phaser";
 
 export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: Effect | undefined) => {
@@ -38,11 +37,12 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       break;
     case EffectType.SceneFade:
       scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
-      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-        await sleep(dayjs.duration(1, "seconds").asMilliseconds());
-        scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
-        scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-          emit();
+      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+        scene.time.delayedCall(dayjs.duration(1, "seconds").asMilliseconds(), () => {
+          scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
+          scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+            emit();
+          });
         });
       });
       return;
