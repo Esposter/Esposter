@@ -158,9 +158,49 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "id":9,
+         "layers":[
+                {
+                 "draworder":"topdown",
+                 "id":8,
+                 "name":"Mum",
+                 "objects":[
+                        {
+                         "gid":122,
+                         "height":64,
+                         "id":3,
+                         "name":"",
+                         "properties":[
+                                {
+                                 "name":"id",
+                                 "propertytype":"NpcId",
+                                 "type":"string",
+                                 "value":"Mum"
+                                }],
+                         "rotation":0,
+                         "type":"Npc",
+                         "visible":true,
+                         "width":64,
+                         "x":576,
+                         "y":256
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }],
+         "name":"Npc",
+         "opacity":1,
+         "type":"group",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":8,
- "nextobjectid":3,
+ "nextlayerid":10,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

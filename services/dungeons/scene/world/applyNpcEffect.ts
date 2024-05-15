@@ -6,11 +6,16 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { dayjs } from "@/services/dayjs";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
+import { useWorldPlayerStore } from "@/store/dungeons/world/player";
+import { sleep } from "@/util/sleep";
 import { Cameras } from "phaser";
-import { useWorldPlayerStore } from "~/store/dungeons/world/player";
 
 export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: Effect | undefined) => {
   if (!effect) return;
+
+  const emit = () => {
+    phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY}`);
+  };
 
   switch (effect.type) {
     case EffectType.Message:
@@ -20,12 +25,10 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         await showMessages(
           scene,
           effect.messages.map((text) => ({ title: npc.name, text })),
-          () => {
-            phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY}`);
-          },
+          emit,
         );
       }
-      break;
+      return;
     case EffectType.Heal:
       {
         const worldPlayerStore = useWorldPlayerStore();
@@ -34,12 +37,18 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       }
       break;
     case EffectType.SceneFade:
-      scene.cameras.main.fadeOut(dayjs.duration(0.5, "seconds").asMilliseconds());
-      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-        scene.cameras.main.fadeIn(dayjs.duration(0.5, "seconds").asMilliseconds());
+      scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
+      scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
+        await sleep(dayjs.duration(1, "seconds").asMilliseconds());
+        scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
+        scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+          emit();
+        });
       });
-      break;
+      return;
     default:
       break;
   }
+
+  emit();
 };
