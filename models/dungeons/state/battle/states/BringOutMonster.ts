@@ -16,7 +16,7 @@ export const BringOutMonster: State<StateName> = {
     await useMonsterAppearTween(false, async () => {
       useMonsterInfoContainerAppearTween(false);
       await showMessageNoInputRequired(scene, `Go ${activeMonster.value.key}!`, () => {
-        scene.time.delayedCall(dayjs.duration(1.2, "second").asMilliseconds(), async () => {
+        scene.time.delayedCall(dayjs.duration(1, "second").asMilliseconds(), async () => {
           await battleStateMachine.setState(StateName.PlayerInput);
         });
       });
