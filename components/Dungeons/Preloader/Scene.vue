@@ -44,8 +44,8 @@ const preload = (scene: SceneWithPlugins) => {
     assetText.value = `Loading asset: ${prettifyName(file.key)}`;
   });
 
-  scene.load.on("complete", () => {
-    switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
+  scene.load.on("complete", async () => {
+    await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
   });
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);

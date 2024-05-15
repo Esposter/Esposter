@@ -129,12 +129,12 @@ const initializeVolumeSetting = (scene: SceneWithPlugins, volumePercentage: numb
   scene.sound.setVolume(volumePercentage / 100);
 };
 
-onMounted(() => {
+onMounted(async () => {
   const game = useGame();
   const scene = game.scene.add(sceneKey, NewScene) as SceneWithPlugins;
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
-  if (autoStart) switchToScene(sceneKey);
+  if (autoStart) await switchToScene(sceneKey);
 });
 
 watch(
