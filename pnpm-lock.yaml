@@ -183,17 +183,17 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
       survey-core:
-        specifier: ^1.10.3
-        version: 1.10.3
+        specifier: ^1.10.4
+        version: 1.10.4
       survey-creator-core:
-        specifier: ^1.10.3
-        version: 1.10.3(survey-core@1.10.3)
+        specifier: ^1.10.4
+        version: 1.10.4(survey-core@1.10.4)
       survey-creator-vue:
-        specifier: ^1.10.3
-        version: 1.10.3(survey-core@1.10.3)(survey-creator-core@1.10.3(survey-core@1.10.3))(survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^1.10.4
+        version: 1.10.4(survey-core@1.10.4)(survey-creator-core@1.10.4(survey-core@1.10.4))(survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       survey-vue3-ui:
-        specifier: ^1.10.3
-        version: 1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^1.10.4
+        version: 1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5))
       three:
         specifier: ^0.164.1
         version: 0.164.1
@@ -343,8 +343,8 @@ importers:
         specifier: ^1.77.1
         version: 1.77.1
       tsx:
-        specifier: ^4.10.2
-        version: 4.10.2
+        specifier: ^4.10.3
+        version: 4.10.3
       type-fest:
         specifier: ^4.18.2
         version: 4.18.2
@@ -4617,6 +4617,9 @@ packages:
   get-tsconfig@4.7.3:
     resolution: {integrity: sha512-ZvkrzoUA0PQZM6fy6+/Hce561s+faD1rsNwhnO5FelNjyy7EMGJ3Rz1AQ8GYDWjhRs/7dBLOEJvhK8MiEJOAFg==}
 
+  get-tsconfig@4.7.5:
+    resolution: {integrity: sha512-ZCuZCnlqNzjb4QprAzXKdpp/gh6KTxSJuw3IBsPnV/7fV4NxC9ckB+vPTt8w7fJA0TaSD7c55BR47JD6MEDyDw==}
+
   giget@1.2.1:
     resolution: {integrity: sha512-4VG22mopWtIeHwogGSy1FViXVo0YT+m6BrqZfz0JJFwbSsePsCdOzdLIIli5BtMp7Xe8f/o2OmBpQX2NBOC24g==}
     hasBin: true
@@ -6821,31 +6824,31 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@1.10.3:
-    resolution: {integrity: sha512-C7erRVrcLobpPdCrVn0vuzKpjkAL+RvPR77sTQxzwdb8Zu4mzrVw6B4+Nhr+P9ckEHUhsDHtzlsyZQyGEHKDYA==}
+  survey-core@1.10.4:
+    resolution: {integrity: sha512-EdBLDZk7T2fLOhX79fL5VgRDsHPCE/3lt7zDvJWRAXDSIny4lyRIWyR6pQGzkTjBq4MiIzdEBd/4TVITfXgTxQ==}
 
-  survey-creator-core@1.10.3:
-    resolution: {integrity: sha512-dNyzdGOlz9l6cGoHpW1tePTzsKXIApuxprZmCTZ5yYpRSZH18RP0g4d7wNVHUqRiqB5u/EyRCPQUaU3QHXTBxg==}
+  survey-creator-core@1.10.4:
+    resolution: {integrity: sha512-xf0HPs0PDS1AP6GUus4d/8kmN5HkcK2W20ZEUwL3BvKYVBlu2qkVU8tbRnQbANVDBtaWmOcXhccS3LMwzIfNnQ==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
-      survey-core: 1.10.3
+      survey-core: 1.10.4
     peerDependenciesMeta:
       ace-builds:
         optional: true
 
-  survey-creator-vue@1.10.3:
-    resolution: {integrity: sha512-Twf/MgbySN1YxUtOI+D9YebSCUbGdb0fGTATBZMSE0ROY3PvYpJWHABT0fH2Yl+zR0K+M68BU9GwZ2Mb94Y2Og==}
+  survey-creator-vue@1.10.4:
+    resolution: {integrity: sha512-ZPXQTPzufzRlK2iIRPofZJcA/cMJ5fWcDdTupou2c3/aeBKBZEmyNSf0KBow8nhzAhf8X3HsbfYw5HMBNUlwBw==}
     peerDependencies:
-      survey-core: 1.10.3
-      survey-creator-core: 1.10.3
-      survey-vue3-ui: 1.10.3
+      survey-core: 1.10.4
+      survey-creator-core: 1.10.4
+      survey-vue3-ui: 1.10.4
       vue: ^3.2.41
 
-  survey-vue3-ui@1.10.3:
-    resolution: {integrity: sha512-T2BRKCDdTjkGcSeXjfZKvEwt0IHQhZ10608QGr1tuBnBxq2Blkqhq3DmrBrW474t0YBWkVvzy6qZRisLIQZo7w==}
+  survey-vue3-ui@1.10.4:
+    resolution: {integrity: sha512-yJLd9LkXS6ipa8JDbKI7P7ZSJcr/tgCpJqhe2y0D2Mi32guXg80BIKuPJ2xoyS0KcEL+zdXDCRdgL5LfqTbGuw==}
     peerDependencies:
-      survey-core: 1.10.3
+      survey-core: 1.10.4
       vue: ^3.2.41
 
   svg-tags@1.0.0:
@@ -7013,8 +7016,8 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  tsx@4.10.2:
-    resolution: {integrity: sha512-gOfACgv1ElsIjvt7Fp0rMJKGnMGjox0JfGOfX3kmZCV/yZumaNqtHGKBXt1KgaYS9KjDOmqGeI8gHk/W7kWVZg==}
+  tsx@4.10.3:
+    resolution: {integrity: sha512-f0g60aFSVRVkzcQkEflh8fPLRfmt+HJHgWi/plG5UgvVaV+9TcpOwJ0sZJSACXmwmjMPg9yQR0BhTLbhkfV2uA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -13297,6 +13300,10 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  get-tsconfig@4.7.5:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+
   giget@1.2.1:
     dependencies:
       citty: 0.1.6
@@ -15756,22 +15763,22 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@1.10.3: {}
+  survey-core@1.10.4: {}
 
-  survey-creator-core@1.10.3(survey-core@1.10.3):
+  survey-creator-core@1.10.4(survey-core@1.10.4):
     dependencies:
-      survey-core: 1.10.3
+      survey-core: 1.10.4
 
-  survey-creator-vue@1.10.3(survey-core@1.10.3)(survey-creator-core@1.10.3(survey-core@1.10.3))(survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  survey-creator-vue@1.10.4(survey-core@1.10.4)(survey-creator-core@1.10.4(survey-core@1.10.4))(survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.3
-      survey-creator-core: 1.10.3(survey-core@1.10.3)
-      survey-vue3-ui: 1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5))
+      survey-core: 1.10.4
+      survey-creator-core: 1.10.4(survey-core@1.10.4)
+      survey-vue3-ui: 1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5))
       vue: 3.4.27(typescript@5.4.5)
 
-  survey-vue3-ui@1.10.3(survey-core@1.10.3)(vue@3.4.27(typescript@5.4.5)):
+  survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.3
+      survey-core: 1.10.4
       vue: 3.4.27(typescript@5.4.5)
 
   svg-tags@1.0.0: {}
@@ -15959,10 +15966,10 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsx@4.10.2:
+  tsx@4.10.3:
     dependencies:
       esbuild: 0.20.2
-      get-tsconfig: 4.7.3
+      get-tsconfig: 4.7.5
     optionalDependencies:
       fsevents: 2.3.3
 

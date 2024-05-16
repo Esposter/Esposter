@@ -65,7 +65,7 @@
     "nuxt-security": "^1.4.3",
     "prettier": "^3.2.5",
     "sass": "^1.77.1",
-    "tsx": "^4.10.2",
+    "tsx": "^4.10.3",
     "type-fest": "^4.18.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.9.0",
@@ -137,10 +137,10 @@
     "rxjs": "^7.8.1",
     "sql-highlight": "^4.4.2",
     "superjson": "^2.2.1",
-    "survey-core": "^1.10.3",
-    "survey-creator-core": "^1.10.3",
-    "survey-creator-vue": "^1.10.3",
-    "survey-vue3-ui": "^1.10.3",
+    "survey-core": "^1.10.4",
+    "survey-creator-core": "^1.10.4",
+    "survey-creator-vue": "^1.10.4",
+    "survey-vue3-ui": "^1.10.4",
     "three": "^0.164.1",
     "three-globe": "^2.31.0",
     "tippy.js": "^6.3.7",
@@ -162,7 +162,7 @@
     "@auth/core": "upgrading breaks authjs-nuxt"
   },
   "engines": {
-    "node": "^22.1.0"
+    "node": "^22.2.0"
   },
   "packageManager": "pnpm@9.1.1+sha512.14e915759c11f77eac07faba4d019c193ec8637229e62ec99eefb7cf3c3b75c64447882b7c485142451ee3a6b408059cdfb7b7fa0341b975f12d0f7629c71195"
 }
