@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A parser for tmx",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -22,7 +22,7 @@
     "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
   "dependencies": {
-    "@esposter/shared": "1.0.9"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
