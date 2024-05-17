@@ -28,6 +28,7 @@
     "lint:fix": "cross-env TIMING=1 eslint --config eslint.light.config.js --fix .",
     "lint:all": "cross-env TIMING=1 eslint .",
     "lint:all:fix": "cross-env TIMING=1 eslint --fix .",
+    "release": "lerna publish --yes",
     "db:run": "tsx --tsconfig ./.nuxt/tsconfig.json node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm run db:run generate",
     "db:studio": "pnpm run db:run studio",
