@@ -1,4 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export const vite: NuxtConfig["vite"] = {
   build: {
@@ -17,6 +18,8 @@ export const vite: NuxtConfig["vite"] = {
       },
     },
   },
+  // Required for parse-tmx
+  plugins: [nodePolyfills({ include: ["zlib"] })],
   // @TODO: Remove this in vue 3.5
   vue: {
     script: {
