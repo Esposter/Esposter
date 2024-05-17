@@ -1,0 +1,10 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [1.0.26](https://github.com/Esposter/Esposter/compare/v1.0.25...v1.0.26) (2024-05-17)
+
+### Bug Fixes
+
+- use esm + polyfill zlib ([f99f6be](https://github.com/Esposter/Esposter/commit/f99f6beaa90387a5fa2a085622587c68220746c0))
