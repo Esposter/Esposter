@@ -1,6 +1,6 @@
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { TMXGroupLayerParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXGroupLayerParsed";
-import type { TMXLayerParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXLayerParsed";
+import type { TMXGroupLayerParsed } from "parse-tmx/models/tmx/parsed/TMXGroupLayerParsed";
+import type { TMXLayerParsed } from "parse-tmx/models/tmx/parsed/TMXLayerParsed";
 
 export interface LayerData {
   key: TilemapKey;

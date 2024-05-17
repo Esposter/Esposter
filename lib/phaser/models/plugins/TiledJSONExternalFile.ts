@@ -1,14 +1,14 @@
 import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
-import type { TMXEmbeddedTilesetParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXEmbeddedTilesetParsed";
-import type { TMXExternalTilesetParsed } from "@/lib/tmxParser/models/tmx/parsed/TMXExternalTilesetParsed";
-import { parseTileset } from "@/lib/tmxParser/util/parseTileset";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { ID_SEPARATOR } from "@/util/id/constants";
 import { isPlainObject } from "@/util/object/isPlainObject";
-import { parseXmlString } from "@/util/parseXmlString";
+import { parseXmlString } from "@esposter/util/parseXmlString";
+import type { TMXEmbeddedTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXEmbeddedTilesetParsed";
+import type { TMXExternalTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXExternalTilesetParsed";
+import { parseTileset } from "parse-tmx/util/parseTileset";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
 
