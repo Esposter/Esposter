@@ -1,8 +1,8 @@
 import type { AzureEntity, CompositeKey } from "@/models/azure";
-import { Operation } from "@/models/shared/Operation";
 import type { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
+import { Operation } from "~/packages/shared/models/shared/Operation";
 
 export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeKey extends AzureEntityType>(
   itemList: Ref<TItem[]>,

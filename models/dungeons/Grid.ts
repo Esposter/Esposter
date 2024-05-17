@@ -1,8 +1,8 @@
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
-import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } ~/packages/shared/models/shared/OperationxhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
+import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   grid: TGrid;

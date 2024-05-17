@@ -1,6 +1,6 @@
 import { usePhaserStore } from "@/lib/phaser/store";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { Game } from "phaser";
+import { NotInitializedError } from "~/packages/shared/models/error/NotInitializedError";
 
 export const useGame = () => {
   const phaserStore = usePhaserStore();

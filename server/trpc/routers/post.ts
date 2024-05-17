@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import type { Post, PostWithRelations } from "@/db/schema/posts";
 import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
-import { NotFoundError } from "@/models/error/NotFoundError";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
@@ -13,6 +12,7 @@ import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhe
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
+import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

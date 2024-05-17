@@ -1,0 +1,24 @@
+{
+  "name": "@esposter/shared",
+  "version": "1.0.0",
+  "description": "Shared utility functions",
+  "private": true,
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "devDependencies": {
+    "@types/data-urls": "^3.0.4",
+    "@types/xml2js": "^0.4.14"
+  },
+  "dependencies": {
+    "data-urls": "^5.0.0",
+    "xml2js": "^0.6.2"
+  }
+}

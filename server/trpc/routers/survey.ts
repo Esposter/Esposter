@@ -2,11 +2,9 @@ import { db } from "@/db";
 import type { Survey } from "@/db/schema/surveys";
 import { selectSurveySchema, surveys } from "@/db/schema/surveys";
 import { AzureContainer } from "@/models/azure/blob";
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
-import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
+import { createOffsetPagina~/packages/shared/models/shared/Operation@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
@@ -15,6 +13,8 @@ import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSort
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, desc, eq } from "drizzle-orm";
 import type { z } from "zod";
+import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
+import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;

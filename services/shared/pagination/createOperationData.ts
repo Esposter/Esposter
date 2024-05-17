@@ -1,8 +1,8 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
-import { Operation } from "@/models/shared/Operation";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
+import { Operation } from "~/packages/shared/models/shared/Operation";
 
 export const createOperationData = <
   TItem extends Pick<AItemEntity, "id">,

@@ -2,11 +2,11 @@ import { BaseControls } from "@/lib/phaser/models/input/BaseControls";
 import type { Controls } from "@/lib/phaser/models/input/Controls";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursorKeysToDirection";
 import { Direction } from "grid-engine";
 import type { Types } from "phaser";
 import { Input } from "phaser";
+import { NotInitializedError } from "~/packages/shared/models/error/NotInitializedError";
 
 export class KeyboardControls extends BaseControls implements Controls {
   cursorKeys: Types.Input.Keyboard.CursorKeys;

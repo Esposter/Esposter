@@ -5,7 +5,6 @@ import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
-import { NotFoundError } from "@/models/error/NotFoundError";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -13,6 +12,7 @@ import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObje
 import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Cameras } from "phaser";
+import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const teleportObject = useGetInteractiveObject(teleportObjects);

@@ -1,16 +1,16 @@
 import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
-import { NotFoundError } from "@/models/error/NotFoundError";
 import { Operation } from "@/models/shared/Operation";
 import { ID_SEPARATOR } from "@/util/id/constants";
-import { isPlainObject } from "@/util/object/isPlainObject";
-import { parseXmlString } from "@esposter/util/parseXmlString";
+import { isPlainObject } fr~/packages/shared/models/shared/OperationObject";
+import { parseXmlString } from "@esposter/shared/parseXmlString";
 import type { TMXEmbeddedTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXEmbeddedTilesetParsed";
 import type { TMXExternalTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXExternalTilesetParsed";
 import { parseTileset } from "parse-tmx/util/parseTileset";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
+import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
+import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 const GetFastValue = Utils.Objects.GetFastValue;
 const JSONFile = Loader.FileTypes.JSONFile;

@@ -6,7 +6,7 @@
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -14,7 +14,15 @@
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json"
+  },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.4.5"
   }
 }

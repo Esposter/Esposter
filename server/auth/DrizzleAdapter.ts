@@ -3,12 +3,12 @@ import { accounts } from "@/db/schema/accounts";
 import { sessions } from "@/db/schema/sessions";
 import { users } from "@/db/schema/users";
 import { verificationTokens } from "@/db/schema/verificationTokens";
-import { NotFoundError } from "@/models/error/NotFoundError";
-import { NotInitializedError } from "@/models/error/NotInitializedError";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { omit } from "@/util/object/omit";
 import type { Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
+import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
+import { NotInitializedError } from "~/packages/shared/models/error/NotInitializedError";
 
 export const DrizzleAdapter: Adapter = {
   createUser: async (input) =>

@@ -1,7 +1,7 @@
-import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldScene~/packages/shared/models/shared/Operationgeons/world/scene";
 import type { Tilemaps } from "phaser";
+import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
 
 export const createLayer = (layerName: string, tileset: Tilemaps.Tileset | Tilemaps.Tileset[]) => {
   const layer = ExternalWorldSceneStore.tilemap.createLayer(layerName, tileset);
