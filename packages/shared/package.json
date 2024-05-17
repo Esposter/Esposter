@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Shared code",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -10,9 +10,6 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -35,6 +32,5 @@
   "dependencies": {
     "data-urls": "^5.0.0",
     "xml2js": "^0.6.2"
-  },
-  "gitHead": "e12e9662a7e2509ea017d05e90287287b2e361e1"
+  }
 }
