@@ -8,7 +8,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "tmx",
+    "parser"
   ],
   "repository": {
     "type": "git",

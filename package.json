@@ -89,7 +89,7 @@
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.13",
     "omit-deep-lodash": "^1.1.7",
-    "parse-tmx": "workspace:*",
+    "parse-tmx": "^1.0.10",
     "pathe": "^1.1.2",
     "phaser": "^3.80.1",
     "phaser3-rex-plugins": "^1.80.3",
