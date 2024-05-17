@@ -1,8 +1,7 @@
 {
   "name": "@esposter/shared",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "Shared code",
-  "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
@@ -13,9 +12,17 @@
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },
+  "scripts": {
+    "build": "rollup --config rollup.config.ts --configPlugin typescript && pnpm run types:gen",
+    "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
+  },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14"
+    "@types/xml2js": "^0.4.14",
+    "dts-bundle-generator": "^9.5.1",
+    "rollup": "^4.17.2",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "data-urls": "^5.0.0",

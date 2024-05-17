@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A parser for tmx",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -28,5 +28,5 @@
     "rollup": "^4.17.2",
     "typescript": "^5.4.5"
   },
-  "gitHead": "f71b892f017758fbf3755b173f223d98d2c08202"
+  "gitHead": "cc24074873d52d4906430c74c1cee8e3384ab585"
 }
