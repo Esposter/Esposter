@@ -1,6 +1,6 @@
 import { items } from "@/assets/dungeons/data/items";
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
-import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
+import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
 
 export const getItem = (itemId: ItemId) => {
   const item = items.find((i) => i.id === itemId);

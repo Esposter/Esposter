@@ -1,6 +1,6 @@
 import { generateRandomInteger } from "@/util/math/random/generateRandomInteger";
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { Operation } from "esposter-shared/models/shared/Operation";
 import type { ArrayElement } from "type-fest/source/internal";
 
 export const pickRandomValue = <T extends string | unknown[]>(values: T) => {

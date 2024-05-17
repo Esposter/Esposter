@@ -1,7 +1,7 @@
 import type { CumulativeWeight } from "@/models/math/CumulativeWeight";
 import { generateRandomNumber } from "@/util/math/random/generateRandomNumber";
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { Operation } from "esposter-shared/models/shared/Operation";
 
 export const pickWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) => {
   const maxCumulativeWeight = values.at(-1)?.cumulativeWeight;

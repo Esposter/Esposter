@@ -10,10 +10,10 @@ import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
 import { and, count, desc, eq } from "drizzle-orm";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
+import { Operation } from "esposter-shared/models/shared/Operation";
 import type { z } from "zod";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;

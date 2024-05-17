@@ -3,8 +3,8 @@ import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption"
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { Operation } from "esposter-shared/models/shared/Operation";
 import { Direction } from "grid-engine";
 import type Slider from "phaser3-rex-plugins/plugins/slider";
 

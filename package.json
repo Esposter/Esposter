@@ -49,7 +49,7 @@
     "@codemirror/language-data": "^6.5.1",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.26.3",
-    "@esposter/shared": "workspace:*",
+    "esposter-shared": "^1.0.21",
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",

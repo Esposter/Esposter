@@ -1,6 +1,6 @@
 import { monstersData } from "@/assets/dungeons/data/monstersData";
 import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
-import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
+import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
 
 export const getMonsterData = (key: MonsterKey) => {
   const monsterData = monstersData.find((m) => m.key === key);

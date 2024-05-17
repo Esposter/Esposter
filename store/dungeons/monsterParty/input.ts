@@ -7,7 +7,7 @@ import { useDialogStore } from "@/store/dungeons/dialog";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {

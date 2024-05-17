@@ -1,6 +1,6 @@
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { Operation } from "esposter-shared/models/shared/Operation";
+import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 

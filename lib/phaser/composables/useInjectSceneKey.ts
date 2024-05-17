@@ -1,6 +1,6 @@
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { NotInitializedError } from "@esposter/shared/models/error/NotInitializedError";
+import { NotInitializedError } from "esposter-shared/models/error/NotInitializedError";
 
 export const useInjectSceneKey = () => {
   const sceneKey = inject<SceneKey>(InjectionKeyMap.SceneKey);

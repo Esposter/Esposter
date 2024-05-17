@@ -7,7 +7,7 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useGameStore } from "@/store/dungeons/game";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {

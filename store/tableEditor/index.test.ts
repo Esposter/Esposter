@@ -2,8 +2,8 @@ import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
-import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
-import { Operation } from "@esposter/shared/models/shared/Operation";
+import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
+import { Operation } from "esposter-shared/models/shared/Operation";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 

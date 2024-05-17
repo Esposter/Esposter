@@ -10,7 +10,7 @@ import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const gameStore = useGameStore();

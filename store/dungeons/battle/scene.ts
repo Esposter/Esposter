@@ -8,7 +8,7 @@ import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpeci
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
 import type { Direction } from "grid-engine";
 
 export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
