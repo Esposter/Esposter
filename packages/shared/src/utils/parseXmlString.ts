@@ -1,4 +1,4 @@
-import { parseXmlValue } from "@esposter/shared/util/parseXmlValue";
+import { parseXmlValue } from "@/utils/parseXmlValue";
 import parseDataUrl from "data-urls";
 import { parseStringPromise } from "xml2js";
 

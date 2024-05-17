@@ -35,7 +35,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
       - run: pnpm ci
         if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm publish
+      - run: pnpm release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.release_created }}

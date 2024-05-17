@@ -8,8 +8,7 @@ import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
 import type { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
 import { parseNode } from "@/util/parseNode";
 import { parseTileset } from "@/util/parseTileset";
-import { parseXmlString } from "@esposter/shared/util/parseXmlString";
-import { exhaustiveGuard } from "@esposter/shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard, parseXmlString } from "@esposter/shared";
 // We will try and match phaser's transform when exporting tmx => json tilemaps
 // but also support extra functionality like using external tilesets
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {

@@ -22,7 +22,7 @@
     "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "1.0.9"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
@@ -31,5 +31,5 @@
     "rollup": "^4.17.2",
     "typescript": "^5.4.5"
   },
-  "gitHead": "092adfd220063f4b6bb81e265a55f14787241ba9"
+  "gitHead": "385b2841878caf951623fdee65e43b7ff841fc7a"
 }
