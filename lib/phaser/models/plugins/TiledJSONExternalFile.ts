@@ -6,9 +6,8 @@ import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOper
 import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
 import { Operation } from "@esposter/shared/models/shared/Operation";
 import { parseXmlString } from "@esposter/shared/util/parseXmlString";
-import type { TMXEmbeddedTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXEmbeddedTilesetParsed";
-import type { TMXExternalTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXExternalTilesetParsed";
-import { parseTileset } from "parse-tmx/util/parseTileset";
+import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
+import { parseTileset } from "parse-tmx";
 import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
 

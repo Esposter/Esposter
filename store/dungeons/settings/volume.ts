@@ -1,6 +1,6 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { dayjs } from "@/se@esposter/shared/models/shared/Operation";
+import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
 import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";

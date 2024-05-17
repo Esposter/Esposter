@@ -4,8 +4,8 @@ import type { LayerData } from "@/scripts/tiled/models/LayerData";
 import { generateBaseTilesetKey } from "@/scripts/tiled/propertyTypes/generateBaseTilesetKey";
 import { getTilemapDirectory } from "@/scripts/tiled/util/getTilemapDirectory";
 import { readFile } from "node:fs/promises";
+import type { TMXExternalTilesetParsed } from "parse-tmx";
 import { parseTmx } from "parse-tmx";
-import type { TMXExternalTilesetParsed } from "parse-tmx/models/tmx/parsed/TMXExternalTilesetParsed";
 
 export const generateTmxProperties = async () => {
   const layersData: LayerData[] = [];
