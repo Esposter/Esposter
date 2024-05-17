@@ -1,8 +1,7 @@
 {
   "name": "@esposter/shared",
-  "version": "1.0.9",
+  "version": "1.0.14",
   "description": "Shared code",
-  "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
