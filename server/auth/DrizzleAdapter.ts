@@ -7,8 +7,7 @@ import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { omit } from "@/util/object/omit";
 import type { Adapter } from "@auth/core/adapters";
 import { and, eq } from "drizzle-orm";
-import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
-import { NotInitializedError } from "esposter-shared/models/error/NotInitializedError";
+import { NotFoundError, NotInitializedError } from "esposter-shared";
 
 export const DrizzleAdapter: Adapter = {
   createUser: async (input) =>

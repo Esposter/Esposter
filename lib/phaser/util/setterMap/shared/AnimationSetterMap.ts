@@ -1,8 +1,7 @@
 import type { AnimationConfiguration } from "@/lib/phaser/models/configuration/shared/AnimationConfiguration";
 import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
-import { Operation } from "esposter-shared/models/shared/Operation";
+import { InvalidOperationError, Operation } from "esposter-shared";
 import type { GameObjects } from "phaser";
 import { Animations } from "phaser";
 

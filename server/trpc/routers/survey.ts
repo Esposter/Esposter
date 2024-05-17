@@ -11,9 +11,7 @@ import { getOffsetPaginationData } from "@/services/shared/pagination/offset/get
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
 import { and, count, desc, eq } from "drizzle-orm";
-import { InvalidOperationError } from "esposter-shared/models/error/InvalidOperationError";
-import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
-import { Operation } from "esposter-shared/models/shared/Operation";
+import { InvalidOperationError, NotFoundError, Operation } from "esposter-shared";
 import type { z } from "zod";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;

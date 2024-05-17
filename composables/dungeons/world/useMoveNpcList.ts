@@ -2,7 +2,7 @@ import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared";
 
 export const useMoveNpcList = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();

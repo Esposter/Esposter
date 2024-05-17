@@ -6,7 +6,7 @@ import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpeci
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { exhaustiveGuard } from "esposter-shared/util/validation/exhaustiveGuard";
+import { exhaustiveGuard } from "esposter-shared";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
   const playerStore = usePlayerStore();

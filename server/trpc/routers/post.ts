@@ -11,7 +11,7 @@ import { getCursorPaginationData } from "@/services/shared/pagination/cursor/get
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
-import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
+import { NotFoundError } from "esposter-shared";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;

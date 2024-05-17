@@ -2,7 +2,7 @@ import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import { uncapitalize } from "@/util/text/uncapitalize";
-import { Operation } from "esposter-shared/models/shared/Operation";
+import { Operation } from "esposter-shared";
 
 export const createOperationData = <
   TItem extends Pick<AItemEntity, "id">,

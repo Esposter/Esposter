@@ -1,4 +1,4 @@
-import { NotFoundError } from "esposter-shared/models/error/NotFoundError";
+import { NotFoundError } from "esposter-shared";
 
 export const extractFirstWordFromPascalCaseString = (string: string) => {
   const match = string.match(/[A-Z][^A-Z]*/);
