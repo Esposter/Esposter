@@ -6,5 +6,5 @@
       "@/*": ["*"]
     }
   },
-  "exclude": []
+  "exclude": ["node_modules"]
 }
