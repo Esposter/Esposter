@@ -1,5 +1,5 @@
+import typescriptIgnores from "@esposter/eslint/typescriptIgnores";
 import type { NuxtConfig } from "nuxt/schema";
-import typescriptIgnores from "../eslint/typescriptIgnores";
 
 export const typescript: NuxtConfig["typescript"] = {
   shim: false,

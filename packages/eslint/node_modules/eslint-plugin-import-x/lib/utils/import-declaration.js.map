@@ -1,0 +1,1 @@
+{"version":3,"file":"import-declaration.js","sourceRoot":"","sources":["../../src/utils/import-declaration.ts"],"names":[],"mappings":";;;AAIA,mDAA8C;AAEvC,MAAM,iBAAiB,GAAG,CAC/B,OAAoB,EACpB,IAAmB,EACnB,EAAE;IACF,MAAM,SAAS,GAAG,IAAA,4BAAY,EAAC,OAAO,EAAE,IAAI,CAAC,CAAA;IAC7C,OAAO,SAAS,CAAC,SAAS,CAAC,MAAM,GAAG,CAAC,CAA+B,CAAA;AACtE,CAAC,CAAA;AANY,QAAA,iBAAiB,qBAM7B"}
