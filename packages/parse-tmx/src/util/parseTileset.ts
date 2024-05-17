@@ -1,13 +1,12 @@
-import { Operation } from "@/models/shared/Operation";
+import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
 import type { TMXTilesetParsed } from "@/models/tmx/parsed/TMXTilesetParsed";
 import type { TMXImageShared } from "@/models/tmx/shared/TMXImageShared";
 import { isExternalTileset } from "@/util/isExternalTileset";
 import { parseTile } from "@/util/parseTile";
-import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
-import type { TMXEmbeddedTi } from ~/packages/shared / models / shared / Operationodels / tmx / node / TMXEmbeddedTilesetNode;
-";
+import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
+import { Operation } from "@esposter/shared/models/shared/Operation";
 
 export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
   if (isExternalTileset(node.$)) return structuredClone(node.$);

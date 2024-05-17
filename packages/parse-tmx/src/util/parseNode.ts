@@ -1,4 +1,4 @@
-import { Operation } from "@/models/shared/Operation";
+import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import type { TMXGroupLayerParsed } from "@/models/tmx/parsed/TMXGroupLayerParsed";
@@ -6,9 +6,8 @@ import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
 import { parseGroup } from "@/util/parseGroup";
 import { parseLayer } from "@/util/parseLayer";
 import { parseTileLayer } from "@/util/parseTileLayer";
-import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
-import type { TMXGroupLayer } from ~/packages/shared / models / shared / Operation / tmx / node / TMXGroupLayerNode;
-";
+import { InvalidOperationError } from "@esposter/shared/models/error/InvalidOperationError";
+import { Operation } from "@esposter/shared/models/shared/Operation";
 
 export const parseNode = <
   TNode extends TMXLayerNode | TMXGroupLayerNode,

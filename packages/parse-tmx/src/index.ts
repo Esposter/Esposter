@@ -1,4 +1,6 @@
 import type { TMX } from "@/models/tmx/node/TMX";
+import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
+import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
 import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
@@ -30,7 +32,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         case TMXNodeType.Layer:
         case TMXNodeType.Objectgroup:
           {
-            const layer = await parseNode(node, expectedCount, translateFlips);
+            const layer = await parseNode(node as TMXLayerNode | TMXGroupLayerNode, expectedCount, translateFlips);
             map.layers.push(layer);
           }
           break;
