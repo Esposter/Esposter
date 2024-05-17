@@ -2,15 +2,11 @@
   "name": "parse-tmx",
   "version": "1.0.0",
   "description": "A parser for tmx",
-  "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
