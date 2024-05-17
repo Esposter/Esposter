@@ -1,4 +1,4 @@
-import type { TMXBaseTilesetShared } from "@/src/models/tmx/shared/TMXBaseTilesetShared";
+import type { TMXBaseTilesetShared } from "@/models/tmx/shared/TMXBaseTilesetShared";
 
 export interface TMXEmbeddedTilesetShared extends TMXBaseTilesetShared {
   columns: number;

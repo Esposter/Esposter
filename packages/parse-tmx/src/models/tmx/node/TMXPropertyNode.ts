@@ -1,4 +1,4 @@
-import type { TMXNode } from "@/src/models/tmx/node/TMXNode";
+import type { TMXNode } from "@/models/tmx/node/TMXNode";
 
 export interface TMXPropertyNode extends TMXNode<{ name: string; value?: string }> {
   // Phaser stores string with special unicode values as data

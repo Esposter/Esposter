@@ -1,5 +1,5 @@
-import type { TMXPropertyNode } from "@/src/models/tmx/node/TMXPropertyNode";
-import type { TMXPropertiesParsed } from "@/src/models/tmx/parsed/TMXPropertiesParsed";
+import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
+import type { TMXPropertiesParsed } from "@/models/tmx/parsed/TMXPropertiesParsed";
 
 export const parseProperties = (properties?: { property: TMXPropertyNode[] }[]): TMXPropertiesParsed | undefined =>
   properties

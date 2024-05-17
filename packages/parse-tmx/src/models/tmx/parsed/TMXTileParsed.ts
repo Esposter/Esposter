@@ -1,6 +1,6 @@
-import type { TMXObjectParsed } from "@/src/models/tmx/parsed/TMXObjectParsed";
-import type { TMXPropertiesParsed } from "@/src/models/tmx/parsed/TMXPropertiesParsed";
-import type { TMXTileShared } from "@/src/models/tmx/shared/TMXTileShared";
+import type { TMXObjectParsed } from "@/models/tmx/parsed/TMXObjectParsed";
+import type { TMXPropertiesParsed } from "@/models/tmx/parsed/TMXPropertiesParsed";
+import type { TMXTileShared } from "@/models/tmx/shared/TMXTileShared";
 
 export interface TMXTileParsed extends TMXTileShared {
   id: number;

@@ -1,5 +1,5 @@
-import { Flipped } from "@/src/models/Flipped";
-import type { TMXFlipsParsed } from "@/src/models/tmx/parsed/TMXFlipsParsed";
+import { Flipped } from "@/models/Flipped";
+import type { TMXFlipsParsed } from "@/models/tmx/parsed/TMXFlipsParsed";
 
 export const parseFlips = (gid: number): TMXFlipsParsed => ({
   H: Boolean(gid & Flipped.Horizontally),

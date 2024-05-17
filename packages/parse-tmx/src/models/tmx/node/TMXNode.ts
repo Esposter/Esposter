@@ -1,4 +1,4 @@
-import type { TMXNodeType } from "@/src/models/tmx/node/TMXNodeType";
+import type { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 // We extend indexable record because we can't access #name properly
 // due to typescript shenanigans with private properties >:C
 interface BaseTMXNode<T> extends Record<string, unknown> {

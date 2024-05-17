@@ -1,6 +1,6 @@
-import type { TMXGroupLayerNode } from "@/src/models/tmx/node/TMXGroupLayerNode";
-import type { TMXGroupLayerParsed } from "@/src/models/tmx/parsed/TMXGroupLayerParsed";
-import { parseNode } from "@/src/util/parseNode";
+import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
+import type { TMXGroupLayerParsed } from "@/models/tmx/parsed/TMXGroupLayerParsed";
+import { parseNode } from "@/util/parseNode";
 
 export const parseGroup = async (
   node: TMXGroupLayerNode,

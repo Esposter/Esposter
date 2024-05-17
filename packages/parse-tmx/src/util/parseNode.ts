@@ -1,13 +1,14 @@
 import { Operation } from "@/models/shared/Operation";
-import type { TMXGroupLayer~/packages/shared/models/shared/Operation/tmx/node/TMXGroupLayerNode";
-import type { TMXLayerNode } from "@/src/models/tmx/node/TMXLayerNode";
-import { TMXNodeType } from "@/src/models/tmx/node/TMXNodeType";
-import type { TMXGroupLayerParsed } from "@/src/models/tmx/parsed/TMXGroupLayerParsed";
-import type { TMXLayerParsed } from "@/src/models/tmx/parsed/TMXLayerParsed";
-import { parseGroup } from "@/src/util/parseGroup";
-import { parseLayer } from "@/src/util/parseLayer";
-import { parseTileLayer } from "@/src/util/parseTileLayer";
+import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
+import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
+import type { TMXGroupLayerParsed } from "@/models/tmx/parsed/TMXGroupLayerParsed";
+import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import { parseGroup } from "@/util/parseGroup";
+import { parseLayer } from "@/util/parseLayer";
+import { parseTileLayer } from "@/util/parseTileLayer";
 import { InvalidOperationError } from "~/packages/shared/models/error/InvalidOperationError";
+import type { TMXGroupLayer } from ~/packages/shared / models / shared / Operation / tmx / node / TMXGroupLayerNode;
+";
 
 export const parseNode = <
   TNode extends TMXLayerNode | TMXGroupLayerNode,

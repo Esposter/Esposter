@@ -1,13 +1,13 @@
-import { Compression } from "@/src/models/Compression";
-import { Encoding } from "@/src/models/Encoding";
-import type { TMXDataNode } from "@/src/models/tmx/node/TMXDataNode";
-import type { TMXEmbeddedTilesetNode } from "@/src/models/tmx/node/TMXEmbeddedTilesetNode";
-import type { TMXLayerNode } from "@/src/models/tmx/node/TMXLayerNode";
-import type { TMXLayerParsed } from "@/src/models/tmx/parsed/TMXLayerParsed";
-import { parseFlips } from "@/src/util/parseFlips";
-import { parseProperties } from "@/src/util/parseProperties";
-import { parseTileId } from "@/src/util/parseTileId";
-import { unpackTileBytes } from "@/src/util/unpackTileBytes";
+import { Compression } from "@/models/Compression";
+import { Encoding } from "@/models/Encoding";
+import type { TMXDataNode } from "@/models/tmx/node/TMXDataNode";
+import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
+import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
+import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import { parseFlips } from "@/util/parseFlips";
+import { parseProperties } from "@/util/parseProperties";
+import { parseTileId } from "@/util/parseTileId";
+import { unpackTileBytes } from "@/util/unpackTileBytes";
 import { exhaustiveGuard } from "@/util/validation/exhaustiveGuard";
 import { gunzip, inflate } from "zlib";
 
