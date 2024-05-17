@@ -1,8 +1,8 @@
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
+import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import type { PartialByKeys } from "unocss";
-import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 interface InitialMetadata {
   position: Position;

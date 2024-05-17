@@ -32,7 +32,11 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         case TMXNodeType.Layer:
         case TMXNodeType.Objectgroup:
           {
-            const layer = await parseNode(node as TMXLayerNode | TMXGroupLayerNode, expectedCount, translateFlips);
+            const layer = await parseNode(
+              node as unknown as TMXLayerNode | TMXGroupLayerNode,
+              expectedCount,
+              translateFlips,
+            );
             map.layers.push(layer);
           }
           break;

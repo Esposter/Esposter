@@ -11,8 +11,8 @@ import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSou
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
 import { Cameras } from "phaser";
-import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const teleportObject = useGetInteractiveObject(teleportObjects);

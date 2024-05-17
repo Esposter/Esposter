@@ -10,9 +10,9 @@ import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
+import { NotFoundError } from "@esposter/shared/models/error/NotFoundError";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
-import { NotFoundError } from "~/packages/shared/models/error/NotFoundError";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

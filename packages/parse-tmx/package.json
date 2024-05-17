@@ -7,6 +7,10 @@
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -15,14 +19,16 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json"
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --tsconfig=tsconfig.build.json --outfile=dist/index.js && pnpm run types:gen",
+    "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "tsc-alias": "^1.8.10",
+    "dts-bundle-generator": "^9.5.1",
+    "esbuild": "^0.21.3",
     "typescript": "^5.4.5"
   }
 }
