@@ -19,7 +19,7 @@
     "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
   "dependencies": {
-    "@esposter/shared": "1.0.0",
+    "@esposter/shared": "workspace:*",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
