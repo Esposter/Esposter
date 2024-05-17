@@ -1,6 +1,6 @@
 {
-  "name": "@esposter/shared",
-  "version": "1.0.18",
+  "name": "esposter-shared",
+  "version": "1.0.21",
   "description": "Shared code",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -36,5 +36,5 @@
     "data-urls": "^5.0.0",
     "xml2js": "^0.6.2"
   },
-  "gitHead": "497ca897232967b985f8d0a5d4b31178de22f4d8"
+  "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
 }

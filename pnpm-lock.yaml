@@ -31,9 +31,6 @@ importers:
       "@codemirror/view":
         specifier: ^6.26.3
         version: 6.26.3
-      "@esposter/shared":
-        specifier: workspace:*
-        version: link:packages/shared
       "@fullcalendar/core":
         specifier: ^6.1.11
         version: 6.1.11
@@ -121,6 +118,9 @@ importers:
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.27(typescript@5.4.5))
+      esposter-shared:
+        specifier: workspace:*
+        version: link:packages/shared
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -374,7 +374,7 @@ importers:
 
   packages/parse-tmx:
     dependencies:
-      "@esposter/shared":
+      esposter-shared:
         specifier: workspace:*
         version: link:../shared
     devDependencies:
