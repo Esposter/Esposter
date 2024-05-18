@@ -18,7 +18,7 @@
     "typecheck": "lerna run typecheck",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm run lint:fix --no-private && pnpm run build --no-private && lerna version --yes && lerna publish from-package --yes"
+    "release": "pnpm run lint:fix --no-private && pnpm run build --no-private && lerna publish --yes"
   },
   "devDependencies": {
     "lerna": "^8.1.3"
