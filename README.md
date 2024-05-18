@@ -235,8 +235,8 @@ Esposter is a lerna + pnpm workspaces monorepo. However, since we want to take a
 
 ### Packages
 
-Private: Used directly by the nuxt application via `workspace:*`
-Public: Built and published to the package registry to be consumed by the nuxt application via standard package manager installation
+- Private: Used directly by the nuxt application via `workspace:*`
+- Public: Built and published to the package registry to be consumed by the nuxt application via standard package manager installation
 
 ### Shared configuration files
 
