@@ -15,7 +15,7 @@ jobs:
           cache: pnpm
 
       - name: Install Node Modules
-        run: pnpm i
+        run: pnpm ci
 
       - name: Build Nuxt 3
         run: pnpm build
@@ -28,3 +28,15 @@ jobs:
 
       - name: Run Tests
         run: pnpm test
+
+      - name: Build Packages
+        run: pnpm exec lerna run build --since
+
+      - name: Run ESLint Packages
+        run: pnpm exec lerna run lint --since
+
+      - name: Run Typechecking Packages
+        run: pnpm exec lerna run typecheck --since
+
+      - name: Run Tests Packages
+        run: pnpm exec lerna run test --since
