@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../app/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
@@ -7,5 +7,6 @@
     },
     "types": ["node"]
   },
+  "include": ["rollup.config.ts", "src/**/*"],
   "exclude": ["node_modules"]
 }

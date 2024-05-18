@@ -1,1 +1,1 @@
-export default ["public/tilesets/**/*.tsx", "packages/**"];
+export default ["public/tilesets/**/*.tsx"];

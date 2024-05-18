@@ -19,8 +19,8 @@
   },
   "scripts": {
     "build": "rollup --config rollup.config.ts --configPlugin typescript && pnpm run types:gen",
-    "lint": "eslint --config ../../eslint.light.config.js .",
-    "lint:fix": "eslint --config ../../eslint.light.config.js --fix .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
     "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
