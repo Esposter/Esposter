@@ -120,8 +120,8 @@ importers:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.27(typescript@5.4.5))
       esposter-shared:
-        specifier: ^1.0.25
-        version: 1.0.25
+        specifier: ^1.0.27
+        version: 1.0.27
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -238,7 +238,7 @@ importers:
         specifier: workspace:*
         version: link:packages/eslint
       '@nuxt/eslint':
-        specifier: ^0.3.12
+        specifier: ^0.3.13
         version: 0.3.13(eslint@9.2.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.12.12)(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.2.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.17.2)(sass@1.77.2)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))
       '@nuxt/fonts':
         specifier: ^0.7.0
@@ -319,8 +319,8 @@ importers:
         specifier: ^1.4.3
         version: 1.4.3(rollup@4.17.2)
       parse-tmx:
-        specifier: ^1.0.25
-        version: 1.0.25
+        specifier: ^1.0.27
+        version: 1.0.27
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
@@ -4892,8 +4892,8 @@ packages:
     resolution: {integrity: sha512-kTUIGKQ/mDPFoJ0oVfcmyJn4iBDRptjNVIzwIFR7tqWXdVI9xfA2RMwY/gbSpJG3lkdWNEjLap/NqVHZiJsdfg==}
     engines: {node: '>=0.10'}
 
-  esposter-shared@1.0.25:
-    resolution: {integrity: sha512-hsqp0EfcsiWf1G0X//V9xlAEkb4BtrApR2geJ+s6atDjQw6H5jmjohS5KI+Mi07P2MrQspwt6rUHKQ8lUOPCeg==}
+  esposter-shared@1.0.27:
+    resolution: {integrity: sha512-PJsQ5aMQfDFExHxQTou+odnkURKdaItyQjDiSQeucxHPklIBTmWKOVhMMNpda9RtO2VR8uCwC09SoAHfYXbSPw==}
 
   espree@10.0.1:
     resolution: {integrity: sha512-MWkrWZbJsL2UwnjxTX3gG8FneachS/Mwg7tdGXce011sJd5b0JG54vat5KHnfSBODZ3Wvzd2WnjxyzsRoVv+ww==}
@@ -6908,8 +6908,8 @@ packages:
   parse-path@7.0.0:
     resolution: {integrity: sha512-Euf9GG8WT9CdqwuWJGdf3RkUcTBArppHABkO7Lm8IzRQp0e2r/kkFnmhu4TSK30Wcu5rVAZLmfPKSBBi9tWFog==}
 
-  parse-tmx@1.0.25:
-    resolution: {integrity: sha512-RTw0EMV7wxYhGRdOXrQnhPVZl1nbmxNHdnTe0De+T4DbsSgQlgQwXiCaqfUe0goSweIjPcjKv1xWmE1iauN+5A==}
+  parse-tmx@1.0.27:
+    resolution: {integrity: sha512-IQjZKXCaAzWzaoeYQjIxkmZ1KIW7s68dDUsGzcAvFy18kFNEIChJrxThlPCE8sUajDAyZujed9gZUzEp7N4ZPQ==}
 
   parse-url@8.1.0:
     resolution: {integrity: sha512-xDvOoLU5XRrcOZvnI6b8zA6n9O9ejNk/GExuz1yBuWUGn9KA97GI6HTs6u02wKara1CeVmZhH+0TZFdWScR89w==}
@@ -14885,7 +14885,7 @@ snapshots:
       event-emitter: 0.3.5
       type: 2.7.2
 
-  esposter-shared@1.0.25:
+  esposter-shared@1.0.27:
     dependencies:
       data-urls: 5.0.0
       xml2js: 0.6.2
@@ -17405,9 +17405,9 @@ snapshots:
     dependencies:
       protocols: 2.0.1
 
-  parse-tmx@1.0.25:
+  parse-tmx@1.0.27:
     dependencies:
-      esposter-shared: 1.0.25
+      esposter-shared: 1.0.27
 
   parse-url@8.1.0:
     dependencies:
