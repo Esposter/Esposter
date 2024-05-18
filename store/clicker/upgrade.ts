@@ -4,7 +4,7 @@ import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { useGameStore } from "@/store/clicker/game";
 import { usePointStore } from "@/store/clicker/point";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
-import { exhaustiveGuard } from "esposter-shared";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const gameStore = useGameStore();

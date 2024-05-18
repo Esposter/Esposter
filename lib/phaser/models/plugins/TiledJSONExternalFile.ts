@@ -2,7 +2,7 @@ import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
 import { ID_SEPARATOR } from "@/util/id/constants";
 import { isPlainObject } from "@/util/object/isPlainObject";
-import { InvalidOperationError, NotFoundError, Operation, parseXmlString } from "esposter-shared";
+import { InvalidOperationError, NotFoundError, Operation, parseXmlString } from "@esposter/shared";
 import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import { parseTileset } from "parse-tmx";
 import type { Types } from "phaser";

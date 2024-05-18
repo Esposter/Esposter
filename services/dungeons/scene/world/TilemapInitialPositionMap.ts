@@ -1,5 +1,5 @@
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import { NotFoundError } from "esposter-shared";
+import { NotFoundError } from "@esposter/shared";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import type { PartialByKeys } from "unocss";

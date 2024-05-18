@@ -1,5 +1,5 @@
 import { usePhaserStore } from "@/lib/phaser/store";
-import { NotInitializedError } from "esposter-shared";
+import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";
 
 export const useGame = () => {

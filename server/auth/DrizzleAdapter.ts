@@ -6,8 +6,8 @@ import { verificationTokens } from "@/db/schema/verificationTokens";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { omit } from "@/util/object/omit";
 import type { Adapter } from "@auth/core/adapters";
+import { NotFoundError, NotInitializedError } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { NotFoundError, NotInitializedError } from "esposter-shared";
 
 export const DrizzleAdapter: Adapter = {
   createUser: async (input) =>

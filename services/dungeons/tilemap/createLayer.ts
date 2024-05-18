@@ -1,5 +1,5 @@
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
-import { InvalidOperationError, Operation } from "esposter-shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import type { Tilemaps } from "phaser";
 
 export const createLayer = (layerName: string, tileset: Tilemaps.Tileset | Tilemaps.Tileset[]) => {

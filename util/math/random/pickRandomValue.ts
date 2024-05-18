@@ -1,5 +1,5 @@
 import { generateRandomInteger } from "@/util/math/random/generateRandomInteger";
-import { InvalidOperationError, Operation } from "esposter-shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import type { ArrayElement } from "type-fest/source/internal";
 
 export const pickRandomValue = <T extends string | unknown[]>(values: T) => {

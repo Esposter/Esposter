@@ -1,4 +1,4 @@
-import { InvalidOperationError, Operation, exhaustiveGuard } from "esposter-shared";
+import { InvalidOperationError, Operation, exhaustiveGuard } from "@esposter/shared";
 import type { Position } from "grid-engine";
 import { Direction } from "grid-engine";
 
