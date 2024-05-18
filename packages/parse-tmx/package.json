@@ -3,8 +3,6 @@
   "version": "1.7.1",
   "description": "A parser for tmx",
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter#readme",
-  "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -15,6 +13,8 @@
     "tmx",
     "parser"
   ],
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -23,7 +23,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.ts --configPlugin typescript && pnpm run types:gen",
+    "build": "rollup --config rollup.config.js && pnpm run types:gen",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
@@ -33,12 +33,10 @@
     "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@esposter/configuration": "workspace:*",
     "@types/node": "^20.12.12",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.3.0",
-    "rollup": "^4.17.2",
-    "typescript": "^5.4.5"
+    "eslint": "^9.3.0"
   },
   "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
 }
