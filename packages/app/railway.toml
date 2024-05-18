@@ -1,0 +1,3 @@
+[build.nixpacksPlan.phases.install]
+dependsOn = ["setup"]
+cmds = ["pnpm i"]
