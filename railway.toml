@@ -1,5 +1,2 @@
-[build]
-buildCommand = "pnpm build:app"
-
 [deploy]
 startCommand = "pnpm start:app"
