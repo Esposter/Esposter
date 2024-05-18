@@ -1,6 +1,6 @@
 {
   "name": "esposter-shared",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Shared code",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -19,6 +19,9 @@
   },
   "scripts": {
     "build": "rollup --config rollup.config.ts --configPlugin typescript && pnpm run types:gen",
+    "lint": "eslint --config ../../eslint.light.config.js .",
+    "lint:fix": "eslint --config ../../eslint.light.config.js --fix .",
+    "typecheck": "tsc --noEmit",
     "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
   },
   "devDependencies": {
@@ -26,6 +29,7 @@
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
     "dts-bundle-generator": "^9.5.1",
+    "eslint": "^9.2.0",
     "rollup": "^4.17.2",
     "typescript": "^5.4.5"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/eslint",
-  "version": "1.0.0",
+  "version": "1.0.28",
   "description": "Shared eslint configuration",
   "private": true,
   "type": "module",
