@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)
+
+
+### Bug Fixes
+
+* lerna publish ([5f362b4](https://github.com/Esposter/Esposter/commit/5f362b4e50e01cc4ed3cced3208730fa24335938))
+
+
+
+
+
 # [1.7.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.7.0) (2024-05-18)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "The Esposter App",
-  "version": "1.5.0",
+  "version": "1.7.1",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
