@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "start:app": "lerna run start --scope=@esposter/app",
+    "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "typecheck": "lerna run typecheck",
     "lint": "lerna run lint",
