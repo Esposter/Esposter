@@ -39,8 +39,8 @@ importers:
         specifier: ^6.26.3
         version: 6.26.3
       '@esposter/shared':
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.2.0
+        version: 1.2.0
       '@fullcalendar/core':
         specifier: ^6.1.11
         version: 6.1.11
@@ -159,8 +159,8 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7
       parse-tmx:
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.2.0
+        version: 1.2.0
       pathe:
         specifier: ^1.1.2
         version: 1.1.2
@@ -1690,8 +1690,8 @@ packages:
     resolution: {integrity: sha512-niBqk8iwv96+yuTwjM6bWg8ovzAPF9qkICsGtcoa5/dmqcEMfdwNAX7+/OHcJHc7wj7XqPxH98oAHytFYlw6Sw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@esposter/shared@1.1.2':
-    resolution: {integrity: sha512-gCuKWvBqKuQP3/ugtb6IUAIiqKUT+jdyj7Kyy1BR8X0WJmZOcbPLPUSCPQJdQvpHF1mX7AxDWerbVYstfZID8w==}
+  '@esposter/shared@1.2.0':
+    resolution: {integrity: sha512-prA4J0myDacaomKkZNyROYtxRnq6VVaa6e33afKm7qPXxUdI+crK8RwnEmz0nA2TxCDvB6QJmRHk5728j1OhdA==}
 
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
@@ -6737,8 +6737,8 @@ packages:
   parse-path@7.0.0:
     resolution: {integrity: sha512-Euf9GG8WT9CdqwuWJGdf3RkUcTBArppHABkO7Lm8IzRQp0e2r/kkFnmhu4TSK30Wcu5rVAZLmfPKSBBi9tWFog==}
 
-  parse-tmx@1.1.2:
-    resolution: {integrity: sha512-W/pS9d0MLTN9aDPOax/OojnfLOhAcPtCNUBhf3B71CMC/KcnzNEplv3XCVZUR6sDL/yJBUioSFW+WnsDVnUsnw==}
+  parse-tmx@1.2.0:
+    resolution: {integrity: sha512-Lrm5OpsxDcwavUgC13tyihRwPPh2ACFdjD4BxjsIJtRuFdAtkcvQwgWqR/EBiYCqh0+W136izn/aCE+l5ZonRQ==}
 
   parse-url@8.1.0:
     resolution: {integrity: sha512-xDvOoLU5XRrcOZvnI6b8zA6n9O9ejNk/GExuz1yBuWUGn9KA97GI6HTs6u02wKara1CeVmZhH+0TZFdWScR89w==}
@@ -10377,7 +10377,7 @@ snapshots:
 
   '@eslint/js@9.3.0': {}
 
-  '@esposter/shared@1.1.2':
+  '@esposter/shared@1.2.0':
     dependencies:
       data-urls: 5.0.0
       xml2js: 0.6.2
@@ -16890,9 +16890,9 @@ snapshots:
     dependencies:
       protocols: 2.0.1
 
-  parse-tmx@1.1.2:
+  parse-tmx@1.2.0:
     dependencies:
-      '@esposter/shared': 1.1.2
+      '@esposter/shared': 1.2.0
 
   parse-url@8.1.0:
     dependencies:

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.3.0) (2024-05-18)
+
+
+### Bug Fixes
+
+* build before release ([b43bcc8](https://github.com/Esposter/Esposter/commit/b43bcc8ba3ec482c495fcad8bee9c755161fad39))
+* commit changes ([25b569d](https://github.com/Esposter/Esposter/commit/25b569d3529ea01b7bcebe78114267dea523a92f))
+* package script ([ffc32a7](https://github.com/Esposter/Esposter/commit/ffc32a74f74ffb5955ca99a99bdf2ece3b7940cb))
+* pnpm lock ([10fb1a9](https://github.com/Esposter/Esposter/commit/10fb1a95fe5c58fe92e88ca67207f1684f65663b))
+
+
+### Features
+
+* move nuxt app to separate package ([a0546f6](https://github.com/Esposter/Esposter/commit/a0546f672564ac0fe26e44eee29c9b752b1ee851))
+
+
+
+
+
 # [1.2.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.2.0) (2024-05-18)
 
 
