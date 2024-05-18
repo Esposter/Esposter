@@ -22,6 +22,7 @@
     "release": "pnpm run lint:fix --no-private && pnpm run build --no-private && lerna publish --yes"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "dts-bundle-generator": "^9.5.1",
     "eslint": "^9.3.0",
     "lerna": "^8.1.3",
