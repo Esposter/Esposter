@@ -1,5 +1,5 @@
 [build.nixpacksPlan.phases.setup]
-nixPkgs = ['...', 'pnpm']
+nixPkgs = ['...', 'pnpm-9_x']
 
 [build.nixpacksPlan.phases.install]
 dependsOn = ["setup"]
