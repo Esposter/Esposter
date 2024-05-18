@@ -29,7 +29,7 @@
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.2.0",
+    "eslint": "^9.3.0",
     "rollup": "^4.17.2",
     "typescript": "^5.4.5"
   },
