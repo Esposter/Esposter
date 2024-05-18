@@ -52,7 +52,7 @@ importers:
         version: 6.26.3
       '@esposter/shared':
         specifier: workspace:*
-        version: 1.2.0
+        version: link:../shared
       '@fullcalendar/core':
         specifier: ^6.1.11
         version: 6.1.11
@@ -1679,9 +1679,6 @@ packages:
   '@eslint/js@9.3.0':
     resolution: {integrity: sha512-niBqk8iwv96+yuTwjM6bWg8ovzAPF9qkICsGtcoa5/dmqcEMfdwNAX7+/OHcJHc7wj7XqPxH98oAHytFYlw6Sw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@esposter/shared@1.2.0':
-    resolution: {integrity: sha512-prA4J0myDacaomKkZNyROYtxRnq6VVaa6e33afKm7qPXxUdI+crK8RwnEmz0nA2TxCDvB6QJmRHk5728j1OhdA==}
 
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
@@ -10355,11 +10352,6 @@ snapshots:
       - supports-color
 
   '@eslint/js@9.3.0': {}
-
-  '@esposter/shared@1.2.0':
-    dependencies:
-      data-urls: 5.0.0
-      xml2js: 0.6.2
 
   '@fastify/busboy@2.1.1': {}
 
