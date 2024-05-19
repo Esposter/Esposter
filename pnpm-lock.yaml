@@ -7,10 +7,17 @@ settings:
 importers:
 
   .:
+    dependencies:
+      data-urls:
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@4.17.2)(tslib@2.6.2)(typescript@5.5.0-dev.20240518)
+      '@types/data-urls':
+        specifier: ^3.0.4
+        version: 3.0.4
       dts-bundle-generator:
         specifier: ^9.5.1
         version: 9.5.1
@@ -125,9 +132,6 @@ importers:
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.2.1)
-      data-urls:
-        specifier: ^5.0.0
-        version: 5.0.0
       dayjs:
         specifier: ^1.11.11
         version: 1.11.11
@@ -411,9 +415,6 @@ importers:
 
   packages/shared:
     dependencies:
-      data-urls:
-        specifier: ^5.0.0
-        version: 5.0.0
       xml2js:
         specifier: ^0.6.2
         version: 0.6.2
@@ -421,9 +422,6 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
-      '@types/data-urls':
-        specifier: ^3.0.4
-        version: 3.0.4
       '@types/xml2js':
         specifier: ^0.4.14
         version: 0.4.14

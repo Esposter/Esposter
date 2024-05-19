@@ -72,7 +72,6 @@
     "@vueuse/nuxt": "^10.9.0",
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
-    "data-urls": "^5.0.0",
     "dayjs": "^1.11.11",
     "dedent": "^1.5.3",
     "deep-equal": "^2.2.3",
