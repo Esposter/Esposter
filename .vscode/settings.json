@@ -23,6 +23,5 @@
     ".env.example": "env",
     ".tsx": "xml"
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.experimental.useFlatConfig": true
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

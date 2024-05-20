@@ -1,7 +1,7 @@
 {
   "name": "@esposter/shared",
   "version": "1.7.1",
-  "description": "Shared code",
+  "description": "Shareable typescript code",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
@@ -18,23 +18,17 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.ts --configPlugin typescript && pnpm run types:gen",
+    "build": "pnpm run export:gen && rollup --config rollup.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
-    "types:gen": "dts-bundle-generator -o dist/index.d.ts src/index.ts"
+    "export:gen": "ctix build --config ../configuration/.ctirc"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14",
-    "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.3.0",
-    "rollup": "^4.17.2",
-    "typescript": "^5.4.5"
+    "@esposter/configuration": "workspace:*",
+    "@types/xml2js": "^0.4.14"
   },
   "dependencies": {
-    "data-urls": "^5.0.0",
     "xml2js": "^0.6.2"
   },
   "gitHead": "000547393d835453249a06f46fc9e652eea3119e"

@@ -1,4 +1,4 @@
-import withNuxt from "../app/.nuxt/eslint.config.mjs";
+import withNuxt from "../../app/.nuxt/eslint.config.mjs";
 import languageOptions from "./languageOptions.js";
 import nuxtPlugin from "./nuxtPlugin.js";
 import typescriptRulesOverrides from "./overrides/typescriptRules.js";
