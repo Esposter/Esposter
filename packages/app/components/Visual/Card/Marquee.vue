@@ -29,9 +29,9 @@ const { surface, "on-surface": onSurface } = useColors();
             justify-center
             items-center
             text-center
-            p-4
             font-montserrat
             font-italic
+            p-4
             cursor-pointer
             rd-1
           >

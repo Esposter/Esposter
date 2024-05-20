@@ -1,3 +1,3 @@
-import eslint from "@esposter/configuration/index.vue.js";
+import eslint from "@esposter/configuration/eslint/index.vue.js";
 
 export default eslint;
