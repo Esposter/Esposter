@@ -182,16 +182,16 @@
 
 ## VSCode Extensions
 
-|   Name   |   Url   |
-| ---- | ---- |
-|   Vue - Official (Volar)   |   https://marketplace.visualstudio.com/items?itemName=Vue.volar   |
-|   ESLint   |   https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint   |
-|   Prettier - Code formatter   |   https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode   |
-|   GitLens — Git supercharged   |   https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens   |
-|   Powershell   |   https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell   |
-|   Material Icon Theme   |   https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme   |
-|   Better Comments   |   https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments   |
-|   Dark++ Italic   |   https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic   |
+| Name                       | Url                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
+| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
+| Prettier - Code formatter  | https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode     |
+| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
+| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
+| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
+| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments |
+| Dark++ Italic              | https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic    |
 
 ## Setup
 
@@ -228,3 +228,16 @@ pnpm preview
 ```
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Architecture
+
+Esposter is a lerna + pnpm workspaces monorepo.
+
+### Packages
+
+Packages are used directly by the nuxt application via `workspace:*`.
+
+### Shared configuration files
+
+- eslint.config.js
+- tsconfig.json

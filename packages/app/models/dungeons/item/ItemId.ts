@@ -1,0 +1,4 @@
+import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
+import { z } from "zod";
+
+export const itemIdSchema = z.nativeEnum(ItemId) satisfies z.ZodType<ItemId>;

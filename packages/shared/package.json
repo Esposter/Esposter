@@ -1,0 +1,35 @@
+{
+  "name": "@esposter/shared",
+  "version": "1.9.0",
+  "description": "Shareable typescript code",
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm run export:gen && rollup --config rollup.config.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc --noEmit",
+    "export:gen": "ctix build --config ../configuration/.ctirc"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@types/xml2js": "^0.4.14"
+  },
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  },
+  "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
+}

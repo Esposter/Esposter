@@ -1,0 +1,8 @@
+{
+  "mode": "bundle",
+  "project": "tsconfig.json",
+  "output": "src",
+  "quote": "\"",
+  "overwrite": true,
+  "backup": false
+}

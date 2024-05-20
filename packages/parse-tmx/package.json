@@ -1,0 +1,40 @@
+{
+  "name": "parse-tmx",
+  "version": "1.9.0",
+  "description": "A parser for tmx",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "tmx",
+    "parser"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm run export:gen && rollup --config rollup.config.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc --noEmit",
+    "export:gen": "ctix build --config ../configuration/.ctirc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@types/node": "^20.12.12"
+  },
+  "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
+}

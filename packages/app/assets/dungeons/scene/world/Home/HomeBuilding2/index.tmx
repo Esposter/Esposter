@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="64" tileheight="64" infinite="0" nextlayerid="8" nextobjectid="3">
+ <editorsettings>
+  <export target="tilemap.json" format="json"/>
+ </editorsettings>
+ <tileset firstgid="1" source="../../../../../../public/tilesets/firstParty/Collision.tsx"/>
+ <tileset firstgid="2" source="../../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
+ <tileset firstgid="122" source="../../../../../../public/tilesets/firstParty/Encounter.tsx"/>
+ <tileset firstgid="123" source="../../../../../../public/tilesets/firstParty/Entrance.tsx"/>
+ <tileset firstgid="126" source="../../../../../../public/tilesets/firstParty/Teleport.tsx"/>
+ <group id="3" name="MainScene" locked="1">
+  <layer id="6" name="Background" width="13" height="9" locked="1">
+   <data encoding="csv">
+0,92,92,92,92,92,92,92,92,92,92,92,0,
+0,100,100,100,100,100,100,100,100,100,100,100,0,
+0,113,113,113,113,113,113,113,113,113,113,113,0,
+0,113,113,113,95,96,96,96,96,97,113,113,0,
+0,113,113,113,107,108,108,108,108,109,113,113,0,
+0,113,113,113,119,120,120,120,120,121,113,113,0,
+0,113,113,113,113,113,113,113,113,113,113,113,0,
+0,113,113,113,113,113,113,113,113,113,113,113,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+  </layer>
+  <layer id="5" name="Decorations" width="13" height="9" locked="1">
+   <data encoding="csv">
+0,0,0,0,0,2,47,48,2,0,0,0,0,
+0,17,18,0,0,26,59,60,26,73,91,0,0,
+0,29,30,0,0,62,62,62,62,0,0,0,0,
+0,0,0,0,0,0,43,44,0,0,0,0,0,
+0,0,0,0,0,65,55,56,53,0,0,0,0,
+0,0,0,0,0,0,67,68,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,45,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+  </layer>
+  <layer id="4" name="Entrance" width="13" height="9" locked="1">
+   <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,123,124,125,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+  </layer>
+ </group>
+ <layer id="2" name="Foreground" width="13" height="9" locked="1">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,43,44,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="1" name="Collision" width="13" height="9" locked="1" opacity="0.5">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,1,1,1,1,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,0,1,
+1,1,0,0,0,0,0,0,0,0,0,0,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
+ <objectgroup id="7" name="Door" locked="1">
+  <object id="2" gid="126" x="320" y="576" width="64" height="64">
+   <properties>
+    <property name="id" propertytype="TeleportId" value="1"/>
+    <property name="target" type="class" propertytype="TeleportTarget">
+     <properties>
+      <property name="id" propertytype="TeleportId" value="2"/>
+      <property name="tilemapKey" propertytype="TilemapKey" value="Home"/>
+     </properties>
+    </property>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

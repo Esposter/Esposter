@@ -1,0 +1,285 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "compatibilityVersion": 1100,
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+        {
+            "id": 12,
+            "name": "Area",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Grass"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "itemId",
+                    "propertyType": "ItemId",
+                    "type": "string",
+                    "value": "Potion"
+                }
+            ],
+            "name": "Chest",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 7,
+            "members": [
+                {
+                    "name": "area",
+                    "propertyType": "Area",
+                    "type": "string",
+                    "value": "Grass"
+                }
+            ],
+            "name": "Encounter",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 13,
+            "name": "ItemId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Potion"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 2,
+            "members": [
+                {
+                    "name": "id",
+                    "propertyType": "NpcId",
+                    "type": "string",
+                    "value": "John"
+                }
+            ],
+            "name": "Npc",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "NpcAction",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "None",
+                "Trade",
+                "Item",
+                "Heal",
+                "Battle"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 19,
+            "name": "NpcId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "John",
+                "Smith",
+                "Mum"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 3,
+            "name": "NpcMovementPattern",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Clockwise",
+                "Idle"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 20,
+            "members": [
+                {
+                    "name": "index",
+                    "type": "int",
+                    "value": 1
+                }
+            ],
+            "name": "NpcPath",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+                {
+                    "name": "message",
+                    "type": "string",
+                    "value": ""
+                }
+            ],
+            "name": "Sign",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 15,
+            "members": [
+                {
+                    "name": "id",
+                    "propertyType": "TeleportId",
+                    "type": "string",
+                    "value": "1"
+                },
+                {
+                    "name": "target",
+                    "propertyType": "TeleportTarget",
+                    "type": "class",
+                    "value": {
+                    }
+                }
+            ],
+            "name": "Teleport",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 16,
+            "name": "TeleportId",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "1",
+                "2"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 18,
+            "members": [
+                {
+                    "name": "id",
+                    "propertyType": "TeleportId",
+                    "type": "string",
+                    "value": "1"
+                },
+                {
+                    "name": "tilemapKey",
+                    "propertyType": "TilemapKey",
+                    "type": "string",
+                    "value": "Home"
+                }
+            ],
+            "name": "TeleportTarget",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
+                "project"
+            ]
+        },
+        {
+            "id": 14,
+            "name": "TilemapKey",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "Home",
+                "HomeBuilding1",
+                "HomeBuilding2"
+            ],
+            "valuesAsFlags": false
+        }
+    ]
+}
