@@ -1,5 +1,5 @@
-import { env } from "@/env.client";
 import type { NuxtConfig } from "nuxt/schema";
+import { env } from "../env.client";
 
 export const security: NuxtConfig["security"] = {
   headers: {
