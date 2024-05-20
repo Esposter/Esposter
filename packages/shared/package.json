@@ -21,7 +21,8 @@
     "build": "rollup --config rollup.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "export:gen": "ctix build --config ../configuration/.ctirc"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

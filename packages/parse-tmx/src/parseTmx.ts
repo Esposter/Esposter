@@ -61,5 +61,3 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
 
   return { map };
 };
-
-export * from "@/util";
