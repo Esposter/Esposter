@@ -25,11 +25,7 @@
     "export:gen": "ctix build --config ../configuration/.ctirc"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
-    "@types/xml2js": "^0.4.14"
-  },
-  "dependencies": {
-    "xml2js": "^0.6.2"
+    "@esposter/configuration": "workspace:*"
   },
   "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
 }
