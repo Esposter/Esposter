@@ -122,7 +122,7 @@
     "@auth/core": "upgrading breaks authjs-nuxt"
   },
   "devDependencies": {
-    "@esposter/eslint": "workspace:*",
+    "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.3.13",
     "@nuxt/fonts": "^0.7.0",
     "@nuxt/test-utils": "^3.13.0",

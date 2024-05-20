@@ -1,4 +1,4 @@
-import typescriptIgnores from "@esposter/eslint/typescriptIgnores";
+import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.js";
 import type { NuxtConfig } from "nuxt/schema";
 
 export const typescript: NuxtConfig["typescript"] = {
