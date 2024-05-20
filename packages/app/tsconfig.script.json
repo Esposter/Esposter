@@ -1,5 +1,5 @@
 {
-  "extends": "./.nuxt/tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
       // typescript alias paths aren't configuration-directory-aware with the typescript runner
