@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/Esposter/Esposter/compare/v1.7.1...v1.8.0) (2024-05-20)
+
+
+### Bug Fixes
+
+* add back typescript plugin ([b33061f](https://github.com/Esposter/Esposter/commit/b33061fdb55edda900bb8ebfb4f37e8177ec8874))
+* add separate tsconfig for scripts ([b8b96ca](https://github.com/Esposter/Esposter/commit/b8b96cadd367d411353804fdb3e8cf81b6966780))
+* lint ([2620a47](https://github.com/Esposter/Esposter/commit/2620a472120d9d53079b8ae0fc5230c772b2fc4d))
+* merge and revert to configDir ([b54386b](https://github.com/Esposter/Esposter/commit/b54386bb1320be7dee9bff30c831aa7c61c80551))
+* only need to start app ([895f309](https://github.com/Esposter/Esposter/commit/895f309481a600c014b60523f2e535f3b3831780))
+* remove deprecated stuff ([11aae13](https://github.com/Esposter/Esposter/commit/11aae139b259a55ff7e2d5349c0b6b53e3c67b48))
+* remove unnecessary vscode settings + move data-urls to root ([7d7ba46](https://github.com/Esposter/Esposter/commit/7d7ba466f0bd137d25472591a81a7b4b9a979117))
+* revert to non config dir ([0b5078a](https://github.com/Esposter/Esposter/commit/0b5078af8e2ba5f6eaaa3290573240e5b55640fa))
+* stuff up ([1852568](https://github.com/Esposter/Esposter/commit/185256899307c2e9a0e9f64c1a0e038498cb9ad9))
+* use config as code ([a4a9559](https://github.com/Esposter/Esposter/commit/a4a9559be2f79990505611f4e5be45b006f73805))
+* use pnpm ([8cc8394](https://github.com/Esposter/Esposter/commit/8cc8394d89714053aa8ff4782e85c4f2842ba7f0))
+* use pnpm ([930416f](https://github.com/Esposter/Esposter/commit/930416f0fa32dc37b8af72d622d4d1d5a3f5df0c))
+* use pnpm ([7116647](https://github.com/Esposter/Esposter/commit/7116647d2d18827b36659a96499dcbb8c63fe457))
+
+
+### Features
+
+* Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
+* remove unnecessary toml ([22f7f37](https://github.com/Esposter/Esposter/commit/22f7f372166e8a3452a2d0f7c6a2fda5c981d0c0))
+* use rollup-plugin-dts ([fbb2c50](https://github.com/Esposter/Esposter/commit/fbb2c503c9fb13a509df9ec8af87cd7bd9093dfe))
+
+
+
+
+
+
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)
 
 

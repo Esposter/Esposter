@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/Esposter/Esposter/compare/v1.7.1...v1.8.0) (2024-05-20)
+
+
+### Bug Fixes
+
+* add back typescript plugin ([b33061f](https://github.com/Esposter/Esposter/commit/b33061fdb55edda900bb8ebfb4f37e8177ec8874))
+* lint ([2620a47](https://github.com/Esposter/Esposter/commit/2620a472120d9d53079b8ae0fc5230c772b2fc4d))
+* merge and revert to configDir ([b54386b](https://github.com/Esposter/Esposter/commit/b54386bb1320be7dee9bff30c831aa7c61c80551))
+* revert to non config dir ([0b5078a](https://github.com/Esposter/Esposter/commit/0b5078af8e2ba5f6eaaa3290573240e5b55640fa))
+
+
+### Features
+
+* Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
+* use rollup-plugin-dts ([fbb2c50](https://github.com/Esposter/Esposter/commit/fbb2c503c9fb13a509df9ec8af87cd7bd9093dfe))
+
+
+
+
+
+
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)
 
 **Note:** Version bump only for package @esposter/eslint
