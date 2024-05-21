@@ -302,8 +302,8 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
       '@types/three':
-        specifier: ^0.164.0
-        version: 0.164.0
+        specifier: ^0.164.1
+        version: 0.164.1
       '@types/webfontloader':
         specifier: ^1.6.38
         version: 1.6.38
@@ -2917,8 +2917,8 @@ packages:
   '@types/stats.js@0.17.3':
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
 
-  '@types/three@0.164.0':
-    resolution: {integrity: sha512-SFDofn9dJVrE+1DKta7xj7lc4ru7B3S3yf10NsxOserW57aQlB6GxtAS1UK5To3LfEMN5HUHMu3n5v+M5rApgA==}
+  '@types/three@0.164.1':
+    resolution: {integrity: sha512-dR/trWDhyaNqJV38rl1TonlCA9DpnX7OPYDWD81bmBGn/+uEc3+zNalFxQcV4FlPTeDBhCY3SFWKvK6EJwL88g==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -12275,7 +12275,7 @@ snapshots:
 
   '@types/stats.js@0.17.3': {}
 
-  '@types/three@0.164.0':
+  '@types/three@0.164.1':
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       '@types/stats.js': 0.17.3
