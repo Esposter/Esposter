@@ -280,9 +280,6 @@ importers:
       '@nuxt/test-utils':
         specifier: ^3.13.1
         version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.11.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.17.2)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vitest@1.6.0(@types/node@20.12.12)(happy-dom@14.11.0)(sass@1.77.2)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
-      '@swc-node/register':
-        specifier: ^1.9.1
-        version: 1.9.1(@swc/core@1.5.7)(@swc/types@0.1.7)(typescript@5.4.5)
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -313,9 +310,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.10
         version: 8.5.10
-      '@unocss/eslint-config':
-        specifier: ^0.60.3
-        version: 0.60.3(eslint@9.3.0)(typescript@5.4.5)
       '@unocss/nuxt':
         specifier: ^0.60.3
         version: 0.60.3(postcss@8.4.38)(rollup@4.17.2)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(webpack@5.90.3(@swc/core@1.5.7)(esbuild@0.19.12))
@@ -358,6 +352,9 @@ importers:
       sass:
         specifier: ^1.77.2
         version: 1.77.2
+      tsx:
+        specifier: ^4.10.5
+        version: 4.10.5
       type-fest:
         specifier: ^4.18.2
         version: 4.18.2
@@ -8251,6 +8248,11 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tsx@4.10.5:
+    resolution: {integrity: sha512-twDSbf7Gtea4I2copqovUiNTEDrT8XNFXsuHpfGbdpW/z9ZW4fTghzzhAG0WfrCuJmJiOEY1nLIjq4u3oujRWQ==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   tty-browserify@0.0.1:
     resolution: {integrity: sha512-C3TaO7K81YvjCgQH9Q1S3R3P3BtN3RIM8n+OvX4il1K1zgE8ZhI0op7kClgkxtutIE8hQrcrHBXvIheqKUUCxw==}
 
@@ -11829,28 +11831,14 @@ snapshots:
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.10
 
-  '@swc-node/core@1.13.1(@swc/core@1.5.7)(@swc/types@0.1.7)':
+  '@swc-node/core@1.13.1(@swc/core@1.5.7)':
     dependencies:
       '@swc/core': 1.5.7
-      '@swc/types': 0.1.7
-
-  '@swc-node/register@1.9.1(@swc/core@1.5.7)(@swc/types@0.1.7)(typescript@5.4.5)':
-    dependencies:
-      '@swc-node/core': 1.13.1(@swc/core@1.5.7)(@swc/types@0.1.7)
-      '@swc-node/sourcemap-support': 0.5.0
-      '@swc/core': 1.5.7
-      colorette: 2.0.20
-      debug: 4.3.4
-      pirates: 4.0.6
-      tslib: 2.6.2
-      typescript: 5.4.5
-    transitivePeerDependencies:
-      - '@swc/types'
-      - supports-color
+    optional: true
 
   '@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518)':
     dependencies:
-      '@swc-node/core': 1.13.1(@swc/core@1.5.7)(@swc/types@0.1.7)
+      '@swc-node/core': 1.13.1(@swc/core@1.5.7)
       '@swc-node/sourcemap-support': 0.5.0
       '@swc/core': 1.5.7
       colorette: 2.0.20
@@ -11867,6 +11855,7 @@ snapshots:
     dependencies:
       source-map-support: 0.5.21
       tslib: 2.6.2
+    optional: true
 
   '@swc/core-darwin-arm64@1.5.7':
     optional: true
@@ -11913,8 +11902,10 @@ snapshots:
       '@swc/core-win32-arm64-msvc': 1.5.7
       '@swc/core-win32-ia32-msvc': 1.5.7
       '@swc/core-win32-x64-msvc': 1.5.7
+    optional: true
 
-  '@swc/counter@0.1.3': {}
+  '@swc/counter@0.1.3':
+    optional: true
 
   '@swc/helpers@0.4.14':
     dependencies:
@@ -11928,6 +11919,7 @@ snapshots:
   '@swc/types@0.1.7':
     dependencies:
       '@swc/counter': 0.1.3
+    optional: true
 
   '@tiptap/core@2.4.0(@tiptap/pm@2.4.0)':
     dependencies:
@@ -12467,29 +12459,9 @@ snapshots:
 
   '@unocss/core@0.60.3': {}
 
-  '@unocss/eslint-config@0.60.3(eslint@9.3.0)(typescript@5.4.5)':
-    dependencies:
-      '@unocss/eslint-plugin': 0.60.3(eslint@9.3.0)(typescript@5.4.5)
-    transitivePeerDependencies:
-      - eslint
-      - supports-color
-      - typescript
-
   '@unocss/eslint-config@0.60.3(eslint@9.3.0)(typescript@5.5.0-dev.20240518)':
     dependencies:
       '@unocss/eslint-plugin': 0.60.3(eslint@9.3.0)(typescript@5.5.0-dev.20240518)
-    transitivePeerDependencies:
-      - eslint
-      - supports-color
-      - typescript
-
-  '@unocss/eslint-plugin@0.60.3(eslint@9.3.0)(typescript@5.4.5)':
-    dependencies:
-      '@typescript-eslint/utils': 7.9.0(eslint@9.3.0)(typescript@5.4.5)
-      '@unocss/config': 0.60.3
-      '@unocss/core': 0.60.3
-      magic-string: 0.30.10
-      synckit: 0.9.0
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -17467,7 +17439,8 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  pirates@4.0.6: {}
+  pirates@4.0.6:
+    optional: true
 
   pkg-dir@4.2.0:
     dependencies:
@@ -18831,6 +18804,13 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@2.6.2: {}
+
+  tsx@4.10.5:
+    dependencies:
+      esbuild: 0.20.2
+      get-tsconfig: 4.7.5
+    optionalDependencies:
+      fsevents: 2.3.3
 
   tty-browserify@0.0.1: {}
 
