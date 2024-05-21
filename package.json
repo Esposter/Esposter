@@ -20,8 +20,8 @@
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "release": "pnpm run lint:fix --no-private && pnpm run build --no-private && lerna publish --yes",
-    "remove:node_modules": "pnpm powershell:run scripts/removeNodeModules.ps1",
-    "powershell:run": "powershell -NoProfile -ExecutionPolicy Unrestricted"
+    "refresh:lockfile": "pnpm powershell:run scripts/refreshLockfile.ps1",
+    "powershell:run": "powershell -ExecutionPolicy Unrestricted"
   },
   "dependencies": {
     "data-urls": "^5.0.0",
