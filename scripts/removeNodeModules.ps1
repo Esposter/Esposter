@@ -1,0 +1,1 @@
+Get-ChildItem -Include 'node_modules' -Recurse -force | Remove-Item -Recurse -force
