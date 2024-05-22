@@ -9,11 +9,12 @@
 
 # dependencies
 node_modules
-/.pnp
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage
+vitest.config.ts.timestamp*
 
 # production
 dist
