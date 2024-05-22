@@ -67,17 +67,17 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@fullcalendar/core':
-        specifier: ^6.1.12
-        version: 6.1.12
+        specifier: ^6.1.13
+        version: 6.1.13
       '@fullcalendar/daygrid':
-        specifier: ^6.1.12
-        version: 6.1.12(@fullcalendar/core@6.1.12)
+        specifier: ^6.1.13
+        version: 6.1.13(@fullcalendar/core@6.1.13)
       '@fullcalendar/timegrid':
-        specifier: ^6.1.12
-        version: 6.1.12(@fullcalendar/core@6.1.12)
+        specifier: ^6.1.13
+        version: 6.1.13(@fullcalendar/core@6.1.13)
       '@fullcalendar/vue3':
-        specifier: ^6.1.12
-        version: 6.1.12(@fullcalendar/core@6.1.12)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^6.1.13
+        version: 6.1.13(@fullcalendar/core@6.1.13)(vue@3.4.27(typescript@5.4.5))
       '@hebilicious/authjs-nuxt':
         specifier: ^0.3.5
         version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.12.12)(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.3.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.2)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.0)
@@ -1679,23 +1679,23 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@fullcalendar/core@6.1.12':
-    resolution: {integrity: sha512-SgAtMnpYSqypjYJyiSuEk17rrznTHYrBvHiDEPSe5KKMiiLgpzlNKrNCqymHDrazHtihrxmeAjIS7kk5bIx/EQ==}
+  '@fullcalendar/core@6.1.13':
+    resolution: {integrity: sha512-Cps/hMQan4kwnsBhFf2+m2mijbGoWs6r18ZzxBnAAOkkNHtPmHU8EdR6lF+ZLsiVvb7nsC4H/ZKqnxXWwgpoPw==}
 
-  '@fullcalendar/daygrid@6.1.12':
-    resolution: {integrity: sha512-SB8owl0jMz3NwRydD+Xo6QCmg8F6wRLr1XuGbGNLtlpCE44jbwNNT2ws9IVGbbAB1duLkvE49g/yYs/cpY4HKA==}
+  '@fullcalendar/daygrid@6.1.13':
+    resolution: {integrity: sha512-0I0hL1kgGjkZuc7Qt8mu4jjrqIL5PZzd58bEpTxoXRKI5UBZ9KbshGVMryQSXYANlrRtkPnXVt90VIDrxZbDrA==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.12
+      '@fullcalendar/core': ~6.1.13
 
-  '@fullcalendar/timegrid@6.1.12':
-    resolution: {integrity: sha512-A7lvPpYCHFGntV2+ZYgSAaOTJ3VbRzTkoUIS+WBhTQ5asgAjieREGvhvnMet1AMdhBPgM/4g0qXeUlqSglT9Xw==}
+  '@fullcalendar/timegrid@6.1.13':
+    resolution: {integrity: sha512-8Ub2mSV+6Mh8WWDKuyCYbj5PKYpmyjSctpJ/21fDBJduE9QFS0WfG9CZZxSJT7CT+srnyk4mX2/5gYN9gYZjUg==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.12
+      '@fullcalendar/core': ~6.1.13
 
-  '@fullcalendar/vue3@6.1.12':
-    resolution: {integrity: sha512-FrPj7vrZL8wxya1lpg0f1zkBOKtUkL8UV+PxYhHJCQytPfT0s6QYfeb9Maa2Mu5vaAY3VAi0f4Zy6LUPOF4heQ==}
+  '@fullcalendar/vue3@6.1.13':
+    resolution: {integrity: sha512-m4pEeYXKo79lnLJAGRrNPxovZWXFXSS/5F+QXLN/eXljP/F2caFG/Bj24eFTXHlj1QykgJ56iwC8ZLpShMdANg==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.12
+      '@fullcalendar/core': ~6.1.13
       vue: ^3.0.11
 
   '@hebilicious/authjs-nuxt@0.3.5':
@@ -10708,22 +10708,22 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fullcalendar/core@6.1.12':
+  '@fullcalendar/core@6.1.13':
     dependencies:
       preact: 10.12.1
 
-  '@fullcalendar/daygrid@6.1.12(@fullcalendar/core@6.1.12)':
+  '@fullcalendar/daygrid@6.1.13(@fullcalendar/core@6.1.13)':
     dependencies:
-      '@fullcalendar/core': 6.1.12
+      '@fullcalendar/core': 6.1.13
 
-  '@fullcalendar/timegrid@6.1.12(@fullcalendar/core@6.1.12)':
+  '@fullcalendar/timegrid@6.1.13(@fullcalendar/core@6.1.13)':
     dependencies:
-      '@fullcalendar/core': 6.1.12
-      '@fullcalendar/daygrid': 6.1.12(@fullcalendar/core@6.1.12)
+      '@fullcalendar/core': 6.1.13
+      '@fullcalendar/daygrid': 6.1.13(@fullcalendar/core@6.1.13)
 
-  '@fullcalendar/vue3@6.1.12(@fullcalendar/core@6.1.12)(vue@3.4.27(typescript@5.4.5))':
+  '@fullcalendar/vue3@6.1.13(@fullcalendar/core@6.1.13)(vue@3.4.27(typescript@5.4.5))':
     dependencies:
-      '@fullcalendar/core': 6.1.12
+      '@fullcalendar/core': 6.1.13
       vue: 3.4.27(typescript@5.4.5)
 
   '@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.12.12)(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.3.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.2)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.0)':
