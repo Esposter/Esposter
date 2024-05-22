@@ -67,17 +67,17 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@fullcalendar/core':
-        specifier: ^6.1.11
-        version: 6.1.11
+        specifier: ^6.1.12
+        version: 6.1.12
       '@fullcalendar/daygrid':
-        specifier: ^6.1.11
-        version: 6.1.11(@fullcalendar/core@6.1.11)
+        specifier: ^6.1.12
+        version: 6.1.12(@fullcalendar/core@6.1.12)
       '@fullcalendar/timegrid':
-        specifier: ^6.1.11
-        version: 6.1.11(@fullcalendar/core@6.1.11)
+        specifier: ^6.1.12
+        version: 6.1.12(@fullcalendar/core@6.1.12)
       '@fullcalendar/vue3':
-        specifier: ^6.1.11
-        version: 6.1.11(@fullcalendar/core@6.1.11)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^6.1.12
+        version: 6.1.12(@fullcalendar/core@6.1.12)(vue@3.4.27(typescript@5.4.5))
       '@hebilicious/authjs-nuxt':
         specifier: ^0.3.5
         version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.12.12)(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.3.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.17.2)(sass@1.77.2)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.17.2)
@@ -217,17 +217,17 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
       survey-core:
-        specifier: ^1.10.4
-        version: 1.10.4
+        specifier: ^1.10.5
+        version: 1.10.5
       survey-creator-core:
         specifier: ^1.10.5
-        version: 1.10.5(survey-core@1.10.4)
+        version: 1.10.5(survey-core@1.10.5)
       survey-creator-vue:
-        specifier: ^1.10.4
-        version: 1.10.4(survey-core@1.10.4)(survey-creator-core@1.10.5(survey-core@1.10.4))(survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^1.10.5
+        version: 1.10.5(survey-core@1.10.5)(survey-creator-core@1.10.5(survey-core@1.10.5))(survey-vue3-ui@1.10.5(survey-core@1.10.5)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       survey-vue3-ui:
-        specifier: ^1.10.4
-        version: 1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^1.10.5
+        version: 1.10.5(survey-core@1.10.5)(vue@3.4.27(typescript@5.4.5))
       three:
         specifier: ^0.164.1
         version: 0.164.1
@@ -253,14 +253,14 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(vue@3.4.27(typescript@5.4.5))
       vuetify:
-        specifier: ^3.6.6
-        version: 3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+        specifier: ^3.6.7
+        version: 3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
       webfontloader:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^7.1.8
-        version: 7.1.8
+        specifier: ^8.0.0
+        version: 8.0.0
       ws:
         specifier: ^8.17.0
         version: 8.17.0
@@ -377,8 +377,8 @@ importers:
         specifier: ^1.8.27
         version: 1.8.27(typescript@5.4.5)
       vuetify-nuxt-module:
-        specifier: ^0.14.0
-        version: 0.14.0(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^0.14.1
+        version: 0.14.1(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))
 
   packages/configuration:
     devDependencies:
@@ -1679,23 +1679,23 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@fullcalendar/core@6.1.11':
-    resolution: {integrity: sha512-TjG7c8sUz+Vkui2FyCNJ+xqyu0nq653Ibe99A66LoW95oBo6tVhhKIaG1Wh0GVKymYiqAQN/OEdYTuj4ay27kA==}
+  '@fullcalendar/core@6.1.12':
+    resolution: {integrity: sha512-SgAtMnpYSqypjYJyiSuEk17rrznTHYrBvHiDEPSe5KKMiiLgpzlNKrNCqymHDrazHtihrxmeAjIS7kk5bIx/EQ==}
 
-  '@fullcalendar/daygrid@6.1.11':
-    resolution: {integrity: sha512-hF5jJB7cgUIxWD5MVjj8IU407HISyLu7BWXcEIuTytkfr8oolOXeCazqnnjmRbnFOncoJQVstTtq6SIhaT32Xg==}
+  '@fullcalendar/daygrid@6.1.12':
+    resolution: {integrity: sha512-SB8owl0jMz3NwRydD+Xo6QCmg8F6wRLr1XuGbGNLtlpCE44jbwNNT2ws9IVGbbAB1duLkvE49g/yYs/cpY4HKA==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.11
+      '@fullcalendar/core': ~6.1.12
 
-  '@fullcalendar/timegrid@6.1.11':
-    resolution: {integrity: sha512-0seUHK/ferH89IeuCvV4Bib0zWjgK0nsptNdmAc9wDBxD/d9hm5Mdti0URJX6bDoRtsSfRDu5XsRcrzwoc+AUQ==}
+  '@fullcalendar/timegrid@6.1.12':
+    resolution: {integrity: sha512-A7lvPpYCHFGntV2+ZYgSAaOTJ3VbRzTkoUIS+WBhTQ5asgAjieREGvhvnMet1AMdhBPgM/4g0qXeUlqSglT9Xw==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.11
+      '@fullcalendar/core': ~6.1.12
 
-  '@fullcalendar/vue3@6.1.11':
-    resolution: {integrity: sha512-jBoDS0WSpuOM9ZgjL3lNh6o385u/LthFZDaMUACjVVJZh3JuBbuA7ghdUvIelcTNXa5VRCkSZOpivTJWOnLfcg==}
+  '@fullcalendar/vue3@6.1.12':
+    resolution: {integrity: sha512-FrPj7vrZL8wxya1lpg0f1zkBOKtUkL8UV+PxYhHJCQytPfT0s6QYfeb9Maa2Mu5vaAY3VAi0f4Zy6LUPOF4heQ==}
     peerDependencies:
-      '@fullcalendar/core': ~6.1.11
+      '@fullcalendar/core': ~6.1.12
       vue: ^3.0.11
 
   '@hebilicious/authjs-nuxt@0.3.5':
@@ -5022,9 +5022,9 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-unique-numbers@8.0.13:
-    resolution: {integrity: sha512-7OnTFAVPefgw2eBJ1xj2PGGR9FwYzSUso9decayHgCDX4sJkHLdcsYTytTg+tYv+wKF3U8gJuSBz2jJpQV4u/g==}
-    engines: {node: '>=16.1.0'}
+  fast-unique-numbers@9.0.5:
+    resolution: {integrity: sha512-wVA1YcLQn0eAo4P1DXu4UI3wx68Llwm2/iCtpoOGuTi3jm/13KFYjCt3Nlq2fseSuyaBz43RKimj5G68GDzjjg==}
+    engines: {node: '>=18.2.0'}
 
   fast-xml-parser@4.3.6:
     resolution: {integrity: sha512-M2SovcRxD4+vC493Uc2GZVcZaj66CCJhWurC4viynVSTvrpErCShNcDz1lAho6n9REQKvL/ll4A4/fw6Y9z8nw==}
@@ -8065,8 +8065,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@1.10.4:
-    resolution: {integrity: sha512-EdBLDZk7T2fLOhX79fL5VgRDsHPCE/3lt7zDvJWRAXDSIny4lyRIWyR6pQGzkTjBq4MiIzdEBd/4TVITfXgTxQ==}
+  survey-core@1.10.5:
+    resolution: {integrity: sha512-6BWdoJJe37PFzZ1fd5Z1qJtqLtTJje/aGaeIGeHK8C2i86heVSdtTx6RbuxKyUg7Eure/uO4P62f62qRXeu7zg==}
 
   survey-creator-core@1.10.5:
     resolution: {integrity: sha512-cwHOFTMWMSay1aGJFkwD7JagnTDTRDE3Pp6SlsAHBVejv2ON+xwvGpBjBZ37D1klhn5f566SULRbFJurXr/BAg==}
@@ -8078,18 +8078,18 @@ packages:
       ace-builds:
         optional: true
 
-  survey-creator-vue@1.10.4:
-    resolution: {integrity: sha512-ZPXQTPzufzRlK2iIRPofZJcA/cMJ5fWcDdTupou2c3/aeBKBZEmyNSf0KBow8nhzAhf8X3HsbfYw5HMBNUlwBw==}
+  survey-creator-vue@1.10.5:
+    resolution: {integrity: sha512-Zo4gW20nf3ht4ll8y2cc9gP7HoOeLglwHHRuNhs7IgXzI1m6gBfNXaomztLxG+J0r82hv2vrUJZoLMewIoz7xw==}
     peerDependencies:
-      survey-core: 1.10.4
-      survey-creator-core: 1.10.4
-      survey-vue3-ui: 1.10.4
+      survey-core: 1.10.5
+      survey-creator-core: 1.10.5
+      survey-vue3-ui: 1.10.5
       vue: ^3.2.41
 
-  survey-vue3-ui@1.10.4:
-    resolution: {integrity: sha512-yJLd9LkXS6ipa8JDbKI7P7ZSJcr/tgCpJqhe2y0D2Mi32guXg80BIKuPJ2xoyS0KcEL+zdXDCRdgL5LfqTbGuw==}
+  survey-vue3-ui@1.10.5:
+    resolution: {integrity: sha512-MmaAnMwGN7FXZy3a5qKTZTQHg+xOlNPIgYm45POemz/An5A/OKLZ+dVaimcj8hkTBH4vH+NuqgzgDL0brKSUaw==}
     peerDependencies:
-      survey-core: 1.10.4
+      survey-core: 1.10.5
       vue: ^3.2.41
 
   svg-tags@1.0.0:
@@ -8875,11 +8875,11 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.14.0:
-    resolution: {integrity: sha512-HYicBpPOt7cI5M0bLgTE3HXUnvQyVG/XWVoS97hYJScjinwchbCYCafVxNk89Dgw4uRtUtB7y4hpcDsOnKeM3g==}
+  vuetify-nuxt-module@0.14.1:
+    resolution: {integrity: sha512-rv7iFc0HrhFSO3JyWbFNXjuPuTfOx8unIdtTYat822vn5b9TVdZf5LffKv4fRrNgKEjmE/v9WT4yzxRVj3WIFA==}
 
-  vuetify@3.6.6:
-    resolution: {integrity: sha512-7RkL0kuLsVUbc0YCwhPhVq54gSFKt5xv+SOrF01dxwJz7Ke3tAbvO616WhhQIfS78h1q/Ev952WJj5jpsdK58g==}
+  vuetify@3.6.7:
+    resolution: {integrity: sha512-oj7zrNbjKFlSS38449K9/ad9mc/o25bxuTFT9rs2AtSNnOA+BOLIVJCAPlmLGWoQGslPh80RzckXDedoifs+TQ==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
@@ -9042,14 +9042,14 @@ packages:
   workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
 
-  worker-timers-broker@6.1.8:
-    resolution: {integrity: sha512-FUCJu9jlK3A8WqLTKXM9E6kAmI/dR1vAJ8dHYLMisLNB/n3GuaFIjJ7pn16ZcD1zCOf7P6H62lWIEBi+yz/zQQ==}
+  worker-timers-broker@7.0.1:
+    resolution: {integrity: sha512-M2ZYaxYUl/D/JCoioltkZMcnSWREoo/mhdyyTPLyeAxjgwrARgsXn+yFssr1LbDmq4GlaASxReeEx/jdsfA8Xg==}
 
-  worker-timers-worker@7.0.71:
-    resolution: {integrity: sha512-ks/5YKwZsto1c2vmljroppOKCivB/ma97g9y77MAAz2TBBjPPgpoOiS1qYQKIgvGTr2QYPT3XhJWIB6Rj2MVPQ==}
+  worker-timers-worker@8.0.0:
+    resolution: {integrity: sha512-smUw4cwY+OczC2rUmg5Zw58boDqq9WnR6m5CoOBmm0zGQgHo4HjxZ3LE2gPLpx1NWf5NSlAd2Ec5TEwgokxQFA==}
 
-  worker-timers@7.1.8:
-    resolution: {integrity: sha512-R54psRKYVLuzff7c1OTFcq/4Hue5Vlz4bFtNEIarpSiCYhpifHU3aIQI29S84o1j87ePCYqbmEJPqwBTf+3sfw==}
+  worker-timers@8.0.0:
+    resolution: {integrity: sha512-ZPC5n62AFD9RmwP5c9dFVFRsEWohJ04bSImT2pTD3GZg45+qyaiznrYf34UwNAJ6oB0HxSjpqkJdh4CoPi+Mog==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -10618,22 +10618,22 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fullcalendar/core@6.1.11':
+  '@fullcalendar/core@6.1.12':
     dependencies:
       preact: 10.12.1
 
-  '@fullcalendar/daygrid@6.1.11(@fullcalendar/core@6.1.11)':
+  '@fullcalendar/daygrid@6.1.12(@fullcalendar/core@6.1.12)':
     dependencies:
-      '@fullcalendar/core': 6.1.11
+      '@fullcalendar/core': 6.1.12
 
-  '@fullcalendar/timegrid@6.1.11(@fullcalendar/core@6.1.11)':
+  '@fullcalendar/timegrid@6.1.12(@fullcalendar/core@6.1.12)':
     dependencies:
-      '@fullcalendar/core': 6.1.11
-      '@fullcalendar/daygrid': 6.1.11(@fullcalendar/core@6.1.11)
+      '@fullcalendar/core': 6.1.12
+      '@fullcalendar/daygrid': 6.1.12(@fullcalendar/core@6.1.12)
 
-  '@fullcalendar/vue3@6.1.11(@fullcalendar/core@6.1.11)(vue@3.4.27(typescript@5.4.5))':
+  '@fullcalendar/vue3@6.1.12(@fullcalendar/core@6.1.12)(vue@3.4.27(typescript@5.4.5))':
     dependencies:
-      '@fullcalendar/core': 6.1.11
+      '@fullcalendar/core': 6.1.12
       vue: 3.4.27(typescript@5.4.5)
 
   '@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.18.0(encoding@0.1.13))(@parcel/watcher@2.4.1)(@types/node@20.12.12)(drizzle-orm@0.30.10(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.3.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.17.2)(sass@1.77.2)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.17.2)':
@@ -12965,11 +12965,11 @@ snapshots:
       date-fns: 3.6.0
       vue: 3.4.27(typescript@5.4.5)
 
-  '@vuetify/loader-shared@2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
+  '@vuetify/loader-shared@2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
     dependencies:
       upath: 2.0.1
       vue: 3.4.27(typescript@5.4.5)
-      vuetify: 3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vuetify: 3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
 
   '@vueuse/core@10.9.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
@@ -15040,7 +15040,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-unique-numbers@8.0.13:
+  fast-unique-numbers@9.0.5:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
@@ -18640,22 +18640,22 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@1.10.4: {}
+  survey-core@1.10.5: {}
 
-  survey-creator-core@1.10.5(survey-core@1.10.4):
+  survey-creator-core@1.10.5(survey-core@1.10.5):
     dependencies:
-      survey-core: 1.10.4
+      survey-core: 1.10.5
 
-  survey-creator-vue@1.10.4(survey-core@1.10.4)(survey-creator-core@1.10.5(survey-core@1.10.4))(survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  survey-creator-vue@1.10.5(survey-core@1.10.5)(survey-creator-core@1.10.5(survey-core@1.10.5))(survey-vue3-ui@1.10.5(survey-core@1.10.5)(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.4
-      survey-creator-core: 1.10.5(survey-core@1.10.4)
-      survey-vue3-ui: 1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5))
+      survey-core: 1.10.5
+      survey-creator-core: 1.10.5(survey-core@1.10.5)
+      survey-vue3-ui: 1.10.5(survey-core@1.10.5)(vue@3.4.27(typescript@5.4.5))
       vue: 3.4.27(typescript@5.4.5)
 
-  survey-vue3-ui@1.10.4(survey-core@1.10.4)(vue@3.4.27(typescript@5.4.5)):
+  survey-vue3-ui@1.10.5(survey-core@1.10.5)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      survey-core: 1.10.4
+      survey-core: 1.10.5
       vue: 3.4.27(typescript@5.4.5)
 
   svg-tags@1.0.0: {}
@@ -19393,14 +19393,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.6):
+  vite-plugin-vuetify@2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.7):
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
+      '@vuetify/loader-shared': 2.0.3(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
       debug: 4.3.4
       upath: 2.0.1
       vite: 5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2)
       vue: 3.4.27(typescript@5.4.5)
-      vuetify: 3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vuetify: 3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - supports-color
 
@@ -19561,7 +19561,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  vuetify-nuxt-module@0.14.0(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5)):
+  vuetify-nuxt-module@0.14.1(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.17.2)
       defu: 6.1.4
@@ -19571,8 +19571,8 @@ snapshots:
       perfect-debounce: 1.0.0
       ufo: 1.5.3
       unconfig: 0.3.13
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.6)
-      vuetify: 3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.7)
+      vuetify: 3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -19582,12 +19582,12 @@ snapshots:
       - vue-i18n
       - webpack-plugin-vuetify
 
-  vuetify@3.6.6(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)):
+  vuetify@3.6.7(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       vue: 3.4.27(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
-      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.6)
+      vite-plugin-vuetify: 2.0.3(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.7)
 
   w3c-keyname@2.2.8: {}
 
@@ -19822,24 +19822,24 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.0.0
 
-  worker-timers-broker@6.1.8:
+  worker-timers-broker@7.0.1:
     dependencies:
       '@babel/runtime': 7.24.5
-      fast-unique-numbers: 8.0.13
+      fast-unique-numbers: 9.0.5
       tslib: 2.6.2
-      worker-timers-worker: 7.0.71
+      worker-timers-worker: 8.0.0
 
-  worker-timers-worker@7.0.71:
+  worker-timers-worker@8.0.0:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
 
-  worker-timers@7.1.8:
+  worker-timers@8.0.0:
     dependencies:
       '@babel/runtime': 7.24.5
       tslib: 2.6.2
-      worker-timers-broker: 6.1.8
-      worker-timers-worker: 7.0.71
+      worker-timers-broker: 7.0.1
+      worker-timers-worker: 8.0.0
 
   wrap-ansi@6.2.0:
     dependencies:
