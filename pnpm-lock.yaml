@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  typescript: ^5.5.0-beta
+  '@esposter/app>typescript': ^5.4.5
+
 importers:
 
   .:
@@ -34,7 +38,7 @@ importers:
         specifier: ^4.17.2
         version: 4.17.2
       typescript:
-        specifier: 5.5.0-dev.20240518
+        specifier: ^5.5.0-beta
         version: 5.5.0-dev.20240518
 
   packages/app:
@@ -2353,7 +2357,7 @@ packages:
     peerDependencies:
       rollup: ^2.14.0||^3.0.0||^4.0.0
       tslib: '*'
-      typescript: '>=3.7.0'
+      typescript: ^5.5.0-beta
     peerDependenciesMeta:
       rollup:
         optional: true
@@ -2556,7 +2560,7 @@ packages:
     resolution: {integrity: sha512-z//TBXJdRWXoISCXlQmVz+NMm8Qm/UvcfKiGC0tSJdfeVYf5EZkGqvk2OiRH4SIJ6OGFfS9T0YrvA2pDKzWtPA==}
     peerDependencies:
       '@swc/core': '>= 1.4.13'
-      typescript: '>= 4.3'
+      typescript: ^5.5.0-beta
 
   '@swc-node/sourcemap-support@0.5.0':
     resolution: {integrity: sha512-fbhjL5G0YvFoWwNhWleuBUfotiX+USiA9oJqu9STFw+Hb0Cgnddn+HVS/K5fI45mn92e8V+cHD2jgFjk4w2T9Q==}
@@ -3284,7 +3288,7 @@ packages:
   '@vue/language-core@1.8.27':
     resolution: {integrity: sha512-L8Kc27VdQserNaCUNiSFdDl9LWT24ly8Hpwf1ECy3aFb9m6bDhBGQYOujDm21N7EW3moKIOKEanQwe1q5BK+mA==}
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.5.0-beta
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -4110,7 +4114,7 @@ packages:
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
     engines: {node: '>=14'}
     peerDependencies:
-      typescript: '>=4.9.5'
+      typescript: ^5.5.0-beta
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -7046,7 +7050,7 @@ packages:
     resolution: {integrity: sha512-+C2AHFtcFqjPih0zpYuvof37SFxMQ7OEG2zV9jRI12i9BOy3YQVAHwdKtyyc8pDcDyIc33WCIsZaCFWU7WWxGQ==}
     peerDependencies:
       '@vue/composition-api': ^1.4.0
-      typescript: '>=4.4.4'
+      typescript: ^5.5.0-beta
       vue: ^2.6.14 || ^3.3.0
     peerDependenciesMeta:
       '@vue/composition-api':
@@ -7623,7 +7627,7 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       rollup: ^3.29.4 || ^4
-      typescript: ^4.5 || ^5.0
+      typescript: ^5.5.0-beta
 
   rollup-plugin-terser@7.0.2:
     resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
@@ -8297,7 +8301,7 @@ packages:
     resolution: {integrity: sha512-UQMIo7pb8WRomKR1/+MFVLTroIvDVtMX3K6OUir8ynLyzB8Jeriont2bTAtmNPa1ekAgN7YPDyf6V+ygrdU+eQ==}
     engines: {node: '>=16'}
     peerDependencies:
-      typescript: '>=4.2.0'
+      typescript: ^5.5.0-beta
 
   ts-morph@22.0.0:
     resolution: {integrity: sha512-M9MqFGZREyeb5fTl6gNHKZLqBQA0TjA1lea+CR48R8EBTDuWrNqW6ccC5QvjNR4s6wDumD3LTCjOFSp9iwlzaw==}
@@ -8670,7 +8674,7 @@ packages:
       meow: ^9.0.0
       optionator: ^0.9.1
       stylelint: '>=13'
-      typescript: '*'
+      typescript: ^5.5.0-beta
       vite: '>=2.0.0'
       vls: '*'
       vti: '*'
@@ -8860,7 +8864,7 @@ packages:
     resolution: {integrity: sha512-WesKCAZCRAbmmhuGl3+VrdWItEvfoFIPXOvUJkjULi+x+6G/Dy69yO3TBRJDr9eUlmsNAwVmxsNZxvHKzbkKdg==}
     hasBin: true
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.5.0-beta
 
   vue-waypoint@4.3.0:
     resolution: {integrity: sha512-hze6CUkb7x+xiHp+rNChHTQB+wYeQ8OM4MHnJe78JBY4luK9fkDp/iAN1+gS5LNYU7iNbwAIBE7yIokRdoFh+A==}
@@ -8870,7 +8874,7 @@ packages:
   vue@3.4.27:
     resolution: {integrity: sha512-8s/56uK6r01r1icG/aEOHqyMVxd1bkYcSe9j8HcKtr/xTOFWvnzIVTehNW+5Yt89f+DLBe4A569pnZLS5HzAMA==}
     peerDependencies:
-      typescript: '*'
+      typescript: ^5.5.0-beta
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -8882,7 +8886,7 @@ packages:
     resolution: {integrity: sha512-7RkL0kuLsVUbc0YCwhPhVq54gSFKt5xv+SOrF01dxwJz7Ke3tAbvO616WhhQIfS78h1q/Ev952WJj5jpsdK58g==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
-      typescript: '>=4.7'
+      typescript: ^5.5.0-beta
       vite-plugin-vuetify: '>=1.0.0'
       vue: ^3.3.0
       vue-i18n: ^9.0.0
@@ -10731,7 +10735,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lerna/create@8.1.3(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)':
+  '@lerna/create@8.1.3(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.5.0-dev.20240518)':
     dependencies:
       '@npmcli/run-script': 7.0.2
       '@nx/devkit': 19.0.4(nx@19.0.4(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7))
@@ -10744,7 +10748,7 @@ snapshots:
       columnify: 1.6.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.4.5)
+      cosmiconfig: 8.3.6(typescript@5.5.0-dev.20240518)
       dedent: 0.7.0
       execa: 5.0.0
       fs-extra: 11.2.0
@@ -13927,14 +13931,14 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig@8.3.6(typescript@5.4.5):
+  cosmiconfig@8.3.6(typescript@5.5.0-dev.20240518):
     dependencies:
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.4.5
+      typescript: 5.5.0-dev.20240518
 
   crc-32@1.2.2: {}
 
@@ -14119,7 +14123,7 @@ snapshots:
       ts-pattern: 5.1.1
       tslib: 2.6.2
       type-fest: 4.18.2
-      typescript: 5.4.5
+      typescript: 5.5.0-dev.20240518
       yaml: 2.4.1
       yargs: 17.7.2
 
@@ -16111,7 +16115,7 @@ snapshots:
 
   lerna@8.1.3(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7)(encoding@0.1.13):
     dependencies:
-      '@lerna/create': 8.1.3(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)
+      '@lerna/create': 8.1.3(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.5.0-dev.20240518)
       '@npmcli/run-script': 7.0.2
       '@nx/devkit': 19.0.4(nx@19.0.4(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.5.0-dev.20240518))(@swc/core@1.5.7))
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -16124,7 +16128,7 @@ snapshots:
       conventional-changelog-angular: 7.0.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.4.5)
+      cosmiconfig: 8.3.6(typescript@5.5.0-dev.20240518)
       dedent: 0.7.0
       envinfo: 7.8.1
       execa: 5.0.0
@@ -16176,7 +16180,7 @@ snapshots:
       strong-log-transformer: 2.1.0
       tar: 6.2.1
       temp-dir: 1.0.0
-      typescript: 5.4.5
+      typescript: 5.5.0-dev.20240518
       upath: 2.0.1
       uuid: 9.0.1
       validate-npm-package-license: 3.0.4
