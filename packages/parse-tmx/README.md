@@ -24,7 +24,7 @@ const translateFlips = true;
 
 const loadMap = async () => {
   const data = await parseTmx(tmxFile, translateFlips);
-  console.log(data);
+  ...
 };
 ```
 

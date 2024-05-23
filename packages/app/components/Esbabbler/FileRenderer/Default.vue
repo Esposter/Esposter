@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+import { getFilename } from "@/util/getFilename";
 
 const { url } = defineProps<FileRendererProps>();
 /**
@@ -7,7 +8,7 @@ const { url } = defineProps<FileRendererProps>();
  * the first decode is to unwrap the fact that we need to encode the path
  * the second decode is to decode the filename which is encoded to support utf8
  */
-const uniqueFilename = computed(() => decodeURIComponent(decodeURIComponent(url.substring(url.lastIndexOf("/") + 1))));
+const uniqueFilename = computed(() => decodeURIComponent(decodeURIComponent(getFilename(url))));
 const niceFilename = computed(() => uniqueFilename.value.substring(uniqueFilename.value.indexOf(":") + 1));
 </script>
 

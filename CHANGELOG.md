@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.1](https://github.com/Esposter/Esposter/compare/v1.9.0...v1.9.1) (2024-05-21)
+
+
+### Bug Fixes
+
+* modify script ([18b6a70](https://github.com/Esposter/Esposter/commit/18b6a70eb0c555cff8e09e22ee4fdab82f8b0495))
+* move runtime deps to root ([07eaa9f](https://github.com/Esposter/Esposter/commit/07eaa9f54f0dd1b625c6f6bdacaef2f290b9db5a))
+* use tsx back ([f5981df](https://github.com/Esposter/Esposter/commit/f5981df689fafc12411b94e99f9b27411ddd1389))
+
+
+### Features
+
+* Add ps script ([2661e25](https://github.com/Esposter/Esposter/commit/2661e25828f14571ad71a68fb98a6067bdce9fb9))
+
+
+
+
+
+
 # [1.9.0](https://github.com/Esposter/Esposter/compare/v1.7.1...v1.9.0) (2024-05-20)
 
 

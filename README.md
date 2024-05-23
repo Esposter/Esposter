@@ -182,7 +182,7 @@
 
 ## VSCode Extensions
 
-| Name                       | Url                                                                            |
+| Name                       | Link                                                                           |
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
@@ -201,19 +201,25 @@
 pnpm i
 ```
 
-2. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
+2. Change to the app directory:
 
-3. Add `.env` file according to `.env.example`
+```bash
+cd packages/app
+```
 
-## Development Server
+### Development Server
 
-Start the development server on <http://localhost:3000>
+1. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
+
+2. Add `.env` file according to `.env.example`
+
+3. Start the development server on <http://localhost:3000>
 
 ```bash
 pnpm dev
 ```
 
-## Production
+### Production
 
 Build the application for production:
 
@@ -236,8 +242,3 @@ Esposter is a lerna + pnpm workspaces monorepo.
 ### Packages
 
 Packages are used directly by the nuxt application via `workspace:*`.
-
-### Shared configuration files
-
-- eslint.config.js
-- tsconfig.json
