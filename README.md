@@ -201,19 +201,25 @@
 pnpm i
 ```
 
-2. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
+2. Change to the app directory:
 
-3. Add `.env` file according to `.env.example`
+```bash
+cd packages/app
+```
 
-## Development Server
+### Development Server
 
-Start the development server on <http://localhost:3000>
+1. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
+
+2. Add `.env` file according to `.env.example`
+
+3. Start the development server on <http://localhost:3000>
 
 ```bash
 pnpm dev
 ```
 
-## Production
+### Production
 
 Build the application for production:
 
