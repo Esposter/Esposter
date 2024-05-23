@@ -1,7 +1,7 @@
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { z } from "zod";
 
-type VuetifyComponentTypeMap = { [P in keyof VuetifyComponentMap]: P };
+export type VuetifyComponentTypeMap = { [P in keyof VuetifyComponentMap]: P };
 export const VuetifyComponentType = Object.keys(VuetifyComponentMap).reduce<Record<string, string>>((acc, curr) => {
   acc[curr] = curr;
   return acc;

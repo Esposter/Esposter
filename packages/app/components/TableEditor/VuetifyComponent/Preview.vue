@@ -11,9 +11,8 @@ const { editedItem } = storeToRefs(tableEditorStore);
   <v-col cols="12">Preview</v-col>
   <v-col cols="12">
     <div class="border-sm elevation--1" flex items-center w-full justify-center rd aspect-video>
-      <!-- @TODO: Remove this cast once vuetify/components import is fixed -->
       <component
-        :is="VuetifyComponentMap[editedItem.component as keyof typeof VuetifyComponentMap]"
+        :is="VuetifyComponentMap[editedItem.component]"
         v-if="editedItem"
         :="editedItem?.props"
       />
