@@ -242,8 +242,3 @@ Esposter is a lerna + pnpm workspaces monorepo.
 ### Packages
 
 Packages are used directly by the nuxt application via `workspace:*`.
-
-### Shared configuration files
-
-- eslint.config.js
-- tsconfig.json
