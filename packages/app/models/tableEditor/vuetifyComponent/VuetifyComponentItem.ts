@@ -5,7 +5,10 @@ import {
   VuetifyComponentItemType,
   vuetifyComponentItemTypeSchema,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-import { VuetifyComponentType, vuetifyComponentTypeSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import {
+  VuetifyComponentType,
+  vuetifyComponentTypeSchema,
+} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
@@ -16,4 +19,6 @@ export class VuetifyComponentItem extends ATableEditorItemEntity implements Item
 
 export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
-  .merge(z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.unknown()) })) satisfies z.ZodType<VuetifyComponentItem>;
+  .merge(
+    z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.unknown()) }),
+  ) satisfies z.ZodType<VuetifyComponentItem>;
