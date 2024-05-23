@@ -182,7 +182,7 @@
 
 ## VSCode Extensions
 
-| Name                       | Url                                                                            |
+| Name                       | Link                                                                           |
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
