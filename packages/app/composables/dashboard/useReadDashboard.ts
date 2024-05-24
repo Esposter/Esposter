@@ -6,6 +6,7 @@ import { jsonDateParse } from "@/util/time/jsonDateParse";
 export const useReadDashboard = async () => {
   const { $client } = useNuxtApp();
   const dashboardStore = useDashboardStore();
+  const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
 
   await useReadData(
@@ -18,4 +19,6 @@ export const useReadDashboard = async () => {
       dashboard.value = await $client.dashboard.readDashboard.query();
     },
   );
+
+  watch(dashboard, saveDashboard, { deep: true });
 };
