@@ -1,8 +1,6 @@
-import type { createTypedChart } from "vue-chartjs";
-
-type TypedChartComponent = ReturnType<typeof createTypedChart>;
+import type { VueApexChartsComponent } from "vue3-apexcharts";
 
 export interface DashboardVisualData {
-  data: InstanceType<TypedChartComponent>["data"];
-  options?: InstanceType<TypedChartComponent>["options"];
+  series: VueApexChartsComponent["series"];
+  options?: VueApexChartsComponent["options"];
 }

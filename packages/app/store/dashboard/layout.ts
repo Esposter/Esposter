@@ -10,7 +10,7 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
       dashboard.value.visuals = newVisuals;
     },
   });
-  const selectedVisualType = ref(DashboardVisualType.Bar);
+  const selectedVisualType = ref(DashboardVisualType.Area);
   const pushVisual = () => {
     visuals.value.push({
       type: selectedVisualType.value,

@@ -9,7 +9,6 @@ export const security: NuxtConfig["security"] = {
         "blob:",
         "*.googleusercontent.com",
         "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
-        "https://quickchart.io/chart",
         process.env.AZURE_BLOB_URL,
       ],
       "script-src-attr": ["'unsafe-inline'"],
