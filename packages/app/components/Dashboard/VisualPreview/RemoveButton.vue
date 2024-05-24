@@ -11,5 +11,5 @@ const { removeDashboardVisual } = layoutStore;
 </script>
 
 <template>
-  <v-btn absolute="!" top-0 right-2 icon="mdi-close" @click="removeDashboardVisual(id)" />
+  <v-btn absolute="!" top-0 right-0 icon="mdi-close" size="small" @click="removeDashboardVisual(id)" />
 </template>

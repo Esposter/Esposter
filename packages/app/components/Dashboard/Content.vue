@@ -12,7 +12,7 @@ const { background, border, surface } = useColors();
     <GridLayout
       v-model:layout="layout"
       :col-num="noColumns"
-      :row-height="30"
+      :row-height="40"
       is-draggable
       is-resizable
       vertical-compact
