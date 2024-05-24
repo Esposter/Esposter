@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
-import { useGameStore } from "@/store/clicker/game";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 const { $client } = useNuxtApp();
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
 const { initializeUpgradeMap } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum DashboardVisualType {
   Bar = "Bar",
   Bubble = "Bubble",
@@ -8,3 +10,5 @@ export enum DashboardVisualType {
   Radar = "Radar",
   Scatter = "Scatter",
 }
+
+export const dashboardVisualTypeSchema = z.nativeEnum(DashboardVisualType) satisfies z.ZodType<DashboardVisualType>;

@@ -7,9 +7,9 @@ interface RemoveButtonProps {
 
 const { id } = defineProps<RemoveButtonProps>();
 const layoutStore = useLayoutStore();
-const { removeDashboardVisual } = layoutStore;
+const { removeVisual } = layoutStore;
 </script>
 
 <template>
-  <v-btn absolute="!" top-0 right-0 icon="mdi-close" size="small" @click="removeDashboardVisual(id)" />
+  <v-btn absolute="!" top-0 right-0 icon="mdi-close" size="small" @click="removeVisual(id)" />
 </template>

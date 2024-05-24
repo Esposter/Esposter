@@ -3,8 +3,8 @@ import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
 import { useLayoutStore } from "@/store/dashboard/layout";
 
 const layoutStore = useLayoutStore();
-const { pushDashboardVisual } = layoutStore;
-const { selectedDashboardVisualType } = storeToRefs(layoutStore);
+const { pushVisual } = layoutStore;
+const { selectedVisualType } = storeToRefs(layoutStore);
 </script>
 
 <template>
@@ -14,14 +14,14 @@ const { selectedDashboardVisualType } = storeToRefs(layoutStore);
         Dashboard Layout Editor
         <div w-full flex items-center pl-4 mr-2>
           <v-select
-            v-model="selectedDashboardVisualType"
+            v-model="selectedVisualType"
             :items="Object.values(DashboardVisualType)"
             label="Visual Type"
             hide-details
           />
-          <v-tooltip :text="`Add ${selectedDashboardVisualType} Visual`">
+          <v-tooltip :text="`Add ${selectedVisualType} Visual`">
             <template #activator="{ props }">
-              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushDashboardVisual">
+              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushVisual">
                 <v-icon icon="mdi-plus" />
               </v-btn>
             </template>

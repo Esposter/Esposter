@@ -1,6 +1,6 @@
 import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 import { omitDeep } from "@/util/object/omitDeep";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
@@ -8,9 +8,9 @@ import deepEqual from "deep-equal";
 
 export const useReadClickerGame = async () => {
   const { $client } = useNuxtApp();
-  const gameStore = useGameStore();
-  const { saveGame } = gameStore;
-  const { game } = storeToRefs(gameStore);
+  const clickerStore = useClickerStore();
+  const { saveGame } = clickerStore;
+  const { game } = storeToRefs(clickerStore);
   // This is used for tracking when we should save the game
   // i.e. every time the user manually updates the game state
   // which is everything excluding automatic updates like noPoints

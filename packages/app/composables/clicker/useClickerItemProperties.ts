@@ -2,11 +2,11 @@ import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperti
 import { IconComponentMap } from "@/services/clicker/properties/IconComponentMap";
 import { NameMap } from "@/services/clicker/properties/NameMap";
 import { PluralNameMap } from "@/services/clicker/properties/PluralNameMap";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 
 export const useClickerItemProperties = () => {
-  const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
+  const clickerStore = useClickerStore();
+  const { game } = storeToRefs(clickerStore);
   const clickerItemColor = useClickerItemColor();
   const clickerItemProperties = computed<ClickerItemProperties>(() => ({
     name: NameMap[game.value.type],

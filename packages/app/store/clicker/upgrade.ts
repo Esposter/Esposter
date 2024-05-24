@@ -1,14 +1,14 @@
 import type { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
 import { Target } from "@/models/clicker/data/Target";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
-  const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
+  const clickerStore = useClickerStore();
+  const { game } = storeToRefs(clickerStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();

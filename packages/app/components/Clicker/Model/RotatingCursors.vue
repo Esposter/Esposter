@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Target } from "@/models/clicker/data/Target";
 import { dayjs } from "@/services/dayjs";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 import { filename } from "pathe/utils";
 
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const amount = computed(() => {
   const cursorBuilding = game.value.boughtBuildings.find((b) => b.id === Target.Cursor);
   return cursorBuilding?.amount ?? 0;

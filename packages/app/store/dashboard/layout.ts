@@ -1,25 +1,32 @@
-import type { DashboardVisual } from "@/models/dashboard/DashboardVisual";
 import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
+import { useDashboardStore } from "@/store/dashboard";
 
 export const useLayoutStore = defineStore("dashboard/layout", () => {
-  const layout = ref<DashboardVisual[]>([]);
-  const selectedDashboardVisualType = ref(DashboardVisualType.Bar);
-  const pushDashboardVisual = () => {
-    layout.value.push({
-      type: selectedDashboardVisualType.value,
-      x: (layout.value.length * 2) % noColumns.value,
+  const dashboardStore = useDashboardStore();
+  const { dashboard } = storeToRefs(dashboardStore);
+  const visuals = computed({
+    get: () => dashboard.value.visuals,
+    set: (newVisuals) => {
+      dashboard.value.visuals = newVisuals;
+    },
+  });
+  const selectedVisualType = ref(DashboardVisualType.Bar);
+  const pushVisual = () => {
+    visuals.value.push({
+      type: selectedVisualType.value,
+      x: (visuals.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
-      y: layout.value.length + noColumns.value,
+      y: visuals.value.length + noColumns.value,
       w: 4,
       h: 4,
       i: crypto.randomUUID(),
     });
   };
-  const removeDashboardVisual = (id: string) => {
-    const index = layout.value.findIndex(({ i }) => i === id);
+  const removeVisual = (id: string) => {
+    const index = visuals.value.findIndex(({ i }) => i === id);
     if (index === -1) return;
-    layout.value.splice(index, 1);
+    visuals.value.splice(index, 1);
   };
   const noColumns = ref(12);
-  return { layout, selectedDashboardVisualType, pushDashboardVisual, removeDashboardVisual, noColumns };
+  return { visuals, selectedVisualType, pushVisual, removeVisual, noColumns };
 });

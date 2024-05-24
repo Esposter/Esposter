@@ -4,14 +4,14 @@ import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingW
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { getInitials } from "@/util/text/getInitials";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
-  const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
+  const clickerStore = useClickerStore();
+  const { game } = storeToRefs(clickerStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const clickerItemProperties = useClickerItemProperties();

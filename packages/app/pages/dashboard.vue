@@ -1,3 +1,7 @@
+<script setup lang="ts">
+await useReadDashboard();
+</script>
+
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
