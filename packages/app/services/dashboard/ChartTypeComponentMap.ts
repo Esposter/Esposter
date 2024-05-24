@@ -1,4 +1,4 @@
-import { ChartType } from "@/services/dashboard/ChartType";
+import { ChartType } from "@/models/dashboard/ChartType";
 
 export const ChartTypeComponentMap = {
   [ChartType.Bar]: (await import("vue-chartjs")).Bar,

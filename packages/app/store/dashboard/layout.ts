@@ -1,15 +1,12 @@
-import type { Layout, LayoutItem } from "grid-layout-plus";
-import type { Except } from "type-fest";
-
-const baseLayout: Except<LayoutItem, "i">[] = [
-  { x: 0, y: 0, w: 2, h: 2 },
-  { x: 2, y: 0, w: 2, h: 4 },
-];
+import { ChartType } from "@/models/dashboard/ChartType";
+import type { DashboardVisual } from "@/models/dashboard/DashboardVisual";
 
 export const useLayoutStore = defineStore("dashboard/layout", () => {
-  const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID() })));
+  const layout = ref<DashboardVisual[]>([]);
+  const selectedChartType = ref(ChartType.Bar);
   const pushDashboardVisual = () => {
     layout.value.push({
+      type: selectedChartType.value,
       x: (layout.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
       y: layout.value.length + noColumns.value,
@@ -24,5 +21,5 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
     layout.value.splice(index, 1);
   };
   const noColumns = ref(12);
-  return { layout, pushDashboardVisual, removeDashboardVisual, noColumns };
+  return { layout, selectedChartType, pushDashboardVisual, removeDashboardVisual, noColumns };
 });
