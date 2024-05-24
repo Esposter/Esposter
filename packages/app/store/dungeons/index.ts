@@ -9,7 +9,7 @@ import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
 import { Cameras } from "phaser";
 
-export const useGameStore = defineStore("dungeons/game", () => {
+export const useDungeonsStore = defineStore("dungeons", () => {
   const { $client } = useNuxtApp();
   const { status } = useAuth();
   const phaserStore = usePhaserStore();
