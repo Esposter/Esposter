@@ -3,14 +3,14 @@ import { useLayoutStore } from "@/store/dashboard/layout";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const layoutStore = useLayoutStore();
-const { layout, noColumns } = storeToRefs(layoutStore);
+const { visuals, noColumns } = storeToRefs(layoutStore);
 const { background, border, surface } = useColors();
 </script>
 
 <template>
   <v-container flex-1 fluid>
     <GridLayout
-      v-model:layout="layout"
+      v-model:layout="visuals"
       :col-num="noColumns"
       :row-height="40"
       is-draggable
@@ -18,7 +18,7 @@ const { background, border, surface } = useColors();
       vertical-compact
       use-css-transforms
     >
-      <GridItem v-for="{ type, i, x, y, w, h } in layout" :key="i" content-center text-center :x :y :w :h :i>
+      <GridItem v-for="{ type, i, x, y, w, h } in visuals" :key="i" content-center text-center :x :y :w :h :i>
         <DashboardVisualPreview :type />
         <DashboardVisualPreviewRemoveButton :id="i" />
       </GridItem>
