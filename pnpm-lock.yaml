@@ -162,6 +162,9 @@ importers:
       grid-engine:
         specifier: ^2.45.0
         version: 2.45.0(phaser@3.80.1)
+      grid-layout-plus:
+        specifier: ^1.0.5
+        version: 1.0.5(vue@3.4.27(typescript@5.4.5))
       gsap:
         specifier: ^3.12.5
         version: 3.12.5
@@ -1679,6 +1682,15 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
+  '@floating-ui/core@1.6.2':
+    resolution: {integrity: sha512-+2XpQV9LLZeanU4ZevzRnGFg2neDeKHgFLjP6YLW+tly0IvrhqT4u8enLGjLH3qeh85g19xY5rsAusfwTdn5lg==}
+
+  '@floating-ui/dom@1.6.5':
+    resolution: {integrity: sha512-Nsdud2X65Dz+1RHjAIP0t8z5e2ff/IRbei6BqFrl1urT8sDVzM1HMQ+R0XcU5ceRfyO3I6ayeqIfh+6Wb8LGTw==}
+
+  '@floating-ui/utils@0.2.2':
+    resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
+
   '@fullcalendar/core@6.1.13':
     resolution: {integrity: sha512-Cps/hMQan4kwnsBhFf2+m2mijbGoWs6r18ZzxBnAAOkkNHtPmHU8EdR6lF+ZLsiVvb7nsC4H/ZKqnxXWwgpoPw==}
 
@@ -1729,6 +1741,9 @@ packages:
   '@iconify/utils@2.1.23':
     resolution: {integrity: sha512-YGNbHKM5tyDvdWZ92y2mIkrfvm5Fvhe6WJSkWu7vvOFhMtYDP0casZpoRz0XEHZCrYsR4stdGT3cZ52yp5qZdQ==}
 
+  '@interactjs/types@1.10.27':
+    resolution: {integrity: sha512-BUdv0cvs4H5ODuwft2Xp4eL8Vmi3LcihK42z0Ft/FbVJZoRioBsxH+LlsBdK4tAie7PqlKGy+1oyOncu1nQ6eA==}
+
   '@ioredis/commands@1.2.0':
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
 
@@ -1767,6 +1782,9 @@ packages:
 
   '@jsdevtools/ono@7.1.3':
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
+
+  '@juggle/resize-observer@3.4.0':
+    resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -3269,6 +3287,17 @@ packages:
     resolution: {integrity: sha512-j4jCOOXke2t8cHZCIxu1dzKLHLcFmYzC3yqAK6MfZznOL1QIJKd0xcFsXK3zcqzU7ScsE2zWkiMMNHGMHgp+FA==}
     engines: {node: '>=16'}
     hasBin: true
+
+  '@vexip-ui/hooks@2.5.0':
+    resolution: {integrity: sha512-T3ikfvkXkm6Et6tnh872GcdMpdEMKgZ9m4sggrddVwW1AvzZTGCY00pW5J64VfAW2Ite8AnSunCrqO1OpiempA==}
+    peerDependencies:
+      vue: ^3.2.25
+
+  '@vexip-ui/utils@2.15.0':
+    resolution: {integrity: sha512-8YPWShNmlAs9PAhKfUbixinpYR37WfwarJyZFS2h+zTSRqGIEmIBCikrdnA3m0Oh8U4r5G0D6v5P26mXlZnIbw==}
+
+  '@vexip-ui/utils@2.16.0':
+    resolution: {integrity: sha512-AMiMs9fF8C2Ya3mvoV/W5isaNg/qjTH1zQ8aDsn1VZ5v5Hcf7Nw1D7WjXAhm20dJ23GbSbLaAwUA9wCncRCPRw==}
 
   '@vite-pwa/nuxt@0.7.0':
     resolution: {integrity: sha512-s4bNChQSlhIIRDZApxWaA4p10UnBDm+DP/mnNgncRaZeWxAg3wpikR8PY/c0ZwJ5H2GBS+k7CVUlKryZZ44DGg==}
@@ -5424,6 +5453,11 @@ packages:
     peerDependencies:
       phaser: ~3.80.1
 
+  grid-layout-plus@1.0.5:
+    resolution: {integrity: sha512-5EUNN4soj4k/yiFw3Y6u9PLRyOrDu/uBUaVLZ9MsoPWicSLRIin+EBnF8SUKnA9mjIhrDdYRG7sJSbdaXCHdPg==}
+    peerDependencies:
+      vue: ^3.0.0
+
   gsap@3.12.5:
     resolution: {integrity: sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==}
 
@@ -5687,6 +5721,9 @@ packages:
   inquirer@8.2.6:
     resolution: {integrity: sha512-M1WuAmb7pn9zdFRtQYk26ZBoY043Sse0wVDdk4Bppr+JOXyQYybdtvK+l9wUibhtjdjvtoiNy8tk+EgsYIUqKg==}
     engines: {node: '>=12.0.0'}
+
+  interactjs@1.10.27:
+    resolution: {integrity: sha512-y/8RcCftGAF24gSp76X2JS3XpHiUvDQyhF8i7ujemBz77hwiHDuJzftHx7thY8cxGogwGiPJ+o97kWB6eAXnsA==}
 
   internal-slot@1.0.7:
     resolution: {integrity: sha512-NGnrKwXzSms2qUUih/ILZ5JBqNTSa1+ZmP6flaIp6KmSElgE9qdndzS3cqjrDovwFdmwsGsLdeFgB6suw+1e9g==}
@@ -10709,6 +10746,17 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
+  '@floating-ui/core@1.6.2':
+    dependencies:
+      '@floating-ui/utils': 0.2.2
+
+  '@floating-ui/dom@1.6.5':
+    dependencies:
+      '@floating-ui/core': 1.6.2
+      '@floating-ui/utils': 0.2.2
+
+  '@floating-ui/utils@0.2.2': {}
+
   '@fullcalendar/core@6.1.13':
     dependencies:
       preact: 10.12.1
@@ -10773,6 +10821,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@interactjs/types@1.10.27': {}
+
   '@ioredis/commands@1.2.0': {}
 
   '@isaacs/cliui@8.0.2':
@@ -10813,6 +10863,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.4.15
 
   '@jsdevtools/ono@7.1.3': {}
+
+  '@juggle/resize-observer@3.4.0': {}
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -12893,6 +12945,17 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  '@vexip-ui/hooks@2.5.0(vue@3.4.27(typescript@5.4.5))':
+    dependencies:
+      '@floating-ui/dom': 1.6.5
+      '@juggle/resize-observer': 3.4.0
+      '@vexip-ui/utils': 2.15.0
+      vue: 3.4.27(typescript@5.4.5)
+
+  '@vexip-ui/utils@2.15.0': {}
+
+  '@vexip-ui/utils@2.16.0': {}
 
   '@vite-pwa/nuxt@0.7.0(rollup@4.18.0)(vite@5.2.11(@types/node@20.12.12)(sass@1.77.2)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)':
     dependencies:
@@ -15558,6 +15621,13 @@ snapshots:
       rxjs: 7.8.1
       tiled-property-flattener: 1.1.1
 
+  grid-layout-plus@1.0.5(vue@3.4.27(typescript@5.4.5)):
+    dependencies:
+      '@vexip-ui/hooks': 2.5.0(vue@3.4.27(typescript@5.4.5))
+      '@vexip-ui/utils': 2.16.0
+      interactjs: 1.10.27
+      vue: 3.4.27(typescript@5.4.5)
+
   gsap@3.12.5: {}
 
   gzip-size@6.0.0:
@@ -15853,6 +15923,10 @@ snapshots:
       strip-ansi: 6.0.1
       through: 2.3.8
       wrap-ansi: 6.2.0
+
+  interactjs@1.10.27:
+    dependencies:
+      '@interactjs/types': 1.10.27
 
   internal-slot@1.0.7:
     dependencies:

@@ -1,39 +1,10 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
-import type { ListItem } from "@/models/shared/ListItem";
-
-const items: ListItem[] = [
-  {
-    title: "Esbabbler",
-    href: RoutePath.MessagesIndex,
-    icon: "mdi-message-fast",
-  },
-  {
-    title: "Clicker",
-    href: RoutePath.Clicker,
-    icon: "mdi-cursor-pointer",
-  },
-  {
-    title: "Table Editor",
-    href: RoutePath.TableEditor,
-    icon: "mdi-table-edit",
-  },
-  {
-    title: "Surveyer",
-    href: RoutePath.Surveyer,
-    icon: "mdi-text-box-edit",
-  },
-  {
-    title: "Dungeons",
-    href: RoutePath.Dungeons,
-    icon: "custom:dungeon-gate",
-  },
-];
+import { productListItems } from "@/services/esposter/productListItems";
 </script>
 
 <template>
   <v-list>
-    <NuxtInvisibleLink v-for="item in items" :key="item.title" :to="item.href">
+    <NuxtInvisibleLink v-for="item in productListItems" :key="item.title" :to="item.href">
       <v-list-item :value="item.title">
         <template #prepend>
           <v-avatar color="background">

@@ -2,6 +2,7 @@ export const RoutePath = {
   About: "/about",
   Calendar: "/calendar",
   Clicker: "/clicker",
+  Dashboard: "/dashboard",
   Dungeons: "/dungeons",
   Github: "https://github.com/Esposter/Esposter",
   Index: "/",
