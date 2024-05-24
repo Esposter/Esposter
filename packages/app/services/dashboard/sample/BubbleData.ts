@@ -8,10 +8,10 @@ export const BubbleData = {
       label: "My First Dataset",
       backgroundColor: "rgb(255, 99, 132)",
       borderColor: "rgb(255, 99, 132)",
-      data: Array(7).map(() => ({
+      data: Array.from({ length: 7 }, () => ({
         x: generateRandomNumber(100),
         y: generateRandomNumber(100),
-        v: Math.round(Math.random() * 30) + 10,
+        r: Math.round(Math.random() * 30) + 10,
       })),
     },
     {
@@ -19,10 +19,10 @@ export const BubbleData = {
       backgroundColor: "rgb(54, 162, 235)",
       borderColor: "rgb(54, 162, 235)",
       borderWidth: 3,
-      data: Array(7).map(() => ({
+      data: Array.from({ length: 7 }, () => ({
         x: generateRandomNumber(100),
         y: generateRandomNumber(100),
-        v: Math.round(Math.random() * 30) + 10,
+        r: Math.round(Math.random() * 30) + 10,
       })),
     },
   ],
