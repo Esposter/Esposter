@@ -1,4 +1,4 @@
-export enum ChartType {
+export enum DashboardVisualType {
   Bar = "Bar",
   Bubble = "Bubble",
   Doughnut = "Doughnut",

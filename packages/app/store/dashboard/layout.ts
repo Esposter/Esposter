@@ -1,12 +1,12 @@
-import { ChartType } from "@/models/dashboard/ChartType";
 import type { DashboardVisual } from "@/models/dashboard/DashboardVisual";
+import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
 
 export const useLayoutStore = defineStore("dashboard/layout", () => {
   const layout = ref<DashboardVisual[]>([]);
-  const selectedChartType = ref(ChartType.Bar);
+  const selectedDashboardVisualType = ref(DashboardVisualType.Bar);
   const pushDashboardVisual = () => {
     layout.value.push({
-      type: selectedChartType.value,
+      type: selectedDashboardVisualType.value,
       x: (layout.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
       y: layout.value.length + noColumns.value,
@@ -21,5 +21,5 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
     layout.value.splice(index, 1);
   };
   const noColumns = ref(12);
-  return { layout, selectedChartType, pushDashboardVisual, removeDashboardVisual, noColumns };
+  return { layout, selectedDashboardVisualType, pushDashboardVisual, removeDashboardVisual, noColumns };
 });

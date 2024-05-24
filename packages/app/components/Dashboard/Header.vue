@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ChartType } from "@/models/dashboard/ChartType";
+import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
 import { useLayoutStore } from "@/store/dashboard/layout";
 
 const layoutStore = useLayoutStore();
-const { selectedChartType, pushDashboardVisual } = layoutStore;
+const { pushDashboardVisual } = layoutStore;
+const { selectedDashboardVisualType } = storeToRefs(layoutStore);
 </script>
 
 <template>
@@ -13,12 +14,12 @@ const { selectedChartType, pushDashboardVisual } = layoutStore;
         Dashboard Layout Editor
         <div w-full flex items-center pl-4 mr-2>
           <v-select
-            v-model="selectedChartType"
-            :items="Object.values(ChartType)"
-            :label="`${selectedChartType} Visual`"
+            v-model="selectedDashboardVisualType"
+            :items="Object.values(DashboardVisualType)"
+            label="Visual Type"
             hide-details
           />
-          <v-tooltip :text="`Add ${selectedChartType} Visual`">
+          <v-tooltip :text="`Add ${selectedDashboardVisualType} Visual`">
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushDashboardVisual">
                 <v-icon icon="mdi-plus" />
