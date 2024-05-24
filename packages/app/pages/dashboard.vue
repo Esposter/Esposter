@@ -14,7 +14,7 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
-      <StyledCard size-full>
+      <StyledCard flex="!" flex-col size-full>
         <v-toolbar>
           <v-toolbar-title font-bold="!">
             <div pt-4 flex items-center justify-between>
@@ -28,7 +28,7 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
             </div>
           </v-toolbar-title>
         </v-toolbar>
-        <v-container flex h-full fluid>
+        <v-container flex-1 fluid>
           <GridLayout
             v-model:layout="layout"
             :col-num="12"
@@ -54,6 +54,7 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
 }
 
 :deep(.vgl-layout) {
+  width: 100%;
   height: 100% !important;
   background-color: v-bind(background);
 }
