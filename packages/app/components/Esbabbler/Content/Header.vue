@@ -6,7 +6,7 @@ const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layo
 </script>
 
 <template>
-  <v-toolbar color="surface" density="comfortable" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
+  <v-toolbar density="comfortable" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
     <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
     <EsbabblerModelRoomTitle />
     <template #append>

@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar pt-4 pr-4 color="surface">
+  <v-toolbar pt-4 pr-4>
     <v-toolbar-title>
       <div pt-4 flex items-center>
         <SurveyerSearchBar />

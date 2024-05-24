@@ -12,7 +12,7 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
 </script>
 
 <template>
-  <v-toolbar pt-4 pr-4 color="surface">
+  <v-toolbar pt-4 pr-4>
     <v-toolbar-title>
       <TableEditorTypeSelect />
       <div pt-4 flex items-center>
