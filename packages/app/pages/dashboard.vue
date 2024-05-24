@@ -17,12 +17,14 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
       <StyledCard size-full>
         <v-toolbar>
           <v-toolbar-title font-bold="!">
-            Dashboard Layout Editor
-            <div flex items-center pr-2>
-              <v-select label="Dashboard Visual" hide-details />
-              <v-btn ml-2 variant="elevated" :flat="false">
-                <v-icon icon="mdi-plus" />
-              </v-btn>
+            <div pt-4 flex items-center justify-between>
+              Dashboard Layout Editor
+              <div w-full flex items-center pl-4 mr-2>
+                <v-select label="Dashboard Visual" hide-details />
+                <v-btn ml-2 variant="elevated" :flat="false">
+                  <v-icon icon="mdi-plus" />
+                </v-btn>
+              </div>
             </div>
           </v-toolbar-title>
         </v-toolbar>
@@ -47,6 +49,10 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
 </template>
 
 <style scoped lang="scss">
+:deep(.v-toolbar__content) {
+  height: auto !important;
+}
+
 :deep(.vgl-layout) {
   height: 100% !important;
   background-color: v-bind(background);
