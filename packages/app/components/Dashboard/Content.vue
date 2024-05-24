@@ -18,18 +18,9 @@ const { background, border, surface } = useColors();
       vertical-compact
       use-css-transforms
     >
-      <GridItem
-        v-for="{ type, i, x, y, w, h } in layout"
-        :key="i"
-        content-center
-        text-center
-        :x="x"
-        :y="y"
-        :w="w"
-        :h="h"
-        :i="i"
-      >
+      <GridItem v-for="{ type, i, x, y, w, h } in layout" :key="i" content-center text-center :x :y :w :h :i>
         <DashboardVisualPreview :type />
+        <DashboardVisualPreviewRemoveButton :id="i" />
       </GridItem>
     </GridLayout>
   </v-container>
