@@ -8,7 +8,24 @@ const baseLayout: Except<LayoutItem, "i">[] = [
   { x: 0, y: 0, w: 2, h: 2 },
   { x: 2, y: 0, w: 2, h: 4 },
 ];
+const noColumns = ref(12);
 const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID() })));
+const addItem = () => {
+  layout.value.push({
+    x: (layout.value.length * 2) % noColumns.value,
+    // Puts the item at the bottom
+    y: layout.value.length + noColumns.value,
+    w: 2,
+    h: 2,
+    i: crypto.randomUUID(),
+  });
+};
+
+const removeItem = (id: string) => {
+  const index = layout.value.findIndex(({ i }) => i === id);
+  if (index === -1) return;
+  layout.value.splice(index, 1);
+};
 </script>
 
 <template>
@@ -21,7 +38,7 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
               Dashboard Layout Editor
               <div w-full flex items-center pl-4 mr-2>
                 <v-select label="Dashboard Visual" hide-details />
-                <v-btn ml-2 variant="elevated" :flat="false">
+                <v-btn ml-2 variant="elevated" :flat="false" @click="addItem">
                   <v-icon icon="mdi-plus" />
                 </v-btn>
               </div>
@@ -31,14 +48,24 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
         <v-container flex-1 fluid>
           <GridLayout
             v-model:layout="layout"
-            :col-num="12"
+            :col-num="noColumns"
             :row-height="30"
             is-draggable
             is-resizable
             vertical-compact
             use-css-transforms
           >
-            <GridItem v-for="{ i, x, y, w, h } in layout" :key="i" :x="x" :y="y" :w="w" :h="h" :i="i">
+            <GridItem
+              v-for="{ i, x, y, w, h } in layout"
+              :key="i"
+              content-center
+              text-center
+              :x="x"
+              :y="y"
+              :w="w"
+              :h="h"
+              :i="i"
+            >
               {{ i }}
             </GridItem>
           </GridLayout>
@@ -55,8 +82,9 @@ const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID()
 
 :deep(.vgl-layout) {
   width: 100%;
-  height: 100% !important;
+  min-height: 100%;
   background-color: v-bind(background);
+  border-radius: $border-radius-root;
 }
 
 :deep(.vgl-item:not(.vgl-item--placeholder)) {
