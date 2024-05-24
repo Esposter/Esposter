@@ -14,10 +14,14 @@ export const useReadClickerGame = async () => {
   // This is used for tracking when we should save the game
   // i.e. every time the user manually updates the game state
   // which is everything excluding automatic updates like noPoints
-  const gameTracker = computed<RecursiveDeepOmit<Game, ["noPoints", "producedValue"]>>((oldGameTracker) => {
-    const newGameTracker = omitDeep(game.value, "noPoints", "producedValue");
-    return oldGameTracker && deepEqual(newGameTracker, oldGameTracker) ? oldGameTracker : newGameTracker;
-  });
+  const gameChangedTracker = computed<RecursiveDeepOmit<Game, ["noPoints", "producedValue"]>>(
+    (oldGameChangedTracker) => {
+      const newGameChangedTracker = omitDeep(game.value, "noPoints", "producedValue");
+      return oldGameChangedTracker && deepEqual(newGameChangedTracker, oldGameChangedTracker)
+        ? oldGameChangedTracker
+        : newGameChangedTracker;
+    },
+  );
 
   await useReadData(
     () => {
@@ -30,5 +34,5 @@ export const useReadClickerGame = async () => {
     },
   );
 
-  watch(gameTracker, saveGame, { deep: true });
+  watch(gameChangedTracker, saveGame, { deep: true });
 };
