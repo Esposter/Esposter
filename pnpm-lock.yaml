@@ -210,6 +210,9 @@ importers:
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
+      quickchart-js:
+        specifier: ^3.1.3
+        version: 3.1.3(encoding@0.1.13)
       rate-limiter-flexible:
         specifier: ^5.0.3
         version: 5.0.3
@@ -6035,6 +6038,9 @@ packages:
   javascript-natural-sort@0.7.1:
     resolution: {integrity: sha512-nO6jcEfZWQXDhOiBtG2KvKyEptz7RVbpGP4vTD2hLBdmNQSsCiicO2Ioinv6UI4y9ukqnBpy+XZ9H6uLNgJTlw==}
 
+  javascript-stringify@2.1.0:
+    resolution: {integrity: sha512-JVAfqNPTvNq3sB/VHQJAFxN/sPgKnsKrCwyRt15zwNCdrMMJDdcEOdubuy+DuJYYdm0ox1J4uzEuYKkN+9yhVg==}
+
   jest-diff@29.7.0:
     resolution: {integrity: sha512-LMIgiIrhigmPrs03JHpxUh2yISK3vLFPkAodPeo0+BuF7wA2FoQbkEg1u8gBYBThncu7e1oEDUfIXVuTqLRUjw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -7553,6 +7559,9 @@ packages:
   quick-lru@4.0.1:
     resolution: {integrity: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==}
     engines: {node: '>=8'}
+
+  quickchart-js@3.1.3:
+    resolution: {integrity: sha512-QzPUXBA/UntYBbOMITtMz7B426fes1XFmmjmjA070jXeMWhyhDojJf2aSZPsekj35ywfJhWjY6TKf3S0/XxyAg==}
 
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
@@ -16215,6 +16224,8 @@ snapshots:
 
   javascript-natural-sort@0.7.1: {}
 
+  javascript-stringify@2.1.0: {}
+
   jest-diff@29.7.0:
     dependencies:
       chalk: 4.1.2
@@ -18147,6 +18158,13 @@ snapshots:
   queue-tick@1.0.1: {}
 
   quick-lru@4.0.1: {}
+
+  quickchart-js@3.1.3(encoding@0.1.13):
+    dependencies:
+      cross-fetch: 3.1.8(encoding@0.1.13)
+      javascript-stringify: 2.1.0
+    transitivePeerDependencies:
+      - encoding
 
   radix3@1.1.2: {}
 

@@ -19,7 +19,7 @@ const { background, border, surface } = useColors();
       use-css-transforms
     >
       <GridItem
-        v-for="{ i, x, y, w, h } in layout"
+        v-for="{ type, i, x, y, w, h } in layout"
         :key="i"
         content-center
         text-center
@@ -29,7 +29,7 @@ const { background, border, surface } = useColors();
         :h="h"
         :i="i"
       >
-        {{ i }}
+        <DashboardVisualPreview :type />
       </GridItem>
     </GridLayout>
   </v-container>
