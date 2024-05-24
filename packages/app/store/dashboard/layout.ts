@@ -6,7 +6,7 @@ const baseLayout: Except<LayoutItem, "i">[] = [
   { x: 2, y: 0, w: 2, h: 4 },
 ];
 
-export const useLayoutStore = defineStore("layout", () => {
+export const useLayoutStore = defineStore("dashboard/layout", () => {
   const layout = ref<Layout>(baseLayout.map((l) => ({ ...l, i: crypto.randomUUID() })));
   const pushDashboardVisual = () => {
     layout.value.push({
