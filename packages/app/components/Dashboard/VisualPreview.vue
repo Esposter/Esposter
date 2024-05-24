@@ -18,6 +18,7 @@ watch(
     quickChart.setConfig({ type: uncapitalize(newType), ...SampleVisualDataMap[newType] });
     src.value = quickChart.getUrl();
   },
+  { immediate: true },
 );
 </script>
 

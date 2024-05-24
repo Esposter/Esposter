@@ -10,8 +10,8 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
       x: (layout.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
       y: layout.value.length + noColumns.value,
-      w: 2,
-      h: 2,
+      w: 4,
+      h: 4,
       i: crypto.randomUUID(),
     });
   };
