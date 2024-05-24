@@ -14,7 +14,7 @@ export const productListItems: ListItem[] = [
   },
   {
     title: "Dashboard",
-    href: RoutePath.TableEditor,
+    href: RoutePath.Dashboard,
     icon: "mdi-view-dashboard-edit",
   },
   {
