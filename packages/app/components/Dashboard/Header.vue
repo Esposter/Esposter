@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
+import { RoutePath } from "@/models/router/RoutePath";
 import { useLayoutStore } from "@/store/dashboard/layout";
 
 const layoutStore = useLayoutStore();
@@ -11,7 +12,7 @@ const { selectedVisualType } = storeToRefs(layoutStore);
   <v-toolbar>
     <v-toolbar-title font-bold="!">
       <div pt-4 flex items-center justify-between>
-        Dashboard Layout Editor
+        Dashboard Editor
         <div w-full flex items-center pl-4 mr-2>
           <v-select
             v-model="selectedVisualType"
@@ -23,6 +24,13 @@ const { selectedVisualType } = storeToRefs(layoutStore);
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushVisual">
                 <v-icon icon="mdi-plus" />
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-tooltip text="Dashboard">
+            <template #activator="{ props }">
+              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="navigateTo(RoutePath.Dashboard)">
+                <v-icon icon="mdi-view-dashboard" />
               </v-btn>
             </template>
           </v-tooltip>

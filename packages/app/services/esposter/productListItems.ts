@@ -13,8 +13,8 @@ export const productListItems: ListItem[] = [
     icon: "mdi-table-edit",
   },
   {
-    title: "Dashboard",
-    href: RoutePath.Dashboard,
+    title: "Dashboard Editor",
+    href: RoutePath.DashboardEditor,
     icon: "mdi-view-dashboard-edit",
   },
   {
