@@ -17,13 +17,18 @@ const visualRows = computed(() => {
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
-      <v-row v-for="(visualRow, index) in visualRows" :key="index">
+      <v-row v-for="(visualRow, rowIndex) in visualRows" :key="rowIndex">
         <v-col
-          v-for="{ type, w, h, i } in visualRow"
+          v-for="({ type, w, h, i }, columnIndex) in visualRow"
           :key="i"
           :style="{ aspectRatio: w / h }"
           :cols="w"
-          :offset="visualRow[0].x"
+          :offset="
+            visualRow[0].x +
+            (columnIndex > 0
+              ? visualRow[columnIndex].x - (visualRow[columnIndex - 1].x + visualRow[columnIndex - 1].w)
+              : 0)
+          "
         >
           <DashboardVisual :type />
         </v-col>
