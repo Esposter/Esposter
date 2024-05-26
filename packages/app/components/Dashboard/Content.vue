@@ -20,7 +20,7 @@ const { background, border, surface } = useColors();
     >
       <GridItem v-for="{ type, i, x, y, w, h } in visuals" :key="i" content-center text-center :x :y :w :h :i>
         <DashboardVisualPreview :type />
-        <DashboardVisualPreviewRemoveButton :id="i" />
+        <DashboardVisualPreviewRemoveButton :id="i" :type />
       </GridItem>
     </GridLayout>
   </v-container>
