@@ -18,7 +18,7 @@ const visualRows = computed(() => {
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
-      <v-row v-for="(visualRow, rowIndex) in visualRows" :key="rowIndex">
+      <v-row v-for="(visualRow, rowIndex) in visualRows" :key="rowIndex" items-start>
         <v-col
           v-for="({ type, w, h, i }, columnIndex) in visualRow"
           :key="i"
