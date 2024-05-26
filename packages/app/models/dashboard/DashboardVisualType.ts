@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export enum DashboardVisualType {
   Area = "Area",
+  Column = "Column",
   Line = "Line",
 }
 
