@@ -13,6 +13,7 @@ const { background, border, surface } = useColors();
       v-model:layout="visuals"
       :col-num="noColumns"
       :row-height="40"
+      :use-style-cursor="false"
       is-draggable
       is-resizable
       vertical-compact
@@ -34,8 +35,16 @@ const { background, border, surface } = useColors();
   border-radius: $border-radius-root;
 }
 
-:deep(.vgl-item:not(.vgl-item--placeholder)) {
-  background-color: v-bind(surface);
-  border: 1px $border-style-root v-bind(border);
+:deep(.vgl-item) {
+  cursor: pointer;
+
+  &:active {
+    opacity: var(--v-medium-emphasis-opacity);
+  }
+
+  &:not(.vgl-item--placeholder) {
+    background-color: v-bind(surface);
+    border: 1px $border-style-root v-bind(border);
+  }
 }
 </style>
