@@ -2,10 +2,10 @@ import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { Chest } from "@/models/dungeons/data/world/Chest";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
-import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { CreateTilemapMetadataMap } from "@/services/dungeons/tilemap/CreateTilemapMetadataMap";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getPositionId } from "@/util/id/getPositionId";
 import type { Tilemaps } from "phaser";
 
 export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
@@ -19,9 +19,9 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
   if (chestObjectLayer) {
     const chestObjects = getObjects(chestObjectLayer);
     for (const { x, y } of chestObjects) {
-      const chestId = getChestId({ x, y });
-      if (worldData.value.chestMap.has(chestId)) continue;
-      else worldData.value.chestMap.set(chestId, new Chest());
+      const positionId = getPositionId({ x, y });
+      if (worldData.value.chestMap.has(positionId)) continue;
+      else worldData.value.chestMap.set(positionId, new Chest());
     }
   }
 
