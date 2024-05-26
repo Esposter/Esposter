@@ -6,8 +6,8 @@ await useReadDashboard();
   <NuxtLayout>
     <v-container h-full fluid>
       <StyledCard flex="!" flex-col size-full>
-        <DashboardHeader />
-        <DashboardContent />
+        <DashboardEditorHeader />
+        <DashboardEditorContent />
       </StyledCard>
     </v-container>
   </NuxtLayout>
