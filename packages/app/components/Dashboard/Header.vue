@@ -11,15 +11,16 @@ const { selectedVisualType } = storeToRefs(layoutStore);
 <template>
   <v-toolbar>
     <v-toolbar-title font-bold="!">
-      <div pt-4 flex items-center justify-between>
-        Dashboard Editor
-        <div w-full flex items-center pl-4 mr-2>
+      <div pt-4 flex flex-col justify-between pr-4 gap-y-4>
+        <div>Dashboard Editor</div>
+        <div w-full flex items-center>
           <v-select
             v-model="selectedVisualType"
             :items="Object.values(DashboardVisualType)"
             label="Visual Type"
             hide-details
           />
+          <v-divider mx-4="!" thickness="2" vertical inset />
           <v-tooltip :text="`Add ${selectedVisualType} Visual`">
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushVisual">

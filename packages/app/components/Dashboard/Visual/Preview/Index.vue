@@ -10,5 +10,7 @@ const { type } = defineProps<VisualPreviewProps>();
 </script>
 
 <template>
-  <component :is="DashboardVisualTypeDemoComponentMap[type]" size="90%" />
+  <Transition name="fade">
+    <component :is="DashboardVisualTypeDemoComponentMap[type]" size="90%" />
+  </Transition>
 </template>
