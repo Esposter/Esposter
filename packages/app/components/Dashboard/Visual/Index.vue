@@ -13,17 +13,8 @@ const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css
 // so we have to use the resize observer to listen for its changes
-const resizeObserver = new ResizeObserver(([{ target }]) => {
+useResizeObserver(divRef, ([{ target }]) => {
   height.value = (target as HTMLDivElement).clientHeight;
-});
-
-watch(divRef, (newDiv) => {
-  if (!newDiv) return;
-  resizeObserver.observe(newDiv);
-});
-
-onUnmounted(() => {
-  resizeObserver.disconnect();
 });
 </script>
 

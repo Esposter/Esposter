@@ -15,6 +15,7 @@ const { visuals, noColumns } = storeToRefs(layoutStore);
       :use-style-cursor="false"
       :is-draggable="false"
       :is-resizable="false"
+      responsive
     >
       <GridItem v-for="{ type, i, x, y, w, h } in visuals" :key="i" :x :y :w :h :i>
         <DashboardVisual :type />
