@@ -38,7 +38,7 @@ const { background, border, surface } = useColors();
 :deep(.vgl-item) {
   cursor: pointer;
 
-  &:active {
+  &:active:not(:focus-within) {
     opacity: var(--v-medium-emphasis-opacity);
   }
 
