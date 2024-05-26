@@ -9,14 +9,7 @@ interface DashboardGridProps {
 }
 
 const { visuals, noColumns } = defineProps<DashboardGridProps>();
-const aspectRatio = 16 / 9;
-const maxY = computed(() => {
-  const visualY = visuals.reduce((acc, { y, h }) => (acc > y + h ? acc : y + h), 0);
-  // We want to fallback to a higher y value that retains some sort of aspect ratio
-  // so that the dashboard will split the grid in the y-axis a lot nicer visually
-  const fallbackY = Math.ceil(noColumns * aspectRatio);
-  return Math.max(visualY, fallbackY);
-});
+const maxY = computed(() => visuals.reduce((acc, { y, h }) => (acc > y + h ? acc : y + h), 0));
 const gridTemplateAreas = computed(() => {
   const gridTemplateAreas: string[][] = Array(maxY.value)
     .fill(null)
@@ -30,7 +23,7 @@ const gridTemplateAreas = computed(() => {
 </script>
 
 <template>
-  <v-container h-full grid grid-cols-12 gap-4 :style="{ gridTemplateAreas }" fluid>
+  <v-container grid grid-cols-12 gap-4 :style="{ gridTemplateAreas }" fluid>
     <div v-for="{ type, x, y, i } in visuals" :key="i" :style="{ gridArea: getPositionHash({ x, y }) }">
       <DashboardVisual :type />
     </div>

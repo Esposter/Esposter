@@ -2,6 +2,7 @@
 import { useLayoutStore } from "@/store/dashboard/layout";
 
 defineRouteRules({ ssr: false });
+
 await useReadDashboard();
 const layoutStore = useLayoutStore();
 const { visuals, noColumns } = storeToRefs(layoutStore);
