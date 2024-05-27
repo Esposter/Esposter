@@ -1,3 +1,5 @@
+// @ts-expect-error We can ignore configuration files that will error at build time if they're wrong
+import { commonjsDeps, commonjsDepsPaths } from "@koumoul/vjsf/utils/build.js";
 import type { NuxtConfig } from "nuxt/schema";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
@@ -6,6 +8,9 @@ export const vite: NuxtConfig["vite"] = {
     // Do not inline images and assets to avoid the phaser error
     // "Local data URIs are not supported"
     assetsInlineLimit: 0,
+    commonjsOptions: {
+      include: commonjsDepsPaths,
+    },
   },
   css: {
     preprocessorOptions: {
@@ -17,6 +22,9 @@ export const vite: NuxtConfig["vite"] = {
         `,
       },
     },
+  },
+  optimizeDeps: {
+    include: commonjsDeps,
   },
   // Required for parse-tmx
   plugins: [nodePolyfills({ include: ["zlib"] })],
