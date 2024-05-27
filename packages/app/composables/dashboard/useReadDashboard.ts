@@ -3,6 +3,7 @@ import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useDashboardStore } from "@/store/dashboard";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
+import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
 import deepEqual from "deep-equal";
 
 export const useReadDashboard = async () => {
@@ -10,7 +11,7 @@ export const useReadDashboard = async () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const dashboardChangedTracker = computed<Dashboard>((oldDashboardChangedTracker) => {
+  const dashboardChangedTracker = computed<RecursiveDeepOmitItemMetadata<Dashboard>>((oldDashboardChangedTracker) => {
     const newDashboardChangedTracker = omitDeepItemMetadata(dashboard.value);
     return oldDashboardChangedTracker && deepEqual(newDashboardChangedTracker, oldDashboardChangedTracker)
       ? oldDashboardChangedTracker
