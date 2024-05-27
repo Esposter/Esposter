@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
+import { productListItems } from "@/services/esposter/productListItems";
 import { mergeProps } from "vue";
 
 const items: ListItem[] = [
@@ -9,31 +10,7 @@ const items: ListItem[] = [
     href: RoutePath.PostCreate,
     icon: "mdi-square-edit-outline",
   },
-  {
-    title: "Esbabbler",
-    href: RoutePath.MessagesIndex,
-    icon: "mdi-message-fast",
-  },
-  {
-    title: "Clicker",
-    href: RoutePath.Clicker,
-    icon: "mdi-cursor-pointer",
-  },
-  {
-    title: "Table Editor",
-    href: RoutePath.TableEditor,
-    icon: "mdi-table-edit",
-  },
-  {
-    title: "Surveyer",
-    href: RoutePath.Surveyer,
-    icon: "mdi-text-box-edit",
-  },
-  {
-    title: "Dungeons",
-    href: RoutePath.Dungeons,
-    icon: "custom:dungeon-gate",
-  },
+  ...productListItems,
 ];
 const menu = ref(false);
 </script>

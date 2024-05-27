@@ -1,9 +1,8 @@
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 
 export const usePointStore = defineStore("clicker/point", () => {
-  const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
-
+  const clickerStore = useClickerStore();
+  const { game } = storeToRefs(clickerStore);
   const incrementPoints = (points: number) => {
     game.value.noPoints += points;
   };

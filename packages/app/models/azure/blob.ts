@@ -1,5 +1,6 @@
 export enum AzureContainer {
   ClickerAssets = "clicker-assets",
+  DashboardAssets = "dashboard-assets",
   DungeonsAssets = "dungeons-assets",
   EsbabblerAssets = "esbabbler-assets",
   EsposterAssets = "esposter-assets",

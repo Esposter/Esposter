@@ -6,9 +6,10 @@ import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
+import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
 import { Cameras } from "phaser";
 
-export const useGameStore = defineStore("dungeons/game", () => {
+export const useDungeonsStore = defineStore("dungeons", () => {
   const { $client } = useNuxtApp();
   const { status } = useAuth();
   const phaserStore = usePhaserStore();
@@ -19,10 +20,10 @@ export const useGameStore = defineStore("dungeons/game", () => {
   const game = ref(new Game());
   const saveGame = async () => {
     if (status.value === "authenticated") {
-      game.value.updatedAt = new Date();
+      saveItemMetadata(game.value);
       await $client.dungeons.saveGame.mutate(game.value);
     } else if (status.value === "unauthenticated") {
-      game.value.updatedAt = new Date();
+      saveItemMetadata(game.value);
       localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
     }
   };

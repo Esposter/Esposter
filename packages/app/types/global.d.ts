@@ -9,5 +9,7 @@ declare global {
     entries<T extends object>(o: T): Entries<T>;
 
     fromEntries<T extends readonly [PropertyKey, unknown]>(entries: Iterable<T>): { [K in T as T[0]]: T[1] };
+
+    groupBy<K extends PropertyKey, T>(items: Iterable<T>, keySelector: (item: T, index: number) => K): Record<K, T[]>;
   }
 }

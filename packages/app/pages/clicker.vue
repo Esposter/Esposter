@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 
 await useReadClickerGame();
 useTimers();
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const clickerItemProperties = useClickerItemProperties();
 const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3));
 </script>

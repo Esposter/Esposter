@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const inventoryUpgrades = computed(() => game.value.boughtUpgrades.toSorted((a, b) => a.price - b.price));
 </script>
 

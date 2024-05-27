@@ -1,8 +1,8 @@
-import { useGameStore } from "@/store/dungeons/game";
+import { useDungeonsStore } from "@/store/dungeons";
 
 export const usePlayerStore = defineStore("dungeons/player", () => {
-  const gameStore = useGameStore();
-  const { save } = storeToRefs(gameStore);
+  const dungeonsStore = useDungeonsStore();
+  const { save } = storeToRefs(dungeonsStore);
   const player = computed({
     get: () => save.value.player,
     set: (newPlayer) => {

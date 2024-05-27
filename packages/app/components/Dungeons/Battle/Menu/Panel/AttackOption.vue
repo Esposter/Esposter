@@ -2,7 +2,6 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
-import { BLANK_VALUE } from "@/services/dungeons/UI/constants";
 import { getGridKey } from "@/services/dungeons/getGridKey";
 import {
   CURSOR_POSITION_INCREMENT,
@@ -11,6 +10,7 @@ import {
   MENU_PADDING,
 } from "@/services/dungeons/scene/battle/menu/constants";
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
+import { BLANK_VALUE } from "@/services/shared/constants";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 

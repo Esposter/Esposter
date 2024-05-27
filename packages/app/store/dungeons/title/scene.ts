@@ -6,14 +6,14 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
-import { useGameStore } from "@/store/dungeons/game";
+import { useDungeonsStore } from "@/store/dungeons";
 import { exhaustiveGuard } from "@esposter/shared";
 import type { Direction } from "grid-engine";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
-  const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
-  const { game, save } = storeToRefs(gameStore);
+  const dungeonsStore = useDungeonsStore();
+  const { fadeSwitchToScene } = dungeonsStore;
+  const { game, save } = storeToRefs(dungeonsStore);
   const isContinueEnabled = computed(() => game.value.saves.length > 0);
   const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>>;
 

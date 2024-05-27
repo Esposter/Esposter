@@ -1,11 +1,11 @@
 import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { useGameStore } from "@/store/dungeons/game";
+import { useDungeonsStore } from "@/store/dungeons";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
-  const gameStore = useGameStore();
-  const { saveGame } = gameStore;
-  const { game } = storeToRefs(gameStore);
+  const dungeonsStore = useDungeonsStore();
+  const { saveGame } = dungeonsStore;
+  const { game } = storeToRefs(dungeonsStore);
   const settings = computed({
     get: () => game.value.settings,
     set: (newSettings) => {

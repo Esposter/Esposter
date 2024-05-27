@@ -6,15 +6,15 @@ import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption"
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { useGameStore } from "@/store/dungeons/game";
+import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
-  const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
+  const dungeonsStore = useDungeonsStore();
+  const { fadeSwitchToScene } = dungeonsStore;
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
