@@ -2,7 +2,7 @@ import type { ItemMetadata } from "@/models/shared/ItemMetadata";
 import { omitDeep } from "@/util/object/omitDeep";
 import type { RecursiveKeyOf } from "@/util/types/RecursiveKeyOf";
 
-export const omitDeepItemMetadata = <T extends ItemMetadata, TKeys extends Exclude<RecursiveKeyOf<T>, "updatedAt">[]>(
+export const omitDeepItemMetadata = <T extends ItemMetadata>(
   itemMetadata: T,
-  ...keys: TKeys
-) => omitDeep(itemMetadata, ...keys);
+  ...keys: Exclude<RecursiveKeyOf<T>, "updatedAt">[]
+) => omitDeep<ItemMetadata>(itemMetadata, ...keys, "updatedAt");
