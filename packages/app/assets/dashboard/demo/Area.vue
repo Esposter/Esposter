@@ -141,9 +141,9 @@
         <line
           id="SvgjsLine1083"
           x1="0"
-          y1="1"
+          y1="0"
           x2="245"
-          y2="1"
+          y2="0"
           stroke="#f1f1f1"
           stroke-dasharray="0"
           stroke-linecap="butt"
