@@ -1,7 +1,7 @@
 import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
+import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useClickerStore } from "@/store/clicker";
-import { omitDeep } from "@/util/object/omitDeep";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
 import deepEqual from "deep-equal";
@@ -16,7 +16,7 @@ export const useReadClickerGame = async () => {
   // which is everything excluding automatic updates like noPoints
   const gameChangedTracker = computed<RecursiveDeepOmit<Game, ["noPoints", "producedValue"]>>(
     (oldGameChangedTracker) => {
-      const newGameChangedTracker = omitDeep(game.value, "noPoints", "producedValue");
+      const newGameChangedTracker = omitDeepItemMetadata(game.value, "noPoints", "producedValue");
       return oldGameChangedTracker && deepEqual(newGameChangedTracker, oldGameChangedTracker)
         ? oldGameChangedTracker
         : newGameChangedTracker;
