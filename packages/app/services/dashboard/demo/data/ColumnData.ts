@@ -1,4 +1,4 @@
-import type { DashboardVisualData } from "@/models/dashboard/DashboardVisualData";
+import type { VisualData } from "@/models/dashboard/VisualData";
 
 export const ColumnData = {
   type: "bar",
@@ -48,4 +48,4 @@ export const ColumnData = {
       },
     },
   },
-} as const satisfies DashboardVisualData;
+} as const satisfies VisualData;

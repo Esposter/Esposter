@@ -1,4 +1,4 @@
-import type { DashboardVisualData } from "@/models/dashboard/DashboardVisualData";
+import type { VisualData } from "@/models/dashboard/VisualData";
 
 export const AreaData = {
   type: "area",
@@ -54,4 +54,4 @@ export const AreaData = {
       opposite: true,
     },
   },
-} as const satisfies DashboardVisualData;
+} as const satisfies VisualData;

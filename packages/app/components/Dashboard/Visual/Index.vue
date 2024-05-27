@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
-import { DashboardVisualTypeDemoDataMap } from "@/services/dashboard/demo/DashboardVisualTypeDemoDataMap";
+import type { VisualType } from "@/models/dashboard/VisualType";
+import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
-  type: DashboardVisualType;
+  type: VisualType;
 }
 
 const { type } = defineProps<VisualProps>();
-const data = DashboardVisualTypeDemoDataMap[type];
+const data = VisualTypeDemoDataMap[type];
 const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css

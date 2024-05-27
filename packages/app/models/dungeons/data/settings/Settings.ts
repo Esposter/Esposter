@@ -14,9 +14,9 @@ const InitialSettings = {
   [SettingsOption.Sound]: SoundSetting.On,
   [SettingsOption.VolumePercentage]: IS_DEVELOPMENT ? 0 : 100,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
-} satisfies Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
+} satisfies Settings;
 export const getInitialSettings = () => structuredClone(InitialSettings);
-export type Settings = typeof InitialSettings;
+export type Settings = Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
 
 export const settingsSchema = z.object({
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,

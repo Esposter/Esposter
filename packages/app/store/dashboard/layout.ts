@@ -1,4 +1,5 @@
-import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
+import { VisualType } from "@/models/dashboard/VisualType";
+import { GetVisualTypeChartConfigurationMap } from "@/services/dashboard/chart/GetVisualTypeChartConfigurationMap";
 import { useDashboardStore } from "@/store/dashboard";
 
 export const useLayoutStore = defineStore("dashboard/layout", () => {
@@ -10,16 +11,17 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
       dashboard.value.visuals = newVisuals;
     },
   });
-  const selectedVisualType = ref(DashboardVisualType.Area);
-  const pushVisual = () => {
+  const selectedVisualType = ref(VisualType.Area);
+  const addVisual = () => {
     visuals.value.push({
-      type: selectedVisualType.value,
       x: (visuals.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
       y: visuals.value.length + noColumns.value,
       w: 4,
       h: 4,
       i: crypto.randomUUID(),
+      type: selectedVisualType.value,
+      configuration: GetVisualTypeChartConfigurationMap[selectedVisualType.value](),
     });
   };
   const removeVisual = (id: string) => {
@@ -28,5 +30,5 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
     visuals.value.splice(index, 1);
   };
   const noColumns = ref(12);
-  return { visuals, selectedVisualType, pushVisual, removeVisual, noColumns };
+  return { visuals, selectedVisualType, addVisual, removeVisual, noColumns };
 });
