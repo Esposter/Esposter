@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/dashboard/layout";
+import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
-const layoutStore = useLayoutStore();
-const { visuals, noColumns } = storeToRefs(layoutStore);
+const visualStore = useVisualStore();
+const { visuals, noColumns } = storeToRefs(visualStore);
 </script>
 
 <template>

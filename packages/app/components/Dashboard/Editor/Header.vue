@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { VisualType } from "@/models/dashboard/VisualType";
 import { RoutePath } from "@/models/router/RoutePath";
-import { useLayoutStore } from "@/store/dashboard/layout";
+import { useVisualStore } from "@/store/dashboard/visual";
 
-const layoutStore = useLayoutStore();
-const { addVisual } = layoutStore;
-const { selectedVisualType } = storeToRefs(layoutStore);
+const visualStore = useVisualStore();
+const { addVisual } = visualStore;
+const { selectedVisualType } = storeToRefs(visualStore);
 </script>
 
 <template>

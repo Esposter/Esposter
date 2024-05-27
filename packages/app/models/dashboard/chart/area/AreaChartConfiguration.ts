@@ -1,10 +1,8 @@
-import { AreaChartType, areaChartTypeSchema } from "@/models/dashboard/chart/area/AreaChartType";
-import { z } from "zod";
+import type { BasicAreaChartConfiguration } from "@/models/dashboard/chart/area/BasicAreaChartConfiguration";
+import { basicAreaChartConfigurationSchema } from "@/models/dashboard/chart/area/BasicAreaChartConfiguration";
+import type { z } from "zod";
 
-export class AreaChartConfiguration {
-  type = AreaChartType.Basic;
-}
+export type AreaChartConfiguration = BasicAreaChartConfiguration;
 
-export const areaChartConfigurationSchema = z.object({
-  type: areaChartTypeSchema,
-}) satisfies z.ZodType<AreaChartConfiguration>;
+export const areaChartConfigurationSchema =
+  basicAreaChartConfigurationSchema satisfies z.ZodType<AreaChartConfiguration>;

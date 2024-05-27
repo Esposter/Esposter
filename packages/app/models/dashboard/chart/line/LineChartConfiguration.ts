@@ -1,10 +1,8 @@
-import { LineChartType, lineChartTypeSchema } from "@/models/dashboard/chart/line/LineChartType";
-import { z } from "zod";
+import type { BasicLineChartConfiguration } from "@/models/dashboard/chart/line/BasicLineChartConfiguration";
+import { basicLineChartConfigurationSchema } from "@/models/dashboard/chart/line/BasicLineChartConfiguration";
+import type { z } from "zod";
 
-export class LineChartConfiguration {
-  type = LineChartType.Basic;
-}
+export type LineChartConfiguration = BasicLineChartConfiguration;
 
-export const lineChartConfigurationSchema = z.object({
-  type: lineChartTypeSchema,
-}) satisfies z.ZodType<LineChartConfiguration>;
+export const lineChartConfigurationSchema =
+  basicLineChartConfigurationSchema satisfies z.ZodType<LineChartConfiguration>;

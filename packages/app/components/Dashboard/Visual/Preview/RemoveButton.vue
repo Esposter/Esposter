@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VisualType } from "@/models/dashboard/VisualType";
-import { useLayoutStore } from "@/store/dashboard/layout";
+import { useVisualStore } from "@/store/dashboard/visual";
 
 interface RemoveButtonProps {
   id: string;
@@ -8,8 +8,8 @@ interface RemoveButtonProps {
 }
 
 const { id, type } = defineProps<RemoveButtonProps>();
-const layoutStore = useLayoutStore();
-const { removeVisual } = layoutStore;
+const visualStore = useVisualStore();
+const { removeVisual } = visualStore;
 </script>
 
 <template>

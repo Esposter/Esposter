@@ -1,5 +1,5 @@
-import { chartConfigurationSchema } from "@/models/dashboard/chart/ChartConfiguration";
 import type { ChartConfiguration } from "@/models/dashboard/chart/ChartConfiguration";
+import { chartConfigurationSchema } from "@/models/dashboard/chart/ChartConfiguration";
 import { layoutItemSchema } from "@/models/dashboard/LayoutItem";
 import type { VisualType } from "@/models/dashboard/VisualType";
 import { visualTypeSchema } from "@/models/dashboard/VisualType";

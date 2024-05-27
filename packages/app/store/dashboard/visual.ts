@@ -1,8 +1,8 @@
 import { VisualType } from "@/models/dashboard/VisualType";
-import { GetVisualTypeChartConfigurationMap } from "@/services/dashboard/chart/GetVisualTypeChartConfigurationMap";
+import { VisualTypeChartConfigurationMap } from "@/services/dashboard/chart/VisualTypeChartConfigurationMap";
 import { useDashboardStore } from "@/store/dashboard";
 
-export const useLayoutStore = defineStore("dashboard/layout", () => {
+export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { dashboard } = storeToRefs(dashboardStore);
   const visuals = computed({
@@ -21,7 +21,7 @@ export const useLayoutStore = defineStore("dashboard/layout", () => {
       h: 4,
       i: crypto.randomUUID(),
       type: selectedVisualType.value,
-      configuration: GetVisualTypeChartConfigurationMap[selectedVisualType.value](),
+      configuration: VisualTypeChartConfigurationMap[selectedVisualType.value].getInitialConfiguration(),
     });
   };
   const removeVisual = (id: string) => {
