@@ -8,16 +8,8 @@ defineSlots<{
 
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { save } = tableEditorStore;
-const {
-  tableEditor,
-  editedItem,
-  editedIndex,
-  editFormDialog,
-  editFormRef,
-  isEditFormValid,
-  isFullScreenDialog,
-  isSavable,
-} = storeToRefs(tableEditorStore);
+const { tableEditor, editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
+  storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : null));
 const originalItem = computed(() => {
   if (!editedItem.value) return null;
@@ -41,11 +33,10 @@ const originalItem = computed(() => {
       </div>
     </v-toolbar-title>
     <StyledEditFormDialog
-      v-if="editedItem && originalItem"
+      v-if="editedItem"
       v-model="editFormDialog"
-      :name="originalItem.name"
+      :name="originalItem?.name ?? ''"
       :edited-item
-      :edited-index
       :original-item
       :edit-form-ref
       :is-edit-form-valid
@@ -61,7 +52,7 @@ const originalItem = computed(() => {
         }
       "
     >
-      <component :is="component" v-if="editedItem" />
+      <component :is="component" />
     </StyledEditFormDialog>
   </v-toolbar>
 </template>

@@ -1,26 +1,21 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
-import { prettifyName } from "@/util/text/prettifyName";
 
 interface ConfirmDeleteDialogButtonProps<T> {
   name: string;
-  editedItem: T;
-  editedIndex: number;
-  originalItem: T;
+  originalItem: T | null;
 }
 
-const { name, editedItem, editedIndex, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
+const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
-// We don't need to show the delete button if user is creating a new item
-const isExistingItem = computed(() => editedIndex > -1);
-const itemType = computed(() => prettifyName(originalItem.type));
 const dialog = ref(false);
 const nameTyped = ref("");
 const isDeletable = computed(() => nameTyped.value === name);
 </script>
 
 <template>
-  <v-dialog v-if="isExistingItem && editedItem" v-model="dialog">
+  <!-- We don't need to show the delete button if user is creating a new item -->
+  <v-dialog v-if="originalItem" v-model="dialog">
     <template #activator>
       <v-tooltip text="Delete">
         <template #activator="{ props: tooltipProps }">
@@ -30,14 +25,14 @@ const isDeletable = computed(() => nameTyped.value === name);
     </template>
     <StyledCard>
       <v-card-title flex="!" flex-wrap items-center whitespace="normal!">
-        Confirm Deletion of {{ itemType }}:
+        Confirm Deletion of {{ originalItem.type }}:
         <v-code mx-2>{{ name }}</v-code>
         <StyledClipboardIconButton :source="name" />
       </v-card-title>
       <v-card-text>
         <div pb-4>
           To confirm the delete action please enter the name of the
-          <span font-bold>{{ itemType }}</span> exactly as it occurs.
+          <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
         </div>
         <v-text-field v-model="nameTyped" />
       </v-card-text>

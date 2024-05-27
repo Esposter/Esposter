@@ -11,8 +11,7 @@ import type { VForm } from "vuetify/components";
 interface HeaderProps<T> {
   name: string;
   editedItem: T;
-  editedIndex: number;
-  originalItem: T;
+  originalItem: T | null;
   editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
@@ -35,13 +34,7 @@ const emit = defineEmits<{
     <v-spacer />
     <ErrorIcon :edit-form-ref :is-edit-form-valid />
     <SaveButton :is-savable @save="emit('save')" />
-    <ConfirmDeleteDialogButton
-      :name
-      :edited-item
-      :edited-index
-      :original-item
-      @delete="(onComplete) => emit('delete', onComplete)"
-    />
+    <ConfirmDeleteDialogButton :name :original-item @delete="(onComplete) => emit('delete', onComplete)" />
     <v-divider mx-2="!" thickness="2" inset vertical />
     <ToggleFullScreenDialogButton :is-full-screen-dialog @click="(value) => emit('update:fullscreen-dialog', value)" />
     <ConfirmCloseDialogButton

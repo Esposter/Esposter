@@ -6,8 +6,7 @@ import { VForm } from "vuetify/components";
 interface EditFormDialogProps<T> {
   name: string;
   editedItem: T;
-  editedIndex: number;
-  originalItem: T;
+  originalItem: T | null;
   editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
@@ -15,7 +14,7 @@ interface EditFormDialogProps<T> {
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { name, editedItem, editedIndex, originalItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
+const { name, editedItem, originalItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
@@ -55,7 +54,6 @@ watch(formRef, (newFormRef) => {
         <Header
           :name
           :edited-item
-          :edited-index
           :original-item
           :edit-form-ref
           :is-edit-form-valid
