@@ -1,7 +1,7 @@
 import type { AreaChartConfiguration } from "@/models/dashboard/chart/area/AreaChartConfiguration";
 import { areaChartConfigurationSchema } from "@/models/dashboard/chart/area/AreaChartConfiguration";
-import { columnChartConfigurationSchema } from "@/models/dashboard/chart/column/ColumnChartConfiguration";
 import type { ColumnChartConfiguration } from "@/models/dashboard/chart/column/ColumnChartConfiguration";
+import { columnChartConfigurationSchema } from "@/models/dashboard/chart/column/ColumnChartConfiguration";
 import type { LineChartConfiguration } from "@/models/dashboard/chart/line/LineChartConfiguration";
 import { lineChartConfigurationSchema } from "@/models/dashboard/chart/line/LineChartConfiguration";
 import { z } from "zod";
