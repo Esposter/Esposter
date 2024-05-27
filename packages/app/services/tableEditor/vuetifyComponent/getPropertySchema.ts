@@ -1,42 +1,28 @@
 import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
 import type { Constructor } from "type-fest";
 
-export const getPropertySchema = (type: Constructor<unknown>): JSONSchema | null => {
-  const title = "Property Value";
+export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<never> | null => {
+  const commonProperties = {
+    title: "Property Value",
+    hideDetails: true,
+  };
 
   switch (type) {
     case Boolean:
       return {
-        type: "object",
-        properties: {
-          switch: {
-            type: "boolean",
-            title,
-            layout: "switch",
-            hideDetails: true,
-          },
-        },
+        type: "boolean",
+        layout: "switch",
+        ...commonProperties,
       };
     case String:
       return {
-        type: "object",
-        properties: {
-          switch: {
-            type: "string",
-            title,
-            layout: "switch",
-          },
-        },
+        type: "string",
+        ...commonProperties,
       };
     case Number:
       return {
-        type: "object",
-        properties: {
-          num: {
-            type: "number",
-            title,
-          },
-        },
+        type: "number",
+        ...commonProperties,
       };
     default:
       return null;
