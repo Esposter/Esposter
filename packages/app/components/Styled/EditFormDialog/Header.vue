@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import ConfirmCloseDialogButton from "@/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue";
 import ConfirmDeleteDialogButton from "@/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue";
 import ErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";

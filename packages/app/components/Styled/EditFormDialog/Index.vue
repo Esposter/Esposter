@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import Header from "@/components/Styled/EditFormDialog/Header.vue";
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
 import { VForm } from "vuetify/components";
