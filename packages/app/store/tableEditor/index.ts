@@ -11,8 +11,8 @@ interface TableEditorState<TItem extends Item = Item> {
   tableEditorConfiguration: TableEditorConfiguration;
   tableEditorType: TableEditorType;
   searchQuery: string;
-  editFormRef: InstanceType<typeof VForm> | undefined;
   editFormDialog: boolean;
+  editFormRef: InstanceType<typeof VForm> | undefined;
   editedItem: TItem | null;
   editedIndex: number;
   isFullScreenDialog: boolean;

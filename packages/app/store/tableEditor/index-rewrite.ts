@@ -22,8 +22,8 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const tableEditorType = ref(TableEditorType.TodoList);
     const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] });
     const searchQuery = ref("");
-    const editFormRef = ref<InstanceType<typeof VForm>>();
     const editFormDialog = ref(false);
+    const editFormRef = ref<InstanceType<typeof VForm>>();
     const editedItem = ref<TItem | null>(null);
     const editedIndex = ref(-1);
     const isFullScreenDialog = ref(false);
