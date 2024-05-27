@@ -9,7 +9,7 @@
     viewBox="0 0 268 143"
   >
     <foreignObject x="0" y="0">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="max-height: 94px" />
+      <div xmlns="http://www.w3.org/1999/xhtml" />
     </foreignObject>
     <g id="SvgjsG2446">
       <defs id="SvgjsDefs2445">
