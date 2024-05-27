@@ -242,3 +242,7 @@ Esposter is a lerna + pnpm workspaces monorepo.
 ### Packages
 
 Packages are used directly by the nuxt application via `workspace:*`.
+
+## Tools
+
+https://devina.io/svg-minifier
