@@ -1,9 +1,4 @@
-import { useTableEditorStore } from "@/store/tableEditor";
-
-export const useConfirmBeforeNavigation = () => {
-  const tableEditorStore = useTableEditorStore()();
-  const { isDirty } = storeToRefs(tableEditorStore);
-
+export const useConfirmBeforeNavigation = (isDirty: Ref<boolean>) => {
   onBeforeRouteLeave(() => {
     if (isDirty.value && !window.confirm("Changes that you made may not be saved.")) return false;
   });

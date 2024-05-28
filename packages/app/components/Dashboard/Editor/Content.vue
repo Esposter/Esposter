@@ -8,13 +8,23 @@ import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 import { Vjsf } from "@koumoul/vjsf";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
-useConfirmBeforeNavigation();
 const route = useRoute();
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
-const { visuals, noColumns, editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
-  storeToRefs(visualStore);
+const {
+  visuals,
+  noColumns,
+  editedItem,
+  editFormDialog,
+  editFormRef,
+  isEditFormValid,
+  isFullScreenDialog,
+  isDirty,
+  isSavable,
+} = storeToRefs(visualStore);
 const { background, border, surface } = useColors();
+
+useConfirmBeforeNavigation(isDirty);
 
 onMounted(async () => {
   const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
