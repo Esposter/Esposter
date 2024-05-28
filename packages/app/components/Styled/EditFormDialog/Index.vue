@@ -8,7 +8,7 @@ import { VForm } from "vuetify/components";
 interface EditFormDialogProps<T> {
   name: string;
   editedItem: T;
-  originalItem: T | null;
+  originalItem?: T | null;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
@@ -56,7 +56,7 @@ watch(editFormRef, (newEditFormRef) => {
     persistent
     no-click-animation
   >
-    <v-form ref="editFormRef" contents="!" @submit="({ preventDefault }) => preventDefault()">
+    <v-form ref="editFormRef" contents="!">
       <StyledCard>
         <Header
           :name
