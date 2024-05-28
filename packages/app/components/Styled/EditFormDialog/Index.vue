@@ -15,8 +15,14 @@ interface EditFormDialogProps<T> {
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { name, editedItem, originalItem, isEditFormValid, isFullScreenDialog, isSavable } =
-  defineProps<EditFormDialogProps<T>>();
+const {
+  name,
+  editedItem,
+  originalItem = null,
+  isEditFormValid,
+  isFullScreenDialog,
+  isSavable,
+} = defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
   "update:edit-form-ref": [value: InstanceType<typeof VForm>];

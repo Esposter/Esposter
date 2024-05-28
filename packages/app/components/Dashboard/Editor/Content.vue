@@ -2,15 +2,23 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
+import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 import { Vjsf } from "@koumoul/vjsf";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
+const route = useRoute();
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
 const { visuals, noColumns, editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
   storeToRefs(visualStore);
 const { background, border, surface } = useColors();
+
+onMounted(async () => {
+  const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
+  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem(itemId);
+});
 </script>
 
 <template>
