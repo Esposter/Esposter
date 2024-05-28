@@ -10,18 +10,21 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const visuals = computed({
-    get: () => dashboard.value.visuals,
-    set: (newVisuals) => {
-      dashboard.value.visuals = newVisuals;
-    },
-  });
   const selectedVisualType = ref(VisualType.Area);
   const {
+    visualList,
     createVisual: storeCreateVisual,
     updateVisual,
     ...restOperationData
-  } = createOperationData(visuals, "Visual");
+  } = createOperationData(
+    computed({
+      get: () => dashboard.value.visuals,
+      set: (newVisuals) => {
+        dashboard.value.visuals = newVisuals;
+      },
+    }),
+    "Visual",
+  );
   const createVisual = () => {
     const id = crypto.randomUUID();
     storeCreateVisual({
@@ -29,16 +32,16 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       type: selectedVisualType.value,
       configuration: VisualTypeChartDataMap[selectedVisualType.value].getInitialConfiguration(),
       i: id,
-      x: (visuals.value.length * 2) % noColumns.value,
+      x: (visualList.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
-      y: visuals.value.length + noColumns.value,
+      y: visualList.value.length + noColumns.value,
       w: 4,
       h: 4,
       ...createItemMetadata(),
     });
   };
   const noColumns = ref(12);
-  const editFormData = createEditFormData(computed(() => visuals.value));
+  const editFormData = createEditFormData(computed(() => visualList.value));
   const save = async (editedVisual: Visual) => {
     const { editFormDialog } = editFormData;
     updateVisual(editedVisual);
@@ -46,7 +49,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     editFormDialog.value = false;
   };
   return {
-    visuals,
+    visualList,
     selectedVisualType,
     createVisual,
     updateVisual,
