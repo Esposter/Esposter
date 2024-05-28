@@ -17,7 +17,6 @@ export const useReadDashboard = async () => {
       ? oldDashboardChangedTracker
       : newDashboardChangedTracker;
   });
-
   await useReadData(
     () => {
       const dashboardJson = localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY);
@@ -29,5 +28,5 @@ export const useReadDashboard = async () => {
     },
   );
 
-  watch(dashboardChangedTracker, saveDashboard);
+  watchTracker(dashboardChangedTracker, saveDashboard);
 };
