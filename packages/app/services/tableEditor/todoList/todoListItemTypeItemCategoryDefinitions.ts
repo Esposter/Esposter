@@ -3,7 +3,7 @@ import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
 import { prettifyName } from "@/util/text/prettifyName";
 
-export const todoListItemCategoryDefinitions: ItemCategoryDefinition<TodoListItem>[] = [
+export const todoListItemTypeItemCategoryDefinitions: ItemCategoryDefinition<TodoListItem>[] = [
   {
     value: TodoListItemType.Todo,
     title: prettifyName(TodoListItemType.Todo),

@@ -10,7 +10,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const selectedVisualType = ref(VisualType.Area);
+  const visualType = ref(VisualType.Area);
   const {
     visualList,
     createVisual: storeCreateVisual,
@@ -29,8 +29,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const id = crypto.randomUUID();
     storeCreateVisual({
       id,
-      type: selectedVisualType.value,
-      configuration: VisualTypeChartDataMap[selectedVisualType.value].getInitialConfiguration(),
+      type: visualType.value,
+      configuration: VisualTypeChartDataMap[visualType.value].getInitialConfiguration(),
       i: id,
       x: (visualList.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
@@ -50,7 +50,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   return {
     visualList,
-    selectedVisualType,
+    visualType,
     createVisual,
     updateVisual,
     ...restOperationData,

@@ -1,5 +1,5 @@
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { InvalidOperationError, Operation } from "@esposter/shared";
