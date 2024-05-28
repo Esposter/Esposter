@@ -15,10 +15,6 @@ class BaseGame {
   boughtUpgrades: Upgrade[] = [];
   boughtBuildings: BuildingWithStats[] = [];
 
-  constructor(init?: Partial<BaseGame>) {
-    Object.assign(this, init);
-  }
-
   toJSON() {
     return JSON.stringify({ ...this });
   }

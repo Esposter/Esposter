@@ -21,7 +21,7 @@ export const useReadDashboard = async () => {
   await useReadData(
     () => {
       const dashboardJson = localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY);
-      if (dashboardJson) dashboard.value = new Dashboard(jsonDateParse(dashboardJson));
+      if (dashboardJson) dashboard.value = Object.assign(new Dashboard(), jsonDateParse(dashboardJson));
       else dashboard.value = new Dashboard();
     },
     async () => {
