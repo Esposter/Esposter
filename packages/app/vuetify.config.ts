@@ -95,6 +95,11 @@ const defaults: Defaults = {
       backgroundColor: "transparent",
     },
   },
+  VToolbarTitle: {
+    style: {
+      marginInlineStart: "1rem",
+    },
+  },
   VTooltip: { location: "top" },
 };
 

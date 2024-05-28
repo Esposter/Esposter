@@ -12,7 +12,7 @@ const route = useRoute();
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
 const {
-  visuals,
+  visualList,
   noColumns,
   editedItem,
   editFormDialog,
@@ -34,9 +34,9 @@ onMounted(async () => {
 
 <template>
   <v-container flex-1 fluid>
-    <GridLayout v-model:layout="visuals" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
+    <GridLayout v-model:layout="visualList" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
       <GridItem
-        v-for="{ id, type, configuration, x, y, w, h } in visuals"
+        v-for="{ id, type, configuration, x, y, w, h } in visualList"
         :key="id"
         :i="id"
         text-center
