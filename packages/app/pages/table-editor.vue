@@ -5,6 +5,8 @@ import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle"
 import { useTableEditorStore } from "@/store/tableEditor";
 import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 
+defineRouteRules({ ssr: false });
+
 await useReadTableEditor();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
