@@ -29,5 +29,5 @@ export const useReadDashboard = async () => {
     },
   );
 
-  watch(dashboardChangedTracker, saveDashboard, { deep: true });
+  watch(dashboardChangedTracker, saveDashboard);
 };
