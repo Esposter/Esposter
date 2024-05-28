@@ -36,7 +36,7 @@ onMounted(async () => {
   <v-container flex-1 fluid>
     <GridLayout v-model:layout="visuals" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
       <GridItem
-        v-for="({ id, type, configuration, x, y, w, h }, index) in visuals"
+        v-for="{ id, type, configuration, x, y, w, h } in visuals"
         :key="id"
         :i="id"
         text-center
@@ -62,7 +62,7 @@ onMounted(async () => {
           @close="resetItem()"
         >
           <v-container fluid>
-            <Vjsf v-model="visuals[index].configuration" :schema="VisualTypeChartDataMap[type].schema" />
+            <Vjsf v-model="editedItem.configuration" :schema="VisualTypeChartDataMap[type].schema" />
           </v-container>
         </StyledEditFormDialog>
       </GridItem>
