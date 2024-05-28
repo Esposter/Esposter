@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { useTableEditorStore } from "@/store/tableEditor";
+import type { VForm } from "vuetify/components";
 
-const tableEditorStore = useTableEditorStore()();
-const { editFormRef, isEditFormValid } = storeToRefs(tableEditorStore);
+interface ErrorIconProps {
+  editFormRef: InstanceType<typeof VForm> | undefined;
+  isEditFormValid: boolean;
+}
+
+const { editFormRef, isEditFormValid } = defineProps<ErrorIconProps>();
 const errorMessage = computed(() => {
-  const error = editFormRef.value?.errors[0];
+  const error = editFormRef?.errors[0];
   if (!error) return "";
 
   const element = document.querySelector(`label[for="${error.id}"]`);
   if (!element) return "";
-  return `${element.textContent}: ${editFormRef.value?.errors[0]?.errorMessages[0]}`;
+  return `${element.textContent}: ${editFormRef?.errors[0]?.errorMessages[0]}`;
 });
 </script>
 

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useTableEditorStore } from "@/store/tableEditor";
+interface ToggleFullScreenDialogButtonProps {
+  isFullScreenDialog: boolean;
+}
 
-const tableEditorStore = useTableEditorStore()();
-const { isFullScreenDialog } = storeToRefs(tableEditorStore);
+const { isFullScreenDialog } = defineProps<ToggleFullScreenDialogButtonProps>();
+const emit = defineEmits<{ click: [value: boolean] }>();
 </script>
 
 <template>
@@ -11,7 +13,7 @@ const { isFullScreenDialog } = storeToRefs(tableEditorStore);
       <v-btn
         :icon="isFullScreenDialog ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
         :="props"
-        @click="isFullScreenDialog = !isFullScreenDialog"
+        @click="emit('click', !isFullScreenDialog)"
       />
     </template>
   </v-tooltip>

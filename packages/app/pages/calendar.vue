@@ -7,10 +7,6 @@ await useReadTableEditor();
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
 const { tableEditor, editedItem } = storeToRefs(tableEditorStore);
 const events = computed<EventSourceInput>(() => {
-  // There are 3 cases:
-  // 1. Editing a new item
-  // 2. Editing an existing item
-  // 3. Viewing the calendar
   const results: EventSourceInput = [];
   if (editedItem.value?.dueAt)
     results.push({

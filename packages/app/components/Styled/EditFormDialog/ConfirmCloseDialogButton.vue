@@ -1,11 +1,15 @@
-<script setup lang="ts">
-import { useTableEditorStore } from "@/store/tableEditor";
+<script setup lang="ts" generic="T extends ItemEntityType<string>">
+import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
 import { prettifyName } from "@/util/text/prettifyName";
 
-const tableEditorStore = useTableEditorStore()();
-const { save } = tableEditorStore;
-const { editFormDialog, editedItem, isSavable } = storeToRefs(tableEditorStore);
-const displayItemType = computed(() => (editedItem.value ? prettifyName(editedItem.value.type) : ""));
+interface ConfirmCloseDialogButtonProps<T> {
+  editedItem: T;
+  isSavable: boolean;
+}
+
+const { editedItem, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
+const emit = defineEmits<{ "update:edit-form-dialog": [value: false]; save: [] }>();
+const displayItemType = computed(() => prettifyName(editedItem.type));
 const dialog = ref(false);
 </script>
 
@@ -20,7 +24,7 @@ const dialog = ref(false);
             @click="
               () => {
                 if (isSavable) dialog = true;
-                else editFormDialog = false;
+                else emit('update:edit-form-dialog', false);
               }
             "
           />
@@ -42,7 +46,7 @@ const dialog = ref(false);
           @click="
             () => {
               dialog = false;
-              editFormDialog = false;
+              emit('update:edit-form-dialog', false);
             }
           "
         >
@@ -51,9 +55,9 @@ const dialog = ref(false);
         <v-btn
           variant="outlined"
           @click="
-            async () => {
+            () => {
               dialog = false;
-              await save();
+              emit('save');
             }
           "
         >

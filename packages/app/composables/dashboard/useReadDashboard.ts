@@ -4,7 +4,7 @@ import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useDashboardStore } from "@/store/dashboard";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
-import deepEqual from "deep-equal";
+import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {
   const { $client } = useNuxtApp();

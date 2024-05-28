@@ -1,4 +1,4 @@
-import type { DashboardVisualData } from "@/models/dashboard/DashboardVisualData";
+import type { VisualData } from "@/models/dashboard/VisualData";
 
 export const LineData = {
   type: "line",
@@ -29,4 +29,4 @@ export const LineData = {
       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     },
   },
-} as const satisfies DashboardVisualData;
+} as const satisfies VisualData;

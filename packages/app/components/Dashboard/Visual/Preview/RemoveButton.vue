@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/dashboard/layout";
-import type { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
+import type { VisualType } from "@/models/dashboard/VisualType";
+import { useVisualStore } from "@/store/dashboard/visual";
 
 interface RemoveButtonProps {
   id: string;
-  type: DashboardVisualType;
+  type: VisualType;
 }
 
 const { id, type } = defineProps<RemoveButtonProps>();
-const layoutStore = useLayoutStore();
-const { removeVisual } = layoutStore;
+const visualStore = useVisualStore();
+const { removeVisual } = visualStore;
 </script>
 
 <template>

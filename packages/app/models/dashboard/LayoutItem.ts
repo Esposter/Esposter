@@ -1,12 +1,14 @@
-import type { LayoutItem } from "grid-layout-plus";
+import type { LayoutItem as BaseLayoutItem } from "grid-layout-plus";
 import { z } from "zod";
 
+export type LayoutItem = BaseLayoutItem & { i: string };
+
 export const layoutItemSchema = z.object({
+  i: z.string().uuid(),
   w: z.number().int().nonnegative(),
   h: z.number().int().nonnegative(),
   x: z.number().int().nonnegative(),
   y: z.number().int().nonnegative(),
-  i: z.string().uuid(),
   minW: z.number().int().nonnegative().optional(),
   minH: z.number().int().nonnegative().optional(),
   maxW: z.number().int().nonnegative().optional(),

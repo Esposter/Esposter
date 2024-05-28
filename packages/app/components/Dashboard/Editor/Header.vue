@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { DashboardVisualType } from "@/models/dashboard/DashboardVisualType";
+import { VisualType } from "@/models/dashboard/VisualType";
 import { RoutePath } from "@/models/router/RoutePath";
-import { useLayoutStore } from "@/store/dashboard/layout";
+import { useVisualStore } from "@/store/dashboard/visual";
 
-const layoutStore = useLayoutStore();
-const { pushVisual } = layoutStore;
-const { selectedVisualType } = storeToRefs(layoutStore);
+const visualStore = useVisualStore();
+const { addVisual } = visualStore;
+const { selectedVisualType } = storeToRefs(visualStore);
 </script>
 
 <template>
@@ -14,16 +14,11 @@ const { selectedVisualType } = storeToRefs(layoutStore);
       <div pt-4 flex flex-col justify-between pr-4 gap-y-4>
         <div>Dashboard Editor</div>
         <div w-full flex items-center>
-          <v-select
-            v-model="selectedVisualType"
-            :items="Object.values(DashboardVisualType)"
-            label="Visual Type"
-            hide-details
-          />
+          <v-select v-model="selectedVisualType" :items="Object.values(VisualType)" label="Visual Type" hide-details />
           <v-divider mx-4="!" thickness="2" vertical inset />
           <v-tooltip :text="`Add ${selectedVisualType} Visual`">
             <template #activator="{ props }">
-              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="pushVisual">
+              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="addVisual">
                 <v-icon icon="mdi-plus" />
               </v-btn>
             </template>

@@ -7,12 +7,13 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 
 await useReadTableEditor();
-useConfirmBeforeNavigation();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-const { tableEditorType } = storeToRefs(tableEditorStore);
+const { tableEditorType, isDirty } = storeToRefs(tableEditorStore);
 const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.value));
+
+useConfirmBeforeNavigation(isDirty);
 
 onMounted(async () => {
   const itemType = route.query[ITEM_TYPE_QUERY_PARAM_KEY];
