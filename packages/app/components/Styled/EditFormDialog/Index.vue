@@ -22,15 +22,15 @@ const emit = defineEmits<{
   "update:edit-form-ref": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
   save: [];
+  close: [];
   delete: [onComplete: () => void];
-  reset: [];
 }>();
 
 watch(dialog, (newDialog) => {
-  // Hack resetting the item so the dialog content doesn't change
+  // Hack emitting the close event so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
   window.setTimeout(() => {
-    if (!newDialog) emit("reset");
+    if (!newDialog) emit("close");
   }, 300);
 });
 

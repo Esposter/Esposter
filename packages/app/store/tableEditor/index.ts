@@ -4,7 +4,7 @@ import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
-import equal from "deep-equal";
+import deepEqual from "deep-equal";
 import type { VForm } from "vuetify/components";
 
 interface TableEditorState<TItem extends Item = Item> {
@@ -34,17 +34,19 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
       tableEditor(): { items: TItem[] } {
         return this.tableEditorConfiguration[this.tableEditorType] as { items: TItem[] };
       },
+      originalItem(): TItem | null {
+        const id = this.editedItem?.id;
+        if (!id) return null;
+        return this.tableEditor.items.find((i) => i.id === id) ?? null;
+      },
       isEditFormValid(): boolean {
         // The form is "valid" if there's no form open/no errors
         return !this.editFormRef || this.editFormRef.errors.length === 0;
       },
       isSavable(): boolean {
-        if (!this.editedItem) return false;
-
-        const originalItem = this.tableEditor.items.find((item) => item.id === this.editedItem?.id);
         // For the form to be savable, it has to have no errors
         // and either it is a new item, or it is not equal to the original item
-        return this.isEditFormValid && (!originalItem || !equal(this.editedItem, originalItem));
+        return this.isEditFormValid && (!this.originalItem || !deepEqual(this.editedItem, this.originalItem));
       },
       isDirty(): boolean {
         // We know the form is dirty if:
