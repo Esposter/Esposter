@@ -9,14 +9,13 @@ interface EditFormDialogProps<T> {
   name: string;
   editedItem: T;
   originalItem: T | null;
-  editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { name, editedItem, originalItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
+const { name, editedItem, originalItem, isEditFormValid, isFullScreenDialog, isSavable } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
@@ -35,11 +34,11 @@ watch(dialog, (newDialog) => {
   }, 300);
 });
 
-const formRef = ref<InstanceType<typeof VForm>>();
+const editFormRef = ref<InstanceType<typeof VForm>>();
 
-watch(formRef, (newFormRef) => {
-  if (!newFormRef) return;
-  emit("update:edit-form-ref", newFormRef);
+watch(editFormRef, (newEditFormRef) => {
+  if (!newEditFormRef) return;
+  emit("update:edit-form-ref", newEditFormRef);
 });
 </script>
 
@@ -51,7 +50,7 @@ watch(formRef, (newFormRef) => {
     persistent
     no-click-animation
   >
-    <v-form ref="formRef" contents="!" @submit="({ preventDefault }) => preventDefault()">
+    <v-form ref="editFormRef" contents="!" @submit="({ preventDefault }) => preventDefault()">
       <StyledCard>
         <Header
           :name

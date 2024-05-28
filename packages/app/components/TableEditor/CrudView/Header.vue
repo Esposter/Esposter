@@ -40,7 +40,6 @@ const originalItem = computed(() => {
       :name="originalItem?.name ?? ''"
       :edited-item
       :original-item
-      :edit-form-ref
       :is-edit-form-valid
       :is-full-screen-dialog
       :is-savable
