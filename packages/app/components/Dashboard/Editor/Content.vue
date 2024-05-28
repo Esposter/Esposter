@@ -8,6 +8,7 @@ import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 import { Vjsf } from "@koumoul/vjsf";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
+useConfirmBeforeNavigation();
 const route = useRoute();
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
