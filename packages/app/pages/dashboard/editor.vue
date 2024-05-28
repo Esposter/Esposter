@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineRouteRules({ ssr: false });
+
 await useReadDashboard();
 </script>
 

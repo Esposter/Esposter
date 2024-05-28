@@ -1,8 +1,10 @@
+import type { Visual } from "@/models/dashboard/Visual";
 import { VisualType } from "@/models/dashboard/VisualType";
 import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
+import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { useDashboardStore } from "@/store/dashboard";
-import { createEditFormData } from "~/services/shared/editForm/createEditFormData";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
@@ -15,9 +17,14 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     },
   });
   const selectedVisualType = ref(VisualType.Area);
-  const addVisual = () => {
+  const {
+    createVisual: storeCreateVisual,
+    updateVisual,
+    ...restOperationData
+  } = createOperationData(visuals, "Visual");
+  const createVisual = () => {
     const id = crypto.randomUUID();
-    visuals.value.push({
+    storeCreateVisual({
       id,
       type: selectedVisualType.value,
       configuration: VisualTypeChartDataMap[selectedVisualType.value].getInitialConfiguration(),
@@ -30,17 +37,22 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       ...createItemMetadata(),
     });
   };
-  const removeVisual = (id: string) => {
-    const index = visuals.value.findIndex((visual) => visual.id === id);
-    if (index === -1) return;
-    visuals.value.splice(index, 1);
-  };
   const noColumns = ref(12);
   const editFormData = createEditFormData(computed(() => visuals.value));
-  const save = async () => {
+  const save = async (editedVisual: Visual) => {
     const { editFormDialog } = editFormData;
+    updateVisual(editedVisual);
     await saveDashboard();
     editFormDialog.value = false;
   };
-  return { visuals, selectedVisualType, addVisual, removeVisual, noColumns, ...editFormData, save };
+  return {
+    visuals,
+    selectedVisualType,
+    createVisual,
+    updateVisual,
+    ...restOperationData,
+    noColumns,
+    ...editFormData,
+    save,
+  };
 });

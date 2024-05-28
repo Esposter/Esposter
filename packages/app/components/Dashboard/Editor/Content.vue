@@ -58,7 +58,7 @@ onMounted(async () => {
           :is-savable
           @update:edit-form-ref="(value) => (editFormRef = value)"
           @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
-          @save="save()"
+          @save="save(editedItem)"
           @close="resetItem()"
         >
           <v-container fluid>

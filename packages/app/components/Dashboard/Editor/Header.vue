@@ -4,7 +4,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { useVisualStore } from "@/store/dashboard/visual";
 
 const visualStore = useVisualStore();
-const { addVisual } = visualStore;
+const { createVisual } = visualStore;
 const { selectedVisualType } = storeToRefs(visualStore);
 </script>
 
@@ -18,7 +18,7 @@ const { selectedVisualType } = storeToRefs(visualStore);
           <v-divider mx-4="!" thickness="2" vertical inset />
           <v-tooltip :text="`Add ${selectedVisualType} Visual`">
             <template #activator="{ props }">
-              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="addVisual">
+              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="createVisual">
                 <v-icon icon="mdi-plus" />
               </v-btn>
             </template>
