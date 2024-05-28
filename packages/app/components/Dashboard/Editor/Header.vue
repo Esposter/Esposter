@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VisualType } from "@/models/dashboard/VisualType";
 import { RoutePath } from "@/models/router/RoutePath";
+import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 
@@ -18,7 +18,7 @@ const { visualType } = storeToRefs(visualStore);
         <div w-full flex items-center>
           <v-select
             v-model="visualType"
-            :items="Object.values(VisualType)"
+            :items="visualTypeItemCategoryDefinitions"
             label="Visual Type"
             hide-details
             @update:model-value="

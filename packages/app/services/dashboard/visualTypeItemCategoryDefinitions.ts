@@ -1,7 +1,7 @@
 import { VisualType } from "@/models/dashboard/VisualType";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
-export const VisualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = [
+export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = [
   {
     value: VisualType.Area,
     title: VisualType.Area,
