@@ -44,9 +44,10 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         return !this.editFormRef || this.editFormRef.errors.length === 0;
       },
       isSavable(): boolean {
+        if (!this.editedItem) return false;
         // For the form to be savable, it has to have no errors
         // and either it is a new item, or it is not equal to the original item
-        return this.isEditFormValid && (!this.originalItem || !deepEqual(this.editedItem, this.originalItem));
+        else return this.isEditFormValid && (!this.originalItem || !deepEqual(this.editedItem, this.originalItem));
       },
       isDirty(): boolean {
         // We know the form is dirty if:

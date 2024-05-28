@@ -7,10 +7,11 @@ interface VisualPreviewProps {
 }
 
 const { type } = defineProps<VisualPreviewProps>();
+const emit = defineEmits<{ click: [] }>();
 </script>
 
 <template>
   <Transition name="fade">
-    <component :is="VisualTypeDemoComponentMap[type]" size="90%" />
+    <component :is="VisualTypeDemoComponentMap[type]" size="90%" @click="emit('click')" />
   </Transition>
 </template>

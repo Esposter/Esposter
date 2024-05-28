@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+// eslint-disable @typescript-eslint/prefer-nullish-coalescing
 import deepEqual from "deep-equal";
 import type { ArrayElement } from "type-fest/source/internal";
 import type { VValidation } from "vuetify/components";

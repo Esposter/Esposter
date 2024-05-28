@@ -21,9 +21,10 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
   // For the form to be savable, it has to have no errors
   // and either it is a new item, or it is not equal to the original item
-  const isSavable = computed(
-    () => isEditFormValid.value && (!originalItem || !deepEqual(editedItem.value, originalItem)),
-  );
+  const isSavable = computed(() => {
+    if (!editedItem.value) return false;
+    else return isEditFormValid.value && (!originalItem || !deepEqual(editedItem.value, originalItem));
+  });
   // We know the form is dirty if:
   // 1. The user has pucked up and the edit form isn't valid
   // 2. or that it is savable

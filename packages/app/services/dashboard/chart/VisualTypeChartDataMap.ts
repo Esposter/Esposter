@@ -7,7 +7,7 @@ import { ColumnChartTypeDataMap } from "@/models/dashboard/chart/column/ColumnCh
 import { LineChartType } from "@/models/dashboard/chart/line/LineChartType";
 import { LineChartTypeDataMap } from "@/models/dashboard/chart/line/LineChartTypeDataMap";
 
-export const VisualTypeChartConfigurationMap = {
+export const VisualTypeChartDataMap = {
   [VisualType.Area]: AreaChartTypeDataMap[AreaChartType.Basic],
   [VisualType.Column]: ColumnChartTypeDataMap[ColumnChartType.Basic],
   [VisualType.Line]: LineChartTypeDataMap[LineChartType.Basic],
