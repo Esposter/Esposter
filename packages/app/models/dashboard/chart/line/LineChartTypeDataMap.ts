@@ -4,7 +4,7 @@ import {
   basicLineChartConfigurationSchema,
 } from "@/models/dashboard/chart/line/BasicLineChartConfiguration";
 import { LineChartType } from "@/models/dashboard/chart/line/LineChartType";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const LineChartTypeDataMap = {
   [LineChartType.Basic]: {

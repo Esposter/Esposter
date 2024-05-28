@@ -8,17 +8,8 @@ import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
-const {
-  visuals,
-  noColumns,
-  editedItem,
-  editFormDialog,
-  editFormRef,
-  originalItem,
-  isEditFormValid,
-  isFullScreenDialog,
-  isSavable,
-} = storeToRefs(visualStore);
+const { visuals, noColumns, editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable } =
+  storeToRefs(visualStore);
 const { background, border, surface } = useColors();
 </script>
 
@@ -26,7 +17,7 @@ const { background, border, surface } = useColors();
   <v-container flex-1 fluid>
     <GridLayout v-model:layout="visuals" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
       <GridItem
-        v-for="({ id, type, x, y, w, h }, index) in visuals"
+        v-for="({ id, type, configuration, x, y, w, h }, index) in visuals"
         :key="id"
         :i="id"
         text-center
@@ -41,9 +32,8 @@ const { background, border, surface } = useColors();
         <StyledEditFormDialog
           v-if="editedItem"
           v-model="editFormDialog"
-          :name="type"
+          :name="`${configuration.type} ${type} Visual`"
           :edited-item
-          :original-item
           :is-edit-form-valid
           :is-full-screen-dialog
           :is-savable
@@ -51,14 +41,10 @@ const { background, border, surface } = useColors();
           @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
           @save="save()"
           @close="resetItem()"
-          @delete="
-            async (onComplete) => {
-              await save();
-              onComplete();
-            }
-          "
         >
-          <Vjsf v-model="visuals[index]" :schema="VisualTypeChartDataMap[type].schema" />
+          <v-container fluid>
+            <Vjsf v-model="visuals[index].configuration" :schema="VisualTypeChartDataMap[type].schema" />
+          </v-container>
         </StyledEditFormDialog>
       </GridItem>
     </GridLayout>

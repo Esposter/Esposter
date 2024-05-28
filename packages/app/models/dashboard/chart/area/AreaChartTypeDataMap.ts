@@ -4,7 +4,7 @@ import {
   BasicAreaChartConfiguration,
   basicAreaChartConfigurationSchema,
 } from "@/models/dashboard/chart/area/BasicAreaChartConfiguration";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const AreaChartTypeDataMap = {
   [AreaChartType.Basic]: {

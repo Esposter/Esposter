@@ -4,7 +4,7 @@ import {
   basicColumnChartConfigurationSchema,
 } from "@/models/dashboard/chart/column/BasicColumnChartConfiguration";
 import { ColumnChartType } from "@/models/dashboard/chart/column/ColumnChartType";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const ColumnChartTypeDataMap = {
   [ColumnChartType.Basic]: {
