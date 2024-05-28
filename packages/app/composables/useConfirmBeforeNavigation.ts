@@ -1,6 +1,5 @@
 export const useConfirmBeforeNavigation = (isDirty: Ref<boolean>) => {
   onBeforeRouteLeave(() => {
-    console.log(isDirty.value);
     if (isDirty.value && !window.confirm("Changes that you made may not be saved.")) return false;
   });
 
