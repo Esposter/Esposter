@@ -1,5 +1,7 @@
-import type { LayoutItem } from "grid-layout-plus";
+import type { LayoutItem as BaseLayoutItem } from "grid-layout-plus";
 import { z } from "zod";
+
+export type LayoutItem = BaseLayoutItem & { i: string };
 
 export const layoutItemSchema = z.object({
   i: z.string().uuid(),

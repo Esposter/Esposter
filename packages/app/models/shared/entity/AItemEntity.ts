@@ -11,6 +11,5 @@ export const AItemEntity = applyItemMetadataMixin(
 export const aItemEntitySchema = z
   .object({
     id: z.string().uuid(),
-    name: z.string().min(1),
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<AItemEntity>;

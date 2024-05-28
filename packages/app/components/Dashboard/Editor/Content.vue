@@ -10,9 +10,9 @@ const { background, border, surface } = useColors();
 <template>
   <v-container flex-1 fluid>
     <GridLayout v-model:layout="visuals" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
-      <GridItem v-for="{ type, i, x, y, w, h } in visuals" :key="i" text-center content-center :x :y :w :h :i>
+      <GridItem v-for="{ id, type, x, y, w, h } in visuals" :key="id" :i="id" text-center content-center :x :y :w :h>
         <DashboardVisualPreview :type />
-        <DashboardVisualPreviewRemoveButton :id="i" :type />
+        <DashboardVisualPreviewRemoveButton :id :type />
       </GridItem>
     </GridLayout>
   </v-container>
