@@ -1,7 +1,7 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
-import deepEqual from "deep-equal";
+import deepEqual from "fast-deep-equal";
 import type { UnwrapRef } from "vue";
 import type { VForm } from "vuetify/components";
 

@@ -5,7 +5,7 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import deepEqual from "deep-equal";
+import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
 
 interface PanelListItemProps {
