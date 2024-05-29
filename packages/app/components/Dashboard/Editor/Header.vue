@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { VisualType } from "@/models/dashboard/VisualType";
 import { RoutePath } from "@/models/router/RoutePath";
+import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
+import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 
+const router = useRouter();
 const visualStore = useVisualStore();
-const { addVisual } = visualStore;
-const { selectedVisualType } = storeToRefs(visualStore);
+const { createVisual } = visualStore;
+const { visualType } = storeToRefs(visualStore);
 </script>
 
 <template>
@@ -14,11 +16,20 @@ const { selectedVisualType } = storeToRefs(visualStore);
       <div pt-4 flex flex-col justify-between pr-4 gap-y-4>
         <div>Dashboard Editor</div>
         <div w-full flex items-center>
-          <v-select v-model="selectedVisualType" :items="Object.values(VisualType)" label="Visual Type" hide-details />
+          <v-select
+            v-model="visualType"
+            :items="visualTypeItemCategoryDefinitions"
+            label="Visual Type"
+            hide-details
+            @update:model-value="
+              (value) =>
+                router.replace({ query: { ...router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAM_KEY]: value } })
+            "
+          />
           <v-divider mx-4="!" thickness="2" vertical inset />
-          <v-tooltip :text="`Add ${selectedVisualType} Visual`">
+          <v-tooltip :text="`Add ${visualType} Visual`">
             <template #activator="{ props }">
-              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="addVisual">
+              <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="createVisual">
                 <v-icon icon="mdi-plus" />
               </v-btn>
             </template>

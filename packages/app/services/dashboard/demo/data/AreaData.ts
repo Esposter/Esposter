@@ -43,10 +43,6 @@ export const AreaData = {
       text: "Price Movements",
       align: "left",
     },
-    title: {
-      text: "Fundamental Analysis of Stocks",
-      align: "left",
-    },
     xaxis: {
       type: "datetime",
     },

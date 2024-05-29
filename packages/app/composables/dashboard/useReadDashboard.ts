@@ -17,11 +17,10 @@ export const useReadDashboard = async () => {
       ? oldDashboardChangedTracker
       : newDashboardChangedTracker;
   });
-
   await useReadData(
     () => {
       const dashboardJson = localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY);
-      if (dashboardJson) dashboard.value = new Dashboard(jsonDateParse(dashboardJson));
+      if (dashboardJson) dashboard.value = Object.assign(new Dashboard(), jsonDateParse(dashboardJson));
       else dashboard.value = new Dashboard();
     },
     async () => {
@@ -29,5 +28,5 @@ export const useReadDashboard = async () => {
     },
   );
 
-  watch(dashboardChangedTracker, saveDashboard, { deep: true });
+  watchTracker(dashboardChangedTracker, saveDashboard);
 };

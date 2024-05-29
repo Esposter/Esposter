@@ -7,10 +7,6 @@ import { z } from "zod";
 class BaseDashboard {
   visuals: Visual[] = [];
 
-  constructor(init?: Partial<BaseDashboard>) {
-    Object.assign(this, init);
-  }
-
   toJSON() {
     return JSON.stringify({ ...this });
   }

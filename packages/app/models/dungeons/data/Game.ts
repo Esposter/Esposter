@@ -10,10 +10,6 @@ class BaseGame {
   saves: Save[] = [];
   settings = getInitialSettings();
 
-  constructor(init?: Partial<BaseGame>) {
-    Object.assign(this, init);
-  }
-
   toJSON() {
     return JSON.stringify({ ...this });
   }

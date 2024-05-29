@@ -10,7 +10,7 @@ export const useReadDungeonsGame = async () => {
   await useReadData(
     () => {
       const dungeonsStoreJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
-      if (dungeonsStoreJson) game.value = new Game(jsonDateParse(dungeonsStoreJson));
+      if (dungeonsStoreJson) game.value = Object.assign(new Game(), jsonDateParse(dungeonsStoreJson));
       else game.value = new Game();
     },
     async () => {

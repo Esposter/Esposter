@@ -1,7 +1,8 @@
 import type { Item } from "@/models/tableEditor/Item";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
-import { ITEM_ID_QUERY_PARAM_KEY, TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import deepEqual from "fast-deep-equal";

@@ -21,10 +21,9 @@ const isValid = ref(true);
   <StyledCard>
     <v-form
       v-model="isValid"
-      @submit="
-        (e) => {
-          e.preventDefault();
-          emit('submit', e, { title, description });
+      @submit.prevent="
+        (event) => {
+          emit('submit', event, { title, description });
         }
       "
     >

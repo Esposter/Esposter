@@ -17,7 +17,7 @@ export const dashboardRouter = router({
       if (!response.readableStreamBody) return new Dashboard();
 
       const json = await streamToText(response.readableStreamBody);
-      return new Dashboard(jsonDateParse(json));
+      return Object.assign(new Dashboard(), jsonDateParse(json));
     } catch {
       // We need to catch the case where the user is reading for the very first time
       // and there is no game saved yet

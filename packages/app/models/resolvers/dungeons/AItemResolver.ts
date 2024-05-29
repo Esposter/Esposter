@@ -7,8 +7,6 @@ import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export abstract class AItemResolver {
-  // @TODO: Ideally if we had es decorators we would be able to look up the class
-  // if we knew the type, instead of storing the value then preValidating against it >:C
   type: ItemEffectType;
 
   constructor(type: ItemEffectType) {

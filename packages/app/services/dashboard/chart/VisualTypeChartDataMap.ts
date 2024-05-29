@@ -1,4 +1,5 @@
 import { VisualType } from "@/models/dashboard/VisualType";
+import type { ChartConfiguration } from "@/models/dashboard/chart/ChartConfiguration";
 import type { ChartData } from "@/models/dashboard/chart/ChartData";
 import { AreaChartType } from "@/models/dashboard/chart/area/AreaChartType";
 import { AreaChartTypeDataMap } from "@/models/dashboard/chart/area/AreaChartTypeDataMap";
@@ -11,4 +12,4 @@ export const VisualTypeChartDataMap = {
   [VisualType.Area]: AreaChartTypeDataMap[AreaChartType.Basic],
   [VisualType.Column]: ColumnChartTypeDataMap[ColumnChartType.Basic],
   [VisualType.Line]: LineChartTypeDataMap[LineChartType.Basic],
-} as const satisfies Record<VisualType, ChartData>;
+} as const satisfies Record<VisualType, ChartData<ChartConfiguration>>;

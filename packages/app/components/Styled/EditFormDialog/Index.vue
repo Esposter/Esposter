@@ -56,7 +56,7 @@ watch(editFormRef, (newEditFormRef) => {
     persistent
     no-click-animation
   >
-    <v-form ref="editFormRef" contents="!">
+    <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header
           :name

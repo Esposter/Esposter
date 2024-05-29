@@ -1,5 +1,5 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
-import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import deepEqual from "fast-deep-equal";
 import type { UnwrapRef } from "vue";

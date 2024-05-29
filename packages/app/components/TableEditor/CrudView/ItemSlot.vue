@@ -2,7 +2,7 @@
 import type { Item } from "@/models/tableEditor/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
-import { getItemCategoryDefinition } from "@/services/tableEditor/itemCategoryDefinition";
+import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 interface TableEditorCrudViewItemSlotProps {

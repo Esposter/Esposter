@@ -21,10 +21,6 @@ export const LineData = {
     stroke: {
       curve: "straight",
     },
-    title: {
-      text: "Product Trends by Month",
-      align: "left",
-    },
     xaxis: {
       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     },

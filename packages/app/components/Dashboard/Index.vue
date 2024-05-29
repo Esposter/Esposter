@@ -3,13 +3,13 @@ import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
-const { visuals, noColumns } = storeToRefs(visualStore);
+const { visualList, noColumns } = storeToRefs(visualStore);
 </script>
 
 <template>
   <v-container fluid>
     <GridLayout
-      v-model:layout="visuals"
+      v-model:layout="visualList"
       :col-num="noColumns"
       :row-height="50"
       :use-style-cursor="false"
@@ -17,8 +17,8 @@ const { visuals, noColumns } = storeToRefs(visualStore);
       :is-resizable="false"
       responsive
     >
-      <GridItem v-for="{ id, type, x, y, w, h } in visuals" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisual :type />
+      <GridItem v-for="{ id, type, configuration, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
+        <DashboardVisual :type :configuration />
       </GridItem>
     </GridLayout>
   </v-container>
