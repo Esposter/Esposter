@@ -5,7 +5,7 @@ import {
 } from "@/models/dashboard/chart/column/BasicColumnChartConfiguration";
 import type { ColumnChartConfiguration } from "@/models/dashboard/chart/column/ColumnChartConfiguration";
 import { ColumnChartType } from "@/models/dashboard/chart/column/ColumnChartType";
-import { BasicColumnChartConfigurationResolver } from "@/models/resolvers/dashboard/column/BasicColumnChartConfigurationResolver";
+import { BasicColumnChartConfigurationResolver } from "@/models/resolvers/dashboard/chart/column/BasicColumnChartConfigurationResolver";
 import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const ColumnChartTypeDataMap = {
