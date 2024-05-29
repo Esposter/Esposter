@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { mergeProps } from "vue";
+import type { SubmitEventPromise } from "vuetify";
 import type { VCard } from "vuetify/components";
 import { VBtn } from "vuetify/components";
 
@@ -19,7 +20,7 @@ defineSlots<{
   default: (props: Record<string, never>) => unknown;
 }>();
 const { cardProps, confirmButtonProps, confirmButtonAttrs } = defineProps<StyledDialogProps>();
-const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
+const emit = defineEmits<{ submit: [submitEventPromise: SubmitEventPromise, onComplete: () => void] }>();
 const isOpen = ref(false);
 const isValid = ref(true);
 </script>
@@ -29,7 +30,16 @@ const isValid = ref(true);
     <template #activator>
       <slot name="activator" :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
     </template>
-    <v-form v-model="isValid" @submit="({ preventDefault }) => preventDefault()">
+    <v-form
+      v-model="isValid"
+      @submit.prevent="
+        (event) => {
+          emit('submit', event, () => {
+            isOpen = false;
+          });
+        }
+      "
+    >
       <StyledCard :card-props="cardProps">
         <slot />
         <v-card-actions>
@@ -37,16 +47,11 @@ const isValid = ref(true);
           <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
           <v-btn
             text-3
+            type="submit"
             color="error"
             variant="outlined"
-            text="Confirm"
             :disabled="!isValid"
             :="mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs ?? {})"
-            @click="
-              emit('confirm', () => {
-                isOpen = false;
-              })
-            "
           />
         </v-card-actions>
       </StyledCard>

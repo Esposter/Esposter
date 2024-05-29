@@ -4,13 +4,12 @@ interface SaveButtonProps {
 }
 
 const { isSavable } = defineProps<SaveButtonProps>();
-const emit = defineEmits<{ save: [] }>();
 </script>
 
 <template>
   <v-tooltip text="Save & Close">
     <template #activator="{ props }">
-      <v-btn icon="mdi-content-save" :disabled="!isSavable" :="props" @click="emit('save')" />
+      <v-btn type="submit" icon="mdi-content-save" :disabled="!isSavable" :="props" />
     </template>
   </v-tooltip>
 </template>

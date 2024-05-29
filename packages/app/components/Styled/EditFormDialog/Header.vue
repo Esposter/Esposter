@@ -35,7 +35,7 @@ const emit = defineEmits<{
   <v-toolbar flex-none :title="`Configuration - ${itemType}`">
     <v-spacer />
     <ErrorIcon :edit-form-ref :is-edit-form-valid />
-    <SaveButton :is-savable @save="emit('save')" />
+    <SaveButton :is-savable />
     <ConfirmDeleteDialogButton :name :original-item @delete="(onComplete) => emit('delete', onComplete)" />
     <v-divider mx-2="!" thickness="2" inset vertical />
     <ToggleFullScreenDialogButton :is-full-screen-dialog @click="(value) => emit('update:fullscreen-dialog', value)" />

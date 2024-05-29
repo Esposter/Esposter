@@ -44,9 +44,8 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
   <div class="text-subtitle-1">Your personal information</div>
   <v-form
     v-model="isValid"
-    @submit="
-      async ({ preventDefault }) => {
-        preventDefault();
+    @submit.prevent="
+      async () => {
         await updateAuthUser(editedProfileCardRows);
         editMode = false;
       }
