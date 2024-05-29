@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import type { VisualType } from "@/models/dashboard/VisualType";
+import type { Visual } from "@/models/dashboard/Visual";
+import { resolveConfiguration } from "@/services/dashboard/chart/resolveConfiguration";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
-  type: VisualType;
+  type: Visual["type"];
+  configuration: Visual["configuration"];
 }
 
-const { type } = defineProps<VisualProps>();
+const { type, configuration } = defineProps<VisualProps>();
 const data = VisualTypeDemoDataMap[type];
 const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
@@ -23,15 +25,21 @@ useResizeObserver(divRef, ([{ target }]) => {
     <div ref="divRef" h-full>
       <VueApexCharts
         :="data"
-        :options="{
-          ...data.options,
-          chart: {
-            height,
-            zoom: {
-              enabled: false,
+        :options="
+          resolveConfiguration(
+            {
+              ...data.options,
+              chart: {
+                height,
+                zoom: {
+                  enabled: false,
+                },
+              },
             },
-          },
-        }"
+            type,
+            configuration,
+          )
+        "
       />
     </div>
   </StyledCard>

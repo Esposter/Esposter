@@ -10,7 +10,7 @@ const emit = defineEmits<{ save: [] }>();
 <template>
   <v-tooltip text="Save & Close">
     <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-content-save" :disabled="!isSavable" @click="emit('save')" />
+      <v-btn icon="mdi-content-save" :disabled="!isSavable" :="props" @click="emit('save')" />
     </template>
   </v-tooltip>
 </template>

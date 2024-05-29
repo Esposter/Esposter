@@ -17,8 +17,8 @@ const { visualList, noColumns } = storeToRefs(visualStore);
       :is-resizable="false"
       responsive
     >
-      <GridItem v-for="{ id, type, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisual :type />
+      <GridItem v-for="{ id, type, configuration, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
+        <DashboardVisual :type :configuration />
       </GridItem>
     </GridLayout>
   </v-container>
