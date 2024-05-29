@@ -14,7 +14,7 @@ interface Item {
   title: string;
   icon: string;
   color?: string;
-  onClick: (e: MouseEvent | KeyboardEvent) => void;
+  onClick: (event: MouseEvent | KeyboardEvent) => void;
 }
 
 const { message, isHovering, hoverProps } = defineProps<MessageOptionsMenuProps>();

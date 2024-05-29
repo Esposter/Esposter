@@ -35,8 +35,8 @@ watch(theme.name, () => {
   });
   document.body.append(copy);
 
-  const onTransitionEnd = (e: TransitionEvent) => {
-    if (e.target !== e.currentTarget) return;
+  const onTransitionEnd = (event: TransitionEvent) => {
+    if (event.target !== event.currentTarget) return;
 
     copy.remove();
     el.removeEventListener("transitionend", onTransitionEnd);

@@ -7,30 +7,10 @@ interface VisualPreviewProps {
 }
 
 const { type } = defineProps<VisualPreviewProps>();
-const emit = defineEmits<{ click: [] }>();
-const isDrag = ref(false);
-const isMouseDown = ref(false);
 </script>
 
 <template>
   <Transition name="fade">
-    <component
-      :is="VisualTypeDemoComponentMap[type]"
-      size="90%"
-      @mousedown="isMouseDown = true"
-      @mouseup="
-        () => {
-          isMouseDown = false;
-          if (isDrag) isDrag = false;
-          else emit('click');
-        }
-      "
-      @mousemove="
-        () => {
-          if (!isMouseDown) return;
-          isDrag = true;
-        }
-      "
-    />
+    <component :is="VisualTypeDemoComponentMap[type]" size="90%" />
   </Transition>
 </template>

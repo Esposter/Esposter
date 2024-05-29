@@ -1,40 +1,10 @@
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { VisualType } from "@/models/dashboard/VisualType";
-import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
-import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
-import { Vjsf } from "@koumoul/vjsf";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
-const route = useRoute();
 const visualStore = useVisualStore();
-const { save, editItem, resetItem } = visualStore;
-const {
-  visualList,
-  visualType,
-  noColumns,
-  editedItem,
-  editFormDialog,
-  editFormRef,
-  isEditFormValid,
-  isFullScreenDialog,
-  isDirty,
-  isSavable,
-} = storeToRefs(visualStore);
+const { visualList, noColumns } = storeToRefs(visualStore);
 const { background, border, surface } = useColors();
-
-useConfirmBeforeNavigation(isDirty);
-
-onMounted(async () => {
-  const itemType = route.query[ITEM_TYPE_QUERY_PARAM_KEY];
-  if (Object.values(VisualType).some((type) => type === itemType)) visualType.value = itemType as VisualType;
-
-  const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
-  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem(itemId);
-});
 </script>
 
 <template>
@@ -51,25 +21,7 @@ onMounted(async () => {
         :w
         :h
       >
-        <DashboardVisualPreview :type @click="editItem(id)" />
-        <DashboardVisualPreviewRemoveButton :id :type />
-        <StyledEditFormDialog
-          v-if="editedItem"
-          v-model="editFormDialog"
-          :name="`${configuration.type} ${type} Visual`"
-          :edited-item
-          :is-edit-form-valid
-          :is-full-screen-dialog
-          :is-savable
-          @update:edit-form-ref="(value) => (editFormRef = value)"
-          @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
-          @save="save(editedItem)"
-          @close="resetItem()"
-        >
-          <v-container fluid>
-            <Vjsf v-model="editedItem.configuration" :schema="VisualTypeChartDataMap[type].schema" />
-          </v-container>
-        </StyledEditFormDialog>
+        <DashboardVisualPreviewContainer :id size-full :type :configuration-type="configuration.type" />
       </GridItem>
     </GridLayout>
   </v-container>
