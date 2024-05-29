@@ -11,6 +11,6 @@ const { type } = defineProps<VisualPreviewProps>();
 
 <template>
   <Transition name="fade">
-    <component :is="VisualTypeDemoComponentMap[type]" size="90%" />
+    <component :is="VisualTypeDemoComponentMap[type]" size-full />
   </Transition>
 </template>
