@@ -59,7 +59,7 @@ onMounted(async () => {
       <v-container fluid>
         <v-select
           v-model="editedItem.chart.type"
-          :items="Object.values(VisualDataMap[type].typeEnum)"
+          :items="Object.values(VisualDataMap[editedItem.type].typeEnum)"
           label="Chart Type"
         />
         <Vjsf v-model="editedItem.chart.configuration" :schema="VisualDataMap[type].data.schema" />
