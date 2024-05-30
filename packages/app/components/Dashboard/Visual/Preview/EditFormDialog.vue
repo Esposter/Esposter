@@ -4,8 +4,6 @@
 import type { Visual } from "@/models/dashboard/Visual";
 import { VisualDataMap } from "@/services/dashboard/chart/VisualDataMap";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { assignCommonProperties } from "@/util/object/assignCommonProperties";
-import { replaceProperties } from "@/util/object/replaceProperties";
 import { Vjsf } from "@koumoul/vjsf";
 
 const editedItem = defineModel<Visual>({ required: true });
@@ -17,17 +15,6 @@ const visualData = computed(() => VisualDataMap[editedItem.value.type]);
 const schema = computed(() => visualData.value.chartDataMap[editedItem.value.chart.type].schema);
 
 useConfirmBeforeNavigation(isDirty);
-
-watch(
-  () => editedItem.value.chart.type,
-  (newType) => {
-    const initialConfiguration = assignCommonProperties(
-      visualData.value.chartDataMap[newType].getInitialConfiguration(),
-      editedItem.value.chart.configuration,
-    );
-    replaceProperties(editedItem.value.chart.configuration, initialConfiguration);
-  },
-);
 </script>
 
 <template>
@@ -45,7 +32,7 @@ watch(
   >
     <v-container fluid>
       <v-select v-model="editedItem.chart.type" :items="Object.values(visualData.typeEnum)" label="Chart Type" />
-      <Vjsf v-model="editedItem.chart.configuration" :schema />
+      <Vjsf v-model="editedItem.chart.configuration" :schema :options="{ removeAdditional: true }" />
     </v-container>
   </StyledEditFormDialog>
 </template>
