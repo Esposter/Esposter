@@ -1,6 +1,6 @@
 import type { Visual } from "@/models/dashboard/Visual";
 import { VisualType } from "@/models/dashboard/VisualType";
-import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
+import { VisualDataMap } from "@/services/dashboard/chart/VisualDataMap";
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
@@ -30,7 +30,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     storeCreateVisual({
       id,
       type: visualType.value,
-      configuration: VisualTypeChartDataMap[visualType.value].getInitialConfiguration(),
+      chart: VisualDataMap[visualType.value].getInitialChart(),
       i: id,
       x: (visualList.value.length * 2) % noColumns.value,
       // Puts the item at the bottom

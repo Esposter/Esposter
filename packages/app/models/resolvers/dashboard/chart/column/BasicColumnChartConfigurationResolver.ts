@@ -1,4 +1,16 @@
-import type { BasicColumnChartConfiguration } from "@/models/dashboard/chart/column/BasicColumnChartConfiguration";
-import { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChartConfigurationResolver";
+import type { BasicAreaChartConfiguration } from "@/models/dashboard/chart/area/configuration/BasicAreaChartConfiguration";
+import type { BasicColumnChartConfiguration } from "@/models/dashboard/chart/column/configuration/BasicColumnChartConfiguration";
+import { BaseChartConfigurationResolver } from "@/models/resolvers/dashboard/chart/BaseChartConfigurationResolver";
+import type { ApexOptions } from "apexcharts";
 
-export class BasicColumnChartConfigurationResolver extends AChartConfigurationResolver<BasicColumnChartConfiguration> {}
+export class BasicColumnChartConfigurationResolver extends BaseChartConfigurationResolver<BasicColumnChartConfiguration> {
+  handleConfiguration(apexOptions: ApexOptions, configuration: BasicAreaChartConfiguration) {
+    super.handleConfiguration(apexOptions, configuration);
+    const { subtitle } = configuration;
+    apexOptions.subtitle = {
+      text: subtitle,
+      align: "left",
+    };
+    return apexOptions;
+  }
+}

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 

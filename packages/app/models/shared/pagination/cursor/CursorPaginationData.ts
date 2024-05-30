@@ -1,6 +1,6 @@
 import type { ItemMetadata } from "@/models/shared/ItemMetadata";
-import { CommonPaginationData } from "@/models/shared/pagination/CommonPaginationData";
+import { BasePaginationData } from "@/models/shared/pagination/BasePaginationData";
 
-export class CursorPaginationData<TItem extends ItemMetadata> extends CommonPaginationData<TItem> {
+export class CursorPaginationData<TItem extends ItemMetadata> extends BasePaginationData<TItem> {
   nextCursor: string | null = null;
 }

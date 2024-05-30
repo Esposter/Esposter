@@ -1,5 +1,5 @@
-import type { ChartConfiguration } from "@/models/dashboard/chart/ChartConfiguration";
-import { chartConfigurationSchema } from "@/models/dashboard/chart/ChartConfiguration";
+import type { Chart } from "@/models/dashboard/chart/Chart";
+import { chartSchema } from "@/models/dashboard/chart/Chart";
 import type { LayoutItem } from "@/models/dashboard/LayoutItem";
 import { layoutItemSchema } from "@/models/dashboard/LayoutItem";
 import type { VisualType } from "@/models/dashboard/VisualType";
@@ -11,11 +11,10 @@ import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityTyp
 import { z } from "zod";
 
 export interface Visual extends AItemEntity, ItemEntityType<VisualType>, LayoutItem {
-  configuration: ChartConfiguration;
+  chart: Chart;
 }
 
-export const visualSchema = z
-  .object({ configuration: chartConfigurationSchema })
-  .merge(aItemEntitySchema)
+export const visualSchema = aItemEntitySchema
   .merge(createItemEntityTypeSchema(visualTypeSchema))
-  .merge(layoutItemSchema) satisfies z.ZodType<Visual>;
+  .merge(layoutItemSchema)
+  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<Visual>;

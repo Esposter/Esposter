@@ -1,6 +1,6 @@
-import type { VisualData } from "@/models/dashboard/VisualData";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-export const ColumnData = {
+export const ColumnPropsData = {
   type: "bar",
   series: [
     {
@@ -48,4 +48,4 @@ export const ColumnData = {
       },
     },
   },
-} as const satisfies VisualData;
+} as const satisfies VisualPropsData;
