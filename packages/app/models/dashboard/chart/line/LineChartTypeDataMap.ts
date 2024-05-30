@@ -15,19 +15,13 @@ import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const LineChartTypeDataMap = {
   [LineChartType.Basic]: {
-    getInitialChart: () => ({
-      type: LineChartType.Basic,
-      configuration: new BasicLineChartConfiguration(),
-    }),
+    getInitialConfiguration: () => new BasicLineChartConfiguration(),
     schema: zodToJsonSchema(basicLineChartConfigurationSchema),
     resolver: new BasicLineChartConfigurationResolver(),
   },
   [LineChartType.DataLabels]: {
-    getInitialChart: () => ({
-      type: LineChartType.DataLabels,
-      configuration: new DataLabelsLineChartConfiguration(),
-    }),
+    getInitialConfiguration: () => new DataLabelsLineChartConfiguration(),
     schema: zodToJsonSchema(dataLabelsLineChartConfigurationSchema),
     resolver: new DataLabelsLineChartConfigurationResolver(),
   },
-} as const satisfies Record<LineChartType, ChartData<LineChart>>;
+} as const satisfies Record<LineChartType, ChartData<LineChart["configuration"]>>;

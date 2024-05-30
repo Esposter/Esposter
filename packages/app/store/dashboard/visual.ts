@@ -30,7 +30,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     storeCreateVisual({
       id,
       type: visualType.value,
-      chart: VisualDataMap[visualType.value].data.getInitialChart(),
+      chart: VisualDataMap[visualType.value].getInitialChart(),
       i: id,
       x: (visualList.value.length * 2) % noColumns.value,
       // Puts the item at the bottom

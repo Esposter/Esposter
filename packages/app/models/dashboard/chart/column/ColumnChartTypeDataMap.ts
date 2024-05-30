@@ -10,11 +10,8 @@ import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const ColumnChartTypeDataMap = {
   [ColumnChartType.Basic]: {
-    getInitialChart: () => ({
-      type: ColumnChartType.Basic,
-      configuration: new BasicColumnChartConfiguration(),
-    }),
+    getInitialConfiguration: () => new BasicColumnChartConfiguration(),
     schema: zodToJsonSchema(basicColumnChartConfigurationSchema),
     resolver: new BasicColumnChartConfigurationResolver(),
   },
-} as const satisfies Record<ColumnChartType, ChartData<ColumnChart>>;
+} as const satisfies Record<ColumnChartType, ChartData<ColumnChart["configuration"]>>;

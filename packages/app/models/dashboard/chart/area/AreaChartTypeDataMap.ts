@@ -10,11 +10,8 @@ import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 
 export const AreaChartTypeDataMap = {
   [AreaChartType.Basic]: {
-    getInitialChart: () => ({
-      type: AreaChartType.Basic,
-      configuration: new BasicAreaChartConfiguration(),
-    }),
+    getInitialConfiguration: () => new BasicAreaChartConfiguration(),
     schema: zodToJsonSchema(basicAreaChartConfigurationSchema),
     resolver: new BasicAreaChartConfigurationResolver(),
   },
-} as const satisfies Record<AreaChartType, ChartData<AreaChart>>;
+} as const satisfies Record<AreaChartType, ChartData<AreaChart["configuration"]>>;

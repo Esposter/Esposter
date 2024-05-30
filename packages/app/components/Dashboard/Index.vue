@@ -18,7 +18,7 @@ const { visualList, noColumns } = storeToRefs(visualStore);
       responsive
     >
       <GridItem v-for="{ id, type, chart, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisual :type :chart-configuration="chart.configuration" />
+        <DashboardVisual :type :chart />
       </GridItem>
     </GridLayout>
   </v-container>
