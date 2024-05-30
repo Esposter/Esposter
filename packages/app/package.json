@@ -122,7 +122,7 @@
     "vue-router": "^4.3.2",
     "vue-waypoint": "^4.3.0",
     "vue3-apexcharts": "^1.5.3",
-    "vuetify": "^3.6.7",
+    "vuetify": "^3.6.8",
     "webfontloader": "^1.6.28",
     "worker-timers": "^8.0.0",
     "ws": "^8.17.0",
