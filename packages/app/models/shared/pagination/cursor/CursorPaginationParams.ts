@@ -1,9 +1,9 @@
-import type { CommonPaginationParams } from "@/models/shared/pagination/CommonPaginationParams";
-import { createCommonPaginationParamsSchema } from "@/models/shared/pagination/CommonPaginationParams";
+import type { BasePaginationParams } from "@/models/shared/pagination/BasePaginationParams";
+import { createBasePaginationParamsSchema } from "@/models/shared/pagination/BasePaginationParams";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { z } from "zod";
 
-export interface CursorPaginationParams<TSortKey extends string> extends CommonPaginationParams<TSortKey> {
+export interface CursorPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
   // This will be a serialised string of all the cursors based on sorting
   cursor?: string | null;
 }
@@ -13,8 +13,8 @@ export const createCursorPaginationParamsSchema = <TSortKeySchema extends z.ZodT
   defaultSortBy: SortItem<TSortKeySchema["_type"]>[],
 ) =>
   // We need at least one sort item so we can derive a primary cursor for pagination
-  createCommonPaginationParamsSchema(sortKeySchema, 1, defaultSortBy).merge(
-    z.object({
+  z
+    .object({
       cursor: z.string().nullable().default(null),
-    }),
-  );
+    })
+    .merge(createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy));

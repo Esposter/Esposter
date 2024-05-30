@@ -1,13 +1,11 @@
 import type { BasicAreaChartConfiguration } from "@/models/dashboard/chart/area/configuration/BasicAreaChartConfiguration";
-import { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChartConfigurationResolver";
+import { BaseChartConfigurationResolver } from "@/models/resolvers/dashboard/chart/BaseChartConfigurationResolver";
 import type { ApexOptions } from "apexcharts";
 
-export class BasicAreaChartConfigurationResolver extends AChartConfigurationResolver<BasicAreaChartConfiguration> {
-  handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: BasicAreaChartConfiguration) {
-    apexOptions.title = {
-      text: title,
-      align: "left",
-    };
+export class BasicAreaChartConfigurationResolver extends BaseChartConfigurationResolver<BasicAreaChartConfiguration> {
+  handleConfiguration(apexOptions: ApexOptions, configuration: BasicAreaChartConfiguration) {
+    super.handleConfiguration(apexOptions, configuration);
+    const { subtitle } = configuration;
     apexOptions.subtitle = {
       text: subtitle,
       align: "left",

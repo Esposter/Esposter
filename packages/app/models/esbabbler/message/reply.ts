@@ -15,6 +15,6 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity {
 
 export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageReplyMetadataEntity>();
 
-export const messageReplyMetadataSchema = messageMetadataSchema.merge(
-  z.object({ messageReplyRowKey: messageSchema.shape.rowKey }),
-) satisfies z.ZodType<MessageReplyMetadataEntity>;
+export const messageReplyMetadataSchema = z
+  .object({ messageReplyRowKey: messageSchema.shape.rowKey })
+  .merge(messageMetadataSchema) satisfies z.ZodType<MessageReplyMetadataEntity>;

@@ -1,15 +1,12 @@
 import type { DataLabelsLineChartConfiguration } from "@/models/dashboard/chart/line/configuration/DataLabelsLineChartConfiguration";
-import { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChartConfigurationResolver";
+import { BaseChartConfigurationResolver } from "@/models/resolvers/dashboard/chart/BaseChartConfigurationResolver";
 import type { ApexOptions } from "apexcharts";
 
-export class DataLabelsLineChartConfigurationResolver extends AChartConfigurationResolver<DataLabelsLineChartConfiguration> {
-  handleConfiguration(apexOptions: ApexOptions, { title }: DataLabelsLineChartConfiguration) {
+export class DataLabelsLineChartConfigurationResolver extends BaseChartConfigurationResolver<DataLabelsLineChartConfiguration> {
+  handleConfiguration(apexOptions: ApexOptions, configuration: DataLabelsLineChartConfiguration) {
+    super.handleConfiguration(apexOptions, configuration);
     apexOptions.dataLabels = {
       enabled: true,
-    };
-    apexOptions.title = {
-      text: title,
-      align: "left",
     };
     return apexOptions;
   }
