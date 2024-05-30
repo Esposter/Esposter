@@ -1,6 +1,6 @@
-import type { VisualData } from "@/models/dashboard/VisualData";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-export const AreaData = {
+export const AreaPropsData = {
   type: "area",
   series: [
     {
@@ -50,4 +50,4 @@ export const AreaData = {
       opposite: true,
     },
   },
-} as const satisfies VisualData;
+} as const satisfies VisualPropsData;

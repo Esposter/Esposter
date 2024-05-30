@@ -1,6 +1,6 @@
-import type { VisualData } from "@/models/dashboard/VisualData";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-export const LineData = {
+export const LinePropsData = {
   type: "line",
   series: [
     {
@@ -25,4 +25,4 @@ export const LineData = {
       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     },
   },
-} as const satisfies VisualData;
+} as const satisfies VisualPropsData;

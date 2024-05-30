@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { Chart } from "@/models/dashboard/chart/Chart";
 import type { Visual } from "@/models/dashboard/Visual";
-import { resolveConfiguration } from "@/services/dashboard/chart/resolveConfiguration";
+import { resolveChartConfiguration } from "@/services/dashboard/chart/resolveChartConfiguration";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
   type: Visual["type"];
-  configuration: Visual["configuration"];
+  chartConfiguration: Chart["configuration"];
 }
 
-const { type, configuration } = defineProps<VisualProps>();
+const { type, chartConfiguration } = defineProps<VisualProps>();
 const data = VisualTypeDemoDataMap[type];
 const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
@@ -26,7 +27,7 @@ useResizeObserver(divRef, ([{ target }]) => {
       <VueApexCharts
         :="data"
         :options="
-          resolveConfiguration(
+          resolveChartConfiguration(
             {
               ...data.options,
               chart: {
@@ -37,7 +38,7 @@ useResizeObserver(divRef, ([{ target }]) => {
               },
             },
             type,
-            configuration,
+            chartConfiguration,
           )
         "
       />

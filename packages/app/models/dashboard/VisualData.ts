@@ -1,7 +1,7 @@
-import type { VueApexChartsComponent } from "vue3-apexcharts";
+import type { Chart } from "@/models/dashboard/chart/Chart";
+import type { ChartData } from "@/models/dashboard/chart/ChartData";
 
-export interface VisualData {
-  type: VueApexChartsComponent["type"];
-  series: VueApexChartsComponent["series"];
-  options?: VueApexChartsComponent["options"];
+export interface VisualData<T extends Chart> {
+  typeEnum: object;
+  data: ChartData<T>;
 }

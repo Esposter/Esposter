@@ -1,9 +1,10 @@
 <script setup lang="ts">
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import type { Chart } from "@/models/dashboard/chart/Chart";
 import type { Visual } from "@/models/dashboard/Visual";
 import { VisualType } from "@/models/dashboard/VisualType";
-import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
+import { VisualDataMap } from "@/services/dashboard/chart/VisualDataMap";
 import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
@@ -12,10 +13,10 @@ import { Vjsf } from "@koumoul/vjsf";
 interface VisualPreviewContainerProps {
   id: Visual["id"];
   type: Visual["type"];
-  configurationType: Visual["configuration"]["type"];
+  chartType: Chart["type"];
 }
 
-const { id, type, configurationType } = defineProps<VisualPreviewContainerProps>();
+const { id, type, chartType } = defineProps<VisualPreviewContainerProps>();
 const route = useRoute();
 const visualStore = useVisualStore();
 const { save, editItem, resetItem } = visualStore;
@@ -45,7 +46,7 @@ onMounted(async () => {
     <StyledEditFormDialog
       v-if="editedItem"
       v-model="editFormDialog"
-      :name="`${configurationType} ${type} Visual`"
+      :name="`${chartType} ${type} Visual`"
       :edited-item
       :is-edit-form-valid
       :is-full-screen-dialog
@@ -56,7 +57,12 @@ onMounted(async () => {
       @close="resetItem()"
     >
       <v-container fluid>
-        <Vjsf v-model="editedItem.configuration" :schema="VisualTypeChartDataMap[type].schema" />
+        <v-select
+          v-model="editedItem.chart.type"
+          :items="Object.values(VisualDataMap[type].typeEnum)"
+          label="Chart Type"
+        />
+        <Vjsf v-model="editedItem.chart.configuration" :schema="VisualDataMap[type].data.schema" />
       </v-container>
     </StyledEditFormDialog>
   </div>

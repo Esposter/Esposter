@@ -1,11 +1,11 @@
-import type { VisualData } from "@/models/dashboard/VisualData";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { VisualType } from "@/models/dashboard/VisualType";
-import { AreaData } from "@/services/dashboard/demo/data/AreaData";
-import { ColumnData } from "@/services/dashboard/demo/data/ColumnData";
-import { LineData } from "@/services/dashboard/demo/data/LineData";
+import { AreaPropsData } from "@/services/dashboard/demo/data/AreaPropsData";
+import { ColumnPropsData } from "@/services/dashboard/demo/data/ColumnPropsData";
+import { LinePropsData } from "@/services/dashboard/demo/data/LinePropsData";
 
 export const VisualTypeDemoDataMap = {
-  [VisualType.Area]: AreaData,
-  [VisualType.Column]: ColumnData,
-  [VisualType.Line]: LineData,
-} as const satisfies Record<VisualType, VisualData>;
+  [VisualType.Area]: AreaPropsData,
+  [VisualType.Column]: ColumnPropsData,
+  [VisualType.Line]: LinePropsData,
+} as const satisfies Record<VisualType, VisualPropsData>;

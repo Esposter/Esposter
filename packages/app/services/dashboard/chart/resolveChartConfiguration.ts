@@ -1,14 +1,15 @@
+import type { Chart } from "@/models/dashboard/chart/Chart";
 import type { Visual } from "@/models/dashboard/Visual";
 import type { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChartConfigurationResolver";
-import { VisualTypeChartDataMap } from "@/services/dashboard/chart/VisualTypeChartDataMap";
+import { VisualDataMap } from "@/services/dashboard/chart/VisualDataMap";
 import type { ApexOptions } from "apexcharts";
 
-export const resolveConfiguration = <T extends Visual["configuration"]>(
+export const resolveChartConfiguration = <T extends Chart["configuration"]>(
   apexOptions: ApexOptions,
   visualType: Visual["type"],
   configuration: T,
 ) =>
-  (VisualTypeChartDataMap[visualType].resolver as AChartConfigurationResolver<T>).handleConfiguration(
+  (VisualDataMap[visualType].data.resolver as AChartConfigurationResolver<T>).handleConfiguration(
     apexOptions,
     configuration,
   );
