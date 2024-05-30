@@ -2,11 +2,11 @@ import { BaseChartConfiguration, baseChartConfigurationSchema } from "@/models/d
 import { z } from "zod";
 
 export class BasicAreaChartConfiguration extends BaseChartConfiguration {
-  subtitle = "";
+  subtitle? = "";
 }
 
 export const basicAreaChartConfigurationSchema = z
   .object({
-    subtitle: z.string(),
+    subtitle: z.string().default(""),
   })
   .merge(baseChartConfigurationSchema) satisfies z.ZodType<BasicAreaChartConfiguration>;

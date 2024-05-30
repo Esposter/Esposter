@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export class BaseChartConfiguration {
-  title = "";
+  title? = "";
 }
 
 export const baseChartConfigurationSchema = z.object({
-  title: z.string(),
+  title: z.string().default(""),
 }) satisfies z.ZodType<BaseChartConfiguration>;
