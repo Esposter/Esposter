@@ -13,8 +13,8 @@ export const createCursorPaginationParamsSchema = <TSortKeySchema extends z.ZodT
   defaultSortBy: SortItem<TSortKeySchema["_type"]>[],
 ) =>
   // We need at least one sort item so we can derive a primary cursor for pagination
-  z
-    .object({
+  createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).merge(
+    z.object({
       cursor: z.string().nullable().default(null),
-    })
-    .merge(createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy));
+    }),
+  );

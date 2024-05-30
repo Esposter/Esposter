@@ -14,8 +14,7 @@ export interface Visual extends AItemEntity, ItemEntityType<VisualType>, LayoutI
   chart: Chart;
 }
 
-export const visualSchema = z
-  .object({ chart: chartSchema })
-  .merge(aItemEntitySchema)
+export const visualSchema = aItemEntitySchema
   .merge(createItemEntityTypeSchema(visualTypeSchema))
-  .merge(layoutItemSchema) satisfies z.ZodType<Visual>;
+  .merge(layoutItemSchema)
+  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<Visual>;

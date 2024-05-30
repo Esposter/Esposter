@@ -5,8 +5,8 @@ export class BasicColumnChartConfiguration extends BaseChartConfiguration {
   subtitle? = "";
 }
 
-export const basicColumnChartConfigurationSchema = z
-  .object({
+export const basicColumnChartConfigurationSchema = baseChartConfigurationSchema.merge(
+  z.object({
     subtitle: z.string().default(""),
-  })
-  .merge(baseChartConfigurationSchema) satisfies z.ZodType<BasicColumnChartConfiguration>;
+  }),
+) satisfies z.ZodType<BasicColumnChartConfiguration>;
