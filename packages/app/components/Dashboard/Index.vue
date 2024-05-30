@@ -4,12 +4,14 @@ import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { visualList, noColumns } = storeToRefs(visualStore);
+// The main dashboard shouldn't actually modify any persisted data
+const layout = ref(structuredClone(visualList.value))
 </script>
 
 <template>
   <v-container fluid>
     <GridLayout
-      v-model:layout="visualList"
+      v-model:layout="layout"
       :col-num="noColumns"
       :row-height="50"
       :use-style-cursor="false"
