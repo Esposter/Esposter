@@ -5,7 +5,7 @@ import { GridItem, GridLayout } from "grid-layout-plus";
 const visualStore = useVisualStore();
 const { visualList, noColumns } = storeToRefs(visualStore);
 // The main dashboard shouldn't actually modify any persisted data
-const layout = ref(structuredClone(visualList.value))
+const layout = ref(structuredClone(visualList.value));
 </script>
 
 <template>
