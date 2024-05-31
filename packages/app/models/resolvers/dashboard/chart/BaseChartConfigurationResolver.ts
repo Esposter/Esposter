@@ -3,7 +3,7 @@ import { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChart
 import type { ApexOptions } from "apexcharts";
 
 export class BaseChartConfigurationResolver<T extends BaseChartConfiguration> extends AChartConfigurationResolver<T> {
-  handleConfiguration(apexOptions: ApexOptions, { title }: T) {
+  handleBaseConfiguration(apexOptions: ApexOptions, { title }: T) {
     apexOptions.title = {
       text: title,
       align: "left",

@@ -3,9 +3,7 @@ import { BaseChartConfigurationResolver } from "@/models/resolvers/dashboard/cha
 import type { ApexOptions } from "apexcharts";
 
 export class BasicAreaChartConfigurationResolver extends BaseChartConfigurationResolver<BasicAreaChartConfiguration> {
-  handleConfiguration(apexOptions: ApexOptions, configuration: BasicAreaChartConfiguration) {
-    super.handleConfiguration(apexOptions, configuration);
-    const { subtitle } = configuration;
+  handleConfiguration(apexOptions: ApexOptions, { subtitle }: BasicAreaChartConfiguration) {
     apexOptions.subtitle = {
       text: subtitle,
       align: "left",

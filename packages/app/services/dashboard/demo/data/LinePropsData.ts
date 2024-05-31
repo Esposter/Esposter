@@ -9,9 +9,6 @@ export const LinePropsData = {
     },
   ],
   options: {
-    dataLabels: {
-      enabled: false,
-    },
     grid: {
       row: {
         colors: ["#f3f3f3", "transparent"],

@@ -23,9 +23,6 @@ export const ColumnPropsData = {
         columnWidth: "55%",
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
     fill: {
       opacity: 1,
     },
