@@ -4,6 +4,9 @@ import type { ApexOptions } from "apexcharts";
 
 export class BaseChartConfigurationResolver<T extends BaseChartConfiguration> extends AChartConfigurationResolver<T> {
   handleBaseConfiguration(apexOptions: ApexOptions, { title }: T) {
+    apexOptions.dataLabels = {
+      enabled: false
+    };
     apexOptions.title = {
       text: title,
       align: "left",
