@@ -80,7 +80,7 @@
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
     "dayjs": "^1.11.11",
-    "debug": "^4.3.4",
+    "debug": "^4.3.5",
     "dedent": "^1.5.3",
     "drizzle-orm": "^0.31.0",
     "drizzle-zod": "^0.5.1",
