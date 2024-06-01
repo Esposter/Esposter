@@ -30,9 +30,6 @@ export const AreaPropsData = {
     },
   ],
   options: {
-    dataLabels: {
-      enabled: false,
-    },
     legend: {
       horizontalAlign: "left",
     },

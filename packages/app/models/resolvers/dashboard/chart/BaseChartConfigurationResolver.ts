@@ -3,9 +3,16 @@ import { AChartConfigurationResolver } from "@/models/resolvers/dashboard/AChart
 import type { ApexOptions } from "apexcharts";
 
 export class BaseChartConfigurationResolver<T extends BaseChartConfiguration> extends AChartConfigurationResolver<T> {
-  handleConfiguration(apexOptions: ApexOptions, { title }: T) {
+  handleBaseConfiguration(apexOptions: ApexOptions, { title, subtitle }: T) {
+    apexOptions.dataLabels = {
+      enabled: false,
+    };
     apexOptions.title = {
       text: title,
+      align: "left",
+    };
+    apexOptions.subtitle = {
+      text: subtitle,
       align: "left",
     };
     return apexOptions;

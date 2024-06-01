@@ -1,12 +1,7 @@
 import { BaseChartConfiguration, baseChartConfigurationSchema } from "@/models/dashboard/chart/BaseChartConfiguration";
-import { z } from "zod";
+import type { z } from "zod";
 
-export class BasicLineChartConfiguration extends BaseChartConfiguration {
-  subtitle? = "";
-}
+export class BasicLineChartConfiguration extends BaseChartConfiguration {}
 
-export const basicLineChartConfigurationSchema = baseChartConfigurationSchema.merge(
-  z.object({
-    subtitle: z.string().default(""),
-  }),
-) satisfies z.ZodType<BasicLineChartConfiguration>;
+export const basicLineChartConfigurationSchema =
+  baseChartConfigurationSchema satisfies z.ZodType<BasicLineChartConfiguration>;
