@@ -12,7 +12,7 @@ export class HealItemResolver extends AItemResolver {
     super(ItemEffectType.Heal);
   }
 
-  validate(item: Ref<Item>, target: Ref<Monster>) {
+  isActive(item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const infoPanelStore = useInfoPanelStore();

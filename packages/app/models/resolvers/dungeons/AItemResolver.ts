@@ -13,7 +13,7 @@ export abstract class AItemResolver {
     this.type = type;
   }
 
-  preValidate(item: Ref<Item>): boolean {
+  validate(item: Ref<Item>): boolean {
     if (item.value.effect.type !== this.type) return false;
 
     const infoPanelStore = useInfoPanelStore();
@@ -27,7 +27,7 @@ export abstract class AItemResolver {
     return true;
   }
 
-  validate(_item: Ref<Item>, _target: Ref<Monster>): boolean {
+  isActive(_item: Ref<Item>, _target: Ref<Monster>): boolean {
     return true;
   }
 

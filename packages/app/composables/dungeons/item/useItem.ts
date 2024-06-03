@@ -8,9 +8,9 @@ export const useItem = (scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Mo
   const itemResolvers = getAllItemResolvers();
   let handled = false;
 
-  for (const itemResolver of itemResolvers) {
-    if (!(itemResolver.preValidate(item) && itemResolver.validate(item, target))) continue;
-    itemResolver.handleItem(scene, item, target);
+  for (const { validate, isActive, handleItem } of itemResolvers) {
+    if (!(validate(item) && isActive(item, target))) continue;
+    handleItem(scene, item, target);
     handled = true;
     break;
   }
