@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { ChartType } from "@/models/dashboard/chart/ChartType";
 import type { Visual } from "@/models/dashboard/Visual";
-import { VisualDataMap } from "@/services/dashboard/chart/VisualDataMap";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -9,8 +9,7 @@ const visualStore = useVisualStore();
 const { save, resetItem } = visualStore;
 const { editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isDirty, isSavable } =
   storeToRefs(visualStore);
-const visualData = computed(() => VisualDataMap[editedItem.value.type]);
-const schema = computed(() => visualData.value.chartDataMap[editedItem.value.chart.type].schema);
+const schema = useSchema(() => editedItem.value.chart.type);
 
 useConfirmBeforeNavigation(isDirty);
 </script>
@@ -29,7 +28,7 @@ useConfirmBeforeNavigation(isDirty);
     @close="resetItem()"
   >
     <v-container fluid>
-      <v-select v-model="editedItem.chart.type" :items="Object.values(visualData.typeEnum)" label="Chart Type" />
+      <v-select v-model="editedItem.chart.type" :items="Object.values(ChartType)" label="Chart Type" />
       <Vjsf v-model="editedItem.chart.configuration" :schema :options="{ removeAdditional: true }" />
     </v-container>
   </StyledEditFormDialog>

@@ -1,11 +1,16 @@
-import type { AreaChart } from "@/models/dashboard/chart/area/AreaChart";
-import { areaChartSchema } from "@/models/dashboard/chart/area/AreaChart";
-import type { ColumnChart } from "@/models/dashboard/chart/column/ColumnChart";
-import { columnChartSchema } from "@/models/dashboard/chart/column/ColumnChart";
-import type { LineChart } from "@/models/dashboard/chart/line/LineChart";
-import { lineChartSchema } from "@/models/dashboard/chart/line/LineChart";
+import {
+  BasicChartConfiguration,
+  basicChartConfigurationSchema,
+} from "@/models/dashboard/chart/BasicChartConfiguration";
+import { ChartType, chartTypeSchema } from "@/models/dashboard/chart/ChartType";
 import { z } from "zod";
 
-export type Chart = AreaChart | ColumnChart | LineChart;
+export class Chart {
+  type = ChartType.Basic;
+  configuration = new BasicChartConfiguration();
+}
 
-export const chartSchema = z.union([areaChartSchema, columnChartSchema, lineChartSchema]) satisfies z.ZodType;
+export const chartSchema = z.object({
+  type: chartTypeSchema,
+  configuration: basicChartConfigurationSchema,
+}) satisfies z.ZodType<Chart>;

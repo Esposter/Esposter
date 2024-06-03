@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { useApexOptions } from "@/composables/dashboard/useApexOptions";
 import type { Visual } from "@/models/dashboard/Visual";
-import { resolveChartConfiguration } from "@/services/dashboard/chart/resolveChartConfiguration";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 
@@ -18,29 +18,25 @@ const height = ref<number>();
 useResizeObserver(divRef, ([{ target }]) => {
   height.value = (target as HTMLDivElement).clientHeight;
 });
+
+const options = useApexOptions(
+  () => chart,
+  computed(() => ({
+    ...data.options,
+    chart: {
+      height: height.value,
+      zoom: {
+        enabled: false,
+      },
+    },
+  })),
+);
 </script>
 
 <template>
   <StyledCard size-full>
     <div ref="divRef" h-full>
-      <VueApexCharts
-        :="data"
-        :options="
-          resolveChartConfiguration(
-            {
-              ...data.options,
-              chart: {
-                height,
-                zoom: {
-                  enabled: false,
-                },
-              },
-            },
-            type,
-            chart,
-          )
-        "
-      />
+      <VueApexCharts :="data" :options />
     </div>
   </StyledCard>
 </template>
