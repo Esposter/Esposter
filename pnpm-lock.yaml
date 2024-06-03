@@ -11,6 +11,9 @@ importers:
       data-urls:
         specifier: ^5.0.0
         version: 5.0.0
+      vue:
+        specifier: ^3.4.27
+        version: 3.4.27(typescript@5.4.5)
       xml2js:
         specifier: ^0.6.2
         version: 0.6.2
@@ -36,6 +39,12 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
+      vite:
+        specifier: ^5.2.12
+        version: 5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2)
+      vue-tsc:
+        specifier: ^1.8.27
+        version: 1.8.27(typescript@5.4.5)
 
   packages/app:
     dependencies:
@@ -267,9 +276,6 @@ importers:
       trpc-nuxt:
         specifier: ^0.10.21
         version: 0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
-      vue:
-        specifier: ^3.4.27
-        version: 3.4.27(typescript@5.5.0-dev.20240518)
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1(@lezer/common@1.2.1))(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -406,12 +412,11 @@ importers:
       vitest:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@20.14.0)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2)
-      vue-tsc:
-        specifier: ^1.8.27
-        version: 1.8.27(typescript@5.5.0-dev.20240518)
       vuetify-nuxt-module:
         specifier: ^0.14.1
         version: 0.14.1(rollup@4.18.0)(typescript@5.5.0-dev.20240518)(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+
+  packages/block-mj-text: {}
 
   packages/configuration:
     devDependencies:
@@ -421,6 +426,9 @@ importers:
       '@unocss/eslint-config':
         specifier: ^0.60.4
         version: 0.60.4(eslint@9.4.0)(typescript@5.5.0-dev.20240518)
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.5
+        version: 5.0.5(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2))(vue@3.4.27(typescript@5.5.0-dev.20240518))
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.4.0)
@@ -3459,6 +3467,13 @@ packages:
 
   '@vitejs/plugin-vue@5.0.4':
     resolution: {integrity: sha512-WS3hevEszI6CEVEx28F8RjTX97k3KsrcY6kvTg7+Whm5y3oYvcqzVeGCU3hxSAn4uY2CLCkeokkGKpoctccilQ==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      vite: ^5.0.0
+      vue: ^3.2.25
+
+  '@vitejs/plugin-vue@5.0.5':
+    resolution: {integrity: sha512-LOjm7XeIimLBZyzinBQ6OSm3UBCNVCpLkxGC0oWmm2YPzVZoxMsdvNVimLTBzpAnR9hl/yn1SHGuRfe6/Td9rQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0
@@ -9655,7 +9670,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-annotate-as-pure@7.24.6':
     dependencies:
@@ -9743,7 +9758,7 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.24.0
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-function-name@7.24.6':
     dependencies:
@@ -9752,7 +9767,7 @@ snapshots:
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-hoist-variables@7.24.6':
     dependencies:
@@ -9760,7 +9775,7 @@ snapshots:
 
   '@babel/helper-member-expression-to-functions@7.23.0':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-member-expression-to-functions@7.24.6':
     dependencies:
@@ -9768,7 +9783,7 @@ snapshots:
 
   '@babel/helper-module-imports@7.24.3':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-module-imports@7.24.6':
     dependencies:
@@ -9794,7 +9809,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-optimise-call-expression@7.24.6':
     dependencies:
@@ -9827,7 +9842,7 @@ snapshots:
 
   '@babel/helper-simple-access@7.24.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-simple-access@7.24.6':
     dependencies:
@@ -9835,7 +9850,7 @@ snapshots:
 
   '@babel/helper-skip-transparent-expression-wrappers@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-skip-transparent-expression-wrappers@7.24.6':
     dependencies:
@@ -9843,7 +9858,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.24.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
 
   '@babel/helper-split-export-declaration@7.24.6':
     dependencies:
@@ -9871,7 +9886,7 @@ snapshots:
     dependencies:
       '@babel/template': 7.24.0
       '@babel/traverse': 7.24.5
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
     transitivePeerDependencies:
       - supports-color
 
@@ -10478,8 +10493,8 @@ snapshots:
   '@babel/template@7.24.0':
     dependencies:
       '@babel/code-frame': 7.24.2
-      '@babel/parser': 7.24.5
-      '@babel/types': 7.24.5
+      '@babel/parser': 7.24.6
+      '@babel/types': 7.24.6
 
   '@babel/template@7.24.6':
     dependencies:
@@ -10495,7 +10510,7 @@ snapshots:
       '@babel/helper-function-name': 7.23.0
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.24.5
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@babel/types': 7.24.5
       debug: 4.3.5
       globals: 11.12.0
@@ -13319,6 +13334,11 @@ snapshots:
       vite: 5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2)
       vue: 3.4.27(typescript@5.5.0-dev.20240518)
 
+  '@vitejs/plugin-vue@5.0.5(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2))(vue@3.4.27(typescript@5.5.0-dev.20240518))':
+    dependencies:
+      vite: 5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2)
+      vue: 3.4.27(typescript@5.5.0-dev.20240518)
+
   '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.0)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))':
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -13402,7 +13422,7 @@ snapshots:
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.5)
       '@babel/template': 7.24.0
       '@babel/traverse': 7.24.5
-      '@babel/types': 7.24.5
+      '@babel/types': 7.24.6
       '@vue/babel-helper-vue-transform-on': 1.2.1
       '@vue/babel-plugin-resolve-type': 1.2.1(@babel/core@7.24.5)
       camelcase: 6.3.0
@@ -13419,12 +13439,12 @@ snapshots:
       '@babel/core': 7.24.5
       '@babel/helper-module-imports': 7.24.3
       '@babel/helper-plugin-utils': 7.24.0
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@vue/compiler-sfc': 3.4.27
 
   '@vue/compiler-core@3.4.27':
     dependencies:
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@vue/shared': 3.4.27
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -13437,7 +13457,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.27':
     dependencies:
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@vue/compiler-core': 3.4.27
       '@vue/compiler-dom': 3.4.27
       '@vue/compiler-ssr': 3.4.27
@@ -13454,6 +13474,20 @@ snapshots:
 
   '@vue/devtools-api@6.6.1': {}
 
+  '@vue/language-core@1.8.27(typescript@5.4.5)':
+    dependencies:
+      '@volar/language-core': 1.11.1
+      '@volar/source-map': 1.11.1
+      '@vue/compiler-dom': 3.4.27
+      '@vue/shared': 3.4.27
+      computeds: 0.0.1
+      minimatch: 9.0.4
+      muggle-string: 0.3.1
+      path-browserify: 1.0.1
+      vue-template-compiler: 2.7.16
+    optionalDependencies:
+      typescript: 5.4.5
+
   '@vue/language-core@1.8.27(typescript@5.5.0-dev.20240518)':
     dependencies:
       '@volar/language-core': 1.11.1
@@ -13467,6 +13501,7 @@ snapshots:
       vue-template-compiler: 2.7.16
     optionalDependencies:
       typescript: 5.5.0-dev.20240518
+    optional: true
 
   '@vue/reactivity@3.4.27':
     dependencies:
@@ -13482,6 +13517,12 @@ snapshots:
       '@vue/runtime-core': 3.4.27
       '@vue/shared': 3.4.27
       csstype: 3.1.3
+
+  '@vue/server-renderer@3.4.27(vue@3.4.27(typescript@5.4.5))':
+    dependencies:
+      '@vue/compiler-ssr': 3.4.27
+      '@vue/shared': 3.4.27
+      vue: 3.4.27(typescript@5.4.5)
 
   '@vue/server-renderer@3.4.27(vue@3.4.27(typescript@5.5.0-dev.20240518))':
     dependencies:
@@ -13842,7 +13883,7 @@ snapshots:
 
   ast-kit@0.11.3(rollup@4.18.0):
     dependencies:
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@rollup/pluginutils': 5.1.0(rollup@4.18.0)
       pathe: 1.1.2
     transitivePeerDependencies:
@@ -13850,7 +13891,7 @@ snapshots:
 
   ast-kit@0.9.5(rollup@4.18.0):
     dependencies:
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.24.6
       '@rollup/pluginutils': 5.1.0(rollup@4.18.0)
       pathe: 1.1.2
     transitivePeerDependencies:
@@ -20013,12 +20054,20 @@ snapshots:
       de-indent: 1.0.2
       he: 1.2.0
 
+  vue-tsc@1.8.27(typescript@5.4.5):
+    dependencies:
+      '@volar/typescript': 1.11.1
+      '@vue/language-core': 1.8.27(typescript@5.4.5)
+      semver: 7.6.2
+      typescript: 5.4.5
+
   vue-tsc@1.8.27(typescript@5.5.0-dev.20240518):
     dependencies:
       '@volar/typescript': 1.11.1
       '@vue/language-core': 1.8.27(typescript@5.5.0-dev.20240518)
       semver: 7.6.2
       typescript: 5.5.0-dev.20240518
+    optional: true
 
   vue-waypoint@4.3.0(vue@3.4.27(typescript@5.5.0-dev.20240518)):
     dependencies:
@@ -20028,6 +20077,16 @@ snapshots:
     dependencies:
       apexcharts: 3.49.1
       vue: 3.4.27(typescript@5.5.0-dev.20240518)
+
+  vue@3.4.27(typescript@5.4.5):
+    dependencies:
+      '@vue/compiler-dom': 3.4.27
+      '@vue/compiler-sfc': 3.4.27
+      '@vue/runtime-dom': 3.4.27
+      '@vue/server-renderer': 3.4.27(vue@3.4.27(typescript@5.4.5))
+      '@vue/shared': 3.4.27
+    optionalDependencies:
+      typescript: 5.4.5
 
   vue@3.4.27(typescript@5.5.0-dev.20240518):
     dependencies:
