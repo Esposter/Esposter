@@ -12,6 +12,5 @@ export class DataLabelsResolver<T extends BasicChartConfiguration> extends AChar
     apexOptions.dataLabels = {
       enabled: true,
     };
-    return apexOptions;
   }
 }

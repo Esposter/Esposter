@@ -6,11 +6,12 @@ import { z } from "zod";
 export const useSchema = (type: MaybeRefOrGetter<ChartType>) => {
   const featureResolvers = getAllFeatureResolvers();
   return computed(() => {
-    const schema = z.object({});
+    let schema = z.object({});
     const typeValue = toValue(type);
-    for (const featureResolver of featureResolvers)
+    for (const featureResolver of featureResolvers) {
       if (!featureResolver.isActive(typeValue)) continue;
-      else featureResolver.handleSchema(schema);
+      schema = featureResolver.handleSchema(schema);
+    }
     return zodToJsonSchema(schema);
   });
 };

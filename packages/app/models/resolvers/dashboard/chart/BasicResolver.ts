@@ -26,7 +26,6 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
       text: subtitle,
       align: "left",
     };
-    return apexOptions;
   }
 
   handleSchema(schema: z.AnyZodObject) {

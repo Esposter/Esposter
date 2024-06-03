@@ -14,9 +14,7 @@ export abstract class AChartFeatureResolver<T extends Chart["configuration"]> {
     return type === this.type;
   }
 
-  handleConfiguration(apexOptions: ApexOptions, _configuration: T): ApexOptions {
-    return apexOptions;
-  }
+  handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
   handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
     return schema;
