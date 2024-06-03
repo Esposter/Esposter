@@ -3,13 +3,14 @@ import { getAllFeatureResolvers } from "@/services/dashboard/chart/getAllFeature
 import { zodToJsonSchema } from "@/services/dashboard/zodToJsonSchema";
 import { z } from "zod";
 
-export const useSchema = (type: ChartType) => {
+export const useSchema = (type: MaybeRefOrGetter<ChartType>) => {
   const featureResolvers = getAllFeatureResolvers();
   return computed(() => {
     const schema = z.object({});
-    for (const { isActive, handleSchema } of featureResolvers)
-      if (!isActive(type)) continue;
-      else handleSchema(schema);
+    const typeValue = toValue(type);
+    for (const featureResolver of featureResolvers)
+      if (!featureResolver.isActive(typeValue)) continue;
+      else featureResolver.handleSchema(schema);
     return zodToJsonSchema(schema);
   });
 };

@@ -8,9 +8,9 @@ export const useApexOptions = (chart: MaybeRefOrGetter<Chart>, initialOptions: C
     const { type, configuration } = toValue(chart);
     const options = initialOptions.value;
 
-    for (const { isActive, handleConfiguration } of featureResolvers)
-      if (!isActive(type)) continue;
-      else handleConfiguration(options, configuration);
+    for (const featureResolver of featureResolvers)
+      if (!featureResolver.isActive(type)) continue;
+      else featureResolver.handleConfiguration(options, configuration);
 
     return options;
   });
