@@ -29,6 +29,7 @@
     "rollup-plugin-dts": "^6.1.1",
     "typescript-eslint": "^7.11.0",
     "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-mkcert": "^1.17.5"
+    "vite-plugin-mkcert": "^1.17.5",
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

@@ -1,7 +1,8 @@
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-import dts from 'vite-plugin-dts';
-import mkcert from 'vite-plugin-mkcert';
+import dts from "vite-plugin-dts";
+import mkcert from "vite-plugin-mkcert";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,16 +10,11 @@ export default defineConfig({
     lib: {
       entry: "src/index.ts",
       fileName: "index",
-      formats: ["es"]
+      formats: ["es"],
     },
     rollupOptions: {
       external: ["vue"],
     },
   },
-  plugins: [vue(), dts(), mkcert()],
-  resolve: {
-    alias: {
-      '@': "./src",
-    }
-  }
+  plugins: [tsconfigPaths(), vue(), dts(), mkcert()],
 });

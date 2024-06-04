@@ -451,6 +451,9 @@ importers:
       vite-plugin-mkcert:
         specifier: ^1.17.5
         version: 1.17.5(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2))
+      vite-tsconfig-paths:
+        specifier: ^4.3.2
+        version: 4.3.2(typescript@5.5.0-dev.20240518)(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2))
 
   packages/parse-tmx:
     dependencies:
@@ -5696,6 +5699,9 @@ packages:
     resolution: {integrity: sha512-jOMLD2Z7MAhyG8aJpNOpmziMOP4rPLcc95oQPKXBazW82z+CEgPFBQvEpRUa1KeIMUJo4Wsm+q6uzO/Q/4BksQ==}
     engines: {node: '>=18'}
 
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
 
@@ -8709,6 +8715,16 @@ packages:
   ts-pattern@5.1.1:
     resolution: {integrity: sha512-i+owkHr5RYdQxj8olUgRrqpiWH9x27PuWVfXwDmJ/n/CoF/SAa7WW1i2oUpPDMQpJ4U+bGRUcZkVq7i1m3zFCg==}
 
+  tsconfck@3.1.0:
+    resolution: {integrity: sha512-CMjc5zMnyAjcS9sPLytrbFmj89st2g+JYtY/c02ug4Q+CZaAtCgbyviI0n1YvjZE/pzoc6FbNsINS13DOL1B9w==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   tsconfig-paths@4.2.0:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
@@ -9165,6 +9181,14 @@ packages:
       vite: '>=5'
       vue: ^3.0.0
       vuetify: ^3.0.0
+
+  vite-tsconfig-paths@4.3.2:
+    resolution: {integrity: sha512-0Vd/a6po6Q+86rPlntHye7F31zA2URZMbH8M3saAZ/xR9QoGN/L21bxEGfXdWmFdNkqPpRdxFT7nmNe12e9/uA==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   vite@5.2.12:
     resolution: {integrity: sha512-/gC8GxzxMK5ntBwb48pR32GGhENnjtY30G4A0jemunsBkiEZFw60s8InGpN8gkhHEkjnRK1aSAxeQgwvFhUHAA==}
@@ -16227,6 +16251,8 @@ snapshots:
       slash: 5.1.0
       unicorn-magic: 0.1.0
 
+  globrex@0.1.2: {}
+
   gopd@1.0.1:
     dependencies:
       get-intrinsic: 1.2.4
@@ -19753,6 +19779,10 @@ snapshots:
 
   ts-pattern@5.1.1: {}
 
+  tsconfck@3.1.0(typescript@5.5.0-dev.20240518):
+    optionalDependencies:
+      typescript: 5.5.0-dev.20240518
+
   tsconfig-paths@4.2.0:
     dependencies:
       json5: 2.2.3
@@ -20290,6 +20320,17 @@ snapshots:
       vuetify: 3.6.8(typescript@5.5.0-dev.20240518)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.5.0-dev.20240518))
     transitivePeerDependencies:
       - supports-color
+
+  vite-tsconfig-paths@4.3.2(typescript@5.5.0-dev.20240518)(vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2)):
+    dependencies:
+      debug: 4.3.5
+      globrex: 0.1.2
+      tsconfck: 3.1.0(typescript@5.5.0-dev.20240518)
+    optionalDependencies:
+      vite: 5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   vite@5.2.12(@types/node@20.14.0)(sass@1.77.4)(terser@5.29.2):
     dependencies:
