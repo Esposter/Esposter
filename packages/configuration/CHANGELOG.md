@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/Esposter/Esposter/compare/v1.10.0...v1.11.0) (2024-06-04)
+
+
+### Bug Fixes
+
+* build stuff + build d.ts ([d535d69](https://github.com/Esposter/Esposter/commit/d535d696a4273643ef9fddad6e4561f845838a07))
+* sweet, vite plugin solves path issue ([7679eb4](https://github.com/Esposter/Esposter/commit/7679eb43f909bc7012f16875d2a1abfa9ffc1acd))
+
+
+### Features
+
+* Add vite pkg ([837a130](https://github.com/Esposter/Esposter/commit/837a1306a226e44b061a3f8a6c660e33dff99078))
+* successfully used vue package ([5d1ac61](https://github.com/Esposter/Esposter/commit/5d1ac61970afe222f3841232e2225a88cf097b2b))
+* Use mkcert plugin + add build stuff ([400c961](https://github.com/Esposter/Esposter/commit/400c961f5dcca03c38c43c8a92afd6b06824786a))
+
+
+
+
+
+
 # [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
 
 
