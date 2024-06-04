@@ -1,3 +1,1 @@
-<template>
-  block-mj-text
-</template>
+<template>block-mj-text</template>

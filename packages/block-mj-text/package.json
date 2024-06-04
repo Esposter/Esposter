@@ -28,5 +28,8 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
   }
 }
