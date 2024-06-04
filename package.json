@@ -5,6 +5,7 @@
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"

@@ -6,6 +6,7 @@
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -133,6 +134,7 @@
     "@auth/core": "upgrading breaks authjs-nuxt"
   },
   "devDependencies": {
+    "@esposter/block-mj-text": "workspace:*",
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.3.13",
     "@nuxt/fonts": "^0.7.0",
