@@ -15,7 +15,7 @@ node_modules
 
 # testing
 coverage
-vitest.config.ts.timestamp*
+vitest.config.*.timestamp*
 
 # production
 dist
