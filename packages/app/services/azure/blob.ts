@@ -11,5 +11,8 @@ export const getContainerClient = async (containerName: AzureContainer) => {
   return containerClient;
 };
 
-export const uploadBlockBlob = (containerClient: ContainerClient, blobName: string, data: HttpRequestBody) =>
-  containerClient.uploadBlockBlob(blobName, data, data.toString().length);
+export const uploadBlockBlob = (
+  containerClient: ContainerClient,
+  blobName: string,
+  data: NonNullable<HttpRequestBody>,
+) => containerClient.uploadBlockBlob(blobName, data, data.toString().length);
