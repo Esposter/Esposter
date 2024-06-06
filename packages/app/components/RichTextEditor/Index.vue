@@ -38,21 +38,23 @@ onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>
-  <StyledCard w-full>
-    <RichTextEditorMenuBar :editor="editor" />
-    <v-divider thickness="2" />
-    <EditorContent :editor="editor" />
-    <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
-      <template #prepend="editorProps">
-        <slot name="prepend-footer" :="editorProps" />
-      </template>
-      <template #append="editorProps">
-        <slot name="append-footer" :="editorProps" />
-      </template>
-    </RichTextEditorFooterBar>
-  </StyledCard>
-  <div pt-2 flex justify-end pr-4 h-6.5>
-    <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+  <div flex flex-col w-full>
+    <StyledCard>
+      <RichTextEditorMenuBar :editor="editor" />
+      <v-divider thickness="2" />
+      <EditorContent :editor="editor" />
+      <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
+        <template #prepend="editorProps">
+          <slot name="prepend-footer" :="editorProps" />
+        </template>
+        <template #append="editorProps">
+          <slot name="append-footer" :="editorProps" />
+        </template>
+      </RichTextEditorFooterBar>
+    </StyledCard>
+    <div pt-2 flex justify-end pr-4 h-6.5>
+      <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+    </div>
   </div>
 </template>
 
