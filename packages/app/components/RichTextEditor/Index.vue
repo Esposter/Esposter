@@ -10,12 +10,12 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 interface RichTextEditorProps {
   height?: string;
   placeholder: string;
-  maxLength: number;
+  limit: number;
   extensions?: AnyExtension[];
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { height = "15rem", placeholder, maxLength, extensions } = defineProps<RichTextEditorProps>();
+const { height = "15rem", placeholder, limit, extensions } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
@@ -24,7 +24,7 @@ const editor = useEditor({
   extensions: [
     StarterKit,
     Placeholder.configure({ placeholder }),
-    CharacterCount.configure({ limit: maxLength }),
+    CharacterCount.configure({ limit }),
     Link,
     ...(extensions ?? []),
   ],
@@ -51,6 +51,9 @@ onUnmounted(() => editor.value?.destroy());
       </template>
     </RichTextEditorFooterBar>
   </StyledCard>
+  <div pt-2 flex justify-end pr-4 h-6.5>
+    <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+  </div>
 </template>
 
 <style scoped lang="scss">
