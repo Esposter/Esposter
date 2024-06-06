@@ -259,8 +259,8 @@ importers:
         specifier: ^1.11.1
         version: 1.11.1(survey-core@1.10.6)
       survey-creator-vue:
-        specifier: ^1.10.6
-        version: 1.10.6(survey-core@1.10.6)(survey-creator-core@1.11.1(survey-core@1.10.6))(survey-vue3-ui@1.10.6(survey-core@1.10.6)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+        specifier: ^1.11.1
+        version: 1.11.1(survey-core@1.10.6)(survey-creator-core@1.11.1(survey-core@1.10.6))(survey-vue3-ui@1.10.6(survey-core@1.10.6)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
       survey-vue3-ui:
         specifier: ^1.10.6
         version: 1.10.6(survey-core@1.10.6)(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -8354,12 +8354,12 @@ packages:
       ace-builds:
         optional: true
 
-  survey-creator-vue@1.10.6:
-    resolution: {integrity: sha512-nbbGfmmrgqnaeRAhMnm7tPYmHVpLHdRfXOVftxq2q1WriIol9lZKNP8mwny7kVWgZ0Ls6iyoNrfsAGOkPygl+Q==}
+  survey-creator-vue@1.11.1:
+    resolution: {integrity: sha512-aZCjOzMCwF4yFrCJKvNcscJn9F3ktc3JkTeCBtCRdQC4j1ykzgXxQJf8Xhwy1rDo9VKLXM3ZODQ5bQFjBfs5eg==}
     peerDependencies:
-      survey-core: 1.10.6
-      survey-creator-core: 1.10.6
-      survey-vue3-ui: 1.10.6
+      survey-core: 1.11.1
+      survey-creator-core: 1.11.1
+      survey-vue3-ui: 1.11.1
       vue: ^3.2.41
 
   survey-vue3-ui@1.10.6:
@@ -19243,7 +19243,7 @@ snapshots:
     dependencies:
       survey-core: 1.10.6
 
-  survey-creator-vue@1.10.6(survey-core@1.10.6)(survey-creator-core@1.11.1(survey-core@1.10.6))(survey-vue3-ui@1.10.6(survey-core@1.10.6)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
+  survey-creator-vue@1.11.1(survey-core@1.10.6)(survey-creator-core@1.11.1(survey-core@1.10.6))(survey-vue3-ui@1.10.6(survey-core@1.10.6)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
     dependencies:
       survey-core: 1.10.6
       survey-creator-core: 1.11.1(survey-core@1.10.6)
