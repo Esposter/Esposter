@@ -12,17 +12,18 @@ interface FileRendererCodeProps extends FileRendererProps {
 const { url, language } = defineProps<FileRendererCodeProps>();
 const code = ref(await (await fetch(url)).text());
 const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language));
-const languageConfiguration = ref(new Compartment());
-const languageSupport = ref(languageRequested.value ? await languageRequested.value.load() : undefined);
-const languageExtension = computed(() =>
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts(2589)
-  languageSupport.value ? languageConfiguration.value.of(languageSupport.value) : undefined,
-);
+const extensions = computedAsync(async () => {
+  if (!languageRequested.value) return undefined;
+  const languageSupport = await languageRequested.value.load();
+  const languageConfiguration = new Compartment();
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts-plugin(2589)
+  return languageConfiguration.of(languageSupport.value);
+});
 const editorView = shallowRef<EditorView>();
 </script>
 
 <template>
   <StyledCard w-full>
-    <Codemirror v-model="code" :extensions="languageExtension" disabled @ready="({ view }) => (editorView = view)" />
+    <Codemirror v-model="code" :extensions disabled @ready="({ view }) => (editorView = view)" />
   </StyledCard>
 </template>

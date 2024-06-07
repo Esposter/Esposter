@@ -1,3 +1,7 @@
+<script setup lang="ts">
+defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+</script>
+
 <template>
   <Transition name="fade">
     <slot />

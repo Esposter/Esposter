@@ -6,7 +6,7 @@ export const extendedLanguages = languages.concat(
   LanguageDescription.of({
     name: "Vue",
     extensions: ["vue"],
-    load: () => import("@codemirror/lang-vue").then((m) => m.vue()),
+    load: () => import("@codemirror/lang-vue").then(({ vue }) => vue()),
   }),
 );
 
