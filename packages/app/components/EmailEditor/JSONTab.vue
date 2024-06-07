@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
 import type { TabItem } from "@/models/vuetify/TabItem";
+import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import type { EditorView } from "@codemirror/view";
 import mjml2html from "mjml-browser";
 import { Codemirror } from "vue-codemirror";
-import { getLanguageExtension } from "~/services/codemirror/getLanguageExtension";
 
 interface MjmlTabProps {
   item: TabItem;
