@@ -17,7 +17,7 @@ const emailEditorStore = useEmailEditorStore();
 const { emailEditor } = storeToRefs(emailEditorStore);
 const json = computed(() => {
   try {
-    return mjml2html(emailEditor.value.mjml, { validationLevel: "strict" }).json;
+    return JSON.stringify(mjml2html(emailEditor.value.mjml, { validationLevel: "strict" }).json);
   } catch {
     return "";
   }
