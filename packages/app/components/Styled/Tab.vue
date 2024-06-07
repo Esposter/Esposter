@@ -11,11 +11,5 @@ const item = computed(() => baseItem as TabItemCategoryDefinition);
 </script>
 
 <template>
-  <v-tooltip :text="item.text">
-    <template #activator="{ props }">
-      <v-tab :value="item.value" :="props">
-        <v-icon :icon="item.icon" />
-      </v-tab>
-    </template>
-  </v-tooltip>
+  <v-tab :prepend-icon="item.icon" :value="item.value" :text="item.text" />
 </template>

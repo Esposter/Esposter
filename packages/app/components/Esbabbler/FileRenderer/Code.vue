@@ -13,11 +13,10 @@ const { url, language } = defineProps<FileRendererCodeProps>();
 const code = ref(await (await fetch(url)).text());
 const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language));
 const extensions = computedAsync(async () => {
-  if (!languageRequested.value) return undefined;
+  if (!languageRequested.value) return [];
   const languageSupport = await languageRequested.value.load();
   const languageConfiguration = new Compartment();
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts-plugin(2589)
-  return languageConfiguration.of(languageSupport.value);
+  return [languageConfiguration.of(languageSupport)];
 });
 const editorView = shallowRef<EditorView>();
 </script>

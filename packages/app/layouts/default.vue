@@ -68,6 +68,9 @@ router.beforeEach(() => {
 </template>
 
 <style scoped lang="scss">
+.v-main {
+  padding-top: $app-bar-height;
+}
 // Only show scrollbar for part of the drawer that actually has
 // content greater than screen size rather than the entire drawer.
 // Make sure to apply attribute overflow-y="auto" for the container
