@@ -14,7 +14,7 @@ const emailEditorStore = useEmailEditorStore();
 const { emailEditor } = storeToRefs(emailEditorStore);
 const html = computed(() => {
   try {
-    return mjml2html(emailEditor.value.mjml).html;
+    return mjml2html(emailEditor.value.mjml, { validationLevel: "strict" }).html;
   } catch {
     return "";
   }
@@ -23,6 +23,9 @@ const html = computed(() => {
 
 <template>
   <v-tabs-window-item :value="item.value">
-    <div v-html="html" />
+    <div v-if="html" v-html="html" />
+    <div v-else h-full flex justify-center items-center font-900 leading-tight font-inter text-5xl>
+      Failed to parse mjml
+    </div>
   </v-tabs-window-item>
 </template>
