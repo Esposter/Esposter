@@ -1,4 +1,5 @@
 export enum EmailEditorTabType {
-  Mjml = "Mjml",
+  JSON = "JSON",
+  MJML = "MJML",
   Preview = "Preview",
 }

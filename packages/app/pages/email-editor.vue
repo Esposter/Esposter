@@ -12,8 +12,12 @@ const isDark = useIsDark();
 const tab = ref(0);
 const baseTabs: Except<EmailEditorTabItemCategoryDefinition, "value">[] = [
   {
-    type: EmailEditorTabType.Mjml,
+    type: EmailEditorTabType.MJML,
     icon: "mdi-code-tags",
+  },
+  {
+    type: EmailEditorTabType.JSON,
+    icon: "mdi-code-braces",
   },
   {
     type: EmailEditorTabType.Preview,

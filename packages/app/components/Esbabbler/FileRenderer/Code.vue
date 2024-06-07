@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
-import { extendedLanguages } from "@/models/esbabbler/file/LanguageRegexSupportPatternMap";
-import { Compartment } from "@codemirror/state";
+import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
 
@@ -11,13 +10,7 @@ interface FileRendererCodeProps extends FileRendererProps {
 
 const { url, language } = defineProps<FileRendererCodeProps>();
 const code = ref(await (await fetch(url)).text());
-const languageRequested = computed(() => extendedLanguages.find((l) => l.name === language));
-const extensions = computedAsync(async () => {
-  if (!languageRequested.value) return [];
-  const languageSupport = await languageRequested.value.load();
-  const languageConfiguration = new Compartment();
-  return [languageConfiguration.of(languageSupport)];
-});
+const extensions = computedAsync(() => getLanguageExtension(language));
 const editorView = shallowRef<EditorView>();
 </script>
 
