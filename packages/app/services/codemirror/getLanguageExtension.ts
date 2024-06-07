@@ -7,6 +7,6 @@ export const getLanguageExtension = async (language: string): Promise<Extension[
   if (!languageRequested) return [];
 
   const languageSupport = await languageRequested.load();
-  const languageConfiguration = new Compartment();
-  return [languageConfiguration.of(languageSupport)];
+  const compartment = new Compartment();
+  return [compartment.of(languageSupport)];
 };
