@@ -4,7 +4,6 @@ import { z } from "zod";
 
 export class BaseEmailEditor {
   mjml = "";
-  json = "";
 
   toJSON() {
     return JSON.stringify({ ...this });
@@ -17,6 +16,5 @@ export const EmailEditor = applyItemMetadataMixin(BaseEmailEditor);
 export const emailEditorSchema = z
   .object({
     mjml: z.string(),
-    json: z.string(),
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<Except<EmailEditor, "toJSON">>;

@@ -1,35 +1,26 @@
 <script setup lang="ts">
-import { extendedLanguages } from "@/models/esbabbler/file/LanguageRegexSupportPatternMap";
-import type { TabItemCategoryDefinition } from "@/models/vuetify/TabItemCategoryDefinition";
-import { useEmailEditorStore } from "@/store/emailEditor";
-import type { Extension } from "@codemirror/state";
-import { Compartment } from "@codemirror/state";
-import type { EditorView } from "@codemirror/view";
+import { EmailEditorTab } from "@/models/emailEditor/EmailEditorTab";
+import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
 import type { Except } from "type-fest";
-import { Codemirror } from "vue-codemirror";
+
+defineRouteRules({ ssr: false });
 
 await useReadEmailEditor();
-const emailEditorStore = useEmailEditorStore();
-const { emailEditor } = storeToRefs(emailEditorStore);
 const { background } = useColors();
-const isDark = useIsDark();
 const backgroundColor = computed(() => (isDark.value ? background.value : "white"));
+const isDark = useIsDark();
 const tab = ref(0);
-const baseTabs: Except<TabItemCategoryDefinition, "value">[] = [
+const baseTabs: Except<EmailEditorTabItemCategoryDefinition, "value">[] = [
   {
+    type: EmailEditorTab.Mjml,
     icon: "mdi-code-tags",
-    text: "mjml",
+  },
+  {
+    type: EmailEditorTab.Preview,
+    icon: "mdi-email-search",
   },
 ];
-const tabs = ref<TabItemCategoryDefinition[]>(baseTabs.map((t, index) => ({ ...t, value: index })));
-const editorView = shallowRef<EditorView>();
-const extensions: Extension[] = [];
-const languageRequested = extendedLanguages.find((l) => l.name === "HTML");
-if (languageRequested) {
-  const languageSupport = await languageRequested.load();
-  const languageConfiguration = new Compartment();
-  extensions.push(languageConfiguration.of(languageSupport));
-}
+const tabs = ref<EmailEditorTabItemCategoryDefinition[]>(baseTabs.map((t, index) => ({ ...t, value: index })));
 </script>
 
 <template>
@@ -37,12 +28,10 @@ if (languageRequested) {
     <v-sheet h-full flex="!" flex-col>
       <v-tabs v-model="tab" :items="tabs">
         <template #tab="{ item }">
-          <StyledTab :item />
+          <EmailEditorTab :item />
         </template>
         <template #item="{ item }">
-          <StyledTabsWindowItem h-full :item>
-            <Codemirror v-model="emailEditor.mjml" :extensions @ready="({ view }) => (editorView = view)" />
-          </StyledTabsWindowItem>
+          <EmailEditorTabItem :item />
         </template>
       </v-tabs>
     </v-sheet>

@@ -76,7 +76,7 @@ export const DrizzleAdapter: Adapter = {
           .where(and(eq(verificationTokens.identifier, params.identifier), eq(verificationTokens.token, params.token)))
           .returning()
       )[0];
-    } catch (err) {
+    } catch {
       throw new NotFoundError(DatabaseEntityType.VerificationToken, `id: ${params.identifier}, token: ${params.token}`);
     }
   },

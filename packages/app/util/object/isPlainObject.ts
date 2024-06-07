@@ -12,7 +12,7 @@ export const isPlainObject = (object: unknown): object is object => {
   // https://bugzilla.mozilla.org/show_bug.cgi?id=814622
   try {
     if (object.constructor && !Object.hasOwn(object.constructor.prototype, "isPrototypeOf")) return false;
-  } catch (e) {
+  } catch {
     return false;
   }
 
