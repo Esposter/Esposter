@@ -83,7 +83,7 @@
     "dayjs": "^1.11.11",
     "debug": "^4.3.5",
     "dedent": "^1.5.3",
-    "drizzle-orm": "^0.31.1",
+    "drizzle-orm": "^0.31.2",
     "drizzle-zod": "^0.5.1",
     "emoji-mart-vue-fast": "^15.0.2",
     "eventemitter3": "^5.0.1",
