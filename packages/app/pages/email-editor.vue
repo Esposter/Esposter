@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { EmailEditorTab } from "@/models/emailEditor/EmailEditorTab";
 import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
+import { EmailEditorTabType } from "@/models/emailEditor/EmailEditorTabType";
 import type { Except } from "type-fest";
 
 defineRouteRules({ ssr: false });
@@ -12,11 +12,11 @@ const isDark = useIsDark();
 const tab = ref(0);
 const baseTabs: Except<EmailEditorTabItemCategoryDefinition, "value">[] = [
   {
-    type: EmailEditorTab.Mjml,
+    type: EmailEditorTabType.Mjml,
     icon: "mdi-code-tags",
   },
   {
-    type: EmailEditorTab.Preview,
+    type: EmailEditorTabType.Preview,
     icon: "mdi-email-search",
   },
 ];
