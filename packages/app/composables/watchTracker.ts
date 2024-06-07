@@ -1,3 +1,4 @@
+import { dayjs } from "@/services/dayjs";
 import type { TupleSlice } from "@/util/types/TupleSlice";
 import type { WatchSource } from "vue";
 
@@ -14,9 +15,16 @@ export const watchTracker = (source: WatchSource<object>, ...args: TupleSlice<Pa
       },
       options,
     ),
-    watchDebounced(source, (...args) => {
-      if (!isTrackerInitialized.value) return;
-      cb(...args);
-    }),
+    watchDebounced(
+      source,
+      (...args) => {
+        if (!isTrackerInitialized.value) return;
+        cb(...args);
+      },
+      {
+        debounce: dayjs.duration(0.5, "seconds").asMilliseconds(),
+        maxWait: dayjs.duration(1, "second").asMilliseconds(),
+      },
+    ),
   ];
 };
