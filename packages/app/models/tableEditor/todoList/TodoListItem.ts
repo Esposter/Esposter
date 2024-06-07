@@ -2,9 +2,11 @@ import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
 import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityType";
 import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "@/models/tableEditor/todoList/TodoListItemType";
+import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
 import { z } from "zod";
 
+@RegisterSuperJSON
 export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   type = TodoListItemType.Todo;
   notes = "";

@@ -5,9 +5,11 @@ import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import type { Except } from "type-fest";
 import { z } from "zod";
 
+@RegisterSuperJSON
 class BaseGame {
   id: string = crypto.randomUUID();
   type = ClickerType.Default;

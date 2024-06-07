@@ -6,6 +6,7 @@ import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import type { Except } from "type-fest";
 import { z } from "zod";
 
@@ -13,6 +14,7 @@ type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
+@RegisterSuperJSON
 export class BaseTableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();

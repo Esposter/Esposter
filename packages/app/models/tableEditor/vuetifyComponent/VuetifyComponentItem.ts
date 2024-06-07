@@ -6,8 +6,10 @@ import {
   vuetifyComponentItemTypeSchema,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 // import { vuetifyComponentTypeSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
   type = VuetifyComponentItemType.VuetifyComponent;
   // @TODO: We actually can't use this type because nuxt cannot load css in the server properly

@@ -1,7 +1,9 @@
 import type { Item } from "@/models/tableEditor/Item";
+import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
 import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "@/services/tableEditor/constants";
 import { z } from "zod";
 
+@RegisterSuperJSON
 export class TableEditor<T extends Item> {
   items: T[] = [];
 }
