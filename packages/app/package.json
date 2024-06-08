@@ -167,7 +167,7 @@
     "nuxt-security": "^1.4.3",
     "prettier": "^3.3.1",
     "sass": "^1.77.4",
-    "tsx": "^4.13.3",
+    "tsx": "^4.14.0",
     "type-fest": "^4.20.0",
     "unocss": "^0.60.4",
     "vite-plugin-node-polyfills": "^0.22.0",
