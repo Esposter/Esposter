@@ -602,12 +602,6 @@
         stroke-width="0"
         stroke-linecap="butt"
       />
-      <g id="SvgjsG2516" transform="translate(0, 0)">
-        <g id="SvgjsG2517" transform="translate(0, -4)" />
-      </g>
-      <g id="SvgjsG2530" />
-      <g id="SvgjsG2531" />
-      <g id="SvgjsG2532" />
     </g>
   </svg>
 </template>
