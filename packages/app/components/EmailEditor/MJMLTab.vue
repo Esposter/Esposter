@@ -3,6 +3,7 @@ import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/
 import type { TabItem } from "@/models/vuetify/TabItem";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { oneDark } from "@codemirror/theme-one-dark";
 import type { EditorView } from "@codemirror/view";
 import { Codemirror } from "vue-codemirror";
 
@@ -14,8 +15,10 @@ const { item: baseItem } = defineProps<MjmlTabProps>();
 const item = computed(() => baseItem as EmailEditorTabItemCategoryDefinition);
 const emailEditorStore = useEmailEditorStore();
 const { emailEditor } = storeToRefs(emailEditorStore);
+const isDark = useIsDark();
+const baseExtensions = await getLanguageExtension("HTML");
+const extensions = computed(() => (isDark.value ? baseExtensions.concat(oneDark) : baseExtensions));
 const editorView = shallowRef<EditorView>();
-const extensions = await getLanguageExtension("HTML");
 </script>
 
 <template>

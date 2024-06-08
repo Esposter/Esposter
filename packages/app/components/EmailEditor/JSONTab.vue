@@ -3,6 +3,7 @@ import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/
 import type { TabItem } from "@/models/vuetify/TabItem";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { oneDark } from "@codemirror/theme-one-dark";
 import type { EditorView } from "@codemirror/view";
 import mjml2html from "mjml-browser";
 import { Codemirror } from "vue-codemirror";
@@ -22,8 +23,10 @@ const json = computed(() => {
     return "";
   }
 });
+const isDark = useIsDark();
+const baseExtensions = await getLanguageExtension("JSON");
+const extensions = computed(() => (isDark.value ? baseExtensions.concat(oneDark) : baseExtensions));
 const editorView = shallowRef<EditorView>();
-const extensions = await getLanguageExtension("JSON");
 </script>
 
 <template>
