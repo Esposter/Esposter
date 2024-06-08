@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
+
+
+### Bug Fixes
+
+* appbar title padding ([5ae8007](https://github.com/Esposter/Esposter/commit/5ae80076ba8ffa313f9e3f8ae35679e1fe46958c))
+* color ([4d3f927](https://github.com/Esposter/Esposter/commit/4d3f927c45d06c5f48a3b00509c85cb42627fc55))
+* debounce time ([8eb7fc9](https://github.com/Esposter/Esposter/commit/8eb7fc911c1acf85e3496b85f2402b27e4aa1832))
+* enum and vue component name collision ([fff1ba2](https://github.com/Esposter/Esposter/commit/fff1ba26d76d5b3c4a4c6e42a304a7a09ed99242))
+* formatting ([2998886](https://github.com/Esposter/Esposter/commit/2998886881b314888ca572f914d839ffc35909d0))
+* paddings ([ac25477](https://github.com/Esposter/Esposter/commit/ac25477f5d2d916ca49a22696308abedf471bbde))
+* rename ([3e335a2](https://github.com/Esposter/Esposter/commit/3e335a2018f45e89c167a36e6aeaa2c6cf281ac4))
+* stringify json ([410e3db](https://github.com/Esposter/Esposter/commit/410e3db4c0041ee409d49380a508ea6cf978f699))
+* styles ([576fb59](https://github.com/Esposter/Esposter/commit/576fb5940153ea4c3fd5723ff834e508c4396b4a))
+
+
+### Features
+
+* Add counter ([54c1069](https://github.com/Esposter/Esposter/commit/54c1069ea78ed201c9d38984d14a92a41d0b250c))
+* Add dark mode for code mirror ([460e2df](https://github.com/Esposter/Esposter/commit/460e2df7df6eea57a6b6f80f2424a58a4f7c02ea))
+* Add email editor ([8e54f48](https://github.com/Esposter/Esposter/commit/8e54f486dd121879e99b9ff117b245a657e1ddba))
+* Add superjson ([627e902](https://github.com/Esposter/Esposter/commit/627e9021fa12ee30a7421aa046fcffe80740f9f6))
+* add tabs and preview ([f734f9c](https://github.com/Esposter/Esposter/commit/f734f9cd92fcdaf11b7bf48e81f681bad5c34fcd))
+
+
+
+
+
 ## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
 
 **Note:** Version bump only for package esposter
