@@ -280,8 +280,8 @@ importers:
         specifier: ^6.3.7
         version: 6.3.7
       trpc-nuxt:
-        specifier: ^0.10.21
-        version: 0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
+        specifier: ^0.10.22
+        version: 0.10.22(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1(@lezer/common@1.2.1))(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -8599,8 +8599,8 @@ packages:
     resolution: {integrity: sha512-pkonvlKk8/ZuR0D5tLW8ljt5I8kmxp2XKymhepUeOdCEfKpZaktSArkLHZt76OB1ZvO9bssUsDty4SWhLvZpLg==}
     engines: {node: '>=0.10.0'}
 
-  trpc-nuxt@0.10.21:
-    resolution: {integrity: sha512-QNrKFNosZ6ax8QLG6VBi3VUurXvoyrRvt0utvuQk2H1ej54YG6SbHEfBnGSIsz7HyDJt4mFvdNIE1lbebEtUAQ==}
+  trpc-nuxt@0.10.22:
+    resolution: {integrity: sha512-krniLpq4FMHqhpQKMKJDBdYJ2NoCN51LOgOqOfaph0mZ3jo8czsgoFJFHRLLI6LFqahCdTmxbhOtELvXf1mCzw==}
     peerDependencies:
       '@trpc/client': ^10.38.1 <11
       '@trpc/server': ^10.38.1 <11
@@ -19507,7 +19507,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4):
+  trpc-nuxt@0.10.22(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4):
     dependencies:
       '@trpc/client': 10.45.2(@trpc/server@10.45.2)
       '@trpc/server': 10.45.2
