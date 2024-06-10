@@ -309,13 +309,13 @@
             barWidth="26.66666666668607"
           />
           <g id="SvgjsG1370">
-            <g id="SvgjsG1371" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1373" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1375" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1377" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1379" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1381" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
-            <g id="SvgjsG1383" className="apexcharts-bar-goals-groups" clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1371"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1373"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1375"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1377"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1379"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1381"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
+            <g id="SvgjsG1383"  clip-path="url(#gridRectMarkerMaskvlug5nsd)" />
           </g>
         </g>
         <g id="SvgjsG1369" data:realIndex="0" />
