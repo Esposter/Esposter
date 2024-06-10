@@ -121,7 +121,7 @@
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.22",
     "vue-codemirror": "^6.1.1",
-    "vue-router": "^4.3.2",
+    "vue-router": "^4.3.3",
     "vue-waypoint": "^4.3.0",
     "vue3-apexcharts": "^1.5.3",
     "vuetify": "^3.6.8",
