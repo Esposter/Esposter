@@ -1,6 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-export const FunnelPropsData = {
+export const BasicPropsData = {
   type: "bar",
   series: [
     {
@@ -9,17 +9,6 @@ export const FunnelPropsData = {
     },
   ],
   options: {
-    legend: {
-      show: false,
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 0,
-        horizontal: true,
-        barHeight: "80%",
-        isFunnel: true,
-      },
-    },
     xaxis: {
       categories: ["Sourced", "Screened", "Assessed", "HR Interview", "Technical", "Verify", "Offered", "Hired"],
     },

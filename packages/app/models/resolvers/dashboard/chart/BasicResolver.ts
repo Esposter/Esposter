@@ -16,15 +16,18 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
   }
 
   handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: T, visualType: VisualType) {
-    apexOptions.title = {
-      text: title,
-      align: "left",
+    apexOptions.dataLabels = {
+      enabled: false,
     };
     apexOptions.subtitle = {
       text: subtitle,
       align: "left",
     };
-    if (visualType === VisualType.Funnel)
+    apexOptions.title = {
+      text: title,
+      align: "left",
+    };
+    if (visualType === VisualType.Funnel) {
       apexOptions.dataLabels = {
         enabled: true,
         formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
@@ -32,10 +35,26 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
           enabled: true,
         },
       };
-    else
-      apexOptions.dataLabels = {
-        enabled: false,
+      apexOptions.legend = {
+        show: false,
       };
+      if (apexOptions.plotOptions?.bar) {
+        apexOptions.plotOptions.bar.borderRadius = 0;
+        apexOptions.plotOptions.bar.horizontal = true;
+        apexOptions.plotOptions.bar.barHeight = "80%";
+        apexOptions.plotOptions.bar.isFunnel = true;
+      } else
+        apexOptions.plotOptions = {
+          bar: {
+            borderRadius: 0,
+            horizontal: true,
+            barHeight: "80%",
+            isFunnel: true,
+          },
+        };
+      apexOptions.subtitle.align = "center";
+      apexOptions.title.align = "center";
+    }
   }
 
   handleSchema(schema: z.AnyZodObject) {
