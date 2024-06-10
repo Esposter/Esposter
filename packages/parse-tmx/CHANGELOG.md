@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
+
+**Note:** Version bump only for package parse-tmx
+
+
+
+
+
+## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
+
+**Note:** Version bump only for package parse-tmx
+
+
+
+
+
+## [1.11.1](https://github.com/Esposter/Esposter/compare/v1.11.0...v1.11.1) (2024-06-04)
+
+**Note:** Version bump only for package parse-tmx
+
+
+
+
+
+# [1.11.0](https://github.com/Esposter/Esposter/compare/v1.10.0...v1.11.0) (2024-06-04)
+
+
+### Bug Fixes
+
+* Make pwsh run properly on windows ([94ef8cf](https://github.com/Esposter/Esposter/commit/94ef8cf7ec0edc924d04fc58df88818dd281b9ce))
+
+
+
+
+
+
 # [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
 
 **Note:** Version bump only for package parse-tmx

@@ -14,8 +14,8 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
 </script>
 
 <template>
-  <v-toolbar pt-4 pr-4>
-    <v-toolbar-title>
+  <v-toolbar pt-4>
+    <v-toolbar-title px-4>
       <TableEditorTypeSelect />
       <div pt-4 flex items-center>
         <TableEditorSearchBar />

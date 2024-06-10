@@ -1,4 +1,4 @@
-import { LanguageRegexSupportPatternMap } from "@/models/esbabbler/file/LanguageRegexSupportPatternMap";
+import { LanguageRegexSupportPatternMap } from "@/models/codemirror/LanguageRegexSupportPatternMap";
 import { getFilename } from "@/util/getFilename";
 
 export const getLanguageForFileUrl = (url: string) => {

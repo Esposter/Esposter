@@ -18,6 +18,11 @@ export const productListItems: ListItem[] = [
     icon: "mdi-view-dashboard-edit",
   },
   {
+    title: "Email Editor",
+    href: RoutePath.EmailEditor,
+    icon: "mdi-email-edit",
+  },
+  {
     title: "Surveyer",
     href: RoutePath.Surveyer,
     icon: "mdi-text-box-edit",

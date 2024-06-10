@@ -97,7 +97,7 @@ const defaults: Defaults = {
   },
   VToolbarTitle: {
     style: {
-      marginInlineStart: "1rem",
+      marginInlineStart: 0,
     },
   },
   VTooltip: { location: "top" },

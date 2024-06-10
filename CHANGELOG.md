@@ -3,6 +3,102 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
+
+
+### Bug Fixes
+
+* appbar title padding ([5ae8007](https://github.com/Esposter/Esposter/commit/5ae80076ba8ffa313f9e3f8ae35679e1fe46958c))
+* color ([4d3f927](https://github.com/Esposter/Esposter/commit/4d3f927c45d06c5f48a3b00509c85cb42627fc55))
+* debounce time ([8eb7fc9](https://github.com/Esposter/Esposter/commit/8eb7fc911c1acf85e3496b85f2402b27e4aa1832))
+* enum and vue component name collision ([fff1ba2](https://github.com/Esposter/Esposter/commit/fff1ba26d76d5b3c4a4c6e42a304a7a09ed99242))
+* formatting ([2998886](https://github.com/Esposter/Esposter/commit/2998886881b314888ca572f914d839ffc35909d0))
+* paddings ([ac25477](https://github.com/Esposter/Esposter/commit/ac25477f5d2d916ca49a22696308abedf471bbde))
+* rename ([3e335a2](https://github.com/Esposter/Esposter/commit/3e335a2018f45e89c167a36e6aeaa2c6cf281ac4))
+* stringify json ([410e3db](https://github.com/Esposter/Esposter/commit/410e3db4c0041ee409d49380a508ea6cf978f699))
+* styles ([576fb59](https://github.com/Esposter/Esposter/commit/576fb5940153ea4c3fd5723ff834e508c4396b4a))
+
+
+### Features
+
+* Add counter ([54c1069](https://github.com/Esposter/Esposter/commit/54c1069ea78ed201c9d38984d14a92a41d0b250c))
+* Add dark mode for code mirror ([460e2df](https://github.com/Esposter/Esposter/commit/460e2df7df6eea57a6b6f80f2424a58a4f7c02ea))
+* Add email editor ([8e54f48](https://github.com/Esposter/Esposter/commit/8e54f486dd121879e99b9ff117b245a657e1ddba))
+* Add superjson ([627e902](https://github.com/Esposter/Esposter/commit/627e9021fa12ee30a7421aa046fcffe80740f9f6))
+* add tabs and preview ([f734f9c](https://github.com/Esposter/Esposter/commit/f734f9cd92fcdaf11b7bf48e81f681bad5c34fcd))
+
+
+
+
+
+## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
+
+**Note:** Version bump only for package esposter
+
+
+
+
+
+## [1.11.1](https://github.com/Esposter/Esposter/compare/v1.11.0...v1.11.1) (2024-06-04)
+
+**Note:** Version bump only for package esposter
+
+
+
+
+
+# [1.11.0](https://github.com/Esposter/Esposter/compare/v1.10.0...v1.11.0) (2024-06-04)
+
+
+### Bug Fixes
+
+* Add defaults so vjsf also defaults ([2718713](https://github.com/Esposter/Esposter/commit/2718713c333e427b4578da4a8b2d44e63d12659a))
+* Add watch tracker ([2636b5c](https://github.com/Esposter/Esposter/commit/2636b5cd234e92b66ce302ba0c43675ecb99353c))
+* build stuff + build d.ts ([d535d69](https://github.com/Esposter/Esposter/commit/d535d696a4273643ef9fddad6e4561f845838a07))
+* defaults ([82c7b0c](https://github.com/Esposter/Esposter/commit/82c7b0c8b5f07d79459911c207da4619e584dd75))
+* imports ([5424713](https://github.com/Esposter/Esposter/commit/54247138e0e9ed213ac3622b417551b98b809c1e))
+* improve types ([61d7d07](https://github.com/Esposter/Esposter/commit/61d7d079f619c6c6ff34ddad3e9865a4241200c8))
+* just use size full ([8e81230](https://github.com/Esposter/Esposter/commit/8e81230308d8adb926d0da8b79df22f5a4ab2985))
+* lint ([cd8221f](https://github.com/Esposter/Esposter/commit/cd8221f9f5a663e61be43a37bb320eb8c71267a3))
+* Make pwsh run properly on windows ([94ef8cf](https://github.com/Esposter/Esposter/commit/94ef8cf7ec0edc924d04fc58df88818dd281b9ce))
+* move folder ([89c09c3](https://github.com/Esposter/Esposter/commit/89c09c35be22be8466f32b329155fe64558b715f))
+* re-assigning schema ([30bbbaa](https://github.com/Esposter/Esposter/commit/30bbbaa53c9850aaaf09d5057bc964ee69631b44))
+* remove unnecessary deep ([c197630](https://github.com/Esposter/Esposter/commit/c197630a9d0ecf83e46c00e5be57d6e5e742cc7a))
+* render table editor in client only ([f4c2dc1](https://github.com/Esposter/Esposter/commit/f4c2dc17cfb30073e6eaec6de8d7e60f2da71c11))
+* schema and using resolvers ([484ffe8](https://github.com/Esposter/Esposter/commit/484ffe831fadd1639a0c73d930464ab92b802094))
+* schema field orders, now it's perfect c: ([0faaebb](https://github.com/Esposter/Esposter/commit/0faaebb95c98e1bc783f8f9e6b982efbceb669e4))
+* sweet, vite plugin solves path issue ([7679eb4](https://github.com/Esposter/Esposter/commit/7679eb43f909bc7012f16875d2a1abfa9ffc1acd))
+* types ([c6d0ada](https://github.com/Esposter/Esposter/commit/c6d0ada8048b35912545904df3f8b703353b0920))
+* types ([ee67111](https://github.com/Esposter/Esposter/commit/ee671118a1678f2e139498d386c5b14a7f54be07))
+* types ([cfe5c46](https://github.com/Esposter/Esposter/commit/cfe5c465298fc8f11170af5a641cf0deb8404dd6))
+* types & clone ([6653163](https://github.com/Esposter/Esposter/commit/6653163495dec2aafbcc0c378f1813269097af33))
+* types & dashboard ([b02836c](https://github.com/Esposter/Esposter/commit/b02836c1628f6aeff937e8533a2dabebbd19a821))
+* use click event ([ac0036b](https://github.com/Esposter/Esposter/commit/ac0036b04cd86262f0ae33c244814dd3fc03de6d))
+* use edited item type ([49d5224](https://github.com/Esposter/Esposter/commit/49d52245b8e08a8a68cb3d0402f679515eeffbf1))
+* use icd ([cd3a587](https://github.com/Esposter/Esposter/commit/cd3a5870355ab489df422b1001ae0abe77ba6079))
+* use mouse events to determine drag/click ([dfc909f](https://github.com/Esposter/Esposter/commit/dfc909f1f3f372c10a5135a0dee456c769f37023))
+* use object assign to override proper values ([d50ff3d](https://github.com/Esposter/Esposter/commit/d50ff3d33f707f98920832e5f0ee0df6cd540ff1))
+* use prevent to also have vuetify prevent submit default natively ([f84fbe7](https://github.com/Esposter/Esposter/commit/f84fbe76503220f2e3781030c3688a30bd0c8be5))
+* visual list + vuetify styles ([a12a6bd](https://github.com/Esposter/Esposter/commit/a12a6bdabd8e62ada7bf3df5730e76c3b28dbccc))
+
+
+### Features
+
+* Add complete type-safe resolver ([5527a1c](https://github.com/Esposter/Esposter/commit/5527a1c8de330342473376b7771ae12dd4018e4d))
+* Add proper removing/keeping only expected propreties when switching types ([b729c1f](https://github.com/Esposter/Esposter/commit/b729c1f48e3a871025f5868f2d87d905d395009c))
+* Add vite pkg ([837a130](https://github.com/Esposter/Esposter/commit/837a1306a226e44b061a3f8a6c660e33dff99078))
+* move subtitle to  base ([3aba2d1](https://github.com/Esposter/Esposter/commit/3aba2d10a2a1cebe88e797816abb57e08fadbee5))
+* Move to on click except drag composable + refactor preview container ([ab0c5ac](https://github.com/Esposter/Esposter/commit/ab0c5ac99dfaa7a239ca87c18a4c7faceddd3fd4))
+* successfully used vue package ([5d1ac61](https://github.com/Esposter/Esposter/commit/5d1ac61970afe222f3841232e2225a88cf097b2b))
+* support different types of charts ([3cb020e](https://github.com/Esposter/Esposter/commit/3cb020e2bedc7dd6b4c390da184f01f48f5d8d1e))
+* Support switching chart types, this was crazy ([cdcc153](https://github.com/Esposter/Esposter/commit/cdcc153ce2ac350d23df9929803847021e95dfb9))
+* Use mkcert plugin + add build stuff ([400c961](https://github.com/Esposter/Esposter/commit/400c961f5dcca03c38c43c8a92afd6b06824786a))
+
+
+
+
+
+
 # [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
 
 

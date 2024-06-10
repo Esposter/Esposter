@@ -10,7 +10,6 @@ interface VisualProps {
 }
 
 const { type, chart } = defineProps<VisualProps>();
-const data = VisualTypeDemoDataMap[type];
 const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css
@@ -19,10 +18,12 @@ useResizeObserver(divRef, ([{ target }]) => {
   height.value = (target as HTMLDivElement).clientHeight;
 });
 
+const data = computed(() => VisualTypeDemoDataMap[type](chart.type));
 const options = useApexOptions(
   () => chart,
+  () => type,
   computed(() => ({
-    ...data.options,
+    ...data.value.options,
     chart: {
       height: height.value,
       zoom: {

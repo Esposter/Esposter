@@ -4,6 +4,7 @@ export const RoutePath = {
   Clicker: "/clicker",
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",
+  EmailEditor: "/email-editor",
   Dungeons: "/dungeons",
   Github: "https://github.com/Esposter/Esposter",
   Index: "/",

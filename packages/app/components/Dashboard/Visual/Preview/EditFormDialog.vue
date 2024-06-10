@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ChartType } from "@/models/dashboard/chart/ChartType";
 import type { Visual } from "@/models/dashboard/Visual";
+import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -28,7 +28,7 @@ useConfirmBeforeNavigation(isDirty);
     @close="resetItem()"
   >
     <v-container fluid>
-      <v-select v-model="editedItem.chart.type" :items="Object.values(ChartType)" label="Chart Type" />
+      <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />
       <Vjsf v-model="editedItem.chart.configuration" :schema :options="{ removeAdditional: true }" />
     </v-container>
   </StyledEditFormDialog>

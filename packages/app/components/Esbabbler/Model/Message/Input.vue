@@ -25,7 +25,7 @@ const keyboardExtension = new Extension({
   <RichTextEditor
     v-model="messageInput"
     placeholder="Aa"
-    :max-length="MESSAGE_MAX_LENGTH"
+    :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
   >
     <template #prepend-footer="editorProps">

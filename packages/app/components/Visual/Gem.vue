@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Transition name="fade">
+  <TransitionFade>
     <canvas v-show="isReady" :id />
-  </Transition>
+  </TransitionFade>
 </template>

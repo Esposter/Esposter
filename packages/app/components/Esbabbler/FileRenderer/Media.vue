@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 import { TypeRendererMap } from "@/models/esbabbler/file/TypeRendererMap";
-import { getLanguageForFileUrl } from "@/services/file/code";
+import { getLanguageForFileUrl } from "@/services/codemirror/getLanguageForFileUrl";
 import type { Component } from "vue";
 
 const { url, mimetype } = defineProps<FileRendererProps>();

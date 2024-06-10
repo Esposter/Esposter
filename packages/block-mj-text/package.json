@@ -1,0 +1,35 @@
+{
+  "name": "@esposter/block-mj-text",
+  "version": "1.12.0",
+  "description": "mj-text block",
+  "type": "module",
+  "keywords": [
+    "mjml"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
+  }
+}
