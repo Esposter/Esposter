@@ -1,3 +1,4 @@
+import { VisualType } from "@/models/dashboard/VisualType";
 import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { ChartType } from "@/models/dashboard/chart/ChartType";
@@ -14,10 +15,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
     return true;
   }
 
-  handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: T) {
-    apexOptions.dataLabels = {
-      enabled: false,
-    };
+  handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: T, visualType: VisualType) {
     apexOptions.title = {
       text: title,
       align: "left",
@@ -26,6 +24,18 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
       text: subtitle,
       align: "left",
     };
+    if (visualType === VisualType.Funnel)
+      apexOptions.dataLabels = {
+        enabled: true,
+        formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
+        dropShadow: {
+          enabled: true,
+        },
+      };
+    else
+      apexOptions.dataLabels = {
+        enabled: false,
+      };
   }
 
   handleSchema(schema: z.AnyZodObject) {

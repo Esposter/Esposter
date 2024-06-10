@@ -21,6 +21,7 @@ useResizeObserver(divRef, ([{ target }]) => {
 
 const options = useApexOptions(
   () => chart,
+  () => type,
   computed(() => ({
     ...data.options,
     chart: {
