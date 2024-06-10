@@ -8,8 +8,10 @@ const VisualTypeItemCategoryDefinitionMap = {
   [VisualType.Area]: {},
   [VisualType.Bar]: {},
   [VisualType.Column]: {},
+  [VisualType.Funnel]: {},
   [VisualType.Line]: {},
   [VisualType.RangeArea]: {},
+  [VisualType.RangeBar]: {},
 } as const satisfies Record<VisualType, Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">>;
 
 export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
