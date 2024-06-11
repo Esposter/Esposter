@@ -1,18 +1,14 @@
 import { Compression } from "@/models/Compression";
 import { Encoding } from "@/models/Encoding";
-import type { TMXDataNode } from "@/models/tmx/node/TMXDataNode";
-import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
 import { parseFlips } from "@/util/parseFlips";
 import { parseProperties } from "@/util/parseProperties";
 import { parseTileId } from "@/util/parseTileId";
 import { unpackTileBytes } from "@/util/unpackTileBytes";
 import { exhaustiveGuard } from "@esposter/shared";
 import { gunzip, inflate } from "node:zlib";
-
-const isTMXEmbeddedTilesetNode = (node: TMXEmbeddedTilesetNode | TMXDataNode): node is TMXEmbeddedTilesetNode =>
-  "tile" in node;
 
 export const parseTileLayer = async (
   node: TMXLayerNode,

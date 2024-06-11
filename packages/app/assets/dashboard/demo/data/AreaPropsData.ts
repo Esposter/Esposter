@@ -36,10 +36,6 @@ export const AreaPropsData = {
     stroke: {
       curve: "straight",
     },
-    subtitle: {
-      text: "Price Movements",
-      align: "left",
-    },
     xaxis: {
       type: "datetime",
     },

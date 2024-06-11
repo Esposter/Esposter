@@ -65,13 +65,16 @@ importers:
         version: 6.10.2
       '@codemirror/language-data':
         specifier: ^6.5.1
-        version: 6.5.1(@codemirror/view@6.27.0)
+        version: 6.5.1(@codemirror/view@6.28.0)
       '@codemirror/state':
         specifier: ^6.4.1
         version: 6.4.1
+      '@codemirror/theme-one-dark':
+        specifier: ^6.1.2
+        version: 6.1.2
       '@codemirror/view':
-        specifier: ^6.27.0
-        version: 6.27.0
+        specifier: ^6.28.0
+        version: 6.28.0
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
@@ -133,8 +136,8 @@ importers:
         specifier: ^10.45.2
         version: 10.45.2
       '@vuepic/vue-datepicker':
-        specifier: ^8.7.0
-        version: 8.7.0(vue@3.4.27(typescript@5.4.5))
+        specifier: ^8.8.0
+        version: 8.8.0(vue@3.4.27(typescript@5.4.5))
       '@vueuse/core':
         specifier: ^10.10.0
         version: 10.10.0(vue@3.4.27(typescript@5.4.5))
@@ -277,14 +280,14 @@ importers:
         specifier: ^6.3.7
         version: 6.3.7
       trpc-nuxt:
-        specifier: ^0.10.21
-        version: 0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
+        specifier: ^0.10.22
+        version: 0.10.22(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4)
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1(@lezer/common@1.2.1))(vue@3.4.27(typescript@5.4.5))
       vue-router:
-        specifier: ^4.3.2
-        version: 4.3.2(vue@3.4.27(typescript@5.4.5))
+        specifier: ^4.3.3
+        version: 4.3.3(vue@3.4.27(typescript@5.4.5))
       vue-waypoint:
         specifier: ^4.3.0
         version: 4.3.0(vue@3.4.27(typescript@5.4.5))
@@ -324,7 +327,7 @@ importers:
         version: 0.7.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.2)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.4.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.4)(terser@5.29.2)(typescript@5.4.5)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))
       '@nuxt/test-utils':
         specifier: ^3.13.1
-        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -377,8 +380,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       drizzle-kit:
-        specifier: ^0.22.5
-        version: 0.22.5
+        specifier: ^0.22.7
+        version: 0.22.7
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
@@ -404,8 +407,8 @@ importers:
         specifier: ^1.77.4
         version: 1.77.4
       tsx:
-        specifier: ^4.13.2
-        version: 4.13.2
+        specifier: ^4.15.2
+        version: 4.15.2
       type-fest:
         specifier: ^4.20.0
         version: 4.20.0
@@ -1423,8 +1426,11 @@ packages:
   '@codemirror/state@6.4.1':
     resolution: {integrity: sha512-QkEyUiLhsJoZkbumGZlswmAhA7CBU02Wrz7zvH4SrcifbsqwlXShVXg65f3v/ts57W3dqyamEriMhij1Z3Zz4A==}
 
-  '@codemirror/view@6.27.0':
-    resolution: {integrity: sha512-8kqX1sHbVW1lVzWwrjAbh4dR7eKhV8eIQ952JKaBXOoXE04WncoqCy4DMU701LSrPZ3N2Q4zsTawz7GQ+2mrUw==}
+  '@codemirror/theme-one-dark@6.1.2':
+    resolution: {integrity: sha512-F+sH0X16j/qFLMAfbciKTxVOwkdAS336b7AXTKOZhy8BR3eH/RelsnLgLFINrpST63mmN2OuwUt0W2ndUgYwUA==}
+
+  '@codemirror/view@6.28.0':
+    resolution: {integrity: sha512-fo7CelaUDKWIyemw4b+J57cWuRkOu4SWCCPfNDkPvfWkGjM9D5racHQXr4EQeYCD6zEBIBxGCeaKkQo+ysl0gA==}
 
   '@es-joy/jsdoccomment@0.43.0':
     resolution: {integrity: sha512-Q1CnsQrytI3TlCB1IVWXWeqUIPGVEKGaE7IbVdt13Nq/3i0JESAkQQERrfiQkmlpijl+++qyqPgaS31Bvc1jRQ==}
@@ -3723,8 +3729,8 @@ packages:
   '@vue/test-utils@2.4.6':
     resolution: {integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==}
 
-  '@vuepic/vue-datepicker@8.7.0':
-    resolution: {integrity: sha512-EqL51GdaRg6AExVuPCOmnO81n9+oLqgTi+LlST44TwU0UcX0UfefHx1HXwV948fAqBgj0ESgTyDvjXx7EFFL2A==}
+  '@vuepic/vue-datepicker@8.8.0':
+    resolution: {integrity: sha512-I9c0EBF+zsCXEGRM/2D8M8N3Jafr0/KftxdLqbbn2DZ1RfVDefUrWZaGDrp8XwWfowEw7963ES59NPKC+nkgdA==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
@@ -4969,8 +4975,8 @@ packages:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.22.5:
-    resolution: {integrity: sha512-hhCJRyZkr6cWnnUuslxE3VbptPVLpFPZkfS3iyuuHUHGQV8jTUotRvpDFhhytxhwazy4Uj5s7wcsQp3iXHn1vQ==}
+  drizzle-kit@0.22.7:
+    resolution: {integrity: sha512-9THPCb2l1GPt7wxhws9LvTR0YG565ZlVgTuqGMwjs590Kch1pXu4GyjEArVijSF5m0OBj3qgdeKmuJXhKXgWFw==}
     hasBin: true
 
   drizzle-orm@0.31.2:
@@ -8736,8 +8742,8 @@ packages:
     resolution: {integrity: sha512-pkonvlKk8/ZuR0D5tLW8ljt5I8kmxp2XKymhepUeOdCEfKpZaktSArkLHZt76OB1ZvO9bssUsDty4SWhLvZpLg==}
     engines: {node: '>=0.10.0'}
 
-  trpc-nuxt@0.10.21:
-    resolution: {integrity: sha512-QNrKFNosZ6ax8QLG6VBi3VUurXvoyrRvt0utvuQk2H1ej54YG6SbHEfBnGSIsz7HyDJt4mFvdNIE1lbebEtUAQ==}
+  trpc-nuxt@0.10.22:
+    resolution: {integrity: sha512-krniLpq4FMHqhpQKMKJDBdYJ2NoCN51LOgOqOfaph0mZ3jo8czsgoFJFHRLLI6LFqahCdTmxbhOtELvXf1mCzw==}
     peerDependencies:
       '@trpc/client': ^10.38.1 <11
       '@trpc/server': ^10.38.1 <11
@@ -8772,8 +8778,8 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  tsx@4.13.2:
-    resolution: {integrity: sha512-s+WGqChkA77uU8xij1IdO9jQnwJAiWJto0bF5yJLbAZpLtNs82Qa5CwMBxWjJ7QOYU9MzBf4MCNt6lZduwkQ+g==}
+  tsx@4.15.2:
+    resolution: {integrity: sha512-kIZTOCmR37nEw0qxQks2dR+eZWSXydhTGmz7yx94vEiJtJGBTkUl0D/jt/5fey+CNdm6i3Cp+29WKRay9ScQUw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -9373,8 +9379,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  vue-router@4.3.2:
-    resolution: {integrity: sha512-hKQJ1vDAZ5LVkKEnHhmm1f9pMiWIBNGF5AwU67PdH7TyXCj/a4hTccuUuYCAMgJK6rO/NVYtQIEN3yL8CECa7Q==}
+  vue-router@4.3.3:
+    resolution: {integrity: sha512-8Q+u+WP4N2SXY38FDcF2H1dUEbYVHVPtPCPZj/GTZx8RCbiB8AtJP9+YIxn4Vs0svMTNQcLIzka4GH7Utkx9xQ==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -10810,18 +10816,18 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@codemirror/autocomplete@6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)':
+  '@codemirror/autocomplete@6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)':
     dependencies:
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
 
   '@codemirror/commands@6.3.3':
     dependencies:
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
 
   '@codemirror/lang-angular@0.1.3':
@@ -10838,9 +10844,9 @@ snapshots:
       '@codemirror/language': 6.10.2
       '@lezer/cpp': 1.1.2
 
-  '@codemirror/lang-css@6.2.1(@codemirror/view@6.27.0)':
+  '@codemirror/lang-css@6.2.1(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -10848,9 +10854,9 @@ snapshots:
     transitivePeerDependencies:
       - '@codemirror/view'
 
-  '@codemirror/lang-go@6.0.0(@codemirror/view@6.27.0)':
+  '@codemirror/lang-go@6.0.0(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -10860,12 +10866,12 @@ snapshots:
 
   '@codemirror/lang-html@6.4.8':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
-      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.27.0)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
+      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.28.0)
       '@codemirror/lang-javascript': 6.2.2
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/css': 1.1.8
       '@lezer/html': 1.3.9
@@ -10877,11 +10883,11 @@ snapshots:
 
   '@codemirror/lang-javascript@6.2.2':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/lint': 6.5.0
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/javascript': 1.4.13
 
@@ -10890,9 +10896,9 @@ snapshots:
       '@codemirror/language': 6.10.2
       '@lezer/json': 1.0.2
 
-  '@codemirror/lang-less@6.0.2(@codemirror/view@6.27.0)':
+  '@codemirror/lang-less@6.0.2(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.27.0)
+      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.28.0)
       '@codemirror/language': 6.10.2
       '@lezer/common': 1.2.1
       '@lezer/highlight': 1.2.0
@@ -10902,22 +10908,22 @@ snapshots:
 
   '@codemirror/lang-liquid@6.2.1':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/lang-html': 6.4.8
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/highlight': 1.2.0
       '@lezer/lr': 1.4.0
 
   '@codemirror/lang-markdown@6.2.4':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/lang-html': 6.4.8
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/markdown': 1.2.0
 
@@ -10929,9 +10935,9 @@ snapshots:
       '@lezer/common': 1.2.1
       '@lezer/php': 1.0.2
 
-  '@codemirror/lang-python@6.1.4(@codemirror/view@6.27.0)':
+  '@codemirror/lang-python@6.1.4(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -10944,9 +10950,9 @@ snapshots:
       '@codemirror/language': 6.10.2
       '@lezer/rust': 1.0.2
 
-  '@codemirror/lang-sass@6.0.2(@codemirror/view@6.27.0)':
+  '@codemirror/lang-sass@6.0.2(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.27.0)
+      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.28.0)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -10954,9 +10960,9 @@ snapshots:
     transitivePeerDependencies:
       - '@codemirror/view'
 
-  '@codemirror/lang-sql@6.6.1(@codemirror/view@6.27.0)':
+  '@codemirror/lang-sql@6.6.1(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -10983,16 +10989,16 @@ snapshots:
 
   '@codemirror/lang-xml@6.1.0':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/xml': 1.0.5
 
-  '@codemirror/lang-yaml@6.0.0(@codemirror/view@6.27.0)':
+  '@codemirror/lang-yaml@6.0.0(@codemirror/view@6.28.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.1
@@ -11000,28 +11006,28 @@ snapshots:
     transitivePeerDependencies:
       - '@codemirror/view'
 
-  '@codemirror/language-data@6.5.1(@codemirror/view@6.27.0)':
+  '@codemirror/language-data@6.5.1(@codemirror/view@6.28.0)':
     dependencies:
       '@codemirror/lang-angular': 0.1.3
       '@codemirror/lang-cpp': 6.0.2
-      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.27.0)
-      '@codemirror/lang-go': 6.0.0(@codemirror/view@6.27.0)
+      '@codemirror/lang-css': 6.2.1(@codemirror/view@6.28.0)
+      '@codemirror/lang-go': 6.0.0(@codemirror/view@6.28.0)
       '@codemirror/lang-html': 6.4.8
       '@codemirror/lang-java': 6.0.1
       '@codemirror/lang-javascript': 6.2.2
       '@codemirror/lang-json': 6.0.1
-      '@codemirror/lang-less': 6.0.2(@codemirror/view@6.27.0)
+      '@codemirror/lang-less': 6.0.2(@codemirror/view@6.28.0)
       '@codemirror/lang-liquid': 6.2.1
       '@codemirror/lang-markdown': 6.2.4
       '@codemirror/lang-php': 6.0.1
-      '@codemirror/lang-python': 6.1.4(@codemirror/view@6.27.0)
+      '@codemirror/lang-python': 6.1.4(@codemirror/view@6.28.0)
       '@codemirror/lang-rust': 6.0.1
-      '@codemirror/lang-sass': 6.0.2(@codemirror/view@6.27.0)
-      '@codemirror/lang-sql': 6.6.1(@codemirror/view@6.27.0)
+      '@codemirror/lang-sass': 6.0.2(@codemirror/view@6.28.0)
+      '@codemirror/lang-sql': 6.6.1(@codemirror/view@6.28.0)
       '@codemirror/lang-vue': 0.1.3
       '@codemirror/lang-wast': 6.0.2
       '@codemirror/lang-xml': 6.1.0
-      '@codemirror/lang-yaml': 6.0.0(@codemirror/view@6.27.0)
+      '@codemirror/lang-yaml': 6.0.0(@codemirror/view@6.28.0)
       '@codemirror/language': 6.10.2
       '@codemirror/legacy-modes': 6.4.0
     transitivePeerDependencies:
@@ -11030,7 +11036,7 @@ snapshots:
   '@codemirror/language@6.10.2':
     dependencies:
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       '@lezer/common': 1.2.1
       '@lezer/highlight': 1.2.0
       '@lezer/lr': 1.4.0
@@ -11043,18 +11049,25 @@ snapshots:
   '@codemirror/lint@6.5.0':
     dependencies:
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       crelt: 1.0.6
 
   '@codemirror/search@6.5.6':
     dependencies:
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       crelt: 1.0.6
 
   '@codemirror/state@6.4.1': {}
 
-  '@codemirror/view@6.27.0':
+  '@codemirror/theme-one-dark@6.1.2':
+    dependencies:
+      '@codemirror/language': 6.10.2
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.28.0
+      '@lezer/highlight': 1.2.0
+
+  '@codemirror/view@6.28.0':
     dependencies:
       '@codemirror/state': 6.4.1
       style-mod: 4.1.2
@@ -12179,7 +12192,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))':
+  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.18.0)
       '@nuxt/schema': 3.11.2(rollup@4.18.0)
@@ -12206,9 +12219,9 @@ snapshots:
       unenv: 1.9.0
       unplugin: 1.10.1
       vite: 5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2)
-      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       vue: 3.4.27(typescript@5.4.5)
-      vue-router: 4.3.2(vue@3.4.27(typescript@5.4.5))
+      vue-router: 4.3.3(vue@3.4.27(typescript@5.4.5))
     optionalDependencies:
       '@vue/test-utils': 2.4.6
       happy-dom: 14.12.0
@@ -13932,7 +13945,7 @@ snapshots:
       js-beautify: 1.15.1
       vue-component-type-helpers: 2.0.14
 
-  '@vuepic/vue-datepicker@8.7.0(vue@3.4.27(typescript@5.4.5))':
+  '@vuepic/vue-datepicker@8.8.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       date-fns: 3.6.0
       vue: 3.4.27(typescript@5.4.5)
@@ -14747,13 +14760,13 @@ snapshots:
 
   codemirror@6.0.1(@lezer/common@1.2.1):
     dependencies:
-      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.27.0)(@lezer/common@1.2.1)
+      '@codemirror/autocomplete': 6.15.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.28.0)(@lezer/common@1.2.1)
       '@codemirror/commands': 6.3.3
       '@codemirror/language': 6.10.2
       '@codemirror/lint': 6.5.0
       '@codemirror/search': 6.5.6
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
     transitivePeerDependencies:
       - '@lezer/common'
 
@@ -15362,7 +15375,7 @@ snapshots:
 
   dotenv@16.4.5: {}
 
-  drizzle-kit@0.22.5:
+  drizzle-kit@0.22.7:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.19.12
@@ -18005,13 +18018,13 @@ snapshots:
       unenv: 1.9.0
       unimport: 3.7.1(rollup@4.18.0)
       unplugin: 1.10.1
-      unplugin-vue-router: 0.7.0(rollup@4.18.0)(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+      unplugin-vue-router: 0.7.0(rollup@4.18.0)(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       unstorage: 1.10.2(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(ioredis@5.3.2)
       untyped: 1.4.2
       vue: 3.4.27(typescript@5.4.5)
       vue-bundle-renderer: 2.0.0
       vue-devtools-stub: 0.1.0
-      vue-router: 4.3.2(vue@3.4.27(typescript@5.4.5))
+      vue-router: 4.3.3(vue@3.4.27(typescript@5.4.5))
     optionalDependencies:
       '@parcel/watcher': 2.4.1
       '@types/node': 20.14.2
@@ -19834,7 +19847,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.10.21(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4):
+  trpc-nuxt@0.10.22(@trpc/client@10.45.2(@trpc/server@10.45.2))(@trpc/server@10.45.2)(ofetch@1.3.4):
     dependencies:
       '@trpc/client': 10.45.2(@trpc/server@10.45.2)
       '@trpc/server': 10.45.2
@@ -19871,9 +19884,9 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsx@4.13.2:
+  tsx@4.15.2:
     dependencies:
-      esbuild: 0.20.2
+      esbuild: 0.21.4
       get-tsconfig: 4.7.5
     optionalDependencies:
       fsevents: 2.3.3
@@ -20136,7 +20149,7 @@ snapshots:
       - rollup
       - supports-color
 
-  unplugin-vue-router@0.7.0(rollup@4.18.0)(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  unplugin-vue-router@0.7.0(rollup@4.18.0)(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       '@babel/types': 7.24.5
       '@rollup/pluginutils': 5.1.0(rollup@4.18.0)
@@ -20152,7 +20165,7 @@ snapshots:
       unplugin: 1.10.1
       yaml: 2.4.1
     optionalDependencies:
-      vue-router: 4.3.2(vue@3.4.27(typescript@5.4.5))
+      vue-router: 4.3.3(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - rollup
       - vue
@@ -20434,9 +20447,9 @@ snapshots:
       sass: 1.77.4
       terser: 5.29.2
 
-  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.11.1)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sass@1.77.4)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.2)(happy-dom@14.12.0)(sass@1.77.4)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -20524,7 +20537,7 @@ snapshots:
       '@codemirror/commands': 6.3.3
       '@codemirror/language': 6.10.2
       '@codemirror/state': 6.4.1
-      '@codemirror/view': 6.27.0
+      '@codemirror/view': 6.28.0
       codemirror: 6.0.1(@lezer/common@1.2.1)
       vue: 3.4.27(typescript@5.4.5)
 
@@ -20549,7 +20562,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-router@4.3.2(vue@3.4.27(typescript@5.4.5)):
+  vue-router@4.3.3(vue@3.4.27(typescript@5.4.5)):
     dependencies:
       '@vue/devtools-api': 6.6.1
       vue: 3.4.27(typescript@5.4.5)

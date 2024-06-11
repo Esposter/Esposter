@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import type { Item } from "@/models/tableEditor/Item";
-import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 interface TableEditorCrudViewItemSlotProps {
-  item: Item;
+  item: TodoListItem | VuetifyComponentItem;
 }
 
 const { item } = defineProps<TableEditorCrudViewItemSlotProps>();
 const tableEditorStore = useTableEditorStore()();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);
-const itemCategoryDefinition = computed(() =>
-  getItemCategoryDefinition(props.value.itemCategoryDefinitions as unknown as ItemCategoryDefinition[], item),
-);
+const itemCategoryDefinition = computed(() => getItemCategoryDefinition(props.value.itemCategoryDefinitions, item));
 </script>
 
 <template>

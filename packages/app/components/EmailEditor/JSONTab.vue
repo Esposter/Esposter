@@ -17,13 +17,14 @@ const emailEditorStore = useEmailEditorStore();
 const { emailEditor } = storeToRefs(emailEditorStore);
 const json = computed(() => {
   try {
-    return JSON.stringify(mjml2html(emailEditor.value.mjml, { validationLevel: "strict" }).json);
+    return JSON.stringify(mjml2html(emailEditor.value.mjml, { validationLevel: "strict" }).json, null, "\t");
   } catch {
     return "";
   }
 });
+const baseExtensions = await getLanguageExtension("JSON");
+const extensions = useExtensions(baseExtensions);
 const editorView = shallowRef<EditorView>();
-const extensions = await getLanguageExtension("JSON");
 </script>
 
 <template>

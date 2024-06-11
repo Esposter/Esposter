@@ -20,7 +20,7 @@
     "typecheck": "lerna run typecheck",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm lint:fix --no-private && pnpm build --no-private && lerna publish --yes",
+    "release": "pnpm typecheck --no-private && pnpm lint:fix --no-private && pnpm build --no-private && lerna publish --yes",
     "refresh:lockfile": "pnpm pwsh scripts/refreshLockfile.ps1",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },

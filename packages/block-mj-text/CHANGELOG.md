@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
+
+**Note:** Version bump only for package @esposter/block-mj-text
+
+
+
+
+
 ## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
 
 **Note:** Version bump only for package @esposter/block-mj-text

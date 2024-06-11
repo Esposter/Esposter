@@ -14,8 +14,9 @@ const { item: baseItem } = defineProps<MjmlTabProps>();
 const item = computed(() => baseItem as EmailEditorTabItemCategoryDefinition);
 const emailEditorStore = useEmailEditorStore();
 const { emailEditor } = storeToRefs(emailEditorStore);
+const baseExtensions = await getLanguageExtension("HTML");
+const extensions = useExtensions(baseExtensions);
 const editorView = shallowRef<EditorView>();
-const extensions = await getLanguageExtension("HTML");
 </script>
 
 <template>
