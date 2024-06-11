@@ -3,6 +3,7 @@ import { BarPropsData } from "@/assets/dashboard/demo/data/BarPropsData";
 import { BoxPlotPropsData } from "@/assets/dashboard/demo/data/BoxPlotPropsData";
 import { CandlestickPropsData } from "@/assets/dashboard/demo/data/CandlestickPropsData";
 import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
+import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
@@ -28,6 +29,7 @@ export const VisualTypeDemoDataMap = {
     if (!(chartType in FunnelPropsDataMap)) throw new NotFoundError("VisualTypeDemoDataMap", chartType);
     return FunnelPropsDataMap[chartType as keyof typeof FunnelPropsDataMap];
   },
+  [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,

@@ -1,20 +1,16 @@
 <template>
   <svg
     id="SvgjsSvg2222"
-    width="277"
-    height="160"
     xmlns="http://www.w3.org/2000/svg"
     version="1.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:svgjs="http://svgjs.dev"
-    class="apexcharts-svg apexcharts-zoomable"
     xmlns:data="ApexChartsNS"
-    transform="translate(0, 0)"
-    style="background: transparent"
+    viewBox="0 0 223 98"
   >
-    <foreignObject x="0" y="0" width="277" height="160"
-      ><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml" style="max-height: 80px"></div
-    ></foreignObject>
+    <foreignObject x="0" y="0">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="max-height: 80px" />
+    </foreignObject>
     <rect
       id="SvgjsRect2229"
       width="0"
@@ -28,11 +24,8 @@
       stroke="none"
       stroke-dasharray="0"
       fill="#fefefe"
-    ></rect>
-    <g id="SvgjsG2316" class="apexcharts-yaxis" rel="0" transform="translate(-8, 0)">
-      <g id="SvgjsG2317" class="apexcharts-yaxis-texts-g"></g>
-    </g>
-    <g id="SvgjsG2224" class="apexcharts-inner apexcharts-graphical" transform="translate(32, 40)">
+    />
+    <g id="SvgjsG2224">
       <defs id="SvgjsDefs2223">
         <clipPath id="gridRectMasksy4tcr0l">
           <rect
@@ -48,10 +41,10 @@
             stroke="none"
             stroke-dasharray="0"
             fill="#fff"
-          ></rect>
+          />
         </clipPath>
-        <clipPath id="forecastMasksy4tcr0l"></clipPath>
-        <clipPath id="nonForecastMasksy4tcr0l"></clipPath>
+        <clipPath id="forecastMasksy4tcr0l" />
+        <clipPath id="nonForecastMasksy4tcr0l" />
         <clipPath id="gridRectMarkerMasksy4tcr0l">
           <rect
             id="SvgjsRect2232"
@@ -66,30 +59,11 @@
             stroke="none"
             stroke-dasharray="0"
             fill="#fff"
-          ></rect>
+          />
         </clipPath>
       </defs>
-      <line
-        id="SvgjsLine2230"
-        x1="0"
-        y1="0"
-        x2="0"
-        y2="98"
-        stroke="#b6b6b6"
-        stroke-dasharray="3"
-        stroke-linecap="butt"
-        class="apexcharts-xcrosshairs"
-        x="0"
-        y="0"
-        width="1"
-        height="98"
-        fill="#b1b9c4"
-        filter="none"
-        fill-opacity="0.9"
-        stroke-width="1"
-      ></line>
-      <g id="SvgjsG2289" class="apexcharts-grid">
-        <g id="SvgjsG2290" class="apexcharts-gridlines-horizontal">
+      <g id="SvgjsG2289">
+        <g id="SvgjsG2290">
           <line
             id="SvgjsLine2294"
             x1="0"
@@ -99,8 +73,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine2295"
             x1="0"
@@ -110,8 +83,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine2296"
             x1="0"
@@ -121,8 +93,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine2297"
             x1="0"
@@ -132,10 +103,9 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
         </g>
-        <g id="SvgjsG2291" class="apexcharts-gridlines-vertical"></g>
+        <g id="SvgjsG2291" />
         <line
           id="SvgjsLine2300"
           x1="0"
@@ -145,7 +115,7 @@
           stroke="transparent"
           stroke-dasharray="0"
           stroke-linecap="butt"
-        ></line>
+        />
         <line
           id="SvgjsLine2299"
           x1="0"
@@ -155,9 +125,9 @@
           stroke="transparent"
           stroke-dasharray="0"
           stroke-linecap="butt"
-        ></line>
+        />
       </g>
-      <g id="SvgjsG2292" class="apexcharts-grid-borders">
+      <g id="SvgjsG2292">
         <line
           id="SvgjsLine2293"
           x1="0"
@@ -167,8 +137,7 @@
           stroke="#f1f1f1"
           stroke-dasharray="0"
           stroke-linecap="butt"
-          class="apexcharts-gridline"
-        ></line>
+        />
         <line
           id="SvgjsLine2298"
           x1="0"
@@ -178,17 +147,10 @@
           stroke="#f1f1f1"
           stroke-dasharray="0"
           stroke-linecap="butt"
-          class="apexcharts-gridline"
-        ></line>
+        />
       </g>
-      <g id="SvgjsG2233" class="apexcharts-heatmap" clip-path="url(#gridRectMasksy4tcr0l)">
-        <g
-          id="SvgjsG2234"
-          class="apexcharts-series apexcharts-heatmap-series"
-          seriesName="Metric5"
-          rel="5"
-          data:realIndex="4"
-        >
+      <g id="SvgjsG2233" clip-path="url(#gridRectMasksy4tcr0l)">
+        <g id="SvgjsG2234" seriesName="Metric5" rel="5" data:realIndex="4">
           <rect
             id="SvgjsRect2235"
             width="22.3"
@@ -204,13 +166,12 @@
             fill="rgba(236,232,248,1)"
             cx="0"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="0"
             val="28"
             color="rgba(236,232,248,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2236"
             width="22.3"
@@ -226,13 +187,12 @@
             fill="rgba(171,155,226,1)"
             cx="22.3"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="1"
             val="124"
             color="rgba(171,155,226,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2237"
             width="22.3"
@@ -248,13 +208,12 @@
             fill="rgba(171,155,226,1)"
             cx="44.6"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="2"
             val="124"
             color="rgba(171,155,226,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2238"
             width="22.3"
@@ -270,13 +229,12 @@
             fill="rgba(165,147,224,1)"
             cx="66.9"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="3"
             val="133"
             color="rgba(165,147,224,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2239"
             width="22.3"
@@ -292,13 +250,12 @@
             fill="rgba(234,230,248,1)"
             cx="89.2"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="4"
             val="31"
             color="rgba(234,230,248,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2240"
             width="22.3"
@@ -314,13 +271,12 @@
             fill="rgba(158,139,221,1)"
             cx="111.5"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="5"
             val="143"
             color="rgba(158,139,221,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2241"
             width="22.3"
@@ -336,13 +292,12 @@
             fill="rgba(220,213,243,1)"
             cx="133.8"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="6"
             val="52"
             color="rgba(220,213,243,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2242"
             width="22.3"
@@ -358,13 +313,12 @@
             fill="rgba(128,104,211,1)"
             cx="156.10000000000002"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="7"
             val="187"
             color="rgba(128,104,211,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2243"
             width="22.3"
@@ -380,13 +334,12 @@
             fill="rgba(216,208,241,1)"
             cx="178.40000000000003"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="8"
             val="58"
             color="rgba(216,208,241,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2244"
             width="22.3"
@@ -402,21 +355,14 @@
             fill="rgba(240,237,250,1)"
             cx="200.70000000000005"
             cy="0"
-            class="apexcharts-heatmap-rect"
             i="4"
             index="4"
             j="9"
             val="22"
             color="rgba(240,237,250,1)"
-          ></rect>
+          />
         </g>
-        <g
-          id="SvgjsG2245"
-          class="apexcharts-series apexcharts-heatmap-series"
-          seriesName="Metric4"
-          rel="4"
-          data:realIndex="3"
-        >
+        <g id="SvgjsG2245" seriesName="Metric4" rel="4" data:realIndex="3">
           <rect
             id="SvgjsRect2246"
             width="22.3"
@@ -432,13 +378,12 @@
             fill="rgba(255,244,245,1)"
             cx="0"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="0"
             val="12"
             color="rgba(255,244,245,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2247"
             width="22.3"
@@ -454,13 +399,12 @@
             fill="rgba(255,101,123,1)"
             cx="22.3"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="1"
             val="166"
             color="rgba(255,101,123,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2248"
             width="22.3"
@@ -476,13 +420,12 @@
             fill="rgba(255,147,163,1)"
             cx="44.6"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="2"
             val="116"
             color="rgba(255,147,163,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2249"
             width="22.3"
@@ -498,13 +441,12 @@
             fill="rgba(255,111,132,1)"
             cx="66.9"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="3"
             val="155"
             color="rgba(255,111,132,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2250"
             width="22.3"
@@ -520,13 +462,12 @@
             fill="rgba(255,161,175,1)"
             cx="89.2"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="4"
             val="101"
             color="rgba(255,161,175,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2251"
             width="22.3"
@@ -542,13 +483,12 @@
             fill="rgba(255,159,173,1)"
             cx="111.5"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="5"
             val="103"
             color="rgba(255,159,173,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2252"
             width="22.3"
@@ -564,13 +504,12 @@
             fill="rgba(255,161,175,1)"
             cx="133.8"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="6"
             val="101"
             color="rgba(255,161,175,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2253"
             width="22.3"
@@ -586,13 +525,12 @@
             fill="rgba(255,108,129,1)"
             cx="156.10000000000002"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="7"
             val="158"
             color="rgba(255,108,129,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2254"
             width="22.3"
@@ -608,13 +546,12 @@
             fill="rgba(255,77,103,1)"
             cx="178.40000000000003"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="8"
             val="191"
             color="rgba(255,77,103,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2255"
             width="22.3"
@@ -630,21 +567,14 @@
             fill="rgba(255,116,137,1)"
             cx="200.70000000000005"
             cy="19.6"
-            class="apexcharts-heatmap-rect"
             i="3"
             index="3"
             j="9"
             val="149"
             color="rgba(255,116,137,1)"
-          ></rect>
+          />
         </g>
-        <g
-          id="SvgjsG2256"
-          class="apexcharts-series apexcharts-heatmap-series"
-          seriesName="Metric3"
-          rel="3"
-          data:realIndex="2"
-        >
+        <g id="SvgjsG2256" seriesName="Metric3" rel="3" data:realIndex="2">
           <rect
             id="SvgjsRect2257"
             width="22.3"
@@ -660,13 +590,12 @@
             fill="rgba(254,185,50,1)"
             cx="0"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="0"
             val="178"
             color="rgba(254,185,50,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2258"
             width="22.3"
@@ -682,13 +611,12 @@
             fill="rgba(255,240,210,1)"
             cx="22.3"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="1"
             val="39"
             color="rgba(255,240,210,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2259"
             width="22.3"
@@ -704,13 +632,12 @@
             fill="rgba(254,195,81,1)"
             cx="44.6"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="2"
             val="151"
             color="rgba(254,195,81,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2260"
             width="22.3"
@@ -726,13 +653,12 @@
             fill="rgba(254,194,77,1)"
             cx="66.9"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="3"
             val="155"
             color="rgba(254,194,77,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2261"
             width="22.3"
@@ -748,13 +674,12 @@
             fill="rgba(255,246,230,1)"
             cx="89.2"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="4"
             val="22"
             color="rgba(255,246,230,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2262"
             width="22.3"
@@ -770,13 +695,12 @@
             fill="rgba(254,183,45,1)"
             cx="111.5"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="5"
             val="183"
             color="rgba(254,183,45,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2263"
             width="22.3"
@@ -792,13 +716,12 @@
             fill="rgba(254,209,120,1)"
             cx="133.8"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="6"
             val="117"
             color="rgba(254,209,120,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2264"
             width="22.3"
@@ -814,13 +737,12 @@
             fill="rgba(255,220,154,1)"
             cx="156.10000000000002"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="7"
             val="88"
             color="rgba(255,220,154,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2265"
             width="22.3"
@@ -836,13 +758,12 @@
             fill="rgba(254,214,137,1)"
             cx="178.40000000000003"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="8"
             val="103"
             color="rgba(254,214,137,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2266"
             width="22.3"
@@ -858,21 +779,14 @@
             fill="rgba(254,202,100,1)"
             cx="200.70000000000005"
             cy="39.2"
-            class="apexcharts-heatmap-rect"
             i="2"
             index="2"
             j="9"
             val="135"
             color="rgba(254,202,100,1)"
-          ></rect>
+          />
         </g>
-        <g
-          id="SvgjsG2267"
-          class="apexcharts-series apexcharts-heatmap-series"
-          seriesName="Metric2"
-          rel="2"
-          data:realIndex="1"
-        >
+        <g id="SvgjsG2267" seriesName="Metric2" rel="2" data:realIndex="1">
           <rect
             id="SvgjsRect2268"
             width="22.3"
@@ -888,13 +802,12 @@
             fill="rgba(15,229,156,1)"
             cx="0"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="0"
             val="188"
             color="rgba(15,229,156,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2269"
             width="22.3"
@@ -910,13 +823,12 @@
             fill="rgba(219,251,240,1)"
             cx="22.3"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="1"
             val="28"
             color="rgba(219,251,240,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2270"
             width="22.3"
@@ -932,13 +844,12 @@
             fill="rgba(96,238,189,1)"
             cx="44.6"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="2"
             val="125"
             color="rgba(96,238,189,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2271"
             width="22.3"
@@ -954,13 +865,12 @@
             fill="rgba(80,236,183,1)"
             cx="66.9"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="3"
             val="137"
             color="rgba(80,236,183,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2272"
             width="22.3"
@@ -976,13 +886,12 @@
             fill="rgba(61,234,175,1)"
             cx="89.2"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="4"
             val="152"
             color="rgba(61,234,175,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2273"
             width="22.3"
@@ -998,13 +907,12 @@
             fill="rgba(200,249,232,1)"
             cx="111.5"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="5"
             val="43"
             color="rgba(200,249,232,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2274"
             width="22.3"
@@ -1020,13 +928,12 @@
             fill="rgba(233,253,246,1)"
             cx="133.8"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="6"
             val="17"
             color="rgba(233,253,246,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2275"
             width="22.3"
@@ -1042,13 +949,12 @@
             fill="rgba(83,236,184,1)"
             cx="156.10000000000002"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="7"
             val="135"
             color="rgba(83,236,184,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2276"
             width="22.3"
@@ -1064,13 +970,12 @@
             fill="rgba(140,242,208,1)"
             cx="178.40000000000003"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="8"
             val="90"
             color="rgba(140,242,208,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2277"
             width="22.3"
@@ -1086,21 +991,14 @@
             fill="rgba(113,239,197,1)"
             cx="200.70000000000005"
             cy="58.800000000000004"
-            class="apexcharts-heatmap-rect"
             i="1"
             index="1"
             j="9"
             val="111"
             color="rgba(113,239,197,1)"
-          ></rect>
+          />
         </g>
-        <g
-          id="SvgjsG2278"
-          class="apexcharts-series apexcharts-heatmap-series"
-          seriesName="Metric1"
-          rel="1"
-          data:realIndex="0"
-        >
+        <g id="SvgjsG2278" seriesName="Metric1" rel="1" data:realIndex="0">
           <rect
             id="SvgjsRect2279"
             width="22.3"
@@ -1116,13 +1014,12 @@
             fill="rgba(125,198,253,1)"
             cx="0"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="0"
             val="102"
             color="rgba(125,198,253,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2280"
             width="22.3"
@@ -1138,13 +1035,12 @@
             fill="rgba(83,179,252,1)"
             cx="22.3"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="1"
             val="135"
             color="rgba(83,179,252,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2281"
             width="22.3"
@@ -1160,13 +1056,12 @@
             fill="rgba(5,145,251,1)"
             cx="44.6"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="2"
             val="196"
             color="rgba(5,145,251,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2282"
             width="22.3"
@@ -1182,13 +1077,12 @@
             fill="rgba(157,212,253,1)"
             cx="66.9"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="3"
             val="77"
             color="rgba(157,212,253,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2283"
             width="22.3"
@@ -1204,13 +1098,12 @@
             fill="rgba(106,189,253,1)"
             cx="89.2"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="4"
             val="117"
             color="rgba(106,189,253,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2284"
             width="22.3"
@@ -1226,13 +1119,12 @@
             fill="rgba(131,201,253,1)"
             cx="111.5"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="5"
             val="97"
             color="rgba(131,201,253,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2285"
             width="22.3"
@@ -1248,13 +1140,12 @@
             fill="rgba(17,150,251,1)"
             cx="133.8"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="6"
             val="187"
             color="rgba(17,150,251,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2286"
             width="22.3"
@@ -1270,13 +1161,12 @@
             fill="rgba(136,203,253,1)"
             cx="156.10000000000002"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="7"
             val="93"
             color="rgba(136,203,253,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2287"
             width="22.3"
@@ -1292,13 +1182,12 @@
             fill="rgba(55,167,252,1)"
             cx="178.40000000000003"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="8"
             val="157"
             color="rgba(55,167,252,1)"
-          ></rect>
+          />
           <rect
             id="SvgjsRect2288"
             width="22.3"
@@ -1314,27 +1203,14 @@
             fill="rgba(212,236,254,1)"
             cx="200.70000000000005"
             cy="78.4"
-            class="apexcharts-heatmap-rect"
             i="0"
             index="0"
             j="9"
             val="34"
             color="rgba(212,236,254,1)"
-          ></rect>
+          />
         </g>
       </g>
-      <line
-        id="SvgjsLine2301"
-        x1="0"
-        y1="0"
-        x2="223"
-        y2="0"
-        stroke="#b6b6b6"
-        stroke-dasharray="0"
-        stroke-width="1"
-        stroke-linecap="butt"
-        class="apexcharts-ycrosshairs"
-      ></line>
       <line
         id="SvgjsLine2302"
         x1="0"
@@ -1344,14 +1220,7 @@
         stroke-dasharray="0"
         stroke-width="0"
         stroke-linecap="butt"
-        class="apexcharts-ycrosshairs-hidden"
-      ></line>
-      <g id="SvgjsG2303" class="apexcharts-xaxis" transform="translate(0, 0)">
-        <g id="SvgjsG2304" class="apexcharts-xaxis-texts-g" transform="translate(0, 2.75)"></g>
-      </g>
-      <g id="SvgjsG2318" class="apexcharts-yaxis-annotations"></g>
-      <g id="SvgjsG2319" class="apexcharts-xaxis-annotations"></g>
-      <g id="SvgjsG2320" class="apexcharts-point-annotations"></g>
+      />
       <rect
         id="SvgjsRect2321"
         width="0"
@@ -1365,8 +1234,7 @@
         stroke="none"
         stroke-dasharray="0"
         fill="#fefefe"
-        class="apexcharts-zoom-rect"
-      ></rect>
+      />
       <rect
         id="SvgjsRect2322"
         width="0"
@@ -1380,8 +1248,7 @@
         stroke="none"
         stroke-dasharray="0"
         fill="#fefefe"
-        class="apexcharts-selection-rect"
-      ></rect>
+      />
     </g>
   </svg>
 </template>

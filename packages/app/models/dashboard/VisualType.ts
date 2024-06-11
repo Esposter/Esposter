@@ -8,6 +8,7 @@ export enum VisualType {
   Candlestick = "Candlestick",
   Column = "Column",
   Funnel = "Funnel",
+  Heatmap = "Heatmap",
   Line = "Line",
   RangeArea = "RangeArea",
   RangeBar = "RangeBar",

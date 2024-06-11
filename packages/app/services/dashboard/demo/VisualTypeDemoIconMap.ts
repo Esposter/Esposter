@@ -8,6 +8,7 @@ export const VisualTypeDemoIconMap = {
   [VisualType.Candlestick]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Candlestick.vue")),
   [VisualType.Column]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Column.vue")),
   [VisualType.Funnel]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Funnel.vue")),
+  [VisualType.Heatmap]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Heatmap.vue")),
   [VisualType.Line]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Line.vue")),
   [VisualType.RangeArea]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeArea.vue")),
   [VisualType.RangeBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeBar.vue")),

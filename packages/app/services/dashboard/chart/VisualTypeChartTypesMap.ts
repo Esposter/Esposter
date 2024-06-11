@@ -12,6 +12,7 @@ export const VisualTypeChartTypesMap = {
   [VisualType.Candlestick]: commonChartTypesWithDataLabels,
   [VisualType.Column]: commonChartTypesWithDataLabels,
   [VisualType.Funnel]: commonChartTypes.concat(ChartType.Pyramid),
+  [VisualType.Heatmap]: commonChartTypesWithDataLabels,
   [VisualType.Line]: commonChartTypesWithDataLabels,
   [VisualType.RangeArea]: commonChartTypesWithDataLabels,
   [VisualType.RangeBar]: commonChartTypesWithDataLabels,
