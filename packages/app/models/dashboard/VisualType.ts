@@ -4,6 +4,7 @@ export enum VisualType {
   Area = "Area",
   Bar = "Bar",
   BoxPlot = "BoxPlot",
+  Bubble = "Bubble",
   Candlestick = "Candlestick",
   Column = "Column",
   Funnel = "Funnel",

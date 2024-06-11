@@ -21,11 +21,9 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
     };
     apexOptions.subtitle = {
       text: subtitle,
-      align: "left",
     };
     apexOptions.title = {
       text: title,
-      align: "left",
     };
     if (visualType === VisualType.Funnel) {
       apexOptions.dataLabels = {

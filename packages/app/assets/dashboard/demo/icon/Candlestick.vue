@@ -25,7 +25,7 @@
       stroke-dasharray="0"
       fill="#fefefe"
     />
-    <g id="SvgjsG1510" transform="translate(0, 20)">
+    <g id="SvgjsG1510" transform="translate(10, 20)">
       <defs id="SvgjsDefs1509">
         <clipPath id="gridRectMask4ytanyowg">
           <rect

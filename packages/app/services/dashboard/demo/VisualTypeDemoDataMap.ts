@@ -6,6 +6,7 @@ import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
+import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { VisualType } from "@/models/dashboard/VisualType";
@@ -16,6 +17,10 @@ export const VisualTypeDemoDataMap = {
   [VisualType.Area]: () => AreaPropsData,
   [VisualType.Bar]: () => BarPropsData,
   [VisualType.BoxPlot]: () => BoxPlotPropsData,
+  [VisualType.Bubble]: (chartType) => {
+    if (!(chartType in BubblePropsDataMap)) throw new NotFoundError("VisualTypeDemoDataMap", chartType);
+    return BubblePropsDataMap[chartType as keyof typeof BubblePropsDataMap];
+  },
   [VisualType.Candlestick]: () => CandlestickPropsData,
   [VisualType.Column]: () => ColumnPropsData,
   [VisualType.Funnel]: (chartType) => {

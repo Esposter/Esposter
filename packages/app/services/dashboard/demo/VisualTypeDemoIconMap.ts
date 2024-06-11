@@ -4,6 +4,7 @@ export const VisualTypeDemoIconMap = {
   [VisualType.Area]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Area.vue")),
   [VisualType.Bar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Bar.vue")),
   [VisualType.BoxPlot]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/BoxPlot.vue")),
+  [VisualType.Bubble]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Bubble.vue")),
   [VisualType.Candlestick]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Candlestick.vue")),
   [VisualType.Column]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Column.vue")),
   [VisualType.Funnel]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Funnel.vue")),
