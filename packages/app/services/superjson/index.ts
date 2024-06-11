@@ -14,7 +14,6 @@ import baseSuperjson from "superjson";
 RegisterSuperJSON(ClickerGame);
 RegisterSuperJSON(Dashboard);
 RegisterSuperJSON(DungeonsGame);
-RegisterSuperJSON(DungeonsGame);
 RegisterSuperJSON(EmailEditor);
 RegisterSuperJSON(TableEditorConfiguration);
 RegisterSuperJSON(TableEditor);
