@@ -165,7 +165,7 @@
     "happy-dom": "^14.12.0",
     "nuxt": "3.11.1",
     "nuxt-security": "^1.4.3",
-    "prettier": "^3.3.1",
+    "prettier": "^3.3.2",
     "sass": "^1.77.4",
     "tsx": "^4.15.2",
     "type-fest": "^4.20.0",
