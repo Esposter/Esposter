@@ -1,5 +1,5 @@
 import type { TrpcRouter } from "@/server/trpc/routers";
-import { superjson } from "@/services/superjson";
+import { SuperJSON } from "@/services/superjson";
 import { errorLink } from "@/services/trpc/errorLink";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { getIsServer } from "@/util/environment/getIsServer";
@@ -29,6 +29,6 @@ export default defineNuxtPlugin(() => {
       false: httpBatchLink({ url, headers }),
     }),
   ];
-  const client = createTRPCNuxtClient<TrpcRouter>({ links, transformer: superjson });
+  const client = createTRPCNuxtClient<TrpcRouter>({ links, transformer: SuperJSON });
   return { provide: { client } };
 });
