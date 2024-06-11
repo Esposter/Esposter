@@ -7,6 +7,8 @@ const commonChartTypesWithDataLabels = commonChartTypes.concat(ChartType.DataLab
 export const VisualTypeChartTypesMap = {
   [VisualType.Area]: commonChartTypesWithDataLabels,
   [VisualType.Bar]: commonChartTypesWithDataLabels,
+  [VisualType.BoxPlot]: commonChartTypesWithDataLabels,
+  [VisualType.Candlestick]: commonChartTypesWithDataLabels,
   [VisualType.Column]: commonChartTypesWithDataLabels,
   [VisualType.Funnel]: commonChartTypes.concat(ChartType.Pyramid),
   [VisualType.Line]: commonChartTypesWithDataLabels,

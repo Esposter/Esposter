@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VisualType } from "@/models/dashboard/VisualType";
-import { VisualTypeDemoComponentMap } from "@/services/dashboard/demo/VisualTypeDemoComponentMap";
+import { VisualTypeDemoIconMap } from "@/services/dashboard/demo/VisualTypeDemoIconMap";
 
 interface VisualPreviewProps {
   type: VisualType;
@@ -11,6 +11,6 @@ const { type } = defineProps<VisualPreviewProps>();
 
 <template>
   <TransitionFade>
-    <component :is="VisualTypeDemoComponentMap[type]" size-full />
+    <component :is="VisualTypeDemoIconMap[type]" size-full />
   </TransitionFade>
 </template>

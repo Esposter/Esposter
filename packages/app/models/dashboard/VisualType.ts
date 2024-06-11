@@ -3,6 +3,8 @@ import { z } from "zod";
 export enum VisualType {
   Area = "Area",
   Bar = "Bar",
+  BoxPlot = "BoxPlot",
+  Candlestick = "Candlestick",
   Column = "Column",
   Funnel = "Funnel",
   Line = "Line",
