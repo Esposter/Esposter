@@ -1,20 +1,16 @@
 <template>
   <svg
     id="SvgjsSvg1782"
-    width="277"
-    height="188"
     xmlns="http://www.w3.org/2000/svg"
     version="1.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:svgjs="http://svgjs.dev"
-    class="apexcharts-svg apexcharts-zoomable"
     xmlns:data="ApexChartsNS"
-    transform="translate(0, 0)"
-    style="background: transparent"
+    viewBox="0 0 251 149"
   >
-    <foreignObject x="0" y="0" width="277" height="188"
-      ><div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml" style="max-height: 94px"></div
-    ></foreignObject>
+    <foreignObject x="0" y="0">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="max-height: 94px" />
+    </foreignObject>
     <rect
       id="SvgjsRect1786"
       width="0"
@@ -28,11 +24,8 @@
       stroke="none"
       stroke-dasharray="0"
       fill="#fefefe"
-    ></rect>
-    <g id="SvgjsG1961" class="apexcharts-yaxis" rel="0" transform="translate(-8, 0)">
-      <g id="SvgjsG1962" class="apexcharts-yaxis-texts-g"></g>
-    </g>
-    <g id="SvgjsG1784" class="apexcharts-inner apexcharts-graphical" transform="translate(22, 30)">
+    />
+    <g id="SvgjsG1784" transform="translate(4, 3)">
       <defs id="SvgjsDefs1783">
         <clipPath id="gridRectMask2pzjeoqf">
           <rect
@@ -48,10 +41,10 @@
             stroke="none"
             stroke-dasharray="0"
             fill="#fff"
-          ></rect>
+          />
         </clipPath>
-        <clipPath id="forecastMask2pzjeoqf"></clipPath>
-        <clipPath id="nonForecastMask2pzjeoqf"></clipPath>
+        <clipPath id="forecastMask2pzjeoqf" />
+        <clipPath id="nonForecastMask2pzjeoqf" />
         <clipPath id="gridRectMarkerMask2pzjeoqf">
           <rect
             id="SvgjsRect1789"
@@ -66,30 +59,11 @@
             stroke="none"
             stroke-dasharray="0"
             fill="#fff"
-          ></rect>
+          />
         </clipPath>
       </defs>
-      <line
-        id="SvgjsLine1787"
-        x1="0"
-        y1="0"
-        x2="0"
-        y2="143"
-        stroke="#b6b6b6"
-        stroke-dasharray="3"
-        stroke-linecap="butt"
-        class="apexcharts-xcrosshairs"
-        x="0"
-        y="0"
-        width="1"
-        height="143"
-        fill="#b1b9c4"
-        filter="none"
-        fill-opacity="0.9"
-        stroke-width="1"
-      ></line>
-      <g id="SvgjsG1915" class="apexcharts-grid">
-        <g id="SvgjsG1916" class="apexcharts-gridlines-horizontal">
+      <g id="SvgjsG1915">
+        <g id="SvgjsG1916">
           <line
             id="SvgjsLine1920"
             x1="0"
@@ -99,8 +73,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine1921"
             x1="0"
@@ -110,8 +83,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine1922"
             x1="0"
@@ -121,8 +93,7 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
           <line
             id="SvgjsLine1923"
             x1="0"
@@ -132,10 +103,9 @@
             stroke="#f1f1f1"
             stroke-dasharray="0"
             stroke-linecap="butt"
-            class="apexcharts-gridline"
-          ></line>
+          />
         </g>
-        <g id="SvgjsG1917" class="apexcharts-gridlines-vertical"></g>
+        <g id="SvgjsG1917" />
         <line
           id="SvgjsLine1926"
           x1="0"
@@ -145,7 +115,7 @@
           stroke="transparent"
           stroke-dasharray="0"
           stroke-linecap="butt"
-        ></line>
+        />
         <line
           id="SvgjsLine1925"
           x1="0"
@@ -155,9 +125,9 @@
           stroke="transparent"
           stroke-dasharray="0"
           stroke-linecap="butt"
-        ></line>
+        />
       </g>
-      <g id="SvgjsG1918" class="apexcharts-grid-borders">
+      <g id="SvgjsG1918">
         <line
           id="SvgjsLine1919"
           x1="0"
@@ -167,8 +137,7 @@
           stroke="#f1f1f1"
           stroke-dasharray="0"
           stroke-linecap="butt"
-          class="apexcharts-gridline"
-        ></line>
+        />
         <line
           id="SvgjsLine1924"
           x1="0"
@@ -178,25 +147,12 @@
           stroke="#f1f1f1"
           stroke-dasharray="0"
           stroke-linecap="butt"
-          class="apexcharts-gridline"
-        ></line>
+        />
       </g>
-      <g id="SvgjsG1790" class="apexcharts-scatter-series apexcharts-plot-series">
-        <g
-          id="SvgjsG1791"
-          class="apexcharts-series"
-          zIndex="0"
-          seriesName="scatter1"
-          data:longestSeries="true"
-          rel="1"
-          data:realIndex="0"
-        >
-          <g id="SvgjsG1792" class="apexcharts-series-markers-wrap" data:realIndex="0">
-            <g
-              id="SvgjsG1794"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+      <g id="SvgjsG1790">
+        <g id="SvgjsG1791" zIndex="0" seriesName="scatter1" data:longestSeries="true" rel="1" data:realIndex="0">
+          <g id="SvgjsG1792" data:realIndex="0">
+            <g id="SvgjsG1794" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1795"
                 r="3"
@@ -214,8 +170,7 @@
                 j="0"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
               <circle
                 id="SvgjsCircle1796"
                 r="3"
@@ -233,14 +188,9 @@
                 j="1"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1797"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1797" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1798"
                 r="3"
@@ -258,14 +208,9 @@
                 j="2"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1799"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1799" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1800"
                 r="3"
@@ -283,14 +228,9 @@
                 j="3"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1801"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1801" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1802"
                 r="3"
@@ -308,14 +248,9 @@
                 j="4"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1803"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1803" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1804"
                 r="3"
@@ -333,14 +268,9 @@
                 j="5"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1805"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1805" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1806"
                 r="3"
@@ -358,14 +288,9 @@
                 j="6"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1807"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1807" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1808"
                 r="3"
@@ -383,14 +308,9 @@
                 j="7"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1809"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1809" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1810"
                 r="3"
@@ -408,14 +328,9 @@
                 j="8"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1811"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1811" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1812"
                 r="3"
@@ -433,14 +348,9 @@
                 j="9"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1813"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1813" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1814"
                 r="3"
@@ -458,14 +368,9 @@
                 j="10"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1815"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1815" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1816"
                 r="3"
@@ -483,14 +388,9 @@
                 j="11"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1817"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1817" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1818"
                 r="3"
@@ -508,14 +408,9 @@
                 j="12"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1819"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1819" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1820"
                 r="3"
@@ -533,14 +428,9 @@
                 j="13"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1821"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1821" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1822"
                 r="3"
@@ -558,14 +448,9 @@
                 j="14"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1823"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1823" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1824"
                 r="3"
@@ -583,14 +468,9 @@
                 j="15"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1825"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1825" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1826"
                 r="3"
@@ -608,14 +488,9 @@
                 j="16"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1827"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1827" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1828"
                 r="3"
@@ -633,14 +508,9 @@
                 j="17"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1829"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1829" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1830"
                 r="3"
@@ -658,14 +528,9 @@
                 j="18"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1831"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1831" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1832"
                 r="3"
@@ -683,14 +548,9 @@
                 j="19"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1833"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1833" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1834"
                 r="3"
@@ -708,14 +568,9 @@
                 j="20"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1835"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1835" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1836"
                 r="3"
@@ -733,14 +588,9 @@
                 j="21"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1837"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1837" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1838"
                 r="3"
@@ -758,14 +608,9 @@
                 j="22"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1839"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1839" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1840"
                 r="3"
@@ -783,14 +628,9 @@
                 j="23"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1841"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1841" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1842"
                 r="3"
@@ -808,14 +648,9 @@
                 j="24"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1843"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1843" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1844"
                 r="3"
@@ -833,14 +668,9 @@
                 j="25"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1845"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1845" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1846"
                 r="3"
@@ -858,14 +688,9 @@
                 j="26"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1847"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1847" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1848"
                 r="3"
@@ -883,14 +708,9 @@
                 j="27"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1849"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1849" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1850"
                 r="3"
@@ -908,14 +728,9 @@
                 j="28"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1851"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1851" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1852"
                 r="3"
@@ -933,26 +748,13 @@
                 j="29"
                 index="0"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
           </g>
         </g>
-        <g
-          id="SvgjsG1853"
-          class="apexcharts-series"
-          zIndex="1"
-          seriesName="scatter2"
-          data:longestSeries="true"
-          rel="2"
-          data:realIndex="1"
-        >
-          <g id="SvgjsG1854" class="apexcharts-series-markers-wrap" data:realIndex="1">
-            <g
-              id="SvgjsG1856"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+        <g id="SvgjsG1853" zIndex="1" seriesName="scatter2" data:longestSeries="true" rel="2" data:realIndex="1">
+          <g id="SvgjsG1854" data:realIndex="1">
+            <g id="SvgjsG1856" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1857"
                 r="3"
@@ -970,8 +772,7 @@
                 j="0"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
               <circle
                 id="SvgjsCircle1858"
                 r="3"
@@ -989,14 +790,9 @@
                 j="1"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1859"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1859" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1860"
                 r="3"
@@ -1014,14 +810,9 @@
                 j="2"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1861"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1861" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1862"
                 r="3"
@@ -1039,14 +830,9 @@
                 j="3"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1863"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1863" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1864"
                 r="3"
@@ -1064,14 +850,9 @@
                 j="4"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1865"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1865" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1866"
                 r="3"
@@ -1089,14 +870,9 @@
                 j="5"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1867"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1867" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1868"
                 r="3"
@@ -1114,14 +890,9 @@
                 j="6"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1869"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1869" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1870"
                 r="3"
@@ -1139,14 +910,9 @@
                 j="7"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1871"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1871" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1872"
                 r="3"
@@ -1164,14 +930,9 @@
                 j="8"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1873"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1873" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1874"
                 r="3"
@@ -1189,14 +950,9 @@
                 j="9"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1875"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1875" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1876"
                 r="3"
@@ -1214,14 +970,9 @@
                 j="10"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1877"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1877" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1878"
                 r="3"
@@ -1239,14 +990,9 @@
                 j="11"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1879"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1879" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1880"
                 r="3"
@@ -1264,14 +1010,9 @@
                 j="12"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1881"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1881" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1882"
                 r="3"
@@ -1289,14 +1030,9 @@
                 j="13"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1883"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1883" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1884"
                 r="3"
@@ -1314,14 +1050,9 @@
                 j="14"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1885"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1885" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1886"
                 r="3"
@@ -1339,14 +1070,9 @@
                 j="15"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1887"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1887" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1888"
                 r="3"
@@ -1364,14 +1090,9 @@
                 j="16"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1889"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1889" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1890"
                 r="3"
@@ -1389,14 +1110,9 @@
                 j="17"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1891"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1891" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1892"
                 r="3"
@@ -1414,14 +1130,9 @@
                 j="18"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1893"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1893" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1894"
                 r="3"
@@ -1439,14 +1150,9 @@
                 j="19"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1895"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1895" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1896"
                 r="3"
@@ -1464,14 +1170,9 @@
                 j="20"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1897"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1897" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1898"
                 r="3"
@@ -1489,14 +1190,9 @@
                 j="21"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1899"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1899" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1900"
                 r="3"
@@ -1514,14 +1210,9 @@
                 j="22"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1901"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1901" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1902"
                 r="3"
@@ -1539,14 +1230,9 @@
                 j="23"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1903"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1903" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1904"
                 r="3"
@@ -1564,14 +1250,9 @@
                 j="24"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1905"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1905" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1906"
                 r="3"
@@ -1589,14 +1270,9 @@
                 j="25"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1907"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1907" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1908"
                 r="3"
@@ -1614,14 +1290,9 @@
                 j="26"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1909"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1909" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1910"
                 r="3"
@@ -1639,14 +1310,9 @@
                 j="27"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1911"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1911" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1912"
                 r="3"
@@ -1664,14 +1330,9 @@
                 j="28"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
-            <g
-              id="SvgjsG1913"
-              class="apexcharts-series-markers apexcharts-series-scatter"
-              clip-path="url(#gridRectMarkerMask2pzjeoqf)"
-            >
+            <g id="SvgjsG1913" clip-path="url(#gridRectMarkerMask2pzjeoqf)">
               <circle
                 id="SvgjsCircle1914"
                 r="3"
@@ -1689,26 +1350,13 @@
                 j="29"
                 index="1"
                 default-marker-size="3"
-                class="apexcharts-marker"
-              ></circle>
+              />
             </g>
           </g>
         </g>
-        <g id="SvgjsG1793" class="apexcharts-datalabels" data:realIndex="0"></g>
-        <g id="SvgjsG1855" class="apexcharts-datalabels" data:realIndex="1"></g>
+        <g id="SvgjsG1793" data:realIndex="0" />
+        <g id="SvgjsG1855" data:realIndex="1" />
       </g>
-      <line
-        id="SvgjsLine1927"
-        x1="0"
-        y1="0"
-        x2="245"
-        y2="0"
-        stroke="#b6b6b6"
-        stroke-dasharray="0"
-        stroke-width="1"
-        stroke-linecap="butt"
-        class="apexcharts-ycrosshairs"
-      ></line>
       <line
         id="SvgjsLine1928"
         x1="0"
@@ -1718,14 +1366,7 @@
         stroke-dasharray="0"
         stroke-width="0"
         stroke-linecap="butt"
-        class="apexcharts-ycrosshairs-hidden"
-      ></line>
-      <g id="SvgjsG1929" class="apexcharts-xaxis" transform="translate(0, 0)">
-        <g id="SvgjsG1930" class="apexcharts-xaxis-texts-g" transform="translate(0, -4)"></g>
-      </g>
-      <g id="SvgjsG1963" class="apexcharts-yaxis-annotations"></g>
-      <g id="SvgjsG1964" class="apexcharts-xaxis-annotations"></g>
-      <g id="SvgjsG1965" class="apexcharts-point-annotations"></g>
+      />
       <rect
         id="SvgjsRect1966"
         width="0"
@@ -1739,8 +1380,7 @@
         stroke="none"
         stroke-dasharray="0"
         fill="#fefefe"
-        class="apexcharts-zoom-rect"
-      ></rect>
+      />
       <rect
         id="SvgjsRect1967"
         width="0"
@@ -1754,8 +1394,7 @@
         stroke="none"
         stroke-dasharray="0"
         fill="#fefefe"
-        class="apexcharts-selection-rect"
-      ></rect>
+      />
     </g>
   </svg>
 </template>

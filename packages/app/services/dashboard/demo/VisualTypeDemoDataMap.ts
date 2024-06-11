@@ -6,6 +6,7 @@ import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
+import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
 import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
@@ -30,4 +31,5 @@ export const VisualTypeDemoDataMap = {
   [VisualType.Line]: () => LinePropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,
+  [VisualType.Scatter]: () => ScatterPropsData,
 } as const satisfies Record<VisualType, (chartType: ChartType) => VisualPropsData>;

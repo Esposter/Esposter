@@ -11,4 +11,5 @@ export const VisualTypeDemoIconMap = {
   [VisualType.Line]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Line.vue")),
   [VisualType.RangeArea]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeArea.vue")),
   [VisualType.RangeBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeBar.vue")),
+  [VisualType.Scatter]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Scatter.vue")),
 } as const satisfies Record<VisualType, Component>;
