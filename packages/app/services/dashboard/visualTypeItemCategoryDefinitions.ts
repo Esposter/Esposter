@@ -4,15 +4,13 @@ import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { prettifyName } from "@/util/text/prettifyName";
 import type { Except } from "type-fest";
 
-const VisualTypeItemCategoryDefinitionMap = {
-  [VisualType.Area]: {},
-  [VisualType.Bar]: {},
-  [VisualType.Column]: {},
-  [VisualType.Funnel]: {},
-  [VisualType.Line]: {},
-  [VisualType.RangeArea]: {},
-  [VisualType.RangeBar]: {},
-} as const satisfies Record<VisualType, Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">>;
+const VisualTypeItemCategoryDefinitionMap = Object.values(VisualType).reduce(
+  (acc, curr) => {
+    acc[curr] = {};
+    return acc;
+  },
+  {} as Record<VisualType, Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">>,
+);
 
 export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
   VisualTypeItemCategoryDefinitionMap,

@@ -7,13 +7,12 @@ import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfig
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
-import baseSuperjson from "superjson";
+import baseSuperJSON from "superjson";
 
 // @TODO: Change this to use class decorators when it is supported
 // https://github.com/nuxt/nuxt/issues/14126
 RegisterSuperJSON(ClickerGame);
 RegisterSuperJSON(Dashboard);
-RegisterSuperJSON(DungeonsGame);
 RegisterSuperJSON(DungeonsGame);
 RegisterSuperJSON(EmailEditor);
 RegisterSuperJSON(TableEditorConfiguration);
@@ -21,4 +20,4 @@ RegisterSuperJSON(TableEditor);
 RegisterSuperJSON(TodoListItem);
 RegisterSuperJSON(VuetifyComponentItem);
 
-export const superjson = baseSuperjson;
+export const SuperJSON = baseSuperJSON;

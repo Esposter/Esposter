@@ -26,9 +26,6 @@ const options = useApexOptions(
     ...data.value.options,
     chart: {
       height: height.value,
-      zoom: {
-        enabled: false,
-      },
     },
   })),
 );
