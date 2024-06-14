@@ -1,4 +1,3 @@
-import { VisualType } from "@/models/dashboard/VisualType";
 import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { ChartType } from "@/models/dashboard/chart/type/ChartType";
@@ -16,16 +15,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     return true;
   }
 
-  handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: T, visualType: VisualType) {
-    apexOptions.dataLabels = {
-      enabled: false,
-    };
-    apexOptions.subtitle = {
-      text: subtitle,
-    };
-    apexOptions.title = {
-      text: title,
-    };
+  handleConfiguration(apexOptions: ApexOptions, { title, subtitle, dataLabels }: T) {
     apexOptions.chart = defu(
       {
         zoom: {
@@ -34,47 +24,24 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
       },
       apexOptions.chart,
     );
-
-    switch (visualType) {
-      case VisualType.Funnel:
-        apexOptions.dataLabels = {
-          enabled: true,
-          formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
-          dropShadow: {
-            enabled: true,
-          },
-        };
-        apexOptions.legend = {
-          show: false,
-        };
-        apexOptions.plotOptions = defu(
-          {
-            bar: {
-              borderRadius: 0,
-              horizontal: true,
-              barHeight: "80%",
-              isFunnel: true,
-            },
-          },
-          apexOptions.plotOptions,
-        );
-        apexOptions.subtitle.align = "center";
-        apexOptions.title.align = "center";
-        break;
-      case VisualType.Scatter:
-        apexOptions.chart.zoom = {
-          enabled: true,
-          type: "xy",
-        };
-        break;
-      case VisualType.Treemap:
-        apexOptions.legend = {
-          show: false,
-        };
-        break;
-      default:
-        break;
-    }
+    apexOptions.dataLabels = defu(
+      {
+        enabled: dataLabels,
+      },
+      apexOptions.dataLabels,
+    );
+    apexOptions.subtitle = defu(
+      {
+        text: subtitle,
+      },
+      apexOptions.subtitle,
+    );
+    apexOptions.title = defu(
+      {
+        text: title,
+      },
+      apexOptions.title,
+    );
   }
 
   handleSchema(schema: z.AnyZodObject) {

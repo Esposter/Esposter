@@ -6,7 +6,6 @@ import { z } from "zod";
 
 enum BaseChartType {
   Basic = "Basic",
-  DataLabels = "DataLabels",
 }
 
 export const ChartType = mergeObjectsStrict(BaseChartType, BubbleType, FunnelType, TreemapType);

@@ -16,7 +16,7 @@ import { VisualType } from "@/models/dashboard/VisualType";
 import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import { getVisualPropsData } from "@/services/dashboard/demo/getVisualPropsData";
 
-export const VisualTypeDemoDataMap = {
+export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) => VisualPropsData> = {
   [VisualType.Area]: () => AreaPropsData,
   [VisualType.Bar]: () => BarPropsData,
   [VisualType.BoxPlot]: () => BoxPlotPropsData,
@@ -30,4 +30,4 @@ export const VisualTypeDemoDataMap = {
   [VisualType.RangeBar]: () => RangeBarPropsData,
   [VisualType.Scatter]: () => ScatterPropsData,
   [VisualType.Treemap]: (chartType) => getVisualPropsData(TreemapPropsDataMap, chartType),
-} as const satisfies Record<VisualType, (chartType: ChartType) => VisualPropsData>;
+};

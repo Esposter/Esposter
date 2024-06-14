@@ -1,4 +1,3 @@
-import type { VisualType } from "@/models/dashboard/VisualType";
 import type { Chart } from "@/models/dashboard/chart/Chart";
 import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import type { ApexOptions } from "apexcharts";
@@ -15,7 +14,7 @@ export abstract class AChartTypeResolver<T extends Chart["configuration"]> {
     return type === this.type;
   }
 
-  handleConfiguration(_apexOptions: ApexOptions, _configuration: T, _visualType: VisualType) {}
+  handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
   handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
     return schema;
