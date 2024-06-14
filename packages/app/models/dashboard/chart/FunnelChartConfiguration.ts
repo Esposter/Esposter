@@ -1,13 +1,3 @@
-import {
-  BasicChartConfiguration,
-  basicChartConfigurationSchema,
-} from "@/models/dashboard/chart/BasicChartConfiguration";
-import type { z } from "zod";
+import { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
 
-export class FunnelChartConfiguration extends BasicChartConfiguration {
-  dataLabels? = true;
-}
-
-export const funnelChartConfigurationSchema = basicChartConfigurationSchema.omit({
-  dataLabels: true,
-}) satisfies z.ZodType<FunnelChartConfiguration>;
+export class FunnelChartConfiguration extends BasicChartConfiguration {}

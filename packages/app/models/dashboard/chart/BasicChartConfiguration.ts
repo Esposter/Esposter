@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export class BasicChartConfiguration {
-  title? = "";
-  subtitle? = "";
-  dataLabels? = false;
+  title?: string;
+  subtitle?: string;
+  dataLabels?: boolean;
 }
 
 export const basicChartConfigurationSchema = z.object({

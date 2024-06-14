@@ -11,7 +11,10 @@ const visualStore = useVisualStore();
 const { save, resetItem } = visualStore;
 const { editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isDirty, isSavable } =
   storeToRefs(visualStore);
-const schema = useSchema(() => editedItem.value.chart.type);
+const schema = useSchema(
+  () => editedItem.value.chart.type,
+  () => editedItem.value.type,
+);
 
 useConfirmBeforeNavigation(isDirty);
 </script>

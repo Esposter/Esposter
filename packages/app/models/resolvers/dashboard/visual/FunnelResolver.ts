@@ -1,7 +1,9 @@
 import { VisualType } from "@/models/dashboard/VisualType";
+import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import type { ApexOptions } from "apexcharts";
 import defu from "defu";
+import type { z } from "zod";
 
 export class FunnelResolver extends AVisualTypeResolver {
   constructor() {
@@ -48,5 +50,9 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.title,
     );
+  }
+
+  handleSchema(schema: z.AnyZodObject) {
+    return schema.omit({ [basicChartConfigurationSchema.keyof().Values.dataLabels]: true });
   }
 }
