@@ -34,12 +34,6 @@ export const Bubble3DPropsData = {
     },
   ],
   options: {
-    fill: {
-      type: "gradient",
-    },
-    theme: {
-      palette: "palette2",
-    },
     xaxis: {
       tickAmount: 12,
       type: "datetime",

@@ -4,17 +4,19 @@ import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTyp
 import type { ApexOptions } from "apexcharts";
 import { defu } from "defu";
 
-export class DataLabelsResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
+export class PyramidResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {
-    super(ChartType.DataLabels);
+    super(ChartType.Pyramid);
   }
 
   handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.dataLabels = defu(
+    apexOptions.plotOptions = defu(
       {
-        enabled: true,
+        bar: {
+          distributed: true,
+        },
       },
-      apexOptions.dataLabels,
+      apexOptions.plotOptions,
     );
   }
 }

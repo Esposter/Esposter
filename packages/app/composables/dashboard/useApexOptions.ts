@@ -1,6 +1,6 @@
 import type { VisualType } from "@/models/dashboard/VisualType";
 import type { Chart } from "@/models/dashboard/chart/Chart";
-import { getAllFeatureResolvers } from "@/services/dashboard/chart/getAllFeatureResolvers";
+import { getAllChartTypeResolvers } from "@/services/dashboard/chart/getAllChartTypeResolvers";
 import type { ApexOptions } from "apexcharts";
 
 export const useApexOptions = (
@@ -8,7 +8,7 @@ export const useApexOptions = (
   visualType: MaybeRefOrGetter<VisualType>,
   initialOptions: ComputedRef<ApexOptions>,
 ) => {
-  const featureResolvers = getAllFeatureResolvers();
+  const featureResolvers = getAllChartTypeResolvers();
   return computed(() => {
     const { type, configuration } = toValue(chart);
     const visualTypeValue = toValue(visualType);

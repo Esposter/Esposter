@@ -1,13 +1,13 @@
 import { VisualType } from "@/models/dashboard/VisualType";
 import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
-import { ChartType } from "@/models/dashboard/chart/ChartType";
-import { AChartFeatureResolver } from "@/models/resolvers/dashboard/chart/AChartFeatureResolver";
-import { NotInitializedError } from "@esposter/shared";
+import { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
 import type { ApexOptions } from "apexcharts";
+import { defu } from "defu";
 import type { z } from "zod";
 
-export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeatureResolver<T> {
+export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {
     super(ChartType.Basic);
   }
@@ -17,8 +17,6 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
   }
 
   handleConfiguration(apexOptions: ApexOptions, { title, subtitle }: T, visualType: VisualType) {
-    if (!apexOptions.chart) throw new NotInitializedError(this.handleConfiguration.name);
-
     apexOptions.dataLabels = {
       enabled: false,
     };
@@ -28,9 +26,14 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
     apexOptions.title = {
       text: title,
     };
-    apexOptions.chart.zoom = {
-      enabled: false,
-    };
+    apexOptions.chart = defu(
+      {
+        zoom: {
+          enabled: false,
+        },
+      },
+      apexOptions.chart,
+    );
 
     switch (visualType) {
       case VisualType.Funnel:
@@ -44,20 +47,17 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
         apexOptions.legend = {
           show: false,
         };
-        if (apexOptions.plotOptions?.bar) {
-          apexOptions.plotOptions.bar.borderRadius = 0;
-          apexOptions.plotOptions.bar.horizontal = true;
-          apexOptions.plotOptions.bar.barHeight = "80%";
-          apexOptions.plotOptions.bar.isFunnel = true;
-        } else
-          apexOptions.plotOptions = {
+        apexOptions.plotOptions = defu(
+          {
             bar: {
               borderRadius: 0,
               horizontal: true,
               barHeight: "80%",
               isFunnel: true,
             },
-          };
+          },
+          apexOptions.plotOptions,
+        );
         apexOptions.subtitle.align = "center";
         apexOptions.title.align = "center";
         break;

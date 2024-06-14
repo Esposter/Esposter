@@ -1,7 +1,7 @@
 import { VisualType } from "@/models/dashboard/VisualType";
-import { ChartType } from "@/models/dashboard/chart/ChartType";
+import { ChartType } from "@/models/dashboard/chart/type/ChartType";
 
-const commonChartTypes = [ChartType.Basic];
+const commonChartTypes: ChartType[] = [ChartType.Basic];
 const commonChartTypesWithDataLabels = commonChartTypes.concat(ChartType.DataLabels);
 
 export const VisualTypeChartTypesMap = {
@@ -17,5 +17,5 @@ export const VisualTypeChartTypesMap = {
   [VisualType.RangeArea]: commonChartTypesWithDataLabels,
   [VisualType.RangeBar]: commonChartTypesWithDataLabels,
   [VisualType.Scatter]: commonChartTypesWithDataLabels,
-  [VisualType.Treemap]: commonChartTypesWithDataLabels,
+  [VisualType.Treemap]: commonChartTypesWithDataLabels.concat(ChartType.Distributed),
 } as const satisfies Record<VisualType, ChartType[]>;
