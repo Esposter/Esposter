@@ -1,6 +1,6 @@
 import { Bubble3DPropsData } from "@/assets/dashboard/demo/data/bubble/3DPropsData";
 import { BasicPropsData } from "@/assets/dashboard/demo/data/bubble/BasicPropsData";
-import { ChartType } from "@/models/dashboard/chart/ChartType";
+import { ChartType } from "@/models/dashboard/chart/type/ChartType";
 
 export const BubblePropsDataMap = {
   [ChartType.Basic]: BasicPropsData,

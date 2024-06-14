@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "data-urls": "^5.0.0",
-    "vue": "^3.4.27",
+    "vue": "^3.5.0-alpha.2",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "vue-tsc": "^2.0.21"
   },
   "engines": {
-    "node": "^22.2.0"
+    "node": "^22.3.0"
   },
-  "packageManager": "pnpm@9.1.4"
+  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631"
 }

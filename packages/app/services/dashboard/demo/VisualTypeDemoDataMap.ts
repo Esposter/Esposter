@@ -10,28 +10,24 @@ import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsDat
 import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
 import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
+import { TreemapPropsDataMap } from "@/assets/dashboard/demo/data/treemap/TreemapPropsDataMap";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { VisualType } from "@/models/dashboard/VisualType";
-import type { ChartType } from "@/models/dashboard/chart/ChartType";
-import { NotFoundError } from "@esposter/shared";
+import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import { getVisualPropsData } from "@/services/dashboard/demo/getVisualPropsData";
 
-export const VisualTypeDemoDataMap = {
+export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) => VisualPropsData> = {
   [VisualType.Area]: () => AreaPropsData,
   [VisualType.Bar]: () => BarPropsData,
   [VisualType.BoxPlot]: () => BoxPlotPropsData,
-  [VisualType.Bubble]: (chartType) => {
-    if (!(chartType in BubblePropsDataMap)) throw new NotFoundError("VisualTypeDemoDataMap", chartType);
-    return BubblePropsDataMap[chartType as keyof typeof BubblePropsDataMap];
-  },
+  [VisualType.Bubble]: (chartType) => getVisualPropsData(BubblePropsDataMap, chartType),
   [VisualType.Candlestick]: () => CandlestickPropsData,
   [VisualType.Column]: () => ColumnPropsData,
-  [VisualType.Funnel]: (chartType) => {
-    if (!(chartType in FunnelPropsDataMap)) throw new NotFoundError("VisualTypeDemoDataMap", chartType);
-    return FunnelPropsDataMap[chartType as keyof typeof FunnelPropsDataMap];
-  },
+  [VisualType.Funnel]: (chartType) => getVisualPropsData(FunnelPropsDataMap, chartType),
   [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,
   [VisualType.Scatter]: () => ScatterPropsData,
-} as const satisfies Record<VisualType, (chartType: ChartType) => VisualPropsData>;
+  [VisualType.Treemap]: (chartType) => getVisualPropsData(TreemapPropsDataMap, chartType),
+};
