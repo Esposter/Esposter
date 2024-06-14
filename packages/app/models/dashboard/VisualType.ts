@@ -13,6 +13,7 @@ export enum VisualType {
   RangeArea = "RangeArea",
   RangeBar = "RangeBar",
   Scatter = "Scatter",
+  Treemap = "Treemap",
 }
 
 export const visualTypeSchema = z.nativeEnum(VisualType) satisfies z.ZodType<VisualType>;

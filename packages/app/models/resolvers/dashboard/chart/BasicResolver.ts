@@ -31,39 +31,50 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartFeat
     apexOptions.chart.zoom = {
       enabled: false,
     };
-    if (visualType === VisualType.Funnel) {
-      apexOptions.dataLabels = {
-        enabled: true,
-        formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
-        dropShadow: {
+
+    switch (visualType) {
+      case VisualType.Funnel:
+        apexOptions.dataLabels = {
           enabled: true,
-        },
-      };
-      apexOptions.legend = {
-        show: false,
-      };
-      if (apexOptions.plotOptions?.bar) {
-        apexOptions.plotOptions.bar.borderRadius = 0;
-        apexOptions.plotOptions.bar.horizontal = true;
-        apexOptions.plotOptions.bar.barHeight = "80%";
-        apexOptions.plotOptions.bar.isFunnel = true;
-      } else
-        apexOptions.plotOptions = {
-          bar: {
-            borderRadius: 0,
-            horizontal: true,
-            barHeight: "80%",
-            isFunnel: true,
+          formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
+          dropShadow: {
+            enabled: true,
           },
         };
-      apexOptions.subtitle.align = "center";
-      apexOptions.title.align = "center";
+        apexOptions.legend = {
+          show: false,
+        };
+        if (apexOptions.plotOptions?.bar) {
+          apexOptions.plotOptions.bar.borderRadius = 0;
+          apexOptions.plotOptions.bar.horizontal = true;
+          apexOptions.plotOptions.bar.barHeight = "80%";
+          apexOptions.plotOptions.bar.isFunnel = true;
+        } else
+          apexOptions.plotOptions = {
+            bar: {
+              borderRadius: 0,
+              horizontal: true,
+              barHeight: "80%",
+              isFunnel: true,
+            },
+          };
+        apexOptions.subtitle.align = "center";
+        apexOptions.title.align = "center";
+        break;
+      case VisualType.Scatter:
+        apexOptions.chart.zoom = {
+          enabled: true,
+          type: "xy",
+        };
+        break;
+      case VisualType.Treemap:
+        apexOptions.legend = {
+          show: false,
+        };
+        break;
+      default:
+        break;
     }
-    if (visualType === VisualType.Scatter)
-      apexOptions.chart.zoom = {
-        enabled: true,
-        type: "xy",
-      };
   }
 
   handleSchema(schema: z.AnyZodObject) {
