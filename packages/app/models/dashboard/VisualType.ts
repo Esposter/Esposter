@@ -13,6 +13,7 @@ export enum VisualType {
   RangeArea = "RangeArea",
   RangeBar = "RangeBar",
   Scatter = "Scatter",
+  Slope = "Slope",
   Treemap = "Treemap",
 }
 

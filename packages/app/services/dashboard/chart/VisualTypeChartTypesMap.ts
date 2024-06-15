@@ -16,5 +16,6 @@ export const VisualTypeChartTypesMap = {
   [VisualType.RangeArea]: commonChartTypes,
   [VisualType.RangeBar]: commonChartTypes,
   [VisualType.Scatter]: commonChartTypes,
+  [VisualType.Slope]: commonChartTypes,
   [VisualType.Treemap]: commonChartTypes.concat(ChartType.Distributed),
 } as const satisfies Record<VisualType, ChartType[]>;
