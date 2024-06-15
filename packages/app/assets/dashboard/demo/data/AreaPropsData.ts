@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const AreaPropsData = {
-  type: "area",
   series: [
     {
       name: "STOCK ABC",

@@ -2,7 +2,6 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { generateData } from "@/services/dashboard/demo/generateData";
 
 export const Bubble3DPropsData = {
-  type: "bubble",
   series: [
     {
       name: "Product1",

@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const BasicPropsData = {
-  type: "bar",
   series: [
     {
       name: "Funnel Series",

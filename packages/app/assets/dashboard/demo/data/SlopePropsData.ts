@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const SlopePropsData = {
-  type: "line",
   series: [
     {
       name: 'Blue',

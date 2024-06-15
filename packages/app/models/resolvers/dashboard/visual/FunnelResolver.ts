@@ -1,6 +1,7 @@
 import { VisualType } from "@/models/dashboard/VisualType";
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import { uncapitalize } from "@/util/text/uncapitalize";
 import type { ApexOptions } from "apexcharts";
 import defu from "defu";
 import type { z } from "zod";
@@ -11,6 +12,12 @@ export class FunnelResolver extends AVisualTypeResolver {
   }
 
   handleConfiguration(apexOptions: ApexOptions) {
+    apexOptions.chart = defu(
+      {
+        type: uncapitalize(VisualType.Bar),
+      },
+      apexOptions.chart,
+    );
     apexOptions.dataLabels = defu<ApexDataLabels, (ApexDataLabels | undefined)[]>(
       {
         enabled: true,

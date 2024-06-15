@@ -11,13 +11,14 @@ export const useApexOptions = (
 ) =>
   computed(() => {
     const options = initialOptions.value;
+    const visualTypeValue = toValue(visualType);
+    const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
+    for (const visualTypeResolver of visualTypeResolvers)
+      visualTypeResolver.handleConfiguration(options, visualTypeValue);
+
     const { type, configuration } = toValue(chart);
     const chartTypeResolvers = getActiveChartTypeResolvers(type);
     for (const chartTypeResolver of chartTypeResolvers) chartTypeResolver.handleConfiguration(options, configuration);
-
-    const visualTypeValue = toValue(visualType);
-    const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
-    for (const visualTypeResolver of visualTypeResolvers) visualTypeResolver.handleConfiguration(options);
 
     return options;
   });

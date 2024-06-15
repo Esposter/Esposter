@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const LinePropsData = {
-  type: "line",
   series: [
     {
       name: "Desktops",

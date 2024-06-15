@@ -4,25 +4,17 @@ import { uncapitalize } from "@/util/text/uncapitalize";
 import type { ApexOptions } from "apexcharts";
 import defu from "defu";
 
-export class SlopeResolver extends AVisualTypeResolver {
+export class ColumnResolver extends AVisualTypeResolver {
   constructor() {
-    super(VisualType.Slope);
+    super(VisualType.Column);
   }
 
   handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu(
       {
-        type: uncapitalize(VisualType.Line),
+        type: uncapitalize(VisualType.Bar),
       },
       apexOptions.chart,
-    );
-    apexOptions.plotOptions = defu(
-      {
-        line: {
-          isSlopeChart: true,
-        },
-      },
-      apexOptions.plotOptions,
     );
   }
 }
