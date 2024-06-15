@@ -3,40 +3,40 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 export const SlopePropsData = {
   series: [
     {
-      name: 'Blue',
+      name: "Blue",
       data: [
         {
-          x: 'Jan',
+          x: "Jan",
           y: 43,
         },
         {
-          x: 'Feb',
+          x: "Feb",
           y: 58,
         },
       ],
     },
     {
-      name: 'Green',
+      name: "Green",
       data: [
         {
-          x: 'Jan',
+          x: "Jan",
           y: 33,
         },
         {
-          x: 'Feb',
+          x: "Feb",
           y: 38,
         },
       ],
     },
     {
-      name: 'Red',
+      name: "Red",
       data: [
         {
-          x: 'Jan',
+          x: "Jan",
           y: 55,
         },
         {
-          x: 'Feb',
+          x: "Feb",
           y: 21,
         },
       ],

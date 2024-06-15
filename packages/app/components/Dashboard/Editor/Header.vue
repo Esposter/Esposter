@@ -3,6 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { prettifyName } from "@/util/text/prettifyName";
 
 const router = useRouter();
 const visualStore = useVisualStore();
@@ -27,7 +28,7 @@ const { visualType } = storeToRefs(visualStore);
             "
           />
           <v-divider mx-4="!" thickness="2" vertical inset />
-          <v-tooltip :text="`Add ${visualType} Visual`">
+          <v-tooltip :text="`Add ${prettifyName(visualType)} Visual`">
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="createVisual">
                 <v-icon icon="mdi-plus" />

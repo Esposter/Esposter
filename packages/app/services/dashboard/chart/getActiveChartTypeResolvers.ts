@@ -10,6 +10,10 @@ import { PyramidResolver } from "@/models/resolvers/dashboard/chart/PyramidResol
 export const getActiveChartTypeResolvers = <T extends Chart["configuration"]>(
   type: ChartType,
 ): AChartTypeResolver<T>[] =>
-  [new ChartType3DResolver(), new BasicResolver(), new DistributedResolver(), new DonutResolver(), new PyramidResolver()].filter((r) =>
-    r.isActive(type),
-  );
+  [
+    new ChartType3DResolver(),
+    new BasicResolver(),
+    new DistributedResolver(),
+    new DonutResolver(),
+    new PyramidResolver(),
+  ].filter((r) => r.isActive(type));
