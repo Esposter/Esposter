@@ -1,29 +1,20 @@
 import type { VisualType } from "@/models/dashboard/VisualType";
 import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
-import { getAllChartTypeResolvers } from "@/services/dashboard/chart/getAllChartTypeResolvers";
+import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
 import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
-import { getAllVisualTypeResolvers } from "@/services/dashboard/visual/getAllVisualTypeResolvers";
+import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
 import { z } from "zod";
 
-export const useSchema = (type: MaybeRefOrGetter<ChartType>, visualType: MaybeRefOrGetter<VisualType>) => {
-  const chartTypeResolvers = getAllChartTypeResolvers();
-  const visualTypeResolvers = getAllVisualTypeResolvers();
-  return computed(() => {
+export const useSchema = (chartType: MaybeRefOrGetter<ChartType>, visualType: MaybeRefOrGetter<VisualType>) =>
+  computed(() => {
     let schema = z.object({});
-    const typeValue = toValue(type);
-
-    for (const chartTypeResolver of chartTypeResolvers) {
-      if (!chartTypeResolver.isActive(typeValue)) continue;
-      schema = chartTypeResolver.handleSchema(schema);
-    }
+    const chartTypeValue = toValue(chartType);
+    const chartTypeResolvers = getActiveChartTypeResolvers(chartTypeValue);
+    for (const chartTypeResolver of chartTypeResolvers) schema = chartTypeResolver.handleSchema(schema);
 
     const visualTypeValue = toValue(visualType);
-
-    for (const visualTypeResolver of visualTypeResolvers) {
-      if (!visualTypeResolver.isActive(visualTypeValue)) continue;
-      schema = visualTypeResolver.handleSchema(schema);
-    }
+    const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
+    for (const visualTypeResolver of visualTypeResolvers) schema = visualTypeResolver.handleSchema(schema);
 
     return zodToJsonSchema(schema);
   });
-};
