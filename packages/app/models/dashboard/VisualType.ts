@@ -11,6 +11,7 @@ export enum VisualType {
   Heatmap = "Heatmap",
   Line = "Line",
   Pie = "Pie",
+  PolarArea = "PolarArea",
   Radar = "Radar",
   RadialBar = "RadialBar",
   RangeArea = "RangeArea",

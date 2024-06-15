@@ -150,20 +150,6 @@
               />
             </g>
             <circle id="SvgjsCircle2000" r="27.566932926829264" cx="93" cy="93" fill="transparent" />
-            <g id="SvgjsG2001" style="opacity: 0">
-              <text
-                id="SvgjsText2002"
-                font-family="Helvetica, Arial, sans-serif"
-                x="93"
-                y="93"
-                text-anchor="middle"
-                dominant-baseline="auto"
-                font-size="16px"
-                font-weight="600"
-                fill="#008ffb"
-                style="font-family: Helvetica, Arial, sans-serif"
-              />
-            </g>
           </g>
         </g>
       </g>
