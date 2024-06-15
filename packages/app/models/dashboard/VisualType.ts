@@ -10,6 +10,7 @@ export enum VisualType {
   Funnel = "Funnel",
   Heatmap = "Heatmap",
   Line = "Line",
+  Pie = "Pie",
   RangeArea = "RangeArea",
   RangeBar = "RangeBar",
   Scatter = "Scatter",

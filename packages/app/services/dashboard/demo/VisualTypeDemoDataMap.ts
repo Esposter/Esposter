@@ -5,6 +5,7 @@ import { CandlestickPropsData } from "@/assets/dashboard/demo/data/CandlestickPr
 import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
+import { PiePropsData } from "@/assets/dashboard/demo/data/PiePropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
 import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
@@ -27,6 +28,7 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.Funnel]: (chartType) => getVisualPropsData(FunnelPropsDataMap, chartType),
   [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
+  [VisualType.Pie]: () => PiePropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,
   [VisualType.Scatter]: () => ScatterPropsData,
