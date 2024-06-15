@@ -4,11 +4,12 @@ import { ChartType3DResolver } from "@/models/resolvers/dashboard/chart/3DResolv
 import type { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
 import { BasicResolver } from "@/models/resolvers/dashboard/chart/BasicResolver";
 import { DistributedResolver } from "@/models/resolvers/dashboard/chart/DistributedResolver";
+import { DonutResolver } from "@/models/resolvers/dashboard/chart/DonutResolver";
 import { PyramidResolver } from "@/models/resolvers/dashboard/chart/PyramidResolver";
 
 export const getActiveChartTypeResolvers = <T extends Chart["configuration"]>(
   type: ChartType,
 ): AChartTypeResolver<T>[] =>
-  [new ChartType3DResolver(), new BasicResolver(), new DistributedResolver(), new PyramidResolver()].filter((r) =>
+  [new ChartType3DResolver(), new BasicResolver(), new DistributedResolver(), new DonutResolver(), new PyramidResolver()].filter((r) =>
     r.isActive(type),
   );
