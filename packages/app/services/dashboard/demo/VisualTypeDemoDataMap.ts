@@ -6,6 +6,7 @@ import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
 import { PiePropsData } from "@/assets/dashboard/demo/data/PiePropsData";
+import { RadarPropsData } from "@/assets/dashboard/demo/data/RadarPropsData";
 import { RadialBarPropsData } from "@/assets/dashboard/demo/data/RadialBarPropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
@@ -30,6 +31,7 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
   [VisualType.Pie]: () => PiePropsData,
+  [VisualType.Radar]: () => RadarPropsData,
   [VisualType.RadialBar]: () => RadialBarPropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,

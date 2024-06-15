@@ -11,6 +11,7 @@ export const VisualTypeDemoIconMap = {
   [VisualType.Heatmap]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Heatmap.vue")),
   [VisualType.Line]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Line.vue")),
   [VisualType.Pie]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Pie.vue")),
+  [VisualType.Radar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Radar.vue")),
   [VisualType.RadialBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RadialBar.vue")),
   [VisualType.RangeArea]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeArea.vue")),
   [VisualType.RangeBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeBar.vue")),

@@ -14,6 +14,7 @@ export const VisualTypeChartTypesMap = {
   [VisualType.Heatmap]: commonChartTypes,
   [VisualType.Line]: commonChartTypes,
   [VisualType.Pie]: commonChartTypes.concat(ChartType.Donut),
+  [VisualType.Radar]: commonChartTypes,
   [VisualType.RadialBar]: commonChartTypes,
   [VisualType.RangeArea]: commonChartTypes,
   [VisualType.RangeBar]: commonChartTypes,
