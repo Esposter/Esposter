@@ -413,8 +413,8 @@ importers:
         specifier: ^4.15.5
         version: 4.15.5
       type-fest:
-        specifier: ^4.20.0
-        version: 4.20.0
+        specifier: ^4.20.1
+        version: 4.20.1
       unocss:
         specifier: ^0.61.0
         version: 0.61.0(@unocss/webpack@0.61.0(rollup@4.18.0)(webpack@5.90.3(@swc/core@1.5.7)(esbuild@0.19.12)))(postcss@8.4.38)(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.2)(sass@1.77.5)(terser@5.29.2))
@@ -8941,12 +8941,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.19.0:
-    resolution: {integrity: sha512-CN2l+hWACRiejlnr68vY0/7734Kzu+9+TOslUXbSCQ1ruY9XIHDBSceVXCcHm/oXrdzhtLMMdJEKfemf1yXiZQ==}
-    engines: {node: '>=16'}
-
-  type-fest@4.20.0:
-    resolution: {integrity: sha512-MBh+PHUHHisjXf4tlx0CFWoMdjx8zCMLJHOjnV1prABYZFHqtFOyauCIK2/7w4oIfwkF8iNhLtnJEfVY2vn3iw==}
+  type-fest@4.20.1:
+    resolution: {integrity: sha512-R6wDsVsoS9xYOpy8vgeBlqpdOyzJ12HNfQhC/aAKWM3YoCV9TtunJzh/QpkMgeDhkoynDcw5f1y+qF9yc/HHyg==}
     engines: {node: '>=16'}
 
   type-level-regexp@0.1.17:
@@ -15394,7 +15390,7 @@ snapshots:
       ts-morph: 22.0.0
       ts-pattern: 5.1.1
       tslib: 2.6.2
-      type-fest: 4.19.0
+      type-fest: 4.20.1
       typescript: 5.4.5
       yaml: 2.4.1
       yargs: 17.7.2
@@ -20218,9 +20214,7 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.19.0: {}
-
-  type-fest@4.20.0: {}
+  type-fest@4.20.1: {}
 
   type-level-regexp@0.1.17: {}
 
