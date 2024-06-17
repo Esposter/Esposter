@@ -65,7 +65,7 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="barPercentage" />
     <Text
       :configuration="{
         visible: !isEnemy,

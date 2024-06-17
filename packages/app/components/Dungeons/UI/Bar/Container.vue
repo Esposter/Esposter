@@ -20,7 +20,7 @@ const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePo
 
 <template>
   <Container :configuration="{ ...position }">
-    <DungeonsUIBarShadow :image-position="{ ...position, ...imageOrigin }" :width :scale-y />
-    <DungeonsUIBar :type :image-position="{ ...position, ...imageOrigin }" :width :scale-y :bar-percentage />
+    <DungeonsUIBarShadow :image-position="{ ...position, ...imageOrigin }" :width :scale-y="scaleY" />
+    <DungeonsUIBar :type :image-position="{ ...position, ...imageOrigin }" :width :scale-y="scaleY" :bar-percentage="barPercentage" />
   </Container>
 </template>

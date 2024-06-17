@@ -69,18 +69,18 @@ watch(barWidth, (newBarWidth) => {
     v-model:display-width="leftCapDisplayWidth"
     :image-position
     :texture="barTextureMap[BarOrigin.Left]"
-    :scale-y
+    :scale-y="scaleY"
   />
   <DungeonsUIBarMiddle
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
     :texture="barTextureMap[BarOrigin.Middle]"
-    :scale-y
+    :scale-y="scaleY"
   />
   <DungeonsUIBarRightCap
     v-model:display-width="rightCapDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapX }"
     :texture="barTextureMap[BarOrigin.Right]"
-    :scale-y
+    :scale-y="scaleY"
   />
 </template>
