@@ -1,5 +1,6 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { structuredCloneClass } from "@/util/class/structuredCloneClass";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import deepEqual from "fast-deep-equal";
 import type { UnwrapRef } from "vue";
@@ -19,10 +20,10 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
-  // For the form to be savable, it has to have no errors
-  // and either it is a new item, or it is not equal to the original item
   const isSavable = computed(() => {
     if (!editedItem.value) return false;
+    // For the form to be savable, it has to have no errors
+    // and either it is a new item, or it is not equal to the original item
     else return isEditFormValid.value && (!originalItem.value || !deepEqual(editedItem.value, originalItem.value));
   });
   // We know the form is dirty if:
@@ -35,7 +36,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     if (!item) return;
 
     // @TODO: Vue cannot unwrap generic refs yet
-    editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
+    editedItem.value = structuredCloneClass(toDeepRaw(item)) as UnwrapRef<TItem>;
     editedIndex.value = items.value.findIndex((item) => item.id === id);
     editFormDialog.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });

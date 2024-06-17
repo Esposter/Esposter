@@ -4,6 +4,7 @@ import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
+import { structuredCloneClass } from "@/util/class/structuredCloneClass";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import deepEqual from "fast-deep-equal";
 import type { VForm } from "vuetify/components";
@@ -62,7 +63,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         const item = this.tableEditor.items.find((item) => item.id === id);
         if (!item) return;
         // @TODO: Vue cannot unwrap generic refs yet
-        this.editedItem = structuredClone(toDeepRaw(item)) as typeof this.editedItem;
+        this.editedItem = structuredCloneClass(toDeepRaw(item)) as typeof this.editedItem;
         this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
         this.editFormDialog = true;
 
