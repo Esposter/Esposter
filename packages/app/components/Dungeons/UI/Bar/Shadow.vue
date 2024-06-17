@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/components/Dungeons/UI/Bar/Container.vue";
+import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 interface ShadowProps {
   imagePosition: ImagePosition;

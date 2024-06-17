@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/components/Dungeons/UI/Bar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
+import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
 interface LeftCapShadowProps {

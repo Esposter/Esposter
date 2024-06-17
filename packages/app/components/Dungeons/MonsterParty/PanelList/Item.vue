@@ -2,6 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -82,7 +83,7 @@ const barPercentage = computed(() => (monster.currentHp / monster.stats.maxHp) *
         },
       }"
     />
-    <DungeonsUIBarContainer :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />
     <Text
       :configuration="{
         x: 458,

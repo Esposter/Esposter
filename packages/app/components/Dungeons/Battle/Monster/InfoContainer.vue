@@ -2,6 +2,7 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
@@ -64,7 +65,7 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsUIBarContainer :position="{ x: 34, y: 34 }" :bar-percentage />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage />
     <Text
       :configuration="{
         visible: !isEnemy,
