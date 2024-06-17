@@ -12,7 +12,7 @@ import { Cameras } from "phaser";
 export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: Effect | undefined) => {
   if (!effect) return;
 
-  const emit = () => {
+  const onComplete = () => {
     phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY}`);
   };
 
@@ -24,7 +24,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         await showMessages(
           scene,
           effect.messages.map((text) => ({ title: npc.name, text })),
-          emit,
+          onComplete,
         );
       }
       return;
@@ -41,7 +41,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         scene.time.delayedCall(dayjs.duration(1, "seconds").asMilliseconds(), () => {
           scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
           scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-            emit();
+            onComplete();
           });
         });
       });
@@ -50,5 +50,5 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       break;
   }
 
-  emit();
+  onComplete();
 };
