@@ -22,6 +22,9 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import type { Loader } from "phaser";
 
 export const ImageLoaderMap = {
+  [ImageKey.BarLeftCapShadow]: (scene) => scene.load.image(ImageKey.BarLeftCapShadow, barHorizontalShadowLeft),
+  [ImageKey.BarMiddleShadow]: (scene) => scene.load.image(ImageKey.BarMiddleShadow, barHorizontalShadowMid),
+  [ImageKey.BarRightCapShadow]: (scene) => scene.load.image(ImageKey.BarRightCapShadow, barHorizontalShadowRight),
   [ImageKey.BlueButton]: (scene) => scene.load.image(ImageKey.BlueButton, blueButton),
   [ImageKey.BlueButtonSelected]: (scene) => scene.load.image(ImageKey.BlueButtonSelected, blueButtonSelected),
   [ImageKey.Cursor]: (scene) => scene.load.image(ImageKey.Cursor, cursor),
@@ -36,11 +39,6 @@ export const ImageLoaderMap = {
   [ImageKey.HealthBarLeftCap]: (scene) => scene.load.image(ImageKey.HealthBarLeftCap, barHorizontalGreenLeft),
   [ImageKey.HealthBarMiddle]: (scene) => scene.load.image(ImageKey.HealthBarMiddle, barHorizontalGreenMid),
   [ImageKey.HealthBarRightCap]: (scene) => scene.load.image(ImageKey.HealthBarRightCap, barHorizontalGreenRight),
-  [ImageKey.HealthBarLeftCapShadow]: (scene) =>
-    scene.load.image(ImageKey.HealthBarLeftCapShadow, barHorizontalShadowLeft),
-  [ImageKey.HealthBarMiddleShadow]: (scene) => scene.load.image(ImageKey.HealthBarMiddleShadow, barHorizontalShadowMid),
-  [ImageKey.HealthBarRightCapShadow]: (scene) =>
-    scene.load.image(ImageKey.HealthBarRightCapShadow, barHorizontalShadowRight),
   ...ControlsLoaderMap,
   ...MonsterLoaderMap,
 } as const satisfies Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;

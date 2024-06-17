@@ -3,6 +3,9 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
 
 enum BaseImageKey {
+  BarLeftCapShadow = "BarLeftCapShadow",
+  BarMiddleShadow = "BarMiddleShadow",
+  BarRightCapShadow = "BarRightCapShadow",
   BlueButton = "BlueButton",
   BlueButtonSelected = "BlueButtonSelected",
   Cursor = "Cursor",
@@ -17,9 +20,6 @@ enum BaseImageKey {
   HealthBarLeftCap = "HealthBarLeftCap",
   HealthBarMiddle = "HealthBarMiddle",
   HealthBarRightCap = "HealthBarRightCap",
-  HealthBarLeftCapShadow = "HealthBarLeftCapShadow",
-  HealthBarMiddleShadow = "HealthBarMiddleShadow",
-  HealthBarRightCapShadow = "HealthBarRightCapShadow",
 }
 
 export const ImageKey = mergeObjectsStrict(BaseImageKey, ControlsKey, MonsterKey);

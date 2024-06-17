@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/components/Dungeons/UI//Container.vue";
+import type { ImagePosition } from "@/components/Dungeons/UI/Bar/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
@@ -14,7 +14,7 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
 
 <template>
   <Image
-    :configuration="{ ...imagePosition, texture: ImageKey.LeftCapShadow, scaleY, displayWidth }"
+    :configuration="{ ...imagePosition, texture: ImageKey.BarLeftCapShadow, scaleY, displayWidth }"
     @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
   />
 </template>
