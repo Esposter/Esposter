@@ -18,7 +18,7 @@ const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween }
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
+const barPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
@@ -64,7 +64,7 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsUIHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIBarContainer :position="{ x: 34, y: 34 }" :bar-percentage />
     <Text
       :configuration="{
         visible: !isEnemy,

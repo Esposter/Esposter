@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
+import type { ImagePosition } from "@/components/Dungeons/UI//Container.vue";
 
 interface ShadowProps {
   imagePosition: ImagePosition;
@@ -18,17 +18,17 @@ const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplay
 </script>
 
 <template>
-  <DungeonsUIHealthBarLeftCapShadow
+  <DungeonsUILeftCapShadow
     v-model:display-width="leftCapShadowDisplayWidth"
     :image-position="imagePosition"
     :scale-y="scaleY"
   />
-  <DungeonsUIHealthBarMiddleShadow
+  <DungeonsUIMiddleShadow
     :image-position="{ ...imagePosition, x: middleShadowX }"
     :scale-y="scaleY"
     :display-width="middleShadowDisplayWidth"
   />
-  <DungeonsUIHealthBarRightCapShadow
+  <DungeonsUIRightCapShadow
     v-model:display-width="rightCapShadowDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapShadowX }"
     :scale-y="scaleY"

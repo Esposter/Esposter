@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/components/Dungeons/UI/HealthBar/Container.vue";
+import type { ImagePosition } from "@/components/Dungeons/UI//Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
@@ -20,7 +20,7 @@ const isVisible = computed(() => (displayWidth ?? 0) > 0);
     :configuration="{
       visible: isVisible,
       ...imagePosition,
-      texture: ImageKey.HealthBarMiddle,
+      texture: ImageKey.Middle,
       displayWidth,
       scaleY,
       tween,

@@ -5,14 +5,14 @@ import type { Position } from "grid-engine";
 
 export type ImagePosition = Pick<ImageConfiguration, "x" | "y" | "originX" | "originY">;
 
-interface HealthBarProps {
+interface Props {
   position: Position;
   width?: number;
   scaleY?: number;
   barPercentage: number;
 }
 
-const { position, width = 372, scaleY = 0.7, barPercentage } = defineProps<HealthBarProps>();
+const { position, width = 372, scaleY = 0.7, barPercentage } = defineProps<Props>();
 // Set origin to the middle-left of the health caps to enable
 // grabbing the full width of the game object
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
@@ -20,8 +20,8 @@ const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePo
 
 <template>
   <Container :configuration="{ ...position }">
-    <DungeonsUIHealthBarShadow :image-position="{ ...position, ...imageOrigin }" :width :scale-y="scaleY" />
-    <DungeonsUIHealthBar
+    <DungeonsUIShadow :image-position="{ ...position, ...imageOrigin }" :width :scale-y="scaleY" />
+    <DungeonsUI
       :image-position="{ ...position, ...imageOrigin }"
       :width
       :scale-y="scaleY"

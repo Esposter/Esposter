@@ -2,6 +2,9 @@ import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
 import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
 import blueButton from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
 import blueButtonSelected from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
+import barHorizontalBlueLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
+import barHorizontalBlueMid from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueMid.png";
+import barHorizontalBlueRight from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueRight.png";
 import barHorizontalGreenLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenLeft.png";
 import barHorizontalGreenMid from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenMid.png";
 import barHorizontalGreenRight from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalGreenRight.png";
@@ -23,6 +26,9 @@ export const ImageLoaderMap = {
   [ImageKey.BlueButtonSelected]: (scene) => scene.load.image(ImageKey.BlueButtonSelected, blueButtonSelected),
   [ImageKey.Cursor]: (scene) => scene.load.image(ImageKey.Cursor, cursor),
   [ImageKey.CursorWhite]: (scene) => scene.load.image(ImageKey.CursorWhite, cursorWhite),
+  [ImageKey.ExperienceBarLeftCap]: (scene) => scene.load.image(ImageKey.ExperienceBarLeftCap, barHorizontalBlueLeft),
+  [ImageKey.ExperienceBarMiddle]: (scene) => scene.load.image(ImageKey.ExperienceBarMiddle, barHorizontalBlueMid),
+  [ImageKey.ExperienceBarRightCap]: (scene) => scene.load.image(ImageKey.ExperienceBarRightCap, barHorizontalBlueRight),
   [ImageKey.GlassPanel]: (scene) => scene.load.image(ImageKey.GlassPanel, glassPanel),
   [ImageKey.GlassPanelGreen]: (scene) => scene.load.image(ImageKey.GlassPanelGreen, glassPanelGreen),
   [ImageKey.GlassPanelPurple]: (scene) => scene.load.image(ImageKey.GlassPanelPurple, glassPanelPurple),

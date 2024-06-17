@@ -19,7 +19,7 @@ const monsterPartySceneStore = useMonsterPartySceneStore();
 const { optionGrid } = storeToRefs(monsterPartySceneStore);
 const onGridClick = useOnGridClick(optionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, optionGrid.value.position));
-const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.maxHp) * 100);
+const barPercentage = computed(() => (monster.currentHp / monster.stats.maxHp) * 100);
 </script>
 
 <template>
@@ -82,7 +82,7 @@ const healthBarPercentage = computed(() => (monster.currentHp / monster.stats.ma
         },
       }"
     />
-    <DungeonsUIHealthBarContainer :position="{ x: 100, y: 40 }" :width="252" :bar-percentage="healthBarPercentage" />
+    <DungeonsUIBarContainer :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />
     <Text
       :configuration="{
         x: 458,
