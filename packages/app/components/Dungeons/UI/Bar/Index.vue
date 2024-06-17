@@ -7,14 +7,14 @@ import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
 
-interface Props {
+interface BarProps {
   imagePosition: ImagePosition;
   width: number;
   scaleY: number;
   barPercentage: number;
 }
 
-const { imagePosition, width, scaleY, barPercentage } = defineProps<Props>();
+const { imagePosition, width, scaleY, barPercentage } = defineProps<BarProps>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
 const barWidth = computed(() => (width * barPercentage) / 100);

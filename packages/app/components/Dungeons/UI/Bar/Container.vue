@@ -5,14 +5,14 @@ import type { Position } from "grid-engine";
 
 export type ImagePosition = Pick<ImageConfiguration, "x" | "y" | "originX" | "originY">;
 
-interface Props {
+interface BarContainerProps {
   position: Position;
   width?: number;
   scaleY?: number;
   barPercentage: number;
 }
 
-const { position, width = 372, scaleY = 0.7, barPercentage } = defineProps<Props>();
+const { position, width = 372, scaleY = 0.7, barPercentage } = defineProps<BarContainerProps>();
 // Set origin to the middle-left of the health caps to enable
 // grabbing the full width of the game object
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
