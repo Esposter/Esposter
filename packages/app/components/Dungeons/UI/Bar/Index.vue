@@ -67,7 +67,7 @@ watch(barWidth, (newBarWidth) => {
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
   <DungeonsUIBarLeftCap
     v-model:display-width="leftCapDisplayWidth"
-    :image-position
+    :image-position="imagePosition"
     :texture="barTextureMap[BarOrigin.Left]"
     :scale-y="scaleY"
   />
