@@ -130,7 +130,7 @@
     "worker-timers": "^8.0.0",
     "ws": "^8.17.1",
     "zod": "^3.23.8",
-    "zod-to-json-schema": "^3.23.0"
+    "zod-to-json-schema": "^3.23.1"
   },
   "dependenciesComments": {
     "class-transformer": "Remove this when es decorators are released",
