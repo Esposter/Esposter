@@ -20,7 +20,7 @@ const isVisible = computed(() => (displayWidth ?? 0) > 0);
     :configuration="{
       visible: isVisible,
       ...imagePosition,
-      texture: ImageKey.Middle,
+      texture: ImageKey.HealthBarMiddle,
       displayWidth,
       scaleY,
       tween,

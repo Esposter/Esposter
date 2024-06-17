@@ -48,17 +48,13 @@ watch(barWidth, (newBarWidth) => {
 <template>
   <!-- We use a placeholder component to hold the tween for the entire health bar -->
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
-  <DungeonsUILeftCap
-    v-model:display-width="leftCapDisplayWidth"
-    :image-position="imagePosition"
-    :scale-y="scaleY"
-  />
-  <DungeonsUIMiddle
+  <DungeonsUIBarLeftCap v-model:display-width="leftCapDisplayWidth" :image-position="imagePosition" :scale-y="scaleY" />
+  <DungeonsUIBarMiddle
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
     :scale-y="scaleY"
   />
-  <DungeonsUIRightCap
+  <DungeonsUIBarRightCap
     v-model:x="rightCapX"
     v-model:display-width="rightCapDisplayWidth"
     :y="imagePosition.y"

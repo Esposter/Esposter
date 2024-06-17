@@ -24,7 +24,7 @@ const isVisible = computed(() => (displayWidth.value ?? 0) > 0);
       x,
       y,
       ...imageOrigin,
-      texture: ImageKey.RightCap,
+      texture: ImageKey.HealthBarRightCap,
       displayWidth,
       scaleY,
       tween,
