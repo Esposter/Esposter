@@ -10,8 +10,13 @@ export const VisualTypeDemoIconMap = {
   [VisualType.Funnel]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Funnel.vue")),
   [VisualType.Heatmap]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Heatmap.vue")),
   [VisualType.Line]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Line.vue")),
+  [VisualType.Pie]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Pie.vue")),
+  [VisualType.PolarArea]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/PolarArea.vue")),
+  [VisualType.Radar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Radar.vue")),
+  [VisualType.RadialBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RadialBar.vue")),
   [VisualType.RangeArea]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeArea.vue")),
   [VisualType.RangeBar]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/RangeBar.vue")),
   [VisualType.Scatter]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Scatter.vue")),
+  [VisualType.Slope]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Slope.vue")),
   [VisualType.Treemap]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Treemap.vue")),
 } as const satisfies Record<VisualType, Component>;

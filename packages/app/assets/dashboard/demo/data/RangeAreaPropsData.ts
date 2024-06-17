@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const RangeAreaPropsData = {
-  type: "rangeArea",
   series: [
     {
       name: "New York Temperature",

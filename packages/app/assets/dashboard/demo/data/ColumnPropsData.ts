@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const ColumnPropsData = {
-  type: "bar",
   series: [
     {
       name: "Net Profit",

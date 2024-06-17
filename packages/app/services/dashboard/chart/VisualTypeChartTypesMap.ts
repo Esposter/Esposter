@@ -13,8 +13,13 @@ export const VisualTypeChartTypesMap = {
   [VisualType.Funnel]: commonChartTypes.concat(ChartType.Pyramid),
   [VisualType.Heatmap]: commonChartTypes,
   [VisualType.Line]: commonChartTypes,
+  [VisualType.Pie]: commonChartTypes.concat(ChartType.Donut),
+  [VisualType.PolarArea]: commonChartTypes,
+  [VisualType.Radar]: commonChartTypes,
+  [VisualType.RadialBar]: commonChartTypes,
   [VisualType.RangeArea]: commonChartTypes,
   [VisualType.RangeBar]: commonChartTypes,
   [VisualType.Scatter]: commonChartTypes,
+  [VisualType.Slope]: commonChartTypes,
   [VisualType.Treemap]: commonChartTypes.concat(ChartType.Distributed),
 } as const satisfies Record<VisualType, ChartType[]>;

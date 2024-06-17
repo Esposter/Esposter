@@ -10,9 +10,14 @@ export enum VisualType {
   Funnel = "Funnel",
   Heatmap = "Heatmap",
   Line = "Line",
+  Pie = "Pie",
+  PolarArea = "PolarArea",
+  Radar = "Radar",
+  RadialBar = "RadialBar",
   RangeArea = "RangeArea",
   RangeBar = "RangeBar",
   Scatter = "Scatter",
+  Slope = "Slope",
   Treemap = "Treemap",
 }
 

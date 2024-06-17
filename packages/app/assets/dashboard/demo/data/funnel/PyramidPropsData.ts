@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const PyramidPropsData = {
-  type: "bar",
   series: [
     {
       name: "",

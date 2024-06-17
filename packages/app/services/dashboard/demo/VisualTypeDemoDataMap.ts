@@ -5,9 +5,14 @@ import { CandlestickPropsData } from "@/assets/dashboard/demo/data/CandlestickPr
 import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
+import { PiePropsData } from "@/assets/dashboard/demo/data/PiePropsData";
+import { PolarAreaPropsData } from "@/assets/dashboard/demo/data/PolarAreaPropsData";
+import { RadarPropsData } from "@/assets/dashboard/demo/data/RadarPropsData";
+import { RadialBarPropsData } from "@/assets/dashboard/demo/data/RadialBarPropsData";
 import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsData";
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
 import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
+import { SlopePropsData } from "@/assets/dashboard/demo/data/SlopePropsData";
 import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import { TreemapPropsDataMap } from "@/assets/dashboard/demo/data/treemap/TreemapPropsDataMap";
@@ -26,8 +31,13 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.Funnel]: (chartType) => getVisualPropsData(FunnelPropsDataMap, chartType),
   [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
+  [VisualType.Pie]: () => PiePropsData,
+  [VisualType.PolarArea]: () => PolarAreaPropsData,
+  [VisualType.Radar]: () => RadarPropsData,
+  [VisualType.RadialBar]: () => RadialBarPropsData,
   [VisualType.RangeArea]: () => RangeAreaPropsData,
   [VisualType.RangeBar]: () => RangeBarPropsData,
   [VisualType.Scatter]: () => ScatterPropsData,
+  [VisualType.Slope]: () => SlopePropsData,
   [VisualType.Treemap]: (chartType) => getVisualPropsData(TreemapPropsDataMap, chartType),
 };

@@ -1,0 +1,21 @@
+import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
+import { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { uncapitalize } from "@/util/text/uncapitalize";
+import type { ApexOptions } from "apexcharts";
+import { defu } from "defu";
+
+export class DonutResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
+  constructor() {
+    super(ChartType.Donut);
+  }
+
+  handleConfiguration(apexOptions: ApexOptions) {
+    apexOptions.chart = defu(
+      {
+        type: uncapitalize(ChartType.Donut),
+      },
+      apexOptions.chart,
+    );
+  }
+}

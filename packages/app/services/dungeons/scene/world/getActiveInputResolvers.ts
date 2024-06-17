@@ -3,7 +3,7 @@ import { MenuInputResolver } from "@/models/resolvers/dungeons/world/MenuInputRe
 import { MessageInputResolver } from "@/models/resolvers/dungeons/world/MessageInputResolver";
 import { MovementInteractionInputResolver } from "@/models/resolvers/dungeons/world/MovementInteractionInputResolver";
 
-export const getAllInputResolvers = (): AInputResolver[] => [
+export const getActiveInputResolvers = (): AInputResolver[] => [
   new MessageInputResolver(),
   new MenuInputResolver(),
   new MovementInteractionInputResolver(),

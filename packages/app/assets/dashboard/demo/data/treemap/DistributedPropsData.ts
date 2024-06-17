@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const DistributedPropsData = {
-  type: "treemap",
   series: [
     {
       data: [

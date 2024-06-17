@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const ScatterPropsData = {
-  type: "scatter",
   series: [
     {
       name: "SAMPLE A",

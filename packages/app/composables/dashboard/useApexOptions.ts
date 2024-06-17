@@ -1,32 +1,24 @@
 import type { VisualType } from "@/models/dashboard/VisualType";
 import type { Chart } from "@/models/dashboard/chart/Chart";
-import { getAllChartTypeResolvers } from "@/services/dashboard/chart/getAllChartTypeResolvers";
-import { getAllVisualTypeResolvers } from "@/services/dashboard/visual/getAllVisualTypeResolvers";
+import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
+import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
 import type { ApexOptions } from "apexcharts";
 
 export const useApexOptions = (
   chart: MaybeRefOrGetter<Chart>,
   visualType: MaybeRefOrGetter<VisualType>,
   initialOptions: ComputedRef<ApexOptions>,
-) => {
-  const chartTypeResolvers = getAllChartTypeResolvers();
-  const visualTypeResolvers = getAllVisualTypeResolvers();
-  return computed(() => {
+) =>
+  computed(() => {
     const options = initialOptions.value;
-    const { type, configuration } = toValue(chart);
-
-    for (const chartTypeResolver of chartTypeResolvers) {
-      if (!chartTypeResolver.isActive(type)) continue;
-      chartTypeResolver.handleConfiguration(options, configuration);
-    }
-
     const visualTypeValue = toValue(visualType);
+    const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
+    for (const visualTypeResolver of visualTypeResolvers)
+      visualTypeResolver.handleConfiguration(options, visualTypeValue);
 
-    for (const visualTypeResolver of visualTypeResolvers) {
-      if (!visualTypeResolver.isActive(visualTypeValue)) continue;
-      visualTypeResolver.handleConfiguration(options);
-    }
+    const { type, configuration } = toValue(chart);
+    const chartTypeResolvers = getActiveChartTypeResolvers(type);
+    for (const chartTypeResolver of chartTypeResolvers) chartTypeResolver.handleConfiguration(options, configuration);
 
     return options;
   });
-};
