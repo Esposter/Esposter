@@ -63,7 +63,7 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
         const item = this.tableEditor.items.find((item) => item.id === id);
         if (!item) return;
         // @TODO: Vue cannot unwrap generic refs yet
-        this.editedItem = structuredCloneClass(toDeepRaw(item)) as typeof this.editedItem;
+        this.editedItem = reactive(structuredCloneClass(toDeepRaw(item))) as typeof this.editedItem;
         this.editedIndex = this.tableEditor.items.findIndex((item) => item.id === id);
         this.editFormDialog = true;
 

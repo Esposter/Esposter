@@ -36,7 +36,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     if (!item) return;
 
     // @TODO: Vue cannot unwrap generic refs yet
-    editedItem.value = structuredCloneClass(toDeepRaw(item)) as UnwrapRef<TItem>;
+    editedItem.value = reactive(structuredCloneClass(toDeepRaw(item))) as UnwrapRef<TItem>;
     editedIndex.value = items.value.findIndex((item) => item.id === id);
     editFormDialog.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
