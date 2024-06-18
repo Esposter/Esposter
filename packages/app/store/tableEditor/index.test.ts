@@ -30,7 +30,9 @@ describe("Table Editor Store", () => {
     expect(router.currentRoute.value.query).toStrictEqual({});
 
     await editItem(newItem.id);
-    expect(editedItem.value).toStrictEqual(newItem);
+    // The edited item will be a structured clone object of the original item class
+    // object !== class (not strictly equal)
+    expect(editedItem.value).toEqual(newItem);
     expect(editedIndex.value).toStrictEqual(0);
     expect(editFormDialog.value).toStrictEqual(true);
     expect(router.currentRoute.value.query).toStrictEqual({ [ITEM_ID_QUERY_PARAM_KEY]: newItem.id });
