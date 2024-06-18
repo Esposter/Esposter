@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/Esposter/Esposter/compare/v1.12.0...v1.13.0) (2024-06-18)
+
+
+### Bug Fixes
+
+* component names ([d31f67c](https://github.com/Esposter/Esposter/commit/d31f67c99c41d26be7535b21189c37c2f18b5f22))
+* disabling eslint for file ([a8283b6](https://github.com/Esposter/Esposter/commit/a8283b6fe7b6256f0a7d8d05f7b6bf1fde414a51))
+* imagekey ([ca6fc12](https://github.com/Esposter/Esposter/commit/ca6fc1231552cdb6dea63c4de8812d57b8fdf74e))
+* lint ([6f5c7dc](https://github.com/Esposter/Esposter/commit/6f5c7dc76fc0a93a45ec108e719e2e44dfa79cba))
+* lint ([6be80e6](https://github.com/Esposter/Esposter/commit/6be80e62fe588fd942ce705644f225a1821350d6))
+* make cloned class reactive ([696724e](https://github.com/Esposter/Esposter/commit/696724ebe53d8db902ec5a43591eaefe65d0785e))
+* properly clone class to also pass test with strict equals ([35a92a2](https://github.com/Esposter/Esposter/commit/35a92a2ef22f1435bd4cde1552e51d7d10d1ea27))
+* revert back to structured clone so we don't puck ourselves with trying to copy class prototype as well ([4fb535a](https://github.com/Esposter/Esposter/commit/4fb535a6dccbeb9ec34852838e064980dce461fe))
+* types ([06a1151](https://github.com/Esposter/Esposter/commit/06a1151a937176b3cfc9b1411fa6f7b9196be2f2))
+* use sleep anyways since it works + fix up types ([40fad06](https://github.com/Esposter/Esposter/commit/40fad0623149644a419bdcbd58c1cf5281d9bc1e))
+* worker src ([23b1623](https://github.com/Esposter/Esposter/commit/23b1623b93bf074bb2accbb65b5a1d7969664c23))
+
+
+### Features
+
+* Add bar chart ([00af995](https://github.com/Esposter/Esposter/commit/00af99543e959b95523688ce706f5407c2d77963))
+* Add bubble chart types ([a03bef2](https://github.com/Esposter/Esposter/commit/a03bef20ba68ed48f47e42650a452de58a5c48a4))
+* Add candlestick + box plot charts ([fba6733](https://github.com/Esposter/Esposter/commit/fba6733d10d95c950c7f1f16e68c5eaf6e10b572))
+* Add donut resolver ([4bd4474](https://github.com/Esposter/Esposter/commit/4bd4474249e32a349c15bb3a9b50be6da62344d4))
+* Add exp bar asset ([2fc01a5](https://github.com/Esposter/Esposter/commit/2fc01a53d8e3b4094c99a4dec857ea0678bd98dd))
+* Add heatmap chart ([be48e2f](https://github.com/Esposter/Esposter/commit/be48e2f62d4699a101d01674038dfcdbfd63a688))
+* Add pie ([8f704ee](https://github.com/Esposter/Esposter/commit/8f704ee392d436fdd52a8187d0053b1f8fee933e))
+* Add radial bar ([9740704](https://github.com/Esposter/Esposter/commit/97407047378737a3bc2c8f82b700e20f7b502512))
+* Add range area chart ([be8d3f9](https://github.com/Esposter/Esposter/commit/be8d3f948430163206e9f21b8904b4d7e0a3bf01))
+* Add range bar + funnel ([4df0c44](https://github.com/Esposter/Esposter/commit/4df0c44cccf6212c7a7bd578566005883365aa73))
+* Add remaining polar area chart ([50eb08c](https://github.com/Esposter/Esposter/commit/50eb08ce62d26d11a2c78f06249c54453248b47e))
+* Add scatter chart ([be4c7bb](https://github.com/Esposter/Esposter/commit/be4c7bb5959a23bf920d6c798ee8c7e6adb68600))
+* Add slope ([8d134ce](https://github.com/Esposter/Esposter/commit/8d134cee691dd659c0ac36514a24f15bd1b3567e))
+* Add specific chart type data ([5c103e0](https://github.com/Esposter/Esposter/commit/5c103e071a5c721ffe1394ca7da0a1757075824f))
+* Add specific chart types for different visual types ([dc2ec57](https://github.com/Esposter/Esposter/commit/dc2ec577302b2468eb117f0d10c7072dde259640))
+* Add treemap chart ([dd3db1f](https://github.com/Esposter/Esposter/commit/dd3db1f5974bb4b6ae84dfab0d8c2d0e8d5991f9))
+* Add watch tracker test ([25d5ed4](https://github.com/Esposter/Esposter/commit/25d5ed4d4020cede63c71d09953803972ba6b20a))
+* Enhance bar to acommodate different types/variations ([ad9b90c](https://github.com/Esposter/Esposter/commit/ad9b90c16cd71f649e7fb9c7ee514211e71d1ee1))
+* move data labels to just a prop ([e44bb44](https://github.com/Esposter/Esposter/commit/e44bb44a2f6776e907ea4cdcc1c34d0bea9da330))
+* use defu to add defaults ([d2d9196](https://github.com/Esposter/Esposter/commit/d2d91963802fc8c996f0f6c547dace8ac5a5a991))
+
+
+
+
+
+
 # [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
 
 
