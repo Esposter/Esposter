@@ -1,4 +1,4 @@
-import MjText from "@/Index.vue";
+import App from "@/App.vue";
 import { createApp } from "vue";
 
-createApp(MjText).mount("#app");
+createApp(App).mount("#app");

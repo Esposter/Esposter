@@ -1,3 +1,3 @@
-import MjText from "@/Index.vue";
+import { BlockElement } from "@/BlockElement";
 
-export { MjText };
+export { BlockElement };

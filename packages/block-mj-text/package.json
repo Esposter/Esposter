@@ -4,6 +4,8 @@
   "description": "mj-text block",
   "type": "module",
   "keywords": [
+    "blockprotocol",
+    "blocks",
     "mjml"
   ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
