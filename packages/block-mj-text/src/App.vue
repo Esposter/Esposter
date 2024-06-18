@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { BlockElement } from "@/BlockElement";
-import { exampleGraph } from "@/exampleGraph";
+import { blockEntity } from "@/blockEntity";
 import { MockBlockDock } from "mock-block-dock";
 import { defineComponent } from "vue";
 import blockprotocol from "../blockprotocol.json";
@@ -13,11 +13,11 @@ const App = defineComponent(() => (
         tagName: blockprotocol.blockType.tagName,
       },
     }}
-    blockEntityRecordId={exampleGraph.blockEntityRecordId}
+    blockEntityRecordId={blockEntity.metadata.recordId}
     blockInfo={blockprotocol}
     debug // remove this to start with the debug UI minimised. You can also toggle it in the UI
     initialData={{
-      initialEntities: exampleGraph.entities,
+      initialEntities: [blockEntity],
     }}
     includeDefaultMockData // this seeds the datastore with sample entities and links, remove this to start with just the contents of `initialData`
     simulateDatastoreLatency={{
