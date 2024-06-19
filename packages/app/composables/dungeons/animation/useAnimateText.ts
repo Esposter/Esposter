@@ -3,7 +3,6 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import type { OnComplete } from "@/models/shared/OnComplete";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { sleep } from "@/util/time/sleep";
 
 export const useAnimateText = (
   scene: SceneWithPlugins,
@@ -33,8 +32,7 @@ export const useAnimateText = (
       if (i === textSections.length) {
         if (!isSkipAnimations.value) stop();
         // Run the hook after vue's rendering cycle has caught up with phaser
-        // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
-        await sleep(textDelay.value * 2);
+        await nextTick();
         await configuration?.onComplete?.();
       }
     },

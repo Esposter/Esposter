@@ -70,7 +70,8 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       const textDelay = useTextDelay();
       target.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
-      scene.time.delayedCall(textDelay.value, () => {
+      // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
+      scene.time.delayedCall(textDelay.value * 2, () => {
         showInputPromptCursor(unref(target.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
       });
