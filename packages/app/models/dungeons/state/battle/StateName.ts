@@ -9,6 +9,7 @@ export enum StateName {
   PlayerPostAttackCheck = "PlayerPostAttackCheck",
   EnemyAttack = "EnemyAttack",
   EnemyPostAttackCheck = "EnemyPostAttackCheck",
+  GainExperience = "GainExperience",
   Finished = "Finished",
   SwitchAttempt = "SwitchAttempt",
   ItemAttempt = "ItemAttempt",

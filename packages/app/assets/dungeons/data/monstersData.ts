@@ -13,7 +13,7 @@ const MonstersDataMap = {
     stats: {
       maxHp: 25,
       attack: 5,
-      exp: 50,
+      baseExp: 50,
     },
     status: { level: 5, hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
@@ -25,7 +25,7 @@ const MonstersDataMap = {
     stats: {
       maxHp: 25,
       attack: 5,
-      exp: 52,
+      baseExp: 52,
     },
     status: { level: 5, hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
@@ -37,7 +37,7 @@ const MonstersDataMap = {
     stats: {
       maxHp: 25,
       attack: 5,
-      exp: 53,
+      baseExp: 53,
     },
     status: { level: 5, hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
@@ -49,7 +49,7 @@ const MonstersDataMap = {
     stats: {
       maxHp: 25,
       attack: 5,
-      exp: 51,
+      baseExp: 51,
     },
     status: { level: 5, hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
@@ -61,7 +61,7 @@ const MonstersDataMap = {
     stats: {
       maxHp: 25,
       attack: 5,
-      exp: 50,
+      baseExp: 50,
     },
     status: { level: 5, hp: 25, exp: 125 },
     attackIds: [AttackId.Slash],
