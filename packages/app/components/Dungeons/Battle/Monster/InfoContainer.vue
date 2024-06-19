@@ -66,19 +66,38 @@ onUnmounted(() => {
       }"
     />
     <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="barPercentage" />
-    <Text
-      :configuration="{
-        visible: !isEnemy,
-        x: 443,
-        y: 80,
-        originX: 1,
-        originY: 0,
-        text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
-        style: {
-          color: '#7e3d3f',
-          fontSize: 16,
-        },
-      }"
-    />
+    <template v-if="!isEnemy">
+      <Text
+        :configuration="{
+          x: 443,
+          y: 80,
+          originX: 1,
+          originY: 0,
+          text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
+          style: {
+            color: '#7e3d3f',
+            fontSize: 16,
+          },
+        }"
+      />
+      <Text
+        :configuration="{
+          x: 30,
+          y: 100,
+          text: 'EXP',
+          style: {
+            color: '#6505ff',
+            fontSize: 14,
+            fontStyle: 'italic',
+          },
+        }"
+      />
+      <DungeonsUIBarContainer
+        :type="BarType.Experience"
+        :position="{ x: 34, y: 54 }"
+        :bar-percentage="barPercentage"
+        :scale-y="0.4"
+      />
+    </template>
   </Container>
 </template>

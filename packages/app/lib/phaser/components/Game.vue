@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useGame } from "@/lib/phaser/composables/useGame";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { registerTiledJSONExternalLoader } from "@/lib/phaser/plugins/registerTiledJSONExternalLoader";
 import { usePhaserStore } from "@/lib/phaser/store";
 import type { Types } from "phaser";
@@ -21,8 +20,6 @@ const phaserStore = usePhaserStore();
 const { game: storeGame } = storeToRefs(phaserStore);
 const canvasRoot = ref<HTMLDivElement>();
 const isReady = ref(false);
-
-useEventListener("resize", () => phaserEventEmitter.emit("resize"));
 
 const readyListener = () => {
   isReady.value = true;

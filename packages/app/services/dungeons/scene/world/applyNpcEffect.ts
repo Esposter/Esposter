@@ -1,10 +1,10 @@
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { EFFECT_COMPLETE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { Effect } from "@/models/dungeons/npc/effect/Effect";
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import { dayjs } from "@/services/dayjs";
+import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { Cameras } from "phaser";
@@ -13,7 +13,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
   if (!effect) return;
 
   const onComplete = () => {
-    phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY}`);
+    phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`);
   };
 
   switch (effect.type) {

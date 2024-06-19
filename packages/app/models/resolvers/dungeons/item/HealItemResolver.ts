@@ -1,9 +1,9 @@
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import type { Item } from "@/models/dungeons/item/Item";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 

@@ -1,9 +1,9 @@
-import type { PhaserEvents } from "@/lib/phaser/events/phaser";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import type { PhaserEvents } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import type { EventEmitter } from "eventemitter3";

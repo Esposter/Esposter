@@ -1,4 +1,4 @@
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";

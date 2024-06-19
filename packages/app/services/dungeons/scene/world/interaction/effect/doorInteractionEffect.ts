@@ -1,7 +1,6 @@
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
@@ -9,6 +8,7 @@ import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { NotFoundError } from "@esposter/shared";

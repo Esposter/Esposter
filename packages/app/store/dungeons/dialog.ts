@@ -1,11 +1,11 @@
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
+import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/services/phaser/constants";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
