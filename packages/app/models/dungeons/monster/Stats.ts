@@ -3,7 +3,7 @@ import { z } from "zod";
 export interface Stats {
   maxHp: number;
   attack: number;
-  // This is the amount of exp you gain when defeating the monster
+  // This is used to calculate the amount of exp you gain when defeating the monster
   baseExp: number;
 }
 
