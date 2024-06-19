@@ -4,9 +4,9 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { onShowMessage } from "@/services/phaser/hooks/onShowMessage";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
-import { onShowMessage } from "~/services/phaser/hooks/onShowMessage";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);

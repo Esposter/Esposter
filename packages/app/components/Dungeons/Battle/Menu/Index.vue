@@ -5,9 +5,9 @@ import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
+import { onShowMessage } from "@/services/phaser/hooks/onShowMessage";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { Input } from "phaser";
-import { onShowMessage } from "~/services/phaser/hooks/onShowMessage";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
