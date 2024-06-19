@@ -22,7 +22,7 @@ const { monster } = storeToRefs(monsterDetailsSceneStore);
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
-      :configuration="{ x: 20, y: 60, text: `LV. ${monster.currentLevel}`, style: { ...MenuTextStyle, fontSize: 40 } }"
+      :configuration="{ x: 20, y: 60, text: `LV. ${monster.status.level}`, style: { ...MenuTextStyle, fontSize: 40 } }"
     />
     <Text :configuration="{ x: 200, y: 60, text: monster.key, style: { ...MenuTextStyle, fontSize: 40 } }" />
     <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: monster.asset.key, scale: 0.7 }" />

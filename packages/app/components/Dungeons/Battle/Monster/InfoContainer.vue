@@ -19,7 +19,7 @@ const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween }
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const barPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
+const barPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
@@ -46,7 +46,7 @@ onUnmounted(() => {
       :configuration="{
         x: levelX,
         y: 23,
-        text: `L${activeMonster.currentLevel}`,
+        text: `L${activeMonster.status.level}`,
         style: {
           color: '#ed474b',
           fontSize: 28,
@@ -73,7 +73,7 @@ onUnmounted(() => {
           y: 80,
           originX: 1,
           originY: 0,
-          text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
+          text: `${activeMonster.status.hp}/${activeMonster.stats.maxHp}`,
           style: {
             color: '#7e3d3f',
             fontSize: 16,

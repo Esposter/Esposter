@@ -24,7 +24,7 @@ export const EnemyAttack: State<StateName> = {
     await showMessageNoInputRequired(scene, `Enemy ${activeMonster.value.key} used ${randomAttackId}.`, () => {
       scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
         await useAttackAnimation(scene, randomAttack, false, () => {
-          takeDamage(calculateDamage(activeMonster.value.stats.baseAttack), async () => {
+          takeDamage(calculateDamage(activeMonster.value.stats.attack), async () => {
             await battleStateMachine.setState(StateName.EnemyPostAttackCheck);
           });
         });

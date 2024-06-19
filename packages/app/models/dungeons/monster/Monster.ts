@@ -6,6 +6,8 @@ import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { monsterKeySchema } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Stats } from "@/models/dungeons/monster/Stats";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
+import type { Status } from "@/models/dungeons/monster/Status";
+import { statusSchema } from "@/models/dungeons/monster/Status";
 import { getMonsterData } from "@/services/dungeons/monster/getMonsterData";
 import { z } from "zod";
 
@@ -14,12 +16,11 @@ export class Monster {
   key!: MonsterKey;
   asset!: Asset;
   stats!: Stats;
-  currentLevel!: number;
-  currentHp!: number;
+  status!: Status;
   attackIds!: AttackId[];
 
   constructor(key: MonsterKey) {
-    Object.assign(this, getMonsterData(key));
+    Object.assign(this, structuredClone(getMonsterData(key)));
   }
 }
 
@@ -28,7 +29,6 @@ export const monsterSchema = z.object({
   key: monsterKeySchema,
   asset: assetSchema,
   stats: statsSchema,
-  currentLevel: z.number().int().positive(),
-  currentHp: z.number().int().nonnegative(),
+  status: statusSchema,
   attackIds: z.array(attackSchema.shape.id),
 }) satisfies z.ZodType<Monster>;
