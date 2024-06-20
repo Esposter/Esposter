@@ -4,6 +4,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { calculateExperienceToLevelUp } from "@/services/dungeons/monster/calculateExperienceToLevelUp";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -19,7 +20,10 @@ const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween }
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const barPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
+const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
+const experienceBarPercentage = computed(
+  () => (activeMonster.value.status.exp / calculateExperienceToLevelUp(activeMonster.value.status.level)) * 100,
+);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
@@ -65,7 +69,7 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="barPercentage" />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <template v-if="!isEnemy">
       <Text
         :configuration="{
@@ -95,7 +99,7 @@ onUnmounted(() => {
       <DungeonsUIBarContainer
         :type="BarType.Experience"
         :position="{ x: 34, y: 54 }"
-        :bar-percentage="barPercentage"
+        :bar-percentage="experienceBarPercentage"
         :scale-y="0.4"
       />
     </template>

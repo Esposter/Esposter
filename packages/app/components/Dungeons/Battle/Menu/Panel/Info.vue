@@ -1,26 +1,32 @@
 <script setup lang="ts">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
+import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
+import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
 const infoPanelStore = useInfoPanelStore();
-// Display width is only going to be computed based on the set text, so we only need the @ listener prop
 const { line1DialogMessage, line1TextDisplayWidth, line2Text } = storeToRefs(infoPanelStore);
+const wordWrapWidth = ref<number>();
+
+onCreate((scene) => {
+  wordWrapWidth.value = scene.scale.width - WORD_PADDING;
+});
 </script>
 
 <template>
-  <!-- Info Panel is also shown when you choose options -->
   <template v-if="activePanel === ActivePanel.Info || activePanel === ActivePanel.Option">
     <Text
       :configuration="{
         x: 20,
         y: 468,
+        // Display width is computed based on the set text, so we only require @update:display-width listener
         text: line1DialogMessage.text,
-        style: DialogTextStyle,
+        style: { ...DialogTextStyle, wordWrap: { width: wordWrapWidth } },
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />

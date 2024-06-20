@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
+import { calculateExperienceGain } from "@/services/dungeons/monster/calculateExperienceGain";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { calculateExperienceGain } from "@/services/dungeons/scene/battle/calculateExperienceGain";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { usePlayerStore } from "@/store/dungeons/player";

@@ -8,6 +8,7 @@ import { useInputStore } from "@/lib/phaser/store/input";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { calculateExperienceToLevelUp } from "@/services/dungeons/monster/calculateExperienceToLevelUp";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 
 const inputStore = useInputStore();
@@ -15,6 +16,9 @@ const { controls } = storeToRefs(inputStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { monster } = storeToRefs(monsterDetailsSceneStore);
+const barPercentage = computed(
+  () => (monster.value.status.exp / calculateExperienceToLevelUp(monster.value.status.level)) * 100,
+);
 </script>
 
 <template>
@@ -45,7 +49,7 @@ const { monster } = storeToRefs(monsterDetailsSceneStore);
     <DungeonsUIBarContainer
       :type="BarType.Experience"
       :position="{ x: 70, y: 200 }"
-      :bar-percentage="50"
+      :bar-percentage="barPercentage"
       :scale-y="0.4"
     />
     <DungeonsMonsterDetailsAttackList />
