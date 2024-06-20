@@ -1,13 +1,19 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.associations": {
+    ".env": "env",
+    ".env.example": "env",
+    ".tsx": "xml"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
   "vue.updateImportsOnFileMove.enabled": true,
   "[javascript][typescript][vue]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"]
   },
-  "[xml]": {
-    "editor.formatOnSave": false
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "[scss]": {
     "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
@@ -15,13 +21,7 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "files.associations": {
-    ".env": "env",
-    ".env.example": "env",
-    ".tsx": "xml"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "[xml]": {
+    "editor.formatOnSave": false
+  }
 }
