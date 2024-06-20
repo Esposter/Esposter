@@ -330,7 +330,7 @@ importers:
         version: 0.7.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.6)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))
       '@nuxt/test-utils':
         specifier: ^3.13.1
-        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -375,7 +375,7 @@ importers:
         version: 0.8.0(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
       '@vitest/coverage-v8':
         specifier: ^1.6.0
-        version: 1.6.0(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))
+        version: 1.6.0(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))
       '@vue/test-utils':
         specifier: ^2.4.6
         version: 2.4.6
@@ -395,8 +395,8 @@ importers:
         specifier: ^1.12.0
         version: 1.12.0
       happy-dom:
-        specifier: ^14.12.0
-        version: 14.12.0
+        specifier: ^14.12.3
+        version: 14.12.3
       nuxt:
         specifier: 3.11.1
         version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.6)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2)
@@ -423,7 +423,7 @@ importers:
         version: 0.22.0(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2)
+        version: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2)
       vuetify-nuxt-module:
         specifier: ^0.14.1
         version: 0.14.1(rollup@4.18.0)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -5889,8 +5889,8 @@ packages:
     engines: {node: '>=0.4.7'}
     hasBin: true
 
-  happy-dom@14.12.0:
-    resolution: {integrity: sha512-dHcnlGFY2o2CdxfuYpqwSrBrpj/Kuzv4u4f3TU5yHW1GL24dKij4pv1BRjXnXc3uWo8qsCbToF9weaDsm/He8A==}
+  happy-dom@14.12.3:
+    resolution: {integrity: sha512-vsYlEs3E9gLwA1Hp+w3qzu+RUDFf4VTT8cyKqVICoZ2k7WM++Qyd2LwzyTi5bqMJFiIC/vNpTDYuxdreENRK/g==}
     engines: {node: '>=16.0.0'}
 
   hard-rejection@2.1.0:
@@ -12434,7 +12434,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))':
+  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))':
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.18.0)
       '@nuxt/schema': 3.11.2(rollup@4.18.0)
@@ -12461,13 +12461,13 @@ snapshots:
       unenv: 1.9.0
       unplugin: 1.10.1
       vite: 5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2)
-      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
       vue: 3.4.27(typescript@5.5.0-dev.20240518)
       vue-router: 4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518))
     optionalDependencies:
       '@vue/test-utils': 2.4.6
-      happy-dom: 14.12.0
-      vitest: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2)
+      happy-dom: 14.12.3
+      vitest: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -13961,7 +13961,7 @@ snapshots:
       vite: 5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2)
       vue: 3.4.29(typescript@5.5.0-dev.20240518)
 
-  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))':
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -13976,7 +13976,7 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.0.0
       test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2)
+      vitest: 1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -16682,7 +16682,7 @@ snapshots:
     optionalDependencies:
       uglify-js: 3.17.4
 
-  happy-dom@14.12.0:
+  happy-dom@14.12.3:
     dependencies:
       entities: 4.5.0
       webidl-conversions: 7.0.0
@@ -20751,9 +20751,9 @@ snapshots:
       sass: 1.77.6
       terser: 5.29.2
 
-  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
+  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
     dependencies:
-      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.0)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.6)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.3.3(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -20773,7 +20773,7 @@ snapshots:
       - vue
       - vue-router
 
-  vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.0)(sass@1.77.6)(terser@5.29.2):
+  vitest@1.6.0(@types/node@20.14.6)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -20797,7 +20797,7 @@ snapshots:
       why-is-node-running: 2.2.2
     optionalDependencies:
       '@types/node': 20.14.6
-      happy-dom: 14.12.0
+      happy-dom: 14.12.3
     transitivePeerDependencies:
       - less
       - lightningcss
