@@ -16,9 +16,9 @@ const { controls } = storeToRefs(inputStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { monster } = storeToRefs(monsterDetailsSceneStore);
-const barPercentage = computed(
-  () => (monster.value.status.exp / calculateExperienceToLevelUp(monster.value.status.level)) * 100,
-);
+const experienceToLevelUp = computed(() => calculateExperienceToLevelUp(monster.value.status.level));
+const experienceToNextLevel = computed(() => experienceToLevelUp.value - monster.value.status.exp);
+const barPercentage = computed(() => (monster.value.status.exp / experienceToLevelUp.value) * 100);
 </script>
 
 <template>
@@ -31,9 +31,27 @@ const barPercentage = computed(
     <Text :configuration="{ x: 200, y: 60, text: monster.key, style: { ...MenuTextStyle, fontSize: 40 } }" />
     <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: monster.asset.key, scale: 0.7 }" />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
-    <Text :configuration="{ x: 516, y: 340, originX: 1, originY: 0, text: '5', style: MenuExperienceTextStyle }" />
+    <Text
+      :configuration="{
+        x: 516,
+        y: 340,
+        originX: 1,
+        originY: 0,
+        text: monster.status.exp.toString(),
+        style: MenuExperienceTextStyle,
+      }"
+    />
     <Text :configuration="{ x: 20, y: 365, origin: 0, text: 'Exp. to next level', style: MenuExperienceTextStyle }" />
-    <Text :configuration="{ x: 516, y: 365, originX: 1, originY: 0, text: '5', style: MenuExperienceTextStyle }" />
+    <Text
+      :configuration="{
+        x: 516,
+        y: 365,
+        originX: 1,
+        originY: 0,
+        text: experienceToNextLevel.toString(),
+        style: MenuExperienceTextStyle,
+      }"
+    />
     <Text
       :configuration="{
         x: 108,
