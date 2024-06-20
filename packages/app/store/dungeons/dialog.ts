@@ -19,9 +19,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   // to access the dialog when the player has inputted a value
   let dialogTarget: DialogTarget;
   let queuedMessages: DialogMessage[];
-  // We need a map of onComplete hooks based on the dialog target id
+  // We need a map of a list of onComplete hooks based on the dialog target id
   // to allow for recursive onComplete hook calls and cleaning them up later
-  const queuedOnCompleteMap = new Map<string, OnComplete>();
+  const dialogOnCompleteListMap = new Map<string, OnComplete[]>();
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
@@ -43,7 +43,11 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    if (onComplete) queuedOnCompleteMap.set(dialogTarget.id, onComplete);
+    if (onComplete) {
+      const onCompleteList = dialogOnCompleteListMap.get(dialogTarget.id);
+      if (onCompleteList) onCompleteList.push(onComplete);
+      else dialogOnCompleteListMap.set(dialogTarget.id, [onComplete]);
+    }
     await showMessage(scene, dialogTarget);
   };
   // By default, this will show the message of what's last been set
@@ -56,10 +60,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
 
     const message = queuedMessages.shift();
     if (!message) {
-      const queuedOnComplete = queuedOnCompleteMap.get(target.id);
+      const queuedOnComplete = dialogOnCompleteListMap.get(target.id)?.shift();
       if (!queuedOnComplete) return;
       await queuedOnComplete();
-      queuedOnCompleteMap.delete(target.id);
       return;
     }
 
