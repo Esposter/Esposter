@@ -4,7 +4,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { calculateExperienceToLevelUp } from "@/services/dungeons/monster/calculateExperienceToLevelUp";
+import { calculateTotalExperienceToLevel } from "@/services/dungeons/monster/calculateTotalExperienceToLevel";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -21,9 +21,7 @@ const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
-const experienceBarPercentage = computed(
-  () => (activeMonster.value.status.exp / calculateExperienceToLevelUp(activeMonster.value.status.level)) * 100,
-);
+const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
