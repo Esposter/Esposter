@@ -155,7 +155,7 @@
     "@types/webfontloader": "^1.6.38",
     "@types/ws": "^8.5.10",
     "@unocss/nuxt": "^0.61.0",
-    "@vite-pwa/nuxt": "^0.8.0",
+    "@vite-pwa/nuxt": "^0.8.1",
     "@vitest/coverage-v8": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^7.0.3",
