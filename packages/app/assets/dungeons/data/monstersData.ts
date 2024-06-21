@@ -11,11 +11,12 @@ const MonstersDataMap = {
       key: AssetKey.Aquavalor,
     },
     stats: {
+      level: 5,
       maxHp: 25,
       attack: 5,
       baseExp: 50,
     },
-    status: { level: 5, hp: 25, exp: 125 },
+    status: { hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Carnodusk]: {
@@ -23,11 +24,12 @@ const MonstersDataMap = {
       key: AssetKey.Carnodusk,
     },
     stats: {
+      level: 5,
       maxHp: 25,
       attack: 5,
       baseExp: 52,
     },
-    status: { level: 5, hp: 25, exp: 125 },
+    status: { hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Frostsaber]: {
@@ -35,11 +37,12 @@ const MonstersDataMap = {
       key: AssetKey.Frostsaber,
     },
     stats: {
+      level: 5,
       maxHp: 25,
       attack: 5,
       baseExp: 53,
     },
-    status: { level: 5, hp: 25, exp: 125 },
+    status: { hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Ignivolt]: {
@@ -47,11 +50,12 @@ const MonstersDataMap = {
       key: AssetKey.Ignivolt,
     },
     stats: {
+      level: 5,
       maxHp: 25,
       attack: 5,
       baseExp: 51,
     },
-    status: { level: 5, hp: 25, exp: 125 },
+    status: { hp: 25, exp: 125 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Iguanignite]: {
@@ -59,11 +63,12 @@ const MonstersDataMap = {
       key: AssetKey.Iguanignite,
     },
     stats: {
+      level: 5,
       maxHp: 25,
       attack: 5,
       baseExp: 50,
     },
-    status: { level: 5, hp: 25, exp: 125 },
+    status: { hp: 25, exp: 125 },
     attackIds: [AttackId.Slash],
   },
 } as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
