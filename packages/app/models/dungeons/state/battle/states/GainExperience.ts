@@ -15,7 +15,7 @@ export const GainExperience: State<StateName> = {
     const { activeMonster } = storeToRefs(enemyStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const experienceGain = calculateExperienceGain(activeMonster.value.stats.baseExp, activeMonster.value.status.level);
+    const experienceGain = calculateExperienceGain(activeMonster.value.stats.baseExp, activeMonster.value.stats.level);
 
     await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
       for (const monster of player.value.monsters) monster.status.exp += experienceGain;

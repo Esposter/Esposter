@@ -64,7 +64,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
       :configuration="{
         x: 26,
         y: 116,
-        text: `LV. ${monster.status.level}`,
+        text: `LV. ${monster.stats.level}`,
         style: {
           color: 'white',
           fontSize: 22,

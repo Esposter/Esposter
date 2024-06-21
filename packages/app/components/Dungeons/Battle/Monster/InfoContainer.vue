@@ -47,7 +47,7 @@ onUnmounted(() => {
       :configuration="{
         x: levelX,
         y: 23,
-        text: `L${activeMonster.status.level}`,
+        text: `L${activeMonster.stats.level}`,
         style: {
           color: '#ed474b',
           fontSize: 28,
