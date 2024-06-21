@@ -8,7 +8,6 @@ describe("Watch Tracker", () => {
   let watchStopHandlers: WatchStopHandle[] = [];
 
   beforeEach(() => {
-    vi.resetAllMocks();
     vi.useFakeTimers();
     source.value = "";
     watchStopHandlers = watchTracker(source, callback);
@@ -16,6 +15,7 @@ describe("Watch Tracker", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
     for (const watchStopHandler of watchStopHandlers) watchStopHandler();
   });
 
