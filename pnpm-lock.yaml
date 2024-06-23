@@ -277,8 +277,8 @@ importers:
         specifier: ^0.165.0
         version: 0.165.0
       three-globe:
-        specifier: ^2.31.0
-        version: 2.31.0(three@0.165.0)
+        specifier: ^2.31.1
+        version: 2.31.1(three@0.165.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -8765,11 +8765,11 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-fatline@0.6.2:
-    resolution: {integrity: sha512-4PnwvGRk0NVKYoo1wGxEwbl9w6ipx//brPvRR0JuP0rap08/SHZeXYSmsRVmf6LW6GcQN3P+W6hoqD5EUvTw5A==}
+  three-fatline@0.7.0:
+    resolution: {integrity: sha512-IG3mA1gNO1ccT/O8ou9rBnYJQynCreCZn12IfuyFoWNN9+0DrrSENlXk46I7TQfNBKCgwsHpzucJ2qyPC3I/dQ==}
     engines: {node: '>=12'}
     peerDependencies:
-      three: '>=0.84.0'
+      three: '>=0.154.0'
 
   three-geojson-geometry@1.3.2:
     resolution: {integrity: sha512-eJflV+2KLDrQNHAbEhvXadF355LYat3izE2sD3Qt1L6Sw41LZ7Nwc/FV9T/z1edeZVQxydeYpmWBsYsFzsPEHA==}
@@ -8777,8 +8777,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.31.0:
-    resolution: {integrity: sha512-p2pCPaqAoBdjZxS0e+oLbv5d4R5ud6m8wkQENaENToyPX4S5NVnMRXu8zyMP4jnhYbtDqnefeDlKo9wqe4jUug==}
+  three-globe@2.31.1:
+    resolution: {integrity: sha512-xsQGPsURxvPpHziq99cX++RmzDFFi3mITJyWNrGiY6cuH8BJkSb1C3xBYoqH5zmGSEIa16uPHN8KrYCiMUg8Wg==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.125'
@@ -20084,7 +20084,7 @@ snapshots:
       earcut: 2.2.4
       three: 0.165.0
 
-  three-fatline@0.6.2(three@0.165.0):
+  three-fatline@0.7.0(three@0.165.0):
     dependencies:
       three: 0.165.0
 
@@ -20094,7 +20094,7 @@ snapshots:
       earcut: 2.2.4
       three: 0.165.0
 
-  three-globe@2.31.0(three@0.165.0):
+  three-globe@2.31.1(three@0.165.0):
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       accessor-fn: 1.5.0
@@ -20112,7 +20112,7 @@ snapshots:
       kapsule: 1.14.5
       three: 0.165.0
       three-conic-polygon-geometry: 1.6.3(three@0.165.0)
-      three-fatline: 0.6.2(three@0.165.0)
+      three-fatline: 0.7.0(three@0.165.0)
       three-geojson-geometry: 1.3.2(three@0.165.0)
       tinycolor2: 1.6.0
       yaot: 1.1.3
