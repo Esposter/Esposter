@@ -6,6 +6,7 @@ import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -17,6 +18,8 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const battlePlayerStore = useBattlePlayerStore();
   const { optionGrid, attackOptionGrid } = storeToRefs(battlePlayerStore);
   const activePanel = ref(ActivePanel.Info);
+  const experienceBarStore = useExperienceBarStore();
+  const { isRunningLevelUpAnimation } = storeToRefs(experienceBarStore);
 
   const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
     if (await handleShowMessageInput(scene, input)) return;
@@ -27,7 +30,9 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const onPlayerSpecialInput = async (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (activePanel.value === ActivePanel.Option) await onChoosePlayerOption();
+        if (isRunningLevelUpAnimation) {
+          // @TODO
+        } else if (activePanel.value === ActivePanel.Option) await onChoosePlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
           const battlePlayerStore = useBattlePlayerStore();
           const { attackOptionGrid } = storeToRefs(battlePlayerStore);
