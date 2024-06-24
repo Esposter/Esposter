@@ -19,7 +19,7 @@ export class Player {
   monsters: Monster[] = [
     (() => {
       const monster = new Monster(MonsterKey.Iguanignite);
-      if (IS_DEVELOPMENT) monster.stats.attack = 25;
+      if (IS_DEVELOPMENT) monster.stats.attack = 100;
       return monster;
     })(),
   ];

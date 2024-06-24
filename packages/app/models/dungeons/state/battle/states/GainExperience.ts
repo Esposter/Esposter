@@ -26,7 +26,7 @@ export const GainExperience: State<StateName> = {
         await battleStateMachine.setState(StateName.Finished);
       };
 
-      if (experienceToNextLevel.value - experienceGain <= 0) {
+      if (experienceGain - experienceToNextLevel.value >= 0) {
         // We will implement and thus assume the fact that the level up event
         // will be triggered by the experience bar once it reaches 100%
         phaserEventEmitter.once("levelUp", async (monster, baseOnComplete) => {
@@ -58,12 +58,14 @@ const gainExperienceForNonActiveMonsters = async (
   const leveledUpNonActiveMonsters: Monster[] = [];
 
   for (const nonActiveMonster of player.value.monsters.filter(({ id }) => id !== activeMonster.value.id)) {
-    let isLeveledUp = false;
+    let levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
     nonActiveMonster.status.exp += experienceGain;
+    const isLeveledUp = nonActiveMonster.status.exp - levelExperience >= 0;
 
-    while (nonActiveMonster.status.exp - calculateLevelExperience(nonActiveMonster.stats.level) <= 0) {
+    while (nonActiveMonster.status.exp - levelExperience >= 0) {
       levelUp(nonActiveMonster);
-      if (!isLeveledUp) isLeveledUp = true;
+      nonActiveMonster.status.exp -= levelExperience;
+      levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
     }
 
     if (isLeveledUp) leveledUpNonActiveMonsters.push(nonActiveMonster);
