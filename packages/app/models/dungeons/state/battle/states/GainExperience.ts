@@ -27,8 +27,8 @@ export const GainExperience: State<StateName> = {
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
       // will be triggered by the experience bar once it reaches 100%
-      phaserEventEmitter.once("levelUp", async (monster, baseOnComplete) => {
-        await showMessages(scene, [`${monster} leveled up to ${monster.stats.level}!`], async () => {
+      phaserEventEmitter.once("levelUp", async ({ key, stats }, baseOnComplete) => {
+        await showMessages(scene, [`${key} leveled up to ${stats.level}!`], async () => {
           baseOnComplete();
           await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
             await gainExperienceForNonActiveMonsters(scene, experienceGain, onComplete);
@@ -75,7 +75,7 @@ const gainExperienceForNonActiveMonsters = async (
   if (leveledUpNonActiveMonsters.length > 0)
     await showMessages(
       scene,
-      leveledUpNonActiveMonsters.map((m) => `${m} leveled up to ${m.stats.level}!`),
+      leveledUpNonActiveMonsters.map(({ key, stats }) => `${key} leveled up to ${stats.level}!`),
       onComplete,
     );
   else await onComplete();
