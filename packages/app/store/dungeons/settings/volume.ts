@@ -3,7 +3,7 @@ import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption"
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
 import type Slider from "phaser3-rex-plugins/plugins/slider";
 
@@ -15,9 +15,8 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();
-  const setVolume = async (volumePercentage: number, isUpdateSlider = true) => {
-    if (!(volumePercentage >= 0 && volumePercentage <= 100))
-      throw new InvalidOperationError(Operation.Update, "Volume", `percentage: ${volumePercentage}`);
+  const setVolume = async (baseVolumePercentage: number, isUpdateSlider = true) => {
+    const volumePercentage = clamp(baseVolumePercentage, 0, 100);
     await setSettings(SettingsOption.VolumePercentage, volumePercentage);
 
     if (!(volumeSlider.value && isUpdateSlider)) return;
