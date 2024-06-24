@@ -33,6 +33,9 @@ export const GainExperience: State<StateName> = {
         { key, stats },
         onComplete,
       ) => {
+        const levelExperience = calculateLevelExperience(activeMonster.value.stats.level);
+        levelUp(activeMonster.value);
+        activeMonster.value.status.exp -= levelExperience;
         await showMessages(scene, [`${key} leveled up to ${stats.level}!`], onComplete);
         if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
       };
