@@ -11,7 +11,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
-import type EventEmitter from "eventemitter3";
+import type { EventEmitter } from "eventemitter3";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
