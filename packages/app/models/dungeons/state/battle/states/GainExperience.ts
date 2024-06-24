@@ -6,10 +6,12 @@ import { calculateExperienceGain } from "@/services/dungeons/monster/calculateEx
 import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
+import type EventEmitter from "eventemitter3";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
@@ -27,12 +29,18 @@ export const GainExperience: State<StateName> = {
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
       // will be triggered by the experience bar once it reaches 100%
-      phaserEventEmitter.once("levelUp", async ({ key, stats }, baseOnComplete) => {
-        await showMessages(scene, [`${key} leveled up to ${stats.level}!`], async () => {
-          baseOnComplete();
-          await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
-            await gainExperienceForNonActiveMonsters(scene, experienceGain, onComplete);
-          });
+      const levelUpListener: EventEmitter.EventListener<PhaserEvents, "levelUp"> = async (
+        { key, stats },
+        onComplete,
+      ) => {
+        await showMessages(scene, [`${key} leveled up to ${stats.level}!`], onComplete);
+        if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
+      };
+      phaserEventEmitter.on("levelUp", levelUpListener);
+      phaserEventEmitter.once("levelUpComplete", async () => {
+        phaserEventEmitter.off("levelUp", levelUpListener);
+        await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
+          await gainExperienceForNonActiveMonsters(scene, experienceGain, onComplete);
         });
       });
       activeMonster.value.status.exp += experienceGain;
