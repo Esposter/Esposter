@@ -3,6 +3,7 @@ import Container from "@/lib/phaser/components/Container.vue";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { BarType } from "@/models/dungeons/UI/bar/BarType";
 import type { Position } from "grid-engine";
+import type { Tweens } from "phaser";
 
 interface BarContainerProps {
   type: BarType;
@@ -13,7 +14,11 @@ interface BarContainerProps {
 }
 
 const { type, position, width = 372, scaleY = 0.7, barPercentage } = defineProps<BarContainerProps>();
-const emit = defineEmits<{ "update:display-width": [value: number] }>();
+const emit = defineEmits<{
+  "start:display-width": [tween: Tweens.Tween];
+  "update:display-width": [value: number];
+  "complete:display-width": [];
+}>();
 // Set origin to the middle-left of the health caps to enable
 // grabbing the full width of the game object
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
@@ -28,7 +33,9 @@ const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePo
       :width
       :scale-y="scaleY"
       :bar-percentage="barPercentage"
-      @update:display-width="(value) => emit('update:display-width', value)"
+      @start:display-width="(...args) => emit('start:display-width', ...args)"
+      @update:display-width="(...args) => emit('update:display-width', ...args)"
+      @complete:display-width="emit('complete:display-width')"
     />
   </Container>
 </template>

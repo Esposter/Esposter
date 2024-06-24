@@ -8,6 +8,7 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import type { Tweens } from "phaser";
 import { Math } from "phaser";
 
 interface BarProps {
@@ -19,7 +20,11 @@ interface BarProps {
 }
 
 const { type, imagePosition, width, scaleY, barPercentage } = defineProps<BarProps>();
-const emit = defineEmits<{ "active:display-width": []; "update:display-width": [value: number] }>();
+const emit = defineEmits<{
+  "start:display-width": [tween: Tweens.Tween];
+  "update:display-width": [value: number];
+  "complete:display-width": [];
+}>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
 const barTextureMap = computed<Record<BarOrigin, ImageKey>>(() =>
@@ -56,12 +61,15 @@ watch(barWidth, (newBarWidth) => {
     duration: dayjs.duration(1, "second").asMilliseconds(),
     displayWidth: newBarWidth,
     ease: Math.Easing.Sine.Out,
-    onActive: () => {
-      emit("active:display-width");
+    onStart: (tween) => {
+      emit("start:display-width", tween);
     },
     onUpdate: (_tween, _key, _target, displayWidth) => {
       syncDisplayWidths(displayWidth);
       emit("update:display-width", displayWidth);
+    },
+    onComplete: () => {
+      emit("complete:display-width");
     },
   });
 });
