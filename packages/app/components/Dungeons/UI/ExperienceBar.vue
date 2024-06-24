@@ -27,13 +27,13 @@ const barPercentage = computed(() => (isLevelUp.value ? 0 : baseBarPercentage));
     :bar-percentage="barPercentage"
     @start:display-width="(barTween) => (tween = barTween)"
     @update:display-width="
-      (value) => {
-        if (value >= width) {
-          isLevelUp = true;
-          emit('level-up', () => {
-            isLevelUp = false;
-          });
-        }
+      () => {
+        if (baseBarPercentage < 100) return;
+
+        isLevelUp = true;
+        emit('level-up', () => {
+          isLevelUp = false;
+        });
       }
     "
   />

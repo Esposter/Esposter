@@ -54,6 +54,7 @@ watch(barWidth, (newBarWidth) => {
   if (isSkipAnimations.value) {
     barDisplayWidth.value = newBarWidth;
     syncDisplayWidths(newBarWidth);
+    emit("update:display-width", newBarWidth);
     return;
   }
 

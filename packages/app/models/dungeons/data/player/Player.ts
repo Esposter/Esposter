@@ -9,13 +9,20 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
+import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import type { Direction, Position } from "grid-engine";
 import { z } from "zod";
 
 export class Player {
   position: Position;
   direction: Direction;
-  monsters: Monster[] = [new Monster(MonsterKey.Iguanignite)];
+  monsters: Monster[] = [
+    (() => {
+      const monster = new Monster(MonsterKey.Iguanignite);
+      if (IS_DEVELOPMENT) monster.stats.attack = 25;
+      return monster;
+    })(),
+  ];
   inventory: Item[] = [{ id: ItemId.Potion, quantity: 10 }].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
   respawnLocation = new RespawnLocation();
 

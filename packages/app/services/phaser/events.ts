@@ -17,7 +17,7 @@ export interface PhaserEvents extends SceneEvents {
   useItem: (item: Item, sceneKey: SceneKey) => Promise<void>;
   unuseItem: () => Promise<void>;
   playerTeleport: (position: Position, direction?: Direction) => void;
-  levelUp: (monster: Monster, onComplete: () => void, isSkipAnimations?: true) => Promise<void>;
+  levelUp: (monster: Monster, onComplete: () => void) => Promise<void>;
 }
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();
