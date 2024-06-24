@@ -16,7 +16,7 @@ const MonstersDataMap = {
       attack: 5,
       baseExp: 50,
     },
-    status: { hp: 25, exp: 125 },
+    status: { hp: 25, exp: 0 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Carnodusk]: {
@@ -29,7 +29,7 @@ const MonstersDataMap = {
       attack: 5,
       baseExp: 52,
     },
-    status: { hp: 25, exp: 125 },
+    status: { hp: 25, exp: 0 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Frostsaber]: {
@@ -42,7 +42,7 @@ const MonstersDataMap = {
       attack: 5,
       baseExp: 53,
     },
-    status: { hp: 25, exp: 125 },
+    status: { hp: 25, exp: 0 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Ignivolt]: {
@@ -55,7 +55,7 @@ const MonstersDataMap = {
       attack: 5,
       baseExp: 51,
     },
-    status: { hp: 25, exp: 125 },
+    status: { hp: 25, exp: 0 },
     attackIds: [AttackId["Ice Shard"]],
   },
   [MonsterKey.Iguanignite]: {
@@ -68,7 +68,7 @@ const MonstersDataMap = {
       attack: 5,
       baseExp: 50,
     },
-    status: { hp: 25, exp: 125 },
+    status: { hp: 25, exp: 0 },
     attackIds: [AttackId.Slash],
   },
 } as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
