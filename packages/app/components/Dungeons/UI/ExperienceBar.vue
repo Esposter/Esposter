@@ -29,9 +29,9 @@ const barPercentage = computed(() => (isLevelUp.value ? 0 : baseBarPercentage));
     @update:display-width="
       (value) => {
         if (value >= width) {
+          isRunningLevelUpAnimation = false;
           isLevelUp = true;
           emit('level-up', () => {
-            isRunningLevelUpAnimation = false;
             isLevelUp = false;
           });
         }
