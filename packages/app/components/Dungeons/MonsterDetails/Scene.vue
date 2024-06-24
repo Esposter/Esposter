@@ -5,7 +5,6 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
@@ -61,12 +60,7 @@ const { experienceToNextLevel, barPercentage } = useExperience(monster);
         },
       }"
     />
-    <DungeonsUIBarContainer
-      :type="BarType.Experience"
-      :position="{ x: 70, y: 200 }"
-      :bar-percentage="barPercentage"
-      :scale-y="0.4"
-    />
+    <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage="barPercentage" />
     <DungeonsMonsterDetailsAttackList />
   </Scene>
 </template>

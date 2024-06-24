@@ -13,6 +13,7 @@ interface BarContainerProps {
 }
 
 const { type, position, width = 372, scaleY = 0.7, barPercentage } = defineProps<BarContainerProps>();
+const emit = defineEmits<{ "update:display-width": [value: number] }>();
 // Set origin to the middle-left of the health caps to enable
 // grabbing the full width of the game object
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
@@ -27,6 +28,7 @@ const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePo
       :width
       :scale-y="scaleY"
       :bar-percentage="barPercentage"
+      @update:display-width="(value) => emit('update:display-width', value)"
     />
   </Container>
 </template>

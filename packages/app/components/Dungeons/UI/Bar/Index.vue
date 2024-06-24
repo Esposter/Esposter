@@ -19,6 +19,7 @@ interface BarProps {
 }
 
 const { type, imagePosition, width, scaleY, barPercentage } = defineProps<BarProps>();
+const emit = defineEmits<{ "update:display-width": [value: number] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
 const barTextureMap = computed<Record<BarOrigin, ImageKey>>(() =>
@@ -55,8 +56,9 @@ watch(barWidth, (newBarWidth) => {
     duration: dayjs.duration(1, "second").asMilliseconds(),
     displayWidth: newBarWidth,
     ease: Math.Easing.Sine.Out,
-    onUpdate: (_, __, ___, current) => {
-      syncDisplayWidths(current);
+    onUpdate: (_tween, _key, _target, displayWidth) => {
+      syncDisplayWidths(displayWidth);
+      emit("update:display-width", displayWidth);
     },
   });
 });

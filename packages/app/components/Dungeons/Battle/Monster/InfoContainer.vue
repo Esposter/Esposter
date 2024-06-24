@@ -4,8 +4,11 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { levelUp } from "@/services/dungeons/monster/levelUp";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { useSettingsStore } from "@/store/dungeons/settings";
 
 interface InfoContainerProps {
   isEnemy: boolean;
@@ -13,6 +16,8 @@ interface InfoContainerProps {
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
+const settingsStore = useSettingsStore();
+const { isSkipAnimations } = storeToRefs(settingsStore);
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
@@ -20,7 +25,7 @@ const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
-const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
+const { experienceToNextLevel, barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
@@ -93,11 +98,16 @@ onUnmounted(() => {
           },
         }"
       />
-      <DungeonsUIBarContainer
-        :type="BarType.Experience"
+      <DungeonsUIExperienceBar
         :position="{ x: 34, y: 54 }"
         :bar-percentage="experienceBarPercentage"
-        :scale-y="0.4"
+        @level-up="
+          (onComplete) => {
+            if (isSkipAnimations) while (experienceToNextLevel <= 0) levelUp(activeMonster);
+            else levelUp(activeMonster);
+            phaserEventEmitter.emit('levelUp', activeMonster, onComplete);
+          }
+        "
       />
     </template>
   </Container>
