@@ -57,7 +57,6 @@ const tween = ref<TweenBuilderConfiguration>();
 
 watch([barWidth, () => isSkipAnimations], ([newBarWidth, newIsSkipAnimations]) => {
   if (newIsSkipAnimations || isSettingsSkipAnimations.value) {
-    if (tween.value) tween.value = undefined;
     barDisplayWidth.value = newBarWidth;
     updateDisplayWidth(newBarWidth);
     return;
@@ -81,7 +80,7 @@ watch([barWidth, () => isSkipAnimations], ([newBarWidth, newIsSkipAnimations]) =
 </script>
 
 <template>
-  <!-- We use a placeholder component to hold the tween for the entire health bar -->
+  <!-- We use a placeholder component to hold the tween for the entire bar -->
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
   <DungeonsUIBarLeftCap
     v-model:display-width="leftCapDisplayWidth"
