@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import type { Position } from "grid-engine";
 
 interface ExperienceBarProps {
@@ -12,27 +13,33 @@ interface ExperienceBarProps {
 
 const { position, width = 372, scaleY = 0.4, barPercentage: baseBarPercentage } = defineProps<ExperienceBarProps>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
+const settingsStore = useSettingsStore();
+const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
 const experienceBarStore = useExperienceBarStore();
 const { isAnimating, isSkipAnimations } = storeToRefs(experienceBarStore);
 const isAnimatingLevelUp = ref(false);
-const barPercentage = computed(() => (isAnimatingLevelUp.value && !isSkipAnimations.value ? 0 : baseBarPercentage));
+const barPercentage = computed(() =>
+  isAnimatingLevelUp.value && !(isSkipAnimations.value || isSettingsSkipAnimations.value) ? 0 : baseBarPercentage,
+);
 </script>
 
 <template>
+  <!-- When we are animating the Experience Bar and we want to skip the animation via player input,
+   we want to make sure that the triggered change doesn't affect...
+   There are also 2 situations we need to consider when skipping the animation via player input
+   1. If we are leveling up, we want to reset the trigger after level up animation has finished
+   2. If we are NOT leveling up, we want to reset the trigger after the tween animation has finished -->
   <DungeonsUIBarContainer
     :type="BarType.Experience"
     :position
     :width
     :scale-y="scaleY"
     :bar-percentage="barPercentage"
-    :is-skip-animations="isSkipAnimations"
+    :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp"
     @start:display-width="isAnimating = true"
     @update:display-width="
       (value) => {
-        if (isAnimatingLevelUp || value < width) {
-          isSkipAnimations = false;
-          return;
-        }
+        if (isAnimatingLevelUp || value < width) return;
 
         isAnimatingLevelUp = true;
         emit('level-up', () => {
@@ -40,6 +47,12 @@ const barPercentage = computed(() => (isAnimatingLevelUp.value && !isSkipAnimati
         });
       }
     "
-    @complete:display-width="isAnimating = false"
+    @complete:display-width="
+      () => {
+        isAnimating = false;
+        if (isAnimatingLevelUp) return;
+        isSkipAnimations = false;
+      }
+    "
   />
 </template>

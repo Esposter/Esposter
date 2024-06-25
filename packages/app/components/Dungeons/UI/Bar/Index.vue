@@ -55,10 +55,24 @@ const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0
 const rightCapX = computed(() => middleX.value + (middleDisplayWidth.value ?? 0));
 const tween = ref<TweenBuilderConfiguration>();
 
-watch([barWidth, () => isSkipAnimations], ([newBarWidth, newIsSkipAnimations]) => {
-  if (newIsSkipAnimations || isSettingsSkipAnimations.value) {
+watch(
+  () => isSkipAnimations,
+  (newIsSkipAnimations) => {
+    if (!newIsSkipAnimations) return;
+
+    barDisplayWidth.value = barWidth.value;
+    updateDisplayWidth(barWidth.value);
+    emit("complete:display-width");
+  },
+);
+
+watch(barWidth, (newBarWidth) => {
+  if (isSkipAnimations) return;
+
+  if (isSettingsSkipAnimations.value) {
     barDisplayWidth.value = newBarWidth;
     updateDisplayWidth(newBarWidth);
+    emit("complete:display-width");
     return;
   }
 
@@ -70,6 +84,7 @@ watch([barWidth, () => isSkipAnimations], ([newBarWidth, newIsSkipAnimations]) =
       emit("start:display-width", tween);
     },
     onUpdate: (_tween, _key, _target, displayWidth) => {
+      if (isSkipAnimations) return;
       updateDisplayWidth(displayWidth);
     },
     onComplete: () => {
