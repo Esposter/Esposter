@@ -41,19 +41,20 @@ export const GainExperience: State<StateName> = {
         onComplete,
       ) => {
         const showLevelUpMessage = async () => {
-          await showMessages(scene, [`${key} leveled up to ${stats.level}!`], onComplete);
+          await showMessages(scene, [`${key} leveled up to ${stats.level}!`], () => {
+            onComplete();
+            if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
+          });
         };
 
         if (isSkipAnimations.value) {
           while (experienceToNextLevel.value > 0) levelUp(activeMonster.value);
           await showLevelUpMessage();
-          phaserEventEmitter.emit("levelUpComplete");
           return;
         }
 
         levelUp(activeMonster.value);
         await showLevelUpMessage();
-        if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
       };
       phaserEventEmitter.on("levelUp", levelUpListener);
       phaserEventEmitter.once("levelUpComplete", async () => {
