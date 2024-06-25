@@ -7,9 +7,9 @@ export const useTakeDamage = (isEnemy: boolean) => {
     const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
     const { activeMonster } = storeToRefs(store);
 
-    let newHp = activeMonster.value.currentHp - damage;
+    let newHp = activeMonster.value.status.hp - damage;
     if (newHp < 0) newHp = 0;
-    activeMonster.value.currentHp = newHp;
+    activeMonster.value.status.hp = newHp;
 
     useMonsterTakeDamageTween(isEnemy, onComplete);
   };

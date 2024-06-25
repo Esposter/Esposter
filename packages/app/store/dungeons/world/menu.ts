@@ -4,14 +4,14 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
-import { useGameStore } from "@/store/dungeons/game";
+import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMenuStore = defineStore("dungeons/world/menu", () => {
-  const gameStore = useGameStore();
-  const { saveData, fadeSwitchToScene } = gameStore;
+  const dungeonsStore = useDungeonsStore();
+  const { saveData, fadeSwitchToScene } = dungeonsStore;
   const worldSceneStore = useWorldSceneStore();
   const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
   const worldDialogStore = useWorldDialogStore();

@@ -5,7 +5,7 @@ import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import type { UpdateUserInput } from "@/server/trpc/routers/user";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
-import deepEqual from "deep-equal";
+import deepEqual from "fast-deep-equal";
 
 const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
@@ -44,9 +44,8 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
   <div class="text-subtitle-1">Your personal information</div>
   <v-form
     v-model="isValid"
-    @submit="
-      async ({ preventDefault }) => {
-        preventDefault();
+    @submit.prevent="
+      async () => {
         await updateAuthUser(editedProfileCardRows);
         editMode = false;
       }

@@ -1,3 +1,4 @@
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Item } from "@/models/tableEditor/Item";
 import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
@@ -12,20 +13,21 @@ type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
-export class TableEditorConfiguration implements TableEditorTypes {
+export class BaseTableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
-
-  constructor(init?: Partial<TableEditorConfiguration>) {
-    Object.assign(this, init);
-  }
 
   toJSON() {
     return JSON.stringify({ ...this });
   }
 }
 
-export const tableEditorConfigurationSchema = z.object({
-  [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
-  [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
-}) satisfies z.ZodType<Except<TableEditorConfiguration, "toJSON">>;
+export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
+export const TableEditorConfiguration = applyItemMetadataMixin(BaseTableEditorConfiguration);
+
+export const tableEditorConfigurationSchema = z
+  .object({
+    [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
+    [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
+  })
+  .merge(itemMetadataSchema) satisfies z.ZodType<Except<TableEditorConfiguration, "toJSON">>;

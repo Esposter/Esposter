@@ -1,10 +1,11 @@
 {
   "name": "@esposter/shared",
-  "version": "1.9.1",
+  "version": "1.13.0",
   "description": "Shareable typescript code",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -18,7 +19,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm run export:gen && rollup --config rollup.config.js",
+    "build": "pnpm export:gen && rollup --config rollup.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",

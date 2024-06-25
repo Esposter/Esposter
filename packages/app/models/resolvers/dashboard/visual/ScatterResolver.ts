@@ -1,0 +1,20 @@
+import { VisualType } from "@/models/dashboard/VisualType";
+import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import type { ApexOptions } from "apexcharts";
+import defu from "defu";
+
+export class ScatterResolver extends AVisualTypeResolver {
+  constructor() {
+    super(VisualType.Scatter);
+  }
+
+  handleConfiguration(apexOptions: ApexOptions) {
+    apexOptions.chart = defu<ApexChart, (ApexChart | undefined)[]>(
+      {
+        enabled: true,
+        type: "xy",
+      },
+      apexOptions.chart,
+    );
+  }
+}

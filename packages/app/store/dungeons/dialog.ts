@@ -1,11 +1,11 @@
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
-import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
+import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/services/phaser/constants";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -19,9 +19,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   // to access the dialog when the player has inputted a value
   let dialogTarget: DialogTarget;
   let queuedMessages: DialogMessage[];
-  // We need a map of onComplete hooks based on the dialog target id
+  // We need a map of a list of onComplete hooks based on the dialog target id
   // to allow for recursive onComplete hook calls and cleaning them up later
-  const queuedOnCompleteMap = new Map<string, OnComplete>();
+  const dialogOnCompleteListMap = new Map<string, OnComplete[]>();
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
@@ -43,7 +43,11 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    if (onComplete) queuedOnCompleteMap.set(dialogTarget.id, onComplete);
+    if (onComplete) {
+      const onCompleteList = dialogOnCompleteListMap.get(dialogTarget.id);
+      if (onCompleteList) onCompleteList.push(onComplete);
+      else dialogOnCompleteListMap.set(dialogTarget.id, [onComplete]);
+    }
     await showMessage(scene, dialogTarget);
   };
   // By default, this will show the message of what's last been set
@@ -56,10 +60,9 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
 
     const message = queuedMessages.shift();
     if (!message) {
-      const queuedOnComplete = queuedOnCompleteMap.get(target.id);
+      const queuedOnComplete = dialogOnCompleteListMap.get(target.id)?.shift();
       if (!queuedOnComplete) return;
       await queuedOnComplete();
-      queuedOnCompleteMap.delete(target.id);
       return;
     }
 
@@ -70,7 +73,8 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       const textDelay = useTextDelay();
       target.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
-      scene.time.delayedCall(textDelay.value, () => {
+      // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
+      scene.time.delayedCall(textDelay.value * 2, () => {
         showInputPromptCursor(unref(target.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
       });

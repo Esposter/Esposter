@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
+import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
-import { useGameStore } from "@/store/clicker/game";
 
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
 const clickerItemProperties = useClickerItemProperties();

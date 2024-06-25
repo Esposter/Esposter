@@ -2,7 +2,7 @@
 import { Sound } from "@/models/clicker/Sound";
 import { ItemType } from "@/models/clicker/data/ItemType";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
-import { useGameStore } from "@/store/clicker/game";
+import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface UpgradeListItemProps {
@@ -11,8 +11,8 @@ interface UpgradeListItemProps {
 }
 
 const { upgrade, isBought } = defineProps<UpgradeListItemProps>();
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useClickerSound(Sound.Buy);

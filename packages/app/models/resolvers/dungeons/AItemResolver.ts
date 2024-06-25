@@ -7,15 +7,13 @@ import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export abstract class AItemResolver {
-  // @TODO: Ideally if we had es decorators we would be able to look up the class
-  // if we knew the type, instead of storing the value then preValidating against it >:C
   type: ItemEffectType;
 
   constructor(type: ItemEffectType) {
     this.type = type;
   }
 
-  preValidate(item: Ref<Item>): boolean {
+  validate(item: Ref<Item>): boolean {
     if (item.value.effect.type !== this.type) return false;
 
     const infoPanelStore = useInfoPanelStore();
@@ -29,7 +27,7 @@ export abstract class AItemResolver {
     return true;
   }
 
-  validate(_item: Ref<Item>, _target: Ref<Monster>): boolean {
+  isActive(_item: Ref<Item>, _target: Ref<Monster>): boolean {
     return true;
   }
 

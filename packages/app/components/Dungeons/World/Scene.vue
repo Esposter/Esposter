@@ -6,14 +6,14 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
-import { getAllInputResolvers } from "@/services/dungeons/scene/world/getAllInputResolvers";
+import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
-const inputResolvers = getAllInputResolvers();
+const inputResolvers = getActiveInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
   playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);

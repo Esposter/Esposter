@@ -10,12 +10,12 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 interface RichTextEditorProps {
   height?: string;
   placeholder: string;
-  maxLength: number;
+  limit: number;
   extensions?: AnyExtension[];
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { height = "15rem", placeholder, maxLength, extensions } = defineProps<RichTextEditorProps>();
+const { height = "15rem", placeholder, limit, extensions } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
@@ -24,7 +24,7 @@ const editor = useEditor({
   extensions: [
     StarterKit,
     Placeholder.configure({ placeholder }),
-    CharacterCount.configure({ limit: maxLength }),
+    CharacterCount.configure({ limit }),
     Link,
     ...(extensions ?? []),
   ],
@@ -38,19 +38,24 @@ onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>
-  <StyledCard w-full>
-    <RichTextEditorMenuBar :editor="editor" />
-    <v-divider thickness="2" />
-    <EditorContent :editor="editor" />
-    <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
-      <template #prepend="editorProps">
-        <slot name="prepend-footer" :="editorProps" />
-      </template>
-      <template #append="editorProps">
-        <slot name="append-footer" :="editorProps" />
-      </template>
-    </RichTextEditorFooterBar>
-  </StyledCard>
+  <div flex flex-col w-full>
+    <StyledCard>
+      <RichTextEditorMenuBar :editor="editor" />
+      <v-divider thickness="2" />
+      <EditorContent :editor="editor" />
+      <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
+        <template #prepend="editorProps">
+          <slot name="prepend-footer" :="editorProps" />
+        </template>
+        <template #append="editorProps">
+          <slot name="append-footer" :="editorProps" />
+        </template>
+      </RichTextEditorFooterBar>
+    </StyledCard>
+    <div flex justify-end pt-2 pr-4 h-6.5>
+      <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">

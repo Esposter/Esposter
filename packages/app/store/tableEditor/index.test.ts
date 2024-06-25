@@ -1,5 +1,5 @@
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/tableEditor/constants";
+import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -30,7 +30,7 @@ describe("Table Editor Store", () => {
     expect(router.currentRoute.value.query).toStrictEqual({});
 
     await editItem(newItem.id);
-    // The edited item will be a structured clone of the original item class
+    // The edited item will be a structured clone object of the original item class
     // object !== class (not strictly equal)
     expect(editedItem.value).toEqual(newItem);
     expect(editedIndex.value).toStrictEqual(0);

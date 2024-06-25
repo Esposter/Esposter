@@ -2,8 +2,8 @@
 import { Sound } from "@/models/clicker/Sound";
 import { ItemType } from "@/models/clicker/data/ItemType";
 import type { Building } from "@/models/clicker/data/building/Building";
+import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
-import { useGameStore } from "@/store/clicker/game";
 import { marked } from "marked";
 
 interface BuildingListItemProps {
@@ -11,8 +11,8 @@ interface BuildingListItemProps {
 }
 
 const { building } = defineProps<BuildingListItemProps>();
-const gameStore = useGameStore();
-const { game } = storeToRefs(gameStore);
+const clickerStore = useClickerStore();
+const { game } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
 const { play } = useClickerSound(Sound.Buy);

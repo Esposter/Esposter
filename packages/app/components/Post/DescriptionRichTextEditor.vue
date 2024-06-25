@@ -17,7 +17,7 @@ const slots = defineSlots<{
   <RichTextEditor
     v-model="modelValue"
     :placeholder="placeholder ?? 'Text (optional)'"
-    :max-length="POST_DESCRIPTION_MAX_LENGTH"
+    :limit="POST_DESCRIPTION_MAX_LENGTH"
   >
     <template #prepend-footer="{ editor }">
       <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Choose an emoji" />

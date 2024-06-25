@@ -20,7 +20,7 @@ export const tableEditorRouter = router({
       if (!response.readableStreamBody) return new TableEditorConfiguration();
 
       const json = await streamToText(response.readableStreamBody);
-      return new TableEditorConfiguration(jsonDateParse(json));
+      return Object.assign(new TableEditorConfiguration(), jsonDateParse(json));
     } catch {
       // We need to catch the case where the user is reading for the very first time
       // and there is no table editor configuration saved yet

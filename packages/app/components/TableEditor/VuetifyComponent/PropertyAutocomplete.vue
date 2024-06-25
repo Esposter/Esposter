@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
-import { getComponent } from "@/services/tableEditor/vuetifyComponent/getComponent";
+import { getPropertySchema } from "@/services/tableEditor/vuetifyComponent/getPropertySchema";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { Vjsf } from "@koumoul/vjsf";
 import type { Constructor } from "type-fest";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
 const { editedItem } = storeToRefs(tableEditorStore);
-const propertyRendererMap = computed<Record<string, Component>>(() => {
+const propertySchemaMap = computed<Record<string, Component>>(() => {
   const component = editedItem.value?.component;
   if (!component) return {};
 
@@ -20,16 +21,16 @@ const propertyRendererMap = computed<Record<string, Component>>(() => {
 
   for (const [name, prop] of Object.entries(props).filter((propEntry) => propEntry[1].type))
     if (Array.isArray(prop.type) && prop.type.length > 0) {
-      const component = getComponent(prop.type[0]);
-      if (component) result[name] = markRaw(component);
+      const componentSchema = getPropertySchema(prop.type[0]);
+      if (componentSchema) result[name] = markRaw(componentSchema);
     } else {
-      const component = getComponent(prop.type as Constructor<unknown>);
-      if (component) result[name] = markRaw(component);
+      const componentSchema = getPropertySchema(prop.type as Constructor<unknown>);
+      if (componentSchema) result[name] = markRaw(componentSchema);
     }
 
   return result;
 });
-const properties = computed(() => Object.keys(propertyRendererMap.value));
+const properties = computed(() => Object.keys(propertySchemaMap.value));
 const selectedProperty = ref<string>();
 
 watch(
@@ -46,12 +47,7 @@ watch(
       <v-autocomplete v-model="selectedProperty" label="Property" :items="properties" />
     </v-col>
     <v-col v-if="selectedProperty">
-      <component
-        :is="propertyRendererMap[selectedProperty]"
-        v-model="editedItem.props[selectedProperty]"
-        label="Property Value"
-        hide-details
-      />
+      <Vjsf v-model="editedItem.props[selectedProperty]" :schema="propertySchemaMap[selectedProperty]" />
     </v-col>
   </template>
 </template>

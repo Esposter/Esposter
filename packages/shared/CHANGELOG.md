@@ -3,6 +3,65 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/Esposter/Esposter/compare/v1.12.0...v1.13.0) (2024-06-18)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+
+# [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.11.1](https://github.com/Esposter/Esposter/compare/v1.11.0...v1.11.1) (2024-06-04)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+# [1.11.0](https://github.com/Esposter/Esposter/compare/v1.10.0...v1.11.0) (2024-06-04)
+
+
+### Bug Fixes
+
+* Make pwsh run properly on windows ([94ef8cf](https://github.com/Esposter/Esposter/commit/94ef8cf7ec0edc924d04fc58df88818dd281b9ce))
+
+
+### Features
+
+* successfully used vue package ([5d1ac61](https://github.com/Esposter/Esposter/commit/5d1ac61970afe222f3841232e2225a88cf097b2b))
+
+
+
+
+
+
+# [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+
 ## [1.9.1](https://github.com/Esposter/Esposter/compare/v1.9.0...v1.9.1) (2024-05-21)
 
 

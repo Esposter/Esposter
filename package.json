@@ -5,6 +5,7 @@
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -19,30 +20,28 @@
     "typecheck": "lerna run typecheck",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm run lint:fix --no-private && pnpm run build --no-private && lerna publish --yes",
-    "refresh:lockfile": "pnpm pwsh scripts/refreshLockfile.ps1"
+    "release": "pnpm typecheck --no-private && pnpm lint:fix --no-private && pnpm build --no-private && lerna publish --yes",
+    "refresh:lockfile": "pnpm pwsh scripts/refreshLockfile.ps1",
+    "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "dependencies": {
     "data-urls": "^5.0.0",
+    "vue": "^3.4.30",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
-    "ctix": "^2.4.4",
-    "eslint": "^9.3.0",
-    "lerna": "^8.1.3",
+    "ctix": "^2.5.1",
+    "eslint": "^9.5.0",
+    "lerna": "^8.1.5",
     "rollup": "^4.18.0",
-    "typescript": "^5.5.0-beta"
-  },
-  "pnpm": {
-    "overrides": {
-      "typescript": "$typescript",
-      "@esposter/app>typescript": "^5.4.5"
-    }
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.22"
   },
   "engines": {
-    "node": "^22.2.0"
+    "node": "^22.3.0"
   },
-  "packageManager": "pnpm@9.1.1+sha512.14e915759c11f77eac07faba4d019c193ec8637229e62ec99eefb7cf3c3b75c64447882b7c485142451ee3a6b408059cdfb7b7fa0341b975f12d0f7629c71195"
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
 }

@@ -2,13 +2,13 @@ import type { Target } from "@/models/clicker/data/Target";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
 import { FPS } from "@/services/clicker/constants";
 import { dayjs } from "@/services/dayjs";
+import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
-import { useGameStore } from "@/store/clicker/game";
 import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingStatsTimer = () => {
-  const gameStore = useGameStore();
-  const { game } = storeToRefs(gameStore);
+  const clickerStore = useClickerStore();
+  const { game } = storeToRefs(clickerStore);
   const buildingStore = useBuildingStore();
   const { getBoughtBuildingPower } = buildingStore;
   const boughtBuildingPowers = computed<{ id: Target; power: number }[]>(() =>

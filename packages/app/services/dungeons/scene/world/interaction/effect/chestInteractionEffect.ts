@@ -2,13 +2,13 @@ import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/Chest
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
-import { getChestId } from "@/services/dungeons/chest/getChestId";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getPositionId } from "@/util/id/getPositionId";
 
 export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   const chestObject = useGetInteractiveObject(chestObjects);
@@ -21,8 +21,8 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   const inventorySceneStore = useInventorySceneStore();
   const { inventory } = storeToRefs(inventorySceneStore);
   const itemIdTiledObjectProperty = getTiledObjectProperty<ItemId>(chestObject.properties, ChestObjectProperty.itemId);
-  const chestId = getChestId(chestObject);
-  const chest = worldData.value.chestMap.get(chestId);
+  const positionId = getPositionId(chestObject);
+  const chest = worldData.value.chestMap.get(positionId);
   if (!chest || chest.isOpened) {
     await showMessages(scene, [{ text: "There is nothing left in the chest." }]);
     return true;

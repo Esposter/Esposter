@@ -6,6 +6,6 @@
       "@/*": ["*"]
     }
   },
-  "include": ["${configDir}/src/**/*.ts"],
+  "include": ["${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
   "exclude": ["${configDir}/node_modules"]
 }

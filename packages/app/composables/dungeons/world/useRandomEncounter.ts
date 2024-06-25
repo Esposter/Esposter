@@ -7,8 +7,8 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { useDungeonsStore } from "@/store/dungeons";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useGameStore } from "@/store/dungeons/game";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
@@ -16,8 +16,8 @@ import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean"
 import { pickWeightedRandomValue } from "@/util/math/random/pickWeightedRandomValues";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
-  const gameStore = useGameStore();
-  const { fadeSwitchToScene } = gameStore;
+  const dungeonsStore = useDungeonsStore();
+  const { fadeSwitchToScene } = dungeonsStore;
   const settingsStore = useSettingsStore();
   const { isSkipEncounters } = storeToRefs(settingsStore);
   if (isSkipEncounters.value) return;

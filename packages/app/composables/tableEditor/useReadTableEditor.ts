@@ -11,7 +11,10 @@ export const useReadTableEditor = async () => {
     () => {
       const tableEditorStoreJson = localStorage.getItem(TABLE_EDITOR_LOCAL_STORAGE_KEY);
       if (tableEditorStoreJson)
-        tableEditorConfiguration.value = new TableEditorConfiguration(jsonDateParse(tableEditorStoreJson));
+        tableEditorConfiguration.value = Object.assign(
+          new TableEditorConfiguration(),
+          jsonDateParse(tableEditorStoreJson),
+        );
       else tableEditorConfiguration.value = new TableEditorConfiguration();
     },
     async () => {

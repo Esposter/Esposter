@@ -17,7 +17,7 @@ export const dungeonsRouter = router({
       if (!response.readableStreamBody) return new Game();
 
       const json = await streamToText(response.readableStreamBody);
-      return new Game(jsonDateParse(json));
+      return Object.assign(new Game(), jsonDateParse(json));
     } catch {
       // We need to catch the case where the user is reading for the very first time
       // and there is no game saved yet

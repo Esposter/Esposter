@@ -48,7 +48,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
     this.pending--;
 
-    if (file.type === "json" && Object.prototype.hasOwnProperty.call(file.data, "tilesets")) {
+    if (file.type === "json" && Object.hasOwn(file.data, "tilesets")) {
       //  Inspect the data for the files to now load
       const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
       const config = this.config;
@@ -66,8 +66,6 @@ export class TiledJSONExternalFile extends MultiFile {
       loader.setPrefix(prefix);
 
       for (const [index, tileset] of tilesets.entries()) {
-        if (!tileset.source) continue;
-
         // Tileset is relative to the tilemap filename, but we will expose our tilesets
         // in nuxt's public folder, so we just need to get the relative path past that
         const publicString = "public";

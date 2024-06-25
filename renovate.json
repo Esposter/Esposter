@@ -11,9 +11,4 @@
       "automergeType": "branch"
     }
   ]
-  // @TODO: Remove this once upgrading nuxt no longer breaks phaser
-  // "lockFileMaintenance": {
-  //   "enabled": true,
-  //   "automerge": true
-  // }
 }

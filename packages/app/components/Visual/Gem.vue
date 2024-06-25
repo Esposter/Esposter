@@ -14,7 +14,7 @@ import {
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-const ready = ref(false);
+const isReady = ref(false);
 const id = "gem";
 const width = 200;
 const height = 200;
@@ -39,7 +39,7 @@ onMounted(() => {
     gem.material.emissiveIntensity = 0;
     gem.material.refractionRatio = 1;
     scene.add(gem);
-    ready.value = true;
+    isReady.value = true;
   });
 
   const ambientLight = new AmbientLight(0xffffff, 4);
@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Transition name="fade">
-    <canvas v-show="ready" :id />
-  </Transition>
+  <TransitionFade>
+    <canvas v-show="isReady" :id />
+  </TransitionFade>
 </template>

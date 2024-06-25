@@ -1,6 +1,6 @@
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Create Operation Data", () => {
   let operationData: ReturnType<typeof createOperationData<TodoListItem>>;
@@ -8,6 +8,10 @@ describe("Create Operation Data", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     operationData = createOperationData(ref<TodoListItem[]>([]));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   test("pushes", () => {

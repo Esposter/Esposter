@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { usePhaserListener } from "@/lib/phaser/composables/usePhaserListener";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
 import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
