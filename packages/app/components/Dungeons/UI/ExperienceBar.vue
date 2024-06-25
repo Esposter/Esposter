@@ -15,7 +15,7 @@ const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const experienceBarStore = useExperienceBarStore();
 const { isAnimating, isSkipAnimations } = storeToRefs(experienceBarStore);
 const isAnimatingLevelUp = ref(false);
-const barPercentage = computed(() => (isAnimatingLevelUp.value ? 0 : baseBarPercentage));
+const barPercentage = computed(() => (isAnimatingLevelUp.value && !isSkipAnimations.value ? 0 : baseBarPercentage));
 </script>
 
 <template>
@@ -29,12 +29,14 @@ const barPercentage = computed(() => (isAnimatingLevelUp.value ? 0 : baseBarPerc
     @start:display-width="isAnimating = true"
     @update:display-width="
       (value) => {
-        if (isAnimatingLevelUp || value < width) return;
+        if (isAnimatingLevelUp || value < width) {
+          isSkipAnimations = false;
+          return;
+        }
 
         isAnimatingLevelUp = true;
-        isAnimating = false;
         emit('level-up', () => {
-          isAnimatingLevelUp = false;
+          isAnimatingLevelUp = isSkipAnimations = false;
         });
       }
     "

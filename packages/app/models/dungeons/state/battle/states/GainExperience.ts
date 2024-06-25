@@ -8,12 +8,13 @@ import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import type { EventEmitter } from "eventemitter3";
-import { useExperienceBarStore } from "~/store/dungeons/UI/experienceBar";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
@@ -22,11 +23,16 @@ export const GainExperience: State<StateName> = {
     const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
+    const enemyStore = useEnemyStore();
+    const { activeMonster: enemyActiveMonster } = storeToRefs(enemyStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const experienceBarStore = useExperienceBarStore();
     const { isSkipAnimations } = storeToRefs(experienceBarStore);
-    const experienceGain = calculateExperienceGain(activeMonster.value.stats.baseExp, activeMonster.value.stats.level);
+    const experienceGain = calculateExperienceGain(
+      enemyActiveMonster.value.stats.baseExp,
+      enemyActiveMonster.value.stats.level,
+    );
     const { experienceToNextLevel } = useExperience(activeMonster);
     const onComplete = async () => {
       await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
@@ -50,10 +56,9 @@ export const GainExperience: State<StateName> = {
           });
         };
 
-        if (isSkipAnimations.value || isSettingsSkipAnimations.value) {
+        if (isSkipAnimations.value || isSettingsSkipAnimations.value)
           while (experienceToNextLevel.value <= 0) levelUp(activeMonster.value);
-          if (isSkipAnimations.value) isSkipAnimations.value = false;
-        } else levelUp(activeMonster.value);
+        else levelUp(activeMonster.value);
 
         await showLevelUpMessage();
       };
