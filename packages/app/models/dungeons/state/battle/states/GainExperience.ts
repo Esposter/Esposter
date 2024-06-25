@@ -51,7 +51,7 @@ export const GainExperience: State<StateName> = {
         };
 
         if (isSkipAnimations.value || isSettingsSkipAnimations.value) {
-          while (experienceToNextLevel.value > 0) levelUp(activeMonster.value);
+          while (experienceToNextLevel.value <= 0) levelUp(activeMonster.value);
           if (isSkipAnimations.value) isSkipAnimations.value = false;
         } else levelUp(activeMonster.value);
 
