@@ -11,18 +11,21 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { useSettingsStore } from "@/store/dungeons/settings";
 import type { EventEmitter } from "eventemitter3";
 import { useExperienceBarStore } from "~/store/dungeons/UI/experienceBar";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
   onEnter: async (scene) => {
+    const settingsStore = useSettingsStore();
+    const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const experienceBarStore = useExperienceBarStore();
-    const { isManualSkipAnimations, isSkipAnimations } = storeToRefs(experienceBarStore);
+    const { isSkipAnimations } = storeToRefs(experienceBarStore);
     const experienceGain = calculateExperienceGain(activeMonster.value.stats.baseExp, activeMonster.value.stats.level);
     const { experienceToNextLevel } = useExperience(activeMonster);
     const onComplete = async () => {
@@ -47,9 +50,9 @@ export const GainExperience: State<StateName> = {
           });
         };
 
-        if (isSkipAnimations.value) {
+        if (isSkipAnimations.value || isSettingsSkipAnimations.value) {
           while (experienceToNextLevel.value > 0) levelUp(activeMonster.value);
-          if (isManualSkipAnimations.value) isManualSkipAnimations.value = false;
+          if (isSkipAnimations.value) isSkipAnimations.value = false;
         } else levelUp(activeMonster.value);
 
         await showLevelUpMessage();
