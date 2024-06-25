@@ -13,7 +13,7 @@ interface ExperienceBarProps {
 const { position, width = 372, scaleY = 0.4, barPercentage: baseBarPercentage } = defineProps<ExperienceBarProps>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const experienceBarStore = useExperienceBarStore();
-const { tween } = storeToRefs(experienceBarStore);
+const { isAnimating, isSkipAnimations } = storeToRefs(experienceBarStore);
 const isLevelUp = ref(false);
 const barPercentage = computed(() => (isLevelUp.value ? 0 : baseBarPercentage));
 </script>
@@ -25,16 +25,19 @@ const barPercentage = computed(() => (isLevelUp.value ? 0 : baseBarPercentage));
     :width
     :scale-y="scaleY"
     :bar-percentage="barPercentage"
-    @start:display-width="(barTween) => (tween = barTween)"
+    :is-skip-animations="isSkipAnimations"
+    @start:display-width="isAnimating = true"
     @update:display-width="
       (value) => {
         if (value < width) return;
 
         isLevelUp = true;
+        isAnimating = false;
         emit('level-up', () => {
           isLevelUp = false;
         });
       }
     "
+    @complete:display-width="isAnimating = false"
   />
 </template>

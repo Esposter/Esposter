@@ -19,7 +19,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const { optionGrid, attackOptionGrid } = storeToRefs(battlePlayerStore);
   const activePanel = ref(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
-  const { tween } = storeToRefs(experienceBarStore);
+  const { isAnimating, isManualSkipAnimations } = storeToRefs(experienceBarStore);
 
   const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
     if (await handleShowMessageInput(scene, input)) return;
@@ -30,9 +30,9 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const onPlayerSpecialInput = async (playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (tween.value) {
-          tween.value.complete();
-          tween.value = undefined;
+        if (isAnimating.value) {
+          isManualSkipAnimations.value = true;
+          isAnimating.value = false;
         } else if (activePanel.value === ActivePanel.Option) await onChoosePlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
           const battlePlayerStore = useBattlePlayerStore();

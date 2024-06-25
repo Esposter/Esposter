@@ -17,16 +17,17 @@ interface BarProps {
   width: number;
   scaleY: number;
   barPercentage: number;
+  isSkipAnimations?: boolean;
 }
 
-const { type, imagePosition, width, scaleY, barPercentage } = defineProps<BarProps>();
+const { type, imagePosition, width, scaleY, barPercentage, isSkipAnimations } = defineProps<BarProps>();
 const emit = defineEmits<{
   "start:display-width": [tween: Tweens.Tween];
   "update:display-width": [value: number];
   "complete:display-width": [];
 }>();
 const settingsStore = useSettingsStore();
-const { isSkipAnimations } = storeToRefs(settingsStore);
+const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
 const barTextureMap = computed<Record<BarOrigin, ImageKey>>(() =>
   type === BarType.Experience
     ? {
@@ -54,8 +55,9 @@ const middleX = computed(() => imagePosition.x + (leftCapDisplayWidth.value ?? 0
 const rightCapX = computed(() => middleX.value + (middleDisplayWidth.value ?? 0));
 const tween = ref<TweenBuilderConfiguration>();
 
-watch(barWidth, (newBarWidth) => {
-  if (isSkipAnimations.value) {
+watch([barWidth, () => isSkipAnimations], ([newBarWidth, newIsSkipAnimations]) => {
+  if (newIsSkipAnimations || isSettingsSkipAnimations.value) {
+    if (tween.value) tween.value = undefined;
     barDisplayWidth.value = newBarWidth;
     updateDisplayWidth(newBarWidth);
     return;

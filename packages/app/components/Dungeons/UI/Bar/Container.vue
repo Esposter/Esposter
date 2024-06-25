@@ -12,6 +12,7 @@ interface BarContainerProps {
   width?: number;
   scaleY?: number;
   barPercentage: number;
+  isSkipAnimations?: boolean;
 }
 
 const {
@@ -20,6 +21,7 @@ const {
   width = 372,
   scaleY = 0.7,
   barPercentage: baseBarPercentage,
+  isSkipAnimations,
 } = defineProps<BarContainerProps>();
 const emit = defineEmits<{
   "start:display-width": [tween: Tweens.Tween];
@@ -41,6 +43,7 @@ const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePo
       :width
       :scale-y="scaleY"
       :bar-percentage="barPercentage"
+      :is-skip-animations="isSkipAnimations"
       @start:display-width="(...args) => emit('start:display-width', ...args)"
       @update:display-width="(...args) => emit('update:display-width', ...args)"
       @complete:display-width="emit('complete:display-width')"
