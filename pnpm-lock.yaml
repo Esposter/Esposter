@@ -326,8 +326,8 @@ importers:
         specifier: ^0.3.13
         version: 0.3.13(eslint@9.5.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))
       '@nuxt/fonts':
-        specifier: ^0.7.0
-        version: 0.7.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))
+        specifier: ^0.7.1
+        version: 0.7.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))
       '@nuxt/test-utils':
         specifier: ^3.13.1
         version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vitest@1.6.0(@types/node@20.14.8)(happy-dom@14.12.3)(sass@1.77.6)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -2362,6 +2362,11 @@ packages:
       nuxt: ^3.9.0
       vite: '*'
 
+  '@nuxt/devtools-kit@1.3.6':
+    resolution: {integrity: sha512-FM0s9CrTxwvaMcakWZc7oGqzSj4GPalcY3PmyZhollMyR2dqBB1n0ZfnTdLm8KUSgc7jdFR6DuG7PfQwAm06tQ==}
+    peerDependencies:
+      vite: '*'
+
   '@nuxt/devtools-wizard@1.0.8':
     resolution: {integrity: sha512-RxyOlM7Isk5npwXwDJ/rjm9ekX5sTNG0LS0VOBMdSx+D5nlRPMRr/r9yO+9WQDyzPLClLzHaXRHBWLPlRX3IMw==}
     hasBin: true
@@ -2395,8 +2400,8 @@ packages:
       vite-plugin-eslint2:
         optional: true
 
-  '@nuxt/fonts@0.7.0':
-    resolution: {integrity: sha512-nng9m7IbdjPkKbNY26xygsuIeld3WjejGBmB4xN3lZDo8kKtThqzLn+M0enYQZBNGQShLaIAoFa+ccFF50qZRg==}
+  '@nuxt/fonts@0.7.1':
+    resolution: {integrity: sha512-uB1vHiWhm96VI0+6QsmWzEDbZlhWGkaUqydZph5huRTW3Y7I9+VIPvsLa9PS0bgbK2hmADrvrMEK9b2zUUIGvQ==}
 
   '@nuxt/kit@3.11.1':
     resolution: {integrity: sha512-8VVlhaY4N+wipgHmSXP+gLM+esms9TEBz13I/J++PbOUJuf2cJlUUTyqMoRVL0xudVKK/8fJgSndRkyidy1m2w==}
@@ -2410,6 +2415,10 @@ packages:
     resolution: {integrity: sha512-PHONuNCMqi3FYp0abgkhF3iH1j6CznJLMLpa8qxDGH532ALDcR1ThxbxytTA3fPiYulG2KenK8jloDfNdXOfCA==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
+  '@nuxt/kit@3.12.2':
+    resolution: {integrity: sha512-5kOqEzfc3FsAncjK2je7vuq4/QsR5ypViTnop52mlFLf0Ku1NMCrWCSWYowAh4P0yqTACMAZYa+HdRZHscU84g==}
+    engines: {node: ^14.18.0 || >=16.10.0}
+
   '@nuxt/schema@3.11.1':
     resolution: {integrity: sha512-XyGlJsf3DtkouBCvBHlvjz+xvN4vza3W7pY3YBNMnktxlMQtfFiF3aB3A2NGLmBnJPqD3oY0j7lljraELb5hkg==}
     engines: {node: ^14.18.0 || >=16.10.0}
@@ -2420,6 +2429,10 @@ packages:
 
   '@nuxt/schema@3.12.1':
     resolution: {integrity: sha512-yPgZVczd0vKhG73E7N61+EZHZTjtCvh2LKVhvT7c69zLBnPPqJNK1oJfqsKUCOOHSm1o1rTG8Xaibp91q2I49w==}
+    engines: {node: ^14.18.0 || >=16.10.0}
+
+  '@nuxt/schema@3.12.2':
+    resolution: {integrity: sha512-IRBuOEPOIe1CANKnO2OUiqZ1Hp/0htPkLaigK7WT6ef/SdIFZUd68Tqqejqy2AFrbgU9G80k3U7eg2XUdaiQlQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
   '@nuxt/telemetry@2.5.3':
@@ -4320,6 +4333,14 @@ packages:
   c12@1.10.0:
     resolution: {integrity: sha512-0SsG7UDhoRWcuSvKWHaXmu5uNjDCDN3nkQLRL4Q42IlFy+ze58FcCoI3uPwINXinkz7ZinbhEgyzYFw9u9ZV8g==}
 
+  c12@1.11.1:
+    resolution: {integrity: sha512-KDU0TvSvVdaYcQKQ6iPHATGz/7p/KiVjPg4vQrB6Jg/wX9R0yl5RZxWm9IoZqaIHD2+6PZd81+KMGwRr/lRIUg==}
+    peerDependencies:
+      magicast: ^0.3.4
+    peerDependenciesMeta:
+      magicast:
+        optional: true
+
   cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
@@ -4570,6 +4591,9 @@ packages:
 
   compatx@0.1.3:
     resolution: {integrity: sha512-MWspQwvBk5xeLZMetIfjOozTAtmAIICz1mtol6NbBpCSllXOO+HvWMO87B18rcFtqjfrZ0tIFOH9gNG63ep+mw==}
+
+  compatx@0.1.8:
+    resolution: {integrity: sha512-jcbsEAR81Bt5s1qOFymBufmCbXCXbk0Ql+K5ouj6gCyx2yHlu6AgmGIi9HxfKixpUDO5bCFJUHQ5uM6ecbTebw==}
 
   complex.js@2.1.1:
     resolution: {integrity: sha512-8njCHOTtFFLtegk6zQo0kkVX1rngygb/KQI6z1qZxlFI3scluC+LVTCFbrkWjBv4vvLlbQ9t88IPMC6k95VTTg==}
@@ -5765,6 +5789,10 @@ packages:
     resolution: {integrity: sha512-4VG22mopWtIeHwogGSy1FViXVo0YT+m6BrqZfz0JJFwbSsePsCdOzdLIIli5BtMp7Xe8f/o2OmBpQX2NBOC24g==}
     hasBin: true
 
+  giget@1.2.3:
+    resolution: {integrity: sha512-8EHPljDvs7qKykr6uw8b+lqLiUc/vUg+KVTI0uND4s63TdsZM2Xus3mflvF0DDG9SiM4RlCkFGL+7aAjRmV7KA==}
+    hasBin: true
+
   git-config-path@2.0.0:
     resolution: {integrity: sha512-qc8h1KIQbJpp+241id3GuAtkdyJ+IK+LIVtkiFTRKRrmddDzs3SI9CvP1QYmWBFvm1I/PWRwj//of8bgAc0ltA==}
     engines: {node: '>=4'}
@@ -6722,10 +6750,6 @@ packages:
 
   lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
-
-  lru-cache@10.2.0:
-    resolution: {integrity: sha512-2bIM8x+VAf6JT4bKAljS1qUWgMsqZRPGJS6FSahIMPVvctcNhyVp7AJu7quxOW9jwkryBReKZY5tY5JYv2n/7Q==}
-    engines: {node: 14 || >=16.14}
 
   lru-cache@10.2.2:
     resolution: {integrity: sha512-9hp3Vp2/hFQUiIwKo8XCeFVnrg8Pk3TYNPIR7tJADKi5YfcF7vEaK7avFHTlSy3kOKYaJQaalfEo6YuXdceBOQ==}
@@ -7986,6 +8010,9 @@ packages:
 
   rc9@2.1.1:
     resolution: {integrity: sha512-lNeOl38Ws0eNxpO3+wD1I9rkHGQyj1NU1jlzv4go2CtEnEQEUfqnIvZG7W+bC/aXdJ27n5x/yUjb6RoT9tko+Q==}
+
+  rc9@2.1.2:
+    resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
 
   react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
@@ -12078,7 +12105,7 @@ snapshots:
   '@npmcli/git@5.0.4':
     dependencies:
       '@npmcli/promise-spawn': 7.0.1
-      lru-cache: 10.2.0
+      lru-cache: 10.2.2
       npm-pick-manifest: 9.0.0
       proc-log: 3.0.0
       promise-inflight: 1.0.1
@@ -12197,7 +12224,7 @@ snapshots:
   '@nuxt/devtools-kit@1.0.8(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))':
     dependencies:
       '@nuxt/kit': 3.12.1(rollup@4.18.0)
-      '@nuxt/schema': 3.11.2(rollup@4.18.0)
+      '@nuxt/schema': 3.12.1(rollup@4.18.0)
       execa: 7.2.0
       nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2)
       vite: 5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2)
@@ -12216,6 +12243,17 @@ snapshots:
       - rollup
       - supports-color
 
+  '@nuxt/devtools-kit@1.3.6(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))':
+    dependencies:
+      '@nuxt/kit': 3.12.2(rollup@4.18.0)
+      '@nuxt/schema': 3.12.2(rollup@4.18.0)
+      execa: 7.2.0
+      vite: 5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2)
+    transitivePeerDependencies:
+      - magicast
+      - rollup
+      - supports-color
+
   '@nuxt/devtools-wizard@1.0.8':
     dependencies:
       consola: 3.2.3
@@ -12224,7 +12262,7 @@ snapshots:
       global-directory: 4.0.1
       magicast: 0.3.3
       pathe: 1.1.2
-      pkg-types: 1.1.0
+      pkg-types: 1.1.1
       prompts: 2.4.2
       rc9: 2.1.1
       semver: 7.6.2
@@ -12333,18 +12371,18 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@nuxt/fonts@0.7.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))':
+  '@nuxt/fonts@0.7.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))':
     dependencies:
-      '@nuxt/devtools-kit': 1.3.1(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.8)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))
-      '@nuxt/kit': 3.11.2(rollup@4.18.0)
+      '@nuxt/devtools-kit': 1.3.6(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8)(sass@1.77.6)(terser@5.29.2))
+      '@nuxt/kit': 3.12.2(rollup@4.18.0)
       chalk: 5.3.0
       css-tree: 2.3.1
       defu: 6.1.4
-      esbuild: 0.20.2
+      esbuild: 0.21.4
       fontaine: 0.5.0(encoding@0.1.13)
       globby: 14.0.1
       h3: 1.12.0
-      jiti: 1.21.0
+      jiti: 1.21.6
       magic-regexp: 0.8.0
       magic-string: 0.30.10
       node-fetch-native: 1.6.4
@@ -12369,7 +12407,7 @@ snapshots:
       - encoding
       - idb-keyval
       - ioredis
-      - nuxt
+      - magicast
       - rollup
       - supports-color
       - uWebSockets.js
@@ -12384,7 +12422,7 @@ snapshots:
       globby: 14.0.1
       hash-sum: 2.0.0
       ignore: 5.3.1
-      jiti: 1.21.0
+      jiti: 1.21.6
       knitwork: 1.1.0
       mlly: 1.7.0
       pathe: 1.1.2
@@ -12408,7 +12446,7 @@ snapshots:
       globby: 14.0.1
       hash-sum: 2.0.0
       ignore: 5.3.1
-      jiti: 1.21.0
+      jiti: 1.21.6
       knitwork: 1.1.0
       mlly: 1.7.0
       pathe: 1.1.2
@@ -12446,6 +12484,33 @@ snapshots:
       unimport: 3.7.2(rollup@4.18.0)
       untyped: 1.4.2
     transitivePeerDependencies:
+      - rollup
+      - supports-color
+
+  '@nuxt/kit@3.12.2(rollup@4.18.0)':
+    dependencies:
+      '@nuxt/schema': 3.12.2(rollup@4.18.0)
+      c12: 1.11.1
+      consola: 3.2.3
+      defu: 6.1.4
+      destr: 2.0.3
+      globby: 14.0.1
+      hash-sum: 2.0.0
+      ignore: 5.3.1
+      jiti: 1.21.6
+      klona: 2.0.6
+      knitwork: 1.1.0
+      mlly: 1.7.1
+      pathe: 1.1.2
+      pkg-types: 1.1.1
+      scule: 1.3.0
+      semver: 7.6.2
+      ufo: 1.5.3
+      unctx: 2.3.1
+      unimport: 3.7.2(rollup@4.18.0)
+      untyped: 1.4.2
+    transitivePeerDependencies:
+      - magicast
       - rollup
       - supports-color
 
@@ -12501,6 +12566,24 @@ snapshots:
       - rollup
       - supports-color
 
+  '@nuxt/schema@3.12.2(rollup@4.18.0)':
+    dependencies:
+      compatx: 0.1.8
+      consola: 3.2.3
+      defu: 6.1.4
+      hookable: 5.5.3
+      pathe: 1.1.2
+      pkg-types: 1.1.1
+      scule: 1.3.0
+      std-env: 3.7.0
+      ufo: 1.5.3
+      uncrypto: 0.1.3
+      unimport: 3.7.2(rollup@4.18.0)
+      untyped: 1.4.2
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+
   '@nuxt/telemetry@2.5.3(rollup@4.18.0)':
     dependencies:
       '@nuxt/kit': 3.12.1(rollup@4.18.0)
@@ -12512,7 +12595,7 @@ snapshots:
       dotenv: 16.4.5
       git-url-parse: 13.1.1
       is-docker: 3.0.0
-      jiti: 1.21.0
+      jiti: 1.21.6
       mri: 1.2.0
       nanoid: 4.0.2
       ofetch: 1.3.4
@@ -14876,13 +14959,28 @@ snapshots:
       defu: 6.1.4
       dotenv: 16.4.5
       giget: 1.2.1
-      jiti: 1.21.0
+      jiti: 1.21.6
       mlly: 1.7.0
       ohash: 1.1.3
       pathe: 1.1.2
       perfect-debounce: 1.0.0
       pkg-types: 1.1.0
       rc9: 2.1.1
+
+  c12@1.11.1:
+    dependencies:
+      chokidar: 3.6.0
+      confbox: 0.1.7
+      defu: 6.1.4
+      dotenv: 16.4.5
+      giget: 1.2.3
+      jiti: 1.21.6
+      mlly: 1.7.1
+      ohash: 1.1.3
+      pathe: 1.1.2
+      perfect-debounce: 1.0.0
+      pkg-types: 1.1.1
+      rc9: 2.1.2
 
   cac@6.7.14: {}
 
@@ -14891,7 +14989,7 @@ snapshots:
       '@npmcli/fs': 3.1.0
       fs-minipass: 3.0.3
       glob: 10.3.15
-      lru-cache: 10.2.0
+      lru-cache: 10.2.2
       minipass: 7.0.4
       minipass-collect: 2.0.1
       minipass-flush: 1.0.5
@@ -15177,6 +15275,8 @@ snapshots:
       dot-prop: 5.3.0
 
   compatx@0.1.3: {}
+
+  compatx@0.1.8: {}
 
   complex.js@2.1.1: {}
 
@@ -16314,7 +16414,7 @@ snapshots:
   externality@1.0.2:
     dependencies:
       enhanced-resolve: 5.16.0
-      mlly: 1.7.0
+      mlly: 1.7.1
       pathe: 1.1.2
       ufo: 1.5.3
 
@@ -16568,6 +16668,17 @@ snapshots:
       resolve-pkg-maps: 1.0.0
 
   giget@1.2.1:
+    dependencies:
+      citty: 0.1.6
+      consola: 3.2.3
+      defu: 6.1.4
+      node-fetch-native: 1.6.4
+      nypm: 0.3.8
+      ohash: 1.1.3
+      pathe: 1.1.2
+      tar: 6.2.1
+
+  giget@1.2.3:
     dependencies:
       citty: 0.1.6
       consola: 3.2.3
@@ -16832,7 +16943,7 @@ snapshots:
 
   hosted-git-info@7.0.1:
     dependencies:
-      lru-cache: 10.2.0
+      lru-cache: 10.2.2
 
   hosted-git-info@7.0.2:
     dependencies:
@@ -17538,8 +17649,8 @@ snapshots:
       get-port-please: 3.1.2
       h3: 1.12.0
       http-shutdown: 1.2.2
-      jiti: 1.21.0
-      mlly: 1.7.0
+      jiti: 1.21.6
+      mlly: 1.7.1
       node-forge: 1.3.1
       pathe: 1.1.2
       std-env: 3.7.0
@@ -17628,8 +17739,6 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  lru-cache@10.2.0: {}
-
   lru-cache@10.2.2: {}
 
   lru-cache@5.1.1:
@@ -17644,7 +17753,7 @@ snapshots:
     dependencies:
       estree-walker: 3.0.3
       magic-string: 0.30.10
-      mlly: 1.7.0
+      mlly: 1.7.1
       regexp-tree: 0.1.27
       type-level-regexp: 0.1.17
       ufo: 1.5.3
@@ -17986,7 +18095,7 @@ snapshots:
       httpxy: 0.1.5
       ioredis: 5.3.2
       is-primitive: 3.0.1
-      jiti: 1.21.0
+      jiti: 1.21.6
       klona: 2.0.6
       knitwork: 1.1.0
       listhen: 1.7.2
@@ -19231,6 +19340,11 @@ snapshots:
       destr: 2.0.3
       flat: 5.0.2
 
+  rc9@2.1.2:
+    dependencies:
+      defu: 6.1.4
+      destr: 2.0.3
+
   react-is@18.2.0: {}
 
   read-cmd-shim@4.0.0: {}
@@ -20320,7 +20434,7 @@ snapshots:
     dependencies:
       '@antfu/utils': 0.7.7
       defu: 6.1.4
-      jiti: 1.21.0
+      jiti: 1.21.6
 
   uncrypto@0.1.3: {}
 
@@ -20510,7 +20624,7 @@ snapshots:
       destr: 2.0.3
       h3: 1.12.0
       listhen: 1.7.2
-      lru-cache: 10.2.0
+      lru-cache: 10.2.2
       mri: 1.2.0
       node-fetch-native: 1.6.4
       ofetch: 1.3.4
@@ -20534,7 +20648,7 @@ snapshots:
       '@babel/standalone': 7.24.0
       '@babel/types': 7.24.5
       defu: 6.1.4
-      jiti: 1.21.0
+      jiti: 1.21.6
       mri: 1.2.0
       scule: 1.3.0
     transitivePeerDependencies:
@@ -20544,9 +20658,9 @@ snapshots:
     dependencies:
       knitwork: 1.1.0
       magic-string: 0.30.10
-      mlly: 1.7.0
+      mlly: 1.7.1
       pathe: 1.1.2
-      pkg-types: 1.1.0
+      pkg-types: 1.1.1
       unplugin: 1.10.1
 
   upath@1.2.0: {}
