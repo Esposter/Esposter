@@ -268,8 +268,8 @@ importers:
         specifier: ^1.11.4
         version: 1.11.4(survey-core@1.11.3)
       survey-creator-vue:
-        specifier: ^1.11.3
-        version: 1.11.3(survey-core@1.11.3)(survey-creator-core@1.11.4(survey-core@1.11.3))(survey-vue3-ui@1.11.3(survey-core@1.11.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
+        specifier: ^1.11.4
+        version: 1.11.4(survey-core@1.11.3)(survey-creator-core@1.11.4(survey-core@1.11.3))(survey-vue3-ui@1.11.3(survey-core@1.11.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518))
       survey-vue3-ui:
         specifier: ^1.11.3
         version: 1.11.3(survey-core@1.11.3)(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -8636,12 +8636,12 @@ packages:
       ace-builds:
         optional: true
 
-  survey-creator-vue@1.11.3:
-    resolution: {integrity: sha512-+RolCpWpzVmILKcUmX9C/goLo//r/NVbRs0/X6m/cz6KAEI2onfJqDwsEg+hYJHtmN+a7+D6oCJjJiJ5MlmIPg==}
+  survey-creator-vue@1.11.4:
+    resolution: {integrity: sha512-SSq+1LOa+0wS4Q5QTU37Fs/+MC20YPHCwGmbA9EZV2hpbhClf3V9sVTVe0TSsm5X3O06Wa5wbFWO7y5CGkI68A==}
     peerDependencies:
-      survey-core: 1.11.3
-      survey-creator-core: 1.11.3
-      survey-vue3-ui: 1.11.3
+      survey-core: 1.11.4
+      survey-creator-core: 1.11.4
+      survey-vue3-ui: 1.11.4
       vue: ^3.2.41
 
   survey-vue3-ui@1.11.3:
@@ -20036,7 +20036,7 @@ snapshots:
     dependencies:
       survey-core: 1.11.3
 
-  survey-creator-vue@1.11.3(survey-core@1.11.3)(survey-creator-core@1.11.4(survey-core@1.11.3))(survey-vue3-ui@1.11.3(survey-core@1.11.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
+  survey-creator-vue@1.11.4(survey-core@1.11.3)(survey-creator-core@1.11.4(survey-core@1.11.3))(survey-vue3-ui@1.11.3(survey-core@1.11.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))(vue@3.4.27(typescript@5.5.0-dev.20240518)):
     dependencies:
       survey-core: 1.11.3
       survey-creator-core: 1.11.4(survey-core@1.11.3)
