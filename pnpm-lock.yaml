@@ -94,8 +94,8 @@ importers:
         specifier: ^0.3.5
         version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.9)(drizzle-orm@0.31.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.5.0)(ioredis@5.3.2)(optionator@0.9.3)(rollup@4.18.0)(sass@1.77.6)(terser@5.29.2)(typescript@5.5.0-dev.20240518)(vite@5.3.1(@types/node@20.14.9)(sass@1.77.6)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.5.0-dev.20240518))(xml2js@0.6.2))(rollup@4.18.0)
       '@koumoul/vjsf':
-        specifier: ^3.0.0-beta.29
-        version: 3.0.0-beta.29(vue@3.4.27(typescript@5.5.0-dev.20240518))(vuetify@3.6.10(typescript@5.5.0-dev.20240518)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))
+        specifier: ^3.0.0-beta.30
+        version: 3.0.0-beta.30(vue@3.4.27(typescript@5.5.0-dev.20240518))(vuetify@3.6.10(typescript@5.5.0-dev.20240518)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
@@ -2145,8 +2145,8 @@ packages:
   '@jsdevtools/ono@7.1.3':
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
 
-  '@json-layout/core@0.24.1':
-    resolution: {integrity: sha512-jEgoEtdZK/U/jNRsqcWzo09QwVXe7IFgX0pvNbCA9Xm7FgCffVdMABU4Qs7rtD6HSGAI80E4nAj+NJAtBJuHmg==}
+  '@json-layout/core@0.25.0':
+    resolution: {integrity: sha512-fOvNHCLQl8iRXAp8aDNh97rrTFy1RNfJRwoob2XC0kBUVe0MTj4SJuGwcfK0V3oS+jyfG5EkWJK5j4kpC3F9FQ==}
 
   '@json-layout/vocabulary@0.19.0':
     resolution: {integrity: sha512-atkAKeYPROR2W+SmRZ19+rsYdOaQLq4wBWHDyyTy0usWwotgFsWIc/soKUNlIacaJBZtq6zywibSmZobQoeQug==}
@@ -2154,8 +2154,8 @@ packages:
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@3.0.0-beta.29':
-    resolution: {integrity: sha512-L3ilF1o/1aKiUFt3Gdl5B88662c6nmLEMqHVfnrzvT34XM5PVpKEltDkAfNfNuYmokD+m3WTS0XHhvBeHRnAmg==}
+  '@koumoul/vjsf@3.0.0-beta.30':
+    resolution: {integrity: sha512-Tdpd2cV6kVTTf8EZmXSM75FHClveBkJd17RcrItY9mXZHHBRn5oJXl0erpmx1mp/vFpDSxaYb9tuv7UqZXSNPQ==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^3.6.8
@@ -11749,7 +11749,7 @@ snapshots:
 
   '@jsdevtools/ono@7.1.3': {}
 
-  '@json-layout/core@0.24.1':
+  '@json-layout/core@0.25.0':
     dependencies:
       '@json-layout/vocabulary': 0.19.0(ajv@8.16.0)
       '@types/markdown-it': 13.0.8
@@ -11774,9 +11774,9 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@3.0.0-beta.29(vue@3.4.27(typescript@5.5.0-dev.20240518))(vuetify@3.6.10(typescript@5.5.0-dev.20240518)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))':
+  '@koumoul/vjsf@3.0.0-beta.30(vue@3.4.27(typescript@5.5.0-dev.20240518))(vuetify@3.6.10(typescript@5.5.0-dev.20240518)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.5.0-dev.20240518)))':
     dependencies:
-      '@json-layout/core': 0.24.1
+      '@json-layout/core': 0.25.0
       '@vueuse/core': 10.11.0(vue@3.4.27(typescript@5.5.0-dev.20240518))
       debug: 4.3.5
       ejs: 3.1.9
