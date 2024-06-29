@@ -28,7 +28,7 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1(typescript@5.5.2)
       eslint:
-        specifier: ^9.5.0
+        specifier: ^9.6.0
         version: 9.6.0
       lerna:
         specifier: ^8.1.5
@@ -359,8 +359,8 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
       '@types/three':
-        specifier: ^0.165.0
-        version: 0.165.0
+        specifier: ^0.166.0
+        version: 0.166.0
       '@types/webfontloader':
         specifier: ^1.6.38
         version: 1.6.38
@@ -410,7 +410,7 @@ importers:
         specifier: ^1.77.6
         version: 1.77.6
       tsx:
-        specifier: ^4.15.8
+        specifier: ^4.15.9
         version: 4.15.9
       type-fest:
         specifier: ^4.20.1
@@ -3290,8 +3290,8 @@ packages:
   '@types/stats.js@0.17.3':
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
 
-  '@types/three@0.165.0':
-    resolution: {integrity: sha512-AJK8JZAFNBF0kBXiAIl5pggYlzAGGA8geVYQXAcPCEDRbyA+oEjkpUBcJJrtNz6IiALwzGexFJGZG2yV3WsYBw==}
+  '@types/three@0.166.0':
+    resolution: {integrity: sha512-FHMnpcdhdbdOOIYbfkTkUVpYMW53odxbTRwd0/xJpYnTzEsjnVnondGAvHZb4z06UW0vo6WPVuvH0/9qrxKx7g==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -13167,7 +13167,7 @@ snapshots:
 
   '@types/stats.js@0.17.3': {}
 
-  '@types/three@0.165.0':
+  '@types/three@0.166.0':
     dependencies:
       '@tweenjs/tween.js': 23.1.2
       '@types/stats.js': 0.17.3
