@@ -1,14 +1,11 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 
-export const useTween = (
-  tween: Ref<TweenBuilderConfiguration | undefined>,
-  configuration: TweenBuilderConfiguration,
-) => {
+export const useTween = (tween: Ref<TweenBuilderConfiguration | undefined>, newTween: TweenBuilderConfiguration) => {
   tween.value = {
-    ...configuration,
+    ...newTween,
     onComplete: (...args) => {
       tween.value = undefined;
-      configuration.onComplete?.(...args);
+      newTween.onComplete?.(...args);
     },
   };
 };

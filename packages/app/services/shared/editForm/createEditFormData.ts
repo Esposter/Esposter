@@ -19,10 +19,10 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
-  // For the form to be savable, it has to have no errors
-  // and either it is a new item, or it is not equal to the original item
   const isSavable = computed(() => {
     if (!editedItem.value) return false;
+    // For the form to be savable, it has to have no errors
+    // and either it is a new item, or it is not equal to the original item
     else return isEditFormValid.value && (!originalItem.value || !deepEqual(editedItem.value, originalItem.value));
   });
   // We know the form is dirty if:

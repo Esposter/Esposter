@@ -2,7 +2,9 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
@@ -18,7 +20,8 @@ const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween }
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
-const healthBarPercentage = computed(() => (activeMonster.value.currentHp / activeMonster.value.stats.maxHp) * 100);
+const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
+const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
 
 onUnmounted(() => {
   monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
@@ -45,7 +48,7 @@ onUnmounted(() => {
       :configuration="{
         x: levelX,
         y: 23,
-        text: `L${activeMonster.currentLevel}`,
+        text: `L${activeMonster.stats.level}`,
         style: {
           color: '#ed474b',
           fontSize: 28,
@@ -64,20 +67,38 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsUIHealthBarContainer :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
-    <Text
-      :configuration="{
-        visible: !isEnemy,
-        x: 443,
-        y: 80,
-        originX: 1,
-        originY: 0,
-        text: `${activeMonster.currentHp}/${activeMonster.stats.maxHp}`,
-        style: {
-          color: '#7e3d3f',
-          fontSize: 16,
-        },
-      }"
-    />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
+    <template v-if="!isEnemy">
+      <Text
+        :configuration="{
+          x: 443,
+          y: 80,
+          originX: 1,
+          originY: 0,
+          text: `${activeMonster.status.hp}/${activeMonster.stats.maxHp}`,
+          style: {
+            color: '#7e3d3f',
+            fontSize: 16,
+          },
+        }"
+      />
+      <Text
+        :configuration="{
+          x: 30,
+          y: 100,
+          text: 'EXP',
+          style: {
+            color: '#6505ff',
+            fontSize: 14,
+            fontStyle: 'italic',
+          },
+        }"
+      />
+      <DungeonsUIExperienceBar
+        :position="{ x: 34, y: 54 }"
+        :bar-percentage="experienceBarPercentage"
+        @level-up="(onComplete) => phaserEventEmitter.emit('levelUp', activeMonster, onComplete)"
+      />
+    </template>
   </Container>
 </template>

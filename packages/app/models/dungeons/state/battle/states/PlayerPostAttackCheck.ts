@@ -17,13 +17,9 @@ export const PlayerPostAttackCheck: State<StateName> = {
 
     if (isActiveMonsterFainted.value) {
       await useMonsterDeathTween(true, async () => {
-        await showMessages(
-          scene,
-          [`Wild ${activeMonster.value.key} has fainted!`, "You have gained some experience."],
-          async () => {
-            await battleStateMachine.setState(StateName.Finished);
-          },
-        );
+        await showMessages(scene, [`Wild ${activeMonster.value.key} has fainted!`], async () => {
+          await battleStateMachine.setState(StateName.GainExperience);
+        });
       });
       return;
     } else await battleStateMachine.setState(attackStatePriorityMap.value[StateName.PlayerPostAttackCheck]);

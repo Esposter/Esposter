@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
-import { onShowMessage } from "@/lib/phaser/hooks/onShowMessage";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
+import { onShowMessage } from "@/services/phaser/hooks/onShowMessage";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { Input } from "phaser";
 

@@ -1,5 +1,5 @@
-import type { PhaserEvents } from "@/lib/phaser/events/phaser";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
+import type { PhaserEvents } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
 
 export const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>(

@@ -1,8 +1,8 @@
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { phaserEventEmitter } from "@/lib/phaser/events/phaser";
 import type { HookArgs } from "@/lib/phaser/models/lifecycle/HookArgs";
-import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/lib/phaser/util/constants";
 import { getScene } from "@/lib/phaser/util/getScene";
+import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/services/phaser/constants";
+import { phaserEventEmitter } from "@/services/phaser/events";
 
 export const onShowMessage = (listener: HookArgs[0]) => {
   const sceneKey = useInjectSceneKey();

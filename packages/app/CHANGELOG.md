@@ -3,6 +3,103 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/Esposter/Esposter/compare/v1.13.0...v1.14.0) (2024-06-27)
+
+
+### Bug Fixes
+
+* add gain exp for non active monsters ([4ac107d](https://github.com/Esposter/Esposter/commit/4ac107de1d4bd9f512f1db62b9a84e2089f22ed7))
+* Add state ([94360f4](https://github.com/Esposter/Esposter/commit/94360f433369997ff4fc040ec8106d65d480ab9f))
+* clamp bar ([cc04c27](https://github.com/Esposter/Esposter/commit/cc04c27f0302f314b8e4d60994d851b59973e4a0))
+* destroy tween when set to undefined ([e7209e7](https://github.com/Esposter/Esposter/commit/e7209e7723509263a555963b189860efb96d03b6))
+* finally fix up all the remaining issues, works fine now ([0960e29](https://github.com/Esposter/Esposter/commit/0960e292722505a63b31bf86b06ec5e0736a7ec8))
+* finally whew, smoothen out exp flow ([0e3fde8](https://github.com/Esposter/Esposter/commit/0e3fde84b9a1893ed9a809576f5d8d9e6e4926bc))
+* keep skip animation ref separate ([7f9ad08](https://github.com/Esposter/Esposter/commit/7f9ad08dec2d8880c940178147d57f147e599f2c))
+* level up complete ([3ebdcbb](https://github.com/Esposter/Esposter/commit/3ebdcbb57898a100134c28db835f2553d5f6c956))
+* leveling up ([a8ee50d](https://github.com/Esposter/Esposter/commit/a8ee50d746262d7c7fbb606fb7baae13379e4260))
+* monsters data ([ff9e08b](https://github.com/Esposter/Esposter/commit/ff9e08b92167640c5744641811d371878d148538))
+* most of remaining exp issues ([5f36edb](https://github.com/Esposter/Esposter/commit/5f36edb7e5c0114fb4934a6bc7bad708be786f1b))
+* revert back exp ([51dcb7d](https://github.com/Esposter/Esposter/commit/51dcb7de465c4c7db7c2f08f21fca4596b2d4b59))
+* revert unnecessary reset ([2622f3a](https://github.com/Esposter/Esposter/commit/2622f3af94d9279a701c2a757530921fba562f9d))
+* schema ([f684405](https://github.com/Esposter/Esposter/commit/f684405d507690b4d5a6a499f43e58ac45a9ab71))
+* set not animating var to false in correct place ([78dbb54](https://github.com/Esposter/Esposter/commit/78dbb54e474c1a94ac3d565abc533e9ad4b3ca1a))
+* show gain exp msg after leveling has fully completed ([3552055](https://github.com/Esposter/Esposter/commit/3552055abb15b81c6ad788b657cb0636bded4950))
+* simplify exp ([9dc82b9](https://github.com/Esposter/Esposter/commit/9dc82b907567ce52b9209ac76e594933efa9f6e7))
+* stupid while loop issue ([11c2798](https://github.com/Esposter/Esposter/commit/11c27989f5f48f2f61ae9330ecb7c0c6ea8a94c9))
+* Support recursive onComplete calls ([1dd6a95](https://github.com/Esposter/Esposter/commit/1dd6a953ec4bb4cf3d22900925f536e3b468e603))
+* use back scene delay call ([26b9b53](https://github.com/Esposter/Esposter/commit/26b9b5318b78c6887ae8ad38ddf9596794c3871b))
+* uuuh actually level up monster thanks ([9dd59b5](https://github.com/Esposter/Esposter/commit/9dd59b56a6a8a2b48580a0dd2a0d4f98fb1c5ec9))
+* while loop again ([23562c2](https://github.com/Esposter/Esposter/commit/23562c293294bdf7119949b7dc357227aa9e37a1))
+
+
+### Features
+
+* Add exp & refactor into status ([1b71855](https://github.com/Esposter/Esposter/commit/1b71855c3819efbd31948d9c1ce10a28604f2274))
+* Add exp bar + emit level up ([1a5ac58](https://github.com/Esposter/Esposter/commit/1a5ac583c1d1db7c2180ba2cd17809384a4fd169))
+* Add gaining exp ([1a8bf90](https://github.com/Esposter/Esposter/commit/1a8bf9054b0dcf9b9c9d57bc3f63f0148b44bf40))
+* Add is running level animation to skip later ([571d97e](https://github.com/Esposter/Esposter/commit/571d97ed1fd2176923d155985a2ed83e4a22fc22))
+* Add lvl up fn ([65611a2](https://github.com/Esposter/Esposter/commit/65611a23f8d35cd05e9269d91c19a4fb8ae4bb40))
+* Divide exp by 7 ([9fc9f26](https://github.com/Esposter/Esposter/commit/9fc9f26d9db3ee64d080ce1e47f374b6436ed37a))
+* fix up issues and properly emit and detect level up ([51624cb](https://github.com/Esposter/Esposter/commit/51624cbb20b38f6f0e908a183f57b3fb53dcdae4))
+* Update bar to grab from monster exp ([0c03a38](https://github.com/Esposter/Esposter/commit/0c03a381d9c39079ff63a16ff0236e3a883172e0))
+* Update monster details bar to also grab from monster exp ([0c67c6b](https://github.com/Esposter/Esposter/commit/0c67c6bf85b83c7fa06d7e2b1029bafed9335422))
+
+
+### Reverts
+
+* back to old tween setter map ([f4c109a](https://github.com/Esposter/Esposter/commit/f4c109a466045e1a73aff3750916fcbfa4511969))
+
+
+
+
+
+
+# [1.13.0](https://github.com/Esposter/Esposter/compare/v1.12.0...v1.13.0) (2024-06-18)
+
+
+### Bug Fixes
+
+* component names ([d31f67c](https://github.com/Esposter/Esposter/commit/d31f67c99c41d26be7535b21189c37c2f18b5f22))
+* disabling eslint for file ([a8283b6](https://github.com/Esposter/Esposter/commit/a8283b6fe7b6256f0a7d8d05f7b6bf1fde414a51))
+* imagekey ([ca6fc12](https://github.com/Esposter/Esposter/commit/ca6fc1231552cdb6dea63c4de8812d57b8fdf74e))
+* lint ([6f5c7dc](https://github.com/Esposter/Esposter/commit/6f5c7dc76fc0a93a45ec108e719e2e44dfa79cba))
+* lint ([6be80e6](https://github.com/Esposter/Esposter/commit/6be80e62fe588fd942ce705644f225a1821350d6))
+* make cloned class reactive ([696724e](https://github.com/Esposter/Esposter/commit/696724ebe53d8db902ec5a43591eaefe65d0785e))
+* properly clone class to also pass test with strict equals ([35a92a2](https://github.com/Esposter/Esposter/commit/35a92a2ef22f1435bd4cde1552e51d7d10d1ea27))
+* revert back to structured clone so we don't puck ourselves with trying to copy class prototype as well ([4fb535a](https://github.com/Esposter/Esposter/commit/4fb535a6dccbeb9ec34852838e064980dce461fe))
+* types ([06a1151](https://github.com/Esposter/Esposter/commit/06a1151a937176b3cfc9b1411fa6f7b9196be2f2))
+* use sleep anyways since it works + fix up types ([40fad06](https://github.com/Esposter/Esposter/commit/40fad0623149644a419bdcbd58c1cf5281d9bc1e))
+* worker src ([23b1623](https://github.com/Esposter/Esposter/commit/23b1623b93bf074bb2accbb65b5a1d7969664c23))
+
+
+### Features
+
+* Add bar chart ([00af995](https://github.com/Esposter/Esposter/commit/00af99543e959b95523688ce706f5407c2d77963))
+* Add bubble chart types ([a03bef2](https://github.com/Esposter/Esposter/commit/a03bef20ba68ed48f47e42650a452de58a5c48a4))
+* Add candlestick + box plot charts ([fba6733](https://github.com/Esposter/Esposter/commit/fba6733d10d95c950c7f1f16e68c5eaf6e10b572))
+* Add donut resolver ([4bd4474](https://github.com/Esposter/Esposter/commit/4bd4474249e32a349c15bb3a9b50be6da62344d4))
+* Add exp bar asset ([2fc01a5](https://github.com/Esposter/Esposter/commit/2fc01a53d8e3b4094c99a4dec857ea0678bd98dd))
+* Add heatmap chart ([be48e2f](https://github.com/Esposter/Esposter/commit/be48e2f62d4699a101d01674038dfcdbfd63a688))
+* Add pie ([8f704ee](https://github.com/Esposter/Esposter/commit/8f704ee392d436fdd52a8187d0053b1f8fee933e))
+* Add radial bar ([9740704](https://github.com/Esposter/Esposter/commit/97407047378737a3bc2c8f82b700e20f7b502512))
+* Add range area chart ([be8d3f9](https://github.com/Esposter/Esposter/commit/be8d3f948430163206e9f21b8904b4d7e0a3bf01))
+* Add range bar + funnel ([4df0c44](https://github.com/Esposter/Esposter/commit/4df0c44cccf6212c7a7bd578566005883365aa73))
+* Add remaining polar area chart ([50eb08c](https://github.com/Esposter/Esposter/commit/50eb08ce62d26d11a2c78f06249c54453248b47e))
+* Add scatter chart ([be4c7bb](https://github.com/Esposter/Esposter/commit/be4c7bb5959a23bf920d6c798ee8c7e6adb68600))
+* Add slope ([8d134ce](https://github.com/Esposter/Esposter/commit/8d134cee691dd659c0ac36514a24f15bd1b3567e))
+* Add specific chart type data ([5c103e0](https://github.com/Esposter/Esposter/commit/5c103e071a5c721ffe1394ca7da0a1757075824f))
+* Add specific chart types for different visual types ([dc2ec57](https://github.com/Esposter/Esposter/commit/dc2ec577302b2468eb117f0d10c7072dde259640))
+* Add treemap chart ([dd3db1f](https://github.com/Esposter/Esposter/commit/dd3db1f5974bb4b6ae84dfab0d8c2d0e8d5991f9))
+* Add watch tracker test ([25d5ed4](https://github.com/Esposter/Esposter/commit/25d5ed4d4020cede63c71d09953803972ba6b20a))
+* Enhance bar to acommodate different types/variations ([ad9b90c](https://github.com/Esposter/Esposter/commit/ad9b90c16cd71f649e7fb9c7ee514211e71d1ee1))
+* move data labels to just a prop ([e44bb44](https://github.com/Esposter/Esposter/commit/e44bb44a2f6776e907ea4cdcc1c34d0bea9da330))
+* use defu to add defaults ([d2d9196](https://github.com/Esposter/Esposter/commit/d2d91963802fc8c996f0f6c547dace8ac5a5a991))
+
+
+
+
+
+
 # [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
 
 

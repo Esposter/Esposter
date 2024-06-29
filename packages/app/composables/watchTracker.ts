@@ -1,11 +1,29 @@
 import { dayjs } from "@/services/dayjs";
-import type { TupleSlice } from "@/util/types/TupleSlice";
-import type { WatchSource } from "vue";
+import type { WatchCallback, WatchOptions, WatchSource } from "vue";
 
-export const watchTracker = (source: WatchSource<object>, ...args: TupleSlice<Parameters<typeof watch>, 1>) => {
-  const [cb, options] = args;
+export const watchTracker = <T>(
+  source: WatchSource<T>,
+  callback: WatchCallback<T, T | undefined>,
+  options?: WatchOptions<Readonly<boolean>>,
+) => {
   const isTrackerInitialized = ref(false);
-  return [
+  const watchStopHandlers = [
+    watch(isTrackerInitialized, (newIsTrackerInitialized) => {
+      if (!newIsTrackerInitialized) return;
+      watchStopHandlers.push(
+        watchDebounced(
+          source,
+          (...args) => {
+            if (!newIsTrackerInitialized) return;
+            callback(...args);
+          },
+          {
+            debounce: dayjs.duration(0.5, "seconds").asMilliseconds(),
+            maxWait: dayjs.duration(1, "second").asMilliseconds(),
+          },
+        ),
+      );
+    }),
     watchOnce(
       source,
       () => {
@@ -15,16 +33,6 @@ export const watchTracker = (source: WatchSource<object>, ...args: TupleSlice<Pa
       },
       options,
     ),
-    watchDebounced(
-      source,
-      (...args) => {
-        if (!isTrackerInitialized.value) return;
-        cb(...args);
-      },
-      {
-        debounce: dayjs.duration(0.5, "seconds").asMilliseconds(),
-        maxWait: dayjs.duration(1, "second").asMilliseconds(),
-      },
-    ),
   ];
+  return watchStopHandlers;
 };

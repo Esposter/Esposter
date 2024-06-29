@@ -7,6 +7,7 @@ import { EnemyInput } from "@/models/dungeons/state/battle/states/EnemyInput";
 import { EnemyPostAttackCheck } from "@/models/dungeons/state/battle/states/EnemyPostAttackCheck";
 import { Finished } from "@/models/dungeons/state/battle/states/Finished";
 import { FleeAttempt } from "@/models/dungeons/state/battle/states/FleeAttempt";
+import { GainExperience } from "@/models/dungeons/state/battle/states/GainExperience";
 import { Intro } from "@/models/dungeons/state/battle/states/Intro";
 import { ItemAttempt } from "@/models/dungeons/state/battle/states/ItemAttempt";
 import { PlayerAttack } from "@/models/dungeons/state/battle/states/PlayerAttack";
@@ -26,6 +27,7 @@ export const StateMap = {
   [StateName.PlayerPostAttackCheck]: PlayerPostAttackCheck,
   [StateName.EnemyAttack]: EnemyAttack,
   [StateName.EnemyPostAttackCheck]: EnemyPostAttackCheck,
+  [StateName.GainExperience]: GainExperience,
   [StateName.Finished]: Finished,
   [StateName.SwitchAttempt]: SwitchAttempt,
   [StateName.ItemAttempt]: ItemAttempt,
