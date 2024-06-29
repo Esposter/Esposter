@@ -90,8 +90,8 @@ const gainExperienceForNonActiveMonsters = async (
   const leveledUpNonActiveMonsters: Monster[] = [];
 
   for (const nonActiveMonster of player.value.monsters.filter(({ id }) => id !== activeMonster.value.id)) {
-    let levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
     nonActiveMonster.status.exp += experienceGain;
+    let levelExperience = calculateLevelExperience(nonActiveMonster.stats.level);
     const isLeveledUp = nonActiveMonster.status.exp - levelExperience >= 0;
 
     while (nonActiveMonster.status.exp - levelExperience >= 0) {

@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/Esposter/Esposter/compare/v1.13.0...v1.14.0) (2024-06-27)
+
+
+### Bug Fixes
+
+* add gain exp for non active monsters ([4ac107d](https://github.com/Esposter/Esposter/commit/4ac107de1d4bd9f512f1db62b9a84e2089f22ed7))
+* Add state ([94360f4](https://github.com/Esposter/Esposter/commit/94360f433369997ff4fc040ec8106d65d480ab9f))
+* clamp bar ([cc04c27](https://github.com/Esposter/Esposter/commit/cc04c27f0302f314b8e4d60994d851b59973e4a0))
+* destroy tween when set to undefined ([e7209e7](https://github.com/Esposter/Esposter/commit/e7209e7723509263a555963b189860efb96d03b6))
+* finally fix up all the remaining issues, works fine now ([0960e29](https://github.com/Esposter/Esposter/commit/0960e292722505a63b31bf86b06ec5e0736a7ec8))
+* finally whew, smoothen out exp flow ([0e3fde8](https://github.com/Esposter/Esposter/commit/0e3fde84b9a1893ed9a809576f5d8d9e6e4926bc))
+* keep skip animation ref separate ([7f9ad08](https://github.com/Esposter/Esposter/commit/7f9ad08dec2d8880c940178147d57f147e599f2c))
+* level up complete ([3ebdcbb](https://github.com/Esposter/Esposter/commit/3ebdcbb57898a100134c28db835f2553d5f6c956))
+* leveling up ([a8ee50d](https://github.com/Esposter/Esposter/commit/a8ee50d746262d7c7fbb606fb7baae13379e4260))
+* monsters data ([ff9e08b](https://github.com/Esposter/Esposter/commit/ff9e08b92167640c5744641811d371878d148538))
+* most of remaining exp issues ([5f36edb](https://github.com/Esposter/Esposter/commit/5f36edb7e5c0114fb4934a6bc7bad708be786f1b))
+* revert back exp ([51dcb7d](https://github.com/Esposter/Esposter/commit/51dcb7de465c4c7db7c2f08f21fca4596b2d4b59))
+* revert unnecessary reset ([2622f3a](https://github.com/Esposter/Esposter/commit/2622f3af94d9279a701c2a757530921fba562f9d))
+* schema ([f684405](https://github.com/Esposter/Esposter/commit/f684405d507690b4d5a6a499f43e58ac45a9ab71))
+* set not animating var to false in correct place ([78dbb54](https://github.com/Esposter/Esposter/commit/78dbb54e474c1a94ac3d565abc533e9ad4b3ca1a))
+* show gain exp msg after leveling has fully completed ([3552055](https://github.com/Esposter/Esposter/commit/3552055abb15b81c6ad788b657cb0636bded4950))
+* simplify exp ([9dc82b9](https://github.com/Esposter/Esposter/commit/9dc82b907567ce52b9209ac76e594933efa9f6e7))
+* stupid while loop issue ([11c2798](https://github.com/Esposter/Esposter/commit/11c27989f5f48f2f61ae9330ecb7c0c6ea8a94c9))
+* Support recursive onComplete calls ([1dd6a95](https://github.com/Esposter/Esposter/commit/1dd6a953ec4bb4cf3d22900925f536e3b468e603))
+* use back scene delay call ([26b9b53](https://github.com/Esposter/Esposter/commit/26b9b5318b78c6887ae8ad38ddf9596794c3871b))
+* uuuh actually level up monster thanks ([9dd59b5](https://github.com/Esposter/Esposter/commit/9dd59b56a6a8a2b48580a0dd2a0d4f98fb1c5ec9))
+* while loop again ([23562c2](https://github.com/Esposter/Esposter/commit/23562c293294bdf7119949b7dc357227aa9e37a1))
+
+
+### Features
+
+* Add exp & refactor into status ([1b71855](https://github.com/Esposter/Esposter/commit/1b71855c3819efbd31948d9c1ce10a28604f2274))
+* Add exp bar + emit level up ([1a5ac58](https://github.com/Esposter/Esposter/commit/1a5ac583c1d1db7c2180ba2cd17809384a4fd169))
+* Add gaining exp ([1a8bf90](https://github.com/Esposter/Esposter/commit/1a8bf9054b0dcf9b9c9d57bc3f63f0148b44bf40))
+* Add is running level animation to skip later ([571d97e](https://github.com/Esposter/Esposter/commit/571d97ed1fd2176923d155985a2ed83e4a22fc22))
+* Add lvl up fn ([65611a2](https://github.com/Esposter/Esposter/commit/65611a23f8d35cd05e9269d91c19a4fb8ae4bb40))
+* Divide exp by 7 ([9fc9f26](https://github.com/Esposter/Esposter/commit/9fc9f26d9db3ee64d080ce1e47f374b6436ed37a))
+* fix up issues and properly emit and detect level up ([51624cb](https://github.com/Esposter/Esposter/commit/51624cbb20b38f6f0e908a183f57b3fb53dcdae4))
+* Update bar to grab from monster exp ([0c03a38](https://github.com/Esposter/Esposter/commit/0c03a381d9c39079ff63a16ff0236e3a883172e0))
+* Update monster details bar to also grab from monster exp ([0c67c6b](https://github.com/Esposter/Esposter/commit/0c67c6bf85b83c7fa06d7e2b1029bafed9335422))
+
+
+### Reverts
+
+* back to old tween setter map ([f4c109a](https://github.com/Esposter/Esposter/commit/f4c109a466045e1a73aff3750916fcbfa4511969))
+
+
+
+
+
+
 # [1.13.0](https://github.com/Esposter/Esposter/compare/v1.12.0...v1.13.0) (2024-06-18)
 
 
