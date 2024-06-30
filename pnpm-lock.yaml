@@ -238,8 +238,8 @@ importers:
         specifier: ^3.80.1
         version: 3.80.1
       phaser3-rex-plugins:
-        specifier: ^1.80.4
-        version: 1.80.4(encoding@0.1.13)
+        specifier: ^1.80.5
+        version: 1.80.5(encoding@0.1.13)
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.5.0-dev.20240518)(vue@3.4.27(typescript@5.5.0-dev.20240518))
@@ -6225,8 +6225,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  i18next-http-backend@2.5.0:
-    resolution: {integrity: sha512-Z/aQsGZk1gSxt2/DztXk92DuDD20J+rNudT7ZCdTrNOiK8uQppfvdjq9+DFQfpAnFPn3VZS+KQIr1S/W1KxhpQ==}
+  i18next-http-backend@2.5.2:
+    resolution: {integrity: sha512-+K8HbDfrvc1/2X8jpb7RLhI9ZxBDpx3xogYkQwGKlWAUXLSEGXzgdt3EcUjLlBCdMwdQY+K+EUF6oh8oB6rwHw==}
 
   i18next@22.5.1:
     resolution: {integrity: sha512-8TGPgM3pAD+VRsMtUMNknRz3kzqwp/gPALrWMsDnmC1mKqJwpWyooQRLMcbTwq8z8YwSmuj+ZYvc+xCuEpkssA==}
@@ -7712,8 +7712,8 @@ packages:
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  phaser3-rex-plugins@1.80.4:
-    resolution: {integrity: sha512-6Pj2brWySF0mbf848gjqDpSaG5L7MX4Y1OgNOm2sj2cKizFXPHAigHmqhIelPH0jRXKCGoVAPMwGURoGRZq9lA==}
+  phaser3-rex-plugins@1.80.5:
+    resolution: {integrity: sha512-hdL3Cm6dK72w6phQdGnEiqqntlwT8SvjU0yit7DkdqiPy/Io1g3KnsRFqndtY+Hu69zaMEuckpIVeQK6yVwx4A==}
 
   phaser@3.80.1:
     resolution: {integrity: sha512-VQGAWoDOkEpAWYkI+PUADv5Ql+SM0xpLuAMBJHz9tBcOLqjJ2wd8bUhxJgOqclQlLTg97NmMd9MhS75w16x1Cw==}
@@ -17268,7 +17268,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  i18next-http-backend@2.5.0(encoding@0.1.13):
+  i18next-http-backend@2.5.2(encoding@0.1.13):
     dependencies:
       cross-fetch: 4.0.0(encoding@0.1.13)
     transitivePeerDependencies:
@@ -19159,11 +19159,11 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  phaser3-rex-plugins@1.80.4(encoding@0.1.13):
+  phaser3-rex-plugins@1.80.5(encoding@0.1.13):
     dependencies:
       eventemitter3: 3.1.2
       i18next: 22.5.1
-      i18next-http-backend: 2.5.0(encoding@0.1.13)
+      i18next-http-backend: 2.5.2(encoding@0.1.13)
       js-yaml: 4.1.0
       mustache: 4.2.0
       papaparse: 5.4.1
