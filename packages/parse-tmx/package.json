@@ -27,7 +27,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
-    "export:gen": "ctix build --config ../configuration/.ctirc"
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*"

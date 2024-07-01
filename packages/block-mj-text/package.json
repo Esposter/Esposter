@@ -24,10 +24,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "vue-tsc --noEmit",
-    "preview": "vite preview"
+    "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*"

@@ -1,3 +1,1 @@
-import MjText from "@/Index.vue";
-
-export { MjText };
+export * from "./components/index";
