@@ -23,7 +23,13 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     if (!editedItem.value) return false;
     // For the form to be savable, it has to have no errors
     // and either it is a new item, or it is not equal to the original item
-    else return isEditFormValid.value && (!originalItem.value || !deepEqual(editedItem.value, originalItem.value));
+    else
+      return (
+        isEditFormValid.value &&
+        // The edited item is a clone of original item which does not clone the class information
+        // so it's not "strictly" equal including the Object prototype
+        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toDeepRaw(originalItem.value))))
+      );
   });
   // We know the form is dirty if:
   // 1. The user has pucked up and the edit form isn't valid
