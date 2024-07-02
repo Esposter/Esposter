@@ -30,6 +30,9 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
       start: monsterPosition.value.y,
       to: monsterPositionYEnd,
     },
+    onUpdate: (_tween, _key, _target, y) => {
+      monsterPosition.value.y = y;
+    },
     onComplete: async () => {
       await onComplete?.();
     },
@@ -41,6 +44,9 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
       from: monsterInfoContainerPosition.value.x,
       start: monsterInfoContainerPosition.value.x,
       to: monsterInfoContainerPositionXEnd,
+    },
+    onUpdate: (_tween, _key, _target, x) => {
+      monsterInfoContainerPosition.value.x = x;
     },
   });
 };
