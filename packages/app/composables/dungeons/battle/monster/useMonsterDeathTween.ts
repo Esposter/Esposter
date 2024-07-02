@@ -7,13 +7,16 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComplete) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
-  const { monsterPosition, monsterTween } = storeToRefs(store);
+  const { monsterPosition, monsterTween, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  const yEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
+  const monsterPositionYEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
+  const monsterInfoContainerPositionYEnd = isEnemy
+    ? monsterInfoContainerPosition.value.y - 400
+    : monsterPosition.value.y + 400;
 
   if (isSkipAnimations.value) {
-    monsterPosition.value.y = yEnd;
+    monsterPosition.value.y = monsterPositionYEnd;
     await onComplete?.();
     return;
   }
@@ -24,10 +27,19 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
     y: {
       from: monsterPosition.value.y,
       start: monsterPosition.value.y,
-      to: yEnd,
+      to: monsterPositionYEnd,
     },
     onComplete: async () => {
       await onComplete?.();
+    },
+  });
+  useTween(monsterInfoContainerTween, {
+    delay: 0,
+    duration: dayjs.duration(2, "seconds").asMilliseconds(),
+    y: {
+      from: monsterInfoContainerPosition.value.y,
+      start: monsterInfoContainerPosition.value.y,
+      to: monsterInfoContainerPositionYEnd,
     },
   });
 };
