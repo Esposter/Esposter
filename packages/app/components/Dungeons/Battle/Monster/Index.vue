@@ -21,7 +21,7 @@ onUnmounted(() => {
 <template>
   <Image
     :configuration="{
-      ...initialMonsterPosition,
+      ...monsterPosition,
       texture: activeMonster.asset.key,
       frame: activeMonster.asset.frame,
       flipX: !isEnemy,
