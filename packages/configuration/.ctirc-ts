@@ -4,5 +4,8 @@
   "output": "src",
   "quote": "\"",
   "overwrite": true,
-  "backup": false
+  "backup": false,
+  "include": [
+    "**/*.ts"
+  ]
 }

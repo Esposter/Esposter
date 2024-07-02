@@ -36,9 +36,14 @@
     "eslint": "^9.6.0",
     "lerna": "^8.1.5",
     "rollup": "^4.18.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.3",
     "vite": "^5.3.2",
-    "vue-tsc": "^2.0.22"
+    "vue-tsc": "^2.0.24"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite-plugin-checker": "^0.7.0"
+    }
   },
   "engines": {
     "node": "^22.3.0"

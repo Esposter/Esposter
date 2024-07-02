@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/Esposter/Esposter/compare/v1.14.0...v1.15.0) (2024-07-01)
+
+
+### Features
+
+* Support generating barrle files for vue ([62f4a06](https://github.com/Esposter/Esposter/commit/62f4a06f7c6e966d3bad0bcceb74f64f91f46451))
+
+
+
+
+
+
 # [1.14.0](https://github.com/Esposter/Esposter/compare/v1.13.0...v1.14.0) (2024-06-27)
 
 **Note:** Version bump only for package parse-tmx

@@ -1,6 +1,6 @@
 # build artifacts
 **/src/index.ts
-!**/block-*/src/index.ts
+**/src/components/index.ts
 
 # nuxt 3
 .nuxt
