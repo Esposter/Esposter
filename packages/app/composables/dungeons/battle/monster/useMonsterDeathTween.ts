@@ -17,6 +17,7 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
 
   if (isSkipAnimations.value) {
     monsterPosition.value.y = monsterPositionYEnd;
+    monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
     await onComplete?.();
     return;
   }
