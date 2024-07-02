@@ -26,10 +26,8 @@ export const useMonsterAppearTween = async (isEnemy: boolean, onComplete?: OnCom
       start: monsterPosition.value.x,
       to: xEnd,
     },
-    onUpdate: (_tween, _key, _target, x) => {
-      monsterPosition.value.x = x;
-    },
     onComplete: async () => {
+      monsterPosition.value.x = xEnd;
       await onComplete?.();
     },
   });

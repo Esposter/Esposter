@@ -29,7 +29,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
+  <Container :configuration="{ ...initialMonsterInfoContainerPosition, tween: monsterInfoContainerTween }">
     <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
     <Text
       :configuration="{
