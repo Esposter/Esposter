@@ -12,8 +12,8 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const monsterPositionYEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
   const monsterInfoContainerPositionXEnd = isEnemy
-    ? monsterInfoContainerPosition.value.y - 600
-    : monsterPosition.value.y + 600;
+    ? monsterInfoContainerPosition.value.x - 600
+    : monsterInfoContainerPosition.value.x + 600;
 
   if (isSkipAnimations.value) {
     monsterPosition.value.y = monsterPositionYEnd;
