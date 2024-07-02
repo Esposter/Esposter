@@ -11,7 +11,7 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const monsterPositionYEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
-  const monsterInfoContainerPositionYEnd = isEnemy
+  const monsterInfoContainerPositionXEnd = isEnemy
     ? monsterInfoContainerPosition.value.y - 400
     : monsterPosition.value.y + 400;
 
@@ -36,10 +36,10 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
   useTween(monsterInfoContainerTween, {
     delay: 0,
     duration: dayjs.duration(2, "seconds").asMilliseconds(),
-    y: {
-      from: monsterInfoContainerPosition.value.y,
-      start: monsterInfoContainerPosition.value.y,
-      to: monsterInfoContainerPositionYEnd,
+    x: {
+      from: monsterInfoContainerPosition.value.x,
+      start: monsterInfoContainerPosition.value.x,
+      to: monsterInfoContainerPositionXEnd,
     },
   });
 };
