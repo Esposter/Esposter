@@ -1,13 +1,13 @@
-import aquavalor from "@/assets/dungeons/scene/battle/monsters/aquavalor.png";
-import carnodusk from "@/assets/dungeons/scene/battle/monsters/carnodusk.png";
-import frostsaber from "@/assets/dungeons/scene/battle/monsters/frostsaber.png";
-import ignivolt from "@/assets/dungeons/scene/battle/monsters/ignivolt.png";
-import iguanignite from "@/assets/dungeons/scene/battle/monsters/iguanignite.png";
+import aquavalor from "@/assets/dungeons/UI/monsters/aquavalor.png";
+import carnodusk from "@/assets/dungeons/UI/monsters/carnodusk.png";
+import frostsaber from "@/assets/dungeons/UI/monsters/frostsaber.png";
+import ignivolt from "@/assets/dungeons/UI/monsters/ignivolt.png";
+import iguanignite from "@/assets/dungeons/UI/monsters/iguanignite.png";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
 
-export const MonsterLoaderMap: Record<MonsterKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
+export const MonsterLoaderMap = {
   [MonsterKey.Aquavalor]: (scene) => scene.load.image(MonsterKey.Aquavalor, aquavalor),
   [MonsterKey.Carnodusk]: (scene) => scene.load.image(MonsterKey.Carnodusk, carnodusk),
   [MonsterKey.Frostsaber]: (scene) => scene.load.image(MonsterKey.Frostsaber, frostsaber),

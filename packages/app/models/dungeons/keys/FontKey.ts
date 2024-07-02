@@ -1,3 +1,3 @@
 export enum FontKey {
-  "KenneyFutureNarrow" = "KenneyFutureNarrow",
+  KenneyFutureNarrow = "KenneyFutureNarrow",
 }
