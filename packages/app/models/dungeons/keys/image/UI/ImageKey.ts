@@ -1,3 +1,4 @@
+import { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
 import { ControlsKey } from "@/models/dungeons/keys/image/UI/ControlsKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
@@ -22,5 +23,5 @@ enum BaseImageKey {
   HealthBarRightCap = "HealthBarRightCap",
 }
 
-export const ImageKey = mergeObjectsStrict(BaseImageKey, ControlsKey, MonsterKey);
-export type ImageKey = BaseImageKey | ControlsKey | MonsterKey;
+export const ImageKey = mergeObjectsStrict(BallKey, BaseImageKey, ControlsKey, MonsterKey);
+export type ImageKey = BallKey | BaseImageKey | ControlsKey | MonsterKey;
