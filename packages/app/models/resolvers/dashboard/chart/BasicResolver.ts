@@ -11,11 +11,11 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     super(ChartType.Basic);
   }
   // This is our base resolver that's always active
-  isActive() {
+  override isActive() {
     return true;
   }
 
-  handleConfiguration(apexOptions: ApexOptions, { title, subtitle, dataLabels }: T) {
+  override handleConfiguration(apexOptions: ApexOptions, { title, subtitle, dataLabels }: T) {
     apexOptions.chart = defu(
       {
         zoom: {
@@ -44,7 +44,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     );
   }
 
-  handleSchema(schema: z.AnyZodObject) {
+  override handleSchema(schema: z.AnyZodObject) {
     return schema.merge(basicChartConfigurationSchema);
   }
 }

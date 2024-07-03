@@ -12,7 +12,7 @@ export class HealItemResolver extends AItemResolver {
     super(ItemEffectType.Heal);
   }
 
-  isActive(item: Ref<Item>, target: Ref<Monster>) {
+  override isActive(_item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const infoPanelStore = useInfoPanelStore();
@@ -29,7 +29,7 @@ export class HealItemResolver extends AItemResolver {
     return true;
   }
 
-  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
+  override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const infoPanelStore = useInfoPanelStore();

@@ -6,7 +6,7 @@ import { useMenuStore } from "@/store/dungeons/world/menu";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export class MenuInputResolver extends AInputResolver {
-  async handleInputPre(scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override async handleInputPre(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const worldSceneStore = useWorldSceneStore();
     const { isMenuVisible } = storeToRefs(worldSceneStore);
     const menuStore = useMenuStore();
@@ -20,7 +20,7 @@ export class MenuInputResolver extends AInputResolver {
     return false;
   }
 
-  handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const worldSceneStore = useWorldSceneStore();
     const { isMenuVisible } = storeToRefs(worldSceneStore);
 

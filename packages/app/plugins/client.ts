@@ -32,3 +32,5 @@ export default defineNuxtPlugin(() => {
   const client = createTRPCNuxtClient<TrpcRouter>({ links, transformer: SuperJSON });
   return { provide: { client } };
 });
+
+export type Client = ReturnType<typeof createTRPCNuxtClient<TrpcRouter>>;

@@ -2,4 +2,4 @@ import { WorldForegroundKey } from "@/models/dungeons/keys/image/world/WorldFore
 import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
 
 export const WorldKey = mergeObjectsStrict(WorldForegroundKey);
-export type WorldKey = keyof typeof WorldKey;
+export type WorldKey = WorldForegroundKey;

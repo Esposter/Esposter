@@ -24,5 +24,8 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
       start: monsterInfoContainerPosition.value.x,
       to: xEnd,
     },
+    onComplete: () => {
+      monsterInfoContainerPosition.value.x = xEnd;
+    },
   });
 };

@@ -16,6 +16,7 @@ import glassPanel from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpans
 import glassPanelGreen from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelGreen.png";
 import glassPanelPurple from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
 import { ImageKey } from "@/models/dungeons/keys/image/UI/ImageKey";
+import { BallLoaderMap } from "@/models/dungeons/loader/image/UI/BallLoaderMap";
 import { ControlsLoaderMap } from "@/models/dungeons/loader/image/UI/ControlsLoaderMap";
 import { MonsterLoaderMap } from "@/models/dungeons/loader/image/UI/MonsterLoaderMap";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
@@ -39,6 +40,7 @@ export const ImageLoaderMap = {
   [ImageKey.HealthBarLeftCap]: (scene) => scene.load.image(ImageKey.HealthBarLeftCap, barHorizontalGreenLeft),
   [ImageKey.HealthBarMiddle]: (scene) => scene.load.image(ImageKey.HealthBarMiddle, barHorizontalGreenMid),
   [ImageKey.HealthBarRightCap]: (scene) => scene.load.image(ImageKey.HealthBarRightCap, barHorizontalGreenRight),
+  ...BallLoaderMap,
   ...ControlsLoaderMap,
   ...MonsterLoaderMap,
 } as const satisfies Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;

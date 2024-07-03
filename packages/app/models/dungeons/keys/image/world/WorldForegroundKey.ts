@@ -1,15 +1,15 @@
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 
-type BaseWorldForegroundKey = `World${TilemapKey}Foreground`;
-type WorldForegroundKey = {
-  [P in BaseWorldForegroundKey]: P;
+export type WorldForegroundKey = `World${TilemapKey}Foreground`;
+type WorldForegroundKeyMap = {
+  [P in WorldForegroundKey]: P;
 };
 
 export const WorldForegroundKey = Object.values(TilemapKey).reduce(
   (acc, curr) => {
-    const key: BaseWorldForegroundKey = `World${curr}Foreground`;
+    const key: WorldForegroundKey = `World${curr}Foreground`;
     acc[key] = key;
     return acc;
   },
-  {} as Record<BaseWorldForegroundKey, BaseWorldForegroundKey>,
-) as WorldForegroundKey;
+  {} as Record<WorldForegroundKey, WorldForegroundKey>,
+) as WorldForegroundKeyMap;

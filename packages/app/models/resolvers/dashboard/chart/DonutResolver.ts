@@ -10,7 +10,7 @@ export class DonutResolver<T extends BasicChartConfiguration> extends AChartType
     super(ChartType.Donut);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+override  handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu(
       {
         type: uncapitalize(ChartType.Donut),
