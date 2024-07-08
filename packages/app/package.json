@@ -156,7 +156,7 @@
     "@types/ws": "^8.5.10",
     "@unocss/nuxt": "^0.61.3",
     "@vite-pwa/nuxt": "^0.9.1",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/coverage-v8": "^2.0.1",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.22.8",
@@ -172,7 +172,7 @@
     "type-fest": "^4.21.0",
     "unocss": "^0.61.3",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vitest": "^1.6.0",
+    "vitest": "^2.0.1",
     "vuetify-nuxt-module": "^0.14.1"
   },
   "devDependenciesComments": {
