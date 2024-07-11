@@ -92,7 +92,7 @@ importers:
         version: 6.1.14(@fullcalendar/core@6.1.14)(vue@3.4.27(typescript@5.4.5))
       '@hebilicious/authjs-nuxt':
         specifier: ^0.3.5
-        version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)
+        version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)
       '@koumoul/vjsf':
         specifier: ^3.0.0-beta.32
         version: 3.0.0-beta.32(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.12(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
@@ -143,7 +143,7 @@ importers:
         version: 10.11.0(vue@3.4.27(typescript@5.4.5))
       '@vueuse/nuxt':
         specifier: ^10.11.0
-        version: 10.11.0(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vue@3.4.27(typescript@5.4.5))
+        version: 10.11.0(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vue@3.4.27(typescript@5.4.5))
       ajv:
         specifier: ^8.16.0
         version: 8.16.0
@@ -178,11 +178,11 @@ importers:
         specifier: ^6.1.4
         version: 6.1.4
       drizzle-orm:
-        specifier: ^0.31.4
-        version: 0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4)
+        specifier: ^0.32.0
+        version: 0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.8)
       emoji-mart-vue-fast:
         specifier: ^15.0.2
         version: 15.0.2(vue@3.4.27(typescript@5.4.5))
@@ -324,13 +324,13 @@ importers:
         version: link:../configuration
       '@nuxt/eslint':
         specifier: ^0.3.13
-        version: 0.3.13(eslint@9.6.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
+        version: 0.3.13(eslint@9.6.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
       '@nuxt/fonts':
         specifier: ^0.7.1
         version: 0.7.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(encoding@0.1.13)(ioredis@5.3.2)(magicast@0.3.4)(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
       '@nuxt/test-utils':
         specifier: ^3.13.1
-        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+        version: 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -399,7 +399,7 @@ importers:
         version: 14.12.3
       nuxt:
         specifier: 3.11.1
-        version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+        version: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       nuxt-security:
         specifier: ^1.4.3
         version: 1.4.3(magicast@0.3.4)(rollup@4.18.1)
@@ -5248,8 +5248,8 @@ packages:
     resolution: {integrity: sha512-w9jE97z193dd4jzAyj4Uv2SOh8Ydue70Ki6W0awy4bGM1aPXan6zD6Yv+nNTA6oGgNTDl2MJFxutjHG4fden5g==}
     hasBin: true
 
-  drizzle-orm@0.31.4:
-    resolution: {integrity: sha512-VGD9SH9aStF2z4QOTnVlVX/WghV/EnuEzTmsH3fSVp2E4fFgc8jl3viQrS/XUJx1ekW4rVVLJMH42SfGQdjX3Q==}
+  drizzle-orm@0.32.0:
+    resolution: {integrity: sha512-99IlfVGPNHzOFEXo9Phyu5At5TALLsY2t6WxFFy68rYd9Ej4cHX/7WjdPOn7JNRW69MNeNtP8XrDQg43SppuAA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -11855,7 +11855,7 @@ snapshots:
       '@fullcalendar/core': 6.1.14
       vue: 3.4.27(typescript@5.4.5)
 
-  '@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)':
+  '@hebilicious/authjs-nuxt@0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)':
     dependencies:
       '@auth/core': 0.21.0
       '@nuxt/kit': 3.11.2(rollup@4.18.1)
@@ -11865,7 +11865,7 @@ snapshots:
       defu: 6.1.4
       immer: 10.0.4
       jose: 4.15.5
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       unctx: 2.3.1
     transitivePeerDependencies:
       - rollup
@@ -12393,24 +12393,24 @@ snapshots:
 
   '@nuxt/devalue@2.0.2': {}
 
-  '@nuxt/devtools-kit@1.0.8(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
+  '@nuxt/devtools-kit@1.0.8(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
     dependencies:
       '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.18.1)
       '@nuxt/schema': 3.12.2(rollup@4.18.1)
       execa: 7.2.0
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       vite: 5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2)
     transitivePeerDependencies:
       - magicast
       - rollup
       - supports-color
 
-  '@nuxt/devtools-kit@1.3.1(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
+  '@nuxt/devtools-kit@1.3.1(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
     dependencies:
       '@nuxt/kit': 3.12.1(rollup@4.18.1)
       '@nuxt/schema': 3.11.2(rollup@4.18.1)
       execa: 7.2.0
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       vite: 5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2)
     transitivePeerDependencies:
       - rollup
@@ -12440,10 +12440,10 @@ snapshots:
       rc9: 2.1.1
       semver: 7.6.2
 
-  '@nuxt/devtools@1.0.8(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
+  '@nuxt/devtools@1.0.8(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
     dependencies:
       '@antfu/utils': 0.7.7
-      '@nuxt/devtools-kit': 1.0.8(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
+      '@nuxt/devtools-kit': 1.0.8(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
       '@nuxt/devtools-wizard': 1.0.8
       '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.18.1)
       birpc: 0.2.17
@@ -12460,7 +12460,7 @@ snapshots:
       launch-editor: 2.6.1
       local-pkg: 0.5.0
       magicast: 0.3.4
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       nypm: 0.3.8
       ohash: 1.1.3
       pacote: 17.0.6
@@ -12518,10 +12518,10 @@ snapshots:
       - supports-color
       - typescript
 
-  '@nuxt/eslint@0.3.13(eslint@9.6.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
+  '@nuxt/eslint@0.3.13(eslint@9.6.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))':
     dependencies:
       '@eslint/config-inspector': 0.4.8(eslint@9.6.0)
-      '@nuxt/devtools-kit': 1.3.1(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
+      '@nuxt/devtools-kit': 1.3.1(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
       '@nuxt/eslint-config': 0.3.13(eslint@9.6.0)(typescript@5.4.5)
       '@nuxt/eslint-plugin': 0.3.13(eslint@9.6.0)(typescript@5.4.5)
       '@nuxt/kit': 3.11.2(rollup@4.18.1)
@@ -12826,7 +12826,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))':
+  '@nuxt/test-utils@3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@nuxt/kit': 3.11.2(rollup@4.18.1)
       '@nuxt/schema': 3.11.2(rollup@4.18.1)
@@ -12841,7 +12841,7 @@ snapshots:
       h3: 1.12.0
       local-pkg: 0.5.0
       magic-string: 0.30.10
-      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2)
+      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2)
       node-fetch-native: 1.6.4
       ofetch: 1.3.4
       pathe: 1.1.2
@@ -12853,7 +12853,7 @@ snapshots:
       unenv: 1.9.0
       unplugin: 1.10.1
       vite: 5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2)
-      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+      vitest-environment-nuxt: 1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
       vue: 3.4.27(typescript@5.4.5)
       vue-router: 4.4.0(vue@3.4.27(typescript@5.4.5))
     optionalDependencies:
@@ -14734,13 +14734,13 @@ snapshots:
 
   '@vueuse/metadata@10.11.0': {}
 
-  '@vueuse/nuxt@10.11.0(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vue@3.4.27(typescript@5.4.5))':
+  '@vueuse/nuxt@10.11.0(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@nuxt/kit': 3.12.1(rollup@4.18.1)
       '@vueuse/core': 10.11.0(vue@3.4.27(typescript@5.4.5))
       '@vueuse/metadata': 10.11.0
       local-pkg: 0.5.0
-      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
+      nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
       vue-demi: 0.14.8(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -15996,9 +15996,9 @@ snapshots:
 
   dayjs@1.11.11: {}
 
-  db0@0.1.4(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4)):
+  db0@0.1.4(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4)):
     optionalDependencies:
-      drizzle-orm: 0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4)
+      drizzle-orm: 0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4)
 
   de-indent@1.0.2: {}
 
@@ -16158,14 +16158,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4):
+  drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4):
     optionalDependencies:
       '@opentelemetry/api': 1.8.0
       postgres: 3.4.4
 
-  drizzle-zod@0.5.1(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.8):
+  drizzle-zod@0.5.1(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.8):
     dependencies:
-      drizzle-orm: 0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4)
+      drizzle-orm: 0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4)
       zod: 3.23.8
 
   duplexer@0.1.2: {}
@@ -18426,7 +18426,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2):
+  nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.1
       '@netlify/functions': 2.6.0
@@ -18449,7 +18449,7 @@ snapshots:
       cookie-es: 1.0.0
       croner: 8.0.1
       crossws: 0.2.4
-      db0: 0.1.4(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))
+      db0: 0.1.4(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 8.0.2
@@ -18748,10 +18748,10 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2):
+  nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2):
     dependencies:
       '@nuxt/devalue': 2.0.2
-      '@nuxt/devtools': 1.0.8(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
+      '@nuxt/devtools': 1.0.8(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.7)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))
       '@nuxt/kit': 3.11.1(rollup@4.18.1)
       '@nuxt/schema': 3.11.1(rollup@4.18.1)
       '@nuxt/telemetry': 2.5.3(magicast@0.3.4)(rollup@4.18.1)
@@ -18780,7 +18780,7 @@ snapshots:
       knitwork: 1.1.0
       magic-string: 0.30.10
       mlly: 1.7.0
-      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2)
+      nitropack: 2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2)
       nuxi: 3.11.0
       nypm: 0.3.8
       ofetch: 1.3.4
@@ -21266,9 +21266,9 @@ snapshots:
       sass: 1.77.7
       terser: 5.29.2
 
-  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
+  vitest-environment-nuxt@1.0.0(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.31.4(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
+      '@nuxt/test-utils': 3.13.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.7)(terser@5.29.2))(vitest@2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.7)(terser@5.29.2))(vue-router@4.4.0(vue@3.4.27(typescript@5.4.5)))(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
