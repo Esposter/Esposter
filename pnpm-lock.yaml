@@ -425,8 +425,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(@types/node@20.14.10)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.29.2)
       vuetify-nuxt-module:
-        specifier: ^0.14.1
-        version: 0.14.1(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^0.15.0
+        version: 0.15.0(magicast@0.3.4)(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))
 
   packages/block-mj-text:
     devDependencies:
@@ -9688,8 +9688,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.14.1:
-    resolution: {integrity: sha512-rv7iFc0HrhFSO3JyWbFNXjuPuTfOx8unIdtTYat822vn5b9TVdZf5LffKv4fRrNgKEjmE/v9WT4yzxRVj3WIFA==}
+  vuetify-nuxt-module@0.15.0:
+    resolution: {integrity: sha512-D9K/jPYcQvD1d+0EywfJcsPPH0XtuUor3ecjB5m+VoK0XNlfOD8E9vmg67Fs6E3r1lzaMMeSBI8qRa3GcIU7Pg==}
 
   vuetify@3.6.12:
     resolution: {integrity: sha512-66fPzMLrJDpSGUjE4xkqEpEbvPJHp+/i9XqTcTGHTVAtb21/Fq/e01wm4VXs6smM4UgWhJvrRRfKacWAbSwZ7Q==}
@@ -12395,7 +12395,7 @@ snapshots:
 
   '@nuxt/devtools-kit@1.0.8(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))':
     dependencies:
-      '@nuxt/kit': 3.12.2(magicast@0.3.4)(rollup@4.18.1)
+      '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
       '@nuxt/schema': 3.12.2(rollup@4.18.1)
       execa: 7.2.0
       nuxt: 3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.10)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.6.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2)
@@ -21447,9 +21447,9 @@ snapshots:
     optionalDependencies:
       typescript: 5.5.0-dev.20240518
 
-  vuetify-nuxt-module@0.14.1(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5)):
+  vuetify-nuxt-module@0.15.0(magicast@0.3.4)(rollup@4.18.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5)):
     dependencies:
-      '@nuxt/kit': 3.11.2(rollup@4.18.1)
+      '@nuxt/kit': 3.12.3(magicast@0.3.4)(rollup@4.18.1)
       defu: 6.1.4
       destr: 2.0.3
       local-pkg: 0.5.0
@@ -21460,6 +21460,7 @@ snapshots:
       vite-plugin-vuetify: 2.0.3(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.29.2))(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.12)
       vuetify: 3.6.12(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5))
     transitivePeerDependencies:
+      - magicast
       - rollup
       - supports-color
       - typescript
