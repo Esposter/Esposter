@@ -3,6 +3,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
@@ -13,8 +14,14 @@ import type { Direction } from "grid-engine";
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
+  const battlePlayerStore = useBattlePlayerStore();
+  const { activeMonster: battleActiveMonster } = storeToRefs(battlePlayerStore);
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { optionGrid, activeMonsterIndex, activeMonster } = storeToRefs(monsterPartySceneStore);
+  const {
+    optionGrid,
+    activeMonsterIndex: monsterPartyActiveMonsterIndex,
+    activeMonster: monsterPartyActiveMonster,
+  } = storeToRefs(monsterPartySceneStore);
   const itemStore = useItemStore();
   const { selectedItemIndex, selectedItem } = storeToRefs(itemStore);
   const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
@@ -31,12 +38,17 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
         if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene(scene);
-        else if (selectedItemIndex.value === -1) {
+        else if (selectedItemIndex.value > -1) {
+          monsterPartyActiveMonsterIndex.value = optionGrid.value.index;
+          useItem(scene, selectedItem, monsterPartyActiveMonster);
+          selectedItemIndex.value = -1;
+        } else if (monsterPartyActiveMonsterIndex.value > -1) {
+          battleActiveMonster.value = monsterPartyActiveMonster.value;
+          monsterPartyActiveMonsterIndex.value = -1;
+          switchToPreviousScene(scene);
+        } else {
           monsterIndex.value = optionGrid.value.index;
           launchScene(scene, SceneKey.MonsterDetails);
-        } else {
-          activeMonsterIndex.value = optionGrid.value.index;
-          useItem(scene, selectedItem, activeMonster);
         }
         return;
       case PlayerSpecialInput.Cancel:
