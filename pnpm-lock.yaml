@@ -307,8 +307,8 @@ importers:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^8.0.1
-        version: 8.0.1
+        specifier: ^8.0.2
+        version: 8.0.2
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -1304,6 +1304,10 @@ packages:
 
   '@babel/runtime@7.24.7':
     resolution: {integrity: sha512-UwgBRMjJP+xv857DCngvqXI3Iq6J4v0wXmwc6sapg+zyhbwmQX67LUEFrkK5tbyJ30jGuG3ZvWpBiB9LCy1kWw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.24.8':
+    resolution: {integrity: sha512-5F7SDGs1T72ZczbRwbGO9lQi0NLjQxzl6i4lJxLxfW9U5UluCSyEJeniWvnhl3/euNiqQVbo8zruhsDfid0esA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/standalone@7.24.0':
@@ -5732,8 +5736,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-unique-numbers@9.0.6:
-    resolution: {integrity: sha512-KGsLrPoDOcnPVDVuZGnc/bHwBA9u9uvsmLK3sNr7js7TWVuM0Udb6lP4YnNZtphb+zBDCsknxf4BNg7grNjTPg==}
+  fast-unique-numbers@9.0.7:
+    resolution: {integrity: sha512-K6hYNu8ZsVb7mwmd9OKxHmw4aLa+IFiBxt1e/FZVFFta94ZgNAHqIgUtDzd7AJaVoo/CoNTgr6sj1Dbj3PQPKg==}
     engines: {node: '>=18.2.0'}
 
   fast-uri@3.0.1:
@@ -9869,14 +9873,14 @@ packages:
   workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
 
-  worker-timers-broker@7.0.2:
-    resolution: {integrity: sha512-YEIBm3AzAzu15hU+lH+PI9KJq44oXSnYTu0rsYt+XbTLnyEehGPmGtU5G6jdIZ4LD9PCuOsVqgqSfCikOUaXJA==}
+  worker-timers-broker@7.0.3:
+    resolution: {integrity: sha512-LG/xWCCOg6UwRnmAzy05wCvn3jIO60AcpT/CgG3TmaYK93+biainiivSVHGK6VEBeJzETrFAKZ9JgW8gkae+Ag==}
 
-  worker-timers-worker@8.0.1:
-    resolution: {integrity: sha512-CYs9tQsvjq7oXQPcODGI6VXwTevuyiSL2wDRCLu0Q0Rm6qZMCVfRNO+RNtTQB5eA++wArAzuyRzV0Zdeq/zroQ==}
+  worker-timers-worker@8.0.2:
+    resolution: {integrity: sha512-Bx8grqm3TyHLorTMBbtoL+fAMwTBgx+c4IiE23fCNinlUpqTISEa9UXR6GAjgHAB2GlZjNLgisLjx9a6CKFV3Q==}
 
-  worker-timers@8.0.1:
-    resolution: {integrity: sha512-LVyIZVrKzeBDzRFQleTFnddKpRXPhVHhCmoAiYDp8UMSaCA81raAWEcReP2GNawIhOE/2uGGgo1YM1WfyCDbCg==}
+  worker-timers@8.0.2:
+    resolution: {integrity: sha512-Xna4rPTforH+a3/Kyukf9diO8MDdKY/nuDU77Ptx3SPi+2V/QfWGdwGUxVOk4oFyCnRoe71ZjH6axjyVWO5Nqw==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -10048,7 +10052,7 @@ snapshots:
 
   '@azure/abort-controller@2.1.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@azure/core-auth@1.7.0':
     dependencies:
@@ -11090,6 +11094,10 @@ snapshots:
       regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.24.7':
+    dependencies:
+      regenerator-runtime: 0.14.1
+
+  '@babel/runtime@7.24.8':
     dependencies:
       regenerator-runtime: 0.14.1
 
@@ -12406,7 +12414,7 @@ snapshots:
   '@nrwl/tao@19.0.4(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)':
     dependencies:
       nx: 19.0.4(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)
-      tslib: 2.6.2
+      tslib: 2.6.3
     transitivePeerDependencies:
       - '@swc-node/register'
       - '@swc/core'
@@ -12954,7 +12962,7 @@ snapshots:
       nx: 19.0.4(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)
       semver: 7.6.2
       tmp: 0.2.3
-      tslib: 2.6.2
+      tslib: 2.6.3
       yargs-parser: 21.1.1
 
   '@nx/nx-darwin-arm64@19.0.4':
@@ -13589,7 +13597,7 @@ snapshots:
   '@swc/helpers@0.4.36':
     dependencies:
       legacy-swc-helpers: '@swc/helpers@0.4.14'
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@swc/types@0.1.7':
     dependencies:
@@ -14861,7 +14869,7 @@ snapshots:
   '@yarnpkg/parsers@3.0.0-rc.46':
     dependencies:
       js-yaml: 3.14.1
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@yr/monotone-cubic-spline@1.0.3': {}
 
@@ -15370,7 +15378,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   camelcase-keys@6.2.2:
     dependencies:
@@ -15394,7 +15402,7 @@ snapshots:
   capital-case@1.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case-first: 2.0.2
 
   chai@5.1.1:
@@ -15436,7 +15444,7 @@ snapshots:
       path-case: 3.0.4
       sentence-case: 3.0.4
       snake-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   char-regex@1.0.2: {}
 
@@ -15654,7 +15662,7 @@ snapshots:
   constant-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case: 2.0.2
 
   constants-browserify@1.0.0: {}
@@ -16155,7 +16163,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   dot-prop@5.3.0:
     dependencies:
@@ -16807,9 +16815,9 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-unique-numbers@9.0.6:
+  fast-unique-numbers@9.0.7:
     dependencies:
-      '@babel/runtime': 7.24.7
+      '@babel/runtime': 7.24.8
       tslib: 2.6.3
 
   fast-uri@3.0.1: {}
@@ -17314,7 +17322,7 @@ snapshots:
   header-case@2.0.4:
     dependencies:
       capital-case: 1.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   hmac-drbg@1.0.1:
     dependencies:
@@ -17398,7 +17406,7 @@ snapshots:
 
   i18next@22.5.1:
     dependencies:
-      '@babel/runtime': 7.24.5
+      '@babel/runtime': 7.24.7
 
   iconv-lite@0.4.24:
     dependencies:
@@ -18127,7 +18135,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   lru-cache@10.2.2: {}
 
@@ -18221,7 +18229,7 @@ snapshots:
 
   mathjs@12.4.2:
     dependencies:
-      '@babel/runtime': 7.24.5
+      '@babel/runtime': 7.24.7
       complex.js: 2.1.1
       decimal.js: 10.4.3
       escape-latex: 1.2.0
@@ -18543,7 +18551,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   node-addon-api@7.1.0: {}
 
@@ -18907,7 +18915,7 @@ snapshots:
       tar-stream: 2.2.0
       tmp: 0.2.3
       tsconfig-paths: 4.2.0
-      tslib: 2.6.2
+      tslib: 2.6.3
       yargs: 17.7.2
       yargs-parser: 21.1.1
     optionalDependencies:
@@ -19163,7 +19171,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   parent-module@1.0.1:
     dependencies:
@@ -19225,14 +19233,14 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   path-browserify@1.0.1: {}
 
   path-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   path-exists@3.0.0: {}
 
@@ -20062,7 +20070,7 @@ snapshots:
   sentence-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
       upper-case-first: 2.0.2
 
   serialize-javascript@4.0.0:
@@ -20184,7 +20192,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   socks-proxy-agent@8.0.2:
     dependencies:
@@ -20488,7 +20496,7 @@ snapshots:
   synckit@0.9.0:
     dependencies:
       '@pkgr/core': 0.1.1
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   system-architecture@0.1.0: {}
 
@@ -21077,11 +21085,11 @@ snapshots:
 
   upper-case-first@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   upper-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   uqr@0.1.2: {}
 
@@ -21727,24 +21735,24 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.0.0
 
-  worker-timers-broker@7.0.2:
+  worker-timers-broker@7.0.3:
     dependencies:
-      '@babel/runtime': 7.24.7
-      fast-unique-numbers: 9.0.6
+      '@babel/runtime': 7.24.8
+      fast-unique-numbers: 9.0.7
       tslib: 2.6.3
-      worker-timers-worker: 8.0.1
+      worker-timers-worker: 8.0.2
 
-  worker-timers-worker@8.0.1:
+  worker-timers-worker@8.0.2:
     dependencies:
-      '@babel/runtime': 7.24.7
+      '@babel/runtime': 7.24.8
       tslib: 2.6.3
 
-  worker-timers@8.0.1:
+  worker-timers@8.0.2:
     dependencies:
-      '@babel/runtime': 7.24.7
+      '@babel/runtime': 7.24.8
       tslib: 2.6.3
-      worker-timers-broker: 7.0.2
-      worker-timers-worker: 8.0.1
+      worker-timers-broker: 7.0.3
+      worker-timers-worker: 8.0.2
 
   wrap-ansi@6.2.0:
     dependencies:
