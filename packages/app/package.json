@@ -154,7 +154,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/three": "^0.166.0",
     "@types/webfontloader": "^1.6.38",
-    "@types/ws": "^8.5.10",
+    "@types/ws": "^8.5.11",
     "@unocss/nuxt": "^0.61.3",
     "@vite-pwa/nuxt": "^0.9.1",
     "@vitest/coverage-v8": "^2.0.2",
