@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CalendarOptions } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/vue3";
 
@@ -15,7 +16,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
   <FullCalendar
     :options="{
       ...calendarOptions,
-      plugins: [dayGridPlugin, timeGridPlugin],
+      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       headerToolbar: {
         left: 'title',
         right: 'prevYear,prev,next,nextYear today',
@@ -23,6 +24,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
       footerToolbar: {
         right: 'dayGridMonth,timeGridWeek,timeGridDay',
       },
+      editable: true,
     }"
   >
     <template #eventContent="{ event, timeText }">
