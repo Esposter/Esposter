@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/node": "^20.14.10"
+    "@types/node": "^20.14.11"
   },
   "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
 }
