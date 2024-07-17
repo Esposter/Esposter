@@ -5,21 +5,14 @@ import type { EventSourceInput } from "@fullcalendar/core";
 
 await useReadTableEditor();
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
+const { editItem, save, resetItem } = tableEditorStore;
 const { tableEditor, editedItem } = storeToRefs(tableEditorStore);
 const events = computed<EventSourceInput>(() => {
   const results: EventSourceInput = [];
-  if (editedItem.value?.dueAt)
-    results.push({
-      id: editedItem.value.id,
-      title: editedItem.value.name,
-      description: editedItem.value.notes,
-      date: editedItem.value.dueAt,
-    });
 
   for (const item of tableEditor.value.items) {
     if (!item.dueAt) continue;
-    if (item.id !== editedItem.value?.id)
-      results.push({ id: item.id, title: item.name, description: item.notes, date: item.dueAt });
+    results.push({ id: item.id, title: item.name, description: item.notes, date: item.dueAt });
   }
 
   return results;
@@ -30,7 +23,19 @@ const events = computed<EventSourceInput>(() => {
   <NuxtLayout>
     <v-container fluid>
       <StyledCard h-full p-4="!">
-        <StyledCalendar h-full :calendar-options="{ events }" />
+        <StyledCalendar
+          h-full
+          :calendar-options="{
+            events,
+            eventChange: async ({ event: { id, start } }) => {
+              await editItem(id);
+              if (!editedItem) return;
+              editedItem.dueAt = start;
+              await save();
+              await resetItem();
+            },
+          }"
+        />
       </StyledCard>
     </v-container>
   </NuxtLayout>

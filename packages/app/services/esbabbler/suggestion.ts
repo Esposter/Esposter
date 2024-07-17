@@ -1,4 +1,3 @@
-import type { OnKeyDown } from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 import type { MentionOptions } from "@tiptap/extension-mention";
@@ -30,7 +29,7 @@ export const suggestion: MentionOptions["suggestion"] = {
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect as () => DOMRect,
           appendTo: () => document.body,
-          content: component.element,
+          content: component.element ?? undefined,
           showOnCreate: true,
           interactive: true,
           trigger: "manual",
@@ -54,7 +53,9 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        return Boolean((component.ref?.onKeyDown as OnKeyDown)(props));
+        return Boolean(
+          (component.editor.contentComponent?.refs[component.id] as InstanceType<typeof MentionList>).onKeyDown(props),
+        );
       },
 
       onExit() {
