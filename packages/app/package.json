@@ -174,7 +174,7 @@
     "unocss": "^0.61.5",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vitest": "^2.0.3",
-    "vuetify-nuxt-module": "^0.15.1"
+    "vuetify-nuxt-module": "^0.15.2"
   },
   "devDependenciesComments": {
     "nuxt": "upgrading breaks phaser"
