@@ -5,7 +5,6 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useItemStore } from "@/store/dungeons/inventory/item";
 import type { EventEmitter } from "eventemitter3";
 
 let unsubscribes: (() => void)[] = [];
@@ -21,16 +20,12 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
 export const ItemAttempt: State<StateName> = {
   name: StateName.ItemAttempt,
   onEnter: (scene) => {
-    const itemStore = useItemStore();
-    const { unselectItem } = itemStore;
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const { launchScene, removeScene } = usePreviousScene(scene.scene.key);
 
     usePhaserListener("useItem", async (scene, item, monster) => {
       const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
-
-      unselectItem();
       // We assume here that you can only use an item in a separate scene
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
@@ -41,7 +36,6 @@ export const ItemAttempt: State<StateName> = {
       });
     });
     usePhaserListener("unuseItem", async () => {
-      unselectItem();
       await battleStateMachine.setState(StateName.PlayerInput);
     });
 

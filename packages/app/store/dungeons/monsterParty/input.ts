@@ -5,10 +5,10 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useItemStore } from "@/store/dungeons/inventory/item";
+import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
@@ -54,9 +54,11 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         return;
       }
       case SceneKey.Inventory: {
-        const itemStore = useItemStore();
-        const { selectedItem } = storeToRefs(itemStore);
-        useItem(scene, selectedItem, toRef(value));
+        const itemStore = useInventorySceneStore();
+        const { itemOptionGrid } = storeToRefs(itemStore);
+        if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel)
+          throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value.value);
+        useItem(scene, toRef(itemOptionGrid.value.value), toRef(value));
         return;
       }
       default: {
