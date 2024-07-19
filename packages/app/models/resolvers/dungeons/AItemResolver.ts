@@ -27,11 +27,11 @@ export abstract class AItemResolver {
     return true;
   }
 
-  isActive(_item: Ref<Item>, _target: Ref<Monster>): boolean {
+  isActive(_item: Ref<Item>, _monster: Ref<Monster>): boolean {
     return true;
   }
 
-  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _target: Ref<Monster>): void {}
+  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): void {}
 
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();

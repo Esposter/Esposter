@@ -5,41 +5,36 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export class HealItemResolver extends AItemResolver {
   constructor() {
     super(ItemEffectType.Heal);
   }
 
-  isActive(item: Ref<Item>, target: Ref<Monster>) {
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster } = storeToRefs(monsterPartySceneStore);
+  isActive(item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
-    if (target.value.status.hp === 0) {
-      infoDialogMessage.value.text = `Cannot heal fainted ${activeMonster.value.key}`;
+    if (monster.value.status.hp === 0) {
+      infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}`;
       return false;
-    } else if (target.value.status.hp === target.value.stats.maxHp) {
-      infoDialogMessage.value.text = `${activeMonster.value.key} is already fully healed`;
+    } else if (monster.value.status.hp === monster.value.stats.maxHp) {
+      infoDialogMessage.value.text = `${monster.value.key} is already fully healed`;
       return false;
     }
 
     return true;
   }
 
-  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, target: Ref<Monster>) {
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster } = storeToRefs(monsterPartySceneStore);
+  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { showMessages } = infoPanelStore;
-    const oldHp = target.value.status.hp;
-    const newHp = Math.min(oldHp + item.value.effect.value, target.value.stats.maxHp);
+    const oldHp = monster.value.status.hp;
+    const newHp = Math.min(oldHp + item.value.effect.value, monster.value.stats.maxHp);
 
-    target.value.status.hp = newHp;
-    await showMessages(scene, [`Healed ${activeMonster.value.key} by ${newHp - oldHp} HP.`], () => {
-      phaserEventEmitter.emit("useItem", item.value, scene.scene.key);
+    monster.value.status.hp = newHp;
+    await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`], () => {
+      phaserEventEmitter.emit("useItem", scene, item.value, monster.value);
     });
   }
 }

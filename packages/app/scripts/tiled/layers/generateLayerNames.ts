@@ -11,13 +11,12 @@ export const generateLayerNames = (layers: (TMXLayerParsed | TMXGroupLayerParsed
       case LayerType.objectgroup:
         objectgroupNames.push(layerName);
         break;
-      case LayerType.group:
-        {
-          const result = generateLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
-          objectgroupNames.push(...result.objectgroupNames);
-          layerNames.push(...result.layerNames);
-        }
+      case LayerType.group: {
+        const result = generateLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
+        objectgroupNames.push(...result.objectgroupNames);
+        layerNames.push(...result.layerNames);
         break;
+      }
       case LayerType.layer:
         layerNames.push(layerName);
         break;

@@ -28,13 +28,12 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         );
       }
       return;
-    case EffectType.Heal:
-      {
-        const worldPlayerStore = useWorldPlayerStore();
-        const { healParty } = worldPlayerStore;
-        healParty();
-      }
+    case EffectType.Heal: {
+      const worldPlayerStore = useWorldPlayerStore();
+      const { healParty } = worldPlayerStore;
+      healParty();
       break;
+    }
     case EffectType.SceneFade:
       scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
       scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {

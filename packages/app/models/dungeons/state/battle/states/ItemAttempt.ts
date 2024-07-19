@@ -5,7 +5,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { useItemStore } from "@/store/dungeons/inventory/item";
 import type { EventEmitter } from "eventemitter3";
 
 let unsubscribes: (() => void)[] = [];
@@ -21,24 +21,27 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
 export const ItemAttempt: State<StateName> = {
   name: StateName.ItemAttempt,
   onEnter: (scene) => {
+    const itemStore = useItemStore();
+    const { unselectItem } = itemStore;
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const { launchScene, removeScene } = usePreviousScene(scene.scene.key);
 
-    usePhaserListener("useItem", async (item, sceneKey) => {
-      const { switchToPreviousScene } = usePreviousScene(sceneKey);
+    usePhaserListener("useItem", async (scene, item, monster) => {
+      const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
+
+      unselectItem();
       // We assume here that you can only use an item in a separate scene
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
       removeScene(scene, SceneKey.Inventory);
       switchToPreviousScene(scene);
-      await showMessages(scene, [`You used ${item.id} on ${activeMonster.value.key}.`], async () => {
+      await showMessages(scene, [`You used ${item.id} on ${monster.key}.`], async () => {
         await battleStateMachine.setState(StateName.EnemyInput);
       });
     });
     usePhaserListener("unuseItem", async () => {
+      unselectItem();
       await battleStateMachine.setState(StateName.PlayerInput);
     });
 

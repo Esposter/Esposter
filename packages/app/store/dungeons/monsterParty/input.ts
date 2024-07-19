@@ -14,19 +14,9 @@ import type { Direction } from "grid-engine";
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
-  const battlePlayerStore = useBattlePlayerStore();
-  const { activeMonster: battleActiveMonster } = storeToRefs(battlePlayerStore);
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const {
-    optionGrid,
-    activeMonsterIndex: monsterPartyActiveMonsterIndex,
-    activeMonster: monsterPartyActiveMonster,
-  } = storeToRefs(monsterPartySceneStore);
-  const itemStore = useItemStore();
-  const { selectedItemIndex, selectedItem } = storeToRefs(itemStore);
-  const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-  const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
-  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
+  const { optionGrid } = storeToRefs(monsterPartySceneStore);
+  const { previousSceneKey, launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (await handleShowMessageInput(scene, justDownInput)) return;
@@ -37,19 +27,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene(scene);
-        else if (selectedItemIndex.value > -1) {
-          monsterPartyActiveMonsterIndex.value = optionGrid.value.index;
-          useItem(scene, selectedItem, monsterPartyActiveMonster);
-          selectedItemIndex.value = -1;
-        } else if (monsterPartyActiveMonsterIndex.value > -1) {
-          battleActiveMonster.value = monsterPartyActiveMonster.value;
-          monsterPartyActiveMonsterIndex.value = -1;
-          switchToPreviousScene(scene);
-        } else {
-          monsterIndex.value = optionGrid.value.index;
-          launchScene(scene, SceneKey.MonsterDetails);
-        }
+        onPlayerConfirmInput(scene, optionGrid.value.value);
         return;
       case PlayerSpecialInput.Cancel:
         switchToPreviousScene(scene);
@@ -58,6 +36,36 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
+    }
+  };
+
+  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof optionGrid.value.value) => {
+    if (value === PlayerSpecialInput.Cancel) {
+      switchToPreviousScene(scene);
+      return;
+    }
+
+    switch (previousSceneKey.value) {
+      case SceneKey.Battle: {
+        const battlePlayerStore = useBattlePlayerStore();
+        const { activeMonster } = storeToRefs(battlePlayerStore);
+        activeMonster.value = value;
+        switchToPreviousScene(scene);
+        return;
+      }
+      case SceneKey.Inventory: {
+        const itemStore = useItemStore();
+        const { selectedItem } = storeToRefs(itemStore);
+        useItem(scene, selectedItem, toRef(value));
+        return;
+      }
+      default: {
+        const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
+        const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
+        selectedMonster.value = value;
+        launchScene(scene, SceneKey.MonsterDetails);
+        return;
+      }
     }
   };
 
