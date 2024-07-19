@@ -97,8 +97,8 @@ importers:
         specifier: ^0.3.5
         version: 0.3.5(@auth/core@0.21.0)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.23.0)(@parcel/watcher@2.4.1)(@types/node@20.14.11)(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.7.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.18.1)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.29.2))(vue-tsc@1.8.27(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.18.1)
       '@koumoul/vjsf':
-        specifier: ^3.0.0-beta.32
-        version: 3.0.0-beta.32(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.13(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
+        specifier: ^3.0.0-beta.33
+        version: 3.0.0-beta.33(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.13(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
@@ -307,8 +307,8 @@ importers:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^8.0.2
-        version: 8.0.2
+        specifier: ^8.0.3
+        version: 8.0.3
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -416,8 +416,8 @@ importers:
         specifier: ^4.16.2
         version: 4.16.2
       type-fest:
-        specifier: ^4.22.0
-        version: 4.22.0
+        specifier: ^4.22.1
+        version: 4.22.1
       unocss:
         specifier: ^0.61.5
         version: 0.61.5(@unocss/webpack@0.61.5(rollup@4.18.1)(webpack@5.90.3(@swc/core@1.5.7)(esbuild@0.19.12)))(postcss@8.4.38)(rollup@4.18.1)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.29.2))
@@ -2306,17 +2306,17 @@ packages:
   '@jsdevtools/ono@7.1.3':
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
 
-  '@json-layout/core@0.27.0':
-    resolution: {integrity: sha512-uXK2sJ/YVmOp0FYYyTtm8miTFGopSm2Q6aGXjFApAfVuqap9UNKxK6PyDeQjiyFQ4h974JSZk6QnWPV6xUzrBw==}
+  '@json-layout/core@0.28.1':
+    resolution: {integrity: sha512-eKIvh0stJzxzfswiWfzlUfIJySNOFDhg+PWzICk7VWvxdud9zUCg+YqHgSSQ11x5bIBRqoqRSy1y+DXyoy0Asg==}
 
-  '@json-layout/vocabulary@0.19.0':
-    resolution: {integrity: sha512-atkAKeYPROR2W+SmRZ19+rsYdOaQLq4wBWHDyyTy0usWwotgFsWIc/soKUNlIacaJBZtq6zywibSmZobQoeQug==}
+  '@json-layout/vocabulary@0.20.0':
+    resolution: {integrity: sha512-k9NfZ1y0ol28qxQrw0/pxlaLibrGdeUSjUUDWkdLy0DE/DQbL69lwn7ihCF7JlwHmg5yU2cVcvOGJXAvA3V3ug==}
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@3.0.0-beta.32':
-    resolution: {integrity: sha512-iqG0BLqjB1K9BafzrWv9joUWdOTDQiUDIih0lZhlq6dBJTncUn3p3GmoEeSQXbZa/BpnJb6WBK6RDtkmOWjbvA==}
+  '@koumoul/vjsf@3.0.0-beta.33':
+    resolution: {integrity: sha512-amP8BhD1l+i2K+USnIfzg+r9fHBpOf4kOs97V/CzT4uJbUS/pPhtWr1P+T0+epOISTqb6PmIpaAh+tzxwc6NYw==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^3.6.8
@@ -9169,8 +9169,8 @@ packages:
     resolution: {integrity: sha512-ADn2w7hVPcK6w1I0uWnM//y1rLXZhzB9mr0a3OirzclKF1Wp6VzevUmzz/NRAWunOT6E8HrnpGY7xOfc6K57fA==}
     engines: {node: '>=16'}
 
-  type-fest@4.22.0:
-    resolution: {integrity: sha512-hxMO1k4ip1uTVGgPbs1hVpYyhz2P91A6tQyH2H9POx3U6T3MdhIcfY8L2hRu/LRmzPFdfduOS0RIDjFlP2urPw==}
+  type-fest@4.22.1:
+    resolution: {integrity: sha512-9tHNEa0Ov81YOopiVkcCJVz5TM6AEQ+CHHjFIktqPnE3NV0AHIkx+gh9tiCl58m/66wWxkOC9eltpa75J4lQPA==}
     engines: {node: '>=16'}
 
   type-level-regexp@0.1.17:
@@ -9943,14 +9943,14 @@ packages:
   workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
 
-  worker-timers-broker@7.0.3:
-    resolution: {integrity: sha512-LG/xWCCOg6UwRnmAzy05wCvn3jIO60AcpT/CgG3TmaYK93+biainiivSVHGK6VEBeJzETrFAKZ9JgW8gkae+Ag==}
+  worker-timers-broker@7.1.0:
+    resolution: {integrity: sha512-Z2oTVYND+x47n/bB3cw1EsLDL8wWHIttu/T46fF/owGN2TqMyiAyWkmGZZUhfDtI4xstIwf+ErQ069maNwFT4g==}
 
   worker-timers-worker@8.0.2:
     resolution: {integrity: sha512-Bx8grqm3TyHLorTMBbtoL+fAMwTBgx+c4IiE23fCNinlUpqTISEa9UXR6GAjgHAB2GlZjNLgisLjx9a6CKFV3Q==}
 
-  worker-timers@8.0.2:
-    resolution: {integrity: sha512-Xna4rPTforH+a3/Kyukf9diO8MDdKY/nuDU77Ptx3SPi+2V/QfWGdwGUxVOk4oFyCnRoe71ZjH6axjyVWO5Nqw==}
+  worker-timers@8.0.3:
+    resolution: {integrity: sha512-wInn/x/jjNhyRA5EPCBXmIJD0v/xWnVH5L0voasVmpPxOV4lB+aVwX1a7ADbhuQdAPJ/EKaJCJjg+RvO6bfxrA==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -12069,9 +12069,9 @@ snapshots:
 
   '@jsdevtools/ono@7.1.3': {}
 
-  '@json-layout/core@0.27.0':
+  '@json-layout/core@0.28.1':
     dependencies:
-      '@json-layout/vocabulary': 0.19.0(ajv@8.17.1)
+      '@json-layout/vocabulary': 0.20.0(ajv@8.17.1)
       '@types/markdown-it': 13.0.8
       ajv: 8.17.1
       ajv-errors: 3.0.0(ajv@8.17.1)
@@ -12084,7 +12084,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@json-layout/vocabulary@0.19.0(ajv@8.17.1)':
+  '@json-layout/vocabulary@0.20.0(ajv@8.17.1)':
     dependencies:
       ajv-formats: 2.1.1(ajv@8.17.1)
       debug: 4.3.5
@@ -12094,9 +12094,9 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@3.0.0-beta.32(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.13(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
+  '@koumoul/vjsf@3.0.0-beta.33(vue@3.4.27(typescript@5.4.5))(vuetify@3.6.13(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.27(typescript@5.4.5)))':
     dependencies:
-      '@json-layout/core': 0.27.0
+      '@json-layout/core': 0.28.1
       '@vueuse/core': 10.11.0(vue@3.4.27(typescript@5.4.5))
       debug: 4.3.5
       ejs: 3.1.9
@@ -20874,7 +20874,7 @@ snapshots:
 
   type-fest@4.21.0: {}
 
-  type-fest@4.22.0: {}
+  type-fest@4.22.1: {}
 
   type-level-regexp@0.1.17: {}
 
@@ -21868,7 +21868,7 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.0.0
 
-  worker-timers-broker@7.0.3:
+  worker-timers-broker@7.1.0:
     dependencies:
       '@babel/runtime': 7.24.8
       fast-unique-numbers: 9.0.7
@@ -21880,11 +21880,11 @@ snapshots:
       '@babel/runtime': 7.24.8
       tslib: 2.6.3
 
-  worker-timers@8.0.2:
+  worker-timers@8.0.3:
     dependencies:
       '@babel/runtime': 7.24.8
       tslib: 2.6.3
-      worker-timers-broker: 7.0.3
+      worker-timers-broker: 7.1.0
       worker-timers-worker: 8.0.2
 
   wrap-ansi@6.2.0:
