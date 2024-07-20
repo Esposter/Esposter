@@ -169,8 +169,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.2.1)
       dayjs:
-        specifier: ^1.11.11
-        version: 1.11.11
+        specifier: ^1.11.12
+        version: 1.11.12
       debug:
         specifier: ^4.3.5
         version: 4.3.5
@@ -5079,8 +5079,8 @@ packages:
   dateformat@3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
 
-  dayjs@1.11.11:
-    resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
+  dayjs@1.11.12:
+    resolution: {integrity: sha512-Rt2g+nTbLlDWZTwwrIXjy9MeiZmSDI375FvZs72ngxx8PDC6YXOeR3q5LAuPzjZQxhiWdRKac7RKV+YyQYfYIg==}
 
   db0@0.1.4:
     resolution: {integrity: sha512-Ft6eCwONYxlwLjBXSJxw0t0RYtA5gW9mq8JfBXn9TtC0nDPlqePAhpv9v4g9aONBi6JI1OXHTKKkUYGd+BOrCA==}
@@ -16027,7 +16027,7 @@ snapshots:
       cli-progress: 3.12.0
       comment-parser: 1.4.1
       consola: 3.2.3
-      dayjs: 1.11.11
+      dayjs: 1.11.12
       eta: 3.4.0
       filenamify: 4.3.0
       find-up: 5.0.0
@@ -16140,7 +16140,7 @@ snapshots:
 
   dateformat@3.0.3: {}
 
-  dayjs@1.11.11: {}
+  dayjs@1.11.12: {}
 
   db0@0.1.4(drizzle-orm@0.32.0(@opentelemetry/api@1.8.0)(postgres@3.4.4)):
     optionalDependencies:
