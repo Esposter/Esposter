@@ -31,8 +31,8 @@ importers:
         specifier: ^9.7.0
         version: 9.7.0
       lerna:
-        specifier: ^8.1.6
-        version: 8.1.6(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)
+        specifier: ^8.1.7
+        version: 8.1.7(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)
       rollup:
         specifier: ^4.19.0
         version: 4.19.0
@@ -2322,8 +2322,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lerna/create@8.1.6':
-    resolution: {integrity: sha512-z7CjDSWFKS6cqydxP2XDrnmp1MYavSk2sU70ku1uo/38SZvFeUlEAkV6evxc2QJOqWQFsGKOO26zX2DBnQ45YQ==}
+  '@lerna/create@8.1.7':
+    resolution: {integrity: sha512-ch81CgU5pBNOiUCQx44F/ZtN4DxxJjUQtuytYRBFWJSHAJ+XPJtiC/yQ9zjr1I1yaUlmNYYblkopoOyziOdJ1w==}
     engines: {node: '>=18.0.0'}
 
   '@lezer/common@1.2.1':
@@ -6802,8 +6802,8 @@ packages:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
 
-  lerna@8.1.6:
-    resolution: {integrity: sha512-O3zSX/dmchMVy9m37DD1BCx7X68nS5lZFECjqG7Siiv3+KgqKXHnF4JQPJUDD/vG2qBQv5StpXCyqGxR0XJVAQ==}
+  lerna@8.1.7:
+    resolution: {integrity: sha512-v2kkBn8Vqtroo30Pr5/JQ9MygRhnCsoI1jSOf3DxWmcTbkpC5U7c6rGr+7NPK6QrxKbC0/Cj4kuIBMb/7f79sQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -12080,7 +12080,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lerna/create@8.1.6(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)':
+  '@lerna/create@8.1.7(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)':
     dependencies:
       '@npmcli/arborist': 7.5.3
       '@npmcli/package-json': 5.2.0
@@ -12140,6 +12140,7 @@ snapshots:
       slash: 3.0.0
       ssri: 10.0.6
       string-width: 4.2.3
+      strip-ansi: 6.0.1
       strong-log-transformer: 2.1.0
       tar: 6.2.1
       temp-dir: 1.0.0
@@ -12433,7 +12434,7 @@ snapshots:
   '@npmcli/package-json@5.2.0':
     dependencies:
       '@npmcli/git': 5.0.4
-      glob: 10.3.15
+      glob: 10.4.3
       hosted-git-info: 7.0.2
       json-parse-even-better-errors: 3.0.2
       normalize-package-data: 6.0.1
@@ -15399,7 +15400,7 @@ snapshots:
       fs-minipass: 3.0.3
       glob: 10.4.3
       lru-cache: 10.2.2
-      minipass: 7.0.4
+      minipass: 7.1.2
       minipass-collect: 2.0.1
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
@@ -17016,7 +17017,7 @@ snapshots:
 
   fs-minipass@3.0.3:
     dependencies:
-      minipass: 7.0.4
+      minipass: 7.1.2
 
   fs.realpath@1.0.0: {}
 
@@ -17950,9 +17951,9 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  lerna@8.1.6(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13):
+  lerna@8.1.7(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13):
     dependencies:
-      '@lerna/create': 8.1.6(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)
+      '@lerna/create': 8.1.7(@swc-node/register@1.9.1(@swc/core@1.5.7)(typescript@5.4.5))(@swc/core@1.5.7)(encoding@0.1.13)(typescript@5.4.5)
       '@npmcli/arborist': 7.5.3
       '@npmcli/package-json': 5.2.0
       '@npmcli/run-script': 8.1.0
@@ -18019,6 +18020,7 @@ snapshots:
       slash: 3.0.0
       ssri: 10.0.6
       string-width: 4.2.3
+      strip-ansi: 6.0.1
       strong-log-transformer: 2.1.0
       tar: 6.2.1
       temp-dir: 1.0.0
@@ -18243,7 +18245,7 @@ snapshots:
       cacache: 18.0.3
       http-cache-semantics: 4.1.1
       is-lambda: 1.0.1
-      minipass: 7.0.4
+      minipass: 7.1.2
       minipass-fetch: 3.0.4
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
@@ -18396,7 +18398,7 @@ snapshots:
 
   minipass-fetch@3.0.4:
     dependencies:
-      minipass: 7.0.4
+      minipass: 7.1.2
       minipass-sized: 1.0.3
       minizlib: 2.1.2
     optionalDependencies:
@@ -18772,7 +18774,7 @@ snapshots:
       '@npmcli/redact': 2.0.1
       jsonparse: 1.3.1
       make-fetch-happen: 13.0.0
-      minipass: 7.0.4
+      minipass: 7.1.2
       minipass-fetch: 3.0.4
       minizlib: 2.1.2
       npm-package-arg: 11.0.2
@@ -19197,7 +19199,7 @@ snapshots:
       '@npmcli/run-script': 8.1.0
       cacache: 18.0.3
       fs-minipass: 3.0.3
-      minipass: 7.0.4
+      minipass: 7.1.2
       npm-package-arg: 11.0.2
       npm-packlist: 8.0.2
       npm-pick-manifest: 9.0.1
@@ -20312,7 +20314,7 @@ snapshots:
 
   ssri@10.0.6:
     dependencies:
-      minipass: 7.0.4
+      minipass: 7.1.2
 
   stackback@0.0.2: {}
 
