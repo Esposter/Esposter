@@ -5,11 +5,11 @@ import type { ApexOptions } from "apexcharts";
 import { defu } from "defu";
 
 export class TypeResolver extends AVisualTypeResolver {
-  isActive() {
+  override isActive() {
     return true;
   }
 
-  handleConfiguration(apexOptions: ApexOptions, type: VisualType) {
+  override handleConfiguration(apexOptions: ApexOptions, type: VisualType) {
     apexOptions.chart = defu(
       {
         type: uncapitalize(type) as ApexChart["type"],

@@ -11,7 +11,7 @@ export class FunnelResolver extends AVisualTypeResolver {
     super(VisualType.Funnel);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu(
       {
         type: uncapitalize(VisualType.Bar),
@@ -59,7 +59,7 @@ export class FunnelResolver extends AVisualTypeResolver {
     );
   }
 
-  handleSchema(schema: z.AnyZodObject) {
+  override handleSchema(schema: z.AnyZodObject) {
     return schema.omit({ [basicChartConfigurationSchema.keyof().Values.dataLabels]: true });
   }
 }

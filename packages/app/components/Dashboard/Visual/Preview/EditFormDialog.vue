@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import type { Visual } from "@/models/dashboard/Visual";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { useVisualStore } from "@/store/dashboard/visual";

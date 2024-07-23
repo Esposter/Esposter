@@ -42,7 +42,7 @@ export class TiledJSONExternalFile extends MultiFile {
     this.config.tilesetXhrSettings = tilesetXhrSettings;
   }
 
-  onFileComplete(file: TilemapFile) {
+  override onFileComplete(file: TilemapFile) {
     const index = this.files.indexOf(file);
     if (index === -1) return;
 

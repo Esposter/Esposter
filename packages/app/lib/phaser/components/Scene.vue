@@ -66,7 +66,7 @@ const NewScene = class extends SceneWithPlugins {
     createListenersMap[this.scene.key] = [];
   }
 
-  update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
+  override update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
     const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
     for (const updateListener of updateListenersMap[this.scene.key]) updateListener(this);
