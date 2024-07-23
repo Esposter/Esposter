@@ -5,7 +5,6 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import type { EventEmitter } from "eventemitter3";
 
 let unsubscribes: (() => void)[] = [];
@@ -23,18 +22,16 @@ export const ItemAttempt: State<StateName> = {
   onEnter: (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { activeMonster } = storeToRefs(monsterPartySceneStore);
     const { launchScene, removeScene } = usePreviousScene(scene.scene.key);
 
-    usePhaserListener("useItem", async (item, sceneKey) => {
-      const { switchToPreviousScene } = usePreviousScene(sceneKey);
+    usePhaserListener("useItem", async (scene, item, monster) => {
+      const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
       // We assume here that you can only use an item in a separate scene
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
       removeScene(scene, SceneKey.Inventory);
       switchToPreviousScene(scene);
-      await showMessages(scene, [`You used ${item.id} on ${activeMonster.value.key}.`], async () => {
+      await showMessages(scene, [`You used ${item.id} on ${monster.key}.`], async () => {
         await battleStateMachine.setState(StateName.EnemyInput);
       });
     });

@@ -32,18 +32,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     { immediate: true },
   );
 
-  const activeMonsterIndex = ref(0);
-  const activeMonster = computed({
-    get: () => player.value.monsters[activeMonsterIndex.value],
-    set: (newActiveMonster) => {
-      player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
-    },
-  });
-
   return {
     monstersGrid,
     optionGrid,
-    activeMonsterIndex,
-    activeMonster,
   };
 });

@@ -13,8 +13,8 @@ const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
-const { monster } = storeToRefs(monsterDetailsSceneStore);
-const { experienceToNextLevel, barPercentage } = useExperience(monster);
+const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
+const { experienceToNextLevel, barPercentage } = useExperience(selectedMonster);
 </script>
 
 <template>
@@ -22,10 +22,17 @@ const { experienceToNextLevel, barPercentage } = useExperience(monster);
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
-      :configuration="{ x: 20, y: 60, text: `LV. ${monster.stats.level}`, style: { ...MenuTextStyle, fontSize: 40 } }"
+      :configuration="{
+        x: 20,
+        y: 60,
+        text: `LV. ${selectedMonster.stats.level}`,
+        style: { ...MenuTextStyle, fontSize: 40 },
+      }"
     />
-    <Text :configuration="{ x: 200, y: 60, text: monster.key, style: { ...MenuTextStyle, fontSize: 40 } }" />
-    <Image :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: monster.asset.key, scale: 0.7 }" />
+    <Text :configuration="{ x: 200, y: 60, text: selectedMonster.key, style: { ...MenuTextStyle, fontSize: 40 } }" />
+    <Image
+      :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.asset.key, scale: 0.7 }"
+    />
     <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
     <Text
       :configuration="{
@@ -33,7 +40,7 @@ const { experienceToNextLevel, barPercentage } = useExperience(monster);
         y: 340,
         originX: 1,
         originY: 0,
-        text: monster.status.exp.toString(),
+        text: selectedMonster.status.exp.toString(),
         style: MenuExperienceTextStyle,
       }"
     />

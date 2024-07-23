@@ -2,6 +2,7 @@ import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
 import type { Item } from "@/models/dungeons/item/Item";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX, SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/services/phaser/constants";
 import EventEmitter from "eventemitter3";
 import type { Direction, Position } from "grid-engine";
@@ -14,7 +15,7 @@ type SceneEvents = {
 };
 
 export interface PhaserEvents extends SceneEvents {
-  useItem: (item: Item, sceneKey: SceneKey) => Promise<void>;
+  useItem: (scene: SceneWithPlugins, item: Item, monster: Monster) => Promise<void>;
   unuseItem: () => Promise<void>;
   playerTeleport: (position: Position, direction?: Direction) => void;
   levelUp: (monster: Monster, onComplete: () => void) => Promise<void>;

@@ -10,6 +10,7 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   const { launchParallelScene, removeParallelScene } = phaserStore;
   const sceneStore = useSceneStore();
   const { previousSceneKeys } = storeToRefs(sceneStore);
+  const previousSceneKey = computed(() => previousSceneKeys.value[previousSceneKeys.value.length - 1]);
 
   const launchScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
     previousSceneKeys.value.push(currentSceneKey);
@@ -35,5 +36,5 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     scene.scene.resume(previousSceneKey);
   };
 
-  return { launchScene, removeScene, switchToPreviousScene };
+  return { previousSceneKey, launchScene, removeScene, switchToPreviousScene };
 };

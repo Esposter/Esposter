@@ -5,28 +5,18 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useItemStore } from "@/store/dungeons/inventory/item";
+import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import type { Direction } from "grid-engine";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
-  const battlePlayerStore = useBattlePlayerStore();
-  const { activeMonster: battleActiveMonster } = storeToRefs(battlePlayerStore);
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const {
-    optionGrid,
-    activeMonsterIndex: monsterPartyActiveMonsterIndex,
-    activeMonster: monsterPartyActiveMonster,
-  } = storeToRefs(monsterPartySceneStore);
-  const itemStore = useItemStore();
-  const { selectedItemIndex, selectedItem } = storeToRefs(itemStore);
-  const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-  const { monsterIndex } = storeToRefs(monsterDetailsSceneStore);
-  const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
+  const { optionGrid } = storeToRefs(monsterPartySceneStore);
+  const { previousSceneKey, launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (await handleShowMessageInput(scene, justDownInput)) return;
@@ -37,19 +27,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        if (optionGrid.value.value === PlayerSpecialInput.Cancel) switchToPreviousScene(scene);
-        else if (selectedItemIndex.value > -1) {
-          monsterPartyActiveMonsterIndex.value = optionGrid.value.index;
-          useItem(scene, selectedItem, monsterPartyActiveMonster);
-          selectedItemIndex.value = -1;
-        } else if (monsterPartyActiveMonsterIndex.value > -1) {
-          battleActiveMonster.value = monsterPartyActiveMonster.value;
-          monsterPartyActiveMonsterIndex.value = -1;
-          switchToPreviousScene(scene);
-        } else {
-          monsterIndex.value = optionGrid.value.index;
-          launchScene(scene, SceneKey.MonsterDetails);
-        }
+        onPlayerConfirmInput(scene, optionGrid.value.value);
         return;
       case PlayerSpecialInput.Cancel:
         switchToPreviousScene(scene);
@@ -58,6 +36,38 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
+    }
+  };
+
+  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof optionGrid.value.value) => {
+    if (value === PlayerSpecialInput.Cancel) {
+      switchToPreviousScene(scene);
+      return;
+    }
+
+    switch (previousSceneKey.value) {
+      case SceneKey.Battle: {
+        const battlePlayerStore = useBattlePlayerStore();
+        const { activeMonster } = storeToRefs(battlePlayerStore);
+        activeMonster.value = value;
+        switchToPreviousScene(scene);
+        return;
+      }
+      case SceneKey.Inventory: {
+        const itemStore = useInventorySceneStore();
+        const { itemOptionGrid } = storeToRefs(itemStore);
+        if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel)
+          throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value.value);
+        useItem(scene, toRef(itemOptionGrid.value.value), toRef(value));
+        return;
+      }
+      default: {
+        const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
+        const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
+        selectedMonster.value = value;
+        launchScene(scene, SceneKey.MonsterDetails);
+        return;
+      }
     }
   };
 

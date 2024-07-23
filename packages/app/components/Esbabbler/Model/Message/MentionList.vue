@@ -6,8 +6,6 @@ interface MessageMentionListProps {
   command: (props: Record<string, unknown>) => void;
 }
 
-export type OnKeyDown = typeof onKeyDown;
-
 const { items, command } = defineProps<MessageMentionListProps>();
 const { infoOpacity10 } = useColors();
 const selectedIndex = ref(0);

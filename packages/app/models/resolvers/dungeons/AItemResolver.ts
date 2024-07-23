@@ -2,7 +2,6 @@ import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { useItemStore } from "@/store/dungeons/inventory/item";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
@@ -27,19 +26,21 @@ export abstract class AItemResolver {
     return true;
   }
 
-  isActive(_item: Ref<Item>, _target: Ref<Monster>): boolean {
+  isActive(_item: Ref<Item>, _monster: Ref<Monster>): boolean {
     return true;
   }
 
-  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _target: Ref<Monster>): void {}
+  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): void {}
 
   static postHandleItem(item: Ref<Item>) {
     const inventorySceneStore = useInventorySceneStore();
     const { inventory } = storeToRefs(inventorySceneStore);
-    const itemStore = useItemStore();
-    const { selectedItemIndex } = storeToRefs(itemStore);
 
     item.value.quantity--;
-    if (item.value.quantity === 0) inventory.value.splice(selectedItemIndex.value, 1);
+    if (item.value.quantity > 0) return;
+
+    const index = inventory.value.findIndex((i) => i.id === item.value.id);
+    if (index === -1) return;
+    inventory.value.splice(index, 1);
   }
 }

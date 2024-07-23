@@ -53,9 +53,7 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        return Boolean(
-          (component.editor.contentComponent?.refs[component.id] as InstanceType<typeof MentionList>).onKeyDown(props),
-        );
+        return Boolean((component.ref as InstanceType<typeof MentionList>).onKeyDown(props));
       },
 
       onExit() {
