@@ -29,7 +29,7 @@ export const suggestion: MentionOptions["suggestion"] = {
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect as () => DOMRect,
           appendTo: () => document.body,
-          content: component.element ?? undefined,
+          content: component.element,
           showOnCreate: true,
           interactive: true,
           trigger: "manual",
@@ -53,9 +53,7 @@ export const suggestion: MentionOptions["suggestion"] = {
           return true;
         }
 
-        return Boolean(
-          (component.editor.contentComponent?.refs[component.id] as InstanceType<typeof MentionList>).onKeyDown(props),
-        );
+        return Boolean((component.ref as InstanceType<typeof MentionList>).onKeyDown(props));
       },
 
       onExit() {
