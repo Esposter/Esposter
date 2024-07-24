@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "data-urls": "^5.0.0",
-    "vue": "^3.4.33",
+    "vue": "^3.4.34",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
