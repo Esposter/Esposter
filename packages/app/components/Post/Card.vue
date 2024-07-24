@@ -25,7 +25,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
         <PostLikeSection absolute top-2 left-2 :post="post" :is-comment-store="isCommentStore" />
         <v-card px-2="!" pt-2="!">
           <v-avatar>
-            <v-img v-if="post.creator.image" :src="post.creator.image" />
+            <v-img v-if="post.creator.image" :src="post.creator.image" :alt="post.creator.name ?? undefined" />
           </v-avatar>
           Posted by <span font-bold>{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
           <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
@@ -49,7 +49,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
     <template #postPreview>
       <v-card px-2="!" shadow-none="!">
         <v-avatar>
-          <v-img v-if="post.creator.image" :src="post.creator.image" />
+          <v-img v-if="post.creator.image" :src="post.creator.image" :alt="post.creator.name ?? undefined" />
         </v-avatar>
         Posted by <span font-bold>{{ post.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
         <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
