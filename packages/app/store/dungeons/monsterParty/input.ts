@@ -2,12 +2,14 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
+import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import type { Direction } from "grid-engine";
@@ -50,8 +52,14 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
       case SceneKey.Battle: {
         const battlePlayerStore = useBattlePlayerStore();
         const { activeMonster } = storeToRefs(battlePlayerStore);
+        const infoPanelStore = useInfoPanelStore();
+        const { infoDialogMessage } = storeToRefs(infoPanelStore);
+
         if (activeMonster.value.id === value.id) {
-          onCancel(scene);
+          infoDialogMessage.value.text = "Selected monster is already battling";
+          return;
+        } else if (isMonsterFainted(value)) {
+          infoDialogMessage.value.text = "Selected monster is fainted";
           return;
         }
         switchToPreviousScene(scene);

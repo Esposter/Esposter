@@ -16,7 +16,6 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
       player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
-  const isActiveMonsterFainted = computed(() => activeMonster.value.status.hp <= 0);
   const switchActiveMonster = (id: string) => {
     activeMonsterIndex.value = player.value.monsters.findIndex((m) => m.id === id);
   };
@@ -47,7 +46,6 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
 
   return {
     activeMonster,
-    isActiveMonsterFainted,
     switchActiveMonster,
     initialMonsterPosition,
     monsterPosition,

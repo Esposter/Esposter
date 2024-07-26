@@ -1,5 +1,6 @@
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
+import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
@@ -11,11 +12,11 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
-    const { activeMonster, isActiveMonsterFainted } = storeToRefs(battlePlayerStore);
+    const { activeMonster } = storeToRefs(battlePlayerStore);
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
-    if (isActiveMonsterFainted.value)
+    if (isMonsterFainted(activeMonster.value))
       await useMonsterDeathTween(false, async () => {
         await showMessages(
           scene,
