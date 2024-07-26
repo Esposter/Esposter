@@ -12,6 +12,7 @@ export enum StateName {
   GainExperience = "GainExperience",
   Finished = "Finished",
   SwitchAttempt = "SwitchAttempt",
+  SwitchMonster = "SwitchMonster",
   ItemAttempt = "ItemAttempt",
   FleeAttempt = "FleeAttempt",
 }

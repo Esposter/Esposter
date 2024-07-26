@@ -17,6 +17,8 @@ type SceneEvents = {
 export interface PhaserEvents extends SceneEvents {
   useItem: (scene: SceneWithPlugins, item: Item, monster: Monster) => Promise<void>;
   unuseItem: () => Promise<void>;
+  switchMonster: (monster: Monster) => Promise<void>;
+  unswitchMonster: () => Promise<void>;
   playerTeleport: (position: Position, direction?: Direction) => void;
   levelUp: (monster: Monster, onComplete: () => void) => Promise<void>;
   levelUpComplete: () => Promise<void>;

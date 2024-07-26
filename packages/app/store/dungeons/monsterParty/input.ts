@@ -1,8 +1,9 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
@@ -41,7 +42,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
   const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof optionGrid.value.value) => {
     if (value === PlayerSpecialInput.Cancel) {
-      switchToPreviousScene(scene);
+      onCancel(scene);
       return;
     }
 
@@ -49,8 +50,12 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
       case SceneKey.Battle: {
         const battlePlayerStore = useBattlePlayerStore();
         const { activeMonster } = storeToRefs(battlePlayerStore);
-        activeMonster.value = value;
+        if (activeMonster.value.id === value.id) {
+          onCancel(scene);
+          return;
+        }
         switchToPreviousScene(scene);
+        phaserEventEmitter.emit("switchMonster", value);
         return;
       }
       case SceneKey.Inventory: {
@@ -73,6 +78,11 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
   const onPlayerDirectionInput = (direction: Direction) => {
     optionGrid.value.move(direction);
+  };
+
+  const onCancel = (scene: SceneWithPlugins) => {
+    switchToPreviousScene(scene);
+    phaserEventEmitter.emit("unswitchMonster");
   };
 
   return {

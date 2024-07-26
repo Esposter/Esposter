@@ -15,6 +15,7 @@ import { PlayerInput } from "@/models/dungeons/state/battle/states/PlayerInput";
 import { PlayerPostAttackCheck } from "@/models/dungeons/state/battle/states/PlayerPostAttackCheck";
 import { PreBattleInfo } from "@/models/dungeons/state/battle/states/PreBattleInfo";
 import { SwitchAttempt } from "@/models/dungeons/state/battle/states/SwitchAttempt";
+import { SwitchMonster } from "@/models/dungeons/state/battle/states/SwitchMonster";
 
 export const StateMap = {
   [StateName.Intro]: Intro,
@@ -30,6 +31,7 @@ export const StateMap = {
   [StateName.GainExperience]: GainExperience,
   [StateName.Finished]: Finished,
   [StateName.SwitchAttempt]: SwitchAttempt,
+  [StateName.SwitchMonster]: SwitchMonster,
   [StateName.ItemAttempt]: ItemAttempt,
   [StateName.FleeAttempt]: FleeAttempt,
 } as const satisfies Record<StateName, State<StateName>>;
