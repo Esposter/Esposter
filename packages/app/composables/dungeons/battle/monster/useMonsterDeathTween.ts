@@ -7,6 +7,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComplete) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const { initialMonsterPosition, initialMonsterInfoContainerPosition } = store;
   const { monsterPosition, monsterTween, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
@@ -16,8 +17,8 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
     : monsterInfoContainerPosition.value.x + 600;
 
   if (isSkipAnimations.value) {
-    monsterPosition.value.y = monsterPositionYEnd;
-    monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
+    monsterPosition.value = { ...initialMonsterPosition };
+    monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
     await onComplete?.();
     return;
   }
@@ -30,8 +31,10 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
       start: monsterPosition.value.y,
       to: monsterPositionYEnd,
     },
+    // For monster death tween, we reset to initial positions for everything
+    // as it may also be re-used for animating switching monsters
     onComplete: async () => {
-      monsterPosition.value.y = monsterPositionYEnd;
+      monsterPosition.value = { ...initialMonsterPosition };
       await onComplete?.();
     },
   });
@@ -44,7 +47,7 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
       to: monsterInfoContainerPositionXEnd,
     },
     onComplete: () => {
-      monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
+      monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
     },
   });
 };

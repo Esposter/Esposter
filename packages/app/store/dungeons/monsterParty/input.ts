@@ -31,7 +31,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         onPlayerConfirmInput(scene, optionGrid.value.value);
         return;
       case PlayerSpecialInput.Cancel:
-        switchToPreviousScene(scene);
+        onCancel(scene);
         return;
       case PlayerSpecialInput.Enter:
         return;

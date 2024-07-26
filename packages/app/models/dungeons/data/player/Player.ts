@@ -16,13 +16,18 @@ import { z } from "zod";
 export class Player {
   position: Position;
   direction: Direction;
-  monsters: Monster[] = [
-    (() => {
-      const monster = new Monster(MonsterKey.Iguanignite);
-      if (IS_DEVELOPMENT) monster.stats.attack = 100;
-      return monster;
-    })(),
-  ];
+  monsters: Monster[] = (() => {
+    if (IS_DEVELOPMENT) {
+      const monsters = [
+        new Monster(MonsterKey.Iguanignite),
+        new Monster(MonsterKey.Carnodusk),
+        new Monster(MonsterKey.Ignivolt),
+      ];
+      for (const monster of monsters) monster.stats.attack = 100;
+      return monsters;
+    }
+    return [new Monster(MonsterKey.Iguanignite)];
+  })();
   inventory: Item[] = [{ id: ItemId.Potion, quantity: 10 }].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
   respawnLocation = new RespawnLocation();
 
