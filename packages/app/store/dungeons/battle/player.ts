@@ -20,7 +20,7 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     activeMonsterIndex.value = player.value.monsters.findIndex((m) => m.id === id);
   };
 
-  const initialMonsterPosition = Object.freeze<Position>({ x: -100, y: 316 });
+  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
   const monsterPosition = ref({ ...initialMonsterPosition });
   const monsterTween = ref<TweenBuilderConfiguration>();
   const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });

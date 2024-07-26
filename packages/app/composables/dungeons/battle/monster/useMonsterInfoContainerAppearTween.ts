@@ -6,10 +6,13 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const { initialMonsterInfoContainerPosition } = store;
   const { monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 0 : 556;
+
+  monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
 
   if (isSkipAnimations.value) {
     monsterInfoContainerPosition.value.x = xEnd;

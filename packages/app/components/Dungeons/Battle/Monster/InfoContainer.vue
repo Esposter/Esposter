@@ -15,17 +15,12 @@ interface InfoContainerProps {
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
-const { initialMonsterInfoContainerPosition } = store;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(store);
 const scaleY = computed(() => (isEnemy ? 0.8 : undefined));
 const nameDisplayWidth = ref<number>();
 const levelX = computed(() => 35 + (nameDisplayWidth.value ?? 0));
 const healthBarPercentage = computed(() => (activeMonster.value.status.hp / activeMonster.value.stats.maxHp) * 100);
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
-
-onUnmounted(() => {
-  monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
-});
 </script>
 
 <template>

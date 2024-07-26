@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref() as Ref<Monster>;
-  const initialMonsterPosition = Object.freeze<Position>({ x: -100, y: 144 });
+  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 144 });
   const monsterPosition = ref({ ...initialMonsterPosition });
   const monsterTween = ref<TweenBuilderConfiguration>();
   const initialMonsterInfoContainerPosition: Position = Object.freeze<Position>({ x: -600, y: 0 });

@@ -7,10 +7,13 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useMonsterAppearTween = async (isEnemy: boolean, onComplete?: OnComplete) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+  const { initialMonsterPosition } = store;
   const { monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const xEnd = isEnemy ? 768 : 256;
+  // Ensure that we are tweening from the correct initial position
+  monsterPosition.value = { ...initialMonsterPosition };
 
   if (isSkipAnimations.value) {
     monsterPosition.value.x = xEnd;
