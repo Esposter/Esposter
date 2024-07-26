@@ -25,6 +25,7 @@ export const SwitchAttempt: State<StateName> = {
     const playerStore = usePlayerStore();
     const { player } = storeToRefs(playerStore);
     const battlePlayerStore = useBattlePlayerStore();
+    const { switchActiveMonster } = battlePlayerStore;
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
@@ -38,7 +39,7 @@ export const SwitchAttempt: State<StateName> = {
 
     usePhaserListener("switchMonster", async (monster) => {
       await useMonsterDeathTween(false, async () => {
-        activeMonster.value = monster;
+        switchActiveMonster(monster.id);
         await battleStateMachine.setState(StateName.SwitchMonster);
       });
     });
