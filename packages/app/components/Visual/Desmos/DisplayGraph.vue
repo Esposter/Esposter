@@ -1,19 +1,21 @@
 <script setup lang="ts">
+import { Colors } from "@/models/desmos/Colors";
+import type { Expression } from "@/models/desmos/Expression";
+
 interface VisualDesmosDisplayGraphProps {
   id: string;
-  expressions: readonly Desmos.ExpressionState[];
+  expressions: Expression[];
   bounds?: { left?: number; right?: number; bottom?: number; top?: number };
 }
 
 const { id, expressions, bounds } = defineProps<VisualDesmosDisplayGraphProps>();
-const { GraphingCalculator, Colors } = useDesmos();
+const { GraphingCalculator } = useDesmos();
 
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
   const calculator = await GraphingCalculator(element, {
     border: false,
-    colors: Object.fromEntries(Object.entries(Colors).map(([color]) => [color, Colors.BLACK])),
     expressions: false,
     keypad: false,
     settingsMenu: false,
@@ -24,7 +26,7 @@ onMounted(async () => {
     zoomButtons: false,
   });
   if (bounds) calculator.setMathBounds(bounds);
-  calculator.setExpressions(expressions);
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
 });
 </script>
 
@@ -35,6 +37,11 @@ onMounted(async () => {
 <style scoped lang="scss">
 :deep(.dcg-container) {
   background: transparent !important;
+  cursor: grab;
+
+  :active {
+    cursor: grabbing;
+  }
 }
 
 :deep(.dcg-graphpaper-branding) {

@@ -4,7 +4,7 @@ import type { WatchCallback, WatchOptions, WatchSource } from "vue";
 export const watchTracker = <T>(
   source: WatchSource<T>,
   callback: WatchCallback<T, T | undefined>,
-  options?: WatchOptions<Readonly<boolean>>,
+  options?: WatchOptions,
 ) => {
   const isTrackerInitialized = ref(false);
   const watchStopHandlers = [

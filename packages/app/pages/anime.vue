@@ -1,11 +1,16 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const drawings = [
+  defineAsyncComponent(() => import("@/components/Anime/Frieren.vue")),
+  defineAsyncComponent(() => import("@/components/Anime/Yui.vue")),
+];
+</script>
 
 <template>
   <NuxtLayout>
     <v-container fluid p-0="!" h-full>
       <v-carousel height="100%" show-arrows="hover" hide-delimiters>
-        <v-carousel-item>
-          <AnimeFrieren />
+        <v-carousel-item v-for="(drawing, index) in drawings" :key="index">
+          <component :is="drawing" />
         </v-carousel-item>
       </v-carousel>
     </v-container>

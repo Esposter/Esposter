@@ -1,4 +1,6 @@
-export const frierenExpressions: Desmos.ExpressionState[] = [
+import type { Expression } from "@/models/desmos/Expression";
+
+export const frierenExpressions: Expression[] = [
   { latex: "y=-0.35\\left(x+3.1\\right)^{2}+4.4\\left\\{-3.64<x<-3.1\\right\\}" },
   { latex: "y=-0.84\\left(x+3.1\\right)^{2}+4.4\\left\\{-3.1<x<-2.35\\right\\}" },
   { latex: "\\left(y-3.66\\right)^{2}=-0.76\\left(x+2.257\\right)\\left\\{3.46<y<3.92\\right\\}" },

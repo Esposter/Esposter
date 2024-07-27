@@ -6,11 +6,6 @@ import { frierenExpressions } from "@/services/anime/frierenExpressions";
   <VisualDesmosDisplayGraph
     id="frieren"
     :expressions="frierenExpressions"
-    :bounds="{
-      top: 5,
-      bottom: -5,
-      left: -6,
-      right: 9,
-    }"
+    :bounds="{ top: 5, bottom: -5, left: -7, right: 9 }"
   />
 </template>
