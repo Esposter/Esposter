@@ -37,11 +37,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 :deep(.dcg-container) {
   background: transparent !important;
-  cursor: grab;
-
-  :active {
-    cursor: grabbing;
-  }
+  cursor: move;
 }
 
 :deep(.dcg-graphpaper-branding) {
