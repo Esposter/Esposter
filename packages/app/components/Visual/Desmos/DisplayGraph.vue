@@ -24,12 +24,10 @@ onMounted(async () => {
     border: false,
     expressions: false,
     keypad: false,
-    settingsMenu: false,
     showGrid: false,
     showXAxis: false,
     showYAxis: false,
     trace: false,
-    zoomButtons: false,
   });
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));
 });
