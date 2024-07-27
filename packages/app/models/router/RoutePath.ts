@@ -1,5 +1,6 @@
 export const RoutePath = {
   About: "/about",
+  Anime: "/anime",
   Calendar: "/calendar",
   Clicker: "/clicker",
   Dashboard: "/dashboard",

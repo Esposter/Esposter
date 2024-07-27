@@ -4,6 +4,7 @@ export const modules: NuxtConfig["modules"] = [
   "@hebilicious/authjs-nuxt",
   "@nuxt/eslint",
   "@nuxt/fonts",
+  "@nuxt/scripts",
   "@nuxt/test-utils/module",
   "@pinia/nuxt",
   "@unocss/nuxt",

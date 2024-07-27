@@ -19,6 +19,11 @@ const items = computed<ListItem[]>(() =>
           icon: "mdi-information",
         },
         {
+          title: "Anime",
+          href: RoutePath.Anime,
+          icon: "custom:anime",
+        },
+        {
           title: "Privacy Policy",
           href: RoutePath.PrivacyPolicy,
           icon: "mdi-lock",
@@ -40,6 +45,11 @@ const items = computed<ListItem[]>(() =>
             title: "About",
             href: RoutePath.About,
             icon: "mdi-information",
+          },
+          {
+            title: "Anime",
+            href: RoutePath.Anime,
+            icon: "custom:anime",
           },
           {
             title: "Privacy Policy",
