@@ -14,7 +14,7 @@ let calculator: Desmos.Calculator;
 
 watch(isDark, () => {
   if (!calculator) return;
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value }))); 
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));
 });
 
 onMounted(async () => {
