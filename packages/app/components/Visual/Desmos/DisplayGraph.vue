@@ -9,12 +9,12 @@ interface VisualDesmosDisplayGraphProps {
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
-const { surface } = useColors();
+const { text } = useColors();
 let calculator: Desmos.Calculator;
 
 watch(isDark, () => {
   if (!calculator) return;
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? text.value })));
 });
 
 onMounted(async () => {
@@ -29,7 +29,7 @@ onMounted(async () => {
     showYAxis: false,
     trace: false,
   });
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? text.value })));
 });
 </script>
 
