@@ -5,10 +5,9 @@ import type { Expression } from "@/models/desmos/Expression";
 interface VisualDesmosDisplayGraphProps {
   id: string;
   expressions: Expression[];
-  bounds?: { left?: number; right?: number; bottom?: number; top?: number };
 }
 
-const { id, expressions, bounds } = defineProps<VisualDesmosDisplayGraphProps>();
+const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
 const { GraphingCalculator } = useDesmos();
 
 onMounted(async () => {
@@ -25,7 +24,6 @@ onMounted(async () => {
     trace: false,
     zoomButtons: false,
   });
-  if (bounds) calculator.setMathBounds(bounds);
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
 });
 </script>
