@@ -9,7 +9,7 @@ const drawings = [
 <template>
   <NuxtLayout>
     <v-container fluid p-0="!" h-full>
-      <v-carousel height="100%" :touch="false" show-arrows="hover" cycle hide-delimiters>
+      <v-carousel height="100%" :touch="false" show-arrows="hover" hide-delimiters>
         <v-carousel-item v-for="(drawing, index) in drawings" :key="index">
           <component :is="drawing" />
         </v-carousel-item>
