@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
 
 interface VisualDesmosDisplayGraphProps {
@@ -9,11 +8,19 @@ interface VisualDesmosDisplayGraphProps {
 
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
 const { GraphingCalculator } = useDesmos();
+const isDark = useIsDark();
+const { surface } = useColors();
+let calculator : Desmos.Calculator;
+  
+watch(isDark, () => {
+  if (!calculator) return;
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));  
+});
 
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
-  const calculator = await GraphingCalculator(element, {
+  calculator = await GraphingCalculator(element, {
     border: false,
     expressions: false,
     keypad: false,
@@ -24,7 +31,7 @@ onMounted(async () => {
     trace: false,
     zoomButtons: false,
   });
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? surface.value })));
 });
 </script>
 
