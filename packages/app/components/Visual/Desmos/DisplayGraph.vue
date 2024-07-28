@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
 
 interface VisualDesmosDisplayGraphProps {
@@ -9,12 +10,11 @@ interface VisualDesmosDisplayGraphProps {
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
-const { text } = useColors();
 let calculator: Desmos.Calculator;
 
-watch(isDark, () => {
+watch(isDark, (newIsDark) => {
   if (!calculator) return;
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? text.value })));
+  calculator.updateSettings({ invertedColors: newIsDark });
 });
 
 onMounted(async () => {
@@ -24,12 +24,13 @@ onMounted(async () => {
     border: false,
     expressions: false,
     keypad: false,
+    invertedColors: isDark.value,
     showGrid: false,
     showXAxis: false,
     showYAxis: false,
     trace: false,
   });
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? text.value })));
+  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
 });
 </script>
 
