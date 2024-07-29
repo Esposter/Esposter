@@ -1,4 +1,3 @@
-import type { TupleSlice } from "@/util/types/TupleSlice";
 import { render } from "vue";
 // https://github.com/vuejs/rfcs/discussions/582
 export const useRender = (container: Ref<Element | null>) => {
@@ -9,17 +8,20 @@ export const useRender = (container: Ref<Element | null>) => {
     render(null, container.value);
   });
 
-  return (...args: [Parameters<typeof h>[0] | null, ...TupleSlice<Parameters<typeof h>, 1>]) => {
+  return (components: Parameters<typeof h>[] = []) => {
     if (!container.value) return;
-
-    const [component, props] = args;
-    if (!component) {
+    else if (components.length === 0) {
       render(null, container.value);
       return;
     }
 
-    const vnode = h(component, props);
-    vnode.appContext = globalAppContext;
+    const vnode = h(
+      "div",
+      components.map((c) => {
+        const vnode = h(...c);
+        vnode.appContext = globalAppContext;
+      }),
+    );
     render(vnode, container.value);
   };
 };

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WindowControls from "@/components/Styled/WindowControls.vue";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
@@ -11,13 +12,29 @@ interface VisualDesmosDisplayGraphProps {
 }
 
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
-
+const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
 let calculator: Desmos.Calculator;
-const expressionPanelOuter = ref<HTMLDivElement | null>(null);
-const render = useRender(expressionPanelOuter);
+const expressionPanel = ref<HTMLDivElement | null>(null);
+const componentsToRender = computed<Parameters<typeof h>[]>(() => {
+  const WindowControlsComponent: Parameters<typeof h> = [
+    WindowControls,
+    {
+      onLeftClick: (event: MouseEvent) => {
+        emit("clickLeft", event);
+      },
+      onRightClick: (event: MouseEvent) => {
+        emit("clickRight", event);
+      },
+    },
+  ];
+  return isAnimating.value
+    ? [WindowControlsComponent]
+    : [[AnimateButton, { onClick: animate }], WindowControlsComponent];
+});
+const render = useRender(expressionPanel);
 
 const animate = () => {
   if (!calculator) return;
@@ -47,10 +64,7 @@ watch(isDark, (newIsDark) => {
   calculator.updateSettings({ invertedColors: newIsDark });
 });
 
-watch(isAnimating, (newIsAnimating) => {
-  if (newIsAnimating) render(null);
-  else render(AnimateButton, { onClick: animate });
-});
+watch(componentsToRender, (newComponentsToRender) => render(newComponentsToRender));
 
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
@@ -66,8 +80,8 @@ onMounted(async () => {
     trace: false,
   });
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
-  expressionPanelOuter.value = document.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
-  render(AnimateButton, { onClick: animate });
+  expressionPanel.value = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+  render(componentsToRender.value);
 });
 </script>
 
