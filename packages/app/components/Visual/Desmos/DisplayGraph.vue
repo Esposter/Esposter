@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
+import { dayjs } from "@/services/dayjs";
 
 interface VisualDesmosDisplayGraphProps {
   id: string;
@@ -10,7 +11,28 @@ interface VisualDesmosDisplayGraphProps {
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
+const { surface } = useColors();
+const isAnimating = ref(false);
 let calculator: Desmos.Calculator;
+
+const animateDrawing = () => {
+  if (!calculator) return;
+  isAnimating.value = true;
+  const savedSettings = { ...calculator.settings };
+  calculator.setBlank();
+  calculator.updateSettings(savedSettings);
+
+  const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
+
+  for (let i = 0; i < expressions.length; i++) {
+    const expression = expressions[i];
+    const interval = (i / expressions.length) * drawingTime;
+    useTimeoutFn(() => {
+      calculator.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
+      if (i === expressions.length - 1) isAnimating.value = false;
+    }, interval);
+  }
+};
 
 watch(isDark, (newIsDark) => {
   if (!calculator) return;
@@ -36,6 +58,22 @@ onMounted(async () => {
 
 <template>
   <div :id w-full h-full />
+  <v-tooltip v-if="!isAnimating" location="left center" text="Animate">
+    <template #activator="{ props }">
+      <v-btn
+        :style="{ backgroundColor: surface }"
+        fixed="!"
+        bg-surface
+        right-1
+        bottom-2
+        rd-1="!"
+        icon="mdi-draw"
+        size="small"
+        :="props"
+        @click="animateDrawing"
+      />
+    </template>
+  </v-tooltip>
 </template>
 
 <style scoped lang="scss">
