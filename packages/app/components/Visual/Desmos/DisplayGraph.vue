@@ -2,6 +2,7 @@
 import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
 import { dayjs } from "@/services/dayjs";
+import { ignoreWarn } from "@/util/console/ignoreWarn";
 
 interface VisualDesmosDisplayGraphProps {
   id: string;
@@ -20,18 +21,22 @@ const animateDrawing = () => {
   isAnimating.value = true;
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
-  calculator.updateSettings(savedSettings);
+  // Ignore warnings from updateSettings
+  // about unsupported extraneous calculator settings which is fine
+  ignoreWarn(() => {
+    calculator.updateSettings(savedSettings);
+  });
 
   const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
-
-  for (let i = 0; i < expressions.length; i++) {
-    const expression = expressions[i];
-    const interval = (i / expressions.length) * drawingTime;
-    useTimeoutFn(() => {
-      calculator.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
-      if (i === expressions.length - 1) isAnimating.value = false;
-    }, interval);
-  }
+  let i = 0;
+  const { pause } = useIntervalFn(() => {
+    const expression = expressions[i++];
+    calculator.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
+    if (i === expressions.length) {
+      pause();
+      isAnimating.value = false;
+    }
+  }, drawingTime / expressions.length);
 };
 
 watch(isDark, (newIsDark) => {
