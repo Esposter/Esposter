@@ -1,3 +1,4 @@
+import Fragment from "@/components/Fragment.vue";
 import { render } from "vue";
 // https://github.com/vuejs/rfcs/discussions/582
 export const useRender = (container: Ref<Element | null>) => {
@@ -16,13 +17,14 @@ export const useRender = (container: Ref<Element | null>) => {
     }
 
     const vnode = h(
-      "div",
+      Fragment,
       components.map((c) => {
         const vnode = h(...c);
         vnode.appContext = globalAppContext;
         return vnode;
       }),
     );
+    vnode.appContext = globalAppContext;
     render(vnode, container.value);
   };
 };
