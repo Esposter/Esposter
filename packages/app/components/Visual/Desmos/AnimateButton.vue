@@ -8,6 +8,7 @@ const { surface } = useColors();
 <template>
   <v-tooltip location="right center" text="Animate">
     <template #activator="{ props }">
+      <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
       <v-btn
         :style="{ backgroundColor: surface }"
         fixed="!"
