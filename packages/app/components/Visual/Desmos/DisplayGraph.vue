@@ -22,10 +22,10 @@ const componentsToRender = computed<Parameters<typeof h>[]>(() => {
   const WindowControlsComponent: Parameters<typeof h> = [
     WindowControls,
     {
-      onLeftClick: (event: MouseEvent) => {
+      onClickLeft: (event: MouseEvent) => {
         emit("clickLeft", event);
       },
-      onRightClick: (event: MouseEvent) => {
+      onClickRight: (event: MouseEvent) => {
         emit("clickRight", event);
       },
     },
