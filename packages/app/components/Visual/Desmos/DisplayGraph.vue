@@ -49,7 +49,7 @@ onMounted(async () => {
   if (!element) return;
   calculator = await GraphingCalculator(element, {
     border: false,
-    expressions: false,
+    expressionsCollapsed: true,
     keypad: false,
     invertedColors: isDark.value,
     showGrid: false,
