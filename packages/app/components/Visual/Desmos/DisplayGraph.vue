@@ -63,14 +63,14 @@ onMounted(async () => {
 
 <template>
   <div :id w-full h-full />
-  <v-tooltip v-if="!isAnimating" location="left center" text="Animate">
+  <v-tooltip v-if="!isAnimating" location="right center" text="Animate">
     <template #activator="{ props }">
       <v-btn
         :style="{ backgroundColor: surface }"
         fixed="!"
         bg-surface
-        right-1
         bottom-2
+        left-1
         rd-1="!"
         icon="mdi-draw"
         size="small"
