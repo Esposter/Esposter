@@ -16,8 +16,7 @@ export const useRender = (container: Ref<Element | null>) => {
       return;
     }
 
-    const vnode = h(
-      Fragment,
+    const vnode = h(Fragment, () =>
       components.map((c) => {
         const vnode = h(...c);
         vnode.appContext = globalAppContext;
