@@ -3,11 +3,11 @@ export const useConfirmBeforeNavigation = (isDirty: Ref<boolean>) => {
     if (isDirty.value && !window.confirm("Changes you made may not be saved.")) return false;
   });
 
-  useEventListener("beforeunload", (e) => {
+  useEventListener("beforeunload", (event) => {
     if (!isDirty.value) return;
-    e.preventDefault();
+    event.preventDefault();
     // Even though the docs tell us that it's deprecated,
     // this actually makes the window prompt for reloading pop up
-    e.returnValue = false;
+    event.returnValue = false;
   });
 };

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
 import { dayjs } from "@/services/dayjs";
@@ -10,19 +11,21 @@ interface VisualDesmosDisplayGraphProps {
 }
 
 const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
+
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
-const { surface } = useColors();
 const isAnimating = ref(false);
 let calculator: Desmos.Calculator;
+const expressionPanelOuter = ref<HTMLDivElement | null>(null);
+const render = useRender(expressionPanelOuter);
 
-const animateDrawing = () => {
+const animate = () => {
   if (!calculator) return;
   isAnimating.value = true;
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
-  // Ignore warnings from updateSettings
-  // about unsupported extraneous calculator settings which is fine
+  // Ignore warnings from updateSettings about
+  // unsupported extraneous calculator settings which is fine
   ignoreWarn(() => {
     calculator.updateSettings(savedSettings);
   });
@@ -44,6 +47,11 @@ watch(isDark, (newIsDark) => {
   calculator.updateSettings({ invertedColors: newIsDark });
 });
 
+watch(isAnimating, (newIsAnimating) => {
+  if (newIsAnimating) render(null);
+  else render(AnimateButton, { onClick: animate });
+});
+
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
@@ -58,33 +66,24 @@ onMounted(async () => {
     trace: false,
   });
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
+  expressionPanelOuter.value = document.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
+  render(AnimateButton, { onClick: animate });
 });
 </script>
 
 <template>
   <div :id w-full h-full />
-  <v-tooltip v-if="!isAnimating" location="right center" text="Animate">
-    <template #activator="{ props }">
-      <v-btn
-        :style="{ backgroundColor: surface }"
-        fixed="!"
-        bg-surface
-        bottom-2
-        left-1
-        rd-1="!"
-        icon="mdi-draw"
-        size="small"
-        :="props"
-        @click="animateDrawing"
-      />
-    </template>
-  </v-tooltip>
 </template>
 
 <style scoped lang="scss">
 :deep(.dcg-container) {
   background: transparent !important;
   cursor: move;
+
+  > div:first-of-type {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 :deep(.dcg-graphpaper-branding) {
