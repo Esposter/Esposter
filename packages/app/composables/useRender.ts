@@ -20,6 +20,7 @@ export const useRender = (container: Ref<Element | null>) => {
       components.map((c) => {
         const vnode = h(...c);
         vnode.appContext = globalAppContext;
+        return vnode;
       }),
     );
     render(vnode, container.value);
