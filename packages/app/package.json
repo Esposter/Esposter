@@ -106,7 +106,7 @@
     "parse-tmx": "workspace:*",
     "pathe": "^1.1.2",
     "phaser": "^3.80.1",
-    "phaser3-rex-plugins": "^1.80.5",
+    "phaser3-rex-plugins": "^1.80.6",
     "pinia": "^2.1.7",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.4",
