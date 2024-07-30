@@ -3,7 +3,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 </script>
 
 <template>
-  <div class="v-window__controls" w-dvw="!">
+  <div class="v-window__controls" fixed="!" w-dvw="!">
     <v-tooltip location="right center" text="Left">
       <template #activator="{ props }">
         <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
