@@ -21,6 +21,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 
 <style scoped lang="scss">
 .v-window__controls {
-  height: calc(100dvh - $app-bar-height) !important;
+  top: $app-bar-height;
+  height: calc(100dvh - $app-bar-height);
 }
 </style>
