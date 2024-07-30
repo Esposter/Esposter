@@ -64,7 +64,9 @@ watch(isDark, (newIsDark) => {
   calculator.updateSettings({ invertedColors: newIsDark });
 });
 
-watch(componentsToRender, (newComponentsToRender) => render(newComponentsToRender));
+watch(componentsToRender, (newComponentsToRender) => {
+  render(newComponentsToRender);
+});
 
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);

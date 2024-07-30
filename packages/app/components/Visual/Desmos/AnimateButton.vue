@@ -5,9 +5,9 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
 <template>
   <v-tooltip location="right center" text="Animate">
     <template #activator="{ props }">
-      <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
       <!-- We actually want to ignore vuetify's dark mode and hardcode color="white"
        as Desmos' invert colors will also apply to this button when we use dark mode -->
+      <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
       <v-btn
         fixed="!"
         bottom-2
