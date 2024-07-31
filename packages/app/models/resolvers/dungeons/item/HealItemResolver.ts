@@ -11,7 +11,7 @@ export class HealItemResolver extends AItemResolver {
     super(ItemEffectType.Heal);
   }
 
-  isActive(item: Ref<Item>, monster: Ref<Monster>) {
+  isActive(_item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
