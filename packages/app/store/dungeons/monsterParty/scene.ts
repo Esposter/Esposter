@@ -15,11 +15,13 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   });
   const monstersGrid = computed(() => {
     const monstersGrid: Monster[][] = [];
-    for (let i = 0; i < Math.min(monsters.value.length, ROW_SIZE * COLUMN_SIZE); i += COLUMN_SIZE)
-      monstersGrid.push(monsters.value.slice(i, i + COLUMN_SIZE));
+    for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
+      monstersGrid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
     return monstersGrid;
   });
-  const optionGrid = ref() as Ref<Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]>>;
+  const optionGrid = ref() as Ref<
+    Grid<Monster | PlayerSpecialInput.Cancel | undefined, (Monster | PlayerSpecialInput.Cancel | undefined)[][]>
+  >;
 
   watch(
     monstersGrid,

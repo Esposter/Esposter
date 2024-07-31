@@ -57,14 +57,40 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
 
   move(direction: Direction) {
     switch (direction) {
-      case Direction.UP:
-        if (this.position.y > 0) this.position.y -= 1;
-        else if (this.wrap && this.position.y === 0) this.position.y = this.rowSize - 1;
-        return;
-      case Direction.DOWN:
-        if (this.position.y < this.rowSize - 1) this.position.y += 1;
-        else if (this.wrap && this.position.y === this.rowSize - 1) this.position.y = 0;
-        return;
+      case Direction.UP: {
+        let newPositionY = this.position.y;
+
+        for (let i = 0; i < this.rowSize; i++) {
+          if (newPositionY > 0) newPositionY -= 1;
+          else if (this.wrap && newPositionY === 0) newPositionY = this.rowSize - 1;
+
+          const newValue = this.getValue({ x: this.position.x, y: newPositionY });
+          // We want to skip grid values that don't exist
+          if (newValue === null || newValue === undefined) continue;
+
+          this.position.y = newPositionY;
+          return;
+        }
+
+        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+      }
+      case Direction.DOWN: {
+        let newPositionY = this.position.y;
+
+        for (let i = 0; i < this.rowSize; i++) {
+          if (newPositionY < this.rowSize - 1) newPositionY += 1;
+          else if (this.wrap && newPositionY === this.rowSize - 1) newPositionY = 0;
+
+          const newValue = this.getValue({ x: this.position.x, y: newPositionY });
+          // We want to skip grid values that don't exist
+          if (newValue === null || newValue === undefined) continue;
+
+          this.position.y = newPositionY;
+          return;
+        }
+
+        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+      }
       case Direction.LEFT:
         if (this.position.x > 0) this.position.x -= 1;
         else if (this.wrap && this.position.x === 0) this.position.x = this.getColumnSize(this.position.y) - 1;
