@@ -2,6 +2,7 @@ import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuratio
 import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
+import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { PlayerOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerOptionGrid";
 import { usePlayerStore } from "@/store/dungeons/player";
 import type { Position } from "grid-engine";
@@ -9,7 +10,7 @@ import type { Position } from "grid-engine";
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
-  const activeMonsterIndex = ref(0);
+  const activeMonsterIndex = ref(player.value.monsters.findIndex((m) => !isMonsterFainted(m)));
   const activeMonster = computed({
     get: () => player.value.monsters[activeMonsterIndex.value],
     set: (newActiveMonster) => {

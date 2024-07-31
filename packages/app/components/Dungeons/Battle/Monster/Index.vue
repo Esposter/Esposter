@@ -10,7 +10,12 @@ interface MonsterProps {
 
 const { isEnemy } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
+const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);
+
+onUnmounted(() => {
+  monsterPosition.value = { ...initialMonsterPosition };
+});
 </script>
 
 <template>

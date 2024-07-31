@@ -5,12 +5,15 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { usePlayerStore } from "@/store/dungeons/player";
 
 export const EnemyPostAttackCheck: State<StateName> = {
   name: StateName.EnemyPostAttackCheck,
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
+    const playerStore = usePlayerStore();
+    const { player } = storeToRefs(playerStore);
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const actionStore = useActionStore();
@@ -18,13 +21,22 @@ export const EnemyPostAttackCheck: State<StateName> = {
 
     if (isMonsterFainted(activeMonster.value))
       await useMonsterDeathTween(false, async () => {
-        await showMessages(
-          scene,
-          [`${activeMonster.value.key} has fainted!`, "You have no more monsters, escaping to safety..."],
-          async () => {
-            await battleStateMachine.setState(StateName.Finished);
-          },
-        );
+        if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !isMonsterFainted(m)))
+          await showMessages(
+            scene,
+            [`${activeMonster.value.key} has fainted!`, "Choose another monster to continue the battle."],
+            async () => {
+              await battleStateMachine.setState(StateName.SwitchAttempt);
+            },
+          );
+        else
+          await showMessages(
+            scene,
+            [`${activeMonster.value.key} has fainted!`, "You have no more monsters, escaping to safety..."],
+            async () => {
+              await battleStateMachine.setState(StateName.Finished);
+            },
+          );
       });
     else await battleStateMachine.setState(attackStatePriorityMap.value[StateName.EnemyPostAttackCheck]);
   },

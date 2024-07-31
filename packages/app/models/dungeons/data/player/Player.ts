@@ -23,7 +23,10 @@ export class Player {
         new Monster(MonsterKey.Carnodusk),
         new Monster(MonsterKey.Ignivolt),
       ];
-      for (const monster of monsters) monster.stats.attack = 100;
+      for (const monster of monsters) {
+        monster.stats.attack = 100;
+        monster.status.hp = 5;
+      }
       return monsters;
     }
     return [new Monster(MonsterKey.Iguanignite)];

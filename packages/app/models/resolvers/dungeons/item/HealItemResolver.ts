@@ -16,10 +16,10 @@ export class HealItemResolver extends AItemResolver {
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
     if (monster.value.status.hp === 0) {
-      infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}`;
+      infoDialogMessage.value.text = `Cannot heal fainted ${monster.value.key}.`;
       return false;
     } else if (monster.value.status.hp === monster.value.stats.maxHp) {
-      infoDialogMessage.value.text = `${monster.value.key} is already fully healed`;
+      infoDialogMessage.value.text = `${monster.value.key} is already fully healed.`;
       return false;
     }
 

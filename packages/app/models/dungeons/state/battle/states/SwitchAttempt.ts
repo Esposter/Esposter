@@ -1,6 +1,7 @@
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
+import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
@@ -39,8 +40,9 @@ export const SwitchAttempt: State<StateName> = {
 
     usePhaserListener("switchMonster", async (monster) => {
       await useMonsterDeathTween(false, async () => {
+        const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
         switchActiveMonster(monster.id);
-        await battleStateMachine.setState(StateName.SwitchMonster);
+        await battleStateMachine.setState(isActiveMonsterFainted ? StateName.BringOutMonster : StateName.SwitchMonster);
       });
     });
     usePhaserListener("unswitchMonster", async () => {

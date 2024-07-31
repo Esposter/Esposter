@@ -55,11 +55,11 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         const infoPanelStore = useInfoPanelStore();
         const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
-        if (activeMonster.value.id === value.id) {
-          infoDialogMessage.value.text = "Selected monster is already battling";
+        if (isMonsterFainted(value)) {
+          infoDialogMessage.value.text = "Selected monster is fainted.";
           return;
-        } else if (isMonsterFainted(value)) {
-          infoDialogMessage.value.text = "Selected monster is fainted";
+        } else if (activeMonster.value.id === value.id) {
+          infoDialogMessage.value.text = "Selected monster is already battling.";
           return;
         }
         switchToPreviousScene(scene);
