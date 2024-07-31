@@ -3,7 +3,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 </script>
 
 <template>
-  <div class="v-window__controls" fixed="!" w-dvw="!">
+  <div class="v-window__controls" fixed="!">
     <v-tooltip location="right center" text="Left">
       <template #activator="{ props }">
         <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
@@ -18,10 +18,3 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
     </v-tooltip>
   </div>
 </template>
-
-<style scoped lang="scss">
-.v-window__controls {
-  top: $app-bar-height;
-  height: calc(100dvh - $app-bar-height);
-}
-</style>
