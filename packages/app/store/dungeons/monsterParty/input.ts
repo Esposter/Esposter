@@ -19,6 +19,10 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { optionGrid } = storeToRefs(monsterPartySceneStore);
+  const infoPanelStore = useInfoPanelStore();
+  const { infoDialogMessage } = storeToRefs(infoPanelStore);
+  const battlePlayerStore = useBattlePlayerStore();
+  const { activeMonster } = storeToRefs(battlePlayerStore);
   const { previousSceneKey, launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
@@ -49,12 +53,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     }
 
     switch (previousSceneKey.value) {
-      case SceneKey.Battle: {
-        const battlePlayerStore = useBattlePlayerStore();
-        const { activeMonster } = storeToRefs(battlePlayerStore);
-        const infoPanelStore = useInfoPanelStore();
-        const { infoDialogMessage } = storeToRefs(infoPanelStore);
-
+      case SceneKey.Battle:
         if (isMonsterFainted(value)) {
           infoDialogMessage.value.text = "Selected monster is fainted.";
           return;
@@ -65,7 +64,6 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         switchToPreviousScene(scene);
         phaserEventEmitter.emit("switchMonster", value);
         return;
-      }
       case SceneKey.Inventory: {
         const itemStore = useInventorySceneStore();
         const { itemOptionGrid } = storeToRefs(itemStore);
@@ -89,6 +87,11 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   };
 
   const onCancel = (scene: SceneWithPlugins) => {
+    if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(activeMonster.value)) {
+      infoDialogMessage.value.text = "You need to select a monster to switch to.";
+      return;
+    }
+
     switchToPreviousScene(scene);
     phaserEventEmitter.emit("unswitchMonster");
   };

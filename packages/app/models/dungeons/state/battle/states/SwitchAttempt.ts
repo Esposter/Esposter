@@ -39,11 +39,17 @@ export const SwitchAttempt: State<StateName> = {
     }
 
     usePhaserListener("switchMonster", async (monster) => {
-      await useMonsterDeathTween(false, async () => {
-        const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
+      const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
+      // If our active monster has fainted, then the death tween would have already been played
+      // so we don't have to play it again
+      if (isActiveMonsterFainted) {
         switchActiveMonster(monster.id);
-        await battleStateMachine.setState(isActiveMonsterFainted ? StateName.BringOutMonster : StateName.SwitchMonster);
-      });
+        await battleStateMachine.setState(StateName.BringOutMonster);
+      } else
+        await useMonsterDeathTween(false, async () => {
+          switchActiveMonster(monster.id);
+          await battleStateMachine.setState(StateName.SwitchMonster);
+        });
     });
     usePhaserListener("unswitchMonster", async () => {
       await battleStateMachine.setState(StateName.PlayerInput);

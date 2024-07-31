@@ -20,7 +20,7 @@ const slots = defineSlots<{
     :limit="POST_DESCRIPTION_MAX_LENGTH"
   >
     <template #prepend-footer="{ editor }">
-      <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Choose an emoji" />
+      <RichTextEditorCustomEmojiPickerButton :editor="editor" tooltip="Select an emoji" />
     </template>
     <template #append-footer="{ editor }">
       <slot name="append-footer" :editor="editor" />

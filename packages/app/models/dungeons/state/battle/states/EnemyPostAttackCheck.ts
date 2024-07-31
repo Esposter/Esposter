@@ -24,7 +24,7 @@ export const EnemyPostAttackCheck: State<StateName> = {
         if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !isMonsterFainted(m)))
           await showMessages(
             scene,
-            [`${activeMonster.value.key} has fainted!`, "Choose another monster to continue the battle."],
+            [`${activeMonster.value.key} has fainted!`, "Select another monster to continue the battle."],
             async () => {
               await battleStateMachine.setState(StateName.SwitchAttempt);
             },

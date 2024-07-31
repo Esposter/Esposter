@@ -33,7 +33,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
         if (isAnimating.value) {
           isSkipAnimations.value = true;
           isAnimating.value = false;
-        } else if (activePanel.value === ActivePanel.Option) await onChoosePlayerOption();
+        } else if (activePanel.value === ActivePanel.Option) await onSelectPlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
           const battlePlayerStore = useBattlePlayerStore();
           const { attackOptionGrid } = storeToRefs(battlePlayerStore);
@@ -55,7 +55,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
     else if (activePanel.value === ActivePanel.AttackOption) attackOptionGrid.value.move(direction);
   };
 
-  const onChoosePlayerOption = async () => {
+  const onSelectPlayerOption = async () => {
     switch (optionGrid.value.value) {
       case PlayerOption.Fight:
         activePanel.value = ActivePanel.AttackOption;
