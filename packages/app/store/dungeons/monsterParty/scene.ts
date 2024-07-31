@@ -19,9 +19,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       monstersGrid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
     return monstersGrid;
   });
-  const optionGrid = ref() as Ref<
-    Grid<Monster | PlayerSpecialInput.Cancel | undefined, (Monster | PlayerSpecialInput.Cancel | undefined)[][]>
-  >;
+  const optionGrid = ref() as Ref<Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]>>;
 
   watch(
     monstersGrid,

@@ -22,7 +22,7 @@
     "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt typecheck",
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
     "lint": "cross-env TIMING=1 eslint --config eslint.light.config.js .",
