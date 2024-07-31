@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import WindowControls from "@/components/Styled/WindowControls.vue";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
+import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
 import { dayjs } from "@/services/dayjs";
