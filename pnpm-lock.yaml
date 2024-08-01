@@ -277,11 +277,11 @@ importers:
         specifier: ^1.11.9
         version: 1.11.9(survey-core@1.11.9)(vue@3.4.33(typescript@5.4.5))
       three:
-        specifier: ^0.167.0
-        version: 0.167.0
+        specifier: ^0.167.1
+        version: 0.167.1
       three-globe:
         specifier: ^2.31.1
-        version: 2.31.1(three@0.167.0)
+        version: 2.31.1(three@0.167.1)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -9171,8 +9171,8 @@ packages:
     peerDependencies:
       three: '>=0.125'
 
-  three@0.167.0:
-    resolution: {integrity: sha512-9Y1a66fpjqF3rhq7ivKTaKtjQLZ97Hj/lZ00DmZWaKHaQFH4uzYT1znwRDWQOcgMmCcOloQzo61gDmqO8l9xmA==}
+  three@0.167.1:
+    resolution: {integrity: sha512-gYTLJA/UQip6J/tJvl91YYqlZF47+D/kxiWrbTon35ZHlXEN0VOo+Qke2walF1/x92v55H6enomymg4Dak52kw==}
 
   through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
@@ -21162,7 +21162,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  three-conic-polygon-geometry@1.6.3(three@0.167.0):
+  three-conic-polygon-geometry@1.6.3(three@0.167.1):
     dependencies:
       '@turf/boolean-point-in-polygon': 6.5.0
       d3-array: 3.2.4
@@ -21171,19 +21171,19 @@ snapshots:
       d3-scale: 4.0.2
       delaunator: 5.0.1
       earcut: 2.2.4
-      three: 0.167.0
+      three: 0.167.1
 
-  three-fatline@0.7.0(three@0.167.0):
+  three-fatline@0.7.0(three@0.167.1):
     dependencies:
-      three: 0.167.0
+      three: 0.167.1
 
-  three-geojson-geometry@1.3.2(three@0.167.0):
+  three-geojson-geometry@1.3.2(three@0.167.1):
     dependencies:
       d3-geo: 3.1.1
       earcut: 2.2.4
-      three: 0.167.0
+      three: 0.167.1
 
-  three-globe@2.31.1(three@0.167.0):
+  three-globe@2.31.1(three@0.167.1):
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       accessor-fn: 1.5.0
@@ -21199,14 +21199,14 @@ snapshots:
       h3-js: 4.1.0
       index-array-by: 1.4.1
       kapsule: 1.14.5
-      three: 0.167.0
-      three-conic-polygon-geometry: 1.6.3(three@0.167.0)
-      three-fatline: 0.7.0(three@0.167.0)
-      three-geojson-geometry: 1.3.2(three@0.167.0)
+      three: 0.167.1
+      three-conic-polygon-geometry: 1.6.3(three@0.167.1)
+      three-fatline: 0.7.0(three@0.167.1)
+      three-geojson-geometry: 1.3.2(three@0.167.1)
       tinycolor2: 1.6.0
       yaot: 1.1.3
 
-  three@0.167.0: {}
+  three@0.167.1: {}
 
   through2@2.0.5:
     dependencies:
