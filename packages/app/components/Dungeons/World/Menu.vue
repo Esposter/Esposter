@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { getScene } from "@/lib/phaser/util/getScene";
-import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
 

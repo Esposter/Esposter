@@ -1,11 +1,8 @@
 <script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
-import { MenuTextStyle } from "@/assets/dungeons/scene/world/styles/MenuTextStyle";
+import { MenuTextStyle } from "@/assets/dungeons/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import type { Grid } from "@/models/dungeons/Grid";
-import {
-  INITIAL_MENU_CURSOR_POSITION,
-  MENU_CURSOR_POSITION_INCREMENT,
-} from "@/services/dungeons/scene/world/constants";
+import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
 import { Input } from "phaser";
 
 interface ContentTextProps {

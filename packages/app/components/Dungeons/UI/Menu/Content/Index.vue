@@ -2,10 +2,7 @@
 import type { Grid } from "@/models/dungeons/Grid";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import {
-  INITIAL_MENU_CURSOR_POSITION,
-  MENU_CURSOR_POSITION_INCREMENT,
-} from "@/services/dungeons/scene/world/constants";
+import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
 
 const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
 </script>

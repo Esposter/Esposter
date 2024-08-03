@@ -2,8 +2,8 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import type { Grid } from "@/models/dungeons/Grid";
-import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/scene/world/constants";
-import { getMenuHeight } from "@/services/dungeons/scene/world/getMenuHeight";
+import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
+import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
 import type { Position } from "grid-engine";
 
 interface MenuProps {
