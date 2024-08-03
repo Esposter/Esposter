@@ -3,6 +3,7 @@ import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { phaserEventEmitter } from "~/services/phaser/events";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
@@ -16,6 +17,7 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
 
   if (isSkipAnimations.value) {
     monsterInfoContainerPosition.value.x = xEnd;
+    if (!isEnemy) phaserEventEmitter.emit("playerMonsterInfoContainerAppear");
     return;
   }
 
@@ -29,6 +31,7 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
     },
     onComplete: () => {
       monsterInfoContainerPosition.value.x = xEnd;
+      if (!isEnemy) phaserEventEmitter.emit("playerMonsterInfoContainerAppear");
     },
   });
 };

@@ -28,5 +28,6 @@ onUnmounted(() => {
       tween: monsterTween,
     }"
   />
+  <DungeonsBattleMonsterAvailableListContainer v-if="!isEnemy" />
   <DungeonsBattleMonsterInfoContainer :is-enemy="isEnemy" />
 </template>
