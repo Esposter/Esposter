@@ -16,5 +16,6 @@ const { onPlayerInput } = monsterPartyInputStore;
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
+    <DungeonsMonsterPartyMenu />
   </Scene>
 </template>

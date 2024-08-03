@@ -18,7 +18,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { optionGrid } = storeToRefs(monsterPartySceneStore);
+  const { monsterPartyOptionGrid, isMenuVisible } = storeToRefs(monsterPartySceneStore);
   const infoPanelStore = useInfoPanelStore();
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const battlePlayerStore = useBattlePlayerStore();
@@ -34,19 +34,20 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Confirm:
-        onPlayerConfirmInput(scene, optionGrid.value.value);
+        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value.value);
         return;
       case PlayerSpecialInput.Cancel:
         onCancel(scene);
         return;
       case PlayerSpecialInput.Enter:
+        isMenuVisible.value = true;
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
     }
   };
 
-  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof optionGrid.value.value) => {
+  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof monsterPartyOptionGrid.value.value) => {
     if (value === PlayerSpecialInput.Cancel) {
       onCancel(scene);
       return;
@@ -83,11 +84,14 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    optionGrid.value.move(direction);
+    monsterPartyOptionGrid.value.move(direction);
   };
 
   const onCancel = (scene: SceneWithPlugins) => {
-    if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(activeMonster.value)) {
+    if (isMenuVisible.value) {
+      isMenuVisible.value = false;
+      return;
+    } else if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(activeMonster.value)) {
       infoDialogMessage.value.text = "You need to select a monster to switch to.";
       return;
     }

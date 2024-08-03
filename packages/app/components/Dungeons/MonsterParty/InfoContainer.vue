@@ -19,11 +19,11 @@ const { controls } = storeToRefs(inputStore);
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { optionGrid } = storeToRefs(monsterPartySceneStore);
+const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
 const infoPanelStore = useInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
 const rectangleHeight = 65;
-const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
+const cancelButtonActive = computed(() => monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();
 
 onCreate((scene) => {

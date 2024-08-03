@@ -9,12 +9,12 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const onGridClick = useOnGridClick(optionGrid, () => ({
-  x: optionGrid.value.position.x,
-  y: optionGrid.value.rowSize - 1,
+const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({
+  x: monsterPartyOptionGrid.value.position.x,
+  y: monsterPartyOptionGrid.value.rowSize - 1,
 }));
-const isActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
+const isActive = computed(() => monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel);
 </script>
 
 <template>
