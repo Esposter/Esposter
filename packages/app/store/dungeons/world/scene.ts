@@ -1,7 +1,6 @@
 import type { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { WorldData } from "@/models/dungeons/data/world/WorldData";
-import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
 import { useDungeonsStore } from "@/store/dungeons";
 import type { Tilemaps } from "phaser";
 
@@ -26,13 +25,10 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   };
 
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
-  const isMenuVisible = ref(false);
-  const menuOptionGrid = ref(MenuOptionGrid);
+
   return {
     tilemapKey,
     switchToTilemap,
     worldData,
-    isMenuVisible,
-    menuOptionGrid,
   };
 });

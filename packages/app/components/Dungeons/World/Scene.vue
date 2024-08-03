@@ -24,9 +24,6 @@ const update = async (scene: SceneWithPlugins) => {
   const justDownInput = controls.value.getInput(true);
   const input = controls.value.getInput();
 
-  for (const inputResolver of inputResolvers)
-    if (await inputResolver.handleInputPre(scene, justDownInput, input)) return;
-
   for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(scene, justDownInput, input)) return;
 };
 </script>

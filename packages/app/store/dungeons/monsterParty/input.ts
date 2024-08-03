@@ -18,7 +18,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { monsterPartyOptionGrid, isMenuVisible } = storeToRefs(monsterPartySceneStore);
+  const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
   const infoPanelStore = useInfoPanelStore();
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const battlePlayerStore = useBattlePlayerStore();
@@ -40,7 +40,6 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         onCancel(scene);
         return;
       case PlayerSpecialInput.Enter:
-        isMenuVisible.value = true;
         return;
       default:
         exhaustiveGuard(playerSpecialInput);
@@ -88,10 +87,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   };
 
   const onCancel = (scene: SceneWithPlugins) => {
-    if (isMenuVisible.value) {
-      isMenuVisible.value = false;
-      return;
-    } else if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(activeMonster.value)) {
+    if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(activeMonster.value)) {
       infoDialogMessage.value.text = "You need to select a monster to switch to.";
       return;
     }

@@ -2,11 +2,11 @@
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { getScene } from "@/lib/phaser/util/getScene";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useMenuStore } from "@/store/dungeons/world/menu";
 import type { Position } from "grid-engine";
 
-const worldSceneStore = useWorldSceneStore();
-const { isMenuVisible, menuOptionGrid } = storeToRefs(worldSceneStore);
+const menuStore = useMenuStore();
+const { isMenuVisible, menuOptionGrid } = storeToRefs(menuStore);
 const position = ref<Position>();
 const sceneKey = useInjectSceneKey();
 

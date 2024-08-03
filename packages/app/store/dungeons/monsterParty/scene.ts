@@ -1,8 +1,6 @@
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 
@@ -36,25 +34,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     { immediate: true },
   );
 
-  const isMenuVisible = ref(false);
-  const menuOptionGrid = ref() as Ref<Grid<MenuOption, [MenuOption[]]>>;
-  const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);
-
-  watch(
-    previousSceneKey,
-    (newPreviousSceneKey) => {
-      menuOptionGrid.value =
-        newPreviousSceneKey === SceneKey.Battle
-          ? new Grid([[MenuOption.Select, MenuOption.Summary, MenuOption.Cancel]])
-          : new Grid([[MenuOption.Move, MenuOption.Summary, MenuOption.Release, MenuOption.Cancel]]);
-    },
-    { immediate: true },
-  );
-
   return {
     monstersGrid,
     monsterPartyOptionGrid,
-    isMenuVisible,
-    menuOptionGrid,
   };
 });

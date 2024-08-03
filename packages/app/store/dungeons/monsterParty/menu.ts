@@ -1,25 +1,29 @@
+import { Grid } from "@/models/dungeons/Grid";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
+import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
-import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
-import { useDungeonsStore } from "@/store/dungeons";
-import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const useMenuStore = defineStore("dungeons/world/menu", () => {
-  const dungeonsStore = useDungeonsStore();
-  const { saveData, fadeSwitchToScene } = dungeonsStore;
-  const worldDialogStore = useWorldDialogStore();
-  const { showMessages } = worldDialogStore;
+export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const isMenuVisible = ref(false);
-  const menuOptionGrid = ref(MenuOptionGrid);
+  const menuOptionGrid = ref() as Ref<Grid<MenuOption, MenuOption[][]>>;
+  const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);
 
-  const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    const { launchScene } = usePreviousScene(scene.scene.key);
+  watch(
+    previousSceneKey,
+    (newPreviousSceneKey) => {
+      menuOptionGrid.value =
+        newPreviousSceneKey === SceneKey.Battle
+          ? new Grid([[MenuOption.Select], [MenuOption.Summary], [MenuOption.Cancel]], true)
+          : new Grid([[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]], true);
+    },
+    { immediate: true },
+  );
 
+  const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (!isMenuVisible.value)
       if (justDownInput === PlayerSpecialInput.Enter) {
         isMenuVisible.value = true;
@@ -28,19 +32,13 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
-        case MenuOption.Monsters:
-          launchScene(scene, SceneKey.MonsterParty);
+        case MenuOption.Select:
+        case MenuOption.Move:
+        case MenuOption.Summary:
+        case MenuOption.Release:
           break;
-        case MenuOption.Inventory:
-          launchScene(scene, SceneKey.Inventory);
-          break;
-        case MenuOption.Save:
-          await saveData();
-          await showMessages(scene, [{ text: "Game has been saved." }]);
-          break;
-        case MenuOption.Exit:
+        case MenuOption.Cancel:
           isMenuVisible.value = false;
-          fadeSwitchToScene(scene, SceneKey.Title);
           break;
         default:
           exhaustiveGuard(menuOptionGrid.value.value);
