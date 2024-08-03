@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
 import { MenuTextStyle } from "@/assets/dungeons/scene/world/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
+import type { Grid } from "@/models/dungeons/Grid";
 import {
   INITIAL_MENU_CURSOR_POSITION,
   MENU_CURSOR_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/world/constants";
-import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Input } from "phaser";
 
 interface ContentTextProps {
@@ -15,9 +15,8 @@ interface ContentTextProps {
 }
 
 const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
-const worldSceneStore = useWorldSceneStore();
-const { menuOptionGrid } = storeToRefs(worldSceneStore);
-const onGridClick = useOnGridClick(menuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
+const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
+const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 
 <template>
