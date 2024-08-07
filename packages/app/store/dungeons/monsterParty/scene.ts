@@ -1,6 +1,7 @@
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 
@@ -34,8 +35,13 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     { immediate: true },
   );
 
+  const sceneMode = ref(SceneMode.Default);
+  const monsterIdToMove = ref<string>();
+
   return {
     monstersGrid,
     monsterPartyOptionGrid,
+    sceneMode,
+    monsterIdToMove,
   };
 });

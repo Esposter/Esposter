@@ -1,4 +1,5 @@
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -18,7 +19,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+  const { monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
   const infoPanelStore = useInfoPanelStore();
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const battlePlayerStore = useBattlePlayerStore();
@@ -26,7 +27,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { previousSceneKey, launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (await handleShowMessageInput(scene, justDownInput)) return;
+    if (sceneMode.value !== SceneMode.Default || (await handleShowMessageInput(scene, justDownInput))) return;
     else if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };

@@ -25,7 +25,11 @@ export default {
       delete rules["@typescript-eslint/no-unnecessary-condition"];
       return rules;
     }),
-    ...tseslint.configs.stylisticTypeChecked.map((c) => c.rules ?? ({})),
+    ...tseslint.configs.stylisticTypeChecked.map((c) => {
+      const rules = c.rules ?? {};
+      delete rules["@typescript-eslint/no-empty-function"];
+      return rules;
+    }),
   ),
   "@typescript-eslint/consistent-type-exports": "error",
   // Computationally expensive
