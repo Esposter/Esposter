@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
+
+
+### Features
+
+* Add moving monsters ([fe838a7](https://github.com/Esposter/Esposter/commit/fe838a72e6424e51f18ece3934bb25f072607ce6))
+
+
+
+
+
 # [1.16.0](https://github.com/Esposter/Esposter/compare/v1.15.0...v1.16.0) (2024-08-01)
 
 **Note:** Version bump only for package @esposter/configuration

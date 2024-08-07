@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
+
+
+### Bug Fixes
+
+* types ([1c1b0ad](https://github.com/Esposter/Esposter/commit/1c1b0ad8acace1b05cf0af45e1901911b85a7d46))
+
+
+### Features
+
+* Add monster party menu ([93201aa](https://github.com/Esposter/Esposter/commit/93201aa5fd84a14b3a23b2d7d0e91b1620ddf957))
+* Add moving monsters ([fe838a7](https://github.com/Esposter/Esposter/commit/fe838a72e6424e51f18ece3934bb25f072607ce6))
+* Add summary + remove unnecessary select ([a5d86f3](https://github.com/Esposter/Esposter/commit/a5d86f3a971611e3b54b6bc432995edf9b1c7b66))
+* Add UI to show monsters ([ea8349e](https://github.com/Esposter/Esposter/commit/ea8349e34d75cb7d9c013e33cb2c0f5f434c16ce))
+* fix up and refactor out input resolvers for world + add input resolvers for monster party ([3622eea](https://github.com/Esposter/Esposter/commit/3622eeac9ff8ce2d662a1e2214a91cfd1deaca6d))
+
+
+
+
+
 # [1.16.0](https://github.com/Esposter/Esposter/compare/v1.15.0...v1.16.0) (2024-08-01)
 
 
