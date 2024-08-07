@@ -7,7 +7,6 @@ export class SceneInputResolver extends AInputResolver {
   async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartyInputStore = useMonsterPartyInputStore();
     const { onPlayerInput } = monsterPartyInputStore;
-
     await onPlayerInput(scene, justDownInput);
     return true;
   }
