@@ -3,7 +3,6 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 export const SlopePropsData = {
   series: [
     {
-      name: "Blue",
       data: [
         {
           x: "Jan",
@@ -14,9 +13,9 @@ export const SlopePropsData = {
           y: 58,
         },
       ],
+      name: "Blue",
     },
     {
-      name: "Green",
       data: [
         {
           x: "Jan",
@@ -27,9 +26,9 @@ export const SlopePropsData = {
           y: 38,
         },
       ],
+      name: "Green",
     },
     {
-      name: "Red",
       data: [
         {
           x: "Jan",
@@ -40,6 +39,7 @@ export const SlopePropsData = {
           y: 21,
         },
       ],
+      name: "Red",
     },
   ],
 } as const satisfies VisualPropsData;

@@ -1,11 +1,12 @@
-import { InvalidOperationError, Operation, exhaustiveGuard } from "@esposter/shared";
 import type { Position } from "grid-engine";
+
+import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   grid: TGrid;
-  wrap: boolean;
   position: Position;
+  wrap: boolean;
 
   constructor(grid: TGrid, wrap = false, position: Position = { x: 0, y: 0 }) {
     this.grid = grid;
@@ -13,34 +14,13 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     this.position = position;
   }
   // This is the array index if the grid were to be flattened
-  // going from top-left to bottom-right
-  get index() {
-    let index = this.position.x;
-    for (let i = 0; i < this.position.y; i++) index += this.getColumnSize(i);
-    return index;
-  }
-
-  get value() {
-    return this.grid[this.position.y][this.position.x];
-  }
-
-  getValue({ x, y }: Position) {
-    if (x > this.getColumnSize(y))
-      throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
-    return this.grid[y][x];
-  }
-
-  get rowSize() {
-    return this.grid.length;
-  }
-
   getColumnSize(rowIndex: number) {
     if (rowIndex > this.rowSize - 1)
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `row index: ${rowIndex}`);
     return this.grid[rowIndex].length;
   }
 
-  getPosition(value: TValue): Position | null {
+  getPosition(value: TValue): null | Position {
     for (let y = 0; y < this.rowSize - 1; y++)
       for (let x = 0; x < this.getColumnSize(y); x++) {
         const position: Position = { x, y };
@@ -50,9 +30,15 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return null;
   }
 
-  getPositionX(value: TValue, y: number): number | null {
+  getPositionX(value: TValue, y: number): null | number {
     for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
     return null;
+  }
+
+  getValue({ x, y }: Position) {
+    if (x > this.getColumnSize(y))
+      throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
+    return this.grid[y][x];
   }
 
   move(direction: Direction) {
@@ -108,5 +94,20 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
       default:
         exhaustiveGuard(direction);
     }
+  }
+
+  // going from top-left to bottom-right
+  get index() {
+    let index = this.position.x;
+    for (let i = 0; i < this.position.y; i++) index += this.getColumnSize(i);
+    return index;
+  }
+
+  get rowSize() {
+    return this.grid.length;
+  }
+
+  get value() {
+    return this.grid[this.position.y][this.position.x];
   }
 }

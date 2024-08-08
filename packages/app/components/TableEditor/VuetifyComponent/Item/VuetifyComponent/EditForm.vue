@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 

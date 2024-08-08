@@ -1,5 +1,6 @@
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
+
+import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { tableEditorHeaders } from "@/services/tableEditor/headers";
 import { todoListHeaders } from "@/services/tableEditor/todoList/headers";
 import { todoListItemTypeItemCategoryDefinitions } from "@/services/tableEditor/todoList/todoListItemTypeItemCategoryDefinitions";
@@ -7,17 +8,17 @@ import { vuetifyComponentItemTypeItemCategoryDefinitions } from "@/services/tabl
 
 export const DefaultPropsMap = {
   [TableEditorType.TodoList]: {
-    itemCategoryDefinitions: todoListItemTypeItemCategoryDefinitions,
     headers: todoListHeaders,
+    itemCategoryDefinitions: todoListItemTypeItemCategoryDefinitions,
   },
   [TableEditorType.VuetifyComponent]: {
-    itemCategoryDefinitions: vuetifyComponentItemTypeItemCategoryDefinitions,
     headers: tableEditorHeaders,
+    itemCategoryDefinitions: vuetifyComponentItemTypeItemCategoryDefinitions,
   },
 } as const satisfies Record<
   TableEditorType,
   {
-    itemCategoryDefinitions: unknown[];
     headers: DataTableHeader[];
+    itemCategoryDefinitions: unknown[];
   }
 >;

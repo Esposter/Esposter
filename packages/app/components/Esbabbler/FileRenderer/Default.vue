@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+
 import { getFilename } from "@/util/getFilename";
 
 const { url } = defineProps<FileRendererProps>();

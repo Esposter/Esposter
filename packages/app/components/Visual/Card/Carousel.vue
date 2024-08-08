@@ -1,26 +1,27 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
-import CardBase from "@/components/Visual/Card/Base.vue";
 import type { Card } from "@/models/visual/Card";
-import { dayjs } from "@/services/dayjs";
 import type { Component } from "vue";
+
+import CardBase from "@/components/Visual/Card/Base.vue";
+import { dayjs } from "@/services/dayjs";
 
 interface VisualCardCarouselProps {
   cards: Card[];
-  duration?: number;
-  maxShownCards?: number;
   cardScaleYRatioLoss?: number;
   cardTemplate?: Component;
+  duration?: number;
+  maxShownCards?: number;
 }
 
 const {
   cards,
-  // Duration before cards move
-  duration = dayjs.duration(10, "seconds").asMilliseconds(),
-  maxShownCards = 5,
   // Ratio of how much shorter the next card is
   cardScaleYRatioLoss = 0.05,
   cardTemplate = CardBase,
+  // Duration before cards move
+  duration = dayjs.duration(10, "seconds").asMilliseconds(),
+  maxShownCards = 5,
 } = defineProps<VisualCardCarouselProps>();
 
 /**
@@ -56,10 +57,10 @@ const {
 // === Code ==
 
 interface CardStyleVariables {
-  scaleY?: string;
-  oldScaleY?: string;
   marginRight?: string;
   oldMarginRight?: string;
+  oldScaleY?: string;
+  scaleY?: string;
 }
 
 // We will create fake card ids that are just the indexes of our cards.
@@ -68,8 +69,8 @@ interface CardStyleVariables {
 const cardIds = ref<number[]>(cards.map((_, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
-const activeCardId = ref<number | null>(null);
-const inactiveCardId = ref<number | null>(null);
+const activeCardId = ref<null | number>(null);
+const inactiveCardId = ref<null | number>(null);
 
 const classes = computed<string[]>(() => {
   const newClasses = [];
@@ -117,7 +118,7 @@ const moveOneCard = () => {
 };
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
-const { width, thresholds } = useDisplay();
+const { thresholds, width } = useDisplay();
 
 const gap = computed<string>(() => {
   let gap = 2;
@@ -147,9 +148,9 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // We'll reverse the items at the end so it still maintains LTR chronological order
   for (let i = 0; i < numberOfCards; i++)
     items.push({
+      marginRight: `${i * scale.value}rem`,
       // Normal cards talk about how they move from their position to the next one
       oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : items[items.length - 1].marginRight,
-      marginRight: `${i * scale.value}rem`,
       oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : items[items.length - 1].scaleY,
       // We lose 10% for each shift
       scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,

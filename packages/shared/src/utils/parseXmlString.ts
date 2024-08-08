@@ -5,8 +5,8 @@ import { parseStringPromise } from "xml2js";
 export const parseXmlString = async (xmlString: string) => {
   const xml = parseDataUrl(xmlString) ?? xmlString;
   return parseStringPromise(xml, {
+    attrValueProcessors: [(value: string) => parseXmlValue(value)],
     explicitChildren: true,
     preserveChildrenOrder: true,
-    attrValueProcessors: [(value: string) => parseXmlValue(value)],
   });
 };

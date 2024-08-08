@@ -1,4 +1,5 @@
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
+
 import { NotFoundError } from "@esposter/shared";
 
 export const getTiledObjectProperty = <TValue = never>(properties: object[], name: string) => {

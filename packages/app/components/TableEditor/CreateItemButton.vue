@@ -4,7 +4,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
 const tableEditorStore = useTableEditorStore()();
-const { tableEditorType, editFormDialog, editedItem } = storeToRefs(tableEditorStore);
+const { editedItem, editFormDialog, tableEditorType } = storeToRefs(tableEditorStore);
 const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.value].itemCategoryDefinitions);
 </script>
 

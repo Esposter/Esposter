@@ -1,8 +1,9 @@
 import type { TMXEmbeddedTilesetNode } from "@/models/tmx/node/TMXEmbeddedTilesetNode";
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
 import type { TMXTilesetParsed } from "@/models/tmx/parsed/TMXTilesetParsed";
 import type { TMXImageShared } from "@/models/tmx/shared/TMXImageShared";
+
+import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import { isExternalTileset } from "@/util/isExternalTileset";
 import { parseTile } from "@/util/parseTile";
 import { InvalidOperationError, Operation } from "@esposter/shared";

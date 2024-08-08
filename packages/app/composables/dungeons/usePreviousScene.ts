@@ -1,8 +1,9 @@
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
 import { usePhaserStore } from "@/lib/phaser/store";
 import { getScene } from "@/lib/phaser/util/getScene";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSceneStore } from "@/store/dungeons/scene";
 
 export const usePreviousScene = (currentSceneKey: SceneKey) => {
@@ -36,5 +37,5 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     scene.scene.resume(previousSceneKey);
   };
 
-  return { previousSceneKey, launchScene, removeScene, switchToPreviousScene };
+  return { launchScene, previousSceneKey, removeScene, switchToPreviousScene };
 };

@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { useTableEditorStore } from "@/store/tableEditor";
 import type { EventSourceInput } from "@fullcalendar/core";
+
+import { useTableEditorStore } from "@/store/tableEditor";
 
 await useReadTableEditor();
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
-const { editItem, save, resetItem } = tableEditorStore;
-const { tableEditor, editedItem } = storeToRefs(tableEditorStore);
+const { editItem, resetItem, save } = tableEditorStore;
+const { editedItem, tableEditor } = storeToRefs(tableEditorStore);
 const events = computed<EventSourceInput>(() => {
   const results: EventSourceInput = [];
 
   for (const item of tableEditor.value.items) {
     if (!item.dueAt) continue;
-    results.push({ id: item.id, title: item.name, description: item.notes, date: item.dueAt });
+    results.push({ date: item.dueAt, description: item.notes, id: item.id, title: item.name });
   }
 
   return results;

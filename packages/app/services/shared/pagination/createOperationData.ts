@@ -1,6 +1,7 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
+
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";
 
@@ -26,10 +27,10 @@ export const createOperationData = <
   };
   return {
     [`${uncapitalize(entityTypeKey)}List`]: itemList,
-    [`${uncapitalize(Operation.Push)}${entityTypeKey}List`]: pushItemList,
     [`${uncapitalize(Operation.Create)}${entityTypeKey}`]: createItem,
-    [`${uncapitalize(Operation.Update)}${entityTypeKey}`]: updateItem,
     [`${uncapitalize(Operation.Delete)}${entityTypeKey}`]: deleteItem,
+    [`${uncapitalize(Operation.Push)}${entityTypeKey}List`]: pushItemList,
+    [`${uncapitalize(Operation.Update)}${entityTypeKey}`]: updateItem,
   } as {
     [P in OperationDataKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}List`
       ? typeof itemList

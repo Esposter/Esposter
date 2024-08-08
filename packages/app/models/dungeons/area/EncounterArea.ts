@@ -3,6 +3,6 @@ import type { BaseEncounterableMonster } from "@/models/dungeons/area/BaseEncoun
 import type { EncounterableMonster } from "@/models/dungeons/area/EncounterableMonster";
 
 export interface EncounterArea<T extends BaseEncounterableMonster = EncounterableMonster> {
-  id: Area;
   encounterableMonsters: T[];
+  id: Area;
 }

@@ -4,7 +4,7 @@ import { ID_SEPARATOR } from "@/util/id/constants";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
-const rateLimiter = new RateLimiterMemory({ points: 5, duration: 1, blockDuration: 5 });
+const rateLimiter = new RateLimiterMemory({ blockDuration: 5, duration: 1, points: 5 });
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const ip =

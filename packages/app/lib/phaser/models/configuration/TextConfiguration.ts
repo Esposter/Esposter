@@ -14,18 +14,19 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type TextConfiguration = Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig> & {
+export type TextConfiguration = {
   text: string;
 } & AlphaConfiguration &
   BlendModeConfiguration &
   ComputedSizeConfiguration &
   DepthConfiguration &
+  Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig> &
   FlipConfiguration &
+  GlobalConfiguration &
   MaskConfiguration &
   OriginConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   TintConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

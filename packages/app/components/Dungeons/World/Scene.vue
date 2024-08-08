@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";

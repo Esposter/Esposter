@@ -1,9 +1,10 @@
 import type { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import type { Tilemaps } from "phaser";
+
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
-import type { Tilemaps } from "phaser";
 
 const cache = new Map<TilemapKey, Map<TilesetKey, Tilemaps.Tileset>>();
 // Only our generated base tileset keys are used in all our tilemaps

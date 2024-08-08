@@ -1,7 +1,9 @@
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { Direction } from "grid-engine";
+
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
@@ -13,7 +15,6 @@ import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/sce
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
-import type { Direction } from "grid-engine";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();
@@ -24,7 +25,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const battlePlayerStore = useBattlePlayerStore();
   const { activeMonster } = storeToRefs(battlePlayerStore);
-  const { previousSceneKey, launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
+  const { launchScene, previousSceneKey, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (sceneMode.value !== SceneMode.Default || (await handleShowMessageInput(scene, justDownInput))) return;
@@ -34,11 +35,11 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
-      case PlayerSpecialInput.Confirm:
-        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value.value);
-        return;
       case PlayerSpecialInput.Cancel:
         onCancel(scene);
+        return;
+      case PlayerSpecialInput.Confirm:
+        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value.value);
         return;
       case PlayerSpecialInput.Enter:
         return;

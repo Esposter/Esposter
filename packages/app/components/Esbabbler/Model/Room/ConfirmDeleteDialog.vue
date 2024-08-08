@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomConfirmDeleteDialogProps {
-  roomId: string;
   creatorId: string;
+  roomId: string;
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => unknown;
+  default: (props: { tooltipProps: Record<string, unknown> } & StyledDialogActivatorSlotProps) => unknown;
 }>();
-const { roomId, creatorId } = defineProps<RoomConfirmDeleteDialogProps>();
+const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { session } = useAuth();
 const isCreator = computed(() => session.value?.user.id === creatorId);
 const { deleteRoom, leaveRoom } = useRoomStore();

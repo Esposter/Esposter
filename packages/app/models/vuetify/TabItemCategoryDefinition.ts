@@ -1,5 +1,5 @@
 export interface TabItemCategoryDefinition {
-  value: number;
-  text: string;
   icon: string;
+  text: string;
+  value: number;
 }

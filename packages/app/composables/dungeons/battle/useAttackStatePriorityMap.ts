@@ -10,19 +10,19 @@ export const useAttackStatePriorityMap = () => {
   if (optionGrid.value.value !== PlayerOption.Fight)
     return {
       [StateName.Battle]: StateName.EnemyAttack,
-      [StateName.PlayerPostAttackCheck]: null,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,
+      [StateName.PlayerPostAttackCheck]: null,
     };
   else if (generateRandomBoolean())
     return {
       [StateName.Battle]: StateName.PlayerAttack,
-      [StateName.PlayerPostAttackCheck]: StateName.EnemyAttack,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,
+      [StateName.PlayerPostAttackCheck]: StateName.EnemyAttack,
     };
   else
     return {
       [StateName.Battle]: StateName.EnemyAttack,
-      [StateName.PlayerPostAttackCheck]: StateName.PlayerInput,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerAttack,
+      [StateName.PlayerPostAttackCheck]: StateName.PlayerInput,
     };
 };

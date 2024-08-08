@@ -3,15 +3,15 @@ import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
-const { visualList, noColumns } = storeToRefs(visualStore);
+const { noColumns, visualList } = storeToRefs(visualStore);
 const { background, border, surface } = useColors();
 </script>
 
 <template>
   <v-container flex-1 fluid>
     <GridLayout v-model:layout="visualList" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
-      <GridItem v-for="{ id, type, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisualPreviewContainer :id size-full :type />
+      <GridItem v-for="{ id, type, x, y, w, h } in visualList" :key="id" :i="id" :x="x" :y="y" :w="w" :h="h">
+        <DashboardVisualPreviewContainer :id="id" size-full :type="type" />
       </GridItem>
     </GridLayout>
   </v-container>

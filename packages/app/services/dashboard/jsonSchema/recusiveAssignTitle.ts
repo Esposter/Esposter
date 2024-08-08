@@ -1,5 +1,6 @@
 import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
 import type { JSONSchemaDefinition } from "@/models/jsonSchema/JSONSchemaDefinition";
+
 import { prettifyName } from "@/util/text/prettifyName";
 import { toTitleCase } from "@/util/text/toTitleCase";
 

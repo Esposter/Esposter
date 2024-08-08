@@ -2,6 +2,7 @@ import type { TweenConfiguration } from "@/lib/phaser/models/configuration/globa
 import type { TweenEventEmitsOptions } from "@/lib/phaser/models/emit/global/TweenEventEmitsOptions";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { Tweens } from "phaser";
 
 export const TweenSetterMap = {

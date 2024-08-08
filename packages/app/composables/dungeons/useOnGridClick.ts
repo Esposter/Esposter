@@ -1,8 +1,9 @@
-import { useInputStore } from "@/lib/phaser/store/input";
 import type { Grid } from "@/models/dungeons/Grid";
+import type { Position } from "grid-engine";
+
+import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import deepEqual from "fast-deep-equal";
-import type { Position } from "grid-engine";
 
 export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[])[]>(
   grid: Ref<Grid<TValue, TGrid>>,

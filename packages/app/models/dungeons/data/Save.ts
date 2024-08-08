@@ -6,12 +6,12 @@ import { z } from "zod";
 
 export class Save {
   player = new Player();
-  world = getInitialWorld();
   tilemapKey = TilemapKey.Home;
+  world = getInitialWorld();
 }
 
 export const saveSchema = z.object({
   player: playerSchema,
-  world: worldSchema,
   tilemapKey: tilemapKeySchema,
+  world: worldSchema,
 }) satisfies z.ZodType<Save>;

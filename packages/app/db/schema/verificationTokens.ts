@@ -4,9 +4,9 @@ import { primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 export const verificationTokens = pgTable(
   "VerificationToken",
   {
+    expires: timestamp("expires", { mode: "date" }).notNull(),
     identifier: text("identifier").notNull(),
     token: text("token").notNull().unique(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (verificationToken) => ({
     compoundKey: primaryKey({ columns: [verificationToken.identifier, verificationToken.token] }),

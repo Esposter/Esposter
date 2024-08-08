@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { SITE_NAME } from "@/services/esposter/constants";
-import { toTitleCase } from "@/util/text/toTitleCase";
 import type { BuiltInProviderType } from "@auth/core/providers";
 import type { Component, CSSProperties } from "vue";
 
+import { SITE_NAME } from "@/services/esposter/constants";
+import { toTitleCase } from "@/util/text/toTitleCase";
+
 interface ProviderProps {
-  provider: BuiltInProviderType;
-  logo: Component;
-  logoStyle?: CSSProperties;
-  logoAttrs?: Record<string, unknown>;
   buttonStyle?: CSSProperties;
+  logo: Component;
+  logoAttrs?: Record<string, unknown>;
+  logoStyle?: CSSProperties;
+  provider: BuiltInProviderType;
 }
 
 definePageMeta({ middleware: "guest-only" });
@@ -17,27 +18,27 @@ definePageMeta({ middleware: "guest-only" });
 const { signIn } = useAuth();
 const providerProps = ref<ProviderProps[]>([
   {
-    provider: "google",
+    buttonStyle: { backgroundColor: "#4285f4", paddingLeft: "0" },
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
     logoStyle: {
-      padding: ".625rem",
-      width: "3rem",
-      height: "3rem",
       backgroundColor: "#fff",
       borderRadius: "4px 0 0 4px",
+      height: "3rem",
+      padding: ".625rem",
+      width: "3rem",
     },
-    buttonStyle: { paddingLeft: "0", backgroundColor: "#4285f4" },
+    provider: "google",
   },
   {
-    provider: "github",
+    buttonStyle: { backgroundColor: "#252525" },
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`))),
     logoAttrs: { fill: "#fff" },
-    buttonStyle: { backgroundColor: "#252525" },
+    provider: "github",
   },
   {
-    provider: "facebook",
-    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
     buttonStyle: { backgroundColor: "#1877f2" },
+    logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
+    provider: "facebook",
   },
 ]);
 </script>

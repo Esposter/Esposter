@@ -1,6 +1,7 @@
 import type { BuildingMap } from "@/assets/clicker/data/BuildingMap";
 import type { Building } from "@/models/clicker/data/building/Building";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
@@ -69,13 +70,13 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   return {
-    buildingList,
-    initializeBuildingMap,
     allBuildingPower,
-    getBoughtBuildingPower,
+    buildingList,
+    createBoughtBuilding,
     getBoughtBuildingAmount,
+    getBoughtBuildingPower,
     getBoughtBuildingStats,
     getBuildingPrice,
-    createBoughtBuilding,
+    initializeBuildingMap,
   };
 });

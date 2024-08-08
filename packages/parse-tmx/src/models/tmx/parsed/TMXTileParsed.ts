@@ -3,9 +3,9 @@ import type { TMXPropertiesParsed } from "@/models/tmx/parsed/TMXPropertiesParse
 import type { TMXTileShared } from "@/models/tmx/shared/TMXTileShared";
 
 export interface TMXTileParsed extends TMXTileShared {
-  id: number;
-  type: string;
   animation?: { frames: number[] };
+  id: number;
   objects?: TMXObjectParsed[];
   properties?: TMXPropertiesParsed;
+  type: string;
 }

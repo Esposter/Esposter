@@ -6,6 +6,6 @@ import type { TMXObjectShared } from "@/models/tmx/shared/TMXObjectShared";
 
 export interface TMXObjectNode extends TMXNode<TMXObjectShared, TMXDataNode | TMXPropertiesNode> {
   polygon?: TMXNode<{ points: string }>[];
-  text?: TMXDataNode[];
   properties?: { property: TMXPropertyNode[] }[];
+  text?: TMXDataNode[];
 }

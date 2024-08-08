@@ -6,7 +6,7 @@ interface VisualCardMarqueeProps {
 }
 
 const { cards } = defineProps<VisualCardMarqueeProps>();
-const { surface, "on-surface": onSurface } = useColors();
+const { "on-surface": onSurface, surface } = useColors();
 </script>
 
 <template>

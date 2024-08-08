@@ -24,14 +24,14 @@ export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   useTween(monsterInfoContainerTween, {
     delay: 0,
     duration: dayjs.duration(0.8, "seconds").asMilliseconds(),
+    onComplete: () => {
+      monsterInfoContainerPosition.value.x = xEnd;
+      if (!isEnemy) phaserEventEmitter.emit("playerMonsterInfoContainerAppear");
+    },
     x: {
       from: monsterInfoContainerPosition.value.x,
       start: monsterInfoContainerPosition.value.x,
       to: xEnd,
-    },
-    onComplete: () => {
-      monsterInfoContainerPosition.value.x = xEnd;
-      if (!isEnemy) phaserEventEmitter.emit("playerMonsterInfoContainerAppear");
     },
   });
 };

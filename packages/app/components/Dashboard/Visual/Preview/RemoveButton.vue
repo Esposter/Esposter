@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VisualType } from "@/models/dashboard/VisualType";
+
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettifyName } from "@/util/text/prettifyName";
 

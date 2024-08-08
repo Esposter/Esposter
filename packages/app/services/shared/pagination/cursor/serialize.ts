@@ -4,7 +4,7 @@ import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 export const serialize = <TItem extends ItemMetadata>(
   item: TItem | undefined,
   sortBy: SortItem<keyof TItem & string>[],
-): string | null => {
+): null | string => {
   if (!item) return null;
 
   const keys = sortBy.map((s) => s.key);

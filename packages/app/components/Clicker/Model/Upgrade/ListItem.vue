@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { Sound } from "@/models/clicker/Sound";
-import { ItemType } from "@/models/clicker/data/ItemType";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+
+import { ItemType } from "@/models/clicker/data/ItemType";
+import { Sound } from "@/models/clicker/Sound";
 import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface UpgradeListItemProps {
-  upgrade: Upgrade;
   isBought?: true;
+  upgrade: Upgrade;
 }
 
-const { upgrade, isBought } = defineProps<UpgradeListItemProps>();
+const { isBought, upgrade } = defineProps<UpgradeListItemProps>();
 const clickerStore = useClickerStore();
 const { game } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();

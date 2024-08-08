@@ -15,10 +15,10 @@ const tab = ref(0);
     <v-sheet h-full flex="!" flex-col>
       <v-tabs v-model="tab" :items="emailEditorTabItemCategoryDefinitions">
         <template #tab="{ item }">
-          <EmailEditorTab :item />
+          <EmailEditorTab :item="item" />
         </template>
         <template #item="{ item }">
-          <EmailEditorTabItem :item />
+          <EmailEditorTabItem :item="item" />
         </template>
       </v-tabs>
     </v-sheet>

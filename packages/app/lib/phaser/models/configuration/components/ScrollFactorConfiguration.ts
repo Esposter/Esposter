@@ -2,5 +2,5 @@ import type { ExcludeFunctionProperties } from "@/util/types/ExcludeFunctionProp
 import type { GameObjects } from "phaser";
 
 export type ScrollFactorConfiguration = ExcludeFunctionProperties<
-  GameObjects.Components.ScrollFactor & { scrollFactor: number }
+  { scrollFactor: number } & GameObjects.Components.ScrollFactor
 >;

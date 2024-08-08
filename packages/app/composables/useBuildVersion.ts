@@ -1,4 +1,4 @@
-const buildVersion: number | null = null;
+const buildVersion: null | number = null;
 
 export const useBuildVersion = () => {
   if (buildVersion !== null) return buildVersion;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
 import type { SideBarItem } from "@/models/user/SideBarItem";
+
+import { RoutePath } from "@/models/router/RoutePath";
 import { useUserStore } from "@/store/user";
 
 definePageMeta({ middleware: "auth" });
@@ -11,7 +12,7 @@ const userStore = useUserStore();
 const { authUser } = storeToRefs(userStore);
 authUser.value = await $client.user.readUser.query();
 
-const sections: SideBarItem[] = [{ title: "General", href: RoutePath.UserSettings }];
+const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
 </script>
 
 <template>

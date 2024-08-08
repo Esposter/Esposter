@@ -6,11 +6,11 @@ import { ChartType, chartTypeSchema } from "@/models/dashboard/chart/type/ChartT
 import { z } from "zod";
 
 export class Chart {
-  type: ChartType = ChartType.Basic;
   configuration = new BasicChartConfiguration();
+  type: ChartType = ChartType.Basic;
 }
 
 export const chartSchema = z.object({
-  type: chartTypeSchema,
   configuration: basicChartConfigurationSchema,
+  type: chartTypeSchema,
 }) satisfies z.ZodType<Chart>;

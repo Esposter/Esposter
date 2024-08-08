@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
 import type { TabItem } from "@/models/vuetify/TabItem";
+
 import { TabComponentMap } from "@/services/emailEditor/TabComponentMap";
 
 interface TabItemProps {
@@ -12,5 +13,5 @@ const item = computed(() => baseItem as EmailEditorTabItemCategoryDefinition);
 </script>
 
 <template>
-  <component :is="TabComponentMap[item.type]" h-full :item />
+  <component :is="TabComponentMap[item.type]" h-full :item="item" />
 </template>

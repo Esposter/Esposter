@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Sound } from "@/models/clicker/Sound";
-import { ItemType } from "@/models/clicker/data/ItemType";
 import type { Building } from "@/models/clicker/data/building/Building";
+
+import { ItemType } from "@/models/clicker/data/ItemType";
+import { Sound } from "@/models/clicker/Sound";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { marked } from "marked";
@@ -14,7 +15,7 @@ const { building } = defineProps<BuildingListItemProps>();
 const clickerStore = useClickerStore();
 const { game } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
-const { getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice, createBoughtBuilding } = buildingStore;
+const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice } = buildingStore;
 const { play } = useClickerSound(Sound.Buy);
 const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));

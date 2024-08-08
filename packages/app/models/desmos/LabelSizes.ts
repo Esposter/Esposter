@@ -3,7 +3,7 @@
  * The default value is Desmos.LabelSizes.MEDIUM.
  */
 export enum LabelSizes {
-  SMALL = "SMALL",
-  MEDIUM = "MEDIUM",
   LARGE = "LARGE",
+  MEDIUM = "MEDIUM",
+  SMALL = "SMALL",
 }

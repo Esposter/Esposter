@@ -1,5 +1,6 @@
 import type { TMXTileNode } from "@/models/tmx/node/TMXTileNode";
 import type { TMXTileParsed } from "@/models/tmx/parsed/TMXTileParsed";
+
 import { parseObject } from "@/util/parseObject";
 import { parseProperties } from "@/util/parseProperties";
 

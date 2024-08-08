@@ -1,15 +1,16 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
+import type { UnwrapRef } from "vue";
+import type { VForm } from "vuetify/components";
+
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import deepEqual from "fast-deep-equal";
-import type { UnwrapRef } from "vue";
-import type { VForm } from "vuetify/components";
 
 export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef<TItem[]>) => {
   const router = useRouter();
   const editFormDialog = ref(false);
   const editFormRef = ref<InstanceType<typeof VForm>>();
-  const editedItem = ref<TItem | null>(null);
+  const editedItem = ref<null | TItem>(null);
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const id = editedItem.value?.id;
@@ -53,16 +54,16 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   };
 
   return {
-    editFormRef,
-    editFormDialog,
-    editedItem,
     editedIndex,
-    originalItem,
-    isFullScreenDialog,
-    isEditFormValid,
-    isSavable,
-    isDirty,
+    editedItem,
+    editFormDialog,
+    editFormRef,
     editItem,
+    isDirty,
+    isEditFormValid,
+    isFullScreenDialog,
+    isSavable,
+    originalItem,
     resetItem,
   };
 };

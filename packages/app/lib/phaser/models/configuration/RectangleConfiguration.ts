@@ -2,6 +2,6 @@ import type { ShapeConfiguration } from "@/lib/phaser/models/configuration/share
 import type { GameObjects } from "phaser";
 
 export type RectangleConfiguration = {
-  width: GameObjects.Rectangle["width"];
   height: GameObjects.Rectangle["height"];
+  width: GameObjects.Rectangle["width"];
 } & ShapeConfiguration;

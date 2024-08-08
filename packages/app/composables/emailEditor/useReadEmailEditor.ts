@@ -1,9 +1,10 @@
+import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
+
 import { EmailEditor } from "@/models/emailEditor/EmailEditor";
 import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
 import deepEqual from "fast-deep-equal";
 
 export const useReadEmailEditor = async () => {

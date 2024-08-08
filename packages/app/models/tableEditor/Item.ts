@@ -1,6 +1,7 @@
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
-import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityType";
 import type { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
+
+import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityType";
 import { aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
 import { z } from "zod";
 

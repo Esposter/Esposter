@@ -1,4 +1,5 @@
 import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 // It's a little annoying, but because we can have initial reactive data,
 // we have to account for that and handle that instead of our own created items array
@@ -36,10 +37,10 @@ export const createCursorPaginationData = <TItem extends ItemMetadata>(items?: R
   };
 
   return {
-    itemList,
-    nextCursor,
     hasMore,
     initializeCursorPaginationData,
+    itemList,
+    nextCursor,
     resetCursorPaginationData,
   };
 };

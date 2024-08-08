@@ -11,11 +11,11 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("User", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name"),
   email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
+  id: uuid("id").primaryKey().defaultRandom(),
   image: text("image"),
+  name: text("name"),
 });
 
 export type User = typeof users.$inferSelect;
@@ -26,9 +26,9 @@ export const selectUserSchema = createSelectSchema(users, {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-  sessions: many(sessions),
   likes: many(likes),
   posts: many(posts),
+  sessions: many(sessions),
   surveys: many(surveys),
   usersToRooms: many(usersToRooms),
 }));
@@ -36,12 +36,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const usersToRooms = pgTable(
   "UserToRoom",
   {
-    userId: uuid("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     roomId: uuid("roomId")
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (userToRoom) => ({
     compoundKey: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
@@ -50,25 +50,25 @@ export const usersToRooms = pgTable(
 export type UserToRoom = typeof usersToRooms.$inferSelect;
 
 export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
-  user: one(users, {
-    fields: [usersToRooms.userId],
-    references: [users.id],
-  }),
   room: one(rooms, {
     fields: [usersToRooms.roomId],
     references: [rooms.id],
+  }),
+  user: one(users, {
+    fields: [usersToRooms.userId],
+    references: [users.id],
   }),
 }));
 
 export const likes = pgTable(
   "Like",
   {
-    userId: uuid("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     postId: uuid("postId")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     // @TODO: Check constraint of values 1 or -1 when drizzle implements this
     // and remove all options from createSelectSchema as db should be our source of truth
     // https://github.com/drizzle-team/drizzle-orm/issues/880
@@ -90,12 +90,12 @@ export const selectLikeSchema = createSelectSchema(likes, {
 });
 
 export const likesRelations = relations(likes, ({ one }) => ({
-  user: one(users, {
-    fields: [likes.userId],
-    references: [users.id],
-  }),
   post: one(posts, {
     fields: [likes.postId],
     references: [posts.id],
+  }),
+  user: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
   }),
 }));

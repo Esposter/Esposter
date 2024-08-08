@@ -1,5 +1,6 @@
-import { useTween } from "@/lib/phaser/composables/useTween";
 import type { OnComplete } from "@/models/shared/OnComplete";
+
+import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
@@ -17,17 +18,17 @@ export const useMonsterTakeDamageTween = async (isEnemy: boolean, onComplete?: O
   }
 
   useTween(monsterTween, {
-    delay: 0,
-    repeat: 10,
-    duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
     alpha: {
       from: 1,
       start: 1,
       to: 0,
     },
+    delay: 0,
+    duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
     onComplete: async (_, [monsterImageGameObject]) => {
       monsterImageGameObject.setAlpha(1);
       await onComplete?.();
     },
+    repeat: 10,
   });
 };

@@ -1,11 +1,12 @@
 import type { TMX } from "@/models/tmx/node/TMX";
 import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
-import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
 import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
-import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
 import type { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
+
+import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
+import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
 import { parseNode } from "@/util/parseNode";
 import { parseTileset } from "@/util/parseTileset";
 import { exhaustiveGuard, parseXmlString } from "@esposter/shared";
@@ -26,13 +27,18 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
           if (!node.$$) break;
           map.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
           break;
+        case TMXNodeType.Export:
+        case TMXNodeType.Image:
+        case TMXNodeType.Object:
+        case TMXNodeType.Property:
+          break;
         case TMXNodeType.Group:
         case TMXNodeType.ImageLayer:
         case TMXNodeType.Layer:
         case TMXNodeType.Objectgroup:
           {
             const layer = await parseNode(
-              node as unknown as TMXLayerNode | TMXGroupLayerNode,
+              node as unknown as TMXGroupLayerNode | TMXLayerNode,
               expectedCount,
               translateFlips,
             );
@@ -47,11 +53,6 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
           break;
         case TMXNodeType.Tileset:
           map.tilesets.push(parseTileset(node as TMXTilesetNode));
-          break;
-        case TMXNodeType.Export:
-        case TMXNodeType.Image:
-        case TMXNodeType.Object:
-        case TMXNodeType.Property:
           break;
         default:
           exhaustiveGuard(tmxNodeType);

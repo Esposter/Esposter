@@ -1,9 +1,23 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const RangeAreaPropsData = {
+  options: {
+    markers: {
+      hover: {
+        sizeOffset: 5,
+      },
+    },
+    stroke: {
+      curve: "monotoneCubic",
+    },
+    yaxis: {
+      labels: {
+        formatter: (val) => `${val}°C`,
+      },
+    },
+  },
   series: [
     {
-      name: "New York Temperature",
       data: [
         {
           x: "Jan",
@@ -54,21 +68,7 @@ export const RangeAreaPropsData = {
           y: [1, 7],
         },
       ],
+      name: "New York Temperature",
     },
   ],
-  options: {
-    stroke: {
-      curve: "monotoneCubic",
-    },
-    markers: {
-      hover: {
-        sizeOffset: 5,
-      },
-    },
-    yaxis: {
-      labels: {
-        formatter: (val) => `${val}°C`,
-      },
-    },
-  },
 } as const satisfies VisualPropsData;

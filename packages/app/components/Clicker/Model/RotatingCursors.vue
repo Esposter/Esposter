@@ -40,7 +40,7 @@ watch(
   (newAmount) => {
     animateCursors(newAmount);
   },
-  { immediate: true, flush: "post" },
+  { flush: "post", immediate: true },
 );
 </script>
 

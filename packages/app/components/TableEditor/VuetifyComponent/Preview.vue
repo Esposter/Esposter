@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 

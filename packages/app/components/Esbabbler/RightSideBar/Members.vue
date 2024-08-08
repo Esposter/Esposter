@@ -2,7 +2,7 @@
 import { useMemberStore } from "@/store/esbabbler/member";
 
 const memberStore = useMemberStore();
-const { memberList, hasMore } = storeToRefs(memberStore);
+const { hasMore, memberList } = storeToRefs(memberStore);
 const readMoreMembers = await useReadMembers();
 </script>
 

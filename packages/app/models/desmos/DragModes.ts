@@ -8,9 +8,9 @@
  * to explicitly specified column values, and has no effect on computed column values.
  */
 export enum DragModes {
-  X = "X",
-  Y = "Y",
-  XY = "XY",
-  NONE = "NONE",
   AUTO = "AUTO",
+  NONE = "NONE",
+  X = "X",
+  XY = "XY",
+  Y = "Y",
 }

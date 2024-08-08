@@ -1,4 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
+
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { dayjs } from "@/services/dayjs";
 import { getAttack } from "@/services/dungeons/attack/getAttack";

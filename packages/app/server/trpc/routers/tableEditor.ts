@@ -27,7 +27,7 @@ export const tableEditorRouter = router({
       return new TableEditorConfiguration();
     }
   }),
-  saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ input, ctx }) => {
+  saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.TableEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

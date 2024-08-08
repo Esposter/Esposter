@@ -5,18 +5,18 @@ export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<never>
   switch (type) {
     case Boolean:
       return {
-        type: "boolean",
         title: "True",
-      };
-    case String:
-      return {
-        type: "string",
-        title: "Value",
+        type: "boolean",
       };
     case Number:
       return {
-        type: "number",
         title: "Value",
+        type: "number",
+      };
+    case String:
+      return {
+        title: "Value",
+        type: "string",
       };
     default:
       return null;

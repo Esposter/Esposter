@@ -1,5 +1,6 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";

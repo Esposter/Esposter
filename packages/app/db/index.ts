@@ -16,6 +16,7 @@ const runtimeConfig = useRuntimeConfig();
 
 const client = postgres(runtimeConfig.database.url);
 export const db = drizzle(client, {
+  logger: IS_PRODUCTION ? undefined : new DrizzleLogger(),
   schema: {
     ...accounts,
     ...posts,
@@ -25,7 +26,6 @@ export const db = drizzle(client, {
     ...users,
     ...verificationTokens,
   },
-  logger: IS_PRODUCTION ? undefined : new DrizzleLogger(),
 });
 
 await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER_PATH });

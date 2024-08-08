@@ -1,30 +1,31 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
-import { useTween } from "@/lib/phaser/composables/useTween";
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
+import type { Tweens } from "phaser";
+
+import Image from "@/lib/phaser/components/Image.vue";
+import { useTween } from "@/lib/phaser/composables/useTween";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import type { Tweens } from "phaser";
 import { Math } from "phaser";
 
 interface BarProps {
-  type: BarType;
-  imagePosition: ImagePosition;
-  width: number;
-  scaleY: number;
   barPercentage: number;
+  imagePosition: ImagePosition;
   isSkipAnimations?: boolean;
+  scaleY: number;
+  type: BarType;
+  width: number;
 }
 
-const { type, imagePosition, width, scaleY, barPercentage, isSkipAnimations } = defineProps<BarProps>();
+const { barPercentage, imagePosition, isSkipAnimations, scaleY, type, width } = defineProps<BarProps>();
 const emit = defineEmits<{
+  "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];
   "update:display-width": [value: number];
-  "complete:display-width": [];
 }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
@@ -77,18 +78,18 @@ watch(barWidth, (newBarWidth) => {
   }
 
   useTween(tween, {
-    duration: dayjs.duration(1, "second").asMilliseconds(),
     displayWidth: newBarWidth,
+    duration: dayjs.duration(1, "second").asMilliseconds(),
     ease: Math.Easing.Sine.Out,
+    onComplete: () => {
+      emit("complete:display-width");
+    },
     onStart: (tween) => {
       emit("start:display-width", tween);
     },
     onUpdate: (_tween, _key, _target, displayWidth) => {
       if (isSkipAnimations) return;
       updateDisplayWidth(displayWidth);
-    },
-    onComplete: () => {
-      emit("complete:display-width");
     },
   });
 });

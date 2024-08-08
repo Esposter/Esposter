@@ -24,7 +24,7 @@ export const dashboardRouter = router({
       return new Dashboard();
     }
   }),
-  saveDashboard: authedProcedure.input(dashboardSchema).mutation(async ({ input, ctx }) => {
+  saveDashboard: authedProcedure.input(dashboardSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.DashboardAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

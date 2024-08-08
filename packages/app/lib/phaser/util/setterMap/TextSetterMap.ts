@@ -1,6 +1,8 @@
 import type { TextConfiguration } from "@/lib/phaser/models/configuration/TextConfiguration";
 import type { TextEventEmitsOptions } from "@/lib/phaser/models/emit/TextEventEmitsOptions";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
+
 import { AlphaSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { ComputedSizeSetterMap } from "@/lib/phaser/util/setterMap/components/ComputedSizeSetterMap";
@@ -14,7 +16,6 @@ import { TintSetterMap } from "@/lib/phaser/util/setterMap/components/TintSetter
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
-import type { GameObjects } from "phaser";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
   padding: (gameObject) => (value) => {

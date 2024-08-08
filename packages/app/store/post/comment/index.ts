@@ -1,6 +1,7 @@
 import type { PostWithRelations } from "@/db/schema/posts";
-import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
 import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
+
+import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
@@ -17,8 +18,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   const { itemList, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const {
     createComment: storeCreateComment,
-    updateComment: storeUpdateComment,
     deleteComment: storeDeleteComment,
+    updateComment: storeUpdateComment,
     ...restOperationData
   } = createOperationData(itemList, DerivedDatabaseEntityType.Comment);
 
@@ -51,8 +52,8 @@ export const useCommentStore = defineStore("post/comment", () => {
     currentPost,
     ...restOperationData,
     createComment,
-    updateComment,
     deleteComment,
+    updateComment,
     ...restData,
   };
 });

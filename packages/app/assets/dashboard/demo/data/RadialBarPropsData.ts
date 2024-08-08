@@ -1,7 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const RadialBarPropsData = {
-  series: [70],
   options: {
     labels: ["Cricket"],
     plotOptions: {
@@ -12,4 +11,5 @@ export const RadialBarPropsData = {
       },
     },
   },
+  series: [70],
 } as const satisfies VisualPropsData;

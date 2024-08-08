@@ -1,11 +1,12 @@
-import { Grid } from "@/models/dungeons/Grid";
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
+import { Grid } from "@/models/dungeons/Grid";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
@@ -16,7 +17,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const menuOptionGrid = ref() as Ref<Grid<MenuOption, MenuOption[][]>>;
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { monsterPartyOptionGrid, sceneMode, monsterIdToMove } = storeToRefs(monsterPartySceneStore);
+  const { monsterIdToMove, monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
   const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);

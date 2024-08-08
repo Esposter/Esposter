@@ -1,10 +1,11 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
+import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
@@ -13,7 +14,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export class MoveInputResolver extends AInputResolver {
   handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { monsterPartyOptionGrid, sceneMode, monsterIdToMove } = storeToRefs(monsterPartySceneStore);
+    const { monsterIdToMove, monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
     const playerStore = usePlayerStore();
     const { player } = storeToRefs(playerStore);
 

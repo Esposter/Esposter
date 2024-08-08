@@ -1,13 +1,14 @@
+import type { TilemapMetadataParams } from "@/models/dungeons/tilemap/TilemapMetadataParams";
+import type { Tilemaps } from "phaser";
+
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
-import type { TilemapMetadataParams } from "@/models/dungeons/tilemap/TilemapMetadataParams";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
 import { DEBUG_TILE_LAYER_ALPHA } from "@/services/dungeons/tilemap/constants";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
 import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
-import type { Tilemaps } from "phaser";
 
 export const createTilemapMetadata = <TLayerName extends Record<string, string>>(
   layerNameEnum: TLayerName,

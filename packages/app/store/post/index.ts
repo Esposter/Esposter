@@ -1,6 +1,7 @@
 import type { PostWithRelations } from "@/db/schema/posts";
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { CreatePostInput, DeletePostInput, UpdatePostInput } from "@/server/trpc/routers/post";
+
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
@@ -9,8 +10,8 @@ export const usePostStore = defineStore("post", () => {
   const { itemList, ...restData } = createCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
-    updatePost: storeUpdatePost,
     deletePost: storeDeletePost,
+    updatePost: storeUpdatePost,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Post);
 
@@ -36,8 +37,8 @@ export const usePostStore = defineStore("post", () => {
   return {
     ...restOperationData,
     createPost,
-    updatePost,
     deletePost,
+    updatePost,
     ...restData,
   };
 });

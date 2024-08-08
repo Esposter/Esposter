@@ -1,11 +1,12 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { Position } from "grid-engine";
+
+import { Grid } from "@/models/dungeons/Grid";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { PlayerOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerOptionGrid";
 import { usePlayerStore } from "@/store/dungeons/player";
-import type { Position } from "grid-engine";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const playerStore = usePlayerStore();
@@ -47,16 +48,16 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
 
   return {
     activeMonster,
-    switchActiveMonster,
-    initialMonsterPosition,
-    monsterPosition,
-    monsterTween,
+    attackOptionGrid,
+    attacks,
     initialMonsterInfoContainerPosition,
+    initialMonsterPosition,
     monsterInfoContainerPosition,
     monsterInfoContainerTween,
-    takeDamage,
+    monsterPosition,
+    monsterTween,
     optionGrid,
-    attacks,
-    attackOptionGrid,
+    switchActiveMonster,
+    takeDamage,
   };
 });

@@ -1,4 +1,5 @@
 import type { Extension } from "@codemirror/state";
+
 import { oneDark } from "@codemirror/theme-one-dark";
 
 export const useExtensions = (baseExtensions: MaybeRef<Extension[]>) => {

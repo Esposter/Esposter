@@ -2,8 +2,8 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
 import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
@@ -12,7 +12,7 @@ import { Input } from "phaser";
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const worldDialogStore = useWorldDialogStore();
-const { isDialogVisible, dialogMessage } = storeToRefs(worldDialogStore);
+const { dialogMessage, isDialogVisible } = storeToRefs(worldDialogStore);
 const x = ref<number>();
 const y = ref<number>();
 

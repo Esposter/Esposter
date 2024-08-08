@@ -1,14 +1,11 @@
 import type { VisualType } from "@/models/dashboard/VisualType";
+import type { ApexOptions } from "apexcharts";
+
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import { uncapitalize } from "@/util/text/uncapitalize";
-import type { ApexOptions } from "apexcharts";
 import { defu } from "defu";
 
 export class TypeResolver extends AVisualTypeResolver {
-  isActive() {
-    return true;
-  }
-
   handleConfiguration(apexOptions: ApexOptions, type: VisualType) {
     apexOptions.chart = defu(
       {
@@ -16,5 +13,9 @@ export class TypeResolver extends AVisualTypeResolver {
       },
       apexOptions.chart,
     );
+  }
+
+  isActive() {
+    return true;
   }
 }

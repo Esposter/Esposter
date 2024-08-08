@@ -12,18 +12,18 @@ import type { GameObjects } from "phaser";
 
 export type ShapeConfiguration = {
   active: GameObjects.Shape["active"];
-  displayWidth: GameObjects.Shape["displayWidth"];
   displayHeight: GameObjects.Shape["displayHeight"];
-  fillColor: GameObjects.Shape["fillColor"];
+  displayWidth: GameObjects.Shape["displayWidth"];
   fillAlpha: GameObjects.Shape["fillAlpha"];
+  fillColor: GameObjects.Shape["fillColor"];
   strokeStyle: Parameters<GameObjects.Shape["setStrokeStyle"]>;
 } & AlphaSingleConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
+  GlobalConfiguration &
   MaskConfiguration &
   OriginConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

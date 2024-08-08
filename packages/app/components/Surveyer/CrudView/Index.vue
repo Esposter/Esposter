@@ -5,7 +5,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();
 const surveyerStore = useSurveyStore();
-const { surveyList, totalItemsLength, searchQuery } = storeToRefs(surveyerStore);
+const { searchQuery, surveyList, totalItemsLength } = storeToRefs(surveyerStore);
 </script>
 
 <template>

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { mergeProps } from "vue";
 import type { SubmitEventPromise } from "vuetify";
 import type { VCard } from "vuetify/components";
+
+import { mergeProps } from "vue";
 import { VBtn } from "vuetify/components";
 
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];
-  confirmButtonProps?: VBtn["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
+  confirmButtonProps?: VBtn["$props"];
 }
 
 export interface StyledDialogActivatorSlotProps {
@@ -19,7 +20,7 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: Record<string, never>) => unknown;
 }>();
-const { cardProps, confirmButtonProps, confirmButtonAttrs } = defineProps<StyledDialogProps>();
+const { cardProps, confirmButtonAttrs, confirmButtonProps } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [submitEventPromise: SubmitEventPromise, onComplete: () => void] }>();
 const isOpen = ref(false);
 const isValid = ref(true);

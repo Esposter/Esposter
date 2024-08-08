@@ -7,7 +7,7 @@
 export enum LabelOrientations {
   ABOVE = "ABOVE",
   BELOW = "BELOW",
+  DEFAULT = "DEFAULT",
   LEFT = "LEFT",
   RIGHT = "RIGHT",
-  DEFAULT = "DEFAULT",
 }

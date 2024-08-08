@@ -1,6 +1,16 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const CandlestickPropsData = {
+  options: {
+    xaxis: {
+      type: "datetime",
+    },
+    yaxis: {
+      tooltip: {
+        enabled: true,
+      },
+    },
+  },
   series: [
     {
       data: [
@@ -247,14 +257,4 @@ export const CandlestickPropsData = {
       ],
     },
   ],
-  options: {
-    xaxis: {
-      type: "datetime",
-    },
-    yaxis: {
-      tooltip: {
-        enabled: true,
-      },
-    },
-  },
 } as const satisfies VisualPropsData;

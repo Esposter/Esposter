@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
-import Sprite from "@/lib/phaser/components/Sprite.vue";
 import type { MovementStarted } from "@/models/dungeons/gridEngine/MovementStarted";
 import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopped";
 import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
@@ -8,40 +7,42 @@ import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/Positio
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { Position } from "grid-engine";
-import { Direction } from "grid-engine";
 import type { Subscription } from "rxjs";
+
+import Sprite from "@/lib/phaser/components/Sprite.vue";
+import { Direction } from "grid-engine";
 import { filter } from "rxjs";
 
 export interface CharacterProps {
   id: Character["id"];
-  spriteConfiguration: SpriteProps["configuration"];
-  walkingAnimationMapping: Character["walkingAnimationMapping"];
-  singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
-  speed?: number;
+  onComplete?: SpriteProps["onComplete"];
   onMovementStarted?: (scene: SceneWithPlugins, ...args: Parameters<MovementStarted>) => ReturnType<MovementStarted>;
   onMovementStopped?: (scene: SceneWithPlugins, ...args: Parameters<MovementStopped>) => ReturnType<MovementStopped>;
-  onPositionChangeStarted?: (
-    scene: SceneWithPlugins,
-    ...args: Parameters<PositionChangeStarted>
-  ) => ReturnType<PositionChangeStarted>;
   onPositionChangeFinished?: (
     scene: SceneWithPlugins,
     ...args: Parameters<PositionChangeFinished>
   ) => ReturnType<PositionChangeFinished>;
-  onComplete?: SpriteProps["onComplete"];
+  onPositionChangeStarted?: (
+    scene: SceneWithPlugins,
+    ...args: Parameters<PositionChangeStarted>
+  ) => ReturnType<PositionChangeStarted>;
+  singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
+  speed?: number;
+  spriteConfiguration: SpriteProps["configuration"];
+  walkingAnimationMapping: Character["walkingAnimationMapping"];
 }
 
 const {
   id,
-  spriteConfiguration,
-  walkingAnimationMapping,
-  singleSidedSpritesheetDirection,
-  speed,
+  onComplete,
   onMovementStarted,
   onMovementStopped,
-  onPositionChangeStarted,
   onPositionChangeFinished,
-  onComplete,
+  onPositionChangeStarted,
+  singleSidedSpritesheetDirection,
+  speed,
+  spriteConfiguration,
+  walkingAnimationMapping,
 } = defineProps<CharacterProps>();
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });

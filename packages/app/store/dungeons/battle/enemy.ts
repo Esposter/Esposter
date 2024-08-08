@@ -13,12 +13,12 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const takeDamage = useTakeDamage(true);
   return {
     activeMonster,
-    initialMonsterPosition,
-    monsterPosition,
-    monsterTween,
     initialMonsterInfoContainerPosition,
+    initialMonsterPosition,
     monsterInfoContainerPosition,
     monsterInfoContainerTween,
+    monsterPosition,
+    monsterTween,
     takeDamage,
   };
 });

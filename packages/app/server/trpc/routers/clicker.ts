@@ -10,7 +10,6 @@ import { streamToText } from "@/util/text/streamToText";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const clickerRouter = router({
-  readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
   readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
   readGame: authedProcedure.query<Game>(async ({ ctx }) => {
     try {
@@ -28,7 +27,8 @@ export const clickerRouter = router({
       return new Game();
     }
   }),
-  saveGame: authedProcedure.input(gameSchema).mutation(async ({ input, ctx }) => {
+  readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
+  saveGame: authedProcedure.input(gameSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

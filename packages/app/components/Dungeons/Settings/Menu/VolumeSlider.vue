@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
+
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
@@ -30,11 +31,11 @@ const baseY = computed(
     SETTINGS_POSITION_INCREMENT.y * (optionGrid.value.getPosition(SettingsOption.VolumePercentage)?.y ?? 0),
 );
 const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
-  x: INITIAL_SETTINGS_VALUE_POSITION.x,
-  y: baseY.value + 17,
   originX: 0,
   originY: 0.5,
   width: VOLUME_SLIDER_BAR_WIDTH,
+  x: INITIAL_SETTINGS_VALUE_POSITION.x,
+  y: baseY.value + 17,
 }));
 const onSliderBarClick = async ({ x }: Input.Pointer) => {
   if (!volumeSlider.value) return;

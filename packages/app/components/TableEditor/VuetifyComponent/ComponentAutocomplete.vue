@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+
 import { DEFAULT_READ_LIMIT } from "@/services/shared/pagination/constants";
 import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { formRules } from "@/services/vuetify/formRules";

@@ -8,21 +8,21 @@ import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { z } from "zod";
 
 const InitialSettings = {
-  [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
   [SettingsOption.Animations]: AnimationsSetting.On,
-  [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
   [SettingsOption.Sound]: SoundSetting.On,
   [SettingsOption.VolumePercentage]: IS_DEVELOPMENT ? 0 : 100,
+  [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
+  [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
 } satisfies Settings;
 export const getInitialSettings = () => structuredClone(InitialSettings);
 export type Settings = Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
 
 export const settingsSchema = z.object({
-  [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption.Animations]: animationsSettingSchema,
-  [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
   [SettingsOption.VolumePercentage]: z.number().int().nonnegative().max(100),
+  [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
+  [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,
 }) satisfies z.ZodType<Settings>;

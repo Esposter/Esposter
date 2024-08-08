@@ -1,10 +1,11 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { GameObjects, Types } from "phaser";
+import type { SetupContext } from "vue";
+
 import { GameObjectEventMap } from "@/lib/phaser/util/emit/GameObjectEventMap";
 import { getEventName } from "@/lib/phaser/util/emit/getEventName";
 import { isEvent } from "@/lib/phaser/util/emit/isEvent";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { GameObjects, Types } from "phaser";
 import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
-import type { SetupContext } from "vue";
 
 export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
@@ -50,5 +51,5 @@ export const useInitializeGameObjectEvents = () => {
       });
     }
   };
-  return { initializeGameObjectEvents, eventStopHandlers };
+  return { eventStopHandlers, initializeGameObjectEvents };
 };

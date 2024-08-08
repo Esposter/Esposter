@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+
 import { useCommentStore } from "@/store/post/comment";
 
 interface PostCommentConfirmDeleteDialogProps {
@@ -7,8 +8,8 @@ interface PostCommentConfirmDeleteDialogProps {
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => unknown;
   commentPreview: (props: Record<string, never>) => unknown;
+  default: (props: StyledDialogActivatorSlotProps) => unknown;
 }>();
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const { deleteComment } = useCommentStore();

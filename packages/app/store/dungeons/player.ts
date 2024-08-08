@@ -11,7 +11,7 @@ export const usePlayerStore = defineStore("dungeons/player", () => {
   });
   const isPlayerFainted = computed(() => save.value.player.monsters.every(({ status }) => status.hp === 0));
   return {
-    player,
     isPlayerFainted,
+    player,
   };
 });

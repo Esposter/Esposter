@@ -1,7 +1,7 @@
 export enum Operation {
+  Create = "Create",
+  Delete = "Delete",
   Push = "Push",
   Read = "Read",
-  Create = "Create",
   Update = "Update",
-  Delete = "Delete",
 }

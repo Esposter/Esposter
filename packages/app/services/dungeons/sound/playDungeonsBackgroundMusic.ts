@@ -1,5 +1,6 @@
 import type { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
 
 let backgroundMusicKey: BackgroundMusicKey | null = null;

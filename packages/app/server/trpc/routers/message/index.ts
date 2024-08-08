@@ -1,9 +1,10 @@
-import { selectRoomSchema } from "@/db/schema/rooms";
 import type { CompositeKey } from "@/models/azure";
+import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
+
+import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable } from "@/models/azure/table";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
@@ -23,8 +24,8 @@ import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
   messageRowKeys: z.array(messageSchema.shape.rowKey).min(1),
+  roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
@@ -49,7 +50,7 @@ export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
-const updateMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true, message: true });
+const updateMessageInputSchema = messageSchema.pick({ message: true, partitionKey: true, rowKey: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
 
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -59,16 +60,31 @@ const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey
 export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
-  readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
-    .input(readMessagesInputSchema)
-    .query(async ({ input: { roomId, cursor, limit } }) => {
-      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
-      const filter = cursor
-        ? `${getMessagesPartitionKeyFilter(roomId)} and ${getCursorWhereAzureTable(cursor, sortBy)}`
-        : getMessagesPartitionKeyFilter(roomId);
+  createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
+    .input(createMessageInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const createdAt = new Date();
+      const newMessage = new MessageEntity({
+        createdAt,
+        creatorId: ctx.session.user.id,
+        files: [],
+        message: input.message,
+        partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
+        rowKey: getReverseTickedTimestamp(),
+        updatedAt: createdAt,
+      });
       const messageClient = await getTableClient(AzureTable.Messages);
-      const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
-      return getCursorPaginationData(messages, limit, sortBy);
+      await createEntity(messageClient, newMessage);
+      messageEventEmitter.emit("createMessage", newMessage);
+      return newMessage;
+    }),
+  deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
+    .input(deleteMessageInputSchema)
+    .mutation(async ({ input }) => {
+      const messageClient = await getTableClient(AzureTable.Messages);
+      await deleteEntity(messageClient, input.partitionKey, input.rowKey);
+      messageEventEmitter.emit("deleteMessage", input);
+      return input;
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
@@ -81,43 +97,6 @@ export const messageRouter = router({
         return () => messageEventEmitter.off("createMessage", onCreateMessage);
       }),
     ),
-  createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
-    .input(createMessageInputSchema)
-    .mutation(async ({ input, ctx }) => {
-      const createdAt = new Date();
-      const newMessage = new MessageEntity({
-        partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
-        rowKey: getReverseTickedTimestamp(),
-        creatorId: ctx.session.user.id,
-        message: input.message,
-        files: [],
-        createdAt,
-        updatedAt: createdAt,
-      });
-      const messageClient = await getTableClient(AzureTable.Messages);
-      await createEntity(messageClient, newMessage);
-      messageEventEmitter.emit("createMessage", newMessage);
-      return newMessage;
-    }),
-  onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
-    .input(onUpdateMessageInputSchema)
-    .subscription(({ input }) =>
-      observable<UpdateMessageInput>((emit) => {
-        const onUpdateMessage = (data: UpdateMessageInput) => () => {
-          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
-        };
-        messageEventEmitter.on("updateMessage", onUpdateMessage);
-        return () => messageEventEmitter.off("updateMessage", onUpdateMessage);
-      }),
-    ),
-  updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
-    .input(updateMessageInputSchema)
-    .mutation(async ({ input }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
-      await updateEntity(messageClient, { ...input, updatedAt: new Date() });
-      messageEventEmitter.emit("updateMessage", input);
-      return input;
-    }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
     .subscription(({ input }) =>
@@ -129,12 +108,34 @@ export const messageRouter = router({
         return () => messageEventEmitter.off("deleteMessage", onDeleteMessage);
       }),
     ),
-  deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
-    .input(deleteMessageInputSchema)
+  onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
+    .input(onUpdateMessageInputSchema)
+    .subscription(({ input }) =>
+      observable<UpdateMessageInput>((emit) => {
+        const onUpdateMessage = (data: UpdateMessageInput) => () => {
+          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
+        };
+        messageEventEmitter.on("updateMessage", onUpdateMessage);
+        return () => messageEventEmitter.off("updateMessage", onUpdateMessage);
+      }),
+    ),
+  readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
+    .input(readMessagesInputSchema)
+    .query(async ({ input: { cursor, limit, roomId } }) => {
+      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
+      const filter = cursor
+        ? `${getMessagesPartitionKeyFilter(roomId)} and ${getCursorWhereAzureTable(cursor, sortBy)}`
+        : getMessagesPartitionKeyFilter(roomId);
+      const messageClient = await getTableClient(AzureTable.Messages);
+      const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
+      return getCursorPaginationData(messages, limit, sortBy);
+    }),
+  updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
+    .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);
-      await deleteEntity(messageClient, input.partitionKey, input.rowKey);
-      messageEventEmitter.emit("deleteMessage", input);
+      await updateEntity(messageClient, { ...input, updatedAt: new Date() });
+      messageEventEmitter.emit("updateMessage", input);
       return input;
     }),
 });

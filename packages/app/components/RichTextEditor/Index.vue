@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import type { AnyExtension } from "@tiptap/vue-3";
+
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Link } from "@tiptap/extension-link";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { StarterKit } from "@tiptap/starter-kit";
-import type { AnyExtension } from "@tiptap/vue-3";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
-  height?: string;
-  placeholder: string;
-  limit: number;
   extensions?: AnyExtension[];
+  height?: string;
+  limit: number;
+  placeholder: string;
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { height = "15rem", placeholder, limit, extensions } = defineProps<RichTextEditorProps>();
+const { extensions, height = "15rem", limit, placeholder } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
-  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
+  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
 }>();
 const editor = useEditor({
+  content: modelValue.value,
   extensions: [
     StarterKit,
     Placeholder.configure({ placeholder }),
@@ -28,7 +30,6 @@ const editor = useEditor({
     Link,
     ...(extensions ?? []),
   ],
-  content: modelValue.value,
   onUpdate: ({ editor }) => {
     modelValue.value = editor.getHTML();
   },

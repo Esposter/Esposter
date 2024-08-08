@@ -1,5 +1,5 @@
 export enum PlayerTitleMenuOption {
-  "New Game" = "New Game",
   Continue = "Continue",
+  "New Game" = "New Game",
   Settings = "Settings",
 }

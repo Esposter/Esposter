@@ -1,4 +1,5 @@
 import type { State } from "@/models/dungeons/state/State";
+
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { Battle } from "@/models/dungeons/state/battle/states/Battle";
 import { BringOutMonster } from "@/models/dungeons/state/battle/states/BringOutMonster";
@@ -18,20 +19,20 @@ import { SwitchAttempt } from "@/models/dungeons/state/battle/states/SwitchAttem
 import { SwitchMonster } from "@/models/dungeons/state/battle/states/SwitchMonster";
 
 export const StateMap = {
-  [StateName.Intro]: Intro,
-  [StateName.PreBattleInfo]: PreBattleInfo,
-  [StateName.BringOutMonster]: BringOutMonster,
-  [StateName.PlayerInput]: PlayerInput,
-  [StateName.EnemyInput]: EnemyInput,
   [StateName.Battle]: Battle,
-  [StateName.PlayerAttack]: PlayerAttack,
-  [StateName.PlayerPostAttackCheck]: PlayerPostAttackCheck,
+  [StateName.BringOutMonster]: BringOutMonster,
   [StateName.EnemyAttack]: EnemyAttack,
+  [StateName.EnemyInput]: EnemyInput,
   [StateName.EnemyPostAttackCheck]: EnemyPostAttackCheck,
-  [StateName.GainExperience]: GainExperience,
   [StateName.Finished]: Finished,
+  [StateName.FleeAttempt]: FleeAttempt,
+  [StateName.GainExperience]: GainExperience,
+  [StateName.Intro]: Intro,
+  [StateName.ItemAttempt]: ItemAttempt,
+  [StateName.PlayerAttack]: PlayerAttack,
+  [StateName.PlayerInput]: PlayerInput,
+  [StateName.PlayerPostAttackCheck]: PlayerPostAttackCheck,
+  [StateName.PreBattleInfo]: PreBattleInfo,
   [StateName.SwitchAttempt]: SwitchAttempt,
   [StateName.SwitchMonster]: SwitchMonster,
-  [StateName.ItemAttempt]: ItemAttempt,
-  [StateName.FleeAttempt]: FleeAttempt,
 } as const satisfies Record<StateName, State<StateName>>;

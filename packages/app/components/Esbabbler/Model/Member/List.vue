@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 import type { User } from "@/db/schema/users";
 
+import StyledWaypoint from "@/components/Styled/Waypoint.vue";
+
 interface MemberListProps {
-  members: User[];
   hasMore: boolean;
+  members: User[];
   readMoreMembers: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
 }
 
-const { members, hasMore, readMoreMembers } = defineProps<MemberListProps>();
+const { hasMore, members, readMoreMembers } = defineProps<MemberListProps>();
 </script>
 
 <template>

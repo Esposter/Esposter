@@ -1,30 +1,31 @@
 import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
 import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
+
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
 import { OriginSetterMap } from "@/lib/phaser/util/setterMap/components/OriginSetterMap";
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/lib/phaser/util/setterMap/global/GlobalSetterMap";
-import type { GameObjects } from "phaser";
 
 export const ZoneSetterMap: SetterMap<ZoneConfiguration, GameObjects.Zone, ZoneEventEmitsOptions> = {
-  width: (gameObject) => (value) => {
+  displayHeight: (gameObject) => (value) => {
     if (value === undefined) return;
-    gameObject.setSize(value, gameObject.height);
-  },
-  height: (gameObject) => (value) => {
-    if (value === undefined) return;
-    gameObject.setSize(gameObject.width, value);
+    gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
   displayWidth: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setDisplaySize(value, gameObject.displayHeight);
   },
-  displayHeight: (gameObject) => (value) => {
+  height: (gameObject) => (value) => {
     if (value === undefined) return;
-    gameObject.setDisplaySize(gameObject.displayWidth, value);
+    gameObject.setSize(gameObject.width, value);
+  },
+  width: (gameObject) => (value) => {
+    if (value === undefined) return;
+    gameObject.setSize(value, gameObject.height);
   },
   ...DepthSetterMap,
   ...OriginSetterMap,

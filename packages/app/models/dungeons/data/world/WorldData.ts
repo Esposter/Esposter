@@ -1,4 +1,5 @@
 import type { Chest } from "@/models/dungeons/data/world/Chest";
+
 import { chestSchema } from "@/models/dungeons/data/world/Chest";
 import { z } from "zod";
 

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
+
+import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
 interface MiddleShadowProps {
+  displayWidth: number;
   imagePosition: ImagePosition;
   scaleY: number;
-  displayWidth: number;
 }
 
-const { imagePosition, scaleY, displayWidth } = defineProps<MiddleShadowProps>();
+const { displayWidth, imagePosition, scaleY } = defineProps<MiddleShadowProps>();
 </script>
 
 <template>

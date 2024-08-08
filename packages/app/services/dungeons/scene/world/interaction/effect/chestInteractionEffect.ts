@@ -1,7 +1,8 @@
-import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
+
+import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/ChestObjectProperty";
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";

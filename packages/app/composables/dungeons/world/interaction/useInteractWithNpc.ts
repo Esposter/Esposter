@@ -1,4 +1,5 @@
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { applyNpcEffects } from "@/services/dungeons/scene/world/applyNpcEffects";
 import { usePlayerStore } from "@/store/dungeons/player";

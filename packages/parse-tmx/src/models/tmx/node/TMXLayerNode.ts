@@ -8,8 +8,8 @@ import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
 import type { TMXLayerShared } from "@/models/tmx/shared/TMXLayerShared";
 
 export interface TMXLayerNode
-  extends TMXNode<TMXLayerShared, TMXEmbeddedTilesetNode | TMXDataNode | TMXPropertiesNode> {
-  data?: TMXEmbeddedTilesetNode[] | TMXDataNode[];
+  extends TMXNode<TMXLayerShared, TMXDataNode | TMXEmbeddedTilesetNode | TMXPropertiesNode> {
+  data?: TMXDataNode[] | TMXEmbeddedTilesetNode[];
   image?: TMXImageNode[];
   object?: TMXObjectNode[];
   properties?: { property: TMXPropertyNode[] }[];

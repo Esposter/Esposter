@@ -1,6 +1,7 @@
+import type { Item } from "@/models/dungeons/item/Item";
+
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import type { Item } from "@/models/dungeons/item/Item";
 import { usePlayerStore } from "@/store/dungeons/player";
 
 export const useInventorySceneStore = defineStore("dungeons/inventory/scene", () => {
@@ -19,7 +20,7 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
     (newInventory) => {
       itemOptionGrid.value = new Grid([...newInventory.map((item) => [item]), [PlayerSpecialInput.Cancel]], true);
     },
-    { immediate: true, deep: true },
+    { deep: true, immediate: true },
   );
 
   return {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "@/models/dashboard/Visual";
+
 import { useVisualStore } from "@/store/dashboard/visual";
 
 interface VisualPreviewContainerProps {
@@ -20,8 +21,8 @@ onClickExceptDrag(divRef, () => {
 
 <template>
   <div ref="divRef">
-    <DashboardVisualPreview :type />
-    <DashboardVisualPreviewRemoveButton :id :type />
+    <DashboardVisualPreview :type="type" />
+    <DashboardVisualPreviewRemoveButton :id="id" :type="type" />
     <DashboardVisualPreviewEditFormDialog v-if="editedItem?.id === id" v-model="editedItem" />
   </div>
 </template>

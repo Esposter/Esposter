@@ -1,32 +1,17 @@
-import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import type { Position } from "grid-engine";
+
+import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import { Direction } from "grid-engine";
 
 const BaseInteractivePlayerPositionOffsetMap = {
-  [Direction.UP]: { x: 0, y: -1 },
   [Direction.DOWN]: { x: 0, y: 1 },
   [Direction.LEFT]: { x: -1, y: 0 },
   [Direction.RIGHT]: { x: 1, y: 0 },
+  [Direction.UP]: { x: 0, y: -1 },
 } as const satisfies Record<InteractableDirection, Position>;
 
 const InteractivePlayerPositionOffsetMap = {
   ...BaseInteractivePlayerPositionOffsetMap,
-  [Direction.UP_LEFT]: {
-    x:
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].x +
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.LEFT].x,
-    y:
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].y +
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.LEFT].y,
-  },
-  [Direction.UP_RIGHT]: {
-    x:
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].x +
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.RIGHT].x,
-    y:
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].y +
-      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.RIGHT].y,
-  },
   [Direction.DOWN_LEFT]: {
     x:
       BaseInteractivePlayerPositionOffsetMap[InteractableDirection.DOWN].x +
@@ -44,6 +29,22 @@ const InteractivePlayerPositionOffsetMap = {
       BaseInteractivePlayerPositionOffsetMap[InteractableDirection.RIGHT].y,
   },
   [Direction.NONE]: { x: 0, y: 0 },
+  [Direction.UP_LEFT]: {
+    x:
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].x +
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.LEFT].x,
+    y:
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].y +
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.LEFT].y,
+  },
+  [Direction.UP_RIGHT]: {
+    x:
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].x +
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.RIGHT].x,
+    y:
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.UP].y +
+      BaseInteractivePlayerPositionOffsetMap[InteractableDirection.RIGHT].y,
+  },
 } as const satisfies Record<Direction, Position>;
 
 export const getPositionAfterDirectionMovement = (position: Position, direction: Direction): Position => ({

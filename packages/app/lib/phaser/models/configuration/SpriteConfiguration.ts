@@ -16,14 +16,13 @@ import type { AnimationConfiguration } from "@/lib/phaser/models/configuration/s
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type SpriteConfiguration = Except<
-  Types.GameObjects.Sprite.SpriteConfig,
-  keyof Types.GameObjects.GameObjectConfig | "anims"
-> &
-  AlphaConfiguration &
+export type SpriteConfiguration = AlphaConfiguration &
+  AnimationConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
+  Except<Types.GameObjects.Sprite.SpriteConfig, "anims" | keyof Types.GameObjects.GameObjectConfig> &
   FlipConfiguration &
+  GlobalConfiguration &
   MaskConfiguration &
   OriginConfiguration &
   PipelineConfiguration &
@@ -32,6 +31,4 @@ export type SpriteConfiguration = Except<
   TextureConfiguration &
   TintConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  AnimationConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

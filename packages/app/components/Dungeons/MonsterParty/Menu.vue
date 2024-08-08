@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { Position } from "grid-engine";
+
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMenuStore } from "@/store/dungeons/monsterParty/menu";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import type { Position } from "grid-engine";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);
@@ -27,5 +28,5 @@ onCreate((scene) => {
 </script>
 
 <template>
-  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" v-model:grid="menuOptionGrid" :position />
+  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" v-model:grid="menuOptionGrid" :position="position" />
 </template>

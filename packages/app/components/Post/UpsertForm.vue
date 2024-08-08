@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { Post } from "@/db/schema/posts";
-import { POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
-import { formRules } from "@/services/vuetify/formRules";
 import type { SubmitEventPromise } from "vuetify";
 
+import { POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
+import { formRules } from "@/services/vuetify/formRules";
+
 export interface PostUpsertFormProps {
-  initialValues?: Pick<Post, "title" | "description">;
+  initialValues?: Pick<Post, "description" | "title">;
 }
 
-const { initialValues = { title: "", description: "" } } = defineProps<PostUpsertFormProps>();
+const { initialValues = { description: "", title: "" } } = defineProps<PostUpsertFormProps>();
 const emit = defineEmits<{
   submit: [submitEventPromise: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();

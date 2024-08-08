@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VisualType } from "@/models/dashboard/VisualType";
+
 import { VisualTypeDemoIconMap } from "@/services/dashboard/demo/VisualTypeDemoIconMap";
 
 interface VisualPreviewProps {

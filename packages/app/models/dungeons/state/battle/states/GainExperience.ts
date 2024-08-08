@@ -1,20 +1,21 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { State } from "@/models/dungeons/state/State";
+import type { PhaserEvents } from "@/services/phaser/events";
+import type { EventEmitter } from "eventemitter3";
+
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { calculateExperienceGain } from "@/services/dungeons/monster/calculateExperienceGain";
 import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import type { PhaserEvents } from "@/services/phaser/events";
 import { phaserEventEmitter } from "@/services/phaser/events";
-import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import type { EventEmitter } from "eventemitter3";
+import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,

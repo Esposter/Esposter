@@ -6,12 +6,12 @@ import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 import { Input } from "phaser";
 
 interface ContentTextProps {
-  rowIndex: number;
   columnIndex: number;
+  rowIndex: number;
   text: string;
 }
 
-const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
+const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
 const titleSceneStore = useTitleSceneStore();
 const { optionGrid } = storeToRefs(titleSceneStore);
 const titleCursorPositionIncrement = useTitleCursorPositionIncrement();

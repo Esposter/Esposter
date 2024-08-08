@@ -1,4 +1,4 @@
 export enum CharacterId {
-  Player = "Player",
   Npc = "Npc",
+  Player = "Player",
 }

@@ -12,5 +12,5 @@ export const useUserStore = defineStore("user", () => {
     authUser.value = updatedAuthUser;
   };
 
-  return { userList, authUser, updateAuthUser };
+  return { authUser, updateAuthUser, userList };
 });

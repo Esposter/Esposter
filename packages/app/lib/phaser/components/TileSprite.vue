@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import type { TileSpriteConfiguration } from "@/lib/phaser/models/configuration/TileSpriteConfiguration";
 import type { TileSpriteEventEmitsOptions } from "@/lib/phaser/models/emit/TileSpriteEventEmitsOptions";
-import { TileSpriteSetterMap } from "@/lib/phaser/util/setterMap/TileSpriteSetterMap";
 import type { SetRequired } from "type-fest";
+
+import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { TileSpriteSetterMap } from "@/lib/phaser/util/setterMap/TileSpriteSetterMap";
 
 export interface TileSpriteProps {
   configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;
@@ -16,7 +17,7 @@ const emit = defineEmits<TileSpriteEmits>();
 
 useInitializeGameObject(
   (scene) => {
-    const { x, y, width, height, texture, frame } = configuration;
+    const { frame, height, texture, width, x, y } = configuration;
     return scene.add.tileSprite(x ?? 0, y ?? 0, width ?? 0, height ?? 0, texture, frame);
   },
   () => configuration,

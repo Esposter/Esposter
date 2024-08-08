@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/esbabbler/message";
+
 import { useMemberStore } from "@/store/esbabbler/member";
 
 interface MessageListItemContainerProps {

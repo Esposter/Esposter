@@ -2,8 +2,8 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";

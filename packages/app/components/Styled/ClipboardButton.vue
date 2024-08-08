@@ -4,7 +4,7 @@ interface StyledClipboardButtonProps {
 }
 
 const { source } = defineProps<StyledClipboardButtonProps>();
-const { copy, copied } = useClipboard({ source });
+const { copied, copy } = useClipboard({ source });
 </script>
 
 <template>

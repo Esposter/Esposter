@@ -2,13 +2,13 @@
 import { formatNumberLong } from "@/services/clicker/format";
 
 export interface PointsPopupProps {
+  duration: number;
+  left: number;
   points: number;
   top: number;
-  left: number;
-  duration: number;
 }
 
-const { points, top, left, duration } = defineProps<PointsPopupProps>();
+const { duration, left, points, top } = defineProps<PointsPopupProps>();
 const clickerItemProperties = useClickerItemProperties();
 const color = computed(() => clickerItemProperties.value.color);
 const displayPoints = computed(() => formatNumberLong(points));

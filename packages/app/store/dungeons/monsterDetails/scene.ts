@@ -1,11 +1,12 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
+import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
@@ -21,8 +22,8 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
-      case PlayerSpecialInput.Confirm:
       case PlayerSpecialInput.Cancel:
+      case PlayerSpecialInput.Confirm:
         switchToPreviousScene(scene);
         return;
       case PlayerSpecialInput.Enter:
@@ -33,8 +34,8 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   };
 
   return {
-    selectedMonster,
     attackNameList,
     onPlayerInput,
+    selectedMonster,
   };
 });

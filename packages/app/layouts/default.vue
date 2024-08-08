@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/layout";
 import type { CSSProperties } from "vue";
+
+import { useLayoutStore } from "@/store/layout";
 
 interface DefaultLayoutProps {
   mainStyle?: CSSProperties;
@@ -9,15 +10,15 @@ interface DefaultLayoutProps {
 const { mainStyle } = defineProps<DefaultLayoutProps>();
 const slots = defineSlots<{
   default?: (props: Record<string, never>) => unknown;
+  footer?: (props: Record<string, never>) => unknown;
   left?: (props: Record<string, never>) => unknown;
   right?: (props: Record<string, never>) => unknown;
-  footer?: (props: Record<string, never>) => unknown;
 }>();
 
 const { mobile } = useDisplay();
 const router = useRouter();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);
 
 router.beforeEach(() => {
   // We need to reset layout structure on route change

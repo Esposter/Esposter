@@ -25,7 +25,7 @@ onUnmounted(() => {
 <template>
   <DungeonsWorldCharacterNpc
     v-for="({ id, asset, path, pathIndex, walkingAnimationMapping, singleSidedSpritesheetDirection }, index) in npcList"
-    :id
+    :id="id"
     :key="id"
     v-model:direction="npcList[index].direction"
     v-model:is-moving="npcList[index].isMoving"

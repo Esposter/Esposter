@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
 import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
+
+import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
 import {
   AmbientLight,
   Clock,
@@ -65,7 +66,7 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 2;
 
-  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+  const renderer = new WebGLRenderer({ alpha: true, antialias: true, canvas });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
@@ -86,6 +87,6 @@ onMounted(() => {
 
 <template>
   <TransitionFade>
-    <canvas v-show="isReady" :id />
+    <canvas v-show="isReady" :id="id" />
   </TransitionFade>
 </template>

@@ -2,11 +2,11 @@
 import type { User } from "@/db/schema/users";
 
 interface MessageMentionListProps {
-  items: User[];
   command: (props: Record<string, unknown>) => void;
+  items: User[];
 }
 
-const { items, command } = defineProps<MessageMentionListProps>();
+const { command, items } = defineProps<MessageMentionListProps>();
 const { infoOpacity10 } = useColors();
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {

@@ -1,10 +1,11 @@
 <script setup lang="ts" generic="TValue extends string, TGrid extends readonly (readonly TValue[])[]">
+import type { Grid } from "@/models/dungeons/Grid";
+import type { Position } from "grid-engine";
+
 import Container from "@/lib/phaser/components/Container.vue";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import type { Grid } from "@/models/dungeons/Grid";
 import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
-import type { Position } from "grid-engine";
 
 interface MenuProps {
   position: Position;
@@ -13,7 +14,7 @@ interface MenuProps {
 const { position } = defineProps<MenuProps>();
 const menu = defineModel<boolean>("menu", { required: true });
 const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
-const { primary, border } = useDungeonsColors();
+const { border, primary } = useDungeonsColors();
 const menuHeight = computed(() => getMenuHeight(grid.value.rowSize));
 </script>
 

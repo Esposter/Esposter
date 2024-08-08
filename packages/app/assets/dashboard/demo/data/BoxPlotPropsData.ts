@@ -1,9 +1,18 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const BoxPlotPropsData = {
+  options: {
+    plotOptions: {
+      boxPlot: {
+        colors: {
+          lower: "#A5978B",
+          upper: "#5C4742",
+        },
+      },
+    },
+  },
   series: [
     {
-      type: "boxPlot",
       data: [
         {
           x: "Jan 2015",
@@ -34,16 +43,7 @@ export const BoxPlotPropsData = {
           y: [54, 59, 66, 71, 88],
         },
       ],
+      type: "boxPlot",
     },
   ],
-  options: {
-    plotOptions: {
-      boxPlot: {
-        colors: {
-          upper: "#5C4742",
-          lower: "#A5978B",
-        },
-      },
-    },
-  },
 } as const satisfies VisualPropsData;

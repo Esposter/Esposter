@@ -1,5 +1,6 @@
-import { Chart } from "@/models/dashboard/chart/Chart";
 import type { Visual } from "@/models/dashboard/Visual";
+
+import { Chart } from "@/models/dashboard/chart/Chart";
 import { VisualType } from "@/models/dashboard/VisualType";
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -12,9 +13,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const { dashboard } = storeToRefs(dashboardStore);
   const visualType = ref(VisualType.Area);
   const {
-    visualList,
     createVisual: storeCreateVisual,
     updateVisual,
+    visualList,
     ...restOperationData
   } = createOperationData(
     computed({
@@ -28,15 +29,15 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const createVisual = () => {
     const id = crypto.randomUUID();
     storeCreateVisual({
+      chart: new Chart(),
+      h: 4,
+      i: id,
       id,
       type: visualType.value,
-      chart: new Chart(),
-      i: id,
+      w: 4,
       x: (visualList.value.length * 2) % noColumns.value,
       // Puts the item at the bottom
       y: visualList.value.length + noColumns.value,
-      w: 4,
-      h: 4,
       ...createItemMetadata(),
     });
   };
@@ -49,10 +50,10 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     editFormDialog.value = false;
   };
   return {
-    visualList,
-    visualType,
     createVisual,
     updateVisual,
+    visualList,
+    visualType,
     ...restOperationData,
     noColumns,
     ...editFormData,

@@ -8,17 +8,17 @@ interface MessageEmojiListProps {
 
 const { messageRowKey } = defineProps<MessageEmojiListProps>();
 const { session } = useAuth();
-const { surfaceOpacity80, backgroundOpacity80, border, info, infoOpacity10 } = useColors();
+const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
-const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
+const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
 const emojis = computed(() =>
   getEmojiList(messageRowKey).map((e) => ({
+    emoji: emojify(e.emojiTag),
+    emojiTag: e.emojiTag,
+    isReacted: Boolean(session.value && e.userIds.includes(session.value.user.id)),
     partitionKey: e.partitionKey,
     rowKey: e.rowKey,
-    emojiTag: e.emojiTag,
     userIds: e.userIds,
-    emoji: emojify(e.emojiTag),
-    isReacted: Boolean(session.value && e.userIds.includes(session.value.user.id)),
   })),
 );
 const hasEmojis = computed(() => emojis.value.length > 0);

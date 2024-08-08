@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
 
 const inputStore = useInputStore();

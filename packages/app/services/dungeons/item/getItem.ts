@@ -1,5 +1,6 @@
-import { items } from "@/assets/dungeons/data/items";
 import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
+
+import { items } from "@/assets/dungeons/data/items";
 import { NotFoundError } from "@esposter/shared";
 
 export const getItem = (itemId: ItemId) => {

@@ -1,70 +1,71 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
+
+import { RoutePath } from "@/models/router/RoutePath";
 import { mergeProps } from "vue";
 
-const { session, status, signOut } = useAuth();
+const { session, signOut, status } = useAuth();
 
 const items = computed<ListItem[]>(() =>
   status.value === "unauthenticated"
     ? [
         {
-          title: "Login",
           href: RoutePath.Login,
           icon: "mdi-login",
+          title: "Login",
         },
         {
-          title: "About",
           href: RoutePath.About,
           icon: "mdi-information",
+          title: "About",
         },
         {
-          title: "Anime",
           href: RoutePath.Anime,
           icon: "custom:anime",
+          title: "Anime",
         },
         {
-          title: "Privacy Policy",
           href: RoutePath.PrivacyPolicy,
           icon: "mdi-lock",
+          title: "Privacy Policy",
         },
         {
-          title: "Terms & Conditions",
           href: RoutePath.TermsAndConditions,
           icon: "mdi-shield-lock",
+          title: "Terms & Conditions",
         },
       ]
     : status.value === "authenticated"
       ? [
           {
-            title: "Settings",
             href: RoutePath.UserSettings,
             icon: "mdi-cog",
+            title: "Settings",
           },
           {
-            title: "About",
             href: RoutePath.About,
             icon: "mdi-information",
+            title: "About",
           },
           {
-            title: "Anime",
             href: RoutePath.Anime,
             icon: "custom:anime",
+            title: "Anime",
           },
           {
-            title: "Privacy Policy",
             href: RoutePath.PrivacyPolicy,
             icon: "mdi-lock",
+            title: "Privacy Policy",
           },
           {
-            title: "Terms & Conditions",
             href: RoutePath.TermsAndConditions,
             icon: "mdi-shield-lock",
+            title: "Terms & Conditions",
           },
           {
-            title: "Logout",
             icon: "mdi-logout",
             onClick: signOut,
+            title: "Logout",
           },
         ]
       : [],

@@ -1,5 +1,6 @@
-import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import type { State } from "@/models/dungeons/state/State";
+
+import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";

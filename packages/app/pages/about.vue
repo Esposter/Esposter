@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
+
 import { CardType } from "@/models/visual/CardType";
 
 const supporters = ["Braedon Wooding", "Ryan Fallah", "Arsentiy Zakharchenko", "Bill Do", "Leila Yuan", "Kevin Chen"];

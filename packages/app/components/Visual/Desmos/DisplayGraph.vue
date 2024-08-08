@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import type { Expression } from "@/models/desmos/Expression";
+
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
-import type { Expression } from "@/models/desmos/Expression";
 import { dayjs } from "@/services/dayjs";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 
 interface VisualDesmosDisplayGraphProps {
-  id: string;
   expressions: Expression[];
+  id: string;
 }
 
-const { id, expressions } = defineProps<VisualDesmosDisplayGraphProps>();
+const { expressions, id } = defineProps<VisualDesmosDisplayGraphProps>();
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
@@ -74,8 +75,8 @@ onMounted(async () => {
   calculator = await GraphingCalculator(element, {
     border: false,
     expressionsCollapsed: true,
-    keypad: false,
     invertedColors: isDark.value,
+    keypad: false,
     showGrid: false,
     showXAxis: false,
     showYAxis: false,
@@ -88,7 +89,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div :id w-full h-full />
+  <div :id="id" w-full h-full />
 </template>
 
 <style scoped lang="scss">

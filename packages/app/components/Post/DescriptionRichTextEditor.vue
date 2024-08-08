@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+
 import { POST_DESCRIPTION_MAX_LENGTH } from "@/services/post/constants";
 
 export interface DescriptionRichTextEditorProps {

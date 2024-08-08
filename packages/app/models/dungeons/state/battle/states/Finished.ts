@@ -1,5 +1,6 @@
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { State } from "@/models/dungeons/state/State";
+
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useDungeonsStore } from "@/store/dungeons";
 

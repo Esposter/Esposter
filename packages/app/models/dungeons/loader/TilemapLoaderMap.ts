@@ -1,9 +1,10 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
+
 import homeBuilding1 from "@/assets/dungeons/scene/world/Home/HomeBuilding1/tilemap.json";
 import homeBuilding2 from "@/assets/dungeons/scene/world/Home/HomeBuilding2/tilemap.json";
 import home from "@/assets/dungeons/scene/world/Home/tilemap.json";
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Loader } from "phaser";
 
 export const TilemapLoaderMap: Record<TilemapKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [TilemapKey.Home]: (scene) => scene.load.tilemapTiledJSONExternal(TilemapKey.Home, home),

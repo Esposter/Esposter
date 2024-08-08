@@ -3,7 +3,7 @@ import { usePostStore } from "@/store/post";
 
 const readMorePosts = await useReadPosts();
 const postStore = usePostStore();
-const { postList, hasMore } = storeToRefs(postStore);
+const { hasMore, postList } = storeToRefs(postStore);
 </script>
 
 <template>

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/db/schema/posts";
+
 import { dayjs } from "@/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
-  post: PostWithRelations;
-  // This is only used for the post card in the comments page to direct it
   // into looking for post data in the comment store instead
   isCommentStore?: true;
+  // This is only used for the post card in the comments page to direct it
+  post: PostWithRelations;
 }
 
-const { post, isCommentStore } = defineProps<PostCardProps>();
+const { isCommentStore, post } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
 const createdAt = computed(() => dayjs(post.createdAt).fromNow());

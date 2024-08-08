@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import type { SpriteConfiguration } from "@/lib/phaser/models/configuration/SpriteConfiguration";
 import type { SpriteEventEmitsOptions } from "@/lib/phaser/models/emit/SpriteEventEmitsOptions";
-import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
+
+import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { SpriteSetterMap } from "@/lib/phaser/util/setterMap/SpriteSetterMap";
 
 export interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;
@@ -20,7 +21,7 @@ const emit = defineEmits<SpriteEmits>();
 
 useInitializeGameObject(
   (scene) => {
-    const { x, y, texture, frame } = configuration;
+    const { frame, texture, x, y } = configuration;
     const sprite = scene.add.sprite(x ?? 0, y ?? 0, texture, frame);
     onComplete?.(scene, sprite);
     return sprite;

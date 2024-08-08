@@ -5,12 +5,12 @@ import type { ItemMetadata } from "@/models/shared/ItemMetadata";
 import type { Direction, Position, WalkingAnimationMapping } from "grid-engine";
 
 export interface Character<TName extends string = string> extends ItemMetadata {
-  id: CharacterId.Player | `${CharacterId.Npc}${NpcId}`;
+  asset: Asset;
+  direction?: Direction;
+  id: `${CharacterId.Npc}${NpcId}` | CharacterId.Player;
   name: TName;
   position: Position;
-  direction?: Direction;
-  asset: Asset;
-  walkingAnimationMapping: WalkingAnimationMapping;
   // Some spritesheets may only animate one side and rely on us to flipX
   singleSidedSpritesheetDirection?: Direction.LEFT | Direction.RIGHT;
+  walkingAnimationMapping: WalkingAnimationMapping;
 }

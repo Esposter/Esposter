@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Room } from "@/db/schema/rooms";
+
 import { RoutePath } from "@/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -17,7 +18,7 @@ const active = computed(() => room.id === currentRoomId.value);
 <template>
   <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
-      <v-list-item :active :title="room.name" :value="room.id">
+      <v-list-item :active="active" :title="room.name" :value="room.id">
         <template #prepend>
           <v-badge mr-4 color="green" location="bottom end" dot>
             <v-avatar v-if="room.image">

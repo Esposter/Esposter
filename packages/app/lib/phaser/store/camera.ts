@@ -1,6 +1,7 @@
-import { useInputStore } from "@/lib/phaser/store/input";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Cameras } from "phaser";
+
+import { useInputStore } from "@/lib/phaser/store/input";
 
 export const useCameraStore = defineStore("phaser/camera", () => {
   const inputStore = useInputStore();
@@ -23,8 +24,8 @@ export const useCameraStore = defineStore("phaser/camera", () => {
     scene.cameras.main.fadeOut(...args);
   };
   return {
-    isFading,
     fadeIn,
     fadeOut,
+    isFading,
   };
 });

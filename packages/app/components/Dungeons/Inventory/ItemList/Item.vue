@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { Item } from "@/models/dungeons/item/Item";
+
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import type { Item } from "@/models/dungeons/item/Item";
 import {
   CONTENT_MENU_WIDTH,
   CURSOR_POSITION_INCREMENT,
@@ -14,12 +15,12 @@ import { parsePixel } from "@/util/parsePixel";
 import { Input } from "phaser";
 
 interface InventoryItemListItemProps {
-  rowIndex: number;
   columnIndex: number;
   item: Item | PlayerSpecialInput.Cancel;
+  rowIndex: number;
 }
 
-const { rowIndex, columnIndex, item } = defineProps<InventoryItemListItemProps>();
+const { columnIndex, item, rowIndex } = defineProps<InventoryItemListItemProps>();
 const inventorySceneStore = useInventorySceneStore();
 const { itemOptionGrid } = storeToRefs(inventorySceneStore);
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));

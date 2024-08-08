@@ -2,7 +2,7 @@
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, rightDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
+const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen } = storeToRefs(layoutStore);
 </script>
 
 <template>

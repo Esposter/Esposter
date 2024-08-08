@@ -1,17 +1,18 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
+import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const dungeonsStore = useDungeonsStore();
-  const { saveData, fadeSwitchToScene } = dungeonsStore;
+  const { fadeSwitchToScene, saveData } = dungeonsStore;
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const isMenuVisible = ref(false);

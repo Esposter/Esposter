@@ -1,35 +1,34 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import Header from "@/components/Styled/EditFormDialog/Header.vue";
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
+
+import Header from "@/components/Styled/EditFormDialog/Header.vue";
 import { VForm } from "vuetify/components";
 
 interface EditFormDialogProps<T> {
-  name: string;
   editedItem: T;
-  originalItem?: T | null;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
+  name: string;
+  originalItem?: null | T;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const {
-  name,
   editedItem,
-  originalItem = null,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,
+  name,
+  originalItem = null,
 } = defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
-  "update:edit-form-ref": [value: InstanceType<typeof VForm>];
-  "update:fullscreen-dialog": [value: boolean];
-  save: [];
   close: [];
   delete: [onComplete: () => void];
+  save: [];
+  "update:edit-form-ref": [value: InstanceType<typeof VForm>];
+  "update:fullscreen-dialog": [value: boolean];
 }>();
 
 watch(dialog, (newDialog) => {
@@ -59,13 +58,13 @@ watch(editFormRef, (newEditFormRef) => {
     <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header
-          :name
-          :edited-item
-          :original-item
-          :edit-form-ref
-          :is-edit-form-valid
-          :is-full-screen-dialog
-          :is-savable
+          :name="name"
+          :edited-item="editedItem"
+          :original-item="originalItem"
+          :edit-form-ref="editFormRef"
+          :is-edit-form-valid="isEditFormValid"
+          :is-full-screen-dialog="isFullScreenDialog"
+          :is-savable="isSavable"
           @update:edit-form-dialog="
             (value) => {
               dialog = value;

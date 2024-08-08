@@ -1,6 +1,7 @@
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
+
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
@@ -22,8 +23,6 @@ export const useAnimateText = (
 
   if (!isSkipAnimations.value) play();
   scene.time.addEvent({
-    delay: textDelay.value,
-    repeat: textSections.length - 1,
     callback: async () => {
       const textSection = textSections[i];
       targetText.value += textSection;
@@ -36,5 +35,7 @@ export const useAnimateText = (
         await configuration?.onComplete?.();
       }
     },
+    delay: textDelay.value,
+    repeat: textSections.length - 1,
   });
 };

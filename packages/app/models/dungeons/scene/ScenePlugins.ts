@@ -5,13 +5,13 @@ import type { Constructor } from "type-fest";
 
 export interface ScenePlugins {
   gridEngine: GridEngine;
-  virtualJoystickPlugin: VirtualJoystickPlugin;
   sliderPlugin: SliderPlugin;
+  virtualJoystickPlugin: VirtualJoystickPlugin;
 }
 
 export const applyScenePluginsMixin = <TBase extends Constructor<NonNullable<unknown>>>(Base: TBase) =>
   class SceneWithMetadata extends Base implements ScenePlugins {
     gridEngine!: GridEngine;
-    virtualJoystickPlugin!: VirtualJoystickPlugin;
     sliderPlugin!: SliderPlugin;
+    virtualJoystickPlugin!: VirtualJoystickPlugin;
   };

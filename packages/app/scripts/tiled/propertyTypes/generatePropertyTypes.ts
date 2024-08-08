@@ -1,5 +1,6 @@
-import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import type { TiledProject } from "@/scripts/tiled/models/TiledProject";
+
+import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { generateClassString } from "@/scripts/tiled/propertyTypes/generateClassString";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
@@ -15,7 +16,7 @@ export const generatePropertyTypes = async () => {
 
   for (const propertyType of tiledProject.propertyTypes)
     if (propertyType.type === PropertyType.class) {
-      const { name, type, members } = propertyType;
+      const { members, name, type } = propertyType;
       const objectPropertyFilename = `${name}ObjectProperty`;
       await Promise.all([
         outputFile(`${directory}/${type}/${name}.ts`, generateClassString(name, members)),

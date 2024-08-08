@@ -2,9 +2,9 @@
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
+import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { MENU_HEIGHT, MENU_PADDING } from "@/services/dungeons/scene/battle/menu/constants";
 import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";

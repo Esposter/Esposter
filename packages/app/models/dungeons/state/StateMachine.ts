@@ -2,28 +2,17 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import type { State } from "@/models/dungeons/state/State";
 
 export class StateMachine<TStateName extends string> {
+  changingStateNameQueue: (null | TStateName)[] = [];
+  currentState: State<null | TStateName> = { name: null };
+  isChangingState = false;
   scene!: SceneWithPlugins;
   stateMap: Record<TStateName, State<TStateName>>;
-  currentState: State<TStateName | null> = { name: null };
-  isChangingState = false;
-  changingStateNameQueue: (TStateName | null)[] = [];
 
   constructor(stateMap: Record<TStateName, State<TStateName>>) {
     this.stateMap = stateMap;
   }
 
-  get currentStateName() {
-    return this.currentState.name;
-  }
-
-  update() {
-    const stateName = this.changingStateNameQueue.shift();
-    if (!stateName) return;
-
-    this.setState(stateName);
-  }
-
-  async setState(stateName: TStateName | null) {
+  async setState(stateName: null | TStateName) {
     if (stateName === this.currentStateName) return;
 
     const state = stateName === null ? { name: null } : this.stateMap[stateName];
@@ -39,5 +28,16 @@ export class StateMachine<TStateName extends string> {
     this.currentState = state;
     await this.currentState.onEnter?.(this.scene);
     this.isChangingState = false;
+  }
+
+  update() {
+    const stateName = this.changingStateNameQueue.shift();
+    if (!stateName) return;
+
+    this.setState(stateName);
+  }
+
+  get currentStateName() {
+    return this.currentState.name;
   }
 }

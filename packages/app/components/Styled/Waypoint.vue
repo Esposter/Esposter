@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WaypointState } from "vue-waypoint";
+
 import { Going, Waypoint } from "vue-waypoint";
 
 interface StyledWaypointProps {

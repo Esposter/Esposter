@@ -4,21 +4,21 @@ import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 export const ComputedSizeSetterMap = {
-  width: (gameObject) => (value) => {
+  displayHeight: (gameObject) => (value) => {
     if (value === undefined) return;
-    gameObject.setSize(value, gameObject.height);
-  },
-  height: (gameObject) => (value) => {
-    if (value === undefined) return;
-    gameObject.setSize(gameObject.width, value);
+    gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
   displayWidth: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setDisplaySize(value, gameObject.displayHeight);
   },
-  displayHeight: (gameObject) => (value) => {
+  height: (gameObject) => (value) => {
     if (value === undefined) return;
-    gameObject.setDisplaySize(gameObject.displayWidth, value);
+    gameObject.setSize(gameObject.width, value);
+  },
+  width: (gameObject) => (value) => {
+    if (value === undefined) return;
+    gameObject.setSize(value, gameObject.height);
   },
 } as const satisfies SetterMap<
   ComputedSizeConfiguration,

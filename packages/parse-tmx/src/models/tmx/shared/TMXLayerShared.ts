@@ -1,17 +1,17 @@
 export interface TMXLayerShared {
-  id: number;
-  name: string;
-  type: string;
-  width: number;
   height: number;
-  x?: number;
-  y?: number;
+  id: number;
   locked?: number;
-  opacity?: number;
-  visible?: number;
-  tintcolor?: string;
+  name: string;
   offsetx?: number;
   offsety?: number;
+  opacity?: number;
   parallaxx?: number;
   parallaxy?: number;
+  tintcolor?: string;
+  type: string;
+  visible?: number;
+  width: number;
+  x?: number;
+  y?: number;
 }

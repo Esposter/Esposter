@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
 import type { ZoneConfiguration } from "@/lib/phaser/models/configuration/ZoneConfiguration";
 import type { ZoneEventEmitsOptions } from "@/lib/phaser/models/emit/ZoneEventEmitsOptions";
-import { ZoneSetterMap } from "@/lib/phaser/util/setterMap/ZoneSetterMap";
 import type { SetRequired } from "type-fest";
 
+import { useInitializeGameObject } from "@/lib/phaser/composables/useInitializeGameObject";
+import { ZoneSetterMap } from "@/lib/phaser/util/setterMap/ZoneSetterMap";
+
 interface ZoneProps {
-  configuration: SetRequired<Partial<ZoneConfiguration>, "x" | "y" | "width" | "height">;
+  configuration: SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">;
 }
 
 interface ZoneEmits extends /** @vue-ignore */ ZoneEventEmitsOptions {}
@@ -16,7 +17,7 @@ const emit = defineEmits<ZoneEmits>();
 
 useInitializeGameObject(
   (scene) => {
-    const { x, y, width, height } = configuration;
+    const { height, width, x, y } = configuration;
     return scene.add.zone(x, y, width, height);
   },
   () => configuration,

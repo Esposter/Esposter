@@ -6,7 +6,7 @@ interface GroupComboboxProps {
   comboboxProps?: VCombobox["$props"];
 }
 
-const modelValue = defineModel<string | null>();
+const modelValue = defineModel<null | string>();
 const { comboboxProps } = defineProps<GroupComboboxProps>();
 const surveyerStore = useSurveyStore();
 const { surveyList } = storeToRefs(surveyerStore);

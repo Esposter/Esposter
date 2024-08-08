@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 import type { MessageEntity } from "@/models/esbabbler/message";
 
+import StyledWaypoint from "@/components/Styled/Waypoint.vue";
+
 interface MessageListProps {
-  messages: MessageEntity[];
   hasMore: boolean;
+  messages: MessageEntity[];
   readMoreMessages: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
 }
 
-const { messages, hasMore, readMoreMessages } = defineProps<MessageListProps>();
+const { hasMore, messages, readMoreMessages } = defineProps<MessageListProps>();
 </script>
 
 <template>

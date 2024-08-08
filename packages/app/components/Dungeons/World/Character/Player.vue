@@ -17,13 +17,13 @@ import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
 const playerStore = usePlayerStore();
-const { player, isPlayerFainted } = storeToRefs(playerStore);
+const { isPlayerFainted, player } = storeToRefs(playerStore);
 const playerWalkingDirection = computed(() =>
   player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction,
 );
 const worldPlayerStore = useWorldPlayerStore();
-const { respawn, healParty } = worldPlayerStore;
-const { sprite, isMoving } = storeToRefs(worldPlayerStore);
+const { healParty, respawn } = worldPlayerStore;
+const { isMoving, sprite } = storeToRefs(worldPlayerStore);
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
@@ -39,8 +39,8 @@ onCreate(async (scene) => {
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
     healParty();
     await showMessages(scene, [
-      { title: "???", text: "It looks like your team put up quite a fight..." },
-      { title: "???", text: "I went ahead and healed them up for you." },
+      { text: "It looks like your team put up quite a fight...", title: "???" },
+      { text: "I went ahead and healed them up for you.", title: "???" },
     ]);
   });
 });

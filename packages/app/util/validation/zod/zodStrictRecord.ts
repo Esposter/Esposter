@@ -1,7 +1,7 @@
 import { isPlainObject } from "@/util/object/isPlainObject";
 import { z } from "zod";
 
-export const zodStrictRecord = <K extends z.ZodType<string | number | symbol>, V extends z.ZodSchema>(
+export const zodStrictRecord = <K extends z.ZodType<number | string | symbol>, V extends z.ZodSchema>(
   zKey: K,
   zValue: V,
 ) =>

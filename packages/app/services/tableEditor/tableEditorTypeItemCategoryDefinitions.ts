@@ -1,8 +1,9 @@
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { Except } from "type-fest";
+
+import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
-import type { Except } from "type-fest";
 
 const TableEditorTypeItemCategoryDefinitionMap = {
   [TableEditorType.TodoList]: {

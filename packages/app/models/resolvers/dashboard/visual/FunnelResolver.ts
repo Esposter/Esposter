@@ -1,10 +1,11 @@
-import { VisualType } from "@/models/dashboard/VisualType";
+import type { ApexOptions } from "apexcharts";
+import type { z } from "zod";
+
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
+import { VisualType } from "@/models/dashboard/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import { uncapitalize } from "@/util/text/uncapitalize";
-import type { ApexOptions } from "apexcharts";
 import defu from "defu";
-import type { z } from "zod";
 
 export class FunnelResolver extends AVisualTypeResolver {
   constructor() {
@@ -20,11 +21,11 @@ export class FunnelResolver extends AVisualTypeResolver {
     );
     apexOptions.dataLabels = defu<ApexDataLabels, (ApexDataLabels | undefined)[]>(
       {
-        enabled: true,
-        formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
         dropShadow: {
           enabled: true,
         },
+        enabled: true,
+        formatter: (_val, opts) => opts.w.globals.labels[opts.dataPointIndex],
       },
       apexOptions.dataLabels,
     );
@@ -37,9 +38,9 @@ export class FunnelResolver extends AVisualTypeResolver {
     apexOptions.plotOptions = defu(
       {
         bar: {
+          barHeight: "80%",
           borderRadius: 0,
           horizontal: true,
-          barHeight: "80%",
           isFunnel: true,
         },
       },

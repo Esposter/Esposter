@@ -2,27 +2,27 @@ import type { NuxtConfig } from "nuxt/schema";
 
 export const pwa: NuxtConfig["pwa"] = {
   manifest: {
-    name: "Esposter",
-    short_name: "Esposter",
+    background_color: "#fff",
     description: "A nice and casual place for posting random things.",
+    display: "standalone",
     icons: [
       {
-        src: "/icons/manifest-icon-192.png",
-        sizes: "192x192",
-        type: "image/png",
         purpose: "maskable any",
+        sizes: "192x192",
+        src: "/icons/manifest-icon-192.png",
+        type: "image/png",
       },
       {
-        src: "/icons/manifest-icon-512.png",
-        sizes: "512x512",
-        type: "image/png",
         purpose: "maskable any",
+        sizes: "512x512",
+        src: "/icons/manifest-icon-512.png",
+        type: "image/png",
       },
     ],
-    theme_color: "#fff",
-    background_color: "#fff",
-    start_url: "/",
-    display: "standalone",
+    name: "Esposter",
     orientation: "portrait",
+    short_name: "Esposter",
+    start_url: "/",
+    theme_color: "#fff",
   },
 };

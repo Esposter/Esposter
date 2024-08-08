@@ -1,7 +1,8 @@
 import type { Chart } from "@/models/dashboard/chart/Chart";
 import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
-import { ChartType3DResolver } from "@/models/resolvers/dashboard/chart/3DResolver";
 import type { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+
+import { ChartType3DResolver } from "@/models/resolvers/dashboard/chart/3DResolver";
 import { BasicResolver } from "@/models/resolvers/dashboard/chart/BasicResolver";
 import { DistributedResolver } from "@/models/resolvers/dashboard/chart/DistributedResolver";
 import { DonutResolver } from "@/models/resolvers/dashboard/chart/DonutResolver";

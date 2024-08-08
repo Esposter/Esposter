@@ -10,5 +10,5 @@ export const useBattleDialogTarget = () => {
   const inputPromptCursorX = computed(
     () => (line1TextDisplayWidth.value ?? 0) + (inputPromptCursorDisplayWidth.value ?? 0) * 2.7,
   );
-  return new DialogTarget({ message: line1DialogMessage, inputPromptCursorX });
+  return new DialogTarget({ inputPromptCursorX, message: line1DialogMessage });
 };

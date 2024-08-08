@@ -3,8 +3,8 @@ import { ButtonTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/But
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 

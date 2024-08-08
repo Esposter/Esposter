@@ -3,5 +3,5 @@ import type { TMXGroupLayerParsed, TMXLayerParsed } from "parse-tmx";
 
 export interface LayerData {
   key: TilemapKey;
-  layers: (TMXLayerParsed | TMXGroupLayerParsed)[];
+  layers: (TMXGroupLayerParsed | TMXLayerParsed)[];
 }

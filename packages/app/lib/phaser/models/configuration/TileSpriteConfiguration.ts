@@ -15,15 +15,13 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type TileSpriteConfiguration = Except<
-  Types.GameObjects.TileSprite.TileSpriteConfig,
-  keyof Types.GameObjects.GameObjectConfig
-> &
-  AlphaConfiguration &
+export type TileSpriteConfiguration = AlphaConfiguration &
   BlendModeConfiguration &
   ComputedSizeConfiguration &
   DepthConfiguration &
+  Except<Types.GameObjects.TileSprite.TileSpriteConfig, keyof Types.GameObjects.GameObjectConfig> &
   FlipConfiguration &
+  GlobalConfiguration &
   MaskConfiguration &
   OriginConfiguration &
   PipelineConfiguration &
@@ -31,5 +29,4 @@ export type TileSpriteConfiguration = Except<
   TextureConfiguration &
   TintConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

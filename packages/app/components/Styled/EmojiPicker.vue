@@ -9,13 +9,13 @@ import { mergeProps } from "vue";
 import { VBtn, VTooltip } from "vuetify/components";
 
 interface StyledEmojiPickerProps {
-  tooltipProps: VTooltip["$props"];
-  buttonProps?: VBtn["$props"];
   buttonAttrs?: VBtn["$attrs"];
+  buttonProps?: VBtn["$props"];
+  tooltipProps: VTooltip["$props"];
 }
 
-const { tooltipProps, buttonProps, buttonAttrs } = defineProps<StyledEmojiPickerProps>();
-const emit = defineEmits<{ "update:menu": [value: boolean]; select: [emoji: string] }>();
+const { buttonAttrs, buttonProps, tooltipProps } = defineProps<StyledEmojiPickerProps>();
+const emit = defineEmits<{ select: [emoji: string]; "update:menu": [value: boolean] }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
 const onEmojiSelect = (emoji: { native: string }) => {

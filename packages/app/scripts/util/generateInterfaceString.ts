@@ -1,4 +1,5 @@
 import type { InterfaceProperty } from "@/scripts/models/InterfaceProperty";
+
 import { startsWithNumber } from "@/util/regex/startsWithNumber";
 
 export const generateInterfaceString = (name: string, properties: InterfaceProperty[]) =>

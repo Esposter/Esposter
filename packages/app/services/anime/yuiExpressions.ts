@@ -1,5 +1,6 @@
-import { Colors } from "@/models/desmos/Colors";
 import type { Expression } from "@/models/desmos/Expression";
+
+import { Colors } from "@/models/desmos/Colors";
 
 export const yuiExpressions: Expression[] = [
   { latex: "y=-0.1\\left(x-1\\right)^{2}+4.5\\left\\{-2.05<x<1\\right\\}" },
@@ -168,9 +169,9 @@ export const yuiExpressions: Expression[] = [
   { latex: "y=37\\left(x+2.14\\right)^{2}-4.29\\left\\{-2.14<x<-2.102\\right\\}" },
   { latex: "\\left(y+4.38\\right)^{2}=-0.8\\left(x+2.32\\right)\\left\\{-4.58<y<-4.16\\right\\}" },
   { latex: "y=-2.5x-10.53\\left\\{-2.376<x<-2.28\\right\\}" },
-  { latex: "y=1.2x+0.4\\left\\{-1.07<x<-0.3\\right\\}", color: Colors.RED },
-  { latex: "y=1.2x-0.3\\left\\{-0.57<x<0.4\\right\\}", color: Colors.RED },
-  { latex: "y=1.2x-0.9\\left\\{-0.13<x<0.7\\right\\}", color: Colors.RED },
-  { latex: "y=1.2x-1.48\\left\\{0.48<x<0.98\\right\\}", color: Colors.RED },
-  { latex: "y=1.2x-2\\left\\{0.887<x<1.253\\right\\}", color: Colors.RED },
+  { color: Colors.RED, latex: "y=1.2x+0.4\\left\\{-1.07<x<-0.3\\right\\}" },
+  { color: Colors.RED, latex: "y=1.2x-0.3\\left\\{-0.57<x<0.4\\right\\}" },
+  { color: Colors.RED, latex: "y=1.2x-0.9\\left\\{-0.13<x<0.7\\right\\}" },
+  { color: Colors.RED, latex: "y=1.2x-1.48\\left\\{0.48<x<0.98\\right\\}" },
+  { color: Colors.RED, latex: "y=1.2x-2\\left\\{0.887<x<1.253\\right\\}" },
 ];

@@ -1,6 +1,7 @@
-import { applyItemMetadataMixin } from "@/models/shared/ItemMetadata";
 import type { TableEntity } from "@azure/data-tables";
 import type { OmitIndexSignature } from "type-fest";
+
+import { applyItemMetadataMixin } from "@/models/shared/ItemMetadata";
 
 export type CompositeKey = OmitIndexSignature<TableEntity>;
 

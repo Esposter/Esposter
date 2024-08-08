@@ -17,18 +17,18 @@ import { vite } from "./configuration/vite";
 export default defineNuxtConfig({
   alias,
   app,
+  authJs,
   build,
   experimental,
-  imports,
-  nitro,
-  runtimeConfig,
-  typescript,
-  vite,
-
-  modules,
-  authJs,
   fonts,
+  imports,
+  modules,
+  nitro,
+
   pwa,
+  runtimeConfig,
   security,
+  typescript,
   unocss,
+  vite,
 });

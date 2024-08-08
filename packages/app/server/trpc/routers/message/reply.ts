@@ -1,5 +1,6 @@
-import { selectRoomSchema } from "@/db/schema/rooms";
 import type { CustomTableClient } from "@/models/azure/table";
+
+import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable } from "@/models/azure/table";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import {
@@ -21,26 +22,37 @@ const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id })
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
 
 const createReplyInputSchema = messageReplyMetadataSchema.pick({
+  messageReplyRowKey: true,
+  messageRowKey: true,
   partitionKey: true,
   rowKey: true,
-  messageRowKey: true,
-  messageReplyRowKey: true,
 });
 export type CreateReplyInput = z.infer<typeof createReplyInputSchema>;
 
 export const replyRouter = router({
-  readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
-    .input(readMetadataInputSchema)
-    .query(async ({ input: { roomId, messageRowKeys } }) => {
-      const messagesMetadataClient = (await getTableClient(
-        AzureTable.MessagesMetadata,
-      )) as CustomTableClient<MessageReplyMetadataEntity>;
-      const { type, messageRowKey } = MessageReplyMetadataEntityPropertyNames;
-      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
-          MessageMetadataType.Reply
-        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
+  createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
+    .input(createReplyInputSchema)
+    .mutation(async ({ input }) => {
+      const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+      const { messageReplyRowKey, messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;
+      const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
+        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Reply}' and ${messageRowKey} eq '${input.messageRowKey}' and ${messageReplyRowKey} eq '${input.messageReplyRowKey}'`,
       });
+      if (replies.length > 0) return null;
+
+      const createdAt = new Date();
+      const newReply = new MessageReplyMetadataEntity({
+        createdAt,
+        messageReplyRowKey: input.messageReplyRowKey,
+        messageRowKey: input.messageRowKey,
+        partitionKey: input.partitionKey,
+        rowKey: now(),
+        type: MessageMetadataType.Reply,
+        updatedAt: createdAt,
+      });
+      await createEntity(messagesMetadataClient, newReply);
+      replyEventEmitter.emit("createReply", newReply);
+      return newReply;
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
@@ -53,28 +65,17 @@ export const replyRouter = router({
         return () => replyEventEmitter.off("createReply", onCreateReply);
       }),
     ),
-  createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
-    .input(createReplyInputSchema)
-    .mutation(async ({ input }) => {
-      const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
-      const { type, messageRowKey, messageReplyRowKey } = MessageReplyMetadataEntityPropertyNames;
-      const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
-        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Reply}' and ${messageRowKey} eq '${input.messageRowKey}' and ${messageReplyRowKey} eq '${input.messageReplyRowKey}'`,
+  readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
+    .input(readMetadataInputSchema)
+    .query(async ({ input: { messageRowKeys, roomId } }) => {
+      const messagesMetadataClient = (await getTableClient(
+        AzureTable.MessagesMetadata,
+      )) as CustomTableClient<MessageReplyMetadataEntity>;
+      const { messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;
+      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
+          MessageMetadataType.Reply
+        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
       });
-      if (replies.length > 0) return null;
-
-      const createdAt = new Date();
-      const newReply = new MessageReplyMetadataEntity({
-        partitionKey: input.partitionKey,
-        rowKey: now(),
-        messageRowKey: input.messageRowKey,
-        type: MessageMetadataType.Reply,
-        messageReplyRowKey: input.messageReplyRowKey,
-        createdAt,
-        updatedAt: createdAt,
-      });
-      await createEntity(messagesMetadataClient, newReply);
-      replyEventEmitter.emit("createReply", newReply);
-      return newReply;
     }),
 });

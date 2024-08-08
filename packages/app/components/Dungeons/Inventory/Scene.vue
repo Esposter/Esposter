@@ -2,8 +2,8 @@
 import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
 
 const inputStore = useInputStore();

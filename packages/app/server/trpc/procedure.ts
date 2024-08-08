@@ -1,16 +1,17 @@
+import type { z } from "zod";
+
 import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
 import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
 import { UUIDV4_REGEX } from "@/util/id/uuid/constants";
 import { TRPCError } from "@trpc/server";
-import type { z } from "zod";
 
 export const rateLimitedProcedure = publicProcedure.use(isRateLimited);
 export const authedProcedure = rateLimitedProcedure.use(isAuthed);
 
 export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schema: T, key: keyof T["shape"] & string) =>
-  authedProcedure.use(async ({ ctx, rawInput, next }) => {
+  authedProcedure.use(async ({ ctx, next, rawInput }) => {
     const result = schema.safeParse(rawInput);
     if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
 
@@ -32,7 +33,7 @@ export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
   schema: T,
   key: keyof T["shape"] & string,
 ) =>
-  authedProcedure.use(async ({ ctx, rawInput, next }) => {
+  authedProcedure.use(async ({ ctx, next, rawInput }) => {
     const result = schema.safeParse(rawInput);
     if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
 

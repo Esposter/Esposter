@@ -5,8 +5,8 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 
 const inputStore = useInputStore();
@@ -14,7 +14,7 @@ const { controls } = storeToRefs(inputStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
-const { experienceToNextLevel, barPercentage } = useExperience(selectedMonster);
+const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
 </script>
 
 <template>

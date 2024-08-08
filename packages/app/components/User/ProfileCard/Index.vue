@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { Row } from "@/models/user/ProfileCard/Row";
-import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import type { UpdateUserInput } from "@/server/trpc/routers/user";
+
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
+import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useUserStore } from "@/store/user";
 import deepEqual from "fast-deep-equal";
@@ -62,7 +63,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
           :key="title"
           v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
           px-4
-          :title
+          :title="title"
           :row="{
             type: row.type,
             value: row.value,

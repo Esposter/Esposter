@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
-import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
-import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { parsePixel } from "@/util/parsePixel";
 
 interface DialogTextProps {

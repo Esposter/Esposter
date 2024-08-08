@@ -1,5 +1,6 @@
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Except } from "type-fest";
+
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { z } from "zod";
 
 export class BaseEmailEditor {

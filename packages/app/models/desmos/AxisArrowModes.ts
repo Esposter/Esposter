@@ -4,7 +4,7 @@
  * The default value for both axes is Desmos.AxisArrowMode.NONE.
  */
 export enum AxisArrowModes {
+  BOTH = "BOTH",
   NONE = "NONE",
   POSITIVE = "POSITIVE",
-  BOTH = "BOTH",
 }

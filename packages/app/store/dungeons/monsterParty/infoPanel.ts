@@ -1,6 +1,7 @@
-import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
+
+import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import { useDialogStore } from "@/store/dungeons/dialog";
 
 export const useInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", () => {
@@ -14,7 +15,7 @@ export const useInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", 
   const showMessages = async (scene: SceneWithPlugins, messages: string[], onComplete?: OnComplete) => {
     await updateQueuedMessagesAndShowMessage(
       scene,
-      new DialogTarget({ message: infoDialogMessage, inputPromptCursorX }),
+      new DialogTarget({ inputPromptCursorX, message: infoDialogMessage }),
       messages.map((text) => ({ text })),
       onComplete,
     );

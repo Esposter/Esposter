@@ -9,5 +9,5 @@ export const usePointStore = defineStore("clicker/point", () => {
   const decrementPoints = (points: number) => {
     game.value.noPoints -= points;
   };
-  return { incrementPoints, decrementPoints };
+  return { decrementPoints, incrementPoints };
 });

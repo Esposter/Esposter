@@ -1,4 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
+
 import { BASE_URL } from "../services/desmos/constants";
 
 export const security: NuxtConfig["security"] = {

@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import type { MeshPhongMaterial } from "three";
+import type { ArrayElement } from "type-fest/source/internal";
+
 import airportHistory from "@/assets/about/airport-history.json";
 import flightHistory from "@/assets/about/flight-history.json";
 import countries from "@/assets/about/globe-data-min.json";
 import { dayjs } from "@/services/dayjs";
-import type { MeshPhongMaterial } from "three";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import type { ArrayElement } from "type-fest/source/internal";
 
 type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
 
@@ -23,7 +24,7 @@ const height = computed(() => width.value);
 onMounted(async () => {
   const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
   if (!canvas) return;
-  const renderer = new WebGLRenderer({ canvas, antialias: true });
+  const renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -65,7 +66,7 @@ onMounted(async () => {
   controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
   const ThreeGlobe = (await import("three-globe")).default;
-  const globe = new ThreeGlobe({ waitForGlobeReady: true, animateIn: true })
+  const globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
     .hexPolygonsData(countries.features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.7)
@@ -73,7 +74,7 @@ onMounted(async () => {
     .atmosphereColor("#3a228a")
     .atmosphereAltitude(0.25)
     .hexPolygonColor((e) => {
-      if (["KGZ", "KOR", "THA", "RUS", "UZB", "IDN", "KAZ", "MYS"].includes((e as FeatureCollection).properties.ISO_A3))
+      if (["IDN", "KAZ", "KGZ", "KOR", "MYS", "RUS", "THA", "UZB"].includes((e as FeatureCollection).properties.ISO_A3))
         return "rgba(255,255,255, 1)";
       else return "rgba(255,255,255, 0.7)";
     });
@@ -129,5 +130,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <canvas :id />
+  <canvas :id="id" />
 </template>

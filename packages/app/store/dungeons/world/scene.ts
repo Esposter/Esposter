@@ -1,15 +1,16 @@
 import type { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { WorldData } from "@/models/dungeons/data/world/WorldData";
-import { useDungeonsStore } from "@/store/dungeons";
 import type { Tilemaps } from "phaser";
+
+import { useDungeonsStore } from "@/store/dungeons";
 
 // We will create the tilemap and its metadata in the world scene vue component
 export const ExternalWorldSceneStore = {
+  objectLayerMap: new Map<ObjectgroupName, null | Tilemaps.ObjectLayer>(),
   tilemap: null as unknown as Tilemaps.Tilemap,
   // Each tilemap may or may not use any number of layers that it likes
   tilemapKeyLayerMap: new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>(),
-  objectLayerMap: new Map<ObjectgroupName, Tilemaps.ObjectLayer | null>(),
 };
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
@@ -27,8 +28,8 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
 
   return {
-    tilemapKey,
     switchToTilemap,
+    tilemapKey,
     worldData,
   };
 });

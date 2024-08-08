@@ -4,7 +4,7 @@ export const useReadPosts = async () => {
   const { $client } = useNuxtApp();
   const postStore = usePostStore();
   const { initializeCursorPaginationData, pushPostList } = postStore;
-  const { nextCursor, hasMore } = storeToRefs(postStore);
+  const { hasMore, nextCursor } = storeToRefs(postStore);
   const readMorePosts = async (onComplete: () => void) => {
     try {
       const response = await $client.post.readPosts.query({ cursor: nextCursor.value });

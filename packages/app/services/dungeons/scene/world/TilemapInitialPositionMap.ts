@@ -1,12 +1,13 @@
-import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import { NotFoundError } from "@esposter/shared";
 import type { Position } from "grid-engine";
-import { Direction } from "grid-engine";
 import type { PartialByKeys } from "unocss";
 
+import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
+import { NotFoundError } from "@esposter/shared";
+import { Direction } from "grid-engine";
+
 interface InitialMetadata {
-  position: Position;
   direction: Direction;
+  position: Position;
 }
 
 const TilemapInitialMetadataMap: Partial<Record<TilemapKey, PartialByKeys<InitialMetadata, "direction">>> = {
