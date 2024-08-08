@@ -142,8 +142,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1(vue@3.4.33(typescript@5.4.5))
       '@vueuse/core':
-        specifier: ^10.11.0
-        version: 10.11.0(vue@3.4.33(typescript@5.4.5))
+        specifier: ^10.11.1
+        version: 10.11.1(vue@3.4.33(typescript@5.4.5))
       '@vueuse/nuxt':
         specifier: ^10.11.1
         version: 10.11.1(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(@parcel/watcher@2.4.1)(@types/node@22.1.0)(drizzle-orm@0.32.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.8.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.20.0)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.4.0(@types/node@22.1.0)(sass@1.77.8)(terser@5.29.2))(vue-tsc@2.0.29(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.20.0)(vue@3.4.33(typescript@5.4.5))
@@ -10170,17 +10170,6 @@ packages:
       '@vue/composition-api':
         optional: true
 
-  vue-demi@0.14.8:
-    resolution: {integrity: sha512-Uuqnk9YE9SsWeReYqK2alDI5YzciATE0r2SkA6iMAtuXvNTMNACJLJEXNXaEy94ECuBe4Sk6RzRU80kjdbIo1Q==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-
   vue-devtools-stub@0.1.0:
     resolution: {integrity: sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==}
 
@@ -12757,7 +12746,7 @@ snapshots:
   '@koumoul/vjsf@3.0.0-beta.40(vue@3.4.33(typescript@5.4.5))(vuetify@3.6.14(typescript@5.4.5)(vite-plugin-vuetify@2.0.3)(vue@3.4.33(typescript@5.4.5)))':
     dependencies:
       '@json-layout/core': 0.31.0
-      '@vueuse/core': 10.11.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/core': 10.11.1(vue@3.4.33(typescript@5.4.5))
       debug: 4.3.6
       ejs: 3.1.9
       vue: 3.4.33(typescript@5.4.5)
@@ -13254,7 +13243,7 @@ snapshots:
       '@unocss/preset-icons': 0.61.9
       '@unocss/preset-mini': 0.61.9
       '@unocss/reset': 0.61.9
-      '@vueuse/core': 10.11.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/core': 10.11.1(vue@3.4.33(typescript@5.4.5))
       '@vueuse/integrations': 10.11.0(axios@1.6.8(debug@4.3.6))(change-case@4.1.2)(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
       '@vueuse/nuxt': 10.11.1(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(@parcel/watcher@2.4.1)(@types/node@22.1.0)(drizzle-orm@0.32.2(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.8.0)(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.20.0)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.4.0(@types/node@22.1.0)(sass@1.77.8)(terser@5.29.2))(vue-tsc@2.0.29(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.20.0)(vue@3.4.33(typescript@5.4.5))
       defu: 6.1.4
@@ -13675,7 +13664,7 @@ snapshots:
       '@types/vimeo__player': 2.18.3
       '@types/youtube': 0.0.50
       '@unhead/vue': 1.9.16(vue@3.4.33(typescript@5.4.5))
-      '@vueuse/core': 10.11.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/core': 10.11.1(vue@3.4.33(typescript@5.4.5))
       consola: 3.2.3
       defu: 6.1.4
       h3: 1.12.0
@@ -15672,7 +15661,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.11.0
       '@vueuse/shared': 10.11.0(vue@3.4.33(typescript@5.4.5))
-      vue-demi: 0.14.8(vue@3.4.33(typescript@5.4.5))
+      vue-demi: 0.14.10(vue@3.4.33(typescript@5.4.5))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -15722,7 +15711,7 @@ snapshots:
 
   '@vueuse/shared@10.11.0(vue@3.4.33(typescript@5.4.5))':
     dependencies:
-      vue-demi: 0.14.8(vue@3.4.33(typescript@5.4.5))
+      vue-demi: 0.14.10(vue@3.4.33(typescript@5.4.5))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -22543,10 +22532,6 @@ snapshots:
       vue: 3.4.33(typescript@5.4.5)
 
   vue-demi@0.14.7(vue@3.4.33(typescript@5.4.5)):
-    dependencies:
-      vue: 3.4.33(typescript@5.4.5)
-
-  vue-demi@0.14.8(vue@3.4.33(typescript@5.4.5)):
     dependencies:
       vue: 3.4.33(typescript@5.4.5)
 
