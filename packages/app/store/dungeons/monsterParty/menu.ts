@@ -22,35 +22,32 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const infoPanelStore = useInfoPanelStore();
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);
-  const menuOptionGrid = ref() as Ref<Grid<MenuOption, MenuOption[][]>>;
 
-  watch(
-    previousSceneKey,
-    (newPreviousSceneKey) => {
-      switch (newPreviousSceneKey) {
-        case SceneKey.Battle:
-          menuOptionGrid.value = new Grid([[MenuOption.Summary], [MenuOption.Cancel]], true);
-          return;
-        case SceneKey.Inventory:
-          menuOptionGrid.value = new Grid(
-            player.value.monsters.length > 1
-              ? [[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]]
-              : [[MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]],
-            true,
-          );
-          return;
-        default:
-          menuOptionGrid.value = new Grid(
-            player.value.monsters.length > 1
-              ? [[MenuOption.Move], [MenuOption.Release], [MenuOption.Cancel]]
-              : [[MenuOption.Release], [MenuOption.Cancel]],
-            true,
-          );
-          return;
-      }
-    },
-    { immediate: true },
-  );
+  const getNewMenuOptionGrid = (newPreviousSceneKey?: SceneKey): Grid<MenuOption, MenuOption[][]> => {
+    switch (newPreviousSceneKey) {
+      case SceneKey.Battle:
+        return new Grid([[MenuOption.Summary], [MenuOption.Cancel]], true);
+      case SceneKey.Inventory:
+        return new Grid(
+          player.value.monsters.length > 1
+            ? [[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]]
+            : [[MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]],
+          true,
+        );
+      default:
+        return new Grid(
+          player.value.monsters.length > 1
+            ? [[MenuOption.Move], [MenuOption.Release], [MenuOption.Cancel]]
+            : [[MenuOption.Release], [MenuOption.Cancel]],
+          true,
+        );
+    }
+  };
+  const menuOptionGrid = ref(getNewMenuOptionGrid());
+
+  watch(previousSceneKey, (newPreviousSceneKey) => {
+    menuOptionGrid.value = getNewMenuOptionGrid(newPreviousSceneKey);
+  });
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     // We should never hit the menu mode if the player was selecting "Cancel"
