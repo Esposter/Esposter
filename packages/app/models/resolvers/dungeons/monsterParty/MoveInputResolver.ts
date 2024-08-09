@@ -28,7 +28,7 @@ export class MoveInputResolver extends AInputResolver {
       if (monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel) {
         onCancel();
         return true;
-      }
+      } else if (monsterPartyOptionGrid.value.value.id === monsterIdToMove.value) return true;
 
       const index = player.value.monsters.findIndex(({ id }) => id === monsterIdToMove.value);
       if (index === -1) throw new InvalidOperationError(Operation.Read, this.handleInput.name, monsterIdToMove.value);
@@ -40,9 +40,9 @@ export class MoveInputResolver extends AInputResolver {
         player.value.monsters[index],
       ];
 
-      infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
       sceneMode.value = SceneMode.Default;
       monsterIdToMove.value = undefined;
+      infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
     } else if (justDownInput === PlayerSpecialInput.Cancel) onCancel();
     else if (isMovingDirection(justDownInput)) monsterPartyOptionGrid.value.move(justDownInput);
 

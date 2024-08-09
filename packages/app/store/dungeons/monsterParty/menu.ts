@@ -15,12 +15,14 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
-  const menuOptionGrid = ref() as Ref<Grid<MenuOption, MenuOption[][]>>;
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { monsterIdToMove, monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
+  const infoPanelStore = useInfoPanelStore();
+  const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);
+  const menuOptionGrid = ref() as Ref<Grid<MenuOption, MenuOption[][]>>;
 
   watch(
     previousSceneKey,
@@ -66,8 +68,6 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (menuOptionGrid.value.value) {
         case MenuOption.Move: {
-          const infoPanelStore = useInfoPanelStore();
-          const { infoDialogMessage } = storeToRefs(infoPanelStore);
           monsterIdToMove.value = monsterPartyOptionGrid.value.value.id;
           sceneMode.value = SceneMode.Move;
           infoDialogMessage.value.text = `Select a monster to switch ${monsterPartyOptionGrid.value.value.key} with.`;
@@ -82,18 +82,29 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
           break;
         }
         case MenuOption.Release:
+          if (player.value.monsters.length <= 1) {
+            infoDialogMessage.value.text = "Cannot release any more monsters.";
+            sceneMode.value = SceneMode.Default;
+            break;
+          }
+
+          sceneMode.value = SceneMode.Confirmation;
+          infoDialogMessage.value.text = `Release ${monsterPartyOptionGrid.value.value.key}?`;
           break;
         case MenuOption.Cancel:
-          sceneMode.value = SceneMode.Default;
+          onCancel();
           break;
         default:
           exhaustiveGuard(menuOptionGrid.value.value);
       }
-    else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel)
-      sceneMode.value = SceneMode.Default;
+    else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel) onCancel();
     else if (isMovingDirection(justDownInput)) menuOptionGrid.value.move(justDownInput);
 
     return true;
+  };
+
+  const onCancel = () => {
+    sceneMode.value = SceneMode.Default;
   };
 
   return { menuOptionGrid, onPlayerInput };

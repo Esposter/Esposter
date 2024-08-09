@@ -25,5 +25,6 @@ const update = async (scene: SceneWithPlugins) => {
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
     <DungeonsMonsterPartyMenu />
+    <DungeonsMonsterPartyMenuConfirmation />
   </Scene>
 </template>
