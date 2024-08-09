@@ -15,7 +15,7 @@ export const security: NuxtConfig["security"] = {
       ],
       "script-src": "'unsafe-eval'",
       "script-src-elem": ["'unsafe-inline'", process.env.BASE_URL, BASE_URL],
-      "worker-src": "blob:",
+      "worker-src": ["blob:", process.env.BASE_URL],
     },
     crossOriginEmbedderPolicy: "unsafe-none",
   },
