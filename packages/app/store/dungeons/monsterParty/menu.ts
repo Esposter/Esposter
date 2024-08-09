@@ -23,7 +23,7 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const { previousSceneKey } = usePreviousScene(SceneKey.MonsterParty);
 
-  const getNewMenuOptionGrid = (newPreviousSceneKey?: SceneKey): Grid<MenuOption, MenuOption[][]> => {
+  const createMenuOptionGrid = (newPreviousSceneKey?: SceneKey): Grid<MenuOption, MenuOption[][]> => {
     switch (newPreviousSceneKey) {
       case SceneKey.Battle:
         return new Grid([[MenuOption.Summary], [MenuOption.Cancel]], true);
@@ -43,10 +43,10 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
         );
     }
   };
-  const menuOptionGrid = ref(getNewMenuOptionGrid());
+  const menuOptionGrid = ref(createMenuOptionGrid());
 
   watch(previousSceneKey, (newPreviousSceneKey) => {
-    menuOptionGrid.value = getNewMenuOptionGrid(newPreviousSceneKey);
+    menuOptionGrid.value = createMenuOptionGrid(newPreviousSceneKey);
   });
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
