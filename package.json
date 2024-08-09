@@ -36,7 +36,7 @@
     "eslint": "^9.8.0",
     "lerna": "^8.1.8",
     "rollup": "^4.20.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.4",
     "vite": "^5.4.0",
     "vue-tsc": "^1.8.27"
   },
