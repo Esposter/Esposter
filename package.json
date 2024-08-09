@@ -33,7 +33,7 @@
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
     "ctix": "^2.5.1",
-    "eslint": "^9.8.0",
+    "eslint": "^9.9.0",
     "lerna": "^8.1.8",
     "rollup": "^4.20.0",
     "typescript": "^5.4.5",
