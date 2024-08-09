@@ -16,20 +16,19 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const { fadeSwitchToScene } = dungeonsStore;
   const { game, save } = storeToRefs(dungeonsStore);
   const isContinueEnabled = computed(() => game.value.saves.length > 0);
-  const optionGrid = ref() as Ref<Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>>;
 
-  watch(
-    isContinueEnabled,
-    (newIsContinueEnabled) => {
-      optionGrid.value = newIsContinueEnabled
-        ? new Grid(
-            [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Settings]],
-            true,
-          )
-        : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Settings]], true);
-    },
-    { immediate: true },
-  );
+  const createOptionGrid = (isContinueEnabled: boolean): Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]> =>
+    isContinueEnabled
+      ? new Grid(
+          [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Settings]],
+          true,
+        )
+      : new Grid([[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Settings]], true);
+  const optionGrid = ref(createOptionGrid(isContinueEnabled.value));
+
+  watch(isContinueEnabled, (newIsContinueEnabled) => {
+    optionGrid.value = createOptionGrid(newIsContinueEnabled);
+  });
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);

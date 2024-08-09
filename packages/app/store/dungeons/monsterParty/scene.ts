@@ -21,20 +21,20 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
       monstersGrid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
     return monstersGrid;
   });
-  const monsterPartyOptionGrid = ref() as Ref<
-    Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]>
-  >;
 
-  watch(
-    monstersGrid,
-    (newMonstersGrid) => {
-      monsterPartyOptionGrid.value = new Grid(
-        [...newMonstersGrid, Array(newMonstersGrid[0]?.length ?? 0).fill(PlayerSpecialInput.Cancel)],
-        true,
-      );
-    },
-    { immediate: true },
-  );
+  const createMonsterPartyOptionGrid = (
+    newMonstersGrid: Monster[][],
+  ): Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]> => {
+    const grid = [...newMonstersGrid];
+    const rowSize = newMonstersGrid[0]?.length ?? 0;
+    if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
+    return new Grid(grid, true);
+  };
+  const monsterPartyOptionGrid = ref(createMonsterPartyOptionGrid(monstersGrid.value));
+
+  watch(monstersGrid, (newMonstersGrid) => {
+    monsterPartyOptionGrid.value = createMonsterPartyOptionGrid(newMonstersGrid);
+  });
 
   const sceneMode = ref(SceneMode.Default);
   const monsterIdToMove = ref<string>();
