@@ -12,7 +12,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
-export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/menu", () => {
+export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confirmationMenu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
   const playerStore = usePlayerStore();
