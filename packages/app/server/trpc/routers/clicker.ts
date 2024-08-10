@@ -2,15 +2,15 @@ import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
 import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
-import { router } from "@/server/trpc";
-import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
+import { publicProcedure, router } from "@/server/trpc";
+import { authedProcedure } from "@/server/trpc/procedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
 import { streamToText } from "@/util/text/streamToText";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const clickerRouter = router({
-  readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
+  readBuildingMap: publicProcedure.query(() => BuildingMap),
   readGame: authedProcedure.query<Game>(async ({ ctx }) => {
     try {
       const containerClient = await getContainerClient(AzureContainer.ClickerAssets);
@@ -27,7 +27,7 @@ export const clickerRouter = router({
       return new Game();
     }
   }),
-  readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
+  readUpgradeMap: publicProcedure.query(() => UpgradeMap),
   saveGame: authedProcedure.input(gameSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;

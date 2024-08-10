@@ -5,8 +5,8 @@ import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { router } from "@/server/trpc";
-import { authedProcedure, rateLimitedProcedure } from "@/server/trpc/procedure";
+import { publicProcedure, router } from "@/server/trpc";
+import { authedProcedure } from "@/server/trpc/procedure";
 import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
@@ -142,12 +142,12 @@ export const postRouter = router({
         return deletedPost;
       }),
   ),
-  readPost: rateLimitedProcedure
+  readPost: publicProcedure
     .input(readPostInputSchema)
     .query(({ input }) =>
       db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
     ),
-  readPosts: rateLimitedProcedure
+  readPosts: publicProcedure
     .input(readPostsInputSchema)
     .query(async ({ input: { cursor, limit, parentId, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);

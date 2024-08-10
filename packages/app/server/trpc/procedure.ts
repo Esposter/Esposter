@@ -3,12 +3,10 @@ import type { z } from "zod";
 import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
-import { isRateLimited } from "@/server/trpc/middleware/rateLimiter";
 import { UUIDV4_REGEX } from "@/util/id/uuid/constants";
 import { TRPCError } from "@trpc/server";
 
-export const rateLimitedProcedure = publicProcedure.use(isRateLimited);
-export const authedProcedure = rateLimitedProcedure.use(isAuthed);
+export const authedProcedure = publicProcedure.use(isAuthed);
 
 export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(schema: T, key: keyof T["shape"] & string) =>
   authedProcedure.use(async ({ ctx, next, rawInput }) => {
