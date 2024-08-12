@@ -16,7 +16,10 @@ import { z } from "zod";
 
 export class Player {
   direction: Direction;
-  inventory: Item[] = [{ id: ItemId.Potion, quantity: 10 }].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
+  inventory: Item[] = [
+    { id: ItemId.Potion, quantity: 10 },
+    { id: ItemId.DamagedBall, quantity: 5 },
+  ].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
   monsters: Monster[] = (() => {
     if (IS_DEVELOPMENT) {
       const monsters = [
