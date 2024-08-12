@@ -25,8 +25,8 @@ importers:
         specifier: ^0.4.14
         version: 0.4.14
       ctix:
-        specifier: ^2.6.0
-        version: 2.6.0(prettier-plugin-organize-imports@3.2.4(prettier@3.3.3)(typescript@5.4.5))(prettier@3.3.3)(typescript@5.4.5)
+        specifier: ^2.6.1
+        version: 2.6.1(prettier-plugin-organize-imports@3.2.4(prettier@3.3.3)(typescript@5.4.5))(prettier@3.3.3)(typescript@5.4.5)
       eslint:
         specifier: ^9.9.0
         version: 9.9.0(jiti@1.21.6)
@@ -5318,14 +5318,14 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  ctix@2.6.0:
-    resolution: {integrity: sha512-dLhaFUJkVQL9NyQvuE2UGt0rsQGnAFy5OJRBEgVGbbhH9LLqScG9Sa3jO9TNny16CJuOfbqyU93KU9VDxia64g==}
+  ctix@2.6.1:
+    resolution: {integrity: sha512-qcM6kYKMBwJt29orH/bjgwQ1WNShk3XhR4S7scSGrNSm8DwmW8ye7UjKr8rYQCiZ3uBp/6dPY7nf9L4KcF3FpA==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
-      prettier: ^3
-      prettier-plugin-organize-imports: ^3
-      typescript: ^5
+      prettier: '>=3'
+      prettier-plugin-organize-imports: '>=3'
+      typescript: '>=5'
 
   d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
@@ -16827,7 +16827,7 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  ctix@2.6.0(prettier-plugin-organize-imports@3.2.4(prettier@3.3.3)(typescript@5.4.5))(prettier@3.3.3)(typescript@5.4.5):
+  ctix@2.6.1(prettier-plugin-organize-imports@3.2.4(prettier@3.3.3)(typescript@5.4.5))(prettier@3.3.3)(typescript@5.4.5):
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
