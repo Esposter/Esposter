@@ -77,7 +77,8 @@
             "storageType": "string",
             "type": "enum",
             "values": [
-                "Potion"
+                "Potion",
+                "DamagedBall"
             ],
             "valuesAsFlags": false
         },
