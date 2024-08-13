@@ -1,6 +1,7 @@
 import type { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
-import { Target } from "@/models/clicker/data/Target";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+
+import { Target } from "@/models/clicker/data/Target";
 import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
@@ -47,9 +48,9 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   };
 
   return {
-    upgradeList,
+    createBoughtUpgrade,
     initializeUpgradeMap,
     unlockedUpgrades,
-    createBoughtUpgrade,
+    upgradeList,
   };
 });

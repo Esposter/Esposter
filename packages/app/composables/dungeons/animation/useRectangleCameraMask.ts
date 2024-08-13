@@ -1,5 +1,6 @@
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
+
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
@@ -11,14 +12,13 @@ export const useRectangleCameraMask = async (scene: SceneWithPlugins, onComplete
     return;
   }
 
-  const { width, height } = scene.scale;
+  const { height, width } = scene.scale;
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);
   const graphics = scene.add.graphics().fillRectShape(rectangleShape).setDepth(-1);
   const mask = graphics.createGeometryMask();
 
   scene.cameras.main.setMask(mask);
   scene.tweens.add({
-    targets: rectangleShape,
     delay: 400,
     duration: 800,
     height: {
@@ -27,19 +27,20 @@ export const useRectangleCameraMask = async (scene: SceneWithPlugins, onComplete
       start: 0,
       to: height,
     },
+    onComplete: async () => {
+      mask.destroy();
+      scene.cameras.main.clearMask();
+      await onComplete?.();
+    },
+    onUpdate: () => {
+      graphics.clear().fillRectShape(rectangleShape);
+    },
+    targets: rectangleShape,
     y: {
       ease: Math.Easing.Expo.InOut,
       from: height / 2,
       start: height / 2,
       to: 0,
-    },
-    onUpdate: () => {
-      graphics.clear().fillRectShape(rectangleShape);
-    },
-    onComplete: async () => {
-      mask.destroy();
-      scene.cameras.main.clearMask();
-      await onComplete?.();
     },
   });
 };

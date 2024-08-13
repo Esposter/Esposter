@@ -1,8 +1,9 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
+
 import monsterPartyBackground from "@/assets/dungeons/scene/monsterParty/background.png";
 import monsterDetailsBackground from "@/assets/dungeons/scene/monsterParty/monsterDetailsBackground.png";
 import { MonsterPartyKey } from "@/models/dungeons/keys/image/MonsterPartyKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Loader } from "phaser";
 
 export const MonsterPartyLoaderMap = {
   [MonsterPartyKey.MonsterDetailsBackground]: (scene) =>

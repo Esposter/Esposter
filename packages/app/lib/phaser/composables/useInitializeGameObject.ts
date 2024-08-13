@@ -1,14 +1,15 @@
-import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
-import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
-import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
-import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
-import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
-import { getScene } from "@/lib/phaser/util/getScene";
-import { getInitializeGameObjectLifecycleHook } from "@/lib/phaser/util/hooks/getInitializeGameObjectLifecycleHook";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
+
+import { useInitializeGameObjectEvents } from "@/lib/phaser/composables/useInitializeGameObjectEvents";
+import { useInitializeGameObjectSetters } from "@/lib/phaser/composables/useInitializeGameObjectSetters";
+import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
+import { useParentContainerStore } from "@/lib/phaser/store/parentContainer";
+import { getScene } from "@/lib/phaser/util/getScene";
+import { getInitializeGameObjectLifecycleHook } from "@/lib/phaser/util/hooks/getInitializeGameObjectLifecycleHook";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,
@@ -33,13 +34,13 @@ export const useInitializeGameObject = <
     setterMap,
     immediate,
   );
-  const { initializeGameObjectEvents, eventStopHandlers } = useInitializeGameObjectEvents();
+  const { eventStopHandlers, initializeGameObjectEvents } = useInitializeGameObjectEvents();
   // This is only used to track if the current gameObject we are rendering
   // is in a parent container and append to it if it exists. We need to use
   // the vue provide / inject api as this context should not be shared across every component,
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
-  const parentContainer = inject<Ref<GameObjects.Container> | null>(InjectionKeyMap.ParentContainer, null);
+  const parentContainer = inject<null | Ref<GameObjects.Container>>(InjectionKeyMap.ParentContainer, null);
   const sceneKey = useInjectSceneKey();
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
   const initializeGameObject = (scene: SceneWithPlugins) => {

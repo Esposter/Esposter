@@ -4,7 +4,7 @@ type DialogMessageKey<TTypeKey extends string> =
   | `${TTypeKey}${TTypeKey extends "" ? "d" : "D"}ialogMessage`
   | `${TTypeKey}${TTypeKey extends "" ? "t" : "T"}extDisplayWidth`;
 
-export const useDialogMessage = <TTypeKey extends string = "">(typeKey: TTypeKey | string = "") => {
+export const useDialogMessage = <TTypeKey extends string = "">(typeKey: string | TTypeKey = "") => {
   const dialogMessage = ref(new DialogMessage());
   const textDisplayWidth = ref<number>();
   return {

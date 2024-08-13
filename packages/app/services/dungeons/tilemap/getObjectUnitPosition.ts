@@ -1,5 +1,6 @@
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import type { Position } from "grid-engine";
+
+import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const getObjectUnitPosition = (pixelPosition: Position): Position => ({
   x: pixelPosition.x / ExternalWorldSceneStore.tilemap.tileWidth,

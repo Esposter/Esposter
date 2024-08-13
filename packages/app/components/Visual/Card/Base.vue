@@ -6,7 +6,7 @@ interface BaseCardProps {
 }
 
 const { card } = defineProps<BaseCardProps>();
-const { xs, sm } = useDisplay();
+const { sm, xs } = useDisplay();
 </script>
 
 <template>

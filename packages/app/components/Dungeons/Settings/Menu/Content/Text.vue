@@ -2,8 +2,8 @@
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import Text from "@/lib/phaser/components/Text.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -15,12 +15,12 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
 
 interface ContentTextProps {
-  rowIndex: number;
   columnIndex: number;
+  rowIndex: number;
   text: string;
 }
 
-const { rowIndex, columnIndex, text } = defineProps<ContentTextProps>();
+const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const settingsStore = useSettingsStore();

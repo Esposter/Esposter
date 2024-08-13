@@ -6,8 +6,8 @@ import { usePhaserStore } from "@/lib/phaser/store";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { ExternalSceneStore } from "@/lib/phaser/store/scene";
-import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { getScene } from "@/lib/phaser/util/getScene";
+import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
@@ -16,18 +16,18 @@ import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Cameras, Scenes } from "phaser";
 
 interface SceneProps {
-  sceneKey: SceneKey;
   autoStart?: true;
+  sceneKey: SceneKey;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
-const { sceneKey, autoStart } = defineProps<SceneProps>();
+const { autoStart, sceneKey } = defineProps<SceneProps>();
 const emit = defineEmits<{
+  create: [SceneWithPlugins];
   init: [SceneWithPlugins];
   preload: [SceneWithPlugins];
-  create: [SceneWithPlugins];
-  update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
   shutdown: [SceneWithPlugins];
+  update: [SceneWithPlugins, ...Parameters<SceneWithPlugins["update"]>];
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
@@ -42,6 +42,16 @@ const { settings } = storeToRefs(settingsStore);
 const volumeStore = useVolumeStore();
 const { volumePercentage } = storeToRefs(volumeStore);
 const NewScene = class extends SceneWithPlugins {
+  create(this: SceneWithPlugins) {
+    emit("create", this);
+    // MobileJoystick is an always active side scene
+    if (this.scene.key !== SceneKey.MobileJoystick) initializeRootScene(this);
+
+    const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
+    for (const createListener of createListenersMap[this.scene.key]) createListener(this);
+    createListenersMap[this.scene.key] = [];
+  }
+
   init(this: SceneWithPlugins) {
     emit("init", this);
     const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
@@ -54,16 +64,6 @@ const NewScene = class extends SceneWithPlugins {
     const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
     for (const preloadListener of preloadListenersMap[this.scene.key]) preloadListener(this);
     preloadListenersMap[this.scene.key] = [];
-  }
-
-  create(this: SceneWithPlugins) {
-    emit("create", this);
-    // MobileJoystick is an always active side scene
-    if (this.scene.key !== SceneKey.MobileJoystick) initializeRootScene(this);
-
-    const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
-    for (const createListener of createListenersMap[this.scene.key]) createListener(this);
-    createListenersMap[this.scene.key] = [];
   }
 
   override update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {

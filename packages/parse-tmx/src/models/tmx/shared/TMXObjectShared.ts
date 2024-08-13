@@ -1,9 +1,9 @@
 export interface TMXObjectShared {
+  gid: number;
+  height: number;
   id: number;
   type: string;
-  gid: number;
+  width: number;
   x: number;
   y: number;
-  width: number;
-  height: number;
 }

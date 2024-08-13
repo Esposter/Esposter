@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
 import type { ListItem } from "@/models/shared/ListItem";
+
+import { RoutePath } from "@/models/router/RoutePath";
 import { productListItems } from "@/services/esposter/productListItems";
 import { mergeProps } from "vue";
 
 const items: ListItem[] = [
   {
-    title: "Create Post",
     href: RoutePath.PostCreate,
     icon: "mdi-square-edit-outline",
+    title: "Create Post",
   },
   ...productListItems,
 ];

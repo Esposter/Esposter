@@ -1,11 +1,12 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
@@ -19,9 +20,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { setSettings } = settingsStore;
   const { settings } = storeToRefs(settingsStore);
   const volumeStore = useVolumeStore();
-  const { updateVolume, isUpdateVolume } = volumeStore;
+  const { isUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
-  const { updateThemeModeSetting, isUpdateThemeModeSetting } = colorPickerStore;
+  const { isUpdateThemeModeSetting, updateThemeModeSetting } = colorPickerStore;
   const optionGrid = ref(SettingsOptionGrid);
   const selectedSettingsOption = computed(
     () => optionGrid.value.getValue({ x: 0, y: optionGrid.value.position.y }) as SettingsOption,
@@ -70,11 +71,11 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
-      case PlayerSpecialInput.Confirm:
-        if (selectedSettingsOption.value === SettingsOption.Close) fadeSwitchToScene(scene, SceneKey.Title);
-        return;
       case PlayerSpecialInput.Cancel:
         fadeSwitchToScene(scene, SceneKey.Title);
+        return;
+      case PlayerSpecialInput.Confirm:
+        if (selectedSettingsOption.value === SettingsOption.Close) fadeSwitchToScene(scene, SceneKey.Title);
         return;
       case PlayerSpecialInput.Enter:
         return;
@@ -83,5 +84,5 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     }
   };
 
-  return { optionGrid, infoText, onPlayerInput };
+  return { infoText, onPlayerInput, optionGrid };
 });

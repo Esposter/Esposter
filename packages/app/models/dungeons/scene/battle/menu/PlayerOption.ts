@@ -1,6 +1,6 @@
 export enum PlayerOption {
   Fight = "Fight",
-  Switch = "Switch",
-  Item = "Item",
   Flee = "Flee",
+  Item = "Item",
+  Switch = "Switch",
 }

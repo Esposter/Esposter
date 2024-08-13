@@ -1,4 +1,5 @@
 import type { Theme } from "@/models/dungeons/theme/Theme";
+
 import { ThemeModeColorsMap } from "@/services/dungeons/scene/settings/ThemeModeColorsMap";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 
@@ -10,7 +11,7 @@ export const useDungeonsColors = (): DungeonsColors => {
   const colorPickerStore = useColorPickerStore();
   const { themeModeSetting } = storeToRefs(colorPickerStore);
   return {
-    primary: computed(() => ThemeModeColorsMap[themeModeSetting.value].primary),
     border: computed(() => ThemeModeColorsMap[themeModeSetting.value].border),
+    primary: computed(() => ThemeModeColorsMap[themeModeSetting.value].primary),
   };
 };

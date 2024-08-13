@@ -1,5 +1,6 @@
-import { getCursorPosition } from "@/services/dungeons/scene/battle/menu/getCursorPosition";
 import type { Position } from "grid-engine";
+
+import { getCursorPosition } from "@/services/dungeons/scene/battle/menu/getCursorPosition";
 
 export const getPanelTextPosition = (rowIndex: number, columnIndex: number): Position => {
   const cursorPosition = getCursorPosition(rowIndex, columnIndex);

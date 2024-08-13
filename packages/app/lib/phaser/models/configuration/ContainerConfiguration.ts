@@ -9,15 +9,12 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type ContainerConfiguration = Except<
-  Types.GameObjects.Container.ContainerConfig,
-  keyof Types.GameObjects.GameObjectConfig
-> &
-  AlphaSingleConfiguration &
+export type ContainerConfiguration = AlphaSingleConfiguration &
   BlendModeConfiguration &
   ComputedSizeConfiguration &
   DepthConfiguration &
+  Except<Types.GameObjects.Container.ContainerConfig, keyof Types.GameObjects.GameObjectConfig> &
+  GlobalConfiguration &
   MaskConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

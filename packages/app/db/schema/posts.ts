@@ -1,4 +1,5 @@
 import type { Like, User } from "@/db/schema/users";
+
 import { likes, users } from "@/db/schema/users";
 import { pgTable } from "@/db/shared/pgTable";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/services/post/constants";
@@ -8,17 +9,17 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable("Post", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  parentId: uuid("parentId"),
   creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  title: text("title").notNull().default(""),
-  description: text("description").notNull().default(""),
-  noLikes: integer("noLikes").notNull().default(0),
-  noComments: integer("noComments").notNull().default(0),
   depth: integer("depth").notNull().default(0),
+  description: text("description").notNull().default(""),
+  id: uuid("id").primaryKey().defaultRandom(),
+  noComments: integer("noComments").notNull().default(0),
+  noLikes: integer("noLikes").notNull().default(0),
+  parentId: uuid("parentId"),
   ranking: doublePrecision("ranking").notNull(),
+  title: text("title").notNull().default(""),
 });
 
 export type Post = typeof posts.$inferSelect;
@@ -27,21 +28,21 @@ export const PostRelations = {
   creator: true,
   likes: true,
 } as const;
-export type PostWithRelations = Post & { creator: User; likes: Like[] };
+export type PostWithRelations = { creator: User; likes: Like[] } & Post;
 
 export const selectPostSchema = createSelectSchema(posts, {
-  title: z.string().max(POST_TITLE_MAX_LENGTH),
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
+  title: z.string().max(POST_TITLE_MAX_LENGTH),
 });
 
-export const postsRelations = relations(posts, ({ one, many }) => ({
-  parent: one(posts, {
-    fields: [posts.parentId],
-    references: [posts.id],
-  }),
+export const postsRelations = relations(posts, ({ many, one }) => ({
   creator: one(users, {
     fields: [posts.creatorId],
     references: [users.id],
   }),
   likes: many(likes),
+  parent: one(posts, {
+    fields: [posts.parentId],
+    references: [posts.id],
+  }),
 }));

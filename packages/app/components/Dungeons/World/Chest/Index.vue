@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { useAnimations } from "@/lib/phaser/composables/useAnimations";
 import type { Chest } from "@/models/dungeons/data/world/Chest";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import type { Position } from "grid-engine";
 
+import Sprite from "@/lib/phaser/components/Sprite.vue";
+import { useAnimations } from "@/lib/phaser/composables/useAnimations";
+import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+
 interface ChestProps {
-  position: Position;
   chest: Chest;
+  position: Position;
 }
 
-const { position, chest } = defineProps<ChestProps>();
+const { chest, position } = defineProps<ChestProps>();
 const startFrame = 18 * 32 + 19;
 const endFrame = 18 * 32 + 21;
 // Reactivity will be handled by animations
 const frame = chest.isOpened ? endFrame : startFrame;
 const animations = useAnimations((scene) => [
   {
-    key: TilesetKey.Dungeon,
-    frames: scene.anims.generateFrameNumbers(TilesetKey.Dungeon, { start: startFrame, end: endFrame }),
-    frameRate: 16,
-    repeat: 0,
     delay: 0,
+    frameRate: 16,
+    frames: scene.anims.generateFrameNumbers(TilesetKey.Dungeon, { end: endFrame, start: startFrame }),
+    key: TilesetKey.Dungeon,
+    repeat: 0,
   },
 ]);
 const playAnimationKey = ref<TilesetKey>();

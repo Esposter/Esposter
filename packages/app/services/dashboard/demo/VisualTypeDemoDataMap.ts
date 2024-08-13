@@ -1,8 +1,13 @@
+import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+
 import { AreaPropsData } from "@/assets/dashboard/demo/data/AreaPropsData";
 import { BarPropsData } from "@/assets/dashboard/demo/data/BarPropsData";
 import { BoxPlotPropsData } from "@/assets/dashboard/demo/data/BoxPlotPropsData";
+import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { CandlestickPropsData } from "@/assets/dashboard/demo/data/CandlestickPropsData";
 import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
+import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
 import { LinePropsData } from "@/assets/dashboard/demo/data/LinePropsData";
 import { PiePropsData } from "@/assets/dashboard/demo/data/PiePropsData";
@@ -13,12 +18,8 @@ import { RangeAreaPropsData } from "@/assets/dashboard/demo/data/RangeAreaPropsD
 import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsData";
 import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
 import { SlopePropsData } from "@/assets/dashboard/demo/data/SlopePropsData";
-import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
-import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import { TreemapPropsDataMap } from "@/assets/dashboard/demo/data/treemap/TreemapPropsDataMap";
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { VisualType } from "@/models/dashboard/VisualType";
-import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import { getVisualPropsData } from "@/services/dashboard/demo/getVisualPropsData";
 
 export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) => VisualPropsData> = {

@@ -4,11 +4,11 @@ import type { TMXPropertiesParsed } from "@/models/tmx/parsed/TMXPropertiesParse
 import type { TMXObjectShared } from "@/models/tmx/shared/TMXObjectShared";
 
 export interface TMXObjectParsed extends TMXObjectShared {
-  name: string;
-  value: string;
-  shape: Shape;
-  points?: [number, number][];
-  text?: string;
   flips?: TMXFlipsParsed;
+  name: string;
+  points?: [number, number][];
   properties?: TMXPropertiesParsed;
+  shape: Shape;
+  text?: string;
+  value: string;
 }

@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
-import { useSettingsStore } from "@/store/dungeons/settings";
 import type { Position } from "grid-engine";
 
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { useSettingsStore } from "@/store/dungeons/settings";
+import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+
 interface ExperienceBarProps {
-  position: Position;
-  width?: number;
-  scaleY?: number;
   barPercentage: number;
+  position: Position;
+  scaleY?: number;
+  width?: number;
 }
 
-const { position, width = 372, scaleY = 0.4, barPercentage: baseBarPercentage } = defineProps<ExperienceBarProps>();
+const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = 372 } = defineProps<ExperienceBarProps>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
@@ -32,8 +33,8 @@ const barPercentage = computed(() =>
    2. If we are NOT leveling up, we want to reset isSkipAnimations trigger after the tween animation has finished -->
   <DungeonsUIBarContainer
     :type="BarType.Experience"
-    :position
-    :width
+    :position="position"
+    :width="width"
     :scale-y="scaleY"
     :bar-percentage="barPercentage"
     :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp"

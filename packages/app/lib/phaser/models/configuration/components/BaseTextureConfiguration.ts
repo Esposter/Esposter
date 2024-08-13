@@ -1,4 +1,4 @@
 export interface BaseTextureConfiguration {
+  frame: number | string;
   texture: string;
-  frame: string | number;
 }

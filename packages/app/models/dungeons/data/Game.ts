@@ -1,8 +1,9 @@
 import type { Save } from "@/models/dungeons/data/Save";
+import type { Except } from "type-fest";
+
 import { saveSchema } from "@/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/settings/Settings";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import type { Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {

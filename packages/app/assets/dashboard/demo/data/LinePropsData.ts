@@ -1,12 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const LinePropsData = {
-  series: [
-    {
-      name: "Desktops",
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
-    },
-  ],
   options: {
     grid: {
       row: {
@@ -21,4 +15,10 @@ export const LinePropsData = {
       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     },
   },
+  series: [
+    {
+      data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+      name: "Desktops",
+    },
+  ],
 } as const satisfies VisualPropsData;

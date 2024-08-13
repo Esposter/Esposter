@@ -1,31 +1,32 @@
 <script setup lang="ts">
+import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Position } from "grid-engine";
+import type { Types } from "phaser";
+
 import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { useAnimations } from "@/lib/phaser/composables/useAnimations";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
-import type { Position } from "grid-engine";
-import type { Types } from "phaser";
 import { Animations } from "phaser";
 
 interface AttackProps {
-  spritesheetKey: SpritesheetKey;
-  isToEnemy: boolean;
   configuration:
     | {
         // Position can be inferred if we know that the attack is just a base sprite
         type: AttackGameObjectType.Sprite;
       }
     | {
-        type: AttackGameObjectType.Container;
         position?: Partial<Position>;
+        type: AttackGameObjectType.Container;
       };
   createAnimationConfigurations?: (scene: SceneWithPlugins) => Types.Animations.Animation[];
+  isToEnemy: boolean;
   playAnimationKey?: SpritesheetKey;
+  spritesheetKey: SpritesheetKey;
 }
 
-const { spritesheetKey, isToEnemy, configuration, createAnimationConfigurations, playAnimationKey } =
+const { configuration, createAnimationConfigurations, isToEnemy, playAnimationKey, spritesheetKey } =
   defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const frame = ref<number>();

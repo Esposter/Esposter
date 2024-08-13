@@ -1,8 +1,9 @@
 import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(currentId: Ref<string | null>) => {
+export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(currentId: Ref<null | string>) => {
   // @TODO: Vue cannot unwrap generic refs yet
   const cursorPaginationDataMap = ref(new Map()) as Ref<Map<string, CursorPaginationData<TItem>>>;
   const cursorPaginationData = computed({
@@ -42,10 +43,10 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(curren
   };
 
   return {
-    itemList,
-    nextCursor,
     hasMore,
     initializeCursorPaginationData,
+    itemList,
+    nextCursor,
     resetCursorPaginationData,
   };
 };

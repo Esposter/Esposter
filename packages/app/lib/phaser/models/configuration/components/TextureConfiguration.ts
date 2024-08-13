@@ -4,5 +4,5 @@ import type { GameObjects } from "phaser";
 import type { Except } from "type-fest";
 
 export type TextureConfiguration = ExcludeFunctionProperties<
-  Except<GameObjects.Components.Texture, keyof BaseTextureConfiguration> & BaseTextureConfiguration
+  BaseTextureConfiguration & Except<GameObjects.Components.Texture, keyof BaseTextureConfiguration>
 >;

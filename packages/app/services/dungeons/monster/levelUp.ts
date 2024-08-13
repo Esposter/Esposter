@@ -1,4 +1,5 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
+
 import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";
 import { generateRandomInteger } from "@/util/math/random/generateRandomInteger";
 

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { GameObjects } from "phaser";
+import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
+
 import Image from "@/lib/phaser/components/Image.vue";
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { useInputStore } from "@/lib/phaser/store/input";
@@ -7,8 +10,6 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
-import type { GameObjects } from "phaser";
-import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
@@ -22,11 +23,11 @@ watch([base, thumb], ([newBase, newThumb]) => {
 
   const scene = getScene(sceneKey);
   virtualJoystick.value = scene.virtualJoystickPlugin.add(scene, {
+    base: newBase,
+    radius: JOYSTICK_RADIUS,
+    thumb: newThumb,
     x: getJoystickX(),
     y: getJoystickY(scene),
-    radius: JOYSTICK_RADIUS,
-    base: newBase,
-    thumb: newThumb,
   });
 });
 

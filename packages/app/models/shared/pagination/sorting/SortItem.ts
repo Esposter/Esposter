@@ -1,4 +1,5 @@
 import type { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
+
 import { sortOrderSchema } from "@/models/shared/pagination/sorting/SortOrder";
 import { z } from "zod";
 

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
+import Image from "@/lib/phaser/components/Image.vue";
+
 interface LeftCapProps {
   imagePosition: ImagePosition;
-  texture: ImageKey;
   scaleY: number;
+  texture: ImageKey;
 }
 
-const { imagePosition, texture, scaleY } = defineProps<LeftCapProps>();
+const { imagePosition, scaleY, texture } = defineProps<LeftCapProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
 const isVisible = computed(() => (displayWidth.value ?? 0) > 0);
 </script>

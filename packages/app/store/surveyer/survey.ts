@@ -1,6 +1,7 @@
 import type { Survey } from "@/db/schema/surveys";
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
+
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
@@ -9,12 +10,16 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { itemList, ...restData } = createOffsetPaginationData<Survey>();
   const {
     createSurvey: storeCreateSurvey,
-    updateSurvey: storeUpdateSurvey,
     deleteSurvey: storeDeleteSurvey,
+    updateSurvey: storeUpdateSurvey,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Survey);
-  const searchQuery = ref("");
-  const totalItemsLength = ref(0);
+
+  const autoSave = async (survey: Survey) => {
+    survey.modelVersion++;
+    // Surveyjs needs to know whether the save was successful with a boolean
+    return Boolean(await $client.survey.updateSurvey.mutate(survey));
+  };
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $client.survey.createSurvey.mutate(input);
@@ -35,20 +40,18 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
 
     storeDeleteSurvey(deletedSurvey.id);
   };
-  const autoSave = async (survey: Survey) => {
-    survey.modelVersion++;
-    // Surveyjs needs to know whether the save was successful with a boolean
-    return Boolean(await $client.survey.updateSurvey.mutate(survey));
-  };
+
+  const searchQuery = ref("");
+  const totalItemsLength = ref(0);
 
   return {
+    ...restData,
     ...restOperationData,
+    autoSave,
+    createSurvey,
+    deleteSurvey,
     searchQuery,
     totalItemsLength,
-    createSurvey,
     updateSurvey,
-    deleteSurvey,
-    ...restData,
-    autoSave,
   };
 });

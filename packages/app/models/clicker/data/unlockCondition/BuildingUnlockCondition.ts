@@ -1,16 +1,17 @@
-import { ItemType } from "@/models/clicker/data/ItemType";
 import type { BuildingId } from "@/models/clicker/data/building/BuildingId";
+
 import { buildingIdSchema } from "@/models/clicker/data/building/BuildingId";
+import { ItemType } from "@/models/clicker/data/ItemType";
 import { z } from "zod";
 
 export interface BuildingUnlockCondition {
+  amount: number;
   id: BuildingId;
   type: ItemType.Building;
-  amount: number;
 }
 
 export const buildingUnlockConditionSchema = z.object({
+  amount: z.number().int(),
   id: buildingIdSchema,
   type: z.literal(ItemType.Building),
-  amount: z.number().int(),
 }) satisfies z.ZodType<BuildingUnlockCondition>;

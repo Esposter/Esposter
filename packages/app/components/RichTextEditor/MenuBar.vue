@@ -2,6 +2,7 @@
 import type { IsDivider } from "@/models/richTextEditor/IsDivider";
 import type { MenuItem } from "@/models/richTextEditor/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
+
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
@@ -11,37 +12,37 @@ interface MenuBarProps {
 const { editor } = defineProps<MenuBarProps>();
 const items = computed<MenuItem[]>(() => [
   {
-    icon: "mdi-format-bold",
-    title: "Bold",
-    onClick: () => editor?.chain().focus().toggleBold().run(),
     active: editor?.isActive("bold"),
+    icon: "mdi-format-bold",
+    onClick: () => editor?.chain().focus().toggleBold().run(),
+    title: "Bold",
   },
   {
-    icon: "mdi-format-italic",
-    title: "Italic",
-    onClick: () => editor?.chain().focus().toggleItalic().run(),
     active: editor?.isActive("italic"),
+    icon: "mdi-format-italic",
+    onClick: () => editor?.chain().focus().toggleItalic().run(),
+    title: "Italic",
   },
   {
-    icon: "mdi-format-strikethrough-variant",
-    title: "Strike",
-    onClick: () => editor?.chain().focus().toggleStrike().run(),
     active: editor?.isActive("strike"),
+    icon: "mdi-format-strikethrough-variant",
+    onClick: () => editor?.chain().focus().toggleStrike().run(),
+    title: "Strike",
   },
   {
     isDivider: true,
   },
   {
-    icon: "mdi-format-list-bulleted",
-    title: "Bullet List",
-    onClick: () => editor?.chain().focus().toggleBulletList().run(),
     active: editor?.isActive("bulletList"),
+    icon: "mdi-format-list-bulleted",
+    onClick: () => editor?.chain().focus().toggleBulletList().run(),
+    title: "Bullet List",
   },
   {
-    icon: "mdi-format-list-numbered",
-    title: "Ordered List",
-    onClick: () => editor?.chain().focus().toggleOrderedList().run(),
     active: editor?.isActive("orderedList"),
+    icon: "mdi-format-list-numbered",
+    onClick: () => editor?.chain().focus().toggleOrderedList().run(),
+    title: "Ordered List",
   },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;

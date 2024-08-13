@@ -1,4 +1,5 @@
 import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+
 import { compileVariable } from "@/services/clicker/compiler/compileVariable";
 import { VARIABLE_REGEX } from "@/services/clicker/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";

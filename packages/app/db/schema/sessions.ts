@@ -4,11 +4,11 @@ import { relations } from "drizzle-orm";
 import { text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const sessions = pgTable("Session", {
+  expires: timestamp("expires", { mode: "date" }).notNull(),
   sessionToken: text("sessionToken").primaryKey(),
   userId: uuid("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

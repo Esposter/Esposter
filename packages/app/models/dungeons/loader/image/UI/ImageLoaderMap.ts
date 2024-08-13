@@ -1,5 +1,6 @@
-import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
-import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
+
 import blueButton from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
 import blueButtonSelected from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
 import barHorizontalBlueLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
@@ -15,12 +16,12 @@ import customUI from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansio
 import glassPanel from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanel.png";
 import glassPanelGreen from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelGreen.png";
 import glassPanelPurple from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
+import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
+import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
 import { ImageKey } from "@/models/dungeons/keys/image/UI/ImageKey";
 import { BallLoaderMap } from "@/models/dungeons/loader/image/UI/BallLoaderMap";
 import { ControlsLoaderMap } from "@/models/dungeons/loader/image/UI/ControlsLoaderMap";
 import { MonsterLoaderMap } from "@/models/dungeons/loader/image/UI/MonsterLoaderMap";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Loader } from "phaser";
 
 export const ImageLoaderMap = {
   [ImageKey.BarLeftCapShadow]: (scene) => scene.load.image(ImageKey.BarLeftCapShadow, barHorizontalShadowLeft),

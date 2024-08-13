@@ -1,9 +1,10 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { JoystickControls } from "@/lib/phaser/models/input/JoystickControls";
 import { KeyboardControls } from "@/lib/phaser/models/input/KeyboardControls";
 import { usePhaserStore } from "@/lib/phaser/store";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import isMobile from "is-mobile";
 
 export const useInitializeControls = (scene: SceneWithPlugins) => {

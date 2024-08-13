@@ -1,21 +1,18 @@
 import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
+import type { ApexOptions } from "apexcharts";
+import type { z } from "zod";
+
 import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
 import { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
-import type { ApexOptions } from "apexcharts";
 import { defu } from "defu";
-import type { z } from "zod";
 
 export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {
     super(ChartType.Basic);
   }
-  // This is our base resolver that's always active
-  override isActive() {
-    return true;
-  }
 
-  override handleConfiguration(apexOptions: ApexOptions, { title, subtitle, dataLabels }: T) {
+  override handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
     apexOptions.chart = defu(
       {
         zoom: {
@@ -46,5 +43,10 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
 
   override handleSchema(schema: z.AnyZodObject) {
     return schema.merge(basicChartConfigurationSchema);
+  }
+
+  // This is our base resolver that's always active
+  override isActive() {
+    return true;
   }
 }

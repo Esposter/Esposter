@@ -1,6 +1,7 @@
-// @ts-expect-error We can ignore configuration files that will error at build time if they're wrong
-import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
 import type { NuxtConfig } from "nuxt/schema";
+
+// @ts-expect-error We can ignore these configuration files as they will error at build time if they're wrong
+import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export const vite: NuxtConfig["vite"] = {

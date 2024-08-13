@@ -6,8 +6,8 @@ import type { TMXLayerShared } from "@/models/tmx/shared/TMXLayerShared";
 
 export interface TMXLayerParsed extends TMXLayerShared {
   data?: number[];
-  image?: TMXImageParsed;
   flips?: TMXFlipsParsed[];
+  image?: TMXImageParsed;
   objects?: TMXObjectParsed[];
   properties?: TMXPropertiesParsed;
 }

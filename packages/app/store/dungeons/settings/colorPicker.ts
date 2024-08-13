@@ -1,4 +1,5 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
 import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -27,8 +28,8 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
   const isUpdateThemeModeSetting = (input: PlayerInput, settingsOption: SettingsOption): input is Direction =>
     settingsOption === SettingsOption["Theme Mode"] && (input === Direction.LEFT || input === Direction.RIGHT);
   return {
+    isUpdateThemeModeSetting,
     themeModeSetting,
     updateThemeModeSetting,
-    isUpdateThemeModeSetting,
   };
 });

@@ -1,6 +1,8 @@
 import type { ShapeConfiguration } from "@/lib/phaser/models/configuration/shared/ShapeConfiguration";
 import type { ShapeEventEmitsOptions } from "@/lib/phaser/models/emit/shared/ShapeEventEmitsOptions";
 import type { SetterMap } from "@/lib/phaser/models/setterMap/SetterMap";
+import type { GameObjects } from "phaser";
+
 import { AlphaSingleSetterMap } from "@/lib/phaser/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/lib/phaser/util/setterMap/components/BlendModeSetterMap";
 import { DepthSetterMap } from "@/lib/phaser/util/setterMap/components/DepthSetterMap";
@@ -10,7 +12,6 @@ import { PipelineSetterMap } from "@/lib/phaser/util/setterMap/components/Pipeli
 import { ScrollFactorSetterMap } from "@/lib/phaser/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/lib/phaser/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/lib/phaser/util/setterMap/components/VisibleSetterMap";
-import type { GameObjects } from "phaser";
 
 export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,
@@ -26,16 +27,16 @@ export const ShapeSetterMap = {
     if (value === undefined) return;
     gameObject.setActive(value);
   },
-  displayWidth: (gameObject) => (value) => {
-    if (value === undefined) return;
-    gameObject.setDisplaySize(value, gameObject.displayHeight);
-  },
   displayHeight: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setDisplaySize(gameObject.displayWidth, value);
   },
-  fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
+  displayWidth: (gameObject) => (value) => {
+    if (value === undefined) return;
+    gameObject.setDisplaySize(value, gameObject.displayHeight);
+  },
   fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
+  fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
   strokeStyle: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setStrokeStyle(...value);

@@ -1,17 +1,18 @@
-import type { Target } from "@/models/clicker/data/Target";
-import { targetSchema } from "@/models/clicker/data/Target";
 import type { EffectConfiguration } from "@/models/clicker/data/effect/EffectConfiguration";
+import type { Target } from "@/models/clicker/data/Target";
+
 import { effectConfigurationSchema } from "@/models/clicker/data/effect/EffectConfiguration";
+import { targetSchema } from "@/models/clicker/data/Target";
 import { z } from "zod";
 
 export interface Effect {
-  value: number;
-  targets: Target[];
   configuration: EffectConfiguration;
+  targets: Target[];
+  value: number;
 }
 
 export const effectSchema = z.object({
-  value: z.number(),
-  targets: z.array(targetSchema).min(1),
   configuration: effectConfigurationSchema,
+  targets: z.array(targetSchema).min(1),
+  value: z.number(),
 }) satisfies z.ZodType<Effect>;

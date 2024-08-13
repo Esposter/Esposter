@@ -28,7 +28,6 @@ export default {
     ...tseslint.configs.stylisticTypeChecked.map((c) => {
       const rules = c.rules ?? {};
       delete rules["@typescript-eslint/no-empty-function"];
-      delete rules["@typescript-eslint/no-empty-interface"];
       return rules;
     }),
   ),

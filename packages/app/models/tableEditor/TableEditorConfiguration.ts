@@ -1,12 +1,13 @@
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import type { Item } from "@/models/tableEditor/Item";
-import { TableEditor, createTableEditorSchema } from "@/models/tableEditor/TableEditor";
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import type { Except } from "type-fest";
+
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { createTableEditorSchema, TableEditor } from "@/models/tableEditor/TableEditor";
+import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
+import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
 
 type TableEditorTypes = {

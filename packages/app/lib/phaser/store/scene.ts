@@ -1,5 +1,6 @@
-import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import type { ListenersMap } from "@/lib/phaser/models/lifecycle/ListenersMap";
+
+import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 
 export const ExternalSceneStore = {

@@ -3,6 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
+
+
+### Bug Fixes
+
+* types ([1c1b0ad](https://github.com/Esposter/Esposter/commit/1c1b0ad8acace1b05cf0af45e1901911b85a7d46))
+
+
+### Features
+
+* Add monster party menu ([93201aa](https://github.com/Esposter/Esposter/commit/93201aa5fd84a14b3a23b2d7d0e91b1620ddf957))
+* Add moving monsters ([fe838a7](https://github.com/Esposter/Esposter/commit/fe838a72e6424e51f18ece3934bb25f072607ce6))
+* Add summary + remove unnecessary select ([a5d86f3](https://github.com/Esposter/Esposter/commit/a5d86f3a971611e3b54b6bc432995edf9b1c7b66))
+* Add UI to show monsters ([ea8349e](https://github.com/Esposter/Esposter/commit/ea8349e34d75cb7d9c013e33cb2c0f5f434c16ce))
+* fix up and refactor out input resolvers for world + add input resolvers for monster party ([3622eea](https://github.com/Esposter/Esposter/commit/3622eeac9ff8ce2d662a1e2214a91cfd1deaca6d))
+
+
+
+
+
+# [1.16.0](https://github.com/Esposter/Esposter/compare/v1.15.0...v1.16.0) (2024-08-01)
+
+
+### Bug Fixes
+
+* actually update ref value during tween ([af735a8](https://github.com/Esposter/Esposter/commit/af735a8266c7d3f4ceef856b2353aa949c05c3b8))
+* Add back disable ([6414478](https://github.com/Esposter/Esposter/commit/64144789738731ee2b4d29b76fe2413c8859d6cd))
+* Add file ([6aa1e36](https://github.com/Esposter/Esposter/commit/6aa1e3608328981e4cabf56f7b284b9b7aea3618))
+* Add fragment ([88c14da](https://github.com/Esposter/Esposter/commit/88c14daa7090b2e690c9033e1b94362445d587d5))
+* button bg color + positions ([352d916](https://github.com/Esposter/Esposter/commit/352d916c2cd125bfe9e384725cbc793553a2b517))
+* change to use function call for perf ([6c7615c](https://github.com/Esposter/Esposter/commit/6c7615c3c0c71932e9c6eb1bfc98544715ef9bca))
+* don't use global item in func ([debb772](https://github.com/Esposter/Esposter/commit/debb772b10a23cef2391fc6494ed3e191721d1e5))
+* ensure tweening from correct pos ([dfe82df](https://github.com/Esposter/Esposter/commit/dfe82dfccc80a82a3b527021a03c55a9b21ed4c5))
+* event handler names ([9934d8f](https://github.com/Esposter/Esposter/commit/9934d8f2eebd92f944364049564a18b515d8fc5f))
+* icon ([408f0a7](https://github.com/Esposter/Esposter/commit/408f0a7e225f48d9a2937b13ba22c578450af824))
+* ignore ([9fba0db](https://github.com/Esposter/Esposter/commit/9fba0dbb21dc650c7dc89cdecf8b035fc361869e))
+* more fixes to position since I'm stoopid ([7087ef0](https://github.com/Esposter/Esposter/commit/7087ef02efe3e76e4d2db680e7311a35b7e5b37e))
+* move container further ([6df5b1e](https://github.com/Esposter/Esposter/commit/6df5b1e343abdb07620c409dbdf50a036e41e141))
+* move to left ([86e3293](https://github.com/Esposter/Esposter/commit/86e32938143e5dd74a802444431b4145e8fecdcf))
+* no idea why but we don't need to specify width/height.. ok thanks ([9c80bac](https://github.com/Esposter/Esposter/commit/9c80bacc115965295698343ff81c91a1f184c612))
+* positions ([d84db19](https://github.com/Esposter/Esposter/commit/d84db19f1d56c13f35fdd5c927ff085d95aee620))
+* positions anyways ([3c29bc4](https://github.com/Esposter/Esposter/commit/3c29bc41c41d8c94b25a93a4a2b04656384cce8d))
+* remove bounds since we allow zoom ([8214743](https://github.com/Esposter/Esposter/commit/8214743810263ad1e43831c39ec4243e44210ec0))
+* resetting monster switching ([a9d854a](https://github.com/Esposter/Esposter/commit/a9d854ab0762d405599fa2bb4c384620b3ab57c0))
+* revert back to sync properly with ref ([efde677](https://github.com/Esposter/Esposter/commit/efde677ae1fd6af467a9e64d57b210b0438e0cd1))
+* revert back vue renderer changes ([2530770](https://github.com/Esposter/Esposter/commit/25307709416afdd78b81692b88a5455ab786e3dd))
+* still coalesce to undefined ([1e77219](https://github.com/Esposter/Esposter/commit/1e772195a6e2112d4a2c699481e4676d0717c3ad))
+* switch active monster instead of replacing it ([504b91a](https://github.com/Esposter/Esposter/commit/504b91a10fdc525676669c9b988d2c696555dfa4))
+* tell ts it's fine ([8b79d4b](https://github.com/Esposter/Esposter/commit/8b79d4b4d5eec5c6d4bf0bd790e79278600a00fb))
+* tween should be on x ([4a6dc76](https://github.com/Esposter/Esposter/commit/4a6dc767928993e3149b00d6b7b5050168c3079d))
+* update getting ref from vue renderer ([5914d53](https://github.com/Esposter/Esposter/commit/5914d53e9db75c2ebae6cb5951d1e2d8cd72c91f))
+* update on skip animations ([cab02ac](https://github.com/Esposter/Esposter/commit/cab02ac5910824ea2af299aea046ea02d78ddd3d))
+* use move instead ([dc457db](https://github.com/Esposter/Esposter/commit/dc457db3d7b465f6e5483a8daf0523949fbcf80a))
+* use onComplete instead of onUpdate to improve perf ([b995739](https://github.com/Esposter/Esposter/commit/b995739aad735b4df32c66cfb52e13c8b5d55180))
+* vnode ([a1e20fa](https://github.com/Esposter/Esposter/commit/a1e20fa3cf7f0edf4672191f0553b70eb855f49a))
+* weird but seems like we don't need to disable here ([a98b051](https://github.com/Esposter/Esposter/commit/a98b05118ea816f8326c552019e216c3754099ae))
+
+
+### Features
+
+* Add animate ([718a5dc](https://github.com/Esposter/Esposter/commit/718a5dcb878ebb29ecfa4bcfcd82b4f2f29f089c))
+* Add azunyan! C: ([d7e95ec](https://github.com/Esposter/Esposter/commit/d7e95ec29eb78c4ae9db322caf56d00cb260b7c3))
+* Add ball assets ([5cf6c74](https://github.com/Esposter/Esposter/commit/5cf6c745538f7b36d5f9b0a3f8147b2cdf00d722))
+* Add better UX to add info dialog message and don't jump straight back ([b41771f](https://github.com/Esposter/Esposter/commit/b41771f1a709095dc618132ffb4e6e300ee80a87))
+* Add crazy ass math function anime drawing ([5060eac](https://github.com/Esposter/Esposter/commit/5060eac87ea3ca5a2d30f1161b98c95052c4b225))
+* Add expressions ([40c2adc](https://github.com/Esposter/Esposter/commit/40c2adc113621afa39d67899c16a644d3f46e41f))
+* Add insane way to render vue components inside a custom html container ([4df88bc](https://github.com/Esposter/Esposter/commit/4df88bcfc0a0fe78504ac4ca7cb485d16cca41ff))
+* Add interactable calendar ([1f69e13](https://github.com/Esposter/Esposter/commit/1f69e13c294a9ac4d9c76423edcc168bc1bcbd37))
+* Add monster info container disappear tween ([2633dec](https://github.com/Esposter/Esposter/commit/2633dec21ef7f57bc9ca8ed1600b54580b8e8e0f))
+* Add switching monsters ([1f7b151](https://github.com/Esposter/Esposter/commit/1f7b15188676f8a84a6b7c95de1eacdc59d2d2f4))
+* Add switching monsters ([8bb7ab9](https://github.com/Esposter/Esposter/commit/8bb7ab984bf5f8062007786921bd71c67a7e2c01))
+* Add yui ([90bc76a](https://github.com/Esposter/Esposter/commit/90bc76a4f4648d14afac99a145c46fbcca5d1dd0))
+* move animate button behind expressions list menu ([e1b3495](https://github.com/Esposter/Esposter/commit/e1b349500a19155218b588659a8864243f6cf62b))
+* Optimise to use interval instead of timeout ([ce52c6d](https://github.com/Esposter/Esposter/commit/ce52c6de785a6544e1ddd23fe45dd67bb357b832))
+
+
+
+
+
+
 # [1.15.0](https://github.com/Esposter/Esposter/compare/v1.14.0...v1.15.0) (2024-07-01)
 
 

@@ -1,18 +1,19 @@
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
-import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
 import type { Item } from "@/models/tableEditor/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+
+import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
 
 class NullItem extends ATableEditorItemEntity implements ItemEntityType<string> {
   type = "None";
 }
 
 const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
-  value: "None",
-  title: "None",
+  create: () => new NullItem(),
   icon: "mdi-help",
   targetTypeKey: "type",
-  create: () => new NullItem(),
+  title: "None",
+  value: "None",
 };
 
 export const getItemCategoryDefinition = <TItem extends Item>(

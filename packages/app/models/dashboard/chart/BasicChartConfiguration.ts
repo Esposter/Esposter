@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export class BasicChartConfiguration {
-  title?: string;
-  subtitle?: string;
   dataLabels?: boolean;
+  subtitle?: string;
+  title?: string;
 }
 
 export const basicChartConfigurationSchema = z.object({
-  title: z.string().default(""),
-  subtitle: z.string().default(""),
   dataLabels: z.boolean().default(false),
+  subtitle: z.string().default(""),
+  title: z.string().default(""),
 }) satisfies z.ZodType<BasicChartConfiguration>;

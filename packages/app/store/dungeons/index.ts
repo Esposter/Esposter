@@ -1,9 +1,10 @@
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { usePhaserStore } from "@/lib/phaser/store";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { dayjs } from "@/services/dayjs";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
@@ -42,5 +43,5 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     });
   };
 
-  return { game, saveGame, save, saveData, fadeSwitchToScene };
+  return { fadeSwitchToScene, game, save, saveData, saveGame };
 });

@@ -14,8 +14,8 @@ export const useLayoutStore = defineStore("layout", () => {
   // mobile initial state can only be detected on client side so we skip SSR picking it up
   return {
     leftDrawerOpen: skipHydrate(leftDrawerOpen),
-    rightDrawerOpen: skipHydrate(rightDrawerOpen),
     leftDrawerOpenAuto: skipHydrate(leftDrawerOpenAuto),
+    rightDrawerOpen: skipHydrate(rightDrawerOpen),
     rightDrawerOpenAuto: skipHydrate(rightDrawerOpenAuto),
   };
 });

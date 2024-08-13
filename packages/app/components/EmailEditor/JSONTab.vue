@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
 import type { TabItem } from "@/models/vuetify/TabItem";
+import type { EditorView } from "@codemirror/view";
+
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { useEmailEditorStore } from "@/store/emailEditor";
-import type { EditorView } from "@codemirror/view";
 import mjml2html from "mjml-browser";
 import { Codemirror } from "vue-codemirror";
 
@@ -29,6 +30,6 @@ const editorView = shallowRef<EditorView>();
 
 <template>
   <v-tabs-window-item :value="item.value">
-    <Codemirror v-model="json" :extensions disabled @ready="({ view }) => (editorView = view)" />
+    <Codemirror v-model="json" :extensions="extensions" disabled @ready="({ view }) => (editorView = view)" />
   </v-tabs-window-item>
 </template>

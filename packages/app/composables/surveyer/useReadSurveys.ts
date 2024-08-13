@@ -1,27 +1,28 @@
 import type { Survey } from "@/db/schema/surveys";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
+
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 export const useReadSurveys = async () => {
   const { $client } = useNuxtApp();
   const surveyStore = useSurveyStore();
   const { initializeOffsetPaginationData } = surveyStore;
-  const { surveyList, hasMore, totalItemsLength } = storeToRefs(surveyStore);
+  const { hasMore, surveyList, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
   const readMoreSurveys = async ({
-    page,
     itemsPerPage,
+    page,
     sortBy,
   }: {
-    page: number;
     itemsPerPage: number;
+    page: number;
     sortBy: SortItem<keyof Survey>[];
   }) => {
     isLoading.value = true;
     try {
       const response = await $client.survey.readSurveys.query({
-        offset: (page - 1) * itemsPerPage,
         limit: itemsPerPage,
+        offset: (page - 1) * itemsPerPage,
         sortBy,
       });
       surveyList.value = response.items;

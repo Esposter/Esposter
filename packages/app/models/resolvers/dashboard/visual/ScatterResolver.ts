@@ -1,6 +1,7 @@
+import type { ApexOptions } from "apexcharts";
+
 import { VisualType } from "@/models/dashboard/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
-import type { ApexOptions } from "apexcharts";
 import defu from "defu";
 
 export class ScatterResolver extends AVisualTypeResolver {

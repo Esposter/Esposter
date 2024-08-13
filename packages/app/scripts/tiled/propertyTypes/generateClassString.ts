@@ -1,7 +1,8 @@
-import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectProperty";
 import type { ImportTypeLine } from "@/scripts/models/ImportTypeLine";
 import type { InterfaceProperty } from "@/scripts/models/InterfaceProperty";
+
+import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { DIRECTORY } from "@/scripts/tiled/propertyTypes/constants";
 import { ROOT_DIRECTORY } from "@/scripts/tiled/util/constants";
 import { generateImportTypeLinesString } from "@/scripts/util/generateImportTypeLinesString";

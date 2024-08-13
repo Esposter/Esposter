@@ -1,6 +1,7 @@
+import type { WatchCallback, WatchStopHandle } from "vue";
+
 import { dayjs } from "@/services/dayjs";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import type { WatchCallback, WatchStopHandle } from "vue";
 
 describe("Watch Tracker", () => {
   const source = ref("");

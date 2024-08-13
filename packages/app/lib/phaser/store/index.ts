@@ -1,7 +1,8 @@
-import { useGame } from "@/lib/phaser/composables/useGame";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Game } from "phaser";
+
+import { useGame } from "@/lib/phaser/composables/useGame";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // @NOTE: A very weird bug will occur here with setInteractive input priority
@@ -14,7 +15,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
-  const sceneKey = ref<SceneKey | null>(null);
+  const sceneKey = ref<null | SceneKey>(null);
   // When we access the root scene key from outside components, it should already be initialized
   const rootSceneKey = sceneKey as Ref<SceneKey>;
   const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
@@ -52,11 +53,11 @@ export const usePhaserStore = defineStore("phaser", () => {
 
   return {
     game,
-    rootSceneKey,
     isSameScene,
-    switchToScene,
-    parallelSceneKeys,
     launchParallelScene,
+    parallelSceneKeys,
     removeParallelScene,
+    rootSceneKey,
+    switchToScene,
   };
 });

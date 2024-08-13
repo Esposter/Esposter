@@ -1,25 +1,26 @@
 <script setup lang="ts">
+import type { Monster } from "@/models/dungeons/monster/Monster";
+
 import Container from "@/lib/phaser/components/Container.vue";
 import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
 
 interface PanelListItemProps {
-  rowIndex: number;
   columnIndex: number;
   monster: Monster;
+  rowIndex: number;
 }
 
-const { rowIndex, columnIndex, monster } = defineProps<PanelListItemProps>();
+const { columnIndex, monster, rowIndex } = defineProps<PanelListItemProps>();
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { optionGrid } = storeToRefs(monsterPartySceneStore);
-const onGridClick = useOnGridClick(optionGrid, () => ({ x: columnIndex, y: rowIndex }));
-const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, optionGrid.value.position));
+const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
+const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.value.position));
 const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) * 100);
 </script>
 

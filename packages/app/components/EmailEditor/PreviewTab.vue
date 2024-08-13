@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EmailEditorTabItemCategoryDefinition } from "@/models/emailEditor/EmailEditorTabItemCategoryDefinition";
 import type { TabItem } from "@/models/vuetify/TabItem";
+
 import { useEmailEditorStore } from "@/store/emailEditor";
 import mjml2html from "mjml-browser";
 

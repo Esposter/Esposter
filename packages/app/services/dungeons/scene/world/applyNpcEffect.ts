@@ -1,7 +1,8 @@
 import type { Effect } from "@/models/dungeons/npc/effect/Effect";
-import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
+
+import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import { dayjs } from "@/services/dayjs";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
@@ -23,7 +24,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         const { showMessages } = worldDialogStore;
         await showMessages(
           scene,
-          effect.messages.map((text) => ({ title: npc.name, text })),
+          effect.messages.map((text) => ({ text, title: npc.name })),
           onComplete,
         );
       }

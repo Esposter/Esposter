@@ -1,11 +1,12 @@
 import type { TilemapFile } from "@/lib/phaser/models/plugins/TilemapFile";
+import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
+import type { Types } from "phaser";
+
 import { TilesetFile } from "@/lib/phaser/models/plugins/TilesetFile";
 import { ID_SEPARATOR } from "@/util/id/constants";
 import { isPlainObject } from "@/util/object/isPlainObject";
 import { InvalidOperationError, NotFoundError, Operation, parseXmlString } from "@esposter/shared";
-import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import { parseTileset } from "parse-tmx";
-import type { Types } from "phaser";
 import { Loader, Tilemaps, Utils } from "phaser";
 
 const GetFastValue = Utils.Objects.GetFastValue;
@@ -17,10 +18,10 @@ export class TiledJSONExternalFile extends MultiFile {
 
   constructor(
     loader: Loader.LoaderPlugin,
-    key: string | object,
-    tilemapURL?: string | object,
-    path?: string | object,
-    baseURL?: string | object,
+    key: object | string,
+    tilemapURL?: object | string,
+    path?: object | string,
+    baseURL?: object | string,
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
@@ -40,6 +41,36 @@ export class TiledJSONExternalFile extends MultiFile {
     this.config.path = path;
     this.config.baseURL = baseURL;
     this.config.tilesetXhrSettings = tilesetXhrSettings;
+  }
+
+  async addToCache() {
+    if (!this.isReadyToProcess()) return;
+
+    const [tilemapFile, ...tilesetFiles] = this.files;
+    for (const tilesetFile of tilesetFiles) {
+      const response = tilesetFile.xhrLoader?.responseText;
+      if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
+
+      const responseData = await parseXmlString(response);
+      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
+      const index = tilesetFile.tilesetIndex;
+      tilemapFile.data.tilesets[index] = {
+        ...tilemapFile.data.tilesets[index],
+        ...tilesetData,
+        imageheight: tilesetData.image.height,
+        imagewidth: tilesetData.image.width,
+        // Avoid throwing in tilemap creator
+        source: undefined,
+      };
+    }
+
+    this.loader.cacheManager.tilemap.add(tilemapFile.key, {
+      data: tilemapFile.data,
+      format: Tilemaps.Formats.TILED_JSON,
+    });
+    this.complete = true;
+
+    for (const file of this.files) file.pendingDestroy();
   }
 
   override onFileComplete(file: TilemapFile) {
@@ -89,35 +120,5 @@ export class TiledJSONExternalFile extends MultiFile {
       loader.setPath(currentPath);
       loader.setPrefix(currentPrefix);
     }
-  }
-
-  async addToCache() {
-    if (!this.isReadyToProcess()) return;
-
-    const [tilemapFile, ...tilesetFiles] = this.files;
-    for (const tilesetFile of tilesetFiles) {
-      const response = tilesetFile.xhrLoader?.responseText;
-      if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
-
-      const responseData = await parseXmlString(response);
-      const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
-      const index = tilesetFile.tilesetIndex;
-      tilemapFile.data.tilesets[index] = {
-        ...tilemapFile.data.tilesets[index],
-        ...tilesetData,
-        imagewidth: tilesetData.image.width,
-        imageheight: tilesetData.image.height,
-        // Avoid throwing in tilemap creator
-        source: undefined,
-      };
-    }
-
-    this.loader.cacheManager.tilemap.add(tilemapFile.key, {
-      format: Tilemaps.Formats.TILED_JSON,
-      data: tilemapFile.data,
-    });
-    this.complete = true;
-
-    for (const file of this.files) file.pendingDestroy();
   }
 }

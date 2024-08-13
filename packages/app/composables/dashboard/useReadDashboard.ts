@@ -1,9 +1,10 @@
+import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
+
 import { Dashboard } from "@/models/dashboard/Dashboard";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useDashboardStore } from "@/store/dashboard";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
 import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {

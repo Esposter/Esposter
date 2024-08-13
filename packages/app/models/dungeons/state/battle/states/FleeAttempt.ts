@@ -1,5 +1,6 @@
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import type { State } from "@/models/dungeons/state/State";
+
+import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";

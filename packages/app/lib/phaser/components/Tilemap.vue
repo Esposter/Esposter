@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Tilemaps, Types } from "phaser";
+
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { getScene } from "@/lib/phaser/util/getScene";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Tilemaps, Types } from "phaser";
 
 interface TilemapProps {
   configuration: Types.Tilemaps.TilemapConfig;

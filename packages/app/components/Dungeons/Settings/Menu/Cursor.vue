@@ -4,7 +4,7 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { optionGrid } = storeToRefs(settingsSceneStore);
-const { y, width, ...configuration } = useSettingsCursorDimensions(() => optionGrid.value.position.y);
+const { width, y, ...configuration } = useSettingsCursorDimensions(() => optionGrid.value.position.y);
 </script>
 
 <template>

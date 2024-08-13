@@ -1,5 +1,6 @@
-import { npcs } from "@/assets/dungeons/data/npcs";
 import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
+
+import { npcs } from "@/assets/dungeons/data/npcs";
 import { NotFoundError } from "@esposter/shared";
 
 export const getNpc = (npcId: NpcId) => {

@@ -9,12 +9,12 @@ if (event) setResponseStatus(event, 404);
 onMounted(() => {
   gsap.to(".hover", {
     duration: 3,
+    ease: "sine.inOut",
+    repeat: -1,
+    rotation: gsap.utils.random(-20, 20),
     x: gsap.utils.random(5, 10),
     y: gsap.utils.random(10, 100),
-    rotation: gsap.utils.random(-20, 20),
-    ease: "sine.inOut",
     yoyo: true,
-    repeat: -1,
   });
 });
 </script>

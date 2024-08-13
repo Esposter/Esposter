@@ -1,6 +1,6 @@
 export class DialogMessage {
-  title?: string;
   text = "";
+  title?: string;
 
   constructor(init?: Partial<DialogMessage>) {
     Object.assign(this, init);

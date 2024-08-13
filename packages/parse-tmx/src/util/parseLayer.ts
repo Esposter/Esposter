@@ -1,5 +1,6 @@
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+
 import { parseObject } from "@/util/parseObject";
 import { parseProperties } from "@/util/parseProperties";
 

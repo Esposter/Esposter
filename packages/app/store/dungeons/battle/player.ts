@@ -1,23 +1,28 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import { Grid } from "@/models/dungeons/Grid";
 import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { Position } from "grid-engine";
+
+import { Grid } from "@/models/dungeons/Grid";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
+import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { PlayerOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerOptionGrid";
 import { usePlayerStore } from "@/store/dungeons/player";
-import type { Position } from "grid-engine";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
-  const activeMonsterIndex = ref(0);
+  const activeMonsterIndex = ref(player.value.monsters.findIndex((m) => !isMonsterFainted(m)));
   const activeMonster = computed({
     get: () => player.value.monsters[activeMonsterIndex.value],
     set: (newActiveMonster) => {
       player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
-  const isActiveMonsterFainted = computed(() => activeMonster.value.status.hp <= 0);
-  const initialMonsterPosition = Object.freeze<Position>({ x: -100, y: 316 });
+  const switchActiveMonster = (id: string) => {
+    activeMonsterIndex.value = player.value.monsters.findIndex((m) => m.id === id);
+  };
+
+  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
   const monsterPosition = ref({ ...initialMonsterPosition });
   const monsterTween = ref<TweenBuilderConfiguration>();
   const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
@@ -26,33 +31,32 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const takeDamage = useTakeDamage(false);
   const optionGrid = ref(PlayerOptionGrid);
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
-  const attackOptionGrid = ref() as Ref<
-    Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>
-  >;
 
-  watch(
-    attacks,
-    (newAttacks) => {
-      attackOptionGrid.value = new Grid([
-        [newAttacks[0], newAttacks[1]],
-        [newAttacks[2], newAttacks[3]],
-      ]);
-    },
-    { immediate: true },
-  );
+  const createAttackOptionGrid = (
+    newAttacks: Attack[],
+  ): Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]> =>
+    new Grid([
+      [newAttacks[0], newAttacks[1]],
+      [newAttacks[2], newAttacks[3]],
+    ]);
+  const attackOptionGrid = ref(createAttackOptionGrid(attacks.value));
+
+  watch(attacks, (newAttacks) => {
+    attackOptionGrid.value = createAttackOptionGrid(newAttacks);
+  });
 
   return {
     activeMonster,
-    isActiveMonsterFainted,
-    initialMonsterPosition,
-    monsterPosition,
-    monsterTween,
+    attackOptionGrid,
+    attacks,
     initialMonsterInfoContainerPosition,
+    initialMonsterPosition,
     monsterInfoContainerPosition,
     monsterInfoContainerTween,
-    takeDamage,
+    monsterPosition,
+    monsterTween,
     optionGrid,
-    attacks,
-    attackOptionGrid,
+    switchActiveMonster,
+    takeDamage,
   };
 });

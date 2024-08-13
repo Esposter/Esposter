@@ -35,10 +35,10 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   };
 
   return {
+    createEmoji,
+    deleteEmoji,
     getEmojiList,
     setEmojiList,
-    createEmoji,
     updateEmoji,
-    deleteEmoji,
   };
 });

@@ -1,8 +1,9 @@
-import { VisualType } from "@/models/dashboard/VisualType";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { Except } from "type-fest";
+
+import { VisualType } from "@/models/dashboard/VisualType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { prettifyName } from "@/util/text/prettifyName";
-import type { Except } from "type-fest";
 
 const VisualTypeItemCategoryDefinitionMap = Object.values(VisualType).reduce(
   (acc, curr) => {

@@ -1,1 +1,1 @@
-export type OnComplete = () => void | Promise<void>;
+export type OnComplete = () => Promise<void> | void;

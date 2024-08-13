@@ -8,7 +8,7 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
-const { currentRoomId, roomList, currentRoomName, roomSearchQuery } = storeToRefs(roomStore);
+const { currentRoomId, currentRoomName, roomList, roomSearchQuery } = storeToRefs(roomStore);
 const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
 const route = useRoute();
 const roomId = route.params.id;

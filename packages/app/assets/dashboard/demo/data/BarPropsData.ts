@@ -1,11 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const BarPropsData = {
-  series: [
-    {
-      data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
-    },
-  ],
   options: {
     plotOptions: {
       bar: {
@@ -29,4 +24,9 @@ export const BarPropsData = {
       ],
     },
   },
+  series: [
+    {
+      data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
+    },
+  ],
 } as const satisfies VisualPropsData;

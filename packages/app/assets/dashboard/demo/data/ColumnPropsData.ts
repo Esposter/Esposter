@@ -1,34 +1,20 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const ColumnPropsData = {
-  series: [
-    {
-      name: "Net Profit",
-      data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-    },
-    {
-      name: "Revenue",
-      data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-    },
-    {
-      name: "Free Cash Flow",
-      data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-    },
-  ],
   options: {
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "55%",
-      },
-    },
     fill: {
       opacity: 1,
     },
+    plotOptions: {
+      bar: {
+        columnWidth: "55%",
+        horizontal: false,
+      },
+    },
     stroke: {
+      colors: ["transparent"],
       show: true,
       width: 2,
-      colors: ["transparent"],
     },
     tooltip: {
       y: {
@@ -44,4 +30,18 @@ export const ColumnPropsData = {
       },
     },
   },
+  series: [
+    {
+      data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+      name: "Net Profit",
+    },
+    {
+      data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+      name: "Revenue",
+    },
+    {
+      data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+      name: "Free Cash Flow",
+    },
+  ],
 } as const satisfies VisualPropsData;

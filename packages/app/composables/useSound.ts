@@ -1,5 +1,6 @@
 import type { ComposableOptions } from "@/models/sound/ComposableOptions";
 import type { PlayOptions } from "@/models/sound/PlayOptions";
+
 import { dayjs } from "@/services/dayjs";
 import { Howl } from "howler";
 
@@ -7,10 +8,10 @@ const cache = new Map<string, Howl>();
 
 export const useSound = (
   src: string,
-  { volume = 1, rate = 1, soundEnabled = true, interrupt, autoplay, onload, ...rest }: ComposableOptions = {},
+  { autoplay, interrupt, onload, rate = 1, soundEnabled = true, volume = 1, ...rest }: ComposableOptions = {},
 ) => {
   const sound = ref<Howl | null>(null);
-  const duration = ref<number | null>(null);
+  const duration = ref<null | number>(null);
   const isPlaying = ref<boolean>(false);
 
   function handleLoad(this: ComposableOptions) {
@@ -26,7 +27,7 @@ export const useSound = (
       return;
     }
 
-    howl = new Howl({ src, volume: unref(volume), rate: unref(rate), onload: handleLoad, ...rest });
+    howl = new Howl({ onload: handleLoad, rate: unref(rate), src, volume: unref(volume), ...rest });
     sound.value = howl;
     cache.set(src, sound.value);
   });
@@ -47,7 +48,7 @@ export const useSound = (
     },
   );
 
-  const play = ({ id, rate, forceSoundEnabled }: PlayOptions = {}) => {
+  const play = ({ forceSoundEnabled, id, rate }: PlayOptions = {}) => {
     if (!sound.value || !(soundEnabled || forceSoundEnabled)) return;
     if (interrupt) sound.value.stop();
     if (rate) sound.value.rate(rate);
@@ -72,11 +73,11 @@ export const useSound = (
   };
 
   return {
-    sound,
     duration,
     isPlaying,
-    play,
     pause,
+    play,
+    sound,
     stop,
   };
 };

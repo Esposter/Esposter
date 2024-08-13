@@ -1,8 +1,9 @@
+import type { GameObjects } from "phaser";
+
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
-import type { GameObjects } from "phaser";
 
 export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const playerStore = usePlayerStore();
@@ -10,7 +11,7 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const worldSceneStore = useWorldSceneStore();
   const { switchToTilemap } = worldSceneStore;
   const respawn = async () => {
-    const { tilemapKey, position, direction } = structuredClone(toDeepRaw(player.value.respawnLocation));
+    const { direction, position, tilemapKey } = structuredClone(toDeepRaw(player.value.respawnLocation));
     await switchToTilemap(tilemapKey);
     phaserEventEmitter.emit("playerTeleport", position, direction);
   };
@@ -21,9 +22,9 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const sprite = ref<GameObjects.Sprite>();
   const isMoving = ref(false);
   return {
-    respawn,
     healParty,
-    sprite,
     isMoving,
+    respawn,
+    sprite,
   };
 });

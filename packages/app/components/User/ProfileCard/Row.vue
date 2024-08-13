@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import type { Row } from "@/models/user/ProfileCard/Row";
+
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
 export interface UserProfileCardRowProps {
-  title: string;
-  row: Row;
   editMode: boolean;
+  row: Row;
+  title: string;
 }
 
 // This is the edited row value
-const modelValue = defineModel<string | null>({ required: true });
-const { title, row, editMode } = defineProps<UserProfileCardRowProps>();
+const modelValue = defineModel<null | string>({ required: true });
+const { editMode, row, title } = defineProps<UserProfileCardRowProps>();
 
 watch(
   () => editMode,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{
@@ -7,8 +8,8 @@ defineSlots<{
 }>();
 
 const tableEditorStore = useTableEditorStore<TodoListItem>()();
-const { save, resetItem } = tableEditorStore;
-const { editedItem, editFormDialog, editFormRef, originalItem, isEditFormValid, isFullScreenDialog, isSavable } =
+const { resetItem, save } = tableEditorStore;
+const { editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
   storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : null));
 </script>
@@ -28,11 +29,11 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       v-if="editedItem"
       v-model="editFormDialog"
       :name="originalItem?.name ?? ''"
-      :edited-item
-      :original-item
-      :is-edit-form-valid
-      :is-full-screen-dialog
-      :is-savable
+      :edited-item="editedItem"
+      :original-item="originalItem"
+      :is-edit-form-valid="isEditFormValid"
+      :is-full-screen-dialog="isFullScreenDialog"
+      :is-savable="isSavable"
       @update:edit-form-ref="(value) => (editFormRef = value)"
       @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
       @save="save()"

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
-import { TypeRendererMap } from "@/models/esbabbler/file/TypeRendererMap";
-import { getLanguageForFileUrl } from "@/services/codemirror/getLanguageForFileUrl";
 import type { Component } from "vue";
 
-const { url, mimetype } = defineProps<FileRendererProps>();
+import { TypeRendererMap } from "@/models/esbabbler/file/TypeRendererMap";
+import { getLanguageForFileUrl } from "@/services/codemirror/getLanguageForFileUrl";
+
+const { mimetype, url } = defineProps<FileRendererProps>();
 const language = computed(() => getLanguageForFileUrl(url));
-const rendererProps = ref<FileRendererProps & Record<string, unknown>>({ url, mimetype, language });
+const rendererProps = ref<FileRendererProps & Record<string, unknown>>({ language, mimetype, url });
 const renderer = computed<Component>(() => {
   if (mimetype in TypeRendererMap) return TypeRendererMap[mimetype];
 

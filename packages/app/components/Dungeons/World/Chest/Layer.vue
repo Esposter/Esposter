@@ -18,6 +18,6 @@ const chestEntries = computed(() =>
       x: position.x * ExternalWorldSceneStore.tilemap.tileWidth,
       y: position.y * ExternalWorldSceneStore.tilemap.tileHeight,
     }"
-    :chest
+    :chest="chest"
   />
 </template>

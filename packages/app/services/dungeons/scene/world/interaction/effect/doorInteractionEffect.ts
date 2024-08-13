@@ -1,9 +1,10 @@
+import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
+import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
+
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/TeleportObjectProperty";
-import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
 import { useCameraStore } from "@/lib/phaser/store/camera";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -36,7 +37,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
       throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
 
     const doorObjects = getObjects(doorObjectLayer);
-    for (const { x, y, properties } of doorObjects) {
+    for (const { properties, x, y } of doorObjects) {
       const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(properties, TeleportObjectProperty.id);
       if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;
 

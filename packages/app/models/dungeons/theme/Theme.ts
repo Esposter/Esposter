@@ -1,4 +1,4 @@
 export interface Theme {
-  primary: number;
   border: number;
+  primary: number;
 }

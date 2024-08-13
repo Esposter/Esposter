@@ -1,4 +1,5 @@
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
+
 import { extractFirstWordFromPascalCaseString } from "@/scripts/util/extractFirstWordFromPascalCaseString";
 
 export const getTilemapDirectory = (tilemapKey: TilemapKey) => {

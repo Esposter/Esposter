@@ -8,7 +8,7 @@ export const getOffsetPaginationData = <TItem extends ItemMetadata>(
   const hasMore = items.length > limit;
   const filteredItems = hasMore ? items.slice(0, limit) : items;
   return {
-    items: filteredItems,
     hasMore,
+    items: filteredItems,
   };
 };

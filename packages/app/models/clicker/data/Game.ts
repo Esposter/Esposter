@@ -1,19 +1,20 @@
-import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerType";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
-import { buildingWithStatsSchema } from "@/models/clicker/data/building/BuildingWithStats";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { Except } from "type-fest";
+
+import { buildingWithStatsSchema } from "@/models/clicker/data/building/BuildingWithStats";
+import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerType";
 import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import type { Except } from "type-fest";
 import { z } from "zod";
 
 class BaseGame {
-  id: string = crypto.randomUUID();
-  type = ClickerType.Default;
-  noPoints = 0;
-  boughtUpgrades: Upgrade[] = [];
   boughtBuildings: BuildingWithStats[] = [];
+  boughtUpgrades: Upgrade[] = [];
+  id: string = crypto.randomUUID();
+  noPoints = 0;
+  type = ClickerType.Default;
 
   toJSON() {
     return JSON.stringify({ ...this });
@@ -25,10 +26,10 @@ export const Game = applyItemMetadataMixin(BaseGame);
 
 export const gameSchema = z
   .object({
-    id: z.string().uuid(),
-    type: clickerTypeSchema,
-    noPoints: z.number(),
-    boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
     boughtBuildings: z.array(buildingWithStatsSchema),
+    boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
+    id: z.string().uuid(),
+    noPoints: z.number(),
+    type: clickerTypeSchema,
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;

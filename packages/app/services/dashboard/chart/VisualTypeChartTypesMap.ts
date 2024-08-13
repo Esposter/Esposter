@@ -1,5 +1,5 @@
-import { VisualType } from "@/models/dashboard/VisualType";
 import { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import { VisualType } from "@/models/dashboard/VisualType";
 
 const commonChartTypes: ChartType[] = [ChartType.Basic];
 

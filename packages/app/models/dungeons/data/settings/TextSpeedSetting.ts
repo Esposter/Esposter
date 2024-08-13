@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export enum TextSpeedSetting {
-  Slow = "Slow",
-  Mid = "Mid",
   Fast = "Fast",
+  Mid = "Mid",
+  Slow = "Slow",
 }
 
 export const textSpeedSettingSchema = z.nativeEnum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;

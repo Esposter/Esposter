@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { Survey } from "@/db/schema/surveys";
+import type { VCard } from "vuetify/components";
+
 import { DEFAULT_NAME } from "@/services/shared/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import type { VCard } from "vuetify/components";
 
 interface CreateSurveyDialogProps {
-  initialValue?: Pick<Survey, "name" | "group" | "model">;
   cardProps?: VCard["$props"];
+  initialValue?: Pick<Survey, "group" | "model" | "name">;
 }
 
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
 }>();
-const { initialValue = { name: DEFAULT_NAME, group: null, model: "" }, cardProps } =
+const { cardProps, initialValue = { group: null, model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();
 const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;

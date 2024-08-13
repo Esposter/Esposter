@@ -1,5 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+import { BASE_URL } from "../services/desmos/constants";
+
 export const security: NuxtConfig["security"] = {
   headers: {
     contentSecurityPolicy: {
@@ -12,8 +14,8 @@ export const security: NuxtConfig["security"] = {
         process.env.AZURE_BLOB_URL,
       ],
       "script-src": "'unsafe-eval'",
-      "script-src-elem": ["'unsafe-inline'", process.env.BASE_URL],
-      "worker-src": "blob:",
+      "script-src-elem": ["'unsafe-inline'", process.env.BASE_URL, BASE_URL],
+      "worker-src": ["blob:", process.env.BASE_URL],
     },
     crossOriginEmbedderPolicy: "unsafe-none",
   },

@@ -2,11 +2,11 @@
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 
 interface UpgradeListGroupProps {
-  upgrades: Upgrade[];
   isBought?: true;
+  upgrades: Upgrade[];
 }
 
-const { upgrades, isBought } = defineProps<UpgradeListGroupProps>();
+const { isBought, upgrades } = defineProps<UpgradeListGroupProps>();
 const hasUpgrades = computed(() => upgrades.length > 0);
 </script>
 

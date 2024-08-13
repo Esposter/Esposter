@@ -2,12 +2,12 @@
 import type { Survey } from "@/db/schema/surveys";
 
 interface CloneSurveyDialogButton {
-  name: Survey["name"];
   group: Survey["group"];
   model: Survey["model"];
+  name: Survey["name"];
 }
 
-const { name, group, model } = defineProps<CloneSurveyDialogButton>();
+const { group, model, name } = defineProps<CloneSurveyDialogButton>();
 </script>
 
 <template>

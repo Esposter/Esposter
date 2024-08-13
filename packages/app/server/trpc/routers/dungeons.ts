@@ -24,7 +24,7 @@ export const dungeonsRouter = router({
       return new Game();
     }
   }),
-  saveGame: authedProcedure.input(gameSchema).mutation(async ({ input, ctx }) => {
+  saveGame: authedProcedure.input(gameSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

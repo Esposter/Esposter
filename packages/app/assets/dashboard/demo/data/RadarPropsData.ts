@@ -1,12 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const RadarPropsData = {
-  series: [
-    {
-      name: "Series 1",
-      data: [80, 50, 30, 40, 100, 20],
-    },
-  ],
   options: {
     xaxis: {
       categories: ["January", "February", "March", "April", "May", "June"],
@@ -15,4 +9,10 @@ export const RadarPropsData = {
       stepSize: 20,
     },
   },
+  series: [
+    {
+      data: [80, 50, 30, 40, 100, 20],
+      name: "Series 1",
+    },
+  ],
 } as const satisfies VisualPropsData;

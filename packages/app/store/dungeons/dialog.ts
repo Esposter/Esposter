@@ -1,10 +1,11 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { OnComplete } from "@/models/shared/OnComplete";
-import { SHOW_MESSAGE_SCENE_EVENT_KEY } from "@/services/phaser/constants";
+
+import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
@@ -67,7 +68,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     // Tell other components like the dialog that we're ready to show our message
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key}`);
+    phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
     if (isSkipAnimations.value) {
       const textDelay = useTextDelay();
@@ -105,7 +106,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     onComplete?: OnComplete,
   ) => {
     target.reset();
-    phaserEventEmitter.emit(`${SHOW_MESSAGE_SCENE_EVENT_KEY}${scene.scene.key}`);
+    phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
     if (isSkipAnimations.value) {
       target.setMessage(message);
@@ -129,12 +130,12 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   };
 
   return {
-    inputPromptCursorX,
+    handleShowMessageInput,
     inputPromptCursorDisplayWidth,
+    inputPromptCursorX,
     isInputPromptCursorVisible,
     isWaitingForPlayerSpecialInput,
-    handleShowMessageInput,
-    updateQueuedMessagesAndShowMessage,
     showMessageNoInputRequired,
+    updateQueuedMessagesAndShowMessage,
   };
 });

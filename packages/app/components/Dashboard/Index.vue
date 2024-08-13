@@ -4,7 +4,7 @@ import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
-const { visualList, noColumns } = storeToRefs(visualStore);
+const { noColumns, visualList } = storeToRefs(visualStore);
 // The main dashboard shouldn't actually modify any persisted data
 const layout = ref(structuredClone(toDeepRaw(visualList.value)));
 </script>
@@ -20,8 +20,8 @@ const layout = ref(structuredClone(toDeepRaw(visualList.value)));
       :is-resizable="false"
       responsive
     >
-      <GridItem v-for="{ id, type, chart, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisual :type :chart />
+      <GridItem v-for="{ id, type, chart, x, y, w, h } in visualList" :key="id" :i="id" :x="x" :y="y" :w="w" :h="h">
+        <DashboardVisual :type="type" :chart="chart" />
       </GridItem>
     </GridLayout>
   </v-container>

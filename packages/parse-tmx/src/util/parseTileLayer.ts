@@ -1,7 +1,8 @@
-import { Compression } from "@/models/Compression";
-import { Encoding } from "@/models/Encoding";
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
+
+import { Compression } from "@/models/Compression";
+import { Encoding } from "@/models/Encoding";
 import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
 import { parseFlips } from "@/util/parseFlips";
 import { parseProperties } from "@/util/parseProperties";
@@ -27,8 +28,8 @@ export const parseTileLayer = async (
   if (isTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {
     // Csv, Base64
-    const { $, _ } = nodeData;
-    const { encoding, compression } = $;
+    const { _, $ } = nodeData;
+    const { compression, encoding } = $;
     const layerData = _.trim();
 
     switch (encoding) {

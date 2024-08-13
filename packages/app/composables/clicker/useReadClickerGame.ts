@@ -1,9 +1,10 @@
+import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
+
 import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
 import { useClickerStore } from "@/store/clicker";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
 import deepEqual from "fast-deep-equal";
 
 export const useReadClickerGame = async () => {

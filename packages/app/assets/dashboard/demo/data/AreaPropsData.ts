@@ -1,9 +1,22 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const AreaPropsData = {
+  options: {
+    legend: {
+      horizontalAlign: "left",
+    },
+    stroke: {
+      curve: "straight",
+    },
+    xaxis: {
+      type: "datetime",
+    },
+    yaxis: {
+      opposite: true,
+    },
+  },
   series: [
     {
-      name: "STOCK ABC",
       data: [
         { x: new Date("2017/11/13").getTime(), y: 8107.85 },
         { x: new Date("2017/11/14").getTime(), y: 8128 },
@@ -26,20 +39,7 @@ export const AreaPropsData = {
         { x: new Date("2017/12/07").getTime(), y: 8881.1 },
         { x: new Date("2017/12/08").getTime(), y: 9340.85 },
       ],
+      name: "STOCK ABC",
     },
   ],
-  options: {
-    legend: {
-      horizontalAlign: "left",
-    },
-    stroke: {
-      curve: "straight",
-    },
-    xaxis: {
-      type: "datetime",
-    },
-    yaxis: {
-      opposite: true,
-    },
-  },
 } as const satisfies VisualPropsData;

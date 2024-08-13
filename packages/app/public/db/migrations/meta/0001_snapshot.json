@@ -1,5 +1,5 @@
 {
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "public.Account": {
@@ -753,5 +753,6 @@
     "columns": {}
   },
   "id": "8d6afcb6-6b17-4326-904f-578606f47303",
-  "prevId": "3613102f-eb61-4123-b4f5-c17bc18b0782"
+  "prevId": "3613102f-eb61-4123-b4f5-c17bc18b0782",
+  "sequences": {}
 }

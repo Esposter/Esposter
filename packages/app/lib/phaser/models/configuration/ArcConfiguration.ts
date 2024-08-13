@@ -2,8 +2,8 @@ import type { ShapeConfiguration } from "@/lib/phaser/models/configuration/share
 import type { GameObjects } from "phaser";
 
 export type ArcConfiguration = {
-  radius: GameObjects.Arc["radius"];
   closePath: GameObjects.Arc["closePath"];
-  startAngle: GameObjects.Arc["startAngle"];
   endAngle: GameObjects.Arc["endAngle"];
+  radius: GameObjects.Arc["radius"];
+  startAngle: GameObjects.Arc["startAngle"];
 } & ShapeConfiguration;

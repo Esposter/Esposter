@@ -1,20 +1,30 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import Scene from "@/lib/phaser/components/Scene.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { useMonsterPartyInputStore } from "@/store/dungeons/monsterParty/input";
+import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
-const monsterPartyInputStore = useMonsterPartyInputStore();
-const { onPlayerInput } = monsterPartyInputStore;
+const inputResolvers = getActiveInputResolvers();
+
+const update = async (scene: SceneWithPlugins) => {
+  const justDownInput = controls.value.getInput(true);
+  const input = controls.value.getInput();
+
+  for (const inputResolver of inputResolvers) if (await inputResolver.handleInput(scene, justDownInput, input)) return;
+};
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterParty" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
+  <Scene :scene-key="SceneKey.MonsterParty" @update="update">
     <DungeonsMonsterPartyBackground />
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
+    <DungeonsMonsterPartyMenu />
+    <DungeonsMonsterPartyMenuConfirmation />
   </Scene>
 </template>

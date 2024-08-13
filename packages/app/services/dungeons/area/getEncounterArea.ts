@@ -1,5 +1,6 @@
-import { encounterAreas } from "@/assets/dungeons/data/encounterAreas";
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
+
+import { encounterAreas } from "@/assets/dungeons/data/encounterAreas";
 import { NotFoundError } from "@esposter/shared";
 
 export const getEncounterArea = (area: Area) => {

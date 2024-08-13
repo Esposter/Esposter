@@ -19,7 +19,7 @@ describe("Table Editor Store", () => {
     const itemStore = useItemStore();
     const { createItem } = itemStore;
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
-    const { editedItem, editedIndex, editFormDialog } = storeToRefs(tableEditorStore);
+    const { editedIndex, editedItem, editFormDialog } = storeToRefs(tableEditorStore);
     const { editItem } = tableEditorStore;
     const newItem = new TodoListItem();
     createItem(newItem);
@@ -52,7 +52,7 @@ describe("Table Editor Store", () => {
 
   test("save new item", async () => {
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
-    const { tableEditor, editedItem, editFormDialog } = storeToRefs(tableEditorStore);
+    const { editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
     const { save } = tableEditorStore;
     const newItem = new TodoListItem();
     editedItem.value = newItem;
@@ -69,7 +69,7 @@ describe("Table Editor Store", () => {
 
   test("save update item", async () => {
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
-    const { tableEditor, editedItem, editFormDialog } = storeToRefs(tableEditorStore);
+    const { editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
     const { createItem } = itemStore;
@@ -91,7 +91,7 @@ describe("Table Editor Store", () => {
 
   test("save delete item", async () => {
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
-    const { tableEditor, editFormDialog } = storeToRefs(tableEditorStore);
+    const { editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
     const { createItem } = itemStore;
@@ -111,7 +111,7 @@ describe("Table Editor Store", () => {
   test("reset item", async () => {
     const router = useRouter();
     const tableEditorStore = useTableEditorStore<TodoListItem>()();
-    const { editedItem, editedIndex } = storeToRefs(tableEditorStore);
+    const { editedIndex, editedItem } = storeToRefs(tableEditorStore);
     const { resetItem } = tableEditorStore;
 
     expect(editedItem.value).toStrictEqual(null);

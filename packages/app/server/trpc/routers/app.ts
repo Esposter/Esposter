@@ -1,9 +1,8 @@
-import { router } from "@/server/trpc";
-import { rateLimitedProcedure } from "@/server/trpc/procedure";
+import { publicProcedure, router } from "@/server/trpc";
 import { getCommitCount } from "@/util/github/getCommitCount";
 
 const buildVersion = await getCommitCount();
 
 export const appRouter = router({
-  buildVersion: rateLimitedProcedure.query(() => buildVersion),
+  buildVersion: publicProcedure.query(() => buildVersion),
 });

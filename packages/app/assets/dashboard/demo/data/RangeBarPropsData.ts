@@ -1,6 +1,16 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const RangeBarPropsData = {
+  options: {
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
+    xaxis: {
+      type: "datetime",
+    },
+  },
   series: [
     {
       data: [
@@ -23,14 +33,4 @@ export const RangeBarPropsData = {
       ],
     },
   ],
-  options: {
-    plotOptions: {
-      bar: {
-        horizontal: true,
-      },
-    },
-    xaxis: {
-      type: "datetime",
-    },
-  },
 } as const satisfies VisualPropsData;

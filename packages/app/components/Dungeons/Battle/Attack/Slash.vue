@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
+
+import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 
 const { isToEnemy } = defineProps<AttackProps>();

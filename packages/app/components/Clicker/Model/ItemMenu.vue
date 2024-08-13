@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import type { ItemType } from "@/models/clicker/data/ItemType";
-import { Target } from "@/models/clicker/data/Target";
 import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
+import type { ItemType } from "@/models/clicker/data/ItemType";
 import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+
+import { Target } from "@/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 import { VMenu } from "vuetify/components";
 
-type ItemMenuProps = { type: ItemType; isAffordable: boolean; menuProps: VMenu["$props"] } & Pick<
-  Upgrade | BuildingWithStats,
-  "id"
+type ItemMenuProps = { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType } & Partial<
+  Pick<BuildingWithStats, "amount">
 > &
-  Pick<Upgrade, "flavorDescription" | "price"> &
   Partial<Pick<Upgrade, "description">> &
-  Partial<Pick<BuildingWithStats, "amount">>;
+  Pick<BuildingWithStats | Upgrade, "id"> &
+  Pick<Upgrade, "flavorDescription" | "price">;
 
-const { type, isAffordable, menuProps, id, description, flavorDescription, price, amount } =
+const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
 const slots = defineSlots<{
-  "append-text"?: (props: Record<string, never>) => unknown;
   action?: (props: Record<string, never>) => unknown;
+  "append-text"?: (props: Record<string, never>) => unknown;
 }>();
 const { error } = useColors();
 const descriptionHtml = computed(() => (description ? marked.parse(description) : ""));

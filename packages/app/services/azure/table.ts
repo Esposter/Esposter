@@ -1,12 +1,13 @@
 import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@/models/azure/table";
-import { dayjs } from "@/services/dayjs";
-import { now } from "@/util/time/now";
 import type { TupleSlice } from "@/util/types/TupleSlice";
 import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
+import type { Constructor } from "type-fest";
+
+import { dayjs } from "@/services/dayjs";
+import { now } from "@/util/time/now";
 import { TableClient } from "@azure/data-tables";
 import { plainToInstance } from "class-transformer";
-import type { Constructor } from "type-fest";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -61,7 +62,7 @@ export const getEntity = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   cls: Constructor<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
-): Promise<TEntity | null> => {
+): Promise<null | TEntity> => {
   try {
     const entity = await tableClient.getEntity<TEntity>(...args);
     return plainToInstance(cls, entity);
@@ -80,7 +81,7 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
   const iterator = listResults.byPage({ maxPageSize: topN });
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  const firstPage = (await iterator.next()).value as (TEntity | string)[] | null;
+  const firstPage = (await iterator.next()).value as (string | TEntity)[] | null;
   if (!firstPage) return [];
   // Filter out metadata like continuation token
   // before deserializing the json to handle transforming Date objects

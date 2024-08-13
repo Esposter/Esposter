@@ -6,6 +6,7 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -19,11 +20,11 @@ const { controls } = storeToRefs(inputStore);
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartySceneStore = useMonsterPartySceneStore();
-const { optionGrid } = storeToRefs(monsterPartySceneStore);
+const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
 const infoPanelStore = useInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
 const rectangleHeight = 65;
-const cancelButtonActive = computed(() => optionGrid.value.value === PlayerSpecialInput.Cancel);
+const cancelButtonActive = computed(() => monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();
 
 onCreate((scene) => {
@@ -35,7 +36,7 @@ watch(
   (newCancelButtonActive) => {
     // We will keep info text as a ref as it can be set by other things
     // e.g. when using items
-    infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : "Choose a monster.";
+    infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
   },
   { immediate: true },
 );

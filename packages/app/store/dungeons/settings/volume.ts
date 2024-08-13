@@ -1,11 +1,12 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type Slider from "phaser3-rex-plugins/plugins/slider";
+
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
 import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
-import type Slider from "phaser3-rex-plugins/plugins/slider";
 
 export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const settingsStore = useSettingsStore();
@@ -25,8 +26,8 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const updateVolume = async (direction: Direction, delta: number) => {
     volumeDelta.value += delta / dayjs.duration(1, "second").asMilliseconds();
     const incrementSpeed = step(volumeDelta.value, [
-      { threshold: 1, speed: 0.1 },
-      { threshold: 3, speed: 0.5 },
+      { speed: 0.1, threshold: 1 },
+      { speed: 0.5, threshold: 3 },
       { speed: 1 },
     ]);
     const increment = 1;
@@ -57,10 +58,10 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   };
 
   return {
-    volumePercentage,
-    volumeSlider,
+    isUpdateVolume,
     setVolume,
     updateVolume,
-    isUpdateVolume,
+    volumePercentage,
+    volumeSlider,
   };
 });

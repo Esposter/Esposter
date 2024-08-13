@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export class FileEntity {
-  url!: string;
-
   mimetype!: string;
+
+  url!: string;
 }
 
-export const fileSchema = z.object({ url: z.string(), mimetype: z.string() }) satisfies z.ZodType<FileEntity>;
+export const fileSchema = z.object({ mimetype: z.string(), url: z.string() }) satisfies z.ZodType<FileEntity>;

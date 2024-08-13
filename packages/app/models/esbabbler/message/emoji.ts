@@ -1,5 +1,6 @@
-import { selectUserSchema } from "@/db/schema/users";
 import type { CompositeKeyEntity } from "@/models/azure";
+
+import { selectUserSchema } from "@/db/schema/users";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/models/esbabbler/message/metadata";
 import { getPropertyNames } from "@/services/shared/getPropertyNames";
 import { z } from "zod";
@@ -9,7 +10,7 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
 
   userIds!: string[];
 
-  constructor(init: Partial<MessageEmojiMetadataEntity> & CompositeKeyEntity) {
+  constructor(init: CompositeKeyEntity & Partial<MessageEmojiMetadataEntity>) {
     super();
     Object.assign(this, init);
   }

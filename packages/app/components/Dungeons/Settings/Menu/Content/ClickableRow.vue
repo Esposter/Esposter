@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
 
@@ -22,7 +22,7 @@ const onGridClick = useOnGridClick(
     if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
   },
 );
-const { y, width, ...configuration } = useSettingsCursorDimensions(() => rowIndex);
+const { width, y, ...configuration } = useSettingsCursorDimensions(() => rowIndex);
 </script>
 
 <template>

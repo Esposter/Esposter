@@ -1,6 +1,7 @@
 import type { Room } from "@/db/schema/rooms";
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
+
+import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import Fuse from "fuse.js";
@@ -9,13 +10,13 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const { $client } = useNuxtApp();
   const { itemList, ...restData } = createCursorPaginationData<Room>();
   const {
-    roomList,
     createRoom: storeCreateRoom,
-    updateRoom: storeUpdateRoom,
     deleteRoom: storeDeleteRoom,
+    roomList,
+    updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Room);
-  const currentRoomId = ref<string | null>(null);
+  const currentRoomId = ref<null | string>(null);
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
@@ -54,9 +55,9 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     roomList,
     ...restOperationData,
     createRoom,
-    updateRoom,
     deleteRoom,
     leaveRoom,
+    updateRoom,
     ...restData,
     currentRoomId,
     currentRoomName,

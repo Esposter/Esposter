@@ -3,7 +3,7 @@ import { AttackComponentMap } from "@/services/dungeons/scene/battle/attack/Atta
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 
 const attackManagerStore = useAttackManagerStore();
-const { attackId, isToEnemy, isActive } = storeToRefs(attackManagerStore);
+const { attackId, isActive, isToEnemy } = storeToRefs(attackManagerStore);
 </script>
 
 <template>

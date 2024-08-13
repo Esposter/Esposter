@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/esbabbler/message";
+import type { Editor } from "@tiptap/core";
+
 import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import type { Editor } from "@tiptap/core";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {
@@ -14,8 +15,8 @@ interface MessageEditorProps {
 
 const { message } = defineProps<MessageEditorProps>();
 const emit = defineEmits<{
-  "update:update-mode": [value: false];
   "update:delete-mode": [value: true];
+  "update:update-mode": [value: false];
 }>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -30,9 +31,9 @@ const onUpdateMessage = async (editor: Editor) => {
     }
 
     await updateMessage({
+      message: editedMessageHtml.value,
       partitionKey: message.partitionKey,
       rowKey: message.rowKey,
-      message: editedMessageHtml.value,
     });
   } finally {
     emit("update:update-mode", false);

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { useApexOptions } from "@/composables/dashboard/useApexOptions";
 import type { Visual } from "@/models/dashboard/Visual";
+
+import { useApexOptions } from "@/composables/dashboard/useApexOptions";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
-  type: Visual["type"];
   chart: Visual["chart"];
+  type: Visual["type"];
 }
 
-const { type, chart } = defineProps<VisualProps>();
+const { chart, type } = defineProps<VisualProps>();
 const divRef = ref<HTMLDivElement>();
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css
@@ -34,7 +35,7 @@ const options = useApexOptions(
 <template>
   <StyledCard size-full>
     <div ref="divRef" h-full>
-      <VueApexCharts :="data" :options />
+      <VueApexCharts :="data" :options="options" />
     </div>
   </StyledCard>
 </template>

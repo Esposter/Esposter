@@ -1,17 +1,18 @@
 import type { BuildingId } from "@/models/clicker/data/building/BuildingId";
+
 import { buildingIdSchema } from "@/models/clicker/data/building/BuildingId";
 import { z } from "zod";
 
 export interface Building {
-  id: BuildingId;
-  flavorDescription: string;
   basePrice: number;
   baseValue: number;
+  flavorDescription: string;
+  id: BuildingId;
 }
 
 export const buildingSchema = z.object({
-  id: buildingIdSchema,
-  flavorDescription: z.string().min(1),
   basePrice: z.number(),
   baseValue: z.number(),
+  flavorDescription: z.string().min(1),
+  id: buildingIdSchema,
 }) satisfies z.ZodType<Building>;

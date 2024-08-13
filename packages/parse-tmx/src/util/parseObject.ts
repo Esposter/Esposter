@@ -1,12 +1,13 @@
 import type { TMXObjectNode } from "@/models/tmx/node/TMXObjectNode";
 import type { TMXObjectParsed } from "@/models/tmx/parsed/TMXObjectParsed";
+
 import { parseFlips } from "@/util/parseFlips";
 import { parseObjectShape } from "@/util/parseObjectShape";
 import { parseProperties } from "@/util/parseProperties";
 import { parseTileId } from "@/util/parseTileId";
 
 export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
-  const { $, polygon, text, properties } = node;
+  const { $, polygon, properties, text } = node;
   const object = structuredClone($) as TMXObjectParsed;
   object.shape = parseObjectShape(node);
 

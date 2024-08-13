@@ -1,11 +1,12 @@
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
+
 import aquavalor from "@/assets/dungeons/UI/monsters/aquavalor.png";
 import carnodusk from "@/assets/dungeons/UI/monsters/carnodusk.png";
 import frostsaber from "@/assets/dungeons/UI/monsters/frostsaber.png";
 import ignivolt from "@/assets/dungeons/UI/monsters/ignivolt.png";
 import iguanignite from "@/assets/dungeons/UI/monsters/iguanignite.png";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { Loader } from "phaser";
 
 export const MonsterLoaderMap = {
   [MonsterKey.Aquavalor]: (scene) => scene.load.image(MonsterKey.Aquavalor, aquavalor),

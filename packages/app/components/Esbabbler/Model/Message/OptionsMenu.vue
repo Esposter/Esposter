@@ -1,31 +1,32 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@/models/esbabbler/message";
+
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
-  message: MessageEntity;
-  isHovering?: boolean | null;
   hoverProps?: Record<string, unknown>;
+  isHovering?: boolean | null;
+  message: MessageEntity;
 }
 
 interface Item {
-  title: string;
-  icon: string;
   color?: string;
-  onClick: (event: MouseEvent | KeyboardEvent) => void;
+  icon: string;
+  onClick: (event: KeyboardEvent | MouseEvent) => void;
+  title: string;
 }
 
-const { message, isHovering, hoverProps } = defineProps<MessageOptionsMenuProps>();
+const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{
+  "update:delete-mode": [value: true];
   "update:menu": [value: boolean];
   "update:update-mode": [value: true];
-  "update:delete-mode": [value: true];
 }>();
 const { session } = useAuth();
 const emojiStore = useEmojiStore();
-const { getEmojiList, createEmoji, updateEmoji, deleteEmoji } = emojiStore;
+const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
 const emojis = computed(() => getEmojiList(message.rowKey));
 const isCreator = computed(() => session.value?.user.id === message.creatorId);
 const items = computed(() => {
@@ -33,19 +34,19 @@ const items = computed(() => {
 
   const result: Item[] = [];
   result.unshift({
-    title: "Edit Message",
     icon: "mdi-pencil",
     onClick: () => {
       emit("update:update-mode", true);
     },
+    title: "Edit Message",
   });
   result.push({
-    title: "Delete Message",
-    icon: "mdi-delete",
     color: "error",
+    icon: "mdi-delete",
     onClick: () => {
       emit("update:delete-mode", true);
     },
+    title: "Delete Message",
   });
   return result;
 });
@@ -57,9 +58,9 @@ const onSelect = async (emoji: string) => {
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
     await createEmoji({
-      partitionKey: message.partitionKey,
-      messageRowKey: message.rowKey,
       emojiTag,
+      messageRowKey: message.rowKey,
+      partitionKey: message.partitionKey,
     });
     return;
   }
@@ -67,24 +68,24 @@ const onSelect = async (emoji: string) => {
   if (foundEmoji.userIds.includes(session.value.user.id)) {
     if (foundEmoji.userIds.length === 1)
       await deleteEmoji({
+        messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
-        messageRowKey: foundEmoji.messageRowKey,
       });
     else
       await updateEmoji({
+        messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
-        messageRowKey: foundEmoji.messageRowKey,
         userIds: foundEmoji.userIds.filter((userId) => userId !== session.value?.user.id),
       });
     return;
   }
 
   await updateEmoji({
+    messageRowKey: foundEmoji.messageRowKey,
     partitionKey: foundEmoji.partitionKey,
     rowKey: foundEmoji.rowKey,
-    messageRowKey: foundEmoji.messageRowKey,
     userIds: [...foundEmoji.userIds, session.value.user.id],
   });
 };

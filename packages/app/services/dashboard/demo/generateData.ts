@@ -9,7 +9,7 @@
       ...
   ]
   */
-export const generateData = (count: number, { min, max }: { min: number; max: number }) => {
+export const generateData = (count: number, { max, min }: { max: number; min: number }) => {
   const series: [number, number, number][] = [];
   for (let i = 0; i < count; i++) {
     const x = Math.floor(Math.random() * (750 - 1 + 1)) + 1;

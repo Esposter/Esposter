@@ -1,11 +1,19 @@
 export default {
-  "@typescript-eslint/ban-types": [
+  "@typescript-eslint/no-empty-object-type": "off",
+  "@typescript-eslint/no-restricted-types": [
     "error",
     {
       types: {
         Omit: "Use `Except` instead",
-        Function: false,
       },
+    },
+  ],
+  "@typescript-eslint/no-unsafe-function-type": "off",
+  "@typescript-eslint/no-unused-expressions": [
+    "error",
+    {
+      allowShortCircuit: true,
+      allowTernary: true,
     },
   ],
 };

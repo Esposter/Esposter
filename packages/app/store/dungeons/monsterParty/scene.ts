@@ -1,6 +1,8 @@
-import { Grid } from "@/models/dungeons/Grid";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { Monster } from "@/models/dungeons/monster/Monster";
+
+import { Grid } from "@/models/dungeons/Grid";
+import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { usePlayerStore } from "@/store/dungeons/player";
 
@@ -15,25 +17,32 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   });
   const monstersGrid = computed(() => {
     const monstersGrid: Monster[][] = [];
-    for (let i = 0; i < Math.min(monsters.value.length, ROW_SIZE * COLUMN_SIZE); i += COLUMN_SIZE)
-      monstersGrid.push(monsters.value.slice(i, i + COLUMN_SIZE));
+    for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
+      monstersGrid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
     return monstersGrid;
   });
-  const optionGrid = ref() as Ref<Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]>>;
 
-  watch(
-    monstersGrid,
-    (newMonstersGrid) => {
-      optionGrid.value = new Grid(
-        [...newMonstersGrid, Array(newMonstersGrid[0]?.length ?? 0).fill(PlayerSpecialInput.Cancel)],
-        true,
-      );
-    },
-    { immediate: true },
-  );
+  const createMonsterPartyOptionGrid = (
+    newMonstersGrid: Monster[][],
+  ): Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]> => {
+    const grid = [...newMonstersGrid];
+    const rowSize = newMonstersGrid[0]?.length ?? 0;
+    if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
+    return new Grid(grid, true);
+  };
+  const monsterPartyOptionGrid = ref(createMonsterPartyOptionGrid(monstersGrid.value));
+
+  watch(monstersGrid, (newMonstersGrid) => {
+    monsterPartyOptionGrid.value = createMonsterPartyOptionGrid(newMonstersGrid);
+  });
+
+  const sceneMode = ref(SceneMode.Default);
+  const monsterIdToMove = ref<string>();
 
   return {
+    monsterIdToMove,
+    monsterPartyOptionGrid,
     monstersGrid,
-    optionGrid,
+    sceneMode,
   };
 });

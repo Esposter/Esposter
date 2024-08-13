@@ -1,4 +1,5 @@
 import type { Item } from "@/models/tableEditor/Item";
+
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -13,14 +14,14 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     const { $client } = useNuxtApp();
     const { status } = useAuth();
     const itemStore = useItemStore();
-    const { createItem, updateItem, deleteItem } = itemStore;
+    const { createItem, deleteItem, updateItem } = itemStore;
+    const searchQuery = ref("");
     const tableEditorConfiguration = ref(new TableEditorConfiguration());
     const tableEditorType = ref(TableEditorType.TodoList);
     const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value] as { items: TItem[] });
-    const searchQuery = ref("");
     const editFormData = createEditFormData(computed(() => tableEditor.value.items));
     const save = async (isDeleteAction?: true) => {
-      const { editedItem, editedIndex, editFormDialog } = editFormData;
+      const { editedIndex, editedItem, editFormDialog } = editFormData;
       if (!editedItem.value) return;
 
       if (isDeleteAction) deleteItem(editedItem.value.id);
@@ -35,9 +36,9 @@ export const useTableEditorStore = <TItem extends Item = Item>() =>
     };
 
     return {
-      tableEditorConfiguration,
-      tableEditor,
       searchQuery,
+      tableEditor,
+      tableEditorConfiguration,
       ...editFormData,
       save,
     };

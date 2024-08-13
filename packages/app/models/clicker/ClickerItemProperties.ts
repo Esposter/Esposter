@@ -1,6 +1,6 @@
 export interface ClickerItemProperties {
-  name: string;
-  pluralName: string;
   color: string;
   iconComponent: Component;
+  name: string;
+  pluralName: string;
 }

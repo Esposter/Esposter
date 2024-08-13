@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 import type { Room } from "@/db/schema/rooms";
 
+import StyledWaypoint from "@/components/Styled/Waypoint.vue";
+
 interface RoomListProps {
-  rooms: Room[];
   hasMore: boolean;
   readMoreRooms: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
+  rooms: Room[];
 }
 
 defineSlots<{ prepend: (props: Record<string, never>) => unknown }>();
-const { rooms, hasMore, readMoreRooms } = defineProps<RoomListProps>();
+const { hasMore, readMoreRooms, rooms } = defineProps<RoomListProps>();
 </script>
 
 <template>

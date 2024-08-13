@@ -27,7 +27,7 @@ describe("Create Operation Data", () => {
   });
 
   test("creates", () => {
-    const { itemList, createItem } = operationData;
+    const { createItem, itemList } = operationData;
     const newItem = new TodoListItem();
 
     expect(itemList.value.length).toStrictEqual(0);
@@ -39,7 +39,7 @@ describe("Create Operation Data", () => {
   });
 
   test("updates", () => {
-    const { itemList, createItem, updateItem } = operationData;
+    const { createItem, itemList, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
     const updatedAt = newItem.updatedAt;
@@ -55,7 +55,7 @@ describe("Create Operation Data", () => {
   });
 
   test("deletes", () => {
-    const { itemList, createItem, deleteItem } = operationData;
+    const { createItem, deleteItem, itemList } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
 

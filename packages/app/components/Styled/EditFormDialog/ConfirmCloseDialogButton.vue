@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
+
 import { prettifyName } from "@/util/text/prettifyName";
 
 interface ConfirmCloseDialogButtonProps<T> {
@@ -8,7 +9,7 @@ interface ConfirmCloseDialogButtonProps<T> {
 }
 
 const { editedItem, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
-const emit = defineEmits<{ "update:edit-form-dialog": [value: false]; save: [] }>();
+const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
 const displayItemType = computed(() => prettifyName(editedItem.type));
 const dialog = ref(false);
 </script>

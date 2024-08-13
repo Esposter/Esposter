@@ -7,16 +7,16 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const surveys = pgTable("Survey", {
-  id: uuid("id").primaryKey().defaultRandom(),
   creatorId: uuid("creatorId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
   group: text("group"),
+  id: uuid("id").primaryKey().defaultRandom(),
   model: text("model").notNull().default(""),
   modelVersion: integer("modelVersion").notNull().default(0),
-  publishVersion: integer("publishVersion").notNull().default(0),
+  name: text("name").notNull(),
   publishedAt: timestamp("publishedAt", { mode: "date" }),
+  publishVersion: integer("publishVersion").notNull().default(0),
 });
 
 export type Survey = typeof surveys.$inferSelect;

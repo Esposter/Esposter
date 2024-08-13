@@ -3,11 +3,11 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
 interface ShadowProps {
   imagePosition: ImagePosition;
-  width: number;
   scaleY: number;
+  width: number;
 }
 
-const { imagePosition, width, scaleY } = defineProps<ShadowProps>();
+const { imagePosition, scaleY, width } = defineProps<ShadowProps>();
 const leftCapShadowDisplayWidth = ref<number>();
 const middleShadowX = computed(() => imagePosition.x + (leftCapShadowDisplayWidth.value ?? 0));
 const middleShadowDisplayWidth = computed(

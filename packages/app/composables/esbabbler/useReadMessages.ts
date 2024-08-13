@@ -7,15 +7,15 @@ export const useReadMessages = async () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
   const { initializeCursorPaginationData, pushMessageList } = messageStore;
-  const { nextCursor, hasMore } = storeToRefs(messageStore);
+  const { hasMore, nextCursor } = storeToRefs(messageStore);
   const readEmojis = useReadEmojis();
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
 
       const response = await $client.message.readMessages.query({
-        roomId: currentRoomId.value,
         cursor: nextCursor.value,
+        roomId: currentRoomId.value,
       });
       pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;

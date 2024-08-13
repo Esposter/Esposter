@@ -11,7 +11,7 @@ await useReadTableEditor();
 const route = useRoute();
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-const { tableEditorType, isDirty } = storeToRefs(tableEditorStore);
+const { isDirty, tableEditorType } = storeToRefs(tableEditorStore);
 const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.value));
 
 useConfirmBeforeNavigation(isDirty);

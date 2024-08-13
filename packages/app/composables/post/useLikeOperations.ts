@@ -46,7 +46,7 @@ export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
 
   return {
     createLike,
-    updateLike,
     deleteLike,
+    updateLike,
   };
 };

@@ -1,9 +1,19 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 export const ScatterPropsData = {
+  options: {
+    xaxis: {
+      labels: {
+        formatter: (val) => parseFloat(val).toFixed(1),
+      },
+      tickAmount: 10,
+    },
+    yaxis: {
+      tickAmount: 7,
+    },
+  },
   series: [
     {
-      name: "SAMPLE A",
       data: [
         [16.4, 5.4],
         [21.7, 2],
@@ -37,9 +47,9 @@ export const ScatterPropsData = {
         [27.1, 0.8],
         [22.1, 2],
       ],
+      name: "SAMPLE A",
     },
     {
-      name: "SAMPLE B",
       data: [
         [36.4, 13.4],
         [1.7, 11],
@@ -73,9 +83,9 @@ export const ScatterPropsData = {
         [7.1, 10.8],
         [2.1, 12],
       ],
+      name: "SAMPLE B",
     },
     {
-      name: "SAMPLE C",
       data: [
         [21.7, 3],
         [23.6, 3.5],
@@ -109,17 +119,7 @@ export const ScatterPropsData = {
         [33.4, 0],
         [16.4, 0],
       ],
+      name: "SAMPLE C",
     },
   ],
-  options: {
-    xaxis: {
-      tickAmount: 10,
-      labels: {
-        formatter: (val) => parseFloat(val).toFixed(1),
-      },
-    },
-    yaxis: {
-      tickAmount: 7,
-    },
-  },
 } as const satisfies VisualPropsData;

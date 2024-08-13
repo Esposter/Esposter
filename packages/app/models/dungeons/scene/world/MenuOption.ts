@@ -1,8 +1,8 @@
 export enum MenuOption {
+  Exit = "Exit",
+  Inventory = "Inventory",
   MonsterDex = "MonsterDex",
   Monsters = "Monsters",
-  Inventory = "Inventory",
   Save = "Save",
   Settings = "Settings",
-  Exit = "Exit",
 }

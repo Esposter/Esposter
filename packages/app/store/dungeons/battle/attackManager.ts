@@ -11,7 +11,7 @@ export const useAttackManagerStore = defineStore("dungeons/battle/attackManager"
   const isActive = ref(false);
   return {
     attackId,
-    isToEnemy,
     isActive,
+    isToEnemy,
   };
 });

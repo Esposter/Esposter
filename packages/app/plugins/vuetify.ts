@@ -1,3 +1,5 @@
+import type { IconProps } from "vuetify";
+
 import { IconComponentMap } from "@/services/dungeons/IconComponentMap";
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -5,7 +7,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     vuetifyOptions.icons = {
       sets: {
         custom: {
-          component: (props) => h(props.tag, [h(IconComponentMap[props.icon as string], { class: "v-icon__svg" })]),
+          component: (props: IconProps) =>
+            h(props.tag, [h(IconComponentMap[props.icon as string], { class: "v-icon__svg" })]),
         },
       },
     };

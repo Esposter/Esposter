@@ -1,6 +1,6 @@
 export type Item = {
-  icon: string;
-  title: string;
-  onClick: () => void;
   active?: boolean;
+  icon: string;
+  onClick: () => void;
+  title: string;
 } & Record<string, unknown>;

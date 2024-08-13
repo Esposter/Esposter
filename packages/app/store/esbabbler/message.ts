@@ -1,12 +1,13 @@
 import type { MessageEntity } from "@/models/esbabbler/message";
-import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import type { CreateMessageInput, DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
+import type { Editor } from "@tiptap/core";
+
+import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { createAzureOperationData } from "@/services/shared/pagination/createAzureOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import type { Editor } from "@tiptap/core";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
   const { $client } = useNuxtApp();
@@ -17,8 +18,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(currentRoomId);
   const {
     createMessage: storeCreateMessage,
-    updateMessage: storeUpdateMessage,
     deleteMessage: storeDeleteMessage,
+    updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createAzureOperationData(itemList, AzureEntityType.Message);
 
@@ -27,7 +28,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
     const savedMessageInput = messageInput.value;
     editor.commands.clearContent(true);
-    await createMessage({ roomId: currentRoomId.value, message: savedMessageInput });
+    await createMessage({ message: savedMessageInput, roomId: currentRoomId.value });
   };
 
   const createMessage = async (input: CreateMessageInput) => {
@@ -46,12 +47,12 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   // since it's also used in subscriptions to receive messages created by other people
   return {
     storeCreateMessage,
-    storeUpdateMessage,
     storeDeleteMessage,
+    storeUpdateMessage,
     ...restOperationData,
+    deleteMessage,
     sendMessage,
     updateMessage,
-    deleteMessage,
     ...restData,
   };
 });

@@ -1,4 +1,5 @@
 import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
+
 import { NotFoundError } from "@esposter/shared";
 
 export const getVisualPropsData = <T extends object>(visualPropsDataMap: T, chartType: ChartType) => {

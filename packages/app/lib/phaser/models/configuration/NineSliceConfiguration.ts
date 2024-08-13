@@ -12,18 +12,15 @@ import type { GlobalConfiguration } from "@/lib/phaser/models/configuration/glob
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type NineSliceConfiguration = Except<
-  Types.GameObjects.NineSlice.NineSliceConfig,
-  keyof Types.GameObjects.GameObjectConfig
-> &
-  AlphaSingleConfiguration &
+export type NineSliceConfiguration = AlphaSingleConfiguration &
   BlendModeConfiguration &
   DepthConfiguration &
+  Except<Types.GameObjects.NineSlice.NineSliceConfig, keyof Types.GameObjects.GameObjectConfig> &
+  GlobalConfiguration &
   MaskConfiguration &
   OriginConfiguration &
   PipelineConfiguration &
   ScrollFactorConfiguration &
   TextureConfiguration &
   TransformConfiguration &
-  VisibleConfiguration &
-  GlobalConfiguration;
+  VisibleConfiguration;

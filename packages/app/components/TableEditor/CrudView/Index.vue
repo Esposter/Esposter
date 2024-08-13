@@ -4,7 +4,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore()();
 const { editItem } = tableEditorStore;
-const { tableEditor, tableEditorType, searchQuery } = storeToRefs(tableEditorStore);
+const { searchQuery, tableEditor, tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);
 // We can assume that the first element of the headers is the type
 const itemTypeKey = computed(() => props.value.headers[0].key);

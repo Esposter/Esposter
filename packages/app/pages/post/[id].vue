@@ -8,7 +8,7 @@ const post = await useReadPostFromRoute();
 const readMoreComments = await useReadComments(post.id);
 const { status } = useAuth();
 const commentStore = useCommentStore();
-const { currentPost, commentList, hasMore } = storeToRefs(commentStore);
+const { commentList, currentPost, hasMore } = storeToRefs(commentStore);
 currentPost.value = post;
 </script>
 

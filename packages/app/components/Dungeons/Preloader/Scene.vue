@@ -1,19 +1,20 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { Loader } from "phaser";
+
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Scene from "@/lib/phaser/components/Scene.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { usePhaserStore } from "@/lib/phaser/store";
 import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
-import type { Loader } from "phaser";
 import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
@@ -29,7 +30,7 @@ const progressBarWidth = ref(0);
 const progressBarHeight = ref(30);
 
 const preload = (scene: SceneWithPlugins) => {
-  const { width, height } = scene.cameras.main;
+  const { height, width } = scene.cameras.main;
   x.value = width / 2;
   y.value = height / 2;
   // We need to preload the fonts so phaser can properly use them

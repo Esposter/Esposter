@@ -1,5 +1,5 @@
 export interface PlayOptions {
-  id?: number;
   forceSoundEnabled?: boolean;
+  id?: number;
   rate?: number;
 }

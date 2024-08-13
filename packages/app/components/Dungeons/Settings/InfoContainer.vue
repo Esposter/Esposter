@@ -23,7 +23,7 @@ onCreate((scene) => {
 
 <template>
   <Container :configuration="{ y: MENU_HEIGHT + MENU_VERTICAL_PADDING }">
-    <DungeonsUIGlassPanelNineSlice :width :height />
+    <DungeonsUIGlassPanelNineSlice :width="width" :height="height" />
     <Text
       :configuration="{
         x: INITIAL_SETTINGS_POSITION.x,

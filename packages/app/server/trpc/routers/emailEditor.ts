@@ -24,7 +24,7 @@ export const emailEditorRouter = router({
       return new EmailEditor();
     }
   }),
-  saveEmailEditor: authedProcedure.input(emailEditorSchema).mutation(async ({ input, ctx }) => {
+  saveEmailEditor: authedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {
     const client = await getContainerClient(AzureContainer.EmailEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

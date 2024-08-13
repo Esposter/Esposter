@@ -1,7 +1,8 @@
-import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";

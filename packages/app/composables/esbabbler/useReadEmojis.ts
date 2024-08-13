@@ -10,7 +10,7 @@ export const useReadEmojis = () => {
   return async (messageRowKeys: string[]) => {
     if (!currentRoomId.value) return;
 
-    const emojis = await $client.emoji.readEmojis.query({ roomId: currentRoomId.value, messageRowKeys });
+    const emojis = await $client.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });
     for (const messageRowKey of messageRowKeys)
       setEmojiList(
         messageRowKey,

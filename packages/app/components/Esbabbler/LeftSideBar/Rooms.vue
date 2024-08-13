@@ -2,7 +2,7 @@
 import { useRoomStore } from "@/store/esbabbler/room";
 
 const roomStore = useRoomStore();
-const { roomList, hasMore } = storeToRefs(roomStore);
+const { hasMore, roomList } = storeToRefs(roomStore);
 const readMoreRooms = await useReadRooms();
 </script>
 

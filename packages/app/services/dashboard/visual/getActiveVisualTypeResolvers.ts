@@ -1,5 +1,6 @@
 import type { VisualType } from "@/models/dashboard/VisualType";
 import type { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+
 import { ColumnResolver } from "@/models/resolvers/dashboard/visual/ColumnResolver";
 import { FunnelResolver } from "@/models/resolvers/dashboard/visual/FunnelResolver";
 import { RadialBarResolver } from "@/models/resolvers/dashboard/visual/RadialBarResolver";

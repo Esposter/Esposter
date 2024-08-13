@@ -26,27 +26,22 @@
   },
   "dependencies": {
     "data-urls": "^5.0.0",
-    "vue": "^3.4.33",
+    "vue": "^3.5.0-beta.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
-    "ctix": "^2.5.1",
-    "eslint": "^9.7.0",
-    "lerna": "^8.1.7",
-    "rollup": "^4.19.0",
+    "ctix": "^2.6.1",
+    "eslint": "^9.9.0",
+    "lerna": "^8.1.8",
+    "rollup": "^4.20.0",
     "typescript": "^5.5.4",
-    "vite": "^5.3.4",
-    "vue-tsc": "^2.0.28"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite-plugin-checker": "^0.7.0"
-    }
+    "vite": "^5.4.0",
+    "vue-tsc": "^2.0.29"
   },
   "engines": {
-    "node": "^22.5.1"
+    "node": "^22.6.0"
   },
-  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
+  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
 }
