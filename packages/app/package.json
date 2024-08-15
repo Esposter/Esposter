@@ -156,7 +156,7 @@
     "@types/three": "^0.167.1",
     "@types/webfontloader": "^1.6.38",
     "@types/ws": "^8.5.12",
-    "@unocss/nuxt": "^0.62.1",
+    "@unocss/nuxt": "^0.62.2",
     "@vite-pwa/nuxt": "^0.9.1",
     "@vitest/coverage-v8": "^2.0.5",
     "@vue/test-utils": "^2.4.6",
@@ -172,7 +172,7 @@
     "sass": "^1.77.8",
     "tsx": "^4.17.0",
     "type-fest": "^4.24.0",
-    "unocss": "^0.62.1",
+    "unocss": "^0.62.2",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vitest": "^2.0.5",
     "vuetify-nuxt-module": "^0.16.1"
