@@ -144,6 +144,9 @@ importers:
       '@vueuse/core':
         specifier: ^11.0.0
         version: 11.0.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/integrations':
+        specifier: ^11.0.0
+        version: 11.0.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
       '@vueuse/nuxt':
         specifier: ^11.0.0
         version: 11.0.0(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(@parcel/watcher@2.4.1)(@types/node@22.3.0)(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.9.0(jiti@1.21.6))(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.20.0)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.4.1(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))(vue-tsc@2.0.29(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.20.0)(vue@3.4.33(typescript@5.4.5))
@@ -330,7 +333,7 @@ importers:
         version: 0.7.2(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(encoding@0.1.13)(ioredis@5.3.2)(magicast@0.3.4)(rollup@4.20.0)(vite@5.4.1(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))
       '@nuxt/scripts':
         specifier: ^0.6.6
-        version: 0.6.6(ldodkkrnverkqdpqotlknfum7q)
+        version: 0.6.6(d2k4ex7a34tlu7mc5xkbtjp5um)
       '@nuxt/test-utils':
         specifier: ^3.14.1
         version: 3.14.1(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@14.12.3)(magicast@0.3.4)(nitropack@2.9.4(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(magicast@0.3.4)(xml2js@0.6.2))(rollup@4.20.0)(vite@5.4.1(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))(vitest@2.0.5(@types/node@22.3.0)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.29.2))(vue-router@4.4.3(vue@3.4.33(typescript@5.4.5)))(vue@3.4.33(typescript@5.4.5))
@@ -4286,6 +4289,47 @@ packages:
       qrcode: ^1.5
       sortablejs: ^1
       universal-cookie: ^6
+    peerDependenciesMeta:
+      async-validator:
+        optional: true
+      axios:
+        optional: true
+      change-case:
+        optional: true
+      drauu:
+        optional: true
+      focus-trap:
+        optional: true
+      fuse.js:
+        optional: true
+      idb-keyval:
+        optional: true
+      jwt-decode:
+        optional: true
+      nprogress:
+        optional: true
+      qrcode:
+        optional: true
+      sortablejs:
+        optional: true
+      universal-cookie:
+        optional: true
+
+  '@vueuse/integrations@11.0.0':
+    resolution: {integrity: sha512-B95nBX4B2q2ZETBDldrKARM/fYXBHfwdo44UbHBq4bUTi25lrlc8MwAZGqEoRvdV4ND9T6O1Rb9e4kaCJFXnqw==}
+    peerDependencies:
+      async-validator: ^4
+      axios: ^1
+      change-case: ^5
+      drauu: ^0.4
+      focus-trap: ^7
+      fuse.js: ^7
+      idb-keyval: ^6
+      jwt-decode: ^4
+      nprogress: ^0.2
+      qrcode: ^1.5
+      sortablejs: ^1
+      universal-cookie: ^7
     peerDependenciesMeta:
       async-validator:
         optional: true
@@ -13139,7 +13183,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/devtools-ui-kit@1.3.9(pxdnaad2fjf45gjc5hne4j2qz4)':
+  '@nuxt/devtools-ui-kit@1.3.9(irqsoqsmy6qig43cqyqf3oin4m)':
     dependencies:
       '@iconify-json/carbon': 1.1.36
       '@iconify-json/logos': 1.1.43
@@ -13155,7 +13199,7 @@ snapshots:
       '@unocss/preset-mini': 0.61.9
       '@unocss/reset': 0.61.9
       '@vueuse/core': 10.11.1(vue@3.4.33(typescript@5.4.5))
-      '@vueuse/integrations': 10.11.0(axios@1.7.4(debug@4.3.6))(change-case@4.1.2)(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/integrations': 10.11.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
       '@vueuse/nuxt': 10.11.1(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(@parcel/watcher@2.4.1)(@types/node@22.3.0)(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.9.0(jiti@1.21.6))(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.20.0)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.4.1(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))(vue-tsc@2.0.29(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.20.0)(vue@3.4.33(typescript@5.4.5))
       defu: 6.1.4
       focus-trap: 7.5.4
@@ -13565,10 +13609,10 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/scripts@0.6.6(ldodkkrnverkqdpqotlknfum7q)':
+  '@nuxt/scripts@0.6.6(d2k4ex7a34tlu7mc5xkbtjp5um)':
     dependencies:
       '@nuxt/devtools-kit': 1.3.9(magicast@0.3.4)(rollup@4.20.0)(vite@5.4.1(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))
-      '@nuxt/devtools-ui-kit': 1.3.9(pxdnaad2fjf45gjc5hne4j2qz4)
+      '@nuxt/devtools-ui-kit': 1.3.9(irqsoqsmy6qig43cqyqf3oin4m)
       '@nuxt/kit': 3.12.4(magicast@0.3.4)(rollup@4.20.0)
       '@types/google.maps': 3.55.12
       '@types/stripe-v3': 3.1.33
@@ -15781,14 +15825,26 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@10.11.0(axios@1.7.4(debug@4.3.6))(change-case@4.1.2)(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))':
+  '@vueuse/integrations@10.11.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))':
     dependencies:
       '@vueuse/core': 10.11.0(vue@3.4.33(typescript@5.4.5))
       '@vueuse/shared': 10.11.0(vue@3.4.33(typescript@5.4.5))
       vue-demi: 0.14.10(vue@3.4.33(typescript@5.4.5))
     optionalDependencies:
       axios: 1.7.4(debug@4.3.6)
-      change-case: 4.1.2
+      focus-trap: 7.5.4
+      fuse.js: 7.0.0
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  '@vueuse/integrations@11.0.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))':
+    dependencies:
+      '@vueuse/core': 11.0.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/shared': 11.0.0(vue@3.4.33(typescript@5.4.5))
+      vue-demi: 0.14.10(vue@3.4.33(typescript@5.4.5))
+    optionalDependencies:
+      axios: 1.7.4(debug@4.3.6)
       focus-trap: 7.5.4
       fuse.js: 7.0.0
     transitivePeerDependencies:
