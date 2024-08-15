@@ -464,8 +464,8 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0(eslint@9.9.0(jiti@1.21.6))(typescript@5.4.5)
       vite-plugin-dts:
-        specifier: ^4.0.2
-        version: 4.0.2(@types/node@22.3.0)(rollup@4.20.0)(typescript@5.4.5)(vite@5.4.0(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))
+        specifier: ^4.0.3
+        version: 4.0.3(@types/node@22.3.0)(rollup@4.20.0)(typescript@5.4.5)(vite@5.4.0(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))
       vite-plugin-mkcert:
         specifier: ^1.17.5
         version: 1.17.5(vite@5.4.0(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2))
@@ -9959,8 +9959,8 @@ packages:
       vue-tsc:
         optional: true
 
-  vite-plugin-dts@4.0.2:
-    resolution: {integrity: sha512-Ni3EPG8yeLc5ivEzT4szreJ0rXpEQgvdYq3PaZ7OMoHc8uET4/HRUfzVPejJaUAojbxsKgaZbp6Zgm41sxb86Q==}
+  vite-plugin-dts@4.0.3:
+    resolution: {integrity: sha512-+xnTsaONwU2kV6zhRjtbRJSGN41uFR/whqmcb4k4fftLFDJElxthp0PP5Fq8gMeM9ytWMt1yk5gGgekLREWYQQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       typescript: '*'
@@ -22494,7 +22494,7 @@ snapshots:
       typescript: 5.4.5
       vue-tsc: 2.0.29(typescript@5.4.5)
 
-  vite-plugin-dts@4.0.2(@types/node@22.3.0)(rollup@4.20.0)(typescript@5.4.5)(vite@5.4.0(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2)):
+  vite-plugin-dts@4.0.3(@types/node@22.3.0)(rollup@4.20.0)(typescript@5.4.5)(vite@5.4.0(@types/node@22.3.0)(sass@1.77.8)(terser@5.29.2)):
     dependencies:
       '@microsoft/api-extractor': 7.47.4(@types/node@22.3.0)
       '@rollup/pluginutils': 5.1.0(rollup@4.20.0)
