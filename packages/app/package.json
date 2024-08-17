@@ -171,7 +171,7 @@
     "prettier": "^3.3.3",
     "sass": "^1.77.8",
     "tsx": "^4.17.0",
-    "type-fest": "^4.24.0",
+    "type-fest": "^4.25.0",
     "unocss": "^0.62.2",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vitest": "^2.0.5",
