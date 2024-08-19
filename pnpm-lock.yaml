@@ -145,8 +145,8 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1(vue@3.4.33(typescript@5.4.5))
       '@vueuse/integrations':
-        specifier: ^11.0.0
-        version: 11.0.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
+        specifier: ^11.0.1
+        version: 11.0.1(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))
       '@vueuse/nuxt':
         specifier: ^11.0.0
         version: 11.0.0(magicast@0.3.4)(nuxt@3.11.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(@parcel/watcher@2.4.1)(@types/node@22.4.1)(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(eslint@9.9.0(jiti@1.21.6))(ioredis@5.3.2)(magicast@0.3.4)(optionator@0.9.3)(rollup@4.21.0)(sass@1.77.8)(terser@5.29.2)(typescript@5.4.5)(vite@5.4.1(@types/node@22.4.1)(sass@1.77.8)(terser@5.29.2))(vue-tsc@2.0.29(typescript@5.4.5))(xml2js@0.6.2))(rollup@4.21.0)(vue@3.4.33(typescript@5.4.5))
@@ -4241,8 +4241,8 @@ packages:
       universal-cookie:
         optional: true
 
-  '@vueuse/integrations@11.0.0':
-    resolution: {integrity: sha512-B95nBX4B2q2ZETBDldrKARM/fYXBHfwdo44UbHBq4bUTi25lrlc8MwAZGqEoRvdV4ND9T6O1Rb9e4kaCJFXnqw==}
+  '@vueuse/integrations@11.0.1':
+    resolution: {integrity: sha512-V/FQTS/aiV6RTFXOj8cXgqhtNJBvxvbHeLElOUR7N7F3Kr0btS+dkymLB54mFd0Or6uEGpgwwb41cs/q2/rdOg==}
     peerDependencies:
       async-validator: ^4
       axios: ^1
@@ -15597,10 +15597,10 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@11.0.0(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))':
+  '@vueuse/integrations@11.0.1(axios@1.7.4(debug@4.3.6))(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.33(typescript@5.4.5))':
     dependencies:
-      '@vueuse/core': 11.0.0(vue@3.4.33(typescript@5.4.5))
-      '@vueuse/shared': 11.0.0(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/core': 11.0.1(vue@3.4.33(typescript@5.4.5))
+      '@vueuse/shared': 11.0.1(vue@3.4.33(typescript@5.4.5))
       vue-demi: 0.14.10(vue@3.4.33(typescript@5.4.5))
     optionalDependencies:
       axios: 1.7.4(debug@4.3.6)

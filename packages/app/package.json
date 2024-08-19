@@ -74,7 +74,7 @@
     "@trpc/server": "^10.45.2",
     "@vuepic/vue-datepicker": "^9.0.2",
     "@vueuse/core": "^11.0.1",
-    "@vueuse/integrations": "^11.0.0",
+    "@vueuse/integrations": "^11.0.1",
     "@vueuse/nuxt": "^11.0.0",
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
