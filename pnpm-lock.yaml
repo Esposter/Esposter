@@ -431,8 +431,8 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.4.1)(happy-dom@14.12.3)(sass@1.77.8)(terser@5.29.2)
       vuetify-nuxt-module:
-        specifier: ^0.17.0
-        version: 0.17.0(magicast@0.3.4)(rollup@4.21.0)(typescript@5.4.5)(vite@5.4.1(@types/node@22.4.1)(sass@1.77.8)(terser@5.29.2))(vue@3.4.33(typescript@5.4.5))
+        specifier: ^0.17.1
+        version: 0.17.1(magicast@0.3.4)(rollup@4.21.0)(typescript@5.4.5)(vite@5.4.1(@types/node@22.4.1)(sass@1.77.8)(terser@5.29.2))(vue@3.4.33(typescript@5.4.5))
 
   packages/block-mj-text:
     devDependencies:
@@ -10177,8 +10177,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.17.0:
-    resolution: {integrity: sha512-hc/zQN3M2DlWm/+AUi7Hxro2iXG/LrGsFwq0odW9KoAwxrPp6NQhqDmnurGhvXofTELREARre6GhdK0Eso33Xg==}
+  vuetify-nuxt-module@0.17.1:
+    resolution: {integrity: sha512-BGjNMIAxqK93BQAj/Uk74Oazkwyj8cKXtvJRW9rwQL2LP79rhoANWoS0mu8OvzgqsR81YlmkZeLNwVJuQSHP3g==}
 
   vuetify@3.7.0:
     resolution: {integrity: sha512-x+UaU4SPYNcJSE/voCTBFrNn0q9Spzx2EMfDdUj0NYgHGKb59OqnZte+AjaJaoOXy1AHYIGEpm5Ryk2BEfgWuw==}
@@ -22546,7 +22546,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  vuetify-nuxt-module@0.17.0(magicast@0.3.4)(rollup@4.21.0)(typescript@5.4.5)(vite@5.4.1(@types/node@22.4.1)(sass@1.77.8)(terser@5.29.2))(vue@3.4.33(typescript@5.4.5)):
+  vuetify-nuxt-module@0.17.1(magicast@0.3.4)(rollup@4.21.0)(typescript@5.4.5)(vite@5.4.1(@types/node@22.4.1)(sass@1.77.8)(terser@5.29.2))(vue@3.4.33(typescript@5.4.5)):
     dependencies:
       '@nuxt/kit': 3.12.4(magicast@0.3.4)(rollup@4.21.0)
       defu: 6.1.4
