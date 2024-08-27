@@ -1,9 +1,11 @@
-export const getPropertyNames = <T>() =>
+type PropertyNames<T> = {
+  [P in keyof T]: P;
+};
+
+export const getPropertyNames = <T>(): PropertyNames<T> =>
   new Proxy(
     {},
     {
       get: (_, prop) => prop,
     },
-  ) as {
-    [P in keyof T]: P;
-  };
+  ) as PropertyNames<T>;

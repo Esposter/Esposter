@@ -10,10 +10,7 @@ import { createLayer } from "@/services/dungeons/tilemap/createLayer";
 import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 
-export const createTilemapMetadata = <TLayerName extends Record<string, string>>(
-  layerNameEnum: TLayerName,
-  ...args: TilemapMetadataParams
-) => {
+export const createTilemapMetadata = (layerNameEnum: Record<string, string>, ...args: TilemapMetadataParams) => {
   const [tilemapKey] = args;
 
   for (const layerName of Object.values(layerNameEnum)) {
