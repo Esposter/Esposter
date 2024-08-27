@@ -1,10 +1,10 @@
 import type { GameObjects } from "phaser";
 
 export const useParentContainerStore = defineStore("phaser/parentContainer", () => {
-  const pushGameObject = <TConfiguration extends object, TGameObject extends GameObjects.GameObject>(
+  const pushGameObject = (
     parentContainer: GameObjects.Container,
-    configuration: TConfiguration,
-    gameObject: TGameObject,
+    configuration: object,
+    gameObject: GameObjects.GameObject,
   ) => {
     const i = parentContainer.list.findIndex(
       (obj) =>
