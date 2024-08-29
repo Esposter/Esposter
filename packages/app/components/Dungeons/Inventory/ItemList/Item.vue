@@ -12,6 +12,7 @@ import {
 } from "@/services/dungeons/scene/inventory/constants";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { parsePixel } from "@/util/parsePixel";
+import { prettifyName } from "@/util/text/prettifyName";
 import { Input } from "phaser";
 
 interface InventoryItemListItemProps {
@@ -61,7 +62,7 @@ const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREM
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
         y,
-        text: item.id,
+        text: prettifyName(item.id),
         style: MenuTextStyle,
       }"
     />
