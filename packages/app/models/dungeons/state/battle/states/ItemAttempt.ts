@@ -20,10 +20,10 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
 
 export const ItemAttempt: State<StateName> = {
   name: StateName.ItemAttempt,
-  onEnter: (scene) => {
+  onEnter: (battleScene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
-    const { launchScene, removeScene } = usePreviousScene(scene.scene.key);
+    const { launchScene, removeScene } = usePreviousScene(battleScene.scene.key);
 
     usePhaserListener("useItem", async (scene, item, monster) => {
       const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
@@ -31,17 +31,16 @@ export const ItemAttempt: State<StateName> = {
       // other than inventory, and that once you've used an item in battle
       // you cannot use another item, so we remove the inventory scene
       removeScene(scene, SceneKey.Inventory);
-      const previousScene = switchToPreviousScene(scene);
-      if (!previousScene) return;
+      switchToPreviousScene(scene);
 
-      await showMessages(previousScene, [`You used ${item.id} on ${monster.key}.`]);
+      await showMessages(battleScene, [`You used ${item.id} on ${monster.key}.`]);
       await battleStateMachine.setState(StateName.EnemyInput);
     });
     usePhaserListener("unuseItem", async () => {
       await battleStateMachine.setState(StateName.PlayerInput);
     });
 
-    launchScene(scene, SceneKey.Inventory);
+    launchScene(battleScene, SceneKey.Inventory);
   },
   onExit: () => {
     for (const unsubscribe of unsubscribes) unsubscribe();
