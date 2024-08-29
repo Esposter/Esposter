@@ -35,6 +35,7 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
     removeParallelScene(scene, currentSceneKey);
     useInitializeControls(previousScene);
     scene.scene.resume(previousSceneKey);
+    return previousScene;
   };
 
   return { launchScene, previousSceneKey, removeScene, switchToPreviousScene };
