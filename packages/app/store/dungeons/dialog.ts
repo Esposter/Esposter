@@ -42,7 +42,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    await new Promise<void>((resolve) => {
+    return new Promise<void>((resolve) => {
       const onComplete = () => {
         resolve();
       };
