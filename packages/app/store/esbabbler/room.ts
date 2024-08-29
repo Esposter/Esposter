@@ -4,7 +4,7 @@ import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput 
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
-import Fuse from "fuse.js";
+import { useFuse } from "@vueuse/integrations/useFuse";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const { $client } = useNuxtApp();
@@ -47,8 +47,12 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const roomsSearched = computed<Room[]>(() => {
     if (!roomSearchQuery.value) return [];
 
-    const fuse = new Fuse(roomList.value, { keys: ["name"] });
-    return fuse.search(roomSearchQuery.value).map((x) => x.item);
+    const { results } = useFuse(roomSearchQuery, roomList, {
+      fuseOptions: {
+        keys: ["name"],
+      },
+    });
+    return results.value.map((x) => x.item);
   });
 
   return {

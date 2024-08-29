@@ -16,11 +16,8 @@ export const useInitializeGameObjectEvents = () => {
     events.includes(key),
   ) as (keyof typeof GameObjectEventMap)[];
   const eventStopHandlers: (() => void)[] = [];
-  const initializeGameObjectEvents = <
-    TGameObject extends GameObjects.GameObject,
-    TEmitsOptions extends Record<string, unknown[]>,
-  >(
-    gameObject: TGameObject,
+  const initializeGameObjectEvents = <TEmitsOptions extends Record<string, unknown[]>>(
+    gameObject: GameObjects.GameObject,
     emit: SetupContext<TEmitsOptions>["emit"],
     scene: SceneWithPlugins,
   ) => {

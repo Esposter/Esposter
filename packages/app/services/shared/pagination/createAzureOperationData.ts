@@ -12,8 +12,9 @@ export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeK
   const pushItemList = (...items: TItem[]) => {
     itemList.value.push(...items);
   };
-  const createItem = (newItem: TItem) => {
-    itemList.value.push(newItem);
+  const createItem = (newItem: TItem, isReversed?: true) => {
+    if (isReversed) itemList.value.unshift(newItem);
+    else itemList.value.push(newItem);
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
     const index = itemList.value.findIndex(

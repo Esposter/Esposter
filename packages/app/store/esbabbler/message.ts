@@ -17,11 +17,16 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { messageInput } = storeToRefs(messageInputStore);
   const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(currentRoomId);
   const {
-    createMessage: storeCreateMessage,
+    createMessage: baseStoreCreateMessage,
     deleteMessage: storeDeleteMessage,
     updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createAzureOperationData(itemList, AzureEntityType.Message);
+  // Our messages list is reversed
+  // i.e. most recent messages are at the front
+  const storeCreateMessage = (message: MessageEntity) => {
+    baseStoreCreateMessage(message, true);
+  };
 
   const sendMessage = async (editor: Editor) => {
     if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;
