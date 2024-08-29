@@ -18,9 +18,7 @@ export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack
   });
 
   return new Promise<void>((resolve) => {
-    ExternalAttackManagerStore.onComplete = () => {
-      resolve();
-    };
+    ExternalAttackManagerStore.onComplete = resolve;
     storeRefs.attackId.value = attack.id;
     storeRefs.isToEnemy.value = isToEnemy;
     storeRefs.isActive.value = true;

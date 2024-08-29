@@ -19,9 +19,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   // to access the dialog when the player has inputted a value
   let dialogTarget: DialogTarget;
   let queuedMessages: DialogMessage[];
-  // We need a map of a list of onComplete hooks based on the dialog target id
-  // to allow for recursive onComplete hook calls and cleaning them up later
-  const dialogOnCompleteListMap = new Map<string, (() => void)[]>();
+  let queuedOnComplete: (() => void) | undefined;
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
@@ -43,12 +41,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     dialogTarget = target;
     queuedMessages = messages;
     return new Promise<void>((resolve) => {
-      const onComplete = () => {
-        resolve();
-      };
-      const onCompleteList = dialogOnCompleteListMap.get(dialogTarget.id);
-      if (onCompleteList) onCompleteList.push(onComplete);
-      else dialogOnCompleteListMap.set(dialogTarget.id, [onComplete]);
+      queuedOnComplete = resolve;
       showMessage(scene, dialogTarget);
     });
   };
@@ -62,9 +55,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
 
     const message = queuedMessages.shift();
     if (!message) {
-      const queuedOnComplete = dialogOnCompleteListMap.get(target.id)?.shift();
-      if (!queuedOnComplete) return;
-      queuedOnComplete();
+      queuedOnComplete?.();
       return;
     }
 
@@ -107,12 +98,12 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     }
 
     const targetText = computed({
-      get: () => dialogTarget.message.value.text,
+      get: () => target.message.value.text,
       set: (newText) => {
-        dialogTarget.message.value.text = newText;
+        target.message.value.text = newText;
       },
     });
-    dialogTarget.message.value.title = message.title;
+    target.message.value.title = message.title;
     return useAnimateText(scene, targetText, message.text);
   };
 
