@@ -2,7 +2,6 @@ import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins"
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import type { OnComplete } from "@/models/shared/OnComplete";
 
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -22,7 +21,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   let queuedMessages: DialogMessage[];
   // We need a map of a list of onComplete hooks based on the dialog target id
   // to allow for recursive onComplete hook calls and cleaning them up later
-  const dialogOnCompleteListMap = new Map<string, OnComplete[]>();
+  const dialogOnCompleteListMap = new Map<string, (() => void)[]>();
   const isQueuedMessagesAnimationPlaying = ref(false);
   const isWaitingForPlayerSpecialInput = ref(false);
 
@@ -40,16 +39,18 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     scene: SceneWithPlugins,
     target: DialogTarget,
     messages: DialogMessage[],
-    onComplete?: OnComplete,
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    if (onComplete) {
+    await new Promise<void>((resolve) => {
+      const onComplete = () => {
+        resolve();
+      };
       const onCompleteList = dialogOnCompleteListMap.get(dialogTarget.id);
       if (onCompleteList) onCompleteList.push(onComplete);
       else dialogOnCompleteListMap.set(dialogTarget.id, [onComplete]);
-    }
-    await showMessage(scene, dialogTarget);
+      showMessage(scene, dialogTarget);
+    });
   };
   // By default, this will show the message of what's last been set
   // but because we allow recursive calls that may show messages in other
@@ -63,7 +64,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     if (!message) {
       const queuedOnComplete = dialogOnCompleteListMap.get(target.id)?.shift();
       if (!queuedOnComplete) return;
-      await queuedOnComplete();
+      queuedOnComplete();
       return;
     }
 

@@ -32,9 +32,8 @@ export const ItemAttempt: State<StateName> = {
       // you cannot use another item, so we remove the inventory scene
       removeScene(scene, SceneKey.Inventory);
       switchToPreviousScene(scene);
-      await showMessages(scene, [`You used ${item.id} on ${monster.key}.`], async () => {
-        await battleStateMachine.setState(StateName.EnemyInput);
-      });
+      await showMessages(scene, [`You used ${item.id} on ${monster.key}.`]);
+      await battleStateMachine.setState(StateName.EnemyInput);
     });
     usePhaserListener("unuseItem", async () => {
       await battleStateMachine.setState(StateName.PlayerInput);

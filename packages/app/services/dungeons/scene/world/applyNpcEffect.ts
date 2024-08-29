@@ -25,8 +25,8 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         await showMessages(
           scene,
           effect.messages.map((text) => ({ text, title: npc.name })),
-          onComplete,
         );
+        onComplete();
       }
       return;
     case EffectType.Heal: {

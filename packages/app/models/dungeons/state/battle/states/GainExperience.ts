@@ -36,11 +36,9 @@ export const GainExperience: State<StateName> = {
     );
     const { experienceToNextLevel } = useExperience(activeMonster);
     const onComplete = async () => {
-      await showMessages(scene, [`You gained ${experienceGain} exp.`], async () => {
-        await gainExperienceForNonActiveMonsters(scene, experienceGain, async () => {
-          await battleStateMachine.setState(StateName.Finished);
-        });
-      });
+      await showMessages(scene, [`You gained ${experienceGain} exp.`]);
+      await gainExperienceForNonActiveMonsters(scene, experienceGain);
+      await battleStateMachine.setState(StateName.Finished);
     };
 
     if (experienceGain - experienceToNextLevel.value >= 0) {
@@ -51,10 +49,9 @@ export const GainExperience: State<StateName> = {
         onComplete,
       ) => {
         const showLevelUpMessage = async () => {
-          await showMessages(scene, [`${key} leveled up to ${stats.level}!`], () => {
-            onComplete();
-            if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
-          });
+          await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
+          onComplete();
+          if (experienceToNextLevel.value > 0) phaserEventEmitter.emit("levelUpComplete");
         };
 
         if (isSkipAnimations.value || isSettingsSkipAnimations.value)
@@ -77,11 +74,7 @@ export const GainExperience: State<StateName> = {
   },
 };
 
-const gainExperienceForNonActiveMonsters = async (
-  scene: SceneWithPlugins,
-  experienceGain: number,
-  onComplete: () => Promise<void>,
-) => {
+const gainExperienceForNonActiveMonsters = async (scene: SceneWithPlugins, experienceGain: number) => {
   const playerStore = usePlayerStore();
   const { player } = storeToRefs(playerStore);
   const battlePlayerStore = useBattlePlayerStore();
@@ -107,7 +100,5 @@ const gainExperienceForNonActiveMonsters = async (
     await showMessages(
       scene,
       leveledUpNonActiveMonsters.map(({ key, stats }) => `${key} leveled up to ${stats.level}!`),
-      onComplete,
     );
-  else await onComplete();
 };

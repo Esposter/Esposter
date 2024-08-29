@@ -19,9 +19,8 @@ export class HealItemResolver extends AItemResolver {
     const newHp = Math.min(oldHp + item.value.effect.value, monster.value.stats.maxHp);
 
     monster.value.status.hp = newHp;
-    await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`], () => {
-      phaserEventEmitter.emit("useItem", scene, item.value, monster.value);
-    });
+    await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`]);
+    phaserEventEmitter.emit("useItem", scene, item.value, monster.value);
   }
 
   isActive(_item: Ref<Item>, monster: Ref<Monster>) {
