@@ -42,16 +42,14 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     queuedMessages = messages;
     return new Promise<void>((resolve) => {
       queuedOnComplete = resolve;
-      showMessage(scene, dialogTarget);
+      showMessage(scene);
     });
   };
-  // By default, this will show the message of what's last been set
-  // but because we allow recursive calls that may show messages in other
-  // dialog targets, we need to also allow being able to specify them
-  const showMessage = async (scene: SceneWithPlugins, target = dialogTarget) => {
+  // Called after updateQueuedMessagesAndShowMessage
+  const showMessage = async (scene: SceneWithPlugins) => {
     isWaitingForPlayerSpecialInput.value = false;
     isInputPromptCursorVisible.value = false;
-    target.reset();
+    dialogTarget.reset();
 
     const message = queuedMessages.shift();
     if (!message) {
@@ -64,26 +62,26 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
 
     if (isSkipAnimations.value) {
       const textDelay = useTextDelay();
-      target.setMessage(message);
+      dialogTarget.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
       // Seems like it takes exactly 2 ticks for vue to register phaser's text changes
       scene.time.delayedCall(textDelay.value * 2, () => {
-        showInputPromptCursor(unref(target.inputPromptCursorX));
+        showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
         isWaitingForPlayerSpecialInput.value = true;
       });
       return;
     }
 
-    const targetText = computed({
-      get: () => target.message.value.text,
+    const dialogTargetText = computed({
+      get: () => dialogTarget.message.value.text,
       set: (newText) => {
-        target.message.value.text = newText;
+        dialogTarget.message.value.text = newText;
       },
     });
-    target.message.value.title = message.title;
+    dialogTarget.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
-    await useAnimateText(scene, targetText, message.text);
-    showInputPromptCursor(unref(target.inputPromptCursorX));
+    await useAnimateText(scene, dialogTargetText, message.text);
+    showInputPromptCursor(unref(dialogTarget.inputPromptCursorX));
     isWaitingForPlayerSpecialInput.value = true;
     isQueuedMessagesAnimationPlaying.value = false;
   };
