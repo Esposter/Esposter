@@ -1,8 +1,7 @@
 import type { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { OnComplete } from "@/models/shared/OnComplete";
 
 export const ExternalAttackManagerStore = {
-  onComplete: undefined as OnComplete | undefined,
+  onComplete: undefined as (() => void) | undefined,
 };
 
 export const useAttackManagerStore = defineStore("dungeons/battle/attackManager", () => {

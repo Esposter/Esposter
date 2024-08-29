@@ -1,33 +1,28 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { OnComplete } from "@/models/shared/OnComplete";
 
 import { dayjs } from "@/services/dayjs";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useAttackAnimation = async (
-  scene: SceneWithPlugins,
-  attack: Attack,
-  isToEnemy: boolean,
-  onComplete?: OnComplete,
-) => {
+export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
+  if (isSkipAnimations.value) return;
+
+  const attackManagerStore = useAttackManagerStore();
+  const storeRefs = storeToRefs(attackManagerStore);
   scene.time.delayedCall(dayjs.duration(0.2, "seconds").asMilliseconds(), () => {
     getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
   });
 
-  if (isSkipAnimations.value) {
-    await onComplete?.();
-    return;
-  }
-
-  const attackManagerStore = useAttackManagerStore();
-  const refs = storeToRefs(attackManagerStore);
-  ExternalAttackManagerStore.onComplete = onComplete;
-  refs.attackId.value = attack.id;
-  refs.isToEnemy.value = isToEnemy;
-  refs.isActive.value = true;
+  return new Promise<void>((resolve) => {
+    ExternalAttackManagerStore.onComplete = () => {
+      resolve();
+    };
+    storeRefs.attackId.value = attack.id;
+    storeRefs.isToEnemy.value = isToEnemy;
+    storeRefs.isActive.value = true;
+  });
 };

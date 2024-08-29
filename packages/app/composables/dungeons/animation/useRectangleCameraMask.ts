@@ -1,16 +1,12 @@
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-import type { OnComplete } from "@/models/shared/OnComplete";
 
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";
 
-export const useRectangleCameraMask = async (scene: SceneWithPlugins, onComplete?: OnComplete) => {
+export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) {
-    await onComplete?.();
-    return;
-  }
+  if (isSkipAnimations.value) return;
 
   const { height, width } = scene.scale;
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);
@@ -18,29 +14,32 @@ export const useRectangleCameraMask = async (scene: SceneWithPlugins, onComplete
   const mask = graphics.createGeometryMask();
 
   scene.cameras.main.setMask(mask);
-  scene.tweens.add({
-    delay: 400,
-    duration: 800,
-    height: {
-      ease: Math.Easing.Expo.InOut,
-      from: 0,
-      start: 0,
-      to: height,
-    },
-    onComplete: async () => {
-      mask.destroy();
-      scene.cameras.main.clearMask();
-      await onComplete?.();
-    },
-    onUpdate: () => {
-      graphics.clear().fillRectShape(rectangleShape);
-    },
-    targets: rectangleShape,
-    y: {
-      ease: Math.Easing.Expo.InOut,
-      from: height / 2,
-      start: height / 2,
-      to: 0,
-    },
+
+  return new Promise<void>((resolve) => {
+    scene.tweens.add({
+      delay: 400,
+      duration: 800,
+      height: {
+        ease: Math.Easing.Expo.InOut,
+        from: 0,
+        start: 0,
+        to: height,
+      },
+      onComplete: () => {
+        mask.destroy();
+        scene.cameras.main.clearMask();
+        resolve();
+      },
+      onUpdate: () => {
+        graphics.clear().fillRectShape(rectangleShape);
+      },
+      targets: rectangleShape,
+      y: {
+        ease: Math.Easing.Expo.InOut,
+        from: height / 2,
+        start: height / 2,
+        to: 0,
+      },
+    });
   });
 };

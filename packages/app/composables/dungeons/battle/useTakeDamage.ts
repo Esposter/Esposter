@@ -1,10 +1,8 @@
-import type { OnComplete } from "@/models/shared/OnComplete";
-
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 
 export const useTakeDamage = (isEnemy: boolean) => {
-  return (damage: number, onComplete?: OnComplete) => {
+  return (damage: number) => {
     const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
     const { activeMonster } = storeToRefs(store);
 
@@ -12,6 +10,6 @@ export const useTakeDamage = (isEnemy: boolean) => {
     if (newHp < 0) newHp = 0;
     activeMonster.value.status.hp = newHp;
 
-    useMonsterTakeDamageTween(isEnemy, onComplete);
+    return useMonsterTakeDamageTween(isEnemy);
   };
 };

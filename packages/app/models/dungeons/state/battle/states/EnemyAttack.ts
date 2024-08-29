@@ -22,14 +22,11 @@ export const EnemyAttack: State<StateName> = {
     const randomAttackId = pickRandomValue(activeMonster.value.attackIds);
     const randomAttack = getAttack(randomAttackId);
 
-    await showMessageNoInputRequired(scene, `Enemy ${activeMonster.value.key} used ${randomAttackId}.`, () => {
-      scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
-        await useAttackAnimation(scene, randomAttack, false, () => {
-          takeDamage(calculateDamage(activeMonster.value.stats.attack), async () => {
-            await battleStateMachine.setState(StateName.EnemyPostAttackCheck);
-          });
-        });
-      });
+    await showMessageNoInputRequired(scene, `Enemy ${activeMonster.value.key} used ${randomAttackId}.`);
+    scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
+      await useAttackAnimation(scene, randomAttack, false);
+      await takeDamage(calculateDamage(activeMonster.value.stats.attack));
+      await battleStateMachine.setState(StateName.EnemyPostAttackCheck);
     });
   },
 };

@@ -21,14 +21,11 @@ export const PlayerAttack: State<StateName> = {
     const attack = attackOptionGrid.value.value;
     if (!attack) return;
 
-    await showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`, () => {
-      scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
-        await useAttackAnimation(scene, attack, true, () => {
-          takeDamage(calculateDamage(activeMonster.value.stats.attack), async () => {
-            await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
-          });
-        });
-      });
+    await showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`);
+    scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
+      await useAttackAnimation(scene, attack, true);
+      await takeDamage(calculateDamage(activeMonster.value.stats.attack));
+      await battleStateMachine.setState(StateName.PlayerPostAttackCheck);
     });
   },
 };

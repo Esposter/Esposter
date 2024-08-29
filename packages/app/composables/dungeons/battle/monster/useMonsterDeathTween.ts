@@ -1,12 +1,10 @@
-import type { OnComplete } from "@/models/shared/OnComplete";
-
 import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComplete) => {
+export const useMonsterDeathTween = async (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
   const { monsterInfoContainerPosition, monsterInfoContainerTween, monsterPosition, monsterTween } = storeToRefs(store);
   const settingsStore = useSettingsStore();
@@ -19,25 +17,9 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
   if (isSkipAnimations.value) {
     monsterPosition.value.y = monsterPositionYEnd;
     monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
-    await onComplete?.();
     return;
   }
 
-  useTween(monsterTween, {
-    delay: 0,
-    duration: dayjs.duration(2, "seconds").asMilliseconds(),
-    // as it may also be re-used for animating switching monsters
-    onComplete: async () => {
-      monsterPosition.value.y = monsterPositionYEnd;
-      await onComplete?.();
-    },
-    // For monster death tween, we reset to initial positions for everything
-    y: {
-      from: monsterPosition.value.y,
-      start: monsterPosition.value.y,
-      to: monsterPositionYEnd,
-    },
-  });
   useTween(monsterInfoContainerTween, {
     delay: 0,
     duration: dayjs.duration(2, "seconds").asMilliseconds(),
@@ -49,5 +31,21 @@ export const useMonsterDeathTween = async (isEnemy: boolean, onComplete?: OnComp
       start: monsterInfoContainerPosition.value.x,
       to: monsterInfoContainerPositionXEnd,
     },
+  });
+
+  return new Promise<void>((resolve) => {
+    useTween(monsterTween, {
+      delay: 0,
+      duration: dayjs.duration(2, "seconds").asMilliseconds(),
+      onComplete: () => {
+        monsterPosition.value.y = monsterPositionYEnd;
+        resolve();
+      },
+      y: {
+        from: monsterPosition.value.y,
+        start: monsterPosition.value.y,
+        to: monsterPositionYEnd,
+      },
+    });
   });
 };

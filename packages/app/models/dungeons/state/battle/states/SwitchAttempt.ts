@@ -46,11 +46,11 @@ export const SwitchAttempt: State<StateName> = {
       if (isActiveMonsterFainted) {
         switchActiveMonster(monster.id);
         await battleStateMachine.setState(StateName.BringOutMonster);
-      } else
-        await useMonsterDeathTween(false, async () => {
-          switchActiveMonster(monster.id);
-          await battleStateMachine.setState(StateName.SwitchMonster);
-        });
+      } else {
+        await useMonsterDeathTween(false);
+        switchActiveMonster(monster.id);
+        await battleStateMachine.setState(StateName.SwitchMonster);
+      }
     });
     usePhaserListener("unswitchMonster", async () => {
       await battleStateMachine.setState(StateName.PlayerInput);

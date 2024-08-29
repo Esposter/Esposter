@@ -90,27 +90,18 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     });
     target.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
-    useAnimateText(scene, targetText, message.text, {
-      onComplete: () => {
-        showInputPromptCursor(unref(target.inputPromptCursorX));
-        isWaitingForPlayerSpecialInput.value = true;
-        isQueuedMessagesAnimationPlaying.value = false;
-      },
-    });
+    await useAnimateText(scene, targetText, message.text);
+    showInputPromptCursor(unref(target.inputPromptCursorX));
+    isWaitingForPlayerSpecialInput.value = true;
+    isQueuedMessagesAnimationPlaying.value = false;
   };
 
-  const showMessageNoInputRequired = async (
-    scene: SceneWithPlugins,
-    target: DialogTarget,
-    message: DialogMessage,
-    onComplete?: OnComplete,
-  ) => {
+  const showMessageNoInputRequired = (scene: SceneWithPlugins, target: DialogTarget, message: DialogMessage) => {
     target.reset();
     phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
     if (isSkipAnimations.value) {
       target.setMessage(message);
-      await onComplete?.();
       return;
     }
 
@@ -121,7 +112,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       },
     });
     dialogTarget.message.value.title = message.title;
-    useAnimateText(scene, targetText, message.text, { onComplete });
+    return useAnimateText(scene, targetText, message.text);
   };
 
   const showInputPromptCursor = (x: number) => {

@@ -31,15 +31,14 @@ const curve = new Curves.CubicBezier(startPoint, controlPoint1, controlPoint2, e
 const path = new Curves.Path(startPosition.x, startPosition.y).add(curve);
 const tween = ref<TweenBuilderConfiguration>();
 
-const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) =>
-  new Promise<void>((resolve) => {
-    if (isSkipAnimations.value) {
-      position.value = { ...endPosition };
-      isVisible.value = true;
-      resolve();
-      return;
-    }
+const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) => {
+  if (isSkipAnimations.value) {
+    position.value = { ...endPosition };
+    isVisible.value = true;
+    return;
+  }
 
+  return new Promise<void>((resolve) => {
     position.value = { ...startPosition };
     isVisible.value = true;
     pathFollower.startFollow({
@@ -50,14 +49,12 @@ const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) =>
       },
     });
   });
+};
 
-const playShakeBallAnimation = () =>
-  new Promise<void>((resolve) => {
-    if (isSkipAnimations.value) {
-      resolve();
-      return;
-    }
+const playShakeBallAnimation = () => {
+  if (isSkipAnimations.value) return;
 
+  return new Promise<void>((resolve) => {
     useTween(tween, {
       delay: dayjs.duration(0.2, "seconds").asMilliseconds(),
       duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
@@ -71,6 +68,7 @@ const playShakeBallAnimation = () =>
       yoyo: true,
     });
   });
+};
 </script>
 
 <template>

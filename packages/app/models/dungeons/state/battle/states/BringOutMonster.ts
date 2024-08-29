@@ -14,13 +14,11 @@ export const BringOutMonster: State<StateName> = {
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
 
-    await useMonsterAppearTween(false, async () => {
-      useMonsterInfoContainerAppearTween(false);
-      await showMessageNoInputRequired(scene, `Go ${activeMonster.value.key}!`, () => {
-        scene.time.delayedCall(dayjs.duration(1, "second").asMilliseconds(), async () => {
-          await battleStateMachine.setState(StateName.PlayerInput);
-        });
-      });
+    await useMonsterAppearTween(false);
+    useMonsterInfoContainerAppearTween(false);
+    await showMessageNoInputRequired(scene, `Go ${activeMonster.value.key}!`);
+    scene.time.delayedCall(dayjs.duration(1, "second").asMilliseconds(), async () => {
+      await battleStateMachine.setState(StateName.PlayerInput);
     });
   },
 };

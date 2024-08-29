@@ -13,11 +13,10 @@ export const PreBattleInfo: State<StateName> = {
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
 
-    await useMonsterAppearTween(true, async () => {
-      useMonsterInfoContainerAppearTween(true);
-      await showMessages(scene, [`A wild ${activeMonster.value.key} has appeared!`], async () => {
-        await battleStateMachine.setState(StateName.BringOutMonster);
-      });
+    await useMonsterAppearTween(true);
+    useMonsterInfoContainerAppearTween(true);
+    await showMessages(scene, [`A wild ${activeMonster.value.key} has appeared!`], async () => {
+      await battleStateMachine.setState(StateName.BringOutMonster);
     });
   },
 };
