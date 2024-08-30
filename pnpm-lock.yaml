@@ -277,11 +277,11 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13(survey-core@1.11.13)(vue@3.4.33(typescript@5.4.5))
       three:
-        specifier: ^0.167.1
-        version: 0.167.1
+        specifier: ^0.168.0
+        version: 0.168.0
       three-globe:
         specifier: ^2.31.1
-        version: 2.31.1(three@0.167.1)
+        version: 2.31.1(three@0.168.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -365,8 +365,8 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
       '@types/three':
-        specifier: ^0.167.2
-        version: 0.167.2
+        specifier: ^0.168.0
+        version: 0.168.0
       '@types/webfontloader':
         specifier: ^1.6.38
         version: 1.6.38
@@ -3496,8 +3496,8 @@ packages:
   '@tweenjs/tween.js@23.1.1':
     resolution: {integrity: sha512-ZpboH7pCPPeyBWKf8c7TJswtCEQObFo3bOBYalm99NzZarATALYCo5OhbCa/n4RQyJyHfhkdx+hNrdL5ByFYDw==}
 
-  '@tweenjs/tween.js@23.1.2':
-    resolution: {integrity: sha512-kMCNaZCJugWI86xiEHaY338CU5JpD0B97p1j1IKNn/Zto8PgACjQx0UxbHjmOcLl/dDOBnItwD07KmCs75pxtQ==}
+  '@tweenjs/tween.js@23.1.3':
+    resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
@@ -3607,8 +3607,8 @@ packages:
   '@types/stripe-v3@3.1.33':
     resolution: {integrity: sha512-fIE7F7alypCrnIMsk4naprHf8kXEvPM2Q9FGdL/3TDeGM0xlHohdVWkwuaEZ2tKzXB9QQKoS8k+ocLkPjZajwQ==}
 
-  '@types/three@0.167.2':
-    resolution: {integrity: sha512-onxnIUNYpXcZJ5DTiIsxfnr4F9kAWkkxAUWx5yqzz/u0a4IygCLCjMuOl2DEeCxyJdJ2nOJZvKpu48sBMqfmkQ==}
+  '@types/three@0.168.0':
+    resolution: {integrity: sha512-qAGLGzbaYgkkonOBfwOr+TZpOskPfFjrDAj801WQSVkUz0/D9zwir4vhruJ/CC/GteywzR9pqeVVfs5th/2oKw==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -4352,6 +4352,9 @@ packages:
 
   '@webassemblyjs/wast-printer@1.12.1':
     resolution: {integrity: sha512-+X4WAlOisVWQMikjbcvY2e0rwPsKQ9F688lksZhBcPycBBuii3O7m8FACbDMWDojpAqvjIncrG8J0XHKyQfVeA==}
+
+  '@webgpu/types@0.1.44':
+    resolution: {integrity: sha512-JDpYJN5E/asw84LTYhKyvPpxGnD+bAKPtpW9Ilurf7cZpxaTbxkQcGwOd7jgB9BPBrTYQ+32ufo4HiuomTjHNQ==}
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -9330,8 +9333,8 @@ packages:
     peerDependencies:
       three: '>=0.125'
 
-  three@0.167.1:
-    resolution: {integrity: sha512-gYTLJA/UQip6J/tJvl91YYqlZF47+D/kxiWrbTon35ZHlXEN0VOo+Qke2walF1/x92v55H6enomymg4Dak52kw==}
+  three@0.168.0:
+    resolution: {integrity: sha512-6m6jXtDwMJEK/GGMbAOTSAmxNdzKvvBzgd7q8bE/7Tr6m7PaBh5kKLrN7faWtlglXbzj7sVba48Idwx+NRsZXw==}
 
   through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
@@ -14477,7 +14480,7 @@ snapshots:
 
   '@tweenjs/tween.js@23.1.1': {}
 
-  '@tweenjs/tween.js@23.1.2': {}
+  '@tweenjs/tween.js@23.1.3': {}
 
   '@tybys/wasm-util@0.9.0':
     dependencies:
@@ -14589,11 +14592,12 @@ snapshots:
 
   '@types/stripe-v3@3.1.33': {}
 
-  '@types/three@0.167.2':
+  '@types/three@0.168.0':
     dependencies:
-      '@tweenjs/tween.js': 23.1.2
+      '@tweenjs/tween.js': 23.1.3
       '@types/stats.js': 0.17.3
       '@types/webxr': 0.5.14
+      '@webgpu/types': 0.1.44
       fflate: 0.8.2
       meshoptimizer: 0.18.1
 
@@ -15824,6 +15828,8 @@ snapshots:
     dependencies:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
+
+  '@webgpu/types@0.1.44': {}
 
   '@xtuc/ieee754@1.2.0': {}
 
@@ -21618,7 +21624,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  three-conic-polygon-geometry@1.6.3(three@0.167.1):
+  three-conic-polygon-geometry@1.6.3(three@0.168.0):
     dependencies:
       '@turf/boolean-point-in-polygon': 6.5.0
       d3-array: 3.2.4
@@ -21627,19 +21633,19 @@ snapshots:
       d3-scale: 4.0.2
       delaunator: 5.0.1
       earcut: 2.2.4
-      three: 0.167.1
+      three: 0.168.0
 
-  three-fatline@0.7.0(three@0.167.1):
+  three-fatline@0.7.0(three@0.168.0):
     dependencies:
-      three: 0.167.1
+      three: 0.168.0
 
-  three-geojson-geometry@1.3.2(three@0.167.1):
+  three-geojson-geometry@1.3.2(three@0.168.0):
     dependencies:
       d3-geo: 3.1.1
       earcut: 2.2.4
-      three: 0.167.1
+      three: 0.168.0
 
-  three-globe@2.31.1(three@0.167.1):
+  three-globe@2.31.1(three@0.168.0):
     dependencies:
       '@tweenjs/tween.js': 23.1.1
       accessor-fn: 1.5.0
@@ -21655,14 +21661,14 @@ snapshots:
       h3-js: 4.1.0
       index-array-by: 1.4.1
       kapsule: 1.14.5
-      three: 0.167.1
-      three-conic-polygon-geometry: 1.6.3(three@0.167.1)
-      three-fatline: 0.7.0(three@0.167.1)
-      three-geojson-geometry: 1.3.2(three@0.167.1)
+      three: 0.168.0
+      three-conic-polygon-geometry: 1.6.3(three@0.168.0)
+      three-fatline: 0.7.0(three@0.168.0)
+      three-geojson-geometry: 1.3.2(three@0.168.0)
       tinycolor2: 1.6.0
       yaot: 1.1.3
 
-  three@0.167.1: {}
+  three@0.168.0: {}
 
   through2@2.0.5:
     dependencies:
