@@ -7,6 +7,7 @@ import type { GameObjects } from "phaser";
 import PathFollower from "@/lib/phaser/components/PathFollower.vue";
 import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Curves, Math } from "phaser";
 
@@ -18,6 +19,8 @@ interface BallProps {
 const { scale, texture } = defineProps<BallProps>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations } = storeToRefs(settingsStore);
+const enemyStore = useEnemyStore();
+const { monsterTween } = storeToRefs(enemyStore);
 const startPosition = Object.freeze<Position>({ x: 0, y: 500 });
 const endPosition = Object.freeze<Position>({ x: 725, y: 180 });
 const position = ref({ ...startPosition });
@@ -31,14 +34,8 @@ const curve = new Curves.CubicBezier(startPoint, controlPoint1, controlPoint2, e
 const path = new Curves.Path(startPosition.x, startPosition.y).add(curve);
 const tween = ref<TweenBuilderConfiguration>();
 
-const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) => {
-  if (isSkipAnimations.value) {
-    position.value = { ...endPosition };
-    isVisible.value = true;
-    return;
-  }
-
-  return new Promise<void>((resolve) => {
+const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) =>
+  new Promise<void>((resolve) => {
     position.value = { ...startPosition };
     isVisible.value = true;
     pathFollower.startFollow({
@@ -49,12 +46,9 @@ const playThrowBallAnimation = (pathFollower: GameObjects.PathFollower) => {
       },
     });
   });
-};
 
-const playShakeBallAnimation = () => {
-  if (isSkipAnimations.value) return;
-
-  return new Promise<void>((resolve) => {
+const playShakeBallAnimation = () =>
+  new Promise<void>((resolve) => {
     useTween(tween, {
       delay: dayjs.duration(0.2, "seconds").asMilliseconds(),
       duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
@@ -68,7 +62,22 @@ const playShakeBallAnimation = () => {
       yoyo: true,
     });
   });
-};
+
+const playCatchEnemyAnimation = () =>
+  new Promise<void>((resolve) => {
+    useTween(monsterTween, {
+      alpha: {
+        from: 1,
+        start: 1,
+        to: 0,
+      },
+      duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
+      ease: Math.Easing.Sine.InOut,
+      onComplete: () => {
+        resolve();
+      },
+    });
+  });
 </script>
 
 <template>
@@ -76,8 +85,16 @@ const playShakeBallAnimation = () => {
     :configuration="{ visible: isVisible, path, ...position, texture, scale, alpha, tween }"
     @complete="
       async (_scene, pathFollower) => {
+        if (isSkipAnimations) {
+          position = { ...endPosition };
+          isVisible = true;
+          return;
+        }
+
         await playThrowBallAnimation(pathFollower);
+        await playCatchEnemyAnimation();
         await playShakeBallAnimation();
+        isVisible = false;
       }
     "
   />
