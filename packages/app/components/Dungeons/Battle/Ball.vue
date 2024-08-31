@@ -9,6 +9,7 @@ import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { sleep } from "@/util/time/sleep";
 import { Curves, Math } from "phaser";
 
 interface BallProps {
@@ -78,6 +79,22 @@ const playCatchEnemyAnimation = () =>
       },
     });
   });
+
+const playCatchEnemyFailedAnimation = () =>
+  new Promise<void>((resolve) => {
+    useTween(monsterTween, {
+      alpha: {
+        from: 0,
+        start: 0,
+        to: 1,
+      },
+      duration: dayjs.duration(0.5, "seconds").asMilliseconds(),
+      ease: Math.Easing.Sine.InOut,
+      onComplete: () => {
+        resolve();
+      },
+    });
+  });
 </script>
 
 <template>
@@ -94,7 +111,9 @@ const playCatchEnemyAnimation = () =>
         await playThrowBallAnimation(pathFollower);
         await playCatchEnemyAnimation();
         await playShakeBallAnimation();
+        await sleep(dayjs.duration(0.5, 'seconds').asMilliseconds());
         isVisible = false;
+        await playCatchEnemyFailedAnimation();
       }
     "
   />
