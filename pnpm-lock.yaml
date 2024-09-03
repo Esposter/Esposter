@@ -377,8 +377,8 @@ importers:
         specifier: ^0.62.3
         version: 0.62.3(magicast@0.3.4)(postcss@8.4.38)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(webpack@5.90.3(esbuild@0.23.0))
       '@vite-pwa/nuxt':
-        specifier: ^0.10.1
-        version: 0.10.1(magicast@0.3.4)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
+        specifier: ^0.10.3
+        version: 0.10.3(magicast@0.3.4)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
       '@vitest/coverage-v8':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.2)(happy-dom@15.7.3)(sass@1.77.8)(terser@5.29.2))
@@ -4024,8 +4024,8 @@ packages:
   '@vexip-ui/utils@2.16.0':
     resolution: {integrity: sha512-AMiMs9fF8C2Ya3mvoV/W5isaNg/qjTH1zQ8aDsn1VZ5v5Hcf7Nw1D7WjXAhm20dJ23GbSbLaAwUA9wCncRCPRw==}
 
-  '@vite-pwa/nuxt@0.10.1':
-    resolution: {integrity: sha512-VAGNeIlKXit21C/tywU2WYCpdq+EB4nXILAjVfaUjUBSXtDUNdZIEn+v+lqyN16iA9dvSVmyoq+jQd7a8hlqEw==}
+  '@vite-pwa/nuxt@0.10.3':
+    resolution: {integrity: sha512-oCHBdaswmw6uY1PQP3QLYV7qeA6LG0U4I/akDLJrg3YqnW0L17uVs0u1Rqg5TnJSBiG41aB/dWC9hTYnH9xL0g==}
     peerDependencies:
       '@vite-pwa/assets-generator': ^0.2.4
     peerDependenciesMeta:
@@ -9998,8 +9998,8 @@ packages:
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
 
-  vite-plugin-pwa@0.20.0:
-    resolution: {integrity: sha512-/kDZyqF8KqoXRpMUQtR5Atri/7BWayW8Gp7Kz/4bfstsV6zSFTxjREbXZYL7zSuRL40HGA+o2hvUAFRmC+bL7g==}
+  vite-plugin-pwa@0.20.3:
+    resolution: {integrity: sha512-aqCOWWSwfX4o6H+6NyEvhzFs3eENBqYFKUK4FYx5OZ3jGio73BE189bPz9+BBgjHBLozldQVSmZTHySVC2zNkg==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       '@vite-pwa/assets-generator': ^0.2.4
@@ -15371,12 +15371,12 @@ snapshots:
 
   '@vexip-ui/utils@2.16.0': {}
 
-  '@vite-pwa/nuxt@0.10.1(magicast@0.3.4)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)':
+  '@vite-pwa/nuxt@0.10.3(magicast@0.3.4)(rollup@4.21.2)(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)':
     dependencies:
       '@nuxt/kit': 3.13.0(magicast@0.3.4)(rollup@4.21.2)
       pathe: 1.1.2
       ufo: 1.5.4
-      vite-plugin-pwa: 0.20.0(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vite-plugin-pwa: 0.20.3(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
     transitivePeerDependencies:
       - magicast
       - rollup
@@ -22560,11 +22560,11 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  vite-plugin-pwa@0.20.0(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0):
+  vite-plugin-pwa@0.20.3(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0):
     dependencies:
       debug: 4.3.6
-      fast-glob: 3.3.2
       pretty-bytes: 6.1.1
+      tinyglobby: 0.2.5
       vite: 5.4.2(@types/node@22.5.2)(sass@1.77.8)(terser@5.29.2)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
