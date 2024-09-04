@@ -220,8 +220,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       marked:
-        specifier: ^14.1.0
-        version: 14.1.0
+        specifier: ^14.1.1
+        version: 14.1.1
       mjml-browser:
         specifier: ^4.15.3
         version: 4.15.3
@@ -7379,8 +7379,8 @@ packages:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  marked@14.1.0:
-    resolution: {integrity: sha512-P93GikH/Pde0hM5TAXEd8I4JAYi8IB03n8qzW8Bh1BIEFpEyBoYxi/XWZA53LSpTeLBiMQOoSMj0u5E/tiVYTA==}
+  marked@14.1.1:
+    resolution: {integrity: sha512-eS59oxof5eBVDCKTs+mJbvB/6Vq137GbimF9wkTIlto2/B2ppY5nigUUQgKVmA3bI2mPTIshUyDj5j612ZxlQQ==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -19395,7 +19395,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  marked@14.1.0: {}
+  marked@14.1.1: {}
 
   mathjs@12.4.2:
     dependencies:
