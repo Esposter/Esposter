@@ -105,9 +105,4 @@ const defaults: Defaults = {
   VTooltip: { location: "top" },
 };
 
-export default defineVuetifyConfiguration({
-  defaults,
-  directives: true,
-  labComponents: true,
-  theme,
-});
+export default defineVuetifyConfiguration({ defaults, theme });

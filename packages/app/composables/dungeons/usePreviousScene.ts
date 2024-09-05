@@ -10,11 +10,10 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   const phaserStore = usePhaserStore();
   const { launchParallelScene, removeParallelScene } = phaserStore;
   const sceneStore = useSceneStore();
-  const { previousSceneKeys } = storeToRefs(sceneStore);
-  const previousSceneKey = computed(() => previousSceneKeys.value[previousSceneKeys.value.length - 1]);
+  const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
 
   const launchScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
-    previousSceneKeys.value.push(currentSceneKey);
+    previousSceneKeyStack.value.push(currentSceneKey);
     scene.scene.pause(currentSceneKey);
     launchParallelScene(scene, sceneKey);
   };
@@ -22,14 +21,14 @@ export const usePreviousScene = (currentSceneKey: SceneKey) => {
   // e.g. Battle -> Inventory (remove this) -> MonsterParty
   // when an item has been used in monster party scene
   const removeScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
-    const index = previousSceneKeys.value.indexOf(sceneKey);
+    const index = previousSceneKeyStack.value.indexOf(sceneKey);
     if (index === -1) return;
-    previousSceneKeys.value.splice(index, 1);
+    previousSceneKeyStack.value.splice(index, 1);
     removeParallelScene(scene, sceneKey);
   };
 
   const switchToPreviousScene = (scene: SceneWithPlugins) => {
-    const previousSceneKey = previousSceneKeys.value.pop();
+    const previousSceneKey = previousSceneKeyStack.value.pop();
     if (!previousSceneKey) return;
     const previousScene = getScene(previousSceneKey);
     removeParallelScene(scene, currentSceneKey);

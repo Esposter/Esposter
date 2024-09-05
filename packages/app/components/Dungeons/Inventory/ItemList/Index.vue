@@ -8,7 +8,7 @@ const { itemOptionGrid } = storeToRefs(inventorySceneStore);
 
 <template>
   <template v-for="(row, rowIndex) in itemOptionGrid.grid" :key="rowIndex">
-    <DungeonsInventoryItemListItem
+    <DungeonsInventoryItemListItemContainer
       v-for="(item, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index="rowIndex"
