@@ -7,7 +7,6 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
-import { parsePixel } from "@/util/parsePixel";
 import { prettifyName } from "@/util/text/prettifyName";
 import { Input } from "phaser";
 
@@ -33,7 +32,7 @@ const alpha = computed(() => {
       :configuration="{
         origin: 0,
         width: CONTENT_MENU_WIDTH,
-        height: parsePixel(MenuTextStyle.fontSize ?? 0),
+        height: MenuTextStyle.fontSize,
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="isUsableItem && emit('click')"
     />
