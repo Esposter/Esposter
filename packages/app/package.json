@@ -140,7 +140,7 @@
   "devDependencies": {
     "@esposter/block-mj-text": "workspace:*",
     "@esposter/configuration": "workspace:*",
-    "@nuxt/eslint": "^0.5.5",
+    "@nuxt/eslint": "^0.5.6",
     "@nuxt/fonts": "^0.7.2",
     "@nuxt/scripts": "^0.6.6",
     "@nuxt/test-utils": "^3.14.1",
