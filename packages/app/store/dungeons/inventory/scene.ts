@@ -17,6 +17,11 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
 
   const createItemOptionGrid = (newInventory: Inventory) =>
     new Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]>({
+      getIsActive(position) {
+        const value = this.getValue(position);
+        if (value === PlayerSpecialInput.Cancel) return true;
+        return useIsUsableItem(value);
+      },
       grid: [...newInventory.map((item) => [item]), [PlayerSpecialInput.Cancel]],
       wrap: true,
     });
