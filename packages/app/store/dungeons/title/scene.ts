@@ -3,10 +3,10 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 
 import { Save } from "@/models/dungeons/data/Save";
-import { Grid } from "@/models/dungeons/Grid";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -16,16 +16,6 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const { fadeSwitchToScene } = dungeonsStore;
   const { game, save } = storeToRefs(dungeonsStore);
   const isContinueEnabled = computed(() => game.value.saves.length > 0);
-  const optionGrid = ref(
-    new Grid<PlayerTitleMenuOption, [PlayerTitleMenuOption][]>({
-      getIsActive(position) {
-        const value = this.getValue(position);
-        return computed(() => (value === PlayerTitleMenuOption.Continue ? isContinueEnabled.value : true));
-      },
-      grid: [[PlayerTitleMenuOption["New Game"]], [PlayerTitleMenuOption.Continue], [PlayerTitleMenuOption.Settings]],
-      wrap: true,
-    }),
-  );
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
@@ -34,7 +24,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
-      switch (optionGrid.value.value) {
+      switch (PlayerTitleMenuOptionGrid.value) {
         case PlayerTitleMenuOption["New Game"]:
           save.value = new Save();
           fadeSwitchToScene(scene, SceneKey.World);
@@ -47,13 +37,13 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
           fadeSwitchToScene(scene, SceneKey.Settings);
           return;
         default:
-          exhaustiveGuard(optionGrid.value.value);
+          exhaustiveGuard(PlayerTitleMenuOptionGrid.value);
       }
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    optionGrid.value.move(direction);
+    PlayerTitleMenuOptionGrid.move(direction);
   };
 
-  return { isContinueEnabled, onPlayerInput, optionGrid };
+  return { isContinueEnabled, onPlayerInput };
 });

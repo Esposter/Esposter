@@ -5,16 +5,14 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 
-const monsterPartySceneStore = useMonsterPartySceneStore();
-const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({
-  x: monsterPartyOptionGrid.value.position.x,
-  y: monsterPartyOptionGrid.value.rowSize - 1,
+  x: monsterPartyOptionGrid.position.value.x,
+  y: monsterPartyOptionGrid.rowSize - 1,
 }));
-const isActive = computed(() => monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel);
+const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
 </script>
 
 <template>

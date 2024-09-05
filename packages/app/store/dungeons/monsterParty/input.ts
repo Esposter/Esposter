@@ -10,7 +10,6 @@ import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpeci
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -20,7 +19,8 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const dialogStore = useDialogStore();
   const { handleShowMessageInput } = dialogStore;
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
+  const { sceneMode } = storeToRefs(monsterPartySceneStore);
+  const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
   const infoPanelStore = useInfoPanelStore();
   const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const battlePlayerStore = useBattlePlayerStore();
@@ -39,7 +39,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         onCancel(scene);
         return;
       case PlayerSpecialInput.Confirm:
-        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value.value);
+        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value);
         return;
       case PlayerSpecialInput.Enter:
         return;
@@ -48,7 +48,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     }
   };
 
-  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof monsterPartyOptionGrid.value.value) => {
+  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof monsterPartyOptionGrid.value) => {
     if (value === PlayerSpecialInput.Cancel) {
       onCancel(scene);
       return;
@@ -67,11 +67,10 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         phaserEventEmitter.emit("switchMonster", value);
         return;
       case SceneKey.Inventory: {
-        const itemStore = useInventorySceneStore();
-        const { itemOptionGrid } = storeToRefs(itemStore);
-        if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel)
-          throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value.value);
-        useItem(scene, toRef(itemOptionGrid.value.value), toRef(value));
+        const itemOptionGrid = useItemOptionGrid();
+        if (itemOptionGrid.value === PlayerSpecialInput.Cancel)
+          throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value);
+        useItem(scene, toRef(itemOptionGrid.value), toRef(value));
         return;
       }
       default: {
@@ -85,7 +84,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    monsterPartyOptionGrid.value.move(direction);
+    monsterPartyOptionGrid.move(direction);
   };
 
   const onCancel = (scene: SceneWithPlugins) => {

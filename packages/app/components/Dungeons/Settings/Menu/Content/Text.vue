@@ -10,8 +10,8 @@ import {
   SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Input } from "phaser";
 
 interface ContentTextProps {
@@ -25,13 +25,11 @@ const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
-const settingsSceneStore = useSettingsSceneStore();
-const { optionGrid } = storeToRefs(settingsSceneStore);
 const onGridClick = useOnGridClick(
-  optionGrid,
+  SettingsOptionGrid,
   () => ({ x: columnIndex, y: rowIndex }),
   () => {
-    if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
+    if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
   },
 );
 </script>
@@ -48,7 +46,9 @@ const onGridClick = useOnGridClick(
       style: {
         ...MenuTextStyle,
         color:
-          settings[optionGrid.getValue({ x: 0, y: rowIndex }) as keyof typeof settings] === text ? '#ff2222' : '#fff',
+          settings[SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) as keyof typeof settings] === text
+            ? '#ff2222'
+            : '#fff',
       },
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"

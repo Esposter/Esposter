@@ -3,11 +3,12 @@ import type { Position } from "grid-engine";
 
 import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
 import { getScene } from "@/lib/phaser/util/getScene";
+import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMenuStore } from "@/store/dungeons/world/menu";
 
 const menuStore = useMenuStore();
-const { isMenuVisible, menuOptionGrid } = storeToRefs(menuStore);
+const { isMenuVisible } = storeToRefs(menuStore);
 const position = ref<Position>();
 const sceneKey = useInjectSceneKey();
 
@@ -23,5 +24,5 @@ watch(isMenuVisible, (newIsMenuVisible) => {
 </script>
 
 <template>
-  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" v-model:grid="menuOptionGrid" :position="position" />
+  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" :grid="WorldMenuOptionGrid" :position="position" />
 </template>

@@ -6,29 +6,30 @@ import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/sha
 import { Direction } from "grid-engine";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
-  _getIsActive: (...args: Parameters<typeof this.getIsActive>) => UnwrapRef<ReturnType<typeof this.getIsActive>>;
-  getIsActive: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
-  grid: TGrid;
-  position: Position;
+  _validate: (...args: Parameters<typeof this.validate>) => UnwrapRef<ReturnType<typeof this.validate>>;
+  // Our grid may be purely computed based on some external 1D array
+  grid: MaybeRef<TGrid>;
+  position: Ref<Position>;
+  validate: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
   wrap: boolean;
 
-  constructor({ getIsActive, grid, position, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
-    this.getIsActive = (position) => {
+  constructor({ grid, position, validate, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
+    this.validate = (position) => {
       const value = this.getValue(position);
       // We want to skip grid values that don't exist
       if (value === null || value === undefined) return false;
-      return getIsActive?.bind(this)?.(position) ?? true;
+      return validate?.bind(this)?.(position) ?? true;
     };
-    this._getIsActive = (...args) => unref(this.getIsActive(...args));
+    this._validate = (...args) => unref(this.validate(...args));
     this.grid = grid;
-    this.position = position ?? { x: 0, y: 0 };
+    this.position = position ?? ref({ x: 0, y: 0 });
     this.wrap = wrap ?? false;
   }
   // This is the array index if the grid were to be flattened
   getColumnSize(rowIndex: number) {
     if (rowIndex > this.rowSize - 1)
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `row index: ${rowIndex}`);
-    return this.grid[rowIndex].length;
+    return unref(this.grid)[rowIndex].length;
   }
 
   getPosition(value: TValue): null | Position {
@@ -49,70 +50,70 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   getValue({ x, y }: Position) {
     if (x > this.getColumnSize(y))
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
-    return this.grid[y][x];
+    return unref(this.grid)[y][x];
   }
 
-  move(direction: Direction) {
+  move(direction: Direction, isSkipValidation?: true) {
     switch (direction) {
       case Direction.UP: {
-        let newPositionY = this.position.y;
+        let newPositionY = this.position.value.y;
 
         for (let i = 0; i < this.rowSize; i++) {
           if (newPositionY > 0) newPositionY -= 1;
           else if (this.wrap && newPositionY === 0) newPositionY = this.rowSize - 1;
 
-          if (!this._getIsActive({ x: this.position.x, y: newPositionY })) continue;
+          if (!(isSkipValidation || this._validate({ x: this.position.value.x, y: newPositionY }))) continue;
 
-          this.position.y = newPositionY;
+          this.position.value.y = newPositionY;
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
       }
       case Direction.DOWN: {
-        let newPositionY = this.position.y;
+        let newPositionY = this.position.value.y;
 
         for (let i = 0; i < this.rowSize; i++) {
           if (newPositionY < this.rowSize - 1) newPositionY += 1;
           else if (this.wrap && newPositionY === this.rowSize - 1) newPositionY = 0;
 
-          if (!this._getIsActive({ x: this.position.x, y: newPositionY })) continue;
+          if (!(isSkipValidation || this._validate({ x: this.position.value.x, y: newPositionY }))) continue;
 
-          this.position.y = newPositionY;
+          this.position.value.y = newPositionY;
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
       }
       case Direction.LEFT: {
-        let newPositionX = this.position.x;
+        let newPositionX = this.position.value.x;
 
-        for (let i = 0; i < this.getColumnSize(this.position.y); i++) {
+        for (let i = 0; i < this.getColumnSize(this.position.value.y); i++) {
           if (newPositionX > 0) newPositionX -= 1;
-          else if (this.wrap && newPositionX === 0) newPositionX = this.getColumnSize(this.position.y) - 1;
+          else if (this.wrap && newPositionX === 0) newPositionX = this.getColumnSize(this.position.value.y) - 1;
 
-          if (!this._getIsActive({ x: newPositionX, y: this.position.y })) continue;
+          if (!(isSkipValidation || this._validate({ x: newPositionX, y: this.position.value.y }))) continue;
 
-          this.position.x = newPositionX;
+          this.position.value.x = newPositionX;
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
       }
       case Direction.RIGHT: {
-        let newPositionX = this.position.x;
+        let newPositionX = this.position.value.x;
 
-        for (let i = 0; i < this.getColumnSize(this.position.y); i++) {
-          if (newPositionX < this.getColumnSize(this.position.y) - 1) newPositionX += 1;
-          else if (this.wrap && newPositionX === this.getColumnSize(this.position.y) - 1) newPositionX = 0;
+        for (let i = 0; i < this.getColumnSize(this.position.value.y); i++) {
+          if (newPositionX < this.getColumnSize(this.position.value.y) - 1) newPositionX += 1;
+          else if (this.wrap && newPositionX === this.getColumnSize(this.position.value.y) - 1) newPositionX = 0;
 
-          if (!this._getIsActive({ x: newPositionX, y: this.position.y })) continue;
+          if (!(isSkipValidation || this._validate({ x: newPositionX, y: this.position.value.y }))) continue;
 
-          this.position.x = newPositionX;
+          this.position.value.x = newPositionX;
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
       }
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:
@@ -127,16 +128,16 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
 
   // going from top-left to bottom-right
   get index() {
-    let index = this.position.x;
-    for (let i = 0; i < this.position.y; i++) index += this.getColumnSize(i);
+    let index = this.position.value.x;
+    for (let i = 0; i < this.position.value.y; i++) index += this.getColumnSize(i);
     return index;
   }
 
   get rowSize() {
-    return this.grid.length;
+    return unref(this.grid).length;
   }
-
+  // @NOTE: This should always be called within a function/computed to get the latest non-stale value
   get value() {
-    return this.grid[this.position.y][this.position.x];
+    return unref(this.grid)[this.position.value.y][this.position.value.x];
   }
 }

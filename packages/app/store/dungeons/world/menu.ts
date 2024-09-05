@@ -4,7 +4,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { MenuOptionGrid } from "@/services/dungeons/scene/world/MenuOptionGrid";
+import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
@@ -16,7 +16,6 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const worldDialogStore = useWorldDialogStore();
   const { showMessages } = worldDialogStore;
   const isMenuVisible = ref(false);
-  const menuOptionGrid = ref(MenuOptionGrid);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     const { launchScene } = usePreviousScene(scene.scene.key);
@@ -28,7 +27,7 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
       } else return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
-      switch (menuOptionGrid.value.value) {
+      switch (WorldMenuOptionGrid.value) {
         case MenuOption.Monsters:
           launchScene(scene, SceneKey.MonsterParty);
           break;
@@ -44,14 +43,14 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
           fadeSwitchToScene(scene, SceneKey.Title);
           break;
         default:
-          exhaustiveGuard(menuOptionGrid.value.value);
+          exhaustiveGuard(WorldMenuOptionGrid.value);
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel)
       isMenuVisible.value = false;
-    else if (isMovingDirection(justDownInput)) menuOptionGrid.value.move(justDownInput);
+    else if (isMovingDirection(justDownInput)) WorldMenuOptionGrid.move(justDownInput);
 
     return true;
   };
 
-  return { isMenuVisible, menuOptionGrid, onPlayerInput };
+  return { isMenuVisible, onPlayerInput };
 });

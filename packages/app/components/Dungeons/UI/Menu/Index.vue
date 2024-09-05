@@ -8,14 +8,14 @@ import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
 
 interface MenuProps {
+  grid: Grid<TValue, TGrid>;
   position: Position;
 }
 
-const { position } = defineProps<MenuProps>();
+const { grid, position } = defineProps<MenuProps>();
 const menu = defineModel<boolean>("menu", { required: true });
-const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
 const { border, primary } = useDungeonsColors();
-const menuHeight = computed(() => getMenuHeight(grid.value.rowSize));
+const menuHeight = computed(() => getMenuHeight(grid.rowSize));
 </script>
 
 <template>
@@ -32,6 +32,6 @@ const menuHeight = computed(() => getMenuHeight(grid.value.rowSize));
       }"
       @clickoutside="menu = false"
     />
-    <DungeonsUIMenuContent v-model:grid="grid" />
+    <DungeonsUIMenuContent :grid="grid" />
   </Container>
 </template>

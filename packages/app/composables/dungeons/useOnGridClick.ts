@@ -6,7 +6,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import deepEqual from "fast-deep-equal";
 
 export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[])[]>(
-  grid: Ref<Grid<TValue, TGrid>>,
+  grid: Grid<TValue, TGrid>,
   position: MaybeRefOrGetter<Position>,
   onConfirm?: () => void,
 ) => {
@@ -17,7 +17,7 @@ export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[]
   };
   return () => {
     const positionValue = toValue(position);
-    if (deepEqual(positionValue, grid.value.position)) (onConfirm ?? defaultOnConfirm)();
-    else grid.value.position = positionValue;
+    if (deepEqual(positionValue, grid.position.value)) (onConfirm ?? defaultOnConfirm)();
+    else grid.position.value = positionValue;
   };
 };

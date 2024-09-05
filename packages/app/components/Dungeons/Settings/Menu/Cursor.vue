@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 
-const settingsSceneStore = useSettingsSceneStore();
-const { optionGrid } = storeToRefs(settingsSceneStore);
-const { width, y, ...configuration } = useSettingsCursorDimensions(() => optionGrid.value.position.y);
+const { width, y, ...configuration } = useSettingsCursorDimensions(() => SettingsOptionGrid.position.value.y);
 </script>
 
 <template>

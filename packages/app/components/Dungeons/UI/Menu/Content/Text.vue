@@ -8,12 +8,12 @@ import { Input } from "phaser";
 
 interface ContentTextProps {
   columnIndex: number;
+  grid: Grid<TValue, TGrid>;
   rowIndex: number;
   text: string;
 }
 
-const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
-const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
+const { columnIndex, grid, rowIndex, text } = defineProps<ContentTextProps>();
 const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 

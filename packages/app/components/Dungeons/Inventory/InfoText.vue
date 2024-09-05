@@ -4,14 +4,12 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
-const inventorySceneStore = useInventorySceneStore();
-const { itemOptionGrid } = storeToRefs(inventorySceneStore);
+const itemOptionGrid = useItemOptionGrid();
 const text = computed(() =>
-  itemOptionGrid.value.value === PlayerSpecialInput.Cancel
+  itemOptionGrid.value === PlayerSpecialInput.Cancel
     ? "Close your bag and go back to adventuring!"
-    : itemOptionGrid.value.value.description,
+    : itemOptionGrid.value.description,
 );
 const wordWrapWidth = ref<number>();
 

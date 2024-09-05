@@ -5,4 +5,4 @@ const grid = [
   [PlayerOption.Fight, PlayerOption.Switch],
   [PlayerOption.Item, PlayerOption.Flee],
 ] as const;
-export const PlayerOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>({ grid });
+export const PlayerBattleMenuOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>({ grid });

@@ -24,8 +24,8 @@ const {
   tween,
 } = defineProps<CursorProps>();
 const position = computed(() => ({
-  x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position.x,
-  y: initialPosition.y + (positionIncrement.y ?? 0) * grid.position.y,
+  x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position.value.x,
+  y: initialPosition.y + (positionIncrement.y ?? 0) * grid.position.value.y,
 }));
 </script>
 

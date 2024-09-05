@@ -2,17 +2,14 @@
 import Container from "@/lib/phaser/components/Container.vue";
 import { dayjs } from "@/services/dayjs";
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-
-const titleSceneStore = useTitleSceneStore();
-const { optionGrid } = storeToRefs(titleSceneStore);
+import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 </script>
 
 <template>
   <Container>
     <DungeonsTitleMenuBackground />
     <DungeonsUIInputCursor
-      :grid="optionGrid"
+      :grid="PlayerTitleMenuOptionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="CURSOR_POSITION_INCREMENT"
       :tween="{

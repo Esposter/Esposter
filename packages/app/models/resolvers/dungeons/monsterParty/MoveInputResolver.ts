@@ -14,7 +14,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export class MoveInputResolver extends AInputResolver {
   handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
-    const { monsterIdToMove, monsterPartyOptionGrid, sceneMode } = storeToRefs(monsterPartySceneStore);
+    const { monsterIdToMove, sceneMode } = storeToRefs(monsterPartySceneStore);
+    const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
     const playerStore = usePlayerStore();
     const { player } = storeToRefs(playerStore);
 
@@ -25,18 +26,18 @@ export class MoveInputResolver extends AInputResolver {
     };
 
     if (justDownInput === PlayerSpecialInput.Confirm) {
-      if (monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel) {
+      if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) {
         onCancel();
         return true;
-      } else if (monsterPartyOptionGrid.value.value.id === monsterIdToMove.value) return true;
+      } else if (monsterPartyOptionGrid.value.id === monsterIdToMove.value) return true;
 
       const index = player.value.monsters.findIndex(({ id }) => id === monsterIdToMove.value);
       if (index === -1) throw new InvalidOperationError(Operation.Read, this.handleInput.name, monsterIdToMove.value);
 
       const infoPanelStore = useInfoPanelStore();
       const { infoDialogMessage } = storeToRefs(infoPanelStore);
-      [player.value.monsters[index], player.value.monsters[monsterPartyOptionGrid.value.index]] = [
-        player.value.monsters[monsterPartyOptionGrid.value.index],
+      [player.value.monsters[index], player.value.monsters[monsterPartyOptionGrid.index]] = [
+        player.value.monsters[monsterPartyOptionGrid.index],
         player.value.monsters[index],
       ];
 
@@ -44,7 +45,7 @@ export class MoveInputResolver extends AInputResolver {
       monsterIdToMove.value = undefined;
       infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
     } else if (justDownInput === PlayerSpecialInput.Cancel) onCancel();
-    else if (isMovingDirection(justDownInput)) monsterPartyOptionGrid.value.move(justDownInput);
+    else if (isMovingDirection(justDownInput)) monsterPartyOptionGrid.move(justDownInput);
 
     return true;
   }

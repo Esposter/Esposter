@@ -4,7 +4,6 @@ import type { Item } from "@/models/dungeons/item/Item";
 import Container from "@/lib/phaser/components/Container.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
 interface ItemContainerProps {
   columnIndex: number;
@@ -13,8 +12,7 @@ interface ItemContainerProps {
 }
 
 const { columnIndex, item, rowIndex } = defineProps<ItemContainerProps>();
-const inventorySceneStore = useInventorySceneStore();
-const { itemOptionGrid } = storeToRefs(inventorySceneStore);
+const itemOptionGrid = useItemOptionGrid();
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREMENT.y * rowIndex);
 </script>

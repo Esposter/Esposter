@@ -16,19 +16,17 @@ import {
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
 } from "@/services/dungeons/scene/settings/constants";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
 
-const settingsSceneStore = useSettingsSceneStore();
-const { optionGrid } = storeToRefs(settingsSceneStore);
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
 const { volumePercentage, volumeSlider } = storeToRefs(volumeStore);
 const baseY = computed(
   () =>
     INITIAL_SETTINGS_POSITION.y +
-    SETTINGS_POSITION_INCREMENT.y * (optionGrid.value.getPosition(SettingsOption.VolumePercentage)?.y ?? 0),
+    SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption.VolumePercentage)?.y ?? 0),
 );
 const baseSliderBarConfiguration = computed<Partial<RectangleConfiguration>>(() => ({
   originX: 0,

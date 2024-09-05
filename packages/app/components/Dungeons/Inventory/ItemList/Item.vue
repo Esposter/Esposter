@@ -7,7 +7,6 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { parsePixel } from "@/util/parsePixel";
 import { prettifyName } from "@/util/text/prettifyName";
 import { Input } from "phaser";
@@ -20,12 +19,11 @@ interface ItemProps {
 
 const { columnIndex, item, rowIndex } = defineProps<ItemProps>();
 const emit = defineEmits<{ click: [] }>();
-const inventorySceneStore = useInventorySceneStore();
-const { itemOptionGrid } = storeToRefs(inventorySceneStore);
+const itemOptionGrid = useItemOptionGrid();
 const isUsableItem = useIsUsableItem(() => item);
 const alpha = computed(() => {
-  const isActive = unref(itemOptionGrid.value.getIsActive({ x: columnIndex, y: rowIndex }));
-  return isActive ? 1 : DISABLED_OPACITY;
+  const isValid = unref(itemOptionGrid.validate({ x: columnIndex, y: rowIndex }));
+  return isValid ? 1 : DISABLED_OPACITY;
 });
 </script>
 

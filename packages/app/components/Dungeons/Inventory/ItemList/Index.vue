@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 
-const inventorySceneStore = useInventorySceneStore();
-const { itemOptionGrid } = storeToRefs(inventorySceneStore);
+const itemOptionGrid = useItemOptionGrid();
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in itemOptionGrid.grid" :key="rowIndex">
+  <template v-for="(row, rowIndex) in unref(itemOptionGrid.grid)" :key="rowIndex">
     <DungeonsInventoryItemListItemContainer
       v-for="(item, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"

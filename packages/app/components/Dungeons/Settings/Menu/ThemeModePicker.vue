@@ -9,13 +9,11 @@ import {
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 
-const settingsSceneStore = useSettingsSceneStore();
-const { optionGrid } = storeToRefs(settingsSceneStore);
 const colorPickerStore = useColorPickerStore();
 const { updateThemeModeSetting } = colorPickerStore;
 const { themeModeSetting } = storeToRefs(colorPickerStore);
@@ -31,7 +29,7 @@ const rightCursorX = textX + padding;
       x: leftCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
       originX: 1,
       originY: 0,
@@ -46,7 +44,7 @@ const rightCursorX = textX + padding;
       x: textX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0),
+        SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0),
       originX: 0.5,
       originY: 0,
       text: themeModeSetting,
@@ -58,7 +56,7 @@ const rightCursorX = textX + padding;
       x: rightCursorX,
       y:
         INITIAL_SETTINGS_POSITION.y +
-        SETTINGS_POSITION_INCREMENT.y * (optionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
+        SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
       origin: 0,
       texture: ImageKey.CursorWhite,

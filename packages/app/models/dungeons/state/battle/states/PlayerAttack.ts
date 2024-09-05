@@ -14,11 +14,11 @@ export const PlayerAttack: State<StateName> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
     const battlePlayerStore = useBattlePlayerStore();
-    const { activeMonster, attackOptionGrid } = storeToRefs(battlePlayerStore);
+    const { activeMonster } = storeToRefs(battlePlayerStore);
+    const attackOptionGrid = useAttackOptionGrid();
     const enemyStore = useEnemyStore();
     const { takeDamage } = enemyStore;
-    // We won't use computed here because we've locked in our attack now
-    const attack = attackOptionGrid.value.value;
+    const attack = attackOptionGrid.value;
     if (!attack) return;
 
     await showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`);

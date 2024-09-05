@@ -1,11 +1,8 @@
 import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
-import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { Position } from "grid-engine";
 
-import { Grid } from "@/models/dungeons/Grid";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
-import { PlayerOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerOptionGrid";
 import { usePlayerStore } from "@/store/dungeons/player";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
@@ -29,25 +26,10 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const monsterInfoContainerPosition = ref({ ...initialMonsterInfoContainerPosition });
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const takeDamage = useTakeDamage(false);
-  const optionGrid = ref(PlayerOptionGrid);
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
-
-  const createAttackOptionGrid = (newAttacks: Attack[]) =>
-    new Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>({
-      grid: [
-        [newAttacks[0], newAttacks[1]],
-        [newAttacks[2], newAttacks[3]],
-      ],
-    });
-  const attackOptionGrid = ref(createAttackOptionGrid(attacks.value));
-
-  watch(attacks, (newAttacks) => {
-    attackOptionGrid.value = createAttackOptionGrid(newAttacks);
-  });
 
   return {
     activeMonster,
-    attackOptionGrid,
     attacks,
     initialMonsterInfoContainerPosition,
     initialMonsterPosition,
@@ -55,7 +37,6 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     monsterInfoContainerTween,
     monsterPosition,
     monsterTween,
-    optionGrid,
     switchActiveMonster,
     takeDamage,
   };

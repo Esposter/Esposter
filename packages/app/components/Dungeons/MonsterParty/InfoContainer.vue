@@ -9,7 +9,6 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Input } from "phaser";
 
 const inputStore = useInputStore();
@@ -19,12 +18,11 @@ const { controls } = storeToRefs(inputStore);
 // i.e. it could be from this info container or from clicking the monster panel
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
-const monsterPartySceneStore = useMonsterPartySceneStore();
-const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const infoPanelStore = useInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(infoPanelStore);
 const rectangleHeight = 65;
-const cancelButtonActive = computed(() => monsterPartyOptionGrid.value.value === PlayerSpecialInput.Cancel);
+const cancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();
 
 onCreate((scene) => {

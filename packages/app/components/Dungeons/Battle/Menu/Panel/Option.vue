@@ -10,13 +10,11 @@ import {
   MENU_PADDING,
 } from "@/services/dungeons/scene/battle/menu/constants";
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
-const battlePlayerStore = useBattlePlayerStore();
-const { optionGrid } = storeToRefs(battlePlayerStore);
 </script>
 
 <template>
@@ -30,18 +28,18 @@ const { optionGrid } = storeToRefs(battlePlayerStore);
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"
     />
-    <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
+    <template v-for="(row, rowIndex) in unref(PlayerBattleMenuOptionGrid.grid)" :key="rowIndex">
       <DungeonsBattleMenuPanelText
         v-for="(text, columnIndex) in row"
         :key="getGridKey(rowIndex, columnIndex)"
-        v-model:grid="optionGrid"
+        :grid="PlayerBattleMenuOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
         :position="getPanelTextPosition(rowIndex, columnIndex)"
         :text="text"
       />
     </template>
     <DungeonsUIInputCursor
-      :grid="optionGrid"
+      :grid="PlayerBattleMenuOptionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
       :position-increment="CURSOR_POSITION_INCREMENT"
     />

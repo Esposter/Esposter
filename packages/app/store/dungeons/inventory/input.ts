@@ -7,12 +7,10 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
-  const inventorySceneStore = useInventorySceneStore();
-  const { itemOptionGrid } = storeToRefs(inventorySceneStore);
+  const itemOptionGrid = useItemOptionGrid();
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
@@ -26,9 +24,9 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
         onCancel(scene);
         return;
       case PlayerSpecialInput.Confirm:
-        if (itemOptionGrid.value.value === PlayerSpecialInput.Cancel) onCancel(scene);
+        if (itemOptionGrid.value === PlayerSpecialInput.Cancel) onCancel(scene);
         else
-          switch (itemOptionGrid.value.value.effect.type) {
+          switch (itemOptionGrid.value.effect.type) {
             case ItemEffectType.Heal:
               launchScene(scene, SceneKey.MonsterParty);
               break;
@@ -37,7 +35,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
               switchToPreviousScene(scene);
               break;
             default:
-              exhaustiveGuard(itemOptionGrid.value.value.effect.type);
+              exhaustiveGuard(itemOptionGrid.value.effect.type);
           }
         return;
       case PlayerSpecialInput.Enter:
@@ -48,7 +46,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   };
 
   const onPlayerDirectionInput = (direction: Direction) => {
-    itemOptionGrid.value.move(direction);
+    itemOptionGrid.move(direction);
   };
 
   const onCancel = (scene: SceneWithPlugins) => {

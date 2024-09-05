@@ -3,7 +3,7 @@ import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { useInputStore } from "@/lib/phaser/store/input";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { Input } from "phaser";
 
 interface ContentTextProps {
@@ -13,13 +13,11 @@ interface ContentTextProps {
 const { rowIndex } = defineProps<ContentTextProps>();
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
-const settingsSceneStore = useSettingsSceneStore();
-const { optionGrid } = storeToRefs(settingsSceneStore);
 const onGridClick = useOnGridClick(
-  optionGrid,
+  SettingsOptionGrid,
   () => ({ x: 0, y: rowIndex }),
   () => {
-    if (optionGrid.value.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
+    if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
   },
 );
 const { width, y, ...configuration } = useSettingsCursorDimensions(() => rowIndex);

@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-
-const titleSceneStore = useTitleSceneStore();
-const { optionGrid } = storeToRefs(titleSceneStore);
+import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in optionGrid.grid" :key="rowIndex">
+  <template v-for="(row, rowIndex) in unref(PlayerTitleMenuOptionGrid.grid)" :key="rowIndex">
     <DungeonsTitleMenuContentText
       v-for="(text, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"

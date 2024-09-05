@@ -7,13 +7,13 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { Input } from "phaser";
 
 interface TextProps {
+  grid: Grid<TValue, TGrid>;
   gridPosition: Position;
   position: Position;
   text: string;
 }
 
-const { gridPosition, position, text } = defineProps<TextProps>();
-const grid = defineModel<Grid<TValue, TGrid>>("grid", { required: true });
+const { grid, gridPosition, position, text } = defineProps<TextProps>();
 const onGridClick = useOnGridClick(grid, () => gridPosition);
 </script>
 

@@ -6,7 +6,6 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
 
@@ -17,10 +16,9 @@ interface PanelListItemProps {
 }
 
 const { columnIndex, monster, rowIndex } = defineProps<PanelListItemProps>();
-const monsterPartySceneStore = useMonsterPartySceneStore();
-const { monsterPartyOptionGrid } = storeToRefs(monsterPartySceneStore);
+const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
-const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.value.position));
+const isActive = computed(() => deepEqual({ x: columnIndex, y: rowIndex }, monsterPartyOptionGrid.position.value));
 const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) * 100);
 </script>
 
