@@ -1,17 +1,28 @@
 import type { Position } from "grid-engine";
+import type { SetRequired } from "type-fest";
+import type { UnwrapRef } from "vue";
 
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
+  _getIsActive: (...args: Parameters<typeof this.getIsActive>) => UnwrapRef<ReturnType<typeof this.getIsActive>>;
+  getIsActive: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
   grid: TGrid;
   position: Position;
   wrap: boolean;
 
-  constructor(grid: TGrid, wrap = false, position: Position = { x: 0, y: 0 }) {
+  constructor({ getIsActive, grid, position, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
+    this.getIsActive = (position) => {
+      const value = this.getValue(position);
+      // We want to skip grid values that don't exist
+      if (value === null || value === undefined) return false;
+      return getIsActive?.bind(this)?.(position) ?? true;
+    };
+    this._getIsActive = (...args) => unref(this.getIsActive(...args));
     this.grid = grid;
-    this.wrap = wrap;
-    this.position = position;
+    this.position = position ?? { x: 0, y: 0 };
+    this.wrap = wrap ?? false;
   }
   // This is the array index if the grid were to be flattened
   getColumnSize(rowIndex: number) {
@@ -50,9 +61,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionY > 0) newPositionY -= 1;
           else if (this.wrap && newPositionY === 0) newPositionY = this.rowSize - 1;
 
-          const newValue = this.getValue({ x: this.position.x, y: newPositionY });
-          // We want to skip grid values that don't exist
-          if (newValue === null || newValue === undefined) continue;
+          if (!this._getIsActive({ x: this.position.x, y: newPositionY })) continue;
 
           this.position.y = newPositionY;
           return;
@@ -67,9 +76,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionY < this.rowSize - 1) newPositionY += 1;
           else if (this.wrap && newPositionY === this.rowSize - 1) newPositionY = 0;
 
-          const newValue = this.getValue({ x: this.position.x, y: newPositionY });
-          // We want to skip grid values that don't exist
-          if (newValue === null || newValue === undefined) continue;
+          if (!this._getIsActive({ x: this.position.x, y: newPositionY })) continue;
 
           this.position.y = newPositionY;
           return;
@@ -77,14 +84,36 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
 
         throw new InvalidOperationError(Operation.Update, this.move.name, direction);
       }
-      case Direction.LEFT:
-        if (this.position.x > 0) this.position.x -= 1;
-        else if (this.wrap && this.position.x === 0) this.position.x = this.getColumnSize(this.position.y) - 1;
-        return;
-      case Direction.RIGHT:
-        if (this.position.x < this.getColumnSize(this.position.y) - 1) this.position.x += 1;
-        else if (this.wrap && this.position.x === this.getColumnSize(this.position.y) - 1) this.position.x = 0;
-        return;
+      case Direction.LEFT: {
+        let newPositionX = this.position.x;
+
+        for (let i = 0; i < this.getColumnSize(this.position.y); i++) {
+          if (newPositionX > 0) newPositionX -= 1;
+          else if (this.wrap && newPositionX === 0) newPositionX = this.getColumnSize(this.position.y) - 1;
+
+          if (!this._getIsActive({ x: newPositionX, y: this.position.y })) continue;
+
+          this.position.x = newPositionX;
+          return;
+        }
+
+        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+      }
+      case Direction.RIGHT: {
+        let newPositionX = this.position.x;
+
+        for (let i = 0; i < this.getColumnSize(this.position.y); i++) {
+          if (newPositionX < this.getColumnSize(this.position.y) - 1) newPositionX += 1;
+          else if (this.wrap && newPositionX === this.getColumnSize(this.position.y) - 1) newPositionX = 0;
+
+          if (!this._getIsActive({ x: newPositionX, y: this.position.y })) continue;
+
+          this.position.x = newPositionX;
+          return;
+        }
+
+        throw new InvalidOperationError(Operation.Update, this.move.name, direction);
+      }
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:
       case Direction.DOWN_LEFT:

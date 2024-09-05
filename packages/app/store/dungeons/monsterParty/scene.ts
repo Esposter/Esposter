@@ -22,13 +22,14 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
     return monstersGrid;
   });
 
-  const createMonsterPartyOptionGrid = (
-    newMonstersGrid: Monster[][],
-  ): Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]> => {
+  const createMonsterPartyOptionGrid = (newMonstersGrid: Monster[][]) => {
     const grid = [...newMonstersGrid];
     const rowSize = newMonstersGrid[0]?.length ?? 0;
     if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
-    return new Grid(grid, true);
+    return new Grid<Monster | PlayerSpecialInput.Cancel, (Monster | PlayerSpecialInput.Cancel)[][]>({
+      grid,
+      wrap: true,
+    });
   };
   const monsterPartyOptionGrid = ref(createMonsterPartyOptionGrid(monstersGrid.value));
 

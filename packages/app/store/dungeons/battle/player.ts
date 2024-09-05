@@ -32,13 +32,13 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const optionGrid = ref(PlayerOptionGrid);
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 
-  const createAttackOptionGrid = (
-    newAttacks: Attack[],
-  ): Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]> =>
-    new Grid([
-      [newAttacks[0], newAttacks[1]],
-      [newAttacks[2], newAttacks[3]],
-    ]);
+  const createAttackOptionGrid = (newAttacks: Attack[]) =>
+    new Grid<Attack | undefined, [[Attack | undefined, Attack | undefined], [Attack | undefined, Attack | undefined]]>({
+      grid: [
+        [newAttacks[0], newAttacks[1]],
+        [newAttacks[2], newAttacks[3]],
+      ],
+    });
   const attackOptionGrid = ref(createAttackOptionGrid(attacks.value));
 
   watch(attacks, (newAttacks) => {

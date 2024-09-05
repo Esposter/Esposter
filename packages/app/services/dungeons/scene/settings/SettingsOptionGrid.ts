@@ -14,4 +14,8 @@ const grid = [
   [SettingsOption["Theme Mode"]],
   [SettingsOption.Close],
 ] as const;
-export const SettingsOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>(grid, false, { x: 2, y: 0 });
+export const SettingsOptionGrid = new Grid<(typeof grid)[number][number], typeof grid>({
+  grid,
+  position: { x: 2, y: 0 },
+  wrap: false,
+});

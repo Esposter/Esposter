@@ -26,21 +26,23 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const createMenuOptionGrid = (newPreviousSceneKey?: SceneKey): Grid<MenuOption, MenuOption[][]> => {
     switch (newPreviousSceneKey) {
       case SceneKey.Battle:
-        return new Grid([[MenuOption.Summary], [MenuOption.Cancel]], true);
+        return new Grid<MenuOption, MenuOption[][]>({ grid: [[MenuOption.Summary], [MenuOption.Cancel]], wrap: true });
       case SceneKey.Inventory:
-        return new Grid(
-          player.value.monsters.length > 1
-            ? [[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]]
-            : [[MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]],
-          true,
-        );
+        return new Grid<MenuOption, MenuOption[][]>({
+          grid:
+            player.value.monsters.length > 1
+              ? [[MenuOption.Move], [MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]]
+              : [[MenuOption.Summary], [MenuOption.Release], [MenuOption.Cancel]],
+          wrap: true,
+        });
       default:
-        return new Grid(
-          player.value.monsters.length > 1
-            ? [[MenuOption.Move], [MenuOption.Release], [MenuOption.Cancel]]
-            : [[MenuOption.Release], [MenuOption.Cancel]],
-          true,
-        );
+        return new Grid<MenuOption, MenuOption[][]>({
+          grid:
+            player.value.monsters.length > 1
+              ? [[MenuOption.Move], [MenuOption.Release], [MenuOption.Cancel]]
+              : [[MenuOption.Release], [MenuOption.Cancel]],
+          wrap: true,
+        });
     }
   };
   const menuOptionGrid = ref(createMenuOptionGrid());

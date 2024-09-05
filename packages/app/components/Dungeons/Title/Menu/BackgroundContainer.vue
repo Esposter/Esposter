@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import Container from "@/lib/phaser/components/Container.vue";
 import { dayjs } from "@/services/dayjs";
-import { INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
+import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 
 const titleSceneStore = useTitleSceneStore();
 const { optionGrid } = storeToRefs(titleSceneStore);
-const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
 </script>
 
 <template>
@@ -15,7 +14,7 @@ const titleCursorPositionIncrement = useTitleCursorPositionIncrement();
     <DungeonsUIInputCursor
       :grid="optionGrid"
       :initial-position="INITIAL_CURSOR_POSITION"
-      :position-increment="titleCursorPositionIncrement"
+      :position-increment="CURSOR_POSITION_INCREMENT"
       :tween="{
         delay: 0,
         repeat: -1,

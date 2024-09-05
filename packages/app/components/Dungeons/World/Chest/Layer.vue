@@ -6,7 +6,7 @@ import { getPositionId } from "@/util/id/getPositionId";
 const worldSceneStore = useWorldSceneStore();
 const { worldData } = storeToRefs(worldSceneStore);
 const chestEntries = computed(() =>
-  [...worldData.value.chestMap.entries()].map(([id, chest]) => [getChestPosition(id), chest] as const),
+  Object.entries(worldData.value.chestMap).map(([id, chest]) => [getChestPosition(id), chest] as const),
 );
 </script>
 

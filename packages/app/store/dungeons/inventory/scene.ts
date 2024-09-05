@@ -15,10 +15,11 @@ export const useInventorySceneStore = defineStore("dungeons/inventory/scene", ()
     },
   });
 
-  const createItemOptionGrid = (
-    newInventory: Inventory,
-  ): Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]> =>
-    new Grid([...newInventory.map((item) => [item]), [PlayerSpecialInput.Cancel]], true);
+  const createItemOptionGrid = (newInventory: Inventory) =>
+    new Grid<Item | PlayerSpecialInput.Cancel, (Item | PlayerSpecialInput.Cancel)[][]>({
+      grid: [...newInventory.map((item) => [item]), [PlayerSpecialInput.Cancel]],
+      wrap: true,
+    });
   const itemOptionGrid = ref(createItemOptionGrid(inventory.value));
 
   watch(

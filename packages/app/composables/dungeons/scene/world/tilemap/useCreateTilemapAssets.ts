@@ -15,14 +15,13 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
 
   ExternalWorldSceneStore.tilemap = tilemap;
   CreateTilemapMetadataMap[tilemapKey.value](tilemapKey.value);
-
   const chestObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Chest);
   if (chestObjectLayer) {
     const chestObjects = getObjects(chestObjectLayer);
     for (const { x, y } of chestObjects) {
       const positionId = getPositionId({ x, y });
-      if (worldData.value.chestMap.has(positionId)) continue;
-      else worldData.value.chestMap.set(positionId, new Chest());
+      if (worldData.value.chestMap[positionId]) continue;
+      else worldData.value.chestMap[positionId] = new Chest();
     }
   }
 
