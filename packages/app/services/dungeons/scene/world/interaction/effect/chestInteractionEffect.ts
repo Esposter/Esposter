@@ -23,7 +23,7 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
   const { inventory } = storeToRefs(inventorySceneStore);
   const itemIdTiledObjectProperty = getTiledObjectProperty<ItemId>(chestObject.properties, ChestObjectProperty.itemId);
   const positionId = getPositionId(chestObject);
-  const chest = worldData.value.chestMap.get(positionId);
+  const chest = worldData.value.chestMap[positionId];
   if (!chest || chest.isOpened) {
     await showMessages(scene, [{ text: "There is nothing left in the chest." }]);
     return true;
