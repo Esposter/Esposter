@@ -1,11 +1,15 @@
 import type { Item } from "@/models/dungeons/item/Item";
+import type { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
+import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
@@ -14,15 +18,15 @@ export class CaptureItemResolver extends AItemResolver {
     super(ItemEffectType.Capture);
   }
 
-  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
-    const infoPanelStore = useInfoPanelStore();
-    const { showMessages } = infoPanelStore;
-    const oldHp = monster.value.status.hp;
-    const newHp = Math.min(oldHp + item.value.effect.value, monster.value.stats.maxHp);
-
-    monster.value.status.hp = newHp;
-    await showMessages(scene, [`Captureed ${monster.value.key} by ${newHp - oldHp} HP.`]);
-    phaserEventEmitter.emit("useItem", scene, item.value, monster.value);
+  handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+    const ballStore = useBallStore();
+    const { texture } = storeToRefs(ballStore);
+    // Unfortunately we can't really enforce in compile-time that all capture item ids
+    // are actually also BallKey textures for convenience
+    texture.value = item.value.id as unknown as BallKey;
+    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
+      battleStateMachine.setState(StateName.CatchMonster),
+    );
   }
 
   isActive(item: Ref<Item>, _monster: Ref<Monster>) {

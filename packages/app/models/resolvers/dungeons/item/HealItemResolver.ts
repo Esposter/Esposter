@@ -3,7 +3,9 @@ import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
+import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
@@ -20,7 +22,9 @@ export class HealItemResolver extends AItemResolver {
 
     monster.value.status.hp = newHp;
     await showMessages(scene, [`Healed ${monster.value.key} by ${newHp - oldHp} HP.`]);
-    phaserEventEmitter.emit("useItem", scene, item.value, monster.value);
+    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
+      battleStateMachine.setState(StateName.EnemyInput),
+    );
   }
 
   isActive(_item: Ref<Item>, monster: Ref<Monster>) {

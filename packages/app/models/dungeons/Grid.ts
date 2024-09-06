@@ -136,7 +136,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   get rowSize() {
     return unref(this.grid).length;
   }
-  // @NOTE: This should always be called within a function/computed to get the latest non-stale value
+
   get value() {
     return unref(this.grid)[this.position.value.y][this.position.value.x];
   }

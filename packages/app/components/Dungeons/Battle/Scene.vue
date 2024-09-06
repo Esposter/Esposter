@@ -41,5 +41,6 @@ const { onPlayerInput } = battleSceneStore;
     <DungeonsBattleMonster />
     <DungeonsBattleAttackManager />
     <DungeonsBattleMenu />
+    <DungeonsBattleBall />
   </Scene>
 </template>

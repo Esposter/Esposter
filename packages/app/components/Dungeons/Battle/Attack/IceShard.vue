@@ -8,7 +8,7 @@ import { Animations } from "phaser";
 const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const emit = defineEmits<{ complete: [] }>();
-const playAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
+const playSpriteAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
 const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["Ice Shard Start"]}`;
 </script>
 
@@ -38,7 +38,7 @@ const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["I
         },
       ]
     "
-    :play-animation-key="playAnimationKey"
-    @[onCompleteKey]="playAnimationKey = AttackKey['Ice Shard']"
+    :play-animation-key="playSpriteAnimationKey"
+    @[onCompleteKey]="playSpriteAnimationKey = AttackKey['Ice Shard']"
   />
 </template>

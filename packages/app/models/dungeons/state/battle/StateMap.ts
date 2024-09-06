@@ -3,6 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { Battle } from "@/models/dungeons/state/battle/states/Battle";
 import { BringOutMonster } from "@/models/dungeons/state/battle/states/BringOutMonster";
+import { CatchMonster } from "@/models/dungeons/state/battle/states/CatchMonster";
 import { EnemyAttack } from "@/models/dungeons/state/battle/states/EnemyAttack";
 import { EnemyInput } from "@/models/dungeons/state/battle/states/EnemyInput";
 import { EnemyPostAttackCheck } from "@/models/dungeons/state/battle/states/EnemyPostAttackCheck";
@@ -21,6 +22,7 @@ import { SwitchMonster } from "@/models/dungeons/state/battle/states/SwitchMonst
 export const StateMap = {
   [StateName.Battle]: Battle,
   [StateName.BringOutMonster]: BringOutMonster,
+  [StateName.CatchMonster]: CatchMonster,
   [StateName.EnemyAttack]: EnemyAttack,
   [StateName.EnemyInput]: EnemyInput,
   [StateName.EnemyPostAttackCheck]: EnemyPostAttackCheck,

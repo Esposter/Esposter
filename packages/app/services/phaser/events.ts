@@ -22,7 +22,7 @@ export interface PhaserEvents extends SceneEvents {
   switchMonster: (monster: Monster) => Promise<void>;
   unswitchMonster: () => Promise<void>;
   unuseItem: () => Promise<void>;
-  useItem: (scene: SceneWithPlugins, item: Item, monster: Monster) => Promise<void>;
+  useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => Promise<void>;
 }
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();

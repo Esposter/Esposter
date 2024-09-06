@@ -1,6 +1,7 @@
 export enum StateName {
   Battle = "Battle",
   BringOutMonster = "BringOutMonster",
+  CatchMonster = "CatchMonster",
   EnemyAttack = "EnemyAttack",
   EnemyInput = "EnemyInput",
   EnemyPostAttackCheck = "EnemyPostAttackCheck",
