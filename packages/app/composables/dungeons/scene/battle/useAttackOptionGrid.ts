@@ -13,12 +13,19 @@ const AttackOptionGrid = new Grid<
   ],
 });
 
+let isInitialized = false;
+
 export const useAttackOptionGrid = () => {
   const battlePlayerStore = useBattlePlayerStore();
   const { attacks } = storeToRefs(battlePlayerStore);
-  AttackOptionGrid.grid = computed(() => [
-    [attacks.value[0], attacks.value[1]],
-    [attacks.value[2], attacks.value[3]],
-  ]);
+
+  if (!isInitialized) {
+    AttackOptionGrid.grid = computed(() => [
+      [attacks.value[0], attacks.value[1]],
+      [attacks.value[2], attacks.value[3]],
+    ]);
+    isInitialized = true;
+  }
+
   return AttackOptionGrid;
 };

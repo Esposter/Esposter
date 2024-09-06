@@ -11,14 +11,21 @@ const MonsterPartyOptionGrid = new Grid<Monster | PlayerSpecialInput.Cancel, (Mo
   },
 );
 
+let isInitialized = false;
+
 export const useMonsterPartyOptionGrid = () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const { monstersGrid } = storeToRefs(monsterPartySceneStore);
-  MonsterPartyOptionGrid.grid = computed(() => {
-    const grid = [...monstersGrid.value];
-    const rowSize = monstersGrid.value[0]?.length ?? 0;
-    if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
-    return grid;
-  });
+
+  if (!isInitialized) {
+    MonsterPartyOptionGrid.grid = computed(() => {
+      const grid = [...monstersGrid.value];
+      const rowSize = monstersGrid.value[0]?.length ?? 0;
+      if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
+      return grid;
+    });
+    isInitialized = true;
+  }
+
   return MonsterPartyOptionGrid;
 };
