@@ -13,6 +13,8 @@ import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@esposter/shared";
 
+let autoUpdateGridX = false;
+
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
@@ -26,25 +28,30 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const selectedSettingsOption = computed(
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );
+  const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
   // We need to do 1 of 2 things when the option grid is updated:
-  // 1. If the user has selected the settings option column or moved up or down regardless of keyboard/click/touch
-  // i.e. (newX === 0 || newY !== oldY), then we should automatically switch it to the active settings value
-  // 2. Otherwise automatically sync settings value with option grid value
-  // We unforunately need to watch the properties separately instead of
-  // watching the entire position object with deep: true, since oldValue
-  // won't update at all unless you replace the entire object everytime
-  // you do an update which is way too annoying and not clean code at all :C
+  // 1. If the user has changed position "y" (settings option) regardless of keyboard/click/touch,
+  // then we should automatically switch it to the active settings value
+  // 2. If the user has changed position "x" (updated settings value), then we should setSettings (save the game)
   watch(
-    [() => SettingsOptionGrid.position.value.y, () => SettingsOptionGrid.position.value.x],
-    async ([newY, newX], [oldY]) => {
+    () => SettingsOptionGrid.position.value.y,
+    (newY) => {
       if (!(selectedSettingsOption.value in settings.value)) return;
 
-      if (newX === 0 || newY !== oldY) {
-        const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value];
-        const x = SettingsOptionGrid.getPositionX(value as typeof SettingsOptionGrid.value, newY);
-        if (x === null) return;
-        // @TODO: This seems to be triggering the watch again... fix this otherwise it calls setSettings too frequently which is annoying
-        SettingsOptionGrid.position.value.x = x;
+      const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value];
+      const x = SettingsOptionGrid.getPositionX(value as typeof SettingsOptionGrid.value, newY);
+      if (x === null) return;
+
+      SettingsOptionGrid.position.value.x = x;
+      autoUpdateGridX = true;
+    },
+  );
+
+  watch(
+    () => SettingsOptionGrid.position.value.x,
+    async () => {
+      if (autoUpdateGridX) {
+        autoUpdateGridX = false;
         return;
       }
 
@@ -54,8 +61,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       );
     },
   );
-
-  const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
 
   const onPlayerInput = async (
     scene: SceneWithPlugins,
