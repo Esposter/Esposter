@@ -24,6 +24,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
 
   return {
     monsterIdToMove,
+    monsters,
     monstersGrid,
     sceneMode,
   };

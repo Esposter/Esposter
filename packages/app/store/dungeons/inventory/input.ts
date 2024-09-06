@@ -7,6 +7,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
@@ -31,9 +32,12 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
               launchScene(scene, SceneKey.MonsterParty);
               break;
             // We assume that you can only call capture items in the battle scene (which is the previous scene)
-            case ItemEffectType.Capture:
-              switchToPreviousScene(scene);
+            case ItemEffectType.Capture: {
+              const enemyStore = useEnemyStore();
+              const { activeMonster } = storeToRefs(enemyStore);
+              useItem(scene, toRef(itemOptionGrid.value), activeMonster);
               break;
+            }
             default:
               exhaustiveGuard(itemOptionGrid.value.effect.type);
           }

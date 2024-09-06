@@ -4,18 +4,25 @@ import Text from "@/lib/phaser/components/Text.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
+import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 
+const infoPanelStore = useInfoPanelStore();
+const { infoDialogMessage } = storeToRefs(infoPanelStore);
 const itemOptionGrid = useItemOptionGrid();
-const text = computed(() =>
-  itemOptionGrid.value === PlayerSpecialInput.Cancel
-    ? "Close your bag and go back to adventuring!"
-    : itemOptionGrid.value.description,
-);
 const wordWrapWidth = ref<number>();
 
 onCreate((scene) => {
   wordWrapWidth.value = scene.scale.width - WORD_PADDING;
 });
+
+watch(
+  () => itemOptionGrid.value,
+  (newValue) => {
+    infoDialogMessage.value.text =
+      newValue === PlayerSpecialInput.Cancel ? "Close your bag and go back to adventuring!" : newValue.description;
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -23,7 +30,7 @@ onCreate((scene) => {
     :configuration="{
       x: 25,
       y: 420,
-      text,
+      text: infoDialogMessage.text,
       style: { ...MenuTextStyle, color: 'white', wordWrap: { width: wordWrapWidth } },
     }"
   />
