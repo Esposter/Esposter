@@ -9,7 +9,7 @@ defineRouteRules({ ssr: false });
 
 await useReadTableEditor();
 const route = useRoute();
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { editItem } = tableEditorStore;
 const { isDirty, tableEditorType } = storeToRefs(tableEditorStore);
 const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.value));

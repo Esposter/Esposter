@@ -6,13 +6,13 @@ import { usePlayerStore } from "@/store/dungeons/player";
 
 export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scene", () => {
   const playerStore = usePlayerStore();
-  const { player } = storeToRefs(playerStore);
   const monsters = computed({
-    get: () => player.value.monsters,
+    get: () => playerStore.player.monsters,
     set: (newMonsters) => {
-      player.value.monsters = newMonsters;
+      playerStore.player.monsters = newMonsters;
     },
   });
+  const isPlayerFainted = computed(() => monsters.value.every(({ status }) => status.hp === 0));
   const monstersGrid = computed(() => {
     const monstersGrid: Monster[][] = [];
     for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
@@ -21,8 +21,8 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   });
   const sceneMode = ref(SceneMode.Default);
   const monsterIdToMove = ref<string>();
-
   return {
+    isPlayerFainted,
     monsterIdToMove,
     monsters,
     monstersGrid,

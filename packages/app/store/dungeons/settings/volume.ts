@@ -11,8 +11,7 @@ import { Direction } from "grid-engine";
 export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
-  const { settings } = storeToRefs(settingsStore);
-  const volumePercentage = computed(() => settings.value[SettingsOption.VolumePercentage]);
+  const volumePercentage = computed(() => settingsStore.settings[SettingsOption.VolumePercentage]);
   const volumeDelta = ref(0);
   const volumeIncrementCooldown = ref(0);
   const volumeSlider = ref<Slider>();

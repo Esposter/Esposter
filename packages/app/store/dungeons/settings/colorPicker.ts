@@ -9,8 +9,7 @@ import { Direction } from "grid-engine";
 export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", () => {
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
-  const { settings } = storeToRefs(settingsStore);
-  const themeModeSetting = computed(() => settings.value[SettingsOption["Theme Mode"]]);
+  const themeModeSetting = computed(() => settingsStore.settings[SettingsOption["Theme Mode"]]);
   const setThemeModeSetting = async (value: ThemeModeSetting) => {
     await setSettings(SettingsOption["Theme Mode"], value);
   };

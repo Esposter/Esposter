@@ -5,7 +5,7 @@ import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const useReadTableEditor = async () => {
   const { $client } = useNuxtApp();
-  const tableEditorStore = useTableEditorStore()();
+  const tableEditorStore = useTableEditorStore();
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
   await useReadData(
     () => {

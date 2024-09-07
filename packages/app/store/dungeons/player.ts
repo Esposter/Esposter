@@ -2,16 +2,13 @@ import { useDungeonsStore } from "@/store/dungeons";
 
 export const usePlayerStore = defineStore("dungeons/player", () => {
   const dungeonsStore = useDungeonsStore();
-  const { save } = storeToRefs(dungeonsStore);
   const player = computed({
-    get: () => save.value.player,
+    get: () => dungeonsStore.save.player,
     set: (newPlayer) => {
-      save.value.player = newPlayer;
+      dungeonsStore.save.player = newPlayer;
     },
   });
-  const isPlayerFainted = computed(() => save.value.player.monsters.every(({ status }) => status.hp === 0));
   return {
-    isPlayerFainted,
     player,
   };
 });

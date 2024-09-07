@@ -7,7 +7,7 @@ import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/Vue
 import { useTableEditorStore } from "@/store/tableEditor";
 import { Vjsf } from "@koumoul/vjsf";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const propertySchemaMap = computed<Record<string, Component>>(() => {
   const component = editedItem.value?.component;

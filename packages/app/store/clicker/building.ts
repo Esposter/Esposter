@@ -12,7 +12,6 @@ import { getInitials } from "@/util/text/getInitials";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const clickerItemProperties = useClickerItemProperties();
@@ -24,17 +23,17 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
 
   const allBuildingPower = computed(() =>
-    applyBuildingUpgrades(0, game.value.boughtUpgrades, game.value.boughtBuildings),
+    applyBuildingUpgrades(0, clickerStore.game.boughtUpgrades, clickerStore.game.boughtBuildings),
   );
   const getBoughtBuildingPower = (boughtBuilding: BuildingWithStats) =>
-    applyBuildingUpgrade(boughtBuilding, game.value.boughtUpgrades, game.value.boughtBuildings);
+    applyBuildingUpgrade(boughtBuilding, clickerStore.game.boughtUpgrades, clickerStore.game.boughtBuildings);
   const getBoughtBuildingAmount = (building: Building) => {
-    const boughtBuilding = game.value.boughtBuildings.find((b) => b.id === building.id);
+    const boughtBuilding = clickerStore.game.boughtBuildings.find((b) => b.id === building.id);
     if (!boughtBuilding) return 0;
     return boughtBuilding.amount;
   };
   const getBoughtBuildingStats = (building: Building) => {
-    const boughtBuilding = game.value.boughtBuildings.find((b) => b.id === building.id);
+    const boughtBuilding = clickerStore.game.boughtBuildings.find((b) => b.id === building.id);
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
@@ -58,9 +57,9 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   const createBoughtBuilding = (newBuilding: Building) => {
     const newBuildingPrice = getBuildingPrice(newBuilding);
-    const boughtBuilding = game.value.boughtBuildings.find((b) => b.id === newBuilding.id);
+    const boughtBuilding = clickerStore.game.boughtBuildings.find((b) => b.id === newBuilding.id);
     if (!boughtBuilding) {
-      game.value.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
+      clickerStore.game.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
       decrementPoints(newBuildingPrice);
       return;
     }

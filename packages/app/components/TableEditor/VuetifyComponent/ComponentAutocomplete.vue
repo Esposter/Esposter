@@ -6,7 +6,7 @@ import { VuetifyComponentMap } from "@/services/tableEditor/vuetifyComponent/Vue
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 // Optimise performance and paginate
 // because we have too many vuetify components to load in the dropdown all at once

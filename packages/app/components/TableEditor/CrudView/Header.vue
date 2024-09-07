@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{
   "append-header": (props: Record<string, never>) => unknown;
 }>();
 
-const tableEditorStore = useTableEditorStore<TodoListItem>()();
+const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const { editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
   storeToRefs(tableEditorStore);

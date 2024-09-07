@@ -5,11 +5,10 @@ import { useDungeonsStore } from "@/store/dungeons";
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const dungeonsStore = useDungeonsStore();
   const { saveGame } = dungeonsStore;
-  const { game } = storeToRefs(dungeonsStore);
   const settings = computed({
-    get: () => game.value.settings,
+    get: () => dungeonsStore.game.settings,
     set: (newSettings) => {
-      game.value.settings = newSettings;
+      dungeonsStore.game.settings = newSettings;
     },
   });
   const setSettings = async (

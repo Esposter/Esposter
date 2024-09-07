@@ -15,17 +15,16 @@ export const ExternalWorldSceneStore = {
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const dungeonsStore = useDungeonsStore();
-  const { save } = storeToRefs(dungeonsStore);
-  const tilemapKey = computed(() => save.value.tilemapKey);
+  const tilemapKey = computed(() => dungeonsStore.save.tilemapKey);
   const switchToTilemap = async (tilemapKey: TilemapKey) => {
-    save.value.tilemapKey = tilemapKey;
+    dungeonsStore.save.tilemapKey = tilemapKey;
     // We need to wait for:
     // 1. The player to re-render first in the tilemap before we can teleport it
     // 2. The tilemap key watcher to load the new tilemap from the vue-phaser library
     await nextTick();
   };
 
-  const worldData = computed<WorldData>(() => save.value.world[tilemapKey.value]);
+  const worldData = computed<WorldData>(() => dungeonsStore.save.world[tilemapKey.value]);
 
   return {
     switchToTilemap,

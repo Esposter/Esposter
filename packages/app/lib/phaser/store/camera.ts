@@ -5,14 +5,13 @@ import { useInputStore } from "@/lib/phaser/store/input";
 
 export const useCameraStore = defineStore("phaser/camera", () => {
   const inputStore = useInputStore();
-  const { isInputActive } = storeToRefs(inputStore);
   const isFading = ref(false);
   const fadeIn = (
     scene: SceneWithPlugins,
     ...args: Parameters<InstanceType<(typeof Cameras)["Scene2D"]["Camera"]>["fadeIn"]>
   ) => {
     isFading.value = true;
-    isInputActive.value = false;
+    inputStore.isInputActive = false;
     scene.cameras.main.fadeIn(...args);
   };
   const fadeOut = (
@@ -20,7 +19,7 @@ export const useCameraStore = defineStore("phaser/camera", () => {
     ...args: Parameters<InstanceType<(typeof Cameras)["Scene2D"]["Camera"]>["fadeOut"]>
   ) => {
     isFading.value = true;
-    isInputActive.value = false;
+    inputStore.isInputActive = false;
     scene.cameras.main.fadeOut(...args);
   };
   return {

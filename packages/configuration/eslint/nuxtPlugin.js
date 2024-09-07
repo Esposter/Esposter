@@ -1,27 +1,38 @@
 import unocss from "@unocss/eslint-config/flat";
 import perfectionist from "eslint-plugin-perfectionist";
+import pinia from "eslint-plugin-pinia";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import vitest from "eslint-plugin-vitest";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
+  pinia.configs["all-flat"],
+  unocss,
   {
-    rules: {
-      "import/consistent-type-specifier-style": "error",
-      eqeqeq: "error",
+    files: ["**.test.ts"],
+    plugins: {
+      vitest,
+    },
+    rules: vitest.configs.all.rules,
+    settings: {
+      vitest: {
+        typecheck: true,
+      },
+    },
+    languageOptions: {
+      globals: vitest.environments.env.globals,
     },
   },
-  unocss,
   perfectionist.configs["recommended-natural"],
   {
     rules: {
+      curly: ["error", "multi"],
+      eqeqeq: "error",
+      "import/consistent-type-specifier-style": "error",
+      "object-shorthand": ["error", "always"],
       "perfectionist/sort-vue-attributes": "off",
+      "pinia/require-setup-store-properties-export": "off"
     },
   },
   eslintPluginPrettierRecommended,
-  {
-    rules: {
-      curly: ["error", "multi"],
-      "object-shorthand": ["error", "always"],
-    },
-  },
 );

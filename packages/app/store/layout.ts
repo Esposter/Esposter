@@ -1,5 +1,3 @@
-import { skipHydrate } from "pinia";
-
 export const useLayoutStore = defineStore("layout", () => {
   const { mobile } = useDisplay();
   const leftDrawerOpen = ref(!mobile.value);
@@ -11,11 +9,10 @@ export const useLayoutStore = defineStore("layout", () => {
   // suddenly whenever we open and close the drawer
   const leftDrawerOpenAuto = ref(!mobile.value);
   const rightDrawerOpenAuto = ref(!mobile.value);
-  // mobile initial state can only be detected on client side so we skip SSR picking it up
   return {
-    leftDrawerOpen: skipHydrate(leftDrawerOpen),
-    leftDrawerOpenAuto: skipHydrate(leftDrawerOpenAuto),
-    rightDrawerOpen: skipHydrate(rightDrawerOpen),
-    rightDrawerOpenAuto: skipHydrate(rightDrawerOpenAuto),
+    leftDrawerOpen,
+    leftDrawerOpenAuto,
+    rightDrawerOpen,
+    rightDrawerOpenAuto,
   };
 });

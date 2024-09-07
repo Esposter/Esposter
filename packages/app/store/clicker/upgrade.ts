@@ -9,7 +9,6 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
@@ -24,12 +23,12 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
         switch (type) {
           case Target.Upgrade: {
-            const foundUpgrade = game.value.boughtUpgrades.find((bu) => bu.id === uc.id);
+            const foundUpgrade = clickerStore.game.boughtUpgrades.find((bu) => bu.id === uc.id);
             if (foundUpgrade) return true;
             break;
           }
           case Target.Building: {
-            const foundBuilding = game.value.boughtBuildings.find((bb) => bb.id === uc.id);
+            const foundBuilding = clickerStore.game.boughtBuildings.find((bb) => bb.id === uc.id);
             if (foundBuilding) return foundBuilding.amount >= uc.amount;
             break;
           }
@@ -43,7 +42,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   );
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    game.value.boughtUpgrades.push(newUpgrade);
+    clickerStore.game.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };
 

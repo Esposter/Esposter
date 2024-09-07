@@ -4,7 +4,7 @@ import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<VuetifyComponentItem>()();
+const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 

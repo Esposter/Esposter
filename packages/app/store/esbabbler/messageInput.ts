@@ -2,16 +2,15 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMessageInputStore = defineStore("esbabbler/messageInput", () => {
   const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
   const messageInputMap = ref(new Map<string, string>());
   const messageInput = computed({
     get: () => {
-      if (!currentRoomId.value) return "";
-      return messageInputMap.value.get(currentRoomId.value) ?? "";
+      if (!roomStore.currentRoomId) return "";
+      return messageInputMap.value.get(roomStore.currentRoomId) ?? "";
     },
     set: (newMessageInput) => {
-      if (!currentRoomId.value) return;
-      messageInputMap.value.set(currentRoomId.value, newMessageInput);
+      if (!roomStore.currentRoomId) return;
+      messageInputMap.value.set(roomStore.currentRoomId, newMessageInput);
     },
   });
   return { messageInput };

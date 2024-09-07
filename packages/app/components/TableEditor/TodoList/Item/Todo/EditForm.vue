@@ -4,7 +4,7 @@ import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore<TodoListItem>()();
+const tableEditorStore = useTableEditorStore<TodoListItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 </script>
 

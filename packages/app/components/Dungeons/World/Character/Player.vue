@@ -9,6 +9,7 @@ import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKe
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
@@ -17,7 +18,9 @@ import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 
 const playerStore = usePlayerStore();
-const { isPlayerFainted, player } = storeToRefs(playerStore);
+const { player } = storeToRefs(playerStore);
+const monsterPartySceneStore = useMonsterPartySceneStore();
+const { isPlayerFainted } = storeToRefs(monsterPartySceneStore);
 const playerWalkingDirection = computed(() =>
   player.value.direction === Direction.NONE ? Direction.DOWN : player.value.direction,
 );

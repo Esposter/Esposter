@@ -1,7 +1,7 @@
 import type { PostWithRelations } from "@/db/schema/posts";
 import type { CreateLikeInput, DeleteLikeInput, UpdateLikeInput } from "@/server/trpc/routers/like";
 
-export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
+export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $client } = useNuxtApp();
   const { session } = useAuth();
 
@@ -9,7 +9,7 @@ export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
     const newLike = await $client.like.createLike.mutate(input);
     if (!newLike) return;
 
-    const post = allPosts.value.find((p) => p.id === newLike.postId);
+    const post = toValue(allPosts).find((p) => p.id === newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
@@ -19,7 +19,7 @@ export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
     const updatedLike = await $client.like.updateLike.mutate(input);
     if (!updatedLike) return;
 
-    const post = allPosts.value.find((p) => p.id === updatedLike.postId);
+    const post = toValue(allPosts).find((p) => p.id === updatedLike.postId);
     if (!post) return;
 
     const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
@@ -34,7 +34,7 @@ export const useLikeOperations = (allPosts: Ref<PostWithRelations[]>) => {
 
     await $client.like.deleteLike.mutate(postId);
 
-    const post = allPosts.value.find((p) => p.id === postId);
+    const post = toValue(allPosts).find((p) => p.id === postId);
     if (!post) return;
 
     const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);

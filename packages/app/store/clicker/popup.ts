@@ -10,21 +10,18 @@ interface Popup extends PointsPopupProps {
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
-  const { mousePower } = storeToRefs(mouseStore);
   const pointStore = usePointStore();
   const { incrementPoints } = pointStore;
-
   const popups = ref<Popup[]>([]);
   const onClick = ({ pageX, pageY }: MouseEvent) => {
     const id = crypto.randomUUID();
     const duration = dayjs.duration(10, "seconds").asMilliseconds();
-    incrementPoints(mousePower.value);
-    popups.value.push({ duration, id, left: pageX, points: mousePower.value, top: pageY });
+    incrementPoints(mouseStore.mousePower);
+    popups.value.push({ duration, id, left: pageX, points: mouseStore.mousePower, top: pageY });
     window.setTimeout(() => {
       const index = popups.value.findIndex((p) => p.id === id);
       if (index > -1) popups.value.splice(index, 1);
     }, duration);
   };
-
   return { onClick, popups };
 });

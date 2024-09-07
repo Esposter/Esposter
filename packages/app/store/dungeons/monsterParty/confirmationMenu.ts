@@ -9,17 +9,12 @@ import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scen
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confirmationMenu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { sceneMode } = storeToRefs(monsterPartySceneStore);
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
-  const playerStore = usePlayerStore();
-  const { player } = storeToRefs(playerStore);
   const infoPanelStore = useInfoPanelStore();
-  const { infoDialogMessage } = storeToRefs(infoPanelStore);
 
   const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     // We should never hit the menu mode if the player was selecting "Cancel"
@@ -27,18 +22,18 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
     // if some day in the future we can fully deserialize json data from local storage
     // to proper classes even for nested objects
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
-    else if (sceneMode.value !== SceneMode.Confirmation) return false;
+    else if (monsterPartySceneStore.sceneMode !== SceneMode.Confirmation) return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (MonsterPartyConfirmationMenuOptionGrid.value) {
         case ConfirmationMenuOption.Yes: {
           const monsterId = monsterPartyOptionGrid.value.id;
-          const index = player.value.monsters.findIndex(({ id }) => id === monsterId);
+          const index = monsterPartySceneStore.monsters.findIndex(({ id }) => id === monsterId);
           if (index === -1) throw new InvalidOperationError(Operation.Read, onPlayerInput.name, monsterId);
 
-          player.value.monsters.splice(index, 1);
-          sceneMode.value = SceneMode.Default;
-          infoDialogMessage.value.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
+          monsterPartySceneStore.monsters.splice(index, 1);
+          monsterPartySceneStore.sceneMode = SceneMode.Default;
+          infoPanelStore.infoDialogMessage.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
           break;
         }
         case ConfirmationMenuOption.No: {
@@ -55,8 +50,8 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
   };
 
   const onCancel = () => {
-    sceneMode.value = SceneMode.Menu;
-    infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
+    monsterPartySceneStore.sceneMode = SceneMode.Menu;
+    infoPanelStore.infoDialogMessage.text = DEFAULT_INFO_DIALOG_MESSAGE;
   };
 
   return { onPlayerInput };

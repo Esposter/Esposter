@@ -7,8 +7,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMemberStore = defineStore("esbabbler/member", () => {
   const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
-  const { itemList, ...rest } = createCursorPaginationDataMap<User>(currentRoomId);
+  const { itemList, ...rest } = createCursorPaginationDataMap<User>(() => roomStore.currentRoomId);
   return {
     ...createOperationData(itemList, DerivedDatabaseEntityType.Member),
     ...rest,

@@ -5,7 +5,7 @@ const editFormComponentFilepathEntries = Object.entries<Component>(
 );
 
 export const useEditFormComponent = (itemType: string) => {
-  const tableEditorStore = useTableEditorStore()();
+  const tableEditorStore = useTableEditorStore();
   const { tableEditorType } = storeToRefs(tableEditorStore);
   let editFormComponent: Component | null = null;
 

@@ -3,20 +3,19 @@ import type { Position } from "grid-engine";
 
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
-  const playerStore = usePlayerStore();
-  const { player } = storeToRefs(playerStore);
-  const activeMonsterIndex = ref(player.value.monsters.findIndex((m) => !isMonsterFainted(m)));
+  const monsterPartySceneStore = useMonsterPartySceneStore();
+  const activeMonsterIndex = ref(monsterPartySceneStore.monsters.findIndex((m) => !isMonsterFainted(m)));
   const activeMonster = computed({
-    get: () => player.value.monsters[activeMonsterIndex.value],
+    get: () => monsterPartySceneStore.monsters[activeMonsterIndex.value],
     set: (newActiveMonster) => {
-      player.value.monsters[activeMonsterIndex.value] = newActiveMonster;
+      monsterPartySceneStore.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
   });
   const switchActiveMonster = (id: string) => {
-    activeMonsterIndex.value = player.value.monsters.findIndex((m) => m.id === id);
+    activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((m) => m.id === id);
   };
 
   const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });

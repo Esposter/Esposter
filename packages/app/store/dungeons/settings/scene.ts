@@ -20,7 +20,6 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const { fadeSwitchToScene } = dungeonsStore;
   const settingsStore = useSettingsStore();
   const { setSettings } = settingsStore;
-  const { settings } = storeToRefs(settingsStore);
   const volumeStore = useVolumeStore();
   const { isUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
@@ -36,9 +35,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   watch(
     () => SettingsOptionGrid.position.value.y,
     (newY) => {
-      if (!(selectedSettingsOption.value in settings.value)) return;
+      if (!(selectedSettingsOption.value in settingsStore.settings)) return;
 
-      const value = settings.value[selectedSettingsOption.value as keyof typeof settings.value];
+      const value = settingsStore.settings[selectedSettingsOption.value as keyof typeof settingsStore.settings];
       const x = SettingsOptionGrid.getPositionX(value as typeof SettingsOptionGrid.value, newY);
       if (x === null) return;
 
@@ -56,8 +55,8 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       }
 
       await setSettings(
-        selectedSettingsOption.value as keyof typeof settings.value,
-        SettingsOptionGrid.value as (typeof settings.value)[keyof typeof settings.value],
+        selectedSettingsOption.value as keyof typeof settingsStore.settings,
+        SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
       );
     },
   );

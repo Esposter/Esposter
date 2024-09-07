@@ -4,10 +4,10 @@ import Image from "@/lib/phaser/components/Image.vue";
 import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
-import { usePlayerStore } from "@/store/dungeons/player";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 
-const playerStore = usePlayerStore();
-const { player } = storeToRefs(playerStore);
+const monsterPartySceneStore = useMonsterPartySceneStore();
+const { monsters } = storeToRefs(monsterPartySceneStore);
 const x = ref<number>();
 const visible = ref(false);
 
@@ -27,7 +27,7 @@ onUnmounted(() => {
 <template>
   <Container :configuration="{ x, y: 304 }">
     <Image
-      v-for="(monster, index) in player.monsters"
+      v-for="(monster, index) in monsters"
       :key="monster.id"
       :configuration="{
         visible,

@@ -3,17 +3,21 @@ import type { ItemMetadata } from "@/models/shared/ItemMetadata";
 import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(currentId: Ref<null | string>) => {
+export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
+  currentId: MaybeRefOrGetter<null | string>,
+) => {
   // @TODO: Vue cannot unwrap generic refs yet
   const cursorPaginationDataMap = ref(new Map()) as Ref<Map<string, CursorPaginationData<TItem>>>;
   const cursorPaginationData = computed({
     get: () => {
-      if (!currentId.value) return new CursorPaginationData<TItem>();
-      return cursorPaginationDataMap.value.get(currentId.value) ?? new CursorPaginationData<TItem>();
+      const currentIdValue = toValue(currentId);
+      if (!currentIdValue) return new CursorPaginationData<TItem>();
+      return cursorPaginationDataMap.value.get(currentIdValue) ?? new CursorPaginationData<TItem>();
     },
     set: (newCursorPaginationData) => {
-      if (!currentId.value) return;
-      cursorPaginationDataMap.value.set(currentId.value, newCursorPaginationData);
+      const currentIdValue = toValue(currentId);
+      if (!currentIdValue) return;
+      cursorPaginationDataMap.value.set(currentIdValue, newCursorPaginationData);
     },
   });
   const itemList = computed({

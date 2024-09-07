@@ -2,7 +2,7 @@
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { editItem } = tableEditorStore;
 const { searchQuery, tableEditor, tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);

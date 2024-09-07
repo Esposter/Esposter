@@ -11,7 +11,7 @@ interface TableEditorCrudViewItemSlotProps {
 }
 
 const { item } = defineProps<TableEditorCrudViewItemSlotProps>();
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);
 const itemCategoryDefinition = computed(() => getItemCategoryDefinition(props.value.itemCategoryDefinitions, item));

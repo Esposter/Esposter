@@ -3,7 +3,7 @@ import CalendarButton from "@/components/TableEditor/TodoList/CalendarButton.vue
 import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 </script>
 

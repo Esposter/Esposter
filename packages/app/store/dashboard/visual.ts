@@ -10,7 +10,6 @@ import { useDashboardStore } from "@/store/dashboard";
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
-  const { dashboard } = storeToRefs(dashboardStore);
   const visualType = ref(VisualType.Area);
   const {
     createVisual: storeCreateVisual,
@@ -19,9 +18,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     ...restOperationData
   } = createOperationData(
     computed({
-      get: () => dashboard.value.visuals,
+      get: () => dashboardStore.dashboard.visuals,
       set: (newVisuals) => {
-        dashboard.value.visuals = newVisuals;
+        dashboardStore.dashboard.visuals = newVisuals;
       },
     }),
     "Visual",

@@ -4,7 +4,7 @@ import { tableEditorTypeItemCategoryDefinitions } from "@/services/tableEditor/t
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const router = useRouter();
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 </script>
 

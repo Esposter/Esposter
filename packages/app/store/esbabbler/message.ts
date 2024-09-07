@@ -12,10 +12,8 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 export const useMessageStore = defineStore("esbabbler/message", () => {
   const { $client } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
   const messageInputStore = useMessageInputStore();
-  const { messageInput } = storeToRefs(messageInputStore);
-  const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(currentRoomId);
+  const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: storeDeleteMessage,
@@ -29,11 +27,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
 
   const sendMessage = async (editor: Editor) => {
-    if (!currentRoomId.value || EMPTY_TEXT_REGEX.test(editor.getText())) return;
+    if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
-    const savedMessageInput = messageInput.value;
+    const savedMessageInput = messageInputStore.messageInput;
     editor.commands.clearContent(true);
-    await createMessage({ message: savedMessageInput, roomId: currentRoomId.value });
+    await createMessage({ message: savedMessageInput, roomId: roomStore.currentRoomId });
   };
 
   const createMessage = async (input: CreateMessageInput) => {

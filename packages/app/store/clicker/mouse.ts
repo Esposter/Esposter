@@ -3,7 +3,8 @@ import { useClickerStore } from "@/store/clicker";
 
 export const useMouseStore = defineStore("clicker/mouse", () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
-  const mousePower = computed(() => applyMouseUpgrades(1, game.value.boughtUpgrades, game.value.boughtBuildings));
+  const mousePower = computed(() =>
+    applyMouseUpgrades(1, clickerStore.game.boughtUpgrades, clickerStore.game.boughtBuildings),
+  );
   return { mousePower };
 });

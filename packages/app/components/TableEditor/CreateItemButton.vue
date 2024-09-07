@@ -3,7 +3,7 @@ import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
-const tableEditorStore = useTableEditorStore()();
+const tableEditorStore = useTableEditorStore();
 const { editedItem, editFormDialog, tableEditorType } = storeToRefs(tableEditorStore);
 const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.value].itemCategoryDefinitions);
 </script>

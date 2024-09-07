@@ -19,7 +19,6 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
   const attackOptionGrid = useAttackOptionGrid();
   const activePanel = ref(ActivePanel.Info);
   const experienceBarStore = useExperienceBarStore();
-  const { isAnimating, isSkipAnimations } = storeToRefs(experienceBarStore);
 
   const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
     if (await handleShowMessageInput(scene, input)) return;
@@ -33,9 +32,9 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
         activePanel.value = ActivePanel.Option;
         return;
       case PlayerSpecialInput.Confirm:
-        if (isAnimating.value) {
-          isSkipAnimations.value = true;
-          isAnimating.value = false;
+        if (experienceBarStore.isAnimating) {
+          experienceBarStore.isSkipAnimations = true;
+          experienceBarStore.isAnimating = false;
         } else if (activePanel.value === ActivePanel.Option) await onSelectPlayerOption();
         else if (activePanel.value === ActivePanel.AttackOption) {
           const attackOptionGrid = useAttackOptionGrid();

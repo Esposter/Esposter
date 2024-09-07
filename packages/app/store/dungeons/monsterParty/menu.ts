@@ -9,37 +9,32 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { usePlayerStore } from "@/store/dungeons/player";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const { monsterIdToMove, sceneMode } = storeToRefs(monsterPartySceneStore);
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
   const monsterPartyMenuOptionGrid = useMonsterPartyMenuOptionGrid();
-  const playerStore = usePlayerStore();
-  const { player } = storeToRefs(playerStore);
   const infoPanelStore = useInfoPanelStore();
-  const { infoDialogMessage } = storeToRefs(infoPanelStore);
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     // We should never hit the menu mode if the player was selecting "Cancel"
     // @TODO: We should be able to use instanceof Monster
     // if some day in the future we can fully deserialize json data from local storage
     // to proper classes even for nested objects
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
-    else if (sceneMode.value === SceneMode.Default)
+    else if (monsterPartySceneStore.sceneMode === SceneMode.Default)
       if (justDownInput === PlayerSpecialInput.Enter) {
-        sceneMode.value = SceneMode.Menu;
+        monsterPartySceneStore.sceneMode = SceneMode.Menu;
         return true;
       } else return false;
-    else if (sceneMode.value !== SceneMode.Menu) return false;
+    else if (monsterPartySceneStore.sceneMode !== SceneMode.Menu) return false;
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (monsterPartyMenuOptionGrid.value) {
         case MenuOption.Move: {
-          monsterIdToMove.value = monsterPartyOptionGrid.value.id;
-          sceneMode.value = SceneMode.Move;
-          infoDialogMessage.value.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
+          monsterPartySceneStore.monsterIdToMove = monsterPartyOptionGrid.value.id;
+          monsterPartySceneStore.sceneMode = SceneMode.Move;
+          infoPanelStore.infoDialogMessage.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
           break;
         }
         case MenuOption.Summary: {
@@ -51,14 +46,14 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
           break;
         }
         case MenuOption.Release:
-          if (player.value.monsters.length <= 1) {
-            infoDialogMessage.value.text = "Cannot release any more monsters.";
-            sceneMode.value = SceneMode.Default;
+          if (monsterPartySceneStore.monsters.length <= 1) {
+            infoPanelStore.infoDialogMessage.text = "Cannot release any more monsters.";
+            monsterPartySceneStore.sceneMode = SceneMode.Default;
             break;
           }
 
-          sceneMode.value = SceneMode.Confirmation;
-          infoDialogMessage.value.text = `Release ${monsterPartyOptionGrid.value.key}?`;
+          monsterPartySceneStore.sceneMode = SceneMode.Confirmation;
+          infoPanelStore.infoDialogMessage.text = `Release ${monsterPartyOptionGrid.value.key}?`;
           break;
         case MenuOption.Cancel:
           onCancel();
@@ -73,7 +68,7 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   };
 
   const onCancel = () => {
-    sceneMode.value = SceneMode.Default;
+    monsterPartySceneStore.sceneMode = SceneMode.Default;
   };
 
   return { onPlayerInput };

@@ -10,7 +10,6 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const settingsStore = useSettingsStore();
-  const { isSkipAnimations } = storeToRefs(settingsStore);
   const inputPromptCursorX = ref();
   const inputPromptCursorDisplayWidth = ref<number>();
   const isInputPromptCursorVisible = ref(false);
@@ -60,7 +59,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     // Tell other components like the dialog that we're ready to show our message
     phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
-    if (isSkipAnimations.value) {
+    if (settingsStore.isSkipAnimations) {
       const textDelay = useTextDelay();
       dialogTarget.setMessage(message);
       // Show the cursor after vue's rendering cycle has caught up with phaser
@@ -90,7 +89,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     target.reset();
     phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
-    if (isSkipAnimations.value) {
+    if (settingsStore.isSkipAnimations) {
       target.setMessage(message);
       return;
     }
