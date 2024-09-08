@@ -48,9 +48,9 @@ export const surveyRouter = router({
         .values({
           ...input,
           createdAt,
-          userId: ctx.session.user.id,
           modelVersion: 1,
           updatedAt: createdAt,
+          userId: ctx.session.user.id,
         })
         .returning()
     ).find(Boolean);

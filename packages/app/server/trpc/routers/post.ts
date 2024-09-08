@@ -66,9 +66,9 @@ export const postRouter = router({
             .values({
               ...input,
               createdAt,
-              userId: ctx.session.user.id,
               depth: parentPost.depth + 1,
               ranking: ranking(0, createdAt),
+              userId: ctx.session.user.id,
             })
             .returning({ id: posts.id })
         )[0];
@@ -94,8 +94,8 @@ export const postRouter = router({
           .values({
             ...input,
             createdAt,
-            userId: ctx.session.user.id,
             ranking: ranking(0, createdAt),
+            userId: ctx.session.user.id,
           })
           .returning({ id: posts.id })
       )[0];

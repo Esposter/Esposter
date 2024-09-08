@@ -9,11 +9,11 @@ import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
-  userId!: string;
-
   files!: FileEntity[];
 
   message!: string;
+
+  userId!: string;
 
   constructor(init: CompositeKeyEntity & Partial<MessageEntity>) {
     super();
@@ -23,12 +23,12 @@ export class MessageEntity extends AzureEntity {
 
 export const messageSchema = z
   .object({
-    userId: selectUserSchema.shape.id,
     files: z.array(fileSchema),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}
     partitionKey: z.string(),
     // reverse-ticked timestamp
     rowKey: z.string(),
+    userId: selectUserSchema.shape.id,
   })
   .merge(itemMetadataSchema) satisfies z.ZodType<MessageEntity>;
