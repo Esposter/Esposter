@@ -6,8 +6,7 @@ export const useMessageMetadataMap = <T extends MessageMetadataEntity>() => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   // Map<partitionKey, Map<messageRowKey, T[]>>
-  // @TODO: Vue cannot unwrap generic refs yet
-  const metadataMap = ref(new Map()) as Ref<Map<string, Map<string, T[]>>>;
+  const metadataMap: Ref<Map<string, Map<string, T[]>>> = ref(new Map());
   const getMetadataList = (messageRowKey: string) => {
     if (!currentRoomId.value) return [];
     const metadataList = metadataMap.value.get(currentRoomId.value)?.get(messageRowKey);

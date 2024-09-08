@@ -6,8 +6,7 @@ import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPa
 export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
   currentId: MaybeRefOrGetter<null | string>,
 ) => {
-  // @TODO: Vue cannot unwrap generic refs yet
-  const cursorPaginationDataMap = ref(new Map()) as Ref<Map<string, CursorPaginationData<TItem>>>;
+  const cursorPaginationDataMap: Ref<Map<string, CursorPaginationData<TItem>>> = ref(new Map());
   const cursorPaginationData = computed({
     get: () => {
       const currentIdValue = toValue(currentId);

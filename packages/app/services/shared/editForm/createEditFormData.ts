@@ -1,5 +1,4 @@
 import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
-import type { UnwrapRef } from "vue";
 import type { VForm } from "vuetify/components";
 
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
@@ -10,7 +9,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   const router = useRouter();
   const editFormDialog = ref(false);
   const editFormRef = ref<InstanceType<typeof VForm>>();
-  const editedItem = ref<null | TItem>(null);
+  const editedItem: Ref<null | TItem> = ref(null);
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const id = editedItem.value?.id;
@@ -41,8 +40,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     const item = items.value.find((item) => item.id === id);
     if (!item) return;
 
-    // @TODO: Vue cannot unwrap generic refs yet
-    editedItem.value = structuredClone(toDeepRaw(item)) as UnwrapRef<TItem>;
+    editedItem.value = structuredClone(toDeepRaw(item));
     editedIndex.value = items.value.findIndex((item) => item.id === id);
     editFormDialog.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });

@@ -17,10 +17,6 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
   const infoPanelStore = useInfoPanelStore();
 
   const onPlayerInput = (_scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    // We should never hit the menu mode if the player was selecting "Cancel"
-    // @TODO: We should be able to use instanceof Monster
-    // if some day in the future we can fully deserialize json data from local storage
-    // to proper classes even for nested objects
     if (monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel) return false;
     else if (monsterPartySceneStore.sceneMode !== SceneMode.Confirmation) return false;
 
