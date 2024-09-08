@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/models/esbabbler/room/invite";
+import { InviteEntity, InviteEntityPropertyNames, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -64,7 +64,7 @@ const generateInviteCodeInputSchema = z.object({
 export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSchema>;
 
 // For room-related queries/mutations we don't need to grab the room user procedure
-// as the SQL clauses inherently contains logic to filter if the user is a member/creator of the room
+// as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
