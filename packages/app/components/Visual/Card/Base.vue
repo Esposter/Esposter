@@ -10,7 +10,8 @@ const { sm, xs } = useDisplay();
 </script>
 
 <template>
-  <!-- @TODO: Add overflow-wrap: anywhere once it's supported in unocss -->
+  <!-- @TODO: Add overflow-wrap: anywhere once it's supported in unocss 
+   https://github.com/unocss/unocss/issues/2614 -->
   <StyledCard
     :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
     flex="!"
