@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/models/esbabbler/room/invite";
+import { InviteEntity, InviteEntityPropertyNames, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -161,7 +161,6 @@ export const roomRouter = router({
       const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
       const cursorWhere = cursor ? getCursorWhere(users, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
-
       const joinedUsers = await db
         .select()
         .from(users)
