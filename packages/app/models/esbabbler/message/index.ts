@@ -9,7 +9,7 @@ import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
-  creatorId!: string;
+  userId!: string;
 
   files!: FileEntity[];
 
@@ -23,7 +23,7 @@ export class MessageEntity extends AzureEntity {
 
 export const messageSchema = z
   .object({
-    creatorId: selectUserSchema.shape.id,
+    userId: selectUserSchema.shape.id,
     files: z.array(fileSchema),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}

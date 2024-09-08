@@ -10,7 +10,7 @@ interface PostCommentCardProps {
 const { comment } = defineProps<PostCommentCardProps>();
 const { session } = useAuth();
 const createdAt = computed(() => dayjs(comment.createdAt).fromNow());
-const isCreator = computed(() => session.value?.user.id === comment.creatorId);
+const isCreator = computed(() => session.value?.user.id === comment.userId);
 const isUpdateMode = ref(false);
 </script>
 
@@ -21,9 +21,9 @@ const isUpdateMode = ref(false);
         <PostLikeSection :post="comment" is-comment-store pt-2 />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">
           <v-avatar>
-            <v-img v-if="comment.creator.image" :src="comment.creator.image" />
+            <v-img v-if="comment.user.image" :src="comment.user.image" />
           </v-avatar>
-          Posted by <span font-bold>{{ comment.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+          Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
           <PostCommentUpdateRichTextEditor
             v-if="isUpdateMode"
             mt-2="!"
@@ -42,9 +42,9 @@ const isUpdateMode = ref(false);
     <template #commentPreview>
       <v-card px-2="!" shadow-none="!">
         <v-avatar>
-          <v-img v-if="comment.creator.image" :src="comment.creator.image" />
+          <v-img v-if="comment.user.image" :src="comment.user.image" />
         </v-avatar>
-        Posted by <span font-bold>{{ comment.creator.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+        Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
         <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
       </v-card>
     </template>

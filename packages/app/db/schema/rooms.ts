@@ -7,12 +7,12 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const rooms = pgTable("Room", {
-  creatorId: uuid("creatorId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
   id: uuid("id").primaryKey().defaultRandom(),
   image: text("image"),
   name: text("name").notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export type Room = typeof rooms.$inferSelect;

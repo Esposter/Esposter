@@ -3,16 +3,31 @@ import type { AdapterUser } from "@auth/core/adapters";
 import type { Session } from "@auth/core/types";
 
 import { NuxtAuthHandler } from "#auth";
+import { db } from "@/db";
+import { accounts } from "@/db/schema/accounts";
+import { authenticators } from "@/db/schema/authenticators";
+import { sessions } from "@/db/schema/sessions";
+import { users } from "@/db/schema/users";
+import { verificationTokens } from "@/db/schema/verificationTokens";
 import { RoutePath } from "@/models/router/RoutePath";
-import { DrizzleAdapter } from "@/server/auth/DrizzleAdapter";
 import FacebookProvider from "@auth/core/providers/facebook";
 import GithubProvider from "@auth/core/providers/github";
 import GoogleProvider from "@auth/core/providers/google";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
 const runtimeConfig = useRuntimeConfig();
 
 export const authOptions: AuthConfig = {
-  adapter: DrizzleAdapter,
+  // @ts-expect-error mismatching @auth/core versions we ignore for now
+  adapter: DrizzleAdapter(db, {
+    accountsTable: accounts,
+    // @TODO
+    // @ts-expect-error https://github.com/nextauthjs/next-auth/issues/11490
+    authenticatorsTable: authenticators,
+    sessionsTable: sessions,
+    usersTable: users,
+    verificationTokensTable: verificationTokens,
+  }),
   callbacks: {
     session: (params) => {
       const { session, user } = params as { session: Session; user: AdapterUser };

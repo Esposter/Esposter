@@ -44,7 +44,7 @@ export const usersToRooms = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   (userToRoom) => ({
-    compoundKey: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
+    compositePK: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
   }),
 );
 export type UserToRoom = typeof usersToRooms.$inferSelect;
@@ -75,7 +75,7 @@ export const likes = pgTable(
     value: integer("value").notNull(),
   },
   (like) => ({
-    compoundKey: primaryKey({ columns: [like.userId, like.postId] }),
+    compositePK: primaryKey({ columns: [like.userId, like.postId] }),
   }),
 );
 

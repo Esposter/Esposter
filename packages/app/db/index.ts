@@ -1,6 +1,7 @@
 import { MIGRATIONS_FOLDER_PATH } from "@/db/constants";
 import { DrizzleLogger } from "@/db/logger";
 import * as accounts from "@/db/schema/accounts";
+import * as authenticators from "@/db/schema/authenticators";
 import * as posts from "@/db/schema/posts";
 import * as rooms from "@/db/schema/rooms";
 import * as sessions from "@/db/schema/sessions";
@@ -19,6 +20,7 @@ export const db = drizzle(client, {
   logger: IS_PRODUCTION ? undefined : new DrizzleLogger(),
   schema: {
     ...accounts,
+    ...authenticators,
     ...posts,
     ...rooms,
     ...sessions,

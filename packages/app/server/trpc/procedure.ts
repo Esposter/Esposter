@@ -42,7 +42,7 @@ export const getRoomOwnerProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
     const isOwner = await db.query.rooms.findFirst({
-      where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.creatorId, ctx.session.user.id)),
+      where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.userId, ctx.session.user.id)),
     });
     if (!isOwner) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();

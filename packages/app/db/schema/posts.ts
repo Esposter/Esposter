@@ -9,9 +9,6 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable("Post", {
-  creatorId: uuid("creatorId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
   depth: integer("depth").notNull().default(0),
   description: text("description").notNull().default(""),
   id: uuid("id").primaryKey().defaultRandom(),
@@ -20,15 +17,18 @@ export const posts = pgTable("Post", {
   parentId: uuid("parentId"),
   ranking: doublePrecision("ranking").notNull(),
   title: text("title").notNull().default(""),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export type Post = typeof posts.$inferSelect;
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const PostRelations = {
-  creator: true,
   likes: true,
+  user: true,
 } as const;
-export type PostWithRelations = { creator: User; likes: Like[] } & Post;
+export type PostWithRelations = { likes: Like[]; user: User } & Post;
 
 export const selectPostSchema = createSelectSchema(posts, {
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
@@ -36,13 +36,13 @@ export const selectPostSchema = createSelectSchema(posts, {
 });
 
 export const postsRelations = relations(posts, ({ many, one }) => ({
-  creator: one(users, {
-    fields: [posts.creatorId],
-    references: [users.id],
-  }),
   likes: many(likes),
   parent: one(posts, {
     fields: [posts.parentId],
     references: [posts.id],
+  }),
+  user: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
   }),
 }));

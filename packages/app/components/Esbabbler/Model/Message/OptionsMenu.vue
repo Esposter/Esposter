@@ -28,7 +28,7 @@ const { session } = useAuth();
 const emojiStore = useEmojiStore();
 const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
 const emojis = computed(() => getEmojiList(message.rowKey));
-const isCreator = computed(() => session.value?.user.id === message.creatorId);
+const isCreator = computed(() => session.value?.user.id === message.userId);
 const items = computed(() => {
   if (!isCreator.value) return [];
 

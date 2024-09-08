@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { rooms, selectRoomSchema } from "@/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/db/schema/users";
 import { AzureTable } from "@/models/azure/table";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/models/esbabbler/room/invite";
+import { InviteEntity, InviteEntityPropertyNames, inviteCodeSchema } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
@@ -86,7 +86,7 @@ export const roomRouter = router({
       const newRoom = (
         await tx
           .insert(rooms)
-          .values({ ...input, creatorId: ctx.session.user.id })
+          .values({ ...input, userId: ctx.session.user.id })
           .returning()
       ).find(Boolean);
       if (!newRoom) return null;
@@ -99,7 +99,7 @@ export const roomRouter = router({
     const deletedRoom = (
       await db
         .delete(rooms)
-        .where(and(eq(rooms.id, input), eq(rooms.creatorId, ctx.session.user.id)))
+        .where(and(eq(rooms.id, input), eq(rooms.userId, ctx.session.user.id)))
         .returning()
     ).find(Boolean);
     return deletedRoom ?? null;
@@ -209,7 +209,7 @@ export const roomRouter = router({
         await db
           .update(rooms)
           .set(rest)
-          .where(and(eq(rooms.id, id), eq(rooms.creatorId, ctx.session.user.id)))
+          .where(and(eq(rooms.id, id), eq(rooms.userId, ctx.session.user.id)))
           .returning()
       ).find(Boolean);
       return updatedRoom ?? null;

@@ -66,7 +66,7 @@ export const postRouter = router({
             .values({
               ...input,
               createdAt,
-              creatorId: ctx.session.user.id,
+              userId: ctx.session.user.id,
               depth: parentPost.depth + 1,
               ranking: ranking(0, createdAt),
             })
@@ -94,7 +94,7 @@ export const postRouter = router({
           .values({
             ...input,
             createdAt,
-            creatorId: ctx.session.user.id,
+            userId: ctx.session.user.id,
             ranking: ranking(0, createdAt),
           })
           .returning({ id: posts.id })
@@ -111,7 +111,7 @@ export const postRouter = router({
         const deletedComment = (
           await tx
             .delete(posts)
-            .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNotNull(posts.parentId)))
+            .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
             .returning()
         ).find(Boolean);
         const postId = deletedComment?.parentId;
@@ -133,7 +133,7 @@ export const postRouter = router({
         const deletedPost = (
           await tx
             .delete(posts)
-            .where(and(eq(posts.id, input), eq(posts.creatorId, ctx.session.user.id), isNull(posts.parentId)))
+            .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
             .returning()
         ).find(Boolean);
         if (!deletedPost) return null;
@@ -169,11 +169,11 @@ export const postRouter = router({
         await db
           .update(posts)
           .set(rest)
-          .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+          .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       )[0];
       const updatedCommentWithRelations = await db.query.posts.findFirst({
-        where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.creatorId, ctx.session.user.id)),
+        where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });
       return updatedCommentWithRelations ?? null;
@@ -191,11 +191,11 @@ export const postRouter = router({
         await db
           .update(posts)
           .set(rest)
-          .where(and(eq(posts.id, id), eq(posts.creatorId, ctx.session.user.id)))
+          .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       )[0];
       const updatedPostWithRelations = await db.query.posts.findFirst({
-        where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.creatorId, ctx.session.user.id)),
+        where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });
       return updatedPostWithRelations ?? null;

@@ -8,22 +8,22 @@ import { integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 export const accounts = pgTable(
   "Account",
   {
-    accessToken: text("access_token"),
-    expiresAt: integer("expires_at"),
-    idToken: text("id_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    id_token: text("id_token"),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
-    refreshToken: text("refresh_token"),
+    refresh_token: text("refresh_token"),
     scope: text("scope"),
-    sessionState: text("session_state"),
-    tokenType: text("token_type"),
+    session_state: text("session_state"),
+    token_type: text("token_type"),
     type: text("type").$type<AdapterAccount["type"]>().notNull(),
     userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   (account) => ({
-    compoundKey: primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    compositePK: primaryKey({ columns: [account.provider, account.providerAccountId] }),
   }),
 );
 

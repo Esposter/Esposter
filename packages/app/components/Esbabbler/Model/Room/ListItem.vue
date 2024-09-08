@@ -29,7 +29,7 @@ const active = computed(() => room.id === currentRoomId.value);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <EsbabblerModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.creatorId">
+    <EsbabblerModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
       <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
           absolute="!"

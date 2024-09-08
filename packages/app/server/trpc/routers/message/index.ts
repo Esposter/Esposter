@@ -66,12 +66,12 @@ export const messageRouter = router({
       const createdAt = new Date();
       const newMessage = new MessageEntity({
         createdAt,
-        creatorId: ctx.session.user.id,
         files: [],
         message: input.message,
         partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
         rowKey: getReverseTickedTimestamp(),
         updatedAt: createdAt,
+        userId: ctx.session.user.id,
       });
       const messageClient = await getTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);

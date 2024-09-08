@@ -9,6 +9,6 @@ export const verificationTokens = pgTable(
     token: text("token").notNull().unique(),
   },
   (verificationToken) => ({
-    compoundKey: primaryKey({ columns: [verificationToken.identifier, verificationToken.token] }),
+    compositePK: primaryKey({ columns: [verificationToken.identifier, verificationToken.token] }),
   }),
 );

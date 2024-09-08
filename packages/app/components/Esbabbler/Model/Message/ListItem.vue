@@ -108,7 +108,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
-  -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 :deep(.ProseMirror) {

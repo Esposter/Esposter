@@ -7,9 +7,6 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const surveys = pgTable("Survey", {
-  creatorId: uuid("creatorId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
   group: text("group"),
   id: uuid("id").primaryKey().defaultRandom(),
   model: text("model").notNull().default(""),
@@ -17,6 +14,9 @@ export const surveys = pgTable("Survey", {
   name: text("name").notNull(),
   publishedAt: timestamp("publishedAt", { mode: "date" }),
   publishVersion: integer("publishVersion").notNull().default(0),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export type Survey = typeof surveys.$inferSelect;
@@ -26,8 +26,8 @@ export const selectSurveySchema = createSelectSchema(surveys, {
 });
 
 export const surveysRelations = relations(surveys, ({ one }) => ({
-  creator: one(users, {
-    fields: [surveys.creatorId],
+  user: one(users, {
+    fields: [surveys.userId],
     references: [users.id],
   }),
 }));

@@ -38,7 +38,7 @@ export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 export const surveyRouter = router({
   count: authedProcedure.query(
     async ({ ctx }) =>
-      (await db.select({ count: count() }).from(surveys).where(eq(surveys.creatorId, ctx.session.user.id)))[0].count,
+      (await db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
   ),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<null | Survey>(async ({ ctx, input }) => {
     const createdAt = new Date();
@@ -48,7 +48,7 @@ export const surveyRouter = router({
         .values({
           ...input,
           createdAt,
-          creatorId: ctx.session.user.id,
+          userId: ctx.session.user.id,
           modelVersion: 1,
           updatedAt: createdAt,
         })
@@ -60,14 +60,14 @@ export const surveyRouter = router({
     const deletedSurvey = (
       await db
         .delete(surveys)
-        .where(and(eq(surveys.id, input), eq(surveys.creatorId, ctx.session.user.id)))
+        .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)))
         .returning()
     ).find(Boolean);
     return deletedSurvey ?? null;
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ ctx, input: { id, ...rest } }) => {
     const survey = await db.query.surveys.findFirst({
-      where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
+      where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
     });
     if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
 
@@ -95,7 +95,7 @@ export const surveyRouter = router({
         limit: limit + 1,
         offset,
         orderBy: sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-        where: (surveys) => eq(surveys.creatorId, ctx.session.user.id),
+        where: (surveys) => eq(surveys.userId, ctx.session.user.id),
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),
@@ -103,7 +103,7 @@ export const surveyRouter = router({
     .input(updateSurveyInputSchema)
     .mutation<null | Survey>(async ({ ctx, input: { id, ...rest } }) => {
       const survey = await db.query.surveys.findFirst({
-        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.creatorId, ctx.session.user.id)),
+        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
       });
       if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
 
