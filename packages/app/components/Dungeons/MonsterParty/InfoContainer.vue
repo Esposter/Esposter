@@ -52,6 +52,10 @@ watch(
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
+          // We have multiple possible input sources that we have to disambiguate:
+          // 1. Monster Panel Item Input
+          // 2. Info Panel Input (this component)
+          // and this is only active when we are waiting for player special input
           if (isWaitingForPlayerSpecialInput) controls.setInput(PlayerSpecialInput.Confirm);
         }
       "
