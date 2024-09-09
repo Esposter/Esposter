@@ -1,4 +1,3 @@
-import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import type { Position } from "grid-engine";
 import type { GameObjects } from "phaser";
 
@@ -11,7 +10,6 @@ export const useBallStore = defineStore("dungeons/battle/ball", () => {
   const endPosition = Object.freeze<Position>({ x: 725, y: 180 });
   const position = ref({ ...startPosition });
   const texture = ref(BallKey.DamagedBall);
-  const tween = ref<TweenBuilderConfiguration>();
   return {
     endPosition,
     isVisible,
@@ -19,6 +17,5 @@ export const useBallStore = defineStore("dungeons/battle/ball", () => {
     position,
     startPosition,
     texture,
-    tween,
   };
 });

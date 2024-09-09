@@ -10,7 +10,7 @@ interface BallProps {
 const { scale = 0.1 } = defineProps<BallProps>();
 const ballStore = useBallStore();
 const { endPosition, startPosition } = ballStore;
-const { isVisible, pathFollower, position, texture, tween } = storeToRefs(ballStore);
+const { isVisible, pathFollower, position, texture } = storeToRefs(ballStore);
 const alpha = ref(1);
 const startPoint = new Math.Vector2(startPosition.x, startPosition.y);
 const controlPoint1 = new Math.Vector2(200, 100);
@@ -26,7 +26,7 @@ onUnmounted(() => {
 
 <template>
   <PathFollower
-    :configuration="{ visible: isVisible, path, ...position, texture, scale, alpha, tween }"
+    :configuration="{ visible: isVisible, path, ...position, texture, scale, alpha }"
     @complete="
       (_scene, newPathFollower) => {
         pathFollower = newPathFollower;

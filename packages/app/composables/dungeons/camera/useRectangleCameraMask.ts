@@ -12,9 +12,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);
   const graphics = scene.add.graphics().fillRectShape(rectangleShape).setDepth(-1);
   const mask = graphics.createGeometryMask();
-
   scene.cameras.main.setMask(mask);
-
   return new Promise<void>((resolve) => {
     scene.tweens.add({
       delay: 400,

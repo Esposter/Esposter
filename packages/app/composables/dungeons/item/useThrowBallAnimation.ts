@@ -11,7 +11,7 @@ export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
   const { endPosition, startPosition } = ballStore;
-  const { isVisible, pathFollower, position, tween } = storeToRefs(ballStore);
+  const { isVisible, pathFollower, position } = storeToRefs(ballStore);
   const pathFollowerValue = pathFollower.value;
   if (!pathFollowerValue) return;
 
@@ -39,17 +39,18 @@ export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
 
   const playShakeBallAnimation = () =>
     new Promise<void>((resolve) => {
-      useTween(tween, {
+      // For some unknown reason, useTween doesn't work here...
+      pathFollowerValue.scene.add.tween({
         delay: dayjs.duration(0.2, "seconds").asMilliseconds(),
         duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
         ease: Math.Easing.Sine.InOut,
         onComplete: () => {
           resolve();
         },
-        repeat: 3,
+        repeat: 2,
         repeatDelay: dayjs.duration(0.8, "seconds").asMilliseconds(),
-        x: endPosition.x + 10,
-        y: endPosition.y,
+        targets: pathFollowerValue,
+        x: pathFollowerValue.x + 10,
         yoyo: true,
       });
     });
