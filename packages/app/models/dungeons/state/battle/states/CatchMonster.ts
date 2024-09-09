@@ -4,6 +4,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { prettifyName } from "@/util/text/prettifyName";
 
 export const CatchMonster: State<StateName> = {
@@ -17,9 +18,12 @@ export const CatchMonster: State<StateName> = {
     await useThrowBallAnimation(isCaptureSuccessful);
 
     if (isCaptureSuccessful) {
+      const monsterPartySceneStore = useMonsterPartySceneStore();
+      const { monsters } = storeToRefs(monsterPartySceneStore);
       await useMonsterDeathTween(true);
       await showMessages(scene, [`You caught ${prettifyName(activeMonster.value.key)}.`]);
       await battleStateMachine.setState(StateName.GainExperience);
+      monsters.value.push(activeMonster.value);
       return;
     }
 

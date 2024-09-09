@@ -26,7 +26,6 @@ const { onPlayerInput } = battleSceneStore;
     "
     @update="
       (scene) => {
-        battleStateMachine.update();
         onPlayerInput(scene, controls.getInput());
       }
     "
