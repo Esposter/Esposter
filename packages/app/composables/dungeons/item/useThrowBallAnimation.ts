@@ -11,10 +11,16 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, isCaptureSu
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
-  const { startPosition } = ballStore;
+  const { endPosition, startPosition } = ballStore;
   const { isVisible, pathFollower, position, tween } = storeToRefs(ballStore);
   const pathFollowerValue = pathFollower.value;
-  if (!pathFollowerValue || isSkipAnimations.value) return;
+  if (!pathFollowerValue) return;
+
+  if (isSkipAnimations.value) {
+    position.value = { ...endPosition };
+    isVisible.value = true;
+    return;
+  }
 
   const enemyStore = useEnemyStore();
   const { monsterTween } = storeToRefs(enemyStore);
@@ -43,7 +49,8 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, isCaptureSu
         },
         repeat: 3,
         repeatDelay: dayjs.duration(0.8, "seconds").asMilliseconds(),
-        x: position.value.x + 10,
+        x: endPosition.x + 10,
+        y: endPosition.y,
         yoyo: true,
       });
     });

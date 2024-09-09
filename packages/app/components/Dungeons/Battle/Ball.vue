@@ -18,6 +18,10 @@ const controlPoint2 = new Math.Vector2(endPosition.x, endPosition.y);
 const endPoint = new Math.Vector2(endPosition.x, endPosition.y);
 const curve = new Curves.CubicBezier(startPoint, controlPoint1, controlPoint2, endPoint);
 const path = new Curves.Path(startPosition.x, startPosition.y).add(curve);
+
+onUnmounted(() => {
+  isVisible.value = false;
+});
 </script>
 
 <template>
