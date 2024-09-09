@@ -27,7 +27,8 @@ const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const onGridClick = useOnGridClick(
   SettingsOptionGrid,
-  () => ({ x: columnIndex, y: rowIndex }),
+  // We shouldn't be able to move to the settings option
+  () => ({ x: columnIndex === 0 ? SettingsOptionGrid.position.value.x : columnIndex, y: rowIndex }),
   () => {
     if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);
   },

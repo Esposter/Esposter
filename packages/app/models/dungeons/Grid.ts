@@ -53,7 +53,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return unref(this.grid)[y][x];
   }
 
-  move(direction: Direction, isSkipValidation?: true) {
+  move(direction: Direction, isSkipValidation?: boolean) {
     switch (direction) {
       case Direction.UP: {
         let newPositionY = this.position.value.y;

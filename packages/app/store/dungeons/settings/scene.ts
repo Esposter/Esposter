@@ -12,6 +12,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@esposter/shared";
+import { Direction } from "grid-engine";
 
 let autoUpdateGridX = false;
 
@@ -72,7 +73,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
     else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
       await updateThemeModeSetting(justDownInput);
-    else SettingsOptionGrid.move(justDownInput, true);
+    // We ignore validation when moving up/down since we auto update grid x
+    // and this is just updating the settings options being viewed, not the actual values
+    else SettingsOptionGrid.move(justDownInput, justDownInput === Direction.UP || justDownInput === Direction.DOWN);
   };
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {

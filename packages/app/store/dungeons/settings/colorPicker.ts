@@ -24,7 +24,7 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
         return;
       }
   };
-  const isUpdateThemeModeSetting = (input: PlayerInput, settingsOption: SettingsOption): input is Direction =>
+  const isUpdateThemeModeSetting = (input: PlayerInput, settingsOption: SettingsOption) =>
     settingsOption === SettingsOption["Theme Mode"] && (input === Direction.LEFT || input === Direction.RIGHT);
   return {
     isUpdateThemeModeSetting,
