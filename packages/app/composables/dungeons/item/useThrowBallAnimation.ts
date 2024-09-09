@@ -11,16 +11,10 @@ export const useThrowBallAnimation = async (scene: SceneWithPlugins, isCaptureSu
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
-  const { endPosition, startPosition } = ballStore;
+  const { startPosition } = ballStore;
   const { isVisible, pathFollower, position, tween } = storeToRefs(ballStore);
   const pathFollowerValue = pathFollower.value;
-  if (!pathFollowerValue) return;
-
-  if (isSkipAnimations) {
-    position.value = { ...endPosition };
-    isVisible.value = true;
-    return;
-  }
+  if (!pathFollowerValue || isSkipAnimations.value) return;
 
   const enemyStore = useEnemyStore();
   const { monsterTween } = storeToRefs(enemyStore);
