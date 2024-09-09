@@ -7,6 +7,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { prettifyName } from "@/util/text/prettifyName";
 
 export const PlayerAttack: State<StateName> = {
   name: StateName.PlayerAttack,
@@ -21,7 +22,10 @@ export const PlayerAttack: State<StateName> = {
     const attack = attackOptionGrid.value;
     if (!attack) return;
 
-    await showMessageNoInputRequired(scene, `${activeMonster.value.key} used ${attack.id}.`);
+    await showMessageNoInputRequired(
+      scene,
+      `${prettifyName(activeMonster.value.key)} used ${prettifyName(attack.id)}.`,
+    );
     scene.time.delayedCall(dayjs.duration(0.5, "seconds").asMilliseconds(), async () => {
       await useAttackAnimation(scene, attack, true);
       await takeDamage(calculateDamage(activeMonster.value.stats.attack));

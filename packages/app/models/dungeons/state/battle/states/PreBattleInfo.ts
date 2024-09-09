@@ -4,6 +4,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { prettifyName } from "@/util/text/prettifyName";
 
 export const PreBattleInfo: State<StateName> = {
   name: StateName.PreBattleInfo,
@@ -15,7 +16,7 @@ export const PreBattleInfo: State<StateName> = {
 
     await useMonsterAppearTween(true);
     useMonsterInfoContainerAppearTween(true);
-    await showMessages(scene, [`A wild ${activeMonster.value.key} has appeared!`]);
+    await showMessages(scene, [`A wild ${prettifyName(activeMonster.value.key)} has appeared!`]);
     await battleStateMachine.setState(StateName.BringOutMonster);
   },
 };
