@@ -14,7 +14,7 @@ export const CatchMonster: State<StateName> = {
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
     const isCaptureSuccessful = true;
-    await useThrowBallAnimation(scene, isCaptureSuccessful);
+    await useThrowBallAnimation(isCaptureSuccessful);
 
     if (isCaptureSuccessful) {
       await useMonsterDeathTween(true);

@@ -1,5 +1,3 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
-
 import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { useBallStore } from "@/store/dungeons/battle/ball";
@@ -8,7 +6,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/time/sleep";
 import { Math } from "phaser";
 
-export const useThrowBallAnimation = async (scene: SceneWithPlugins, isCaptureSuccessful: boolean) => {
+export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
