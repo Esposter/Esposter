@@ -8,6 +8,7 @@ import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
+import { prettifyName } from "@/util/text/prettifyName";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
@@ -29,7 +30,14 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />
-    <Text :configuration="{ x: 200, y: 60, text: selectedMonster.key, style: { ...MenuTextStyle, fontSize: 40 } }" />
+    <Text
+      :configuration="{
+        x: 200,
+        y: 60,
+        text: prettifyName(selectedMonster.key),
+        style: { ...MenuTextStyle, fontSize: 40 },
+      }"
+    />
     <Image
       :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.asset.key, scale: 0.7 }"
     />

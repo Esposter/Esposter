@@ -7,6 +7,7 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import { prettifyName } from "@/util/text/prettifyName";
 
 interface InfoContainerProps {
   isEnemy: boolean;
@@ -35,7 +36,7 @@ onUnmounted(() => {
       :configuration="{
         x: 30,
         y: 20,
-        text: activeMonster.key,
+        text: prettifyName(activeMonster.key),
         style: {
           color: '#7e3d3f',
           fontSize: 32,

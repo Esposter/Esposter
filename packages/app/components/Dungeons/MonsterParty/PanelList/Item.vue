@@ -6,6 +6,7 @@ import Image from "@/lib/phaser/components/Image.vue";
 import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
 
@@ -52,7 +53,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
       :configuration="{
         x: 162,
         y: 36,
-        text: monster.key,
+        text: prettifyName(monster.key),
         style: {
           color: 'white',
           fontSize: 30,
