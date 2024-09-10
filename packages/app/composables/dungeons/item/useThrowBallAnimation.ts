@@ -1,4 +1,5 @@
 import { useTween } from "@/lib/phaser/composables/useTween";
+import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { dayjs } from "@/services/dayjs";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -6,17 +7,17 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/time/sleep";
 import { Math } from "phaser";
 
-export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
+export const useThrowBallAnimation = async (captureResult: CaptureResult) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
   const { endPosition, startPosition } = ballStore;
-  const { isVisible, pathFollower, position } = storeToRefs(ballStore);
+  const { isVisible, pathFollower } = storeToRefs(ballStore);
   const pathFollowerValue = pathFollower.value;
   if (!pathFollowerValue) return;
 
   if (isSkipAnimations.value) {
-    position.value = { ...endPosition };
+    pathFollowerValue.setPosition(endPosition.x, endPosition.y);
     isVisible.value = true;
     return;
   }
@@ -26,7 +27,7 @@ export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
 
   const playThrowBallAnimation = () =>
     new Promise<void>((resolve) => {
-      position.value = { ...startPosition };
+      pathFollowerValue.setPosition(startPosition.x, startPosition.y);
       isVisible.value = true;
       pathFollowerValue.startFollow({
         duration: dayjs.duration(1, "second").asMilliseconds(),
@@ -47,7 +48,7 @@ export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
         onComplete: () => {
           resolve();
         },
-        repeat: 2,
+        repeat: captureResult === CaptureResult.Failure ? 0 : 2,
         repeatDelay: dayjs.duration(0.8, "seconds").asMilliseconds(),
         targets: pathFollowerValue,
         x: pathFollowerValue.x + 10,
@@ -92,5 +93,5 @@ export const useThrowBallAnimation = async (isCaptureSuccessful: boolean) => {
   await playShakeBallAnimation();
   await sleep(dayjs.duration(0.5, "seconds").asMilliseconds());
   isVisible.value = false;
-  if (!isCaptureSuccessful) await playCatchEnemyFailedAnimation();
+  if (captureResult !== CaptureResult.Success) await playCatchEnemyFailedAnimation();
 };
