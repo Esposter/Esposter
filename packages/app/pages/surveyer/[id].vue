@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { validate } from "@/services/router/validate";
-
-// @TODO: Nuxt cannot build survey-creator-core yet
+// @TODO: Nuxt build fails to build this atm
+// import { validate } from "@/services/router/validate";
 // import { useSurveyStore } from "@/store/surveyer/survey";
 // import "survey-core/defaultV2.min.css";
 // import "survey-core/survey.i18n.js";
@@ -10,14 +9,13 @@ import { validate } from "@/services/router/validate";
 // import "survey-creator-core/survey-creator-core.min.css";
 
 // defineRouteRules({ ssr: false });
-definePageMeta({ middleware: "auth", validate });
+// definePageMeta({ middleware: "auth", validate });
 
 // const survey = await useReadSurveyFromRoute();
 // const { status } = useAuth();
 // const surveyerStore = useSurveyStore();
-// const { updateSurvey, autoSave } = surveyerStore;
-
-// const creator = new SurveyCreatorModel({ showLogicTab: true, isAutoSave: true });
+// const { autoSave, updateSurvey } = surveyerStore;
+// const creator = new SurveyCreatorModel({ isAutoSave: true, showLogicTab: true });
 // creator.text = survey.model;
 // creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
 //   survey.model = creator.text;
@@ -32,8 +30,6 @@ definePageMeta({ middleware: "auth", validate });
 //     }
 //   else if (status.value === "unauthenticated") callback(saveNo, autoSave(survey));
 // };
-
-throw createError({ statusCode: 404, statusMessage: "Not implemented" });
 </script>
 
 <template>
@@ -41,10 +37,3 @@ throw createError({ statusCode: 404, statusMessage: "Not implemented" });
     <!-- <SurveyCreatorComponent :model="creator" /> -->
   </NuxtLayout>
 </template>
-
-<style lang="scss">
-.svc-creator {
-  width: 100%;
-  height: calc(100dvh - $app-bar-height);
-}
-</style>

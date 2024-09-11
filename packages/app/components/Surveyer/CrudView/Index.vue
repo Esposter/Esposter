@@ -24,7 +24,7 @@ const { searchQuery, surveyList, totalItemsLength } = storeToRefs(surveyerStore)
         groupBy: [{ key: 'group', order: 'asc' }],
         loading: isLoading,
       }"
-      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.rowKey))"
+      @click:row="(_, { item }) => navigateTo(RoutePath.Survey(item.id))"
       @update:options="readMoreSurveys"
     >
       <template #top>
