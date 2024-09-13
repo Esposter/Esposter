@@ -13,7 +13,7 @@ import { surveyRouter } from "@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@/server/trpc/routers/tableEditor";
 import { userRouter } from "@/server/trpc/routers/user";
 
-export const trpcRouter = router({
+export const TRPCRouter = router({
   app: appRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
@@ -29,4 +29,4 @@ export const trpcRouter = router({
   user: userRouter,
 });
 
-export type TrpcRouter = typeof trpcRouter;
+export type TRPCRouter = typeof TRPCRouter;

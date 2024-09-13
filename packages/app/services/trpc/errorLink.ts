@@ -1,10 +1,10 @@
-import type { TrpcRouter } from "@/server/trpc/routers";
+import type { TRPCRouter } from "@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { RoutePath } from "@/models/router/RoutePath";
 import { observable } from "@trpc/server/observable";
 
-export const errorLink: TRPCLink<TrpcRouter> =
+export const errorLink: TRPCLink<TRPCRouter> =
   () =>
   ({ next, op }) =>
     observable((observer) => {
