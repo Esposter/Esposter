@@ -46,9 +46,6 @@
     "vite": "^5.4.4",
     "vue-tsc": "^2.1.6"
   },
-  "devDependenciesComments": {
-    "typescript": "@TODO: Upgrading breaks everything"
-  },
   "engines": {
     "node": "^22.8.0"
   },
