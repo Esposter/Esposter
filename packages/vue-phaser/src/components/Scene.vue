@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SceneKey } from "@/models/keys/SceneKey";
+import type { SceneProps } from "@/models/scene/SceneProps";
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import { useGame } from "@/composables/useGame";
@@ -9,11 +9,6 @@ import { ExternalSceneStore } from "@/store/scene";
 import { getScene } from "@/utils/getScene";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
 import { Scene, Scenes } from "phaser";
-
-interface SceneProps {
-  autoStart?: true;
-  sceneKey: SceneKey;
-}
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();

@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import type { TextConfiguration } from "@/models/configuration/TextConfiguration";
 import type { TextEventEmitsOptions } from "@/models/emit/TextEventEmitsOptions";
-import type { SetRequired } from "type-fest";
+import type { TextProps } from "@/models/text/TextProps";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { TextSetterMap } from "@/utils/setterMap/TextSetterMap";
-
-interface TextProps {
-  configuration: SetRequired<Partial<TextConfiguration>, "text">;
-  immediate?: true;
-}
 
 interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 

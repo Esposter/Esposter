@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneProps, SceneWithPlugins } from "vue-phaser";
 
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Cameras } from "phaser";
 import { getScene, Scene, SceneKey, useCameraStore, useInputStore } from "vue-phaser";
-
-interface SceneProps {
-  autoStart?: true;
-  sceneKey: SceneKey;
-}
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const props = defineProps<SceneProps>();
