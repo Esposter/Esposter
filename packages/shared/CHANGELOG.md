@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/Esposter/Esposter/compare/v1.18.0...v1.19.0) (2024-09-13)
+
+
+### Features
+
+* Add vue-phaserjs package ([5f158f5](https://github.com/Esposter/Esposter/commit/5f158f5e07da10dd0593257a7ba06d53a49323c9))
+
+
+
+
+
 # [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
 
 
