@@ -1,4 +1,4 @@
-import type { TrpcRouter } from "@/server/trpc/routers";
+import type { TRPCRouter } from "@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { SuperJSON } from "@/services/superjson";
@@ -11,7 +11,7 @@ import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 export default defineNuxtPlugin(() => {
   const url = useClientUrl();
   const headers = useRequestHeaders();
-  const links: TRPCLink<TrpcRouter>[] = [
+  const links: TRPCLink<TRPCRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
       enabled: (opts) =>
@@ -30,6 +30,6 @@ export default defineNuxtPlugin(() => {
       })(),
     }),
   ];
-  const client = createTRPCNuxtClient<TrpcRouter>({ links, transformer: SuperJSON });
+  const client = createTRPCNuxtClient<TRPCRouter>({ links, transformer: SuperJSON });
   return { provide: { client } };
 });
