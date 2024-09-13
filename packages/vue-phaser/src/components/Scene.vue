@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { SceneKey } from "@/models/keys/SceneKey";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import { useGame } from "@/composables/useGame";
 import { Lifecycle } from "@/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/store";
-import { useCameraStore } from "@/store/camera";
-import { useInputStore } from "@/store/input";
 import { ExternalSceneStore } from "@/store/scene";
 import { getScene } from "@/utils/getScene";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
@@ -30,10 +28,6 @@ const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
 const { parallelSceneKeys } = storeToRefs(phaserStore);
 const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
-const cameraStore = useCameraStore();
-const { isFading } = storeToRefs(cameraStore);
-const inputStore = useInputStore();
-const { isInputActive } = storeToRefs(inputStore);
 const NewScene = class extends Scene {
   create(this: SceneWithPlugins) {
     emit("create", this);

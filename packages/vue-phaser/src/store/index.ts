@@ -1,5 +1,5 @@
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { Game } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
 
 import { useGame } from "@/composables/useGame";
 import { SceneKey } from "@/models/keys/SceneKey";

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ImageConfiguration } from "@/models/configuration/ImageConfiguration";
 import type { ImageEventEmitsOptions } from "@/models/emit/ImageEventEmitsOptions";
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
-import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { ImageSetterMap } from "@/utils/setterMap/ImageSetterMap";

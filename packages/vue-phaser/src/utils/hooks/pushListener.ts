@@ -1,6 +1,6 @@
 import type { SceneKey } from "@/models/keys/SceneKey";
 import type { Lifecycle } from "@/models/lifecycle/Lifecycle";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { ExternalSceneStore } from "@/store/scene";

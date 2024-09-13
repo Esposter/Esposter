@@ -1,5 +1,5 @@
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { Cameras } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInputStore } from "@/store/input";
 

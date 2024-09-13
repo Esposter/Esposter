@@ -1,6 +1,6 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 
-import { useInputStore } from "@/store/input";
+import { useInputStore } from "vue-phaser";
 
 export abstract class BaseControls {
   input: null | PlayerInput = null;
