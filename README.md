@@ -84,7 +84,7 @@
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://trpc.io">
-          <img src="./.github/assets/tRPC/logo.svg" />
+          <img src="./.github/assets/trpc/logo.svg" />
         </a>
       </td>
       <td>
@@ -126,7 +126,7 @@
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgreSQL/logo.png" />
+          <img src="./.github/assets/postgresql/logo.png" />
         </a>
       </td>
       <td valign="top">
