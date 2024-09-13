@@ -498,7 +498,11 @@ importers:
         specifier: ^22.5.4
         version: 22.5.4
 
-  packages/shared: {}
+  packages/shared:
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/vue-phaserjs:
     dependencies:
