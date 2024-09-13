@@ -16,7 +16,7 @@ const { defaultTextStyle } = storeToRefs(textStore);
 useInitializeGameObject(
   (scene) => {
     const { style, text, x, y } = configuration;
-    return scene.add.text(x ?? 0, y ?? 0, text, { ...style, ...defaultTextStyle.value });
+    return scene.add.text(x ?? 0, y ?? 0, text, { ...defaultTextStyle.value, ...style });
   },
   () => configuration,
   emit,

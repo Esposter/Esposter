@@ -21,7 +21,7 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
-defaultTextStyle.value = { fontStyle: FontKey.KenneyFutureNarrow };
+defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
 </script>
 
 <template>
