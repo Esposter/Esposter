@@ -82,7 +82,14 @@ watch(volumePercentage, (newVolumePercentage) => {
 </script>
 
 <template>
-  <Scene :="props" @="emit" @create="onCreate" @shutdown="onShutdown">
+  <Scene
+    :="props"
+    @create="onCreate"
+    @init="(...args) => emit('init', ...args)"
+    @preload="(...args) => emit('preload', ...args)"
+    @update="(...args) => emit('update', ...args)"
+    @shutdown="onShutdown"
+  >
     <slot />
   </Scene>
 </template>

@@ -6,7 +6,7 @@ import {
   MENU_VERTICAL_PADDING,
 } from "@/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
-import { Container, onCreate } from "vue-phaser";
+import { Container, onCreate, Text } from "vue-phaser";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);
@@ -22,7 +22,7 @@ onCreate((scene) => {
 <template>
   <Container :configuration="{ y: MENU_HEIGHT + MENU_VERTICAL_PADDING }">
     <DungeonsUIGlassPanelNineSlice :width="width" :height="height" />
-    <DungeonsText
+    <Text
       :configuration="{
         x: INITIAL_SETTINGS_POSITION.x,
         y: 8,

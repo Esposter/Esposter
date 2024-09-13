@@ -6,7 +6,7 @@ import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { prettifyName } from "@/util/text/prettifyName";
 import { Input } from "phaser";
-import { Container, Rectangle } from "vue-phaser";
+import { Container, Rectangle, Text } from "vue-phaser";
 
 interface ItemProps {
   columnIndex: number;
@@ -34,14 +34,14 @@ const alpha = computed(() => {
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="isUsableItem && emit('click')"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
         text: prettifyName(item.id),
         style: MenuTextStyle,
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 590,
         y: 3,
@@ -49,7 +49,7 @@ const alpha = computed(() => {
         style: { ...MenuTextStyle, fontFamily: 'Courier' },
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 620,
         text: `${item.quantity}`,

@@ -4,6 +4,7 @@ import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
+import { Text } from "vue-phaser";
 
 interface DialogTextProps {
   dialogMessage: DialogMessage;
@@ -16,7 +17,7 @@ const y = 12;
 
 <template>
   <template v-if="dialogMessage.title">
-    <DungeonsText
+    <Text
       :configuration="{
         x,
         y,
@@ -27,7 +28,7 @@ const y = 12;
         },
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x,
         y: y + DialogTextStyle.fontSize,
@@ -39,7 +40,7 @@ const y = 12;
       }"
     />
   </template>
-  <DungeonsText
+  <Text
     v-else
     :configuration="{
       x,

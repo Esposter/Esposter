@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuText
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { Input } from "phaser";
-import { Rectangle } from "vue-phaser";
+import { Rectangle, Text } from "vue-phaser";
 
 const emit = defineEmits<{ click: [] }>();
 </script>
@@ -17,7 +17,7 @@ const emit = defineEmits<{ click: [] }>();
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="emit('click')"
   />
-  <DungeonsText
+  <Text
     :configuration="{
       x: INITIAL_CURSOR_POSITION.x + 20,
       text: PlayerSpecialInput.Cancel,

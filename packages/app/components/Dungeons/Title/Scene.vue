@@ -5,7 +5,7 @@ import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusic
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-import { Image } from "vue-phaser";
+import { Image, Text } from "vue-phaser";
 
 const buildVersion = await useBuildVersion();
 const controlsStore = useControlsStore();
@@ -56,7 +56,7 @@ const versionY = ref<number>();
       }"
     />
     <DungeonsTitleMenuContainer />
-    <DungeonsText
+    <Text
       :configuration="{
         x: versionX,
         y: versionY,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RectangleConfiguration } from "vue-phaser";
+import type { RectangleConfiguration, Text } from "vue-phaser";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
@@ -83,7 +83,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
       }
     "
   />
-  <DungeonsText
+  <Text
     :configuration="{
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y: baseY,

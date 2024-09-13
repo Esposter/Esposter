@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
@@ -7,7 +8,7 @@ import { AUTO, Scale } from "phaser";
 import ClickOutsidePlugin from "phaser3-rex-plugins/plugins/clickoutside-plugin.js";
 import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
-import { Game, usePhaserStore } from "vue-phaser";
+import { Game, usePhaserStore, useTextStore } from "vue-phaser";
 
 defineRouteRules({ ssr: false });
 
@@ -15,11 +16,12 @@ await useReadDungeonsGame();
 
 const phaserStore = usePhaserStore();
 const { prioritizedParallelSceneKeys } = storeToRefs(phaserStore);
+// Mobile joystick scene should always be the first to render
+prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 
-onMounted(() => {
-  // Mobile joystick scene should always be the first to render
-  prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
-});
+const textStore = useTextStore();
+const { defaultTextStyle } = storeToRefs(textStore);
+defaultTextStyle.value = { fontStyle: FontKey.KenneyFutureNarrow };
 </script>
 
 <template>

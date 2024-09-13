@@ -11,7 +11,7 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
-import { Image } from "vue-phaser";
+import { Image, Text } from "vue-phaser";
 
 const colorPickerStore = useColorPickerStore();
 const { updateThemeModeSetting } = colorPickerStore;
@@ -38,7 +38,7 @@ const rightCursorX = textX + padding;
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.LEFT)"
   />
-  <DungeonsText
+  <Text
     :configuration="{
       x: textX,
       y:

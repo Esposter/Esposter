@@ -12,6 +12,7 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
+import { Text } from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;
@@ -35,7 +36,7 @@ const onGridClick = useOnGridClick(
 </script>
 
 <template>
-  <DungeonsText
+  <Text
     :configuration="{
       x:
         columnIndex === 0

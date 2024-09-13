@@ -3,7 +3,7 @@ import { ButtonTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/But
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { Input } from "phaser";
-import { Container, Image } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaser";
 
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({
@@ -24,7 +24,7 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 66.5,
         y: 20.6,

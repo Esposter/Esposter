@@ -6,7 +6,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Image } from "vue-phaser";
+import { Image, Text } from "vue-phaser";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
@@ -22,8 +22,8 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
     @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
   >
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
-    <DungeonsText :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
-    <DungeonsText
+    <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
+    <Text
       :configuration="{
         x: 20,
         y: 60,
@@ -31,7 +31,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 200,
         y: 60,
@@ -42,8 +42,8 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
     <Image
       :configuration="{ x: 160, y: 310, originX: 0, originY: 1, texture: selectedMonster.asset.key, scale: 0.7 }"
     />
-    <DungeonsText :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
-    <DungeonsText
+    <Text :configuration="{ x: 20, y: 340, origin: 0, text: 'Current Exp.', style: MenuExperienceTextStyle }" />
+    <Text
       :configuration="{
         x: 516,
         y: 340,
@@ -53,10 +53,8 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         style: MenuExperienceTextStyle,
       }"
     />
-    <DungeonsText
-      :configuration="{ x: 20, y: 365, origin: 0, text: 'Exp. to next level', style: MenuExperienceTextStyle }"
-    />
-    <DungeonsText
+    <Text :configuration="{ x: 20, y: 365, origin: 0, text: 'Exp. to next level', style: MenuExperienceTextStyle }" />
+    <Text
       :configuration="{
         x: 516,
         y: 365,
@@ -66,7 +64,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         style: MenuExperienceTextStyle,
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 108,
         y: 392,

@@ -6,7 +6,7 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
-import { Container, Image } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaser";
 
 interface PanelListItemProps {
   columnIndex: number;
@@ -47,7 +47,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         scale: 0.35,
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 162,
         y: 36,
@@ -58,7 +58,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         },
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 26,
         y: 116,
@@ -69,7 +69,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         },
       }"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 164,
         y: 66,
@@ -87,7 +87,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
       :width="252"
       :bar-percentage="barPercentage"
     />
-    <DungeonsText
+    <Text
       :configuration="{
         x: 458,
         y: 95,

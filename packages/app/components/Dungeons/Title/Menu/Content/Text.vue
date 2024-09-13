@@ -8,6 +8,7 @@ import {
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { Input } from "phaser";
+import { Text } from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;
@@ -21,7 +22,7 @@ const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: col
 </script>
 
 <template>
-  <DungeonsText
+  <Text
     :configuration="{
       x: MENU_BACKGROUND_WIDTH / 2,
       y: INITIAL_CURSOR_POSITION.y + CURSOR_POSITION_INCREMENT.y * rowIndex - 1,
