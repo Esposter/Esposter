@@ -5,7 +5,7 @@ import {
   INITIAL_CURSOR_POSITION,
   MENU_PADDING,
 } from "@/services/dungeons/scene/inventory/constants";
-import { default as Container, default as Rectangle } from "vue-phaser";
+import { Container, Rectangle } from "vue-phaser";
 
 const itemOptionGrid = useItemOptionGrid();
 const panelHeight = 360;

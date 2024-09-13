@@ -17,7 +17,7 @@ import {
 } from "@/services/dungeons/scene/settings/constants";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
-import { default as Rectangle, default as Text } from "vue-phaser";
+import { Rectangle, Text } from "vue-phaser";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;

@@ -10,7 +10,7 @@ import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
-import { default as Rectangle, SceneKey, default as Text, usePhaserStore } from "vue-phaser";
+import { Rectangle, SceneKey, Text, usePhaserStore } from "vue-phaser";
 import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();

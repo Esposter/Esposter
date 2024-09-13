@@ -2,16 +2,17 @@
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
-import Rectangle, { useInputStore } from "vue-phaser";
+import Rectangle from "vue-phaser";
 
 interface ContentTextProps {
   rowIndex: number;
 }
 
 const { rowIndex } = defineProps<ContentTextProps>();
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const onGridClick = useOnGridClick(
   SettingsOptionGrid,
   () => ({ x: 0, y: rowIndex }),

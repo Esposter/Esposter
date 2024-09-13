@@ -2,10 +2,11 @@
 import type { SceneWithPlugins } from "vue-phaser";
 
 import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
-import { SceneKey, useInputStore } from "vue-phaser";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { SceneKey } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const inputResolvers = getActiveInputResolvers();
 
 const update = async (scene: SceneWithPlugins) => {

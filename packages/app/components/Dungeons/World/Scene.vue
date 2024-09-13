@@ -5,12 +5,13 @@ import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusic
 import { dayjs } from "@/services/dayjs";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
-import { SceneKey, useCameraStore, useInputStore } from "vue-phaser";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { SceneKey, useCameraStore } from "vue-phaser";
 
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const inputResolvers = getActiveInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {

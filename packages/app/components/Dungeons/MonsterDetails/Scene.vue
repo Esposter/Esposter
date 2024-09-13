@@ -2,12 +2,13 @@
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { prettifyName } from "@/util/text/prettifyName";
-import { default as Image, SceneKey, default as Text, useInputStore } from "vue-phaser";
+import { Image, SceneKey, Text } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);

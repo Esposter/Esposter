@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 
 import { MENU_DEPTH, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { getMenuHeight } from "@/services/dungeons/UI/menu/getMenuHeight";
-import { default as Container, default as Rectangle } from "vue-phaser";
+import { Container, Rectangle } from "vue-phaser";
 
 interface MenuProps {
   grid: Grid<TValue, TGrid>;

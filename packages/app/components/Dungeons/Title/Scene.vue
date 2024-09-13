@@ -2,12 +2,13 @@
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
-import { default as Image, default as Scene, SceneKey, default as Text, useInputStore } from "vue-phaser";
+import { Image, SceneKey, Text } from "vue-phaser";
 
 const buildVersion = await useBuildVersion();
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const titleSceneStore = useTitleSceneStore();
 const { onPlayerInput } = titleSceneStore;
 const x = ref<number>();
@@ -16,7 +17,7 @@ const versionY = ref<number>();
 </script>
 
 <template>
-  <Scene
+  <DungeonsScene
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {

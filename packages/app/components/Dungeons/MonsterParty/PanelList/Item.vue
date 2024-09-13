@@ -6,7 +6,7 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
-import { default as Container, default as Image, default as Text } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaser";
 
 interface PanelListItemProps {
   columnIndex: number;

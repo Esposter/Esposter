@@ -6,15 +6,15 @@ import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/Positio
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { Position } from "grid-engine";
 import type { Subscription } from "rxjs";
-import type { SceneWithPlugins, SpriteProps } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { Direction } from "grid-engine";
 import { filter } from "rxjs";
-import Sprite from "vue-phaser";
+import { Sprite } from "vue-phaser";
 
 export interface CharacterProps {
   id: Character["id"];
-  onComplete?: SpriteProps["onComplete"];
+  onComplete?: InstanceType<typeof Sprite>["$props"]["onComplete"];
   onMovementStarted?: (scene: SceneWithPlugins, ...args: Parameters<MovementStarted>) => ReturnType<MovementStarted>;
   onMovementStopped?: (scene: SceneWithPlugins, ...args: Parameters<MovementStopped>) => ReturnType<MovementStopped>;
   onPositionChangeFinished?: (
@@ -27,7 +27,7 @@ export interface CharacterProps {
   ) => ReturnType<PositionChangeStarted>;
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
   speed?: number;
-  spriteConfiguration: SpriteProps["configuration"];
+  spriteConfiguration: InstanceType<typeof Sprite>["$props"]["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
 }
 
@@ -68,7 +68,7 @@ onUnmounted(() => {
 
 <template>
   <Sprite
-    :configuration="{ flipX, ...spriteConfiguration }"
+    :configuration="{ ...spriteConfiguration, flipX }"
     :on-complete="
       (scene, sprite) => {
         scene.gridEngine.addCharacter({

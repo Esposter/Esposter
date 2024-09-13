@@ -2,13 +2,14 @@
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
-import { default as Container, default as Rectangle, default as Text, onCreate, useInputStore } from "vue-phaser";
+import { Container, Rectangle, Text, onCreate } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 // It's unfortunate, but we have to access the internals
 // when we handle confirm inputs since we don't know where it comes from
 // i.e. it could be from this info container or from clicking the monster panel

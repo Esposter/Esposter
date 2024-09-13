@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaser";
 
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import Tilemap, { getScene, onCreate, onShutdown, useInjectSceneKey } from "vue-phaser";
+import { getScene, onCreate, onShutdown, Tilemap, useInjectSceneKey } from "vue-phaser";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);

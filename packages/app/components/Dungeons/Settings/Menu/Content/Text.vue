@@ -9,9 +9,10 @@ import {
   SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
-import Text, { useInputStore } from "vue-phaser";
+import Text from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;
@@ -20,8 +21,8 @@ interface ContentTextProps {
 }
 
 const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const onGridClick = useOnGridClick(

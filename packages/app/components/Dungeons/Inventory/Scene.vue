@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
-import { default as Image, SceneKey, useInputStore } from "vue-phaser";
+import { Image, SceneKey } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore= useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const inventoryInputStore = useInventoryInputStore();
 const { onPlayerInput } = inventoryInputStore;
 </script>

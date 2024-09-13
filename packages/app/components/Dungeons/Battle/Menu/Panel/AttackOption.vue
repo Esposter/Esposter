@@ -10,7 +10,7 @@ import {
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
 import { BLANK_VALUE } from "@/services/shared/constants";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { default as Container, default as Rectangle } from "vue-phaser";
+import { Container, Rectangle } from "vue-phaser";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

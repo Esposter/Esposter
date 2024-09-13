@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { MENU_PADDING } from "@/services/dungeons/scene/inventory/constants";
-import { default as Container, default as Rectangle, default as Text } from "vue-phaser";
+import { Container, Rectangle, Text } from "vue-phaser";
 
 const panelWidth = 240;
 const panelHeight = 64;

@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
-import type { ImageProps } from "vue-phaser";
+import type { ImageConfiguration } from "vue-phaser";
 
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import Image from "vue-phaser";
@@ -12,7 +12,7 @@ interface CursorProps {
   initialPosition: Position;
   positionIncrement: Partial<Position>;
   scale?: number;
-  tween?: ImageProps["configuration"]["tween"];
+  tween?: ImageConfiguration["tween"];
 }
 
 const {

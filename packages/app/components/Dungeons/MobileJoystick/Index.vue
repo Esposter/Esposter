@@ -6,10 +6,11 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
-import Image, { getScene, useInjectSceneKey, useInputStore } from "vue-phaser";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { getScene, Image, useInjectSceneKey } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const virtualJoystick = ref<VirtualJoystick>();
 const base = ref<GameObjects.Image>();
 const thumb = ref<GameObjects.Image>();
