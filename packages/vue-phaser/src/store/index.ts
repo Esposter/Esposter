@@ -59,6 +59,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     isSameScene,
     launchParallelScene,
     parallelSceneKeys,
+    prioritizedParallelSceneKeys,
     removeParallelScene,
     rootSceneKey,
     switchToScene,

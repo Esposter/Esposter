@@ -1,4 +1,5 @@
-import type { SceneKey, SceneWithPlugins } from "vue-phaser";
+import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";

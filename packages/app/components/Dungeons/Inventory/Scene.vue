@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
-import { Image, SceneKey } from "vue-phaser";
+import { Image } from "vue-phaser";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
