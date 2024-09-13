@@ -6,6 +6,10 @@ import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoyst
 
 import "vue-phaser";
 
+type BaseAnimationKeyMap = {
+  [P in keyof typeof SpritesheetKey | keyof typeof TilesetKey]: P;
+};
+
 declare module "vue-phaser" {
   interface ScenePlugins {
     gridEngine: GridEngine;
@@ -13,5 +17,5 @@ declare module "vue-phaser" {
     virtualJoystickPlugin: VirtualJoystickPlugin;
   }
 
-  interface AnimationKey extends SpritesheetKey, TilesetKey {}
+  interface AnimationKeyMap extends BaseAnimationKeyMap {}
 }

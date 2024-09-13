@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { dayjs } from "@/services/dayjs";
-import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/title/menu/constants";
-import Container from "vue-phaser";
+import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
+import { Container } from "vue-phaser";
 </script>
 
 <template>

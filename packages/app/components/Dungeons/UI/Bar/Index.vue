@@ -3,13 +3,13 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaser";
 
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
-import Image, { useTween } from "vue-phaser";
+import { Image, useTween } from "vue-phaser";
 
 interface BarProps {
   barPercentage: number;

@@ -7,7 +7,7 @@ import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
-import Rectangle, { onCreate } from "vue-phaser";
+import { onCreate, Rectangle } from "vue-phaser";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

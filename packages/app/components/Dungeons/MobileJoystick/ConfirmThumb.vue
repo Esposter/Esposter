@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
-import Image, { onCreate } from "vue-phaser";
+import { Image, onCreate } from "vue-phaser";
 
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const alpha = ref(1);
 const x = ref<number>();

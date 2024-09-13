@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
   SETTINGS_VALUE_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
-import Text from "vue-phaser";
+import { Text } from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;
@@ -21,7 +21,7 @@ interface ContentTextProps {
 }
 
 const { columnIndex, rowIndex, text } = defineProps<ContentTextProps>();
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);

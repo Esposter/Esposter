@@ -68,7 +68,7 @@ onUnmounted(() => {
 
 <template>
   <Sprite
-    :configuration="{ ...spriteConfiguration, flipX }"
+    :configuration="{ flipX, ...spriteConfiguration }"
     :on-complete="
       (scene, sprite) => {
         scene.gridEngine.addCharacter({

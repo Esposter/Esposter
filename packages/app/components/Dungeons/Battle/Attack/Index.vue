@@ -7,7 +7,7 @@ import type { SceneWithPlugins } from "vue-phaser";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
 import { Animations } from "phaser";
-import Sprite, { useAnimations } from "vue-phaser";
+import { Sprite, useAnimations } from "vue-phaser";
 
 interface AttackProps {
   configuration:
