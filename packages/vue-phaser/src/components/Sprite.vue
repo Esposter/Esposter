@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SpriteConfiguration } from "@/models/configuration/SpriteConfiguration";
 import type { SpriteEventEmitsOptions } from "@/models/emit/SpriteEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { SpriteSetterMap } from "@/utils/setterMap/SpriteSetterMap";

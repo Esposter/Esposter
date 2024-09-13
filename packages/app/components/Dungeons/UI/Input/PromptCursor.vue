@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { useDialogStore } from "@/store/dungeons/dialog";
+import Image from "vue-phaser";
 
 interface InputPromptCursorProps {
   scale?: number;

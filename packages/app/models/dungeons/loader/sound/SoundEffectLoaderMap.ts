@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import openChest from "@/assets/dungeons/sound/openChest.mp3";
 import openDoor from "@/assets/dungeons/sound/openDoor.mp3";

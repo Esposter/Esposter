@@ -1,4 +1,4 @@
-import { isPlainObject } from "@/util/object/isPlainObject";
+import { isPlainObject } from "@esposter/shared";
 import { z } from "zod";
 
 export const zodStrictRecord = <K extends z.ZodType<number | string | symbol>, V extends z.ZodSchema>(

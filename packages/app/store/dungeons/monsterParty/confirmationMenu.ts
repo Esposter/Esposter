@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { ConfirmationMenuOption } from "@/models/dungeons/scene/monsterParty/ConfirmationMenuOption";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";

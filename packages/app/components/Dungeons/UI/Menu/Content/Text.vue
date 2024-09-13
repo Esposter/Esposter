@@ -2,9 +2,9 @@
 import type { Grid } from "@/models/dungeons/Grid";
 
 import { MenuTextStyle } from "@/assets/dungeons/styles/MenuTextStyle";
-import Text from "@/lib/phaser/components/Text.vue";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
 import { Input } from "phaser";
+import Text from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;

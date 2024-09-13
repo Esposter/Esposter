@@ -1,6 +1,6 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects, Types } from "phaser";
 import type { SetupContext } from "vue";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { GameObjectEventMap } from "@/utils/emit/GameObjectEventMap";
 import { getEventName } from "@/utils/emit/getEventName";

@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import Scene from "@/lib/phaser/components/Scene.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { SceneKey } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
 </script>
 
 <template>
-  <Scene
+  <DungeonsScene
     :scene-key="SceneKey.Battle"
     @create="
       async (scene) => {
@@ -41,5 +40,5 @@ const { onPlayerInput } = battleSceneStore;
     <DungeonsBattleAttackManager />
     <DungeonsBattleMenu />
     <DungeonsBattleBall />
-  </Scene>
+  </DungeonsScene>
 </template>

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import Scene from "@/lib/phaser/components/Scene.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
+import { SceneKey, useInputStore } from "vue-phaser";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
@@ -19,12 +17,12 @@ const update = async (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterParty" @update="update">
+  <DungeonsScene :scene-key="SceneKey.MonsterParty" @update="update">
     <DungeonsMonsterPartyBackground />
     <DungeonsMonsterPartyPanelList />
     <DungeonsMonsterPartyInfoContainer />
     <DungeonsMonsterPartyCancelButton />
     <DungeonsMonsterPartyMenu />
     <DungeonsMonsterPartyMenuConfirmation />
-  </Scene>
+  </DungeonsScene>
 </template>

@@ -1,4 +1,4 @@
-import type { TupleSlice } from "@/util/types/TupleSlice";
+import type { TupleSlice } from "@esposter/shared";
 import type { PgColumnBuilderBase } from "drizzle-orm/pg-core";
 
 import { metadataSchema } from "@/db/shared/metadataSchema";

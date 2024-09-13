@@ -1,3 +1,3 @@
-import type { ImageConfiguration } from "@/lib/phaser/models/configuration/ImageConfiguration";
+import type { ImageConfiguration } from "vue-phaser";
 
 export type ImagePosition = Pick<ImageConfiguration, "originX" | "originY" | "x" | "y">;

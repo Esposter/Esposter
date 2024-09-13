@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { Input } from "phaser";
+import Rectangle, { useInputStore } from "vue-phaser";
 
 interface ContentTextProps {
   rowIndex: number;

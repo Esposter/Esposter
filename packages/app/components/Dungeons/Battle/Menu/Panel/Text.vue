@@ -3,8 +3,8 @@ import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
-import Text from "@/lib/phaser/components/Text.vue";
 import { Input } from "phaser";
+import Text from "vue-phaser";
 
 interface TextProps {
   grid: Grid<TValue, TGrid>;

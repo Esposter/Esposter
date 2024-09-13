@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { Types } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onNextTick } from "@/hooks/onNextTick";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SceneKey } from "@/models/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useGame } from "@/composables/useGame";
 import { Lifecycle } from "@/models/lifecycle/Lifecycle";
@@ -10,7 +10,7 @@ import { useInputStore } from "@/store/input";
 import { ExternalSceneStore } from "@/store/scene";
 import { getScene } from "@/utils/getScene";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
-import { Cameras, Scene, Scenes } from "phaser";
+import { Scene, Scenes } from "phaser";
 
 interface SceneProps {
   autoStart?: true;
@@ -67,16 +67,6 @@ const NewScene = class extends Scene {
   }
 };
 
-const fadeInCompleteListener = () => {
-  isFading.value = false;
-  if (!isInputActive.value) isInputActive.value = true;
-};
-
-const fadeOutCompleteListener = () => {
-  isFading.value = false;
-  if (!isInputActive.value) isInputActive.value = true;
-};
-
 const readyListener = () => {
   ExternalSceneStore.sceneReadyMap[sceneKey] = true;
 };
@@ -93,9 +83,6 @@ const shutdownListener = () => {
   for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(scene);
   shutdownListenersMap[sceneKey] = [];
   emit("shutdown", scene);
-
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
 
   ExternalSceneStore.sceneReadyMap[sceneKey] = false;
 };

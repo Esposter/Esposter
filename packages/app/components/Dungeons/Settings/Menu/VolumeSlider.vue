@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { RectangleConfiguration } from "@/lib/phaser/models/configuration/RectangleConfiguration";
+import type { RectangleConfiguration } from "vue-phaser";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -16,9 +15,9 @@ import {
   VOLUME_SLIDER_START_X,
   VOLUME_SLIDER_WIDTH,
 } from "@/services/dungeons/scene/settings/constants";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
+import { default as Rectangle, default as Text } from "vue-phaser";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;

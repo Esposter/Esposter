@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { getScene } from "@/lib/phaser/util/getScene";
-import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
+import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { useMenuStore } from "@/store/dungeons/world/menu";
+import { getScene, useInjectSceneKey } from "vue-phaser";
 
 const menuStore = useMenuStore();
 const { isMenuVisible } = storeToRefs(menuStore);

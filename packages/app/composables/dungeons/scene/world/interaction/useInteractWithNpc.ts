@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { getOppositeDirection } from "@/services/dungeons/direction/getOppositeDirection";
 import { applyNpcEffects } from "@/services/dungeons/scene/world/applyNpcEffects";

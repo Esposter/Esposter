@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
+import Image from "vue-phaser";
 
 interface MonsterProps {
   // By default, this will be the player

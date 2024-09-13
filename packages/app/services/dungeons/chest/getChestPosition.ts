@@ -1,6 +1,6 @@
 import type { Position } from "grid-engine";
 
-import { ID_SEPARATOR } from "@/util/id/constants";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const getChestPosition = (id: string): Position => {
   const [x, y] = id.split(ID_SEPARATOR);

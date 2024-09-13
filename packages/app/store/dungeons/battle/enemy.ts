@@ -1,6 +1,6 @@
-import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { Position } from "grid-engine";
+import type { TweenBuilderConfiguration } from "vue-phaser";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref() as Ref<Monster>;

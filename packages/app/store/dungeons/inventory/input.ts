@@ -1,14 +1,14 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { exhaustiveGuard } from "@esposter/shared";
+import { SceneKey } from "vue-phaser";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
   const itemOptionGrid = useItemOptionGrid();

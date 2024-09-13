@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { Tilemaps, Types } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onCreate } from "@/hooks/onCreate";

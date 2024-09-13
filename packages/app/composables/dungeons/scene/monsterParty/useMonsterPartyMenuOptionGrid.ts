@@ -1,7 +1,7 @@
 import { Grid } from "@/models/dungeons/Grid";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { SceneKey } from "vue-phaser";
 
 const MonsterPartyMenuOptionGrid = new Grid<MenuOption, MenuOption[][]>({
   grid: [],

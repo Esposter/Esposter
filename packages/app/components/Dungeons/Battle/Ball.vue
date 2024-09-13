@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import PathFollower from "@/lib/phaser/components/PathFollower.vue";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { Curves, Math } from "phaser";
+import PathFollower from "vue-phaser";
 
 interface BallProps {
   scale?: number;

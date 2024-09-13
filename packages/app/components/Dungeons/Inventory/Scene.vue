@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
-import Scene from "@/lib/phaser/components/Scene.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
+import { default as Image, SceneKey, useInputStore } from "vue-phaser";
 
 const inputStore = useInputStore();
 const { controls } = storeToRefs(inputStore);
@@ -13,7 +10,7 @@ const { onPlayerInput } = inventoryInputStore;
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Inventory" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
+  <DungeonsScene :scene-key="SceneKey.Inventory" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
     <Image
       :configuration="{
         origin: 0,
@@ -30,5 +27,5 @@ const { onPlayerInput } = inventoryInputStore;
       }"
     />
     <DungeonsInventoryMenu />
-  </Scene>
+  </DungeonsScene>
 </template>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
-import Image from "@/lib/phaser/components/Image.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettifyName } from "@/util/text/prettifyName";
+import { default as Container, default as Image, default as Text } from "vue-phaser";
 
 interface InfoContainerProps {
   isEnemy: boolean;

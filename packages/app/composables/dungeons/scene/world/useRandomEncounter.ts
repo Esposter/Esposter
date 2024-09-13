@@ -1,9 +1,8 @@
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "@/generated/tiled/propertyTypes/class/EncounterObjectProperty";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { Monster } from "@/models/dungeons/monster/Monster";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
@@ -15,6 +14,7 @@ import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
 import { pickWeightedRandomValue } from "@/util/math/random/pickWeightedRandomValues";
+import { SceneKey } from "vue-phaser";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const dungeonsStore = useDungeonsStore();

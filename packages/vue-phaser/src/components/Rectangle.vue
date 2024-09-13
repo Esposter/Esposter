@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RectangleConfiguration } from "@/models/configuration/RectangleConfiguration";
 import type { RectangleEventEmitsOptions } from "@/models/emit/RectangleEventEmitsOptions";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { RectangleSetterMap } from "@/utils/setterMap/RectangleSetterMap";

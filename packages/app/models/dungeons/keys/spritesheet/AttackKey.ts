@@ -1,5 +1,5 @@
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@esposter/shared";
 
 enum BaseAttackKey {
   "Ice Shard Start" = "Ice Shard Start",

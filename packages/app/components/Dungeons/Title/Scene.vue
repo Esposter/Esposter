@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
-import Scene from "@/lib/phaser/components/Scene.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { default as Image, default as Scene, SceneKey, default as Text, useInputStore } from "vue-phaser";
 
 const buildVersion = await useBuildVersion();
 const inputStore = useInputStore();
@@ -66,5 +62,5 @@ const versionY = ref<number>();
         style: { color: 'white', fontSize: 24 },
       }"
     />
-  </Scene>
+  </DungeonsScene>
 </template>

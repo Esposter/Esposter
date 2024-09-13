@@ -1,13 +1,13 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { exhaustiveGuard } from "@esposter/shared";
+import { SceneKey } from "vue-phaser";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
   // We'll ensure that we populate the selected monster everytime before we enter the scene

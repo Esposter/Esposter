@@ -1,5 +1,5 @@
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "vue-phaser";
 
 export const PreviousSceneUsableItemEffectTypesMap: {
   [P in SceneKey]?: ItemEffectType[];

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { Input } from "phaser";
+import { default as Rectangle, default as Text } from "vue-phaser";
 
 const emit = defineEmits<{ click: [] }>();
 </script>

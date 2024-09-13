@@ -1,6 +1,6 @@
 import type { KebabCasedPropertiesDeep } from "type-fest";
 
-import { toKebabCase } from "@/util/text/toKebabCase";
+import { toKebabCase } from "@esposter/shared";
 import * as components from "vuetify/components";
 
 type KebabCasedPropertiesDeepVuetifyComponents = KebabCasedPropertiesDeep<typeof components>;

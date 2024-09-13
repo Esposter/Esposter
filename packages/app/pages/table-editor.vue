@@ -3,7 +3,7 @@ import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "@esposter/shared";
 
 defineRouteRules({ ssr: false });
 

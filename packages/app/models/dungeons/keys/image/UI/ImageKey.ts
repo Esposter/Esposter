@@ -1,7 +1,7 @@
 import { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
 import { ControlsKey } from "@/models/dungeons/keys/image/UI/ControlsKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
-import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@esposter/shared";
 
 enum BaseImageKey {
   BarLeftCapShadow = "BarLeftCapShadow",

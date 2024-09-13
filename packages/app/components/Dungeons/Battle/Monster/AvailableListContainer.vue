@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
-import Image from "@/lib/phaser/components/Image.vue";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { default as Container, default as Image, onCreate } from "vue-phaser";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { monsters } = storeToRefs(monsterPartySceneStore);

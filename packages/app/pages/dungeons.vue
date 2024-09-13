@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Game from "@/lib/phaser/components/Game.vue";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
@@ -7,6 +6,7 @@ import { AUTO, Scale } from "phaser";
 import ClickOutsidePlugin from "phaser3-rex-plugins/plugins/clickoutside-plugin.js";
 import SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import Game from "vue-phaser";
 
 defineRouteRules({ ssr: false });
 

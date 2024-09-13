@@ -1,5 +1,5 @@
 import type { SceneKey } from "@/models/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useGame } from "@/composables/useGame";
 // We need to get the scene manually instead of injecting the sceneKey here

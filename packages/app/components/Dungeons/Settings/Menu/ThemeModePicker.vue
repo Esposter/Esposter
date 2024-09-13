@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import Image from "@/lib/phaser/components/Image.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
   SETTINGS_POSITION_INCREMENT,
 } from "@/services/dungeons/scene/settings/constants";
-import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
+import { default as Image, default as Text } from "vue-phaser";
 
 const colorPickerStore = useColorPickerStore();
 const { updateThemeModeSetting } = colorPickerStore;

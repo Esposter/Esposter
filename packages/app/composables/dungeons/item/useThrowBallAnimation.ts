@@ -1,4 +1,3 @@
-import { useTween } from "@/lib/phaser/composables/useTween";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { dayjs } from "@/services/dayjs";
 import { useBallStore } from "@/store/dungeons/battle/ball";
@@ -6,6 +5,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/time/sleep";
 import { Math } from "phaser";
+import { useTween } from "vue-phaser";
 
 export const useThrowBallAnimation = async (captureResult: CaptureResult) => {
   const settingsStore = useSettingsStore();

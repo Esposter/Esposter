@@ -25,17 +25,24 @@
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "dependencies": {
+    "@esposter/block-mj-text": "workspace:*",
+    "@esposter/shared": "workspace:*",
     "data-urls": "^5.0.0",
+    "is-mobile": "^4.0.0",
+    "parse-tmx": "workspace:*",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "^3.5.0-beta.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
     "ctix": "^2.6.4",
     "eslint": "^9.10.0",
     "lerna": "^8.1.8",
     "rollup": "^4.21.3",
+    "type-fest": "^4.26.1",
     "typescript": "^5.4.5",
     "vite": "^5.4.4",
     "vue-tsc": "^1.8.27"

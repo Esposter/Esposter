@@ -1,6 +1,6 @@
 import type { SoundKey } from "@/models/dungeons/keys/sound/SoundKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Types } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 export const getDungeonsSound = (scene: SceneWithPlugins, soundKey: SoundKey, options?: Types.Sound.SoundConfig) => ({
   play: () => {

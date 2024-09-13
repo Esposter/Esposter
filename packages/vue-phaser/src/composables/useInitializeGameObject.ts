@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { SetterMap } from "@/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 import type { SetupContext } from "vue";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useInitializeGameObjectEvents } from "@/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/composables/useInitializeGameObjectSetters";

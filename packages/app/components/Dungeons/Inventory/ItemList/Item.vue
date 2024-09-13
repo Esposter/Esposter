@@ -2,13 +2,11 @@
 import type { Item } from "@/models/dungeons/item/Item";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
-import Container from "@/lib/phaser/components/Container.vue";
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { prettifyName } from "@/util/text/prettifyName";
 import { Input } from "phaser";
+import { default as Container, default as Rectangle, default as Text } from "vue-phaser";
 
 interface ItemProps {
   columnIndex: number;

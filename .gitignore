@@ -1,6 +1,7 @@
 # build artifacts
 **/src/index.ts
 **/src/components/index.ts
+auto-imports.d.ts
 
 # nuxt 3
 .nuxt
