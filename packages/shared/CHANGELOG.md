@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* shared + vue-phaser pkgs + app usage ([b560736](https://github.com/Esposter/Esposter/commit/b5607366da843044a2229337f90a6613b3ec44b7))
+
+
+### Features
+
+* Added vue-phaser package ([af172cf](https://github.com/Esposter/Esposter/commit/af172cf7930b9d498b0c408b48307c6a04ff2fcd))
+
+
+
+
+
 # [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
 
 **Note:** Version bump only for package @esposter/shared

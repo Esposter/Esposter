@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* add auto imports dts file ([cd669fc](https://github.com/Esposter/Esposter/commit/cd669fc421b75950cd7918c8b31e5276cc0a55b0))
+
+
+### Features
+
+* Added vue-phaser package ([af172cf](https://github.com/Esposter/Esposter/commit/af172cf7930b9d498b0c408b48307c6a04ff2fcd))
+
+
+
+
+
 # [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
 
 **Note:** Version bump only for package @esposter/block-mj-text

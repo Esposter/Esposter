@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* add auto imports dts file ([cd669fc](https://github.com/Esposter/Esposter/commit/cd669fc421b75950cd7918c8b31e5276cc0a55b0))
+* add files ([baa1167](https://github.com/Esposter/Esposter/commit/baa116797544bbfaf3710db0ab3bd955521e1ed9))
+* font family not style you baka ([f96bb51](https://github.com/Esposter/Esposter/commit/f96bb5175451fbc09ff5165518fae137e5263c26))
+* lint + types ([73ad2bd](https://github.com/Esposter/Esposter/commit/73ad2bd81e6f81102b781b96395602c255905085))
+* more types and scenekey imports ([3434e95](https://github.com/Esposter/Esposter/commit/3434e9515c4b433f51d67a57d7b7b323974c8531))
+* shared + vue-phaser pkgs + app usage ([b560736](https://github.com/Esposter/Esposter/commit/b5607366da843044a2229337f90a6613b3ec44b7))
+* use text from lib instead because we can't map emits.. ([db57897](https://github.com/Esposter/Esposter/commit/db5789711a49b0d09c3c057fded3b7f46a2e1c9b))
+* vue-phaser imports ([db73bf0](https://github.com/Esposter/Esposter/commit/db73bf0a551ff9d143031fc639b0be3113c16bbb))
+* vue-phaser to use scenekey types + dungeons text ([474d22e](https://github.com/Esposter/Esposter/commit/474d22e971c6854774231b5f4308e9b45f2d6f56))
+* woohoo! that's the last of em scenekey issues ([706a09e](https://github.com/Esposter/Esposter/commit/706a09e10149115f5ab58b15b8a5826d63403007))
+
+
+### Features
+
+* Added vue-phaser package ([af172cf](https://github.com/Esposter/Esposter/commit/af172cf7930b9d498b0c408b48307c6a04ff2fcd))
+
+
+
+
+
 # [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
 
 **Note:** Version bump only for package @esposter/block-mj-text

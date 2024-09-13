@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* add auto imports dts file ([cd669fc](https://github.com/Esposter/Esposter/commit/cd669fc421b75950cd7918c8b31e5276cc0a55b0))
+* add auto imports dts file ([001f9f1](https://github.com/Esposter/Esposter/commit/001f9f19480692aaf35982d9480d5638ba6d6d63))
+* Add back lab components ([a4b10c5](https://github.com/Esposter/Esposter/commit/a4b10c576245c07330475346e04125ce8927ebae))
+* add back sleep ([3401f77](https://github.com/Esposter/Esposter/commit/3401f770023110cc7bef756816926be9114f3268))
+* add files ([baa1167](https://github.com/Esposter/Esposter/commit/baa116797544bbfaf3710db0ab3bd955521e1ed9))
+* Add item id to tiled ([768778e](https://github.com/Esposter/Esposter/commit/768778ecd365e2594e57ee29af4a873717e75e8e))
+* add on unmounted reset ball state ([4ecccc1](https://github.com/Esposter/Esposter/commit/4ecccc1b630983de42a39dd101f8a2abf0470d27))
+* chestmap ([2e20a86](https://github.com/Esposter/Esposter/commit/2e20a864922a08576da8fdb143c0558971c3799e))
+* cleanup unnecessary types ([bdddd9c](https://github.com/Esposter/Esposter/commit/bdddd9cf6a5ba2bebc08756870b4aca97a5efbd4))
+* font family not style you baka ([f96bb51](https://github.com/Esposter/Esposter/commit/f96bb5175451fbc09ff5165518fae137e5263c26))
+* goddam pinia key issue ([f8b540a](https://github.com/Esposter/Esposter/commit/f8b540ad92eba7e41a9b7d032501f75b56e29c99))
+* have default menu option grid ([d6bd70e](https://github.com/Esposter/Esposter/commit/d6bd70eaa2eb8b6b4be677367e1c6c4642836874))
+* import text ([37c74de](https://github.com/Esposter/Esposter/commit/37c74de5c61775ca588fc0a00aba4f5bab8272b6))
+* importing components + module augmentation ([fc6e642](https://github.com/Esposter/Esposter/commit/fc6e642e564415a28d349316a66b2d3eb7c928ab))
+* just switch to something that works... ([55de1b3](https://github.com/Esposter/Esposter/commit/55de1b3ee1fcb4fe7f1e6158250a41ec1dd31bec))
+* lint ([72280bc](https://github.com/Esposter/Esposter/commit/72280bc35af87783e8bb6f9a01fe754e5397dd5e))
+* lint ([693eb9e](https://github.com/Esposter/Esposter/commit/693eb9ed9687712a81477d37ac30998a93ee5664))
+* lint + types ([73ad2bd](https://github.com/Esposter/Esposter/commit/73ad2bd81e6f81102b781b96395602c255905085))
+* messages are reversed ([aa3d143](https://github.com/Esposter/Esposter/commit/aa3d143141164e3c7f7a56cf3c09adc33efbe528))
+* more types and scenekey imports ([3434e95](https://github.com/Esposter/Esposter/commit/3434e9515c4b433f51d67a57d7b7b323974c8531))
+* most remaining imports/type issues ([04d51f5](https://github.com/Esposter/Esposter/commit/04d51f5c5e6dc17446185f306f339169197dbcb9))
+* optimise setting and watch inventory ([74ccfe6](https://github.com/Esposter/Esposter/commit/74ccfe652deb8ad08f99ec1b0600d8b3eda7ddf2))
+* optimise updating settings ([70c85ec](https://github.com/Esposter/Esposter/commit/70c85ecd887543af122216b55d54609591d21e2c))
+* prettify active monster names + attack ids ([9aa074d](https://github.com/Esposter/Esposter/commit/9aa074dc3dd59950926669b23ed59143e3de09b0))
+* prettify monster & item id names ([a936343](https://github.com/Esposter/Esposter/commit/a9363435136e4dabf4425c02b53dbacb5e0526fd))
+* prettify name ([d62c8fa](https://github.com/Esposter/Esposter/commit/d62c8fae68132e4087cc7c95801749bcdfdbd608))
+* remove grid immediate and just populate default val normally ([0bf45a2](https://github.com/Esposter/Esposter/commit/0bf45a2219877b6ae3e3000c3ea7bbe163267c7c))
+* remove now unnecessary rule ([76a4d87](https://github.com/Esposter/Esposter/commit/76a4d87d492049fff99c3c4c7bbd46a7c0911e11))
+* remove unnecessary todos for unwrap ref, just cast it, it's fine ([e3d8810](https://github.com/Esposter/Esposter/commit/e3d8810379139f6f61958799ec1a19f06de00499))
+* shared + vue-phaser pkgs + app usage ([b560736](https://github.com/Esposter/Esposter/commit/b5607366da843044a2229337f90a6613b3ec44b7))
+* show message in the proper scene ([b4c1a5e](https://github.com/Esposter/Esposter/commit/b4c1a5e44d500c1af3d20068ae8104ba52704ae0))
+* simplify state machine to also make it async/await based ([78ed91b](https://github.com/Esposter/Esposter/commit/78ed91bca8c6b8670398a84e02e0df3b96635bf8))
+* skip animations condition + add catch monster success vs fail animations ([8bab2db](https://github.com/Esposter/Esposter/commit/8bab2db644d2e8cbc9874554226d7aef20b1d684))
+* some ids etc ([838bd27](https://github.com/Esposter/Esposter/commit/838bd27dc94955054b37f1024b1c4fc4d4a572fe))
+* type guards + validations ([691e89f](https://github.com/Esposter/Esposter/commit/691e89f08e3bbedc3f237fb921e2adb6a0498646))
+* types ([9cad3b3](https://github.com/Esposter/Esposter/commit/9cad3b36cfbbb22a090f4e27fbddc969b9a709ad))
+* update capitalization to be consistent ([e80e058](https://github.com/Esposter/Esposter/commit/e80e05814e2545136f998ebe1672583e0ff168c7))
+* update capitalization to be consistent ([5655aab](https://github.com/Esposter/Esposter/commit/5655aab1b2d2eb85a33872afc6141822266bb3e4))
+* use text from lib instead because we can't map emits.. ([db57897](https://github.com/Esposter/Esposter/commit/db5789711a49b0d09c3c057fded3b7f46a2e1c9b))
+* use text wrapper ([5fbc443](https://github.com/Esposter/Esposter/commit/5fbc44312a215a15148d55ab10f23fb0169eafa6))
+* vue-phaser imports ([db73bf0](https://github.com/Esposter/Esposter/commit/db73bf0a551ff9d143031fc639b0be3113c16bbb))
+* vue-phaser to use scenekey types + dungeons text ([474d22e](https://github.com/Esposter/Esposter/commit/474d22e971c6854774231b5f4308e9b45f2d6f56))
+* woohoo! that's the last of em scenekey issues ([706a09e](https://github.com/Esposter/Esposter/commit/706a09e10149115f5ab58b15b8a5826d63403007))
+* worker ([4340631](https://github.com/Esposter/Esposter/commit/43406312083fde8a183e33de64b62779ffcf8827))
+
+
+### Features
+
+* Add ball animations ([bc321d4](https://github.com/Esposter/Esposter/commit/bc321d479b69cfa10d8d0ab591aaccca63ed8543))
+* Add capture algo ([2207493](https://github.com/Esposter/Esposter/commit/2207493300e3167dff16dec2fb7c417535977475))
+* Add capture item resolver ([93cc6ff](https://github.com/Esposter/Esposter/commit/93cc6ffeb5339cd160eb2a8489a370de8eb45677))
+* Add catch enemy animation ([bdaa2d6](https://github.com/Esposter/Esposter/commit/bdaa2d67549e88cc6b94ab2a5ce142628d3e1053))
+* Add catch enemy failed animation + sleep ([34d183d](https://github.com/Esposter/Esposter/commit/34d183d5b689a4bbd2b6e9bf059320c93bd8b7c8))
+* Add drizzle adapter + remove custom adapter + add authenticators table & refactor user id names in table to be consistent ([2b38055](https://github.com/Esposter/Esposter/commit/2b38055f430489ebc07644ad2188374f827b0eed))
+* Add isActive condition to inventory items ([66023f8](https://github.com/Esposter/Esposter/commit/66023f8ed8084603ab0335fee8542783abcf0957))
+* Add item effect type for capture ([be7fbae](https://github.com/Esposter/Esposter/commit/be7fbae4ee3a0e412d72910bc63d2f3e3cfa4423))
+* Add path follower ([c0b82bd](https://github.com/Esposter/Esposter/commit/c0b82bd814f6f7bef71d435091b13365531717cb))
+* Add release + confirmation menu ([e660a74](https://github.com/Esposter/Esposter/commit/e660a74ef8a69299a225b2be410961a7fd88d48b))
+* Add vueuse integrations ([3d43a7c](https://github.com/Esposter/Esposter/commit/3d43a7c22d1f048123a848f641bb446e114d80ec))
+* Added vue-phaser package ([af172cf](https://github.com/Esposter/Esposter/commit/af172cf7930b9d498b0c408b48307c6a04ff2fcd))
+* capture rate takes into account monster hp ([4f22021](https://github.com/Esposter/Esposter/commit/4f22021af98568a80c3486d1a00794bc0f361acd))
+* move type test to file ([2acba3b](https://github.com/Esposter/Esposter/commit/2acba3b2641857d305c88661db67cc2026cce383))
+* successfully transform remaining on completes to async/await ([8fdcb2e](https://github.com/Esposter/Esposter/commit/8fdcb2ed38195358a1978cf53b4098d982594110))
+* upgrade nuxt-security and remove unnecessary rate limiting ([6b9b67a](https://github.com/Esposter/Esposter/commit/6b9b67a279bcaaf9f0b28b360159f835b9214972))
+
+
+
+
+
 # [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
 
 
