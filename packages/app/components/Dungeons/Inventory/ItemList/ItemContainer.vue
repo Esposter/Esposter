@@ -20,12 +20,6 @@ const y = computed(() => INITIAL_CURSOR_POSITION.y - 16 + CURSOR_POSITION_INCREM
 <template>
   <Container :configuration="{ y }">
     <DungeonsInventoryItemListCancel v-if="item === PlayerSpecialInput.Cancel" @click="onGridClick" />
-    <DungeonsInventoryItemListItem
-      v-else
-      :item="item"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      @click="onGridClick"
-    />
+    <DungeonsInventoryItemListItem v-else :item :row-index :column-index @click="onGridClick" />
   </Container>
 </template>

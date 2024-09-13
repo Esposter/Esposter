@@ -9,9 +9,9 @@ const itemOptionGrid = useItemOptionGrid();
     <DungeonsInventoryItemListItemContainer
       v-for="(item, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      :item="item"
+      :row-index
+      :column-index
+      :item
     />
   </template>
 </template>

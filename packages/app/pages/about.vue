@@ -36,8 +36,8 @@ const cardType = ref(CardType.Marquee);
           </div>
         </v-col>
         <v-col cols="12">
-          <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards="cards" />
-          <VisualCardCarousel v-else :cards="cards" />
+          <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards />
+          <VisualCardCarousel v-else :cards />
         </v-col>
       </v-row>
       <v-row pt-12>

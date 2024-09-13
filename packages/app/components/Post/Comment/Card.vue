@@ -27,7 +27,7 @@ const isUpdateMode = ref(false);
           <PostCommentUpdateRichTextEditor
             v-if="isUpdateMode"
             mt-2="!"
-            :comment="comment"
+            :comment
             @update:update-mode="(value) => (isUpdateMode = value)"
             @update:delete-mode="updateIsOpen"
           />

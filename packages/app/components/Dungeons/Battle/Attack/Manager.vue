@@ -11,7 +11,7 @@ const { attackId, isActive, isToEnemy } = storeToRefs(attackManagerStore);
     :is="AttackComponentMap[attackId]"
     v-if="attackId !== undefined && isToEnemy !== undefined"
     v-model:is-active="isActive"
-    :is-to-enemy="isToEnemy"
+    :is-to-enemy
     @complete="
       () => {
         const callback = ExternalAttackManagerStore.onComplete;

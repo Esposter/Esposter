@@ -81,12 +81,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         },
       }"
     />
-    <DungeonsUIBarContainer
-      :type="BarType.Health"
-      :position="{ x: 100, y: 40 }"
-      :width="252"
-      :bar-percentage="barPercentage"
-    />
+    <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 100, y: 40 }" :width="252" :bar-percentage />
     <Text
       :configuration="{
         x: 458,

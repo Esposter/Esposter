@@ -76,7 +76,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
         },
       }"
     />
-    <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage="barPercentage" />
+    <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage />
     <DungeonsMonsterDetailsAttackList />
   </DungeonsScene>
 </template>

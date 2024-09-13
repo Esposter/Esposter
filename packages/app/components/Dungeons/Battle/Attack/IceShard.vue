@@ -16,7 +16,7 @@ const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["I
   <DungeonsBattleAttack
     v-model:is-active="isActive"
     :spritesheet-key="AttackKey['Ice Shard']"
-    :is-to-enemy="isToEnemy"
+    :is-to-enemy
     :configuration="{
       type: AttackGameObjectType.Sprite,
     }"

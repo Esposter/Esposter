@@ -30,6 +30,6 @@ const editorView = shallowRef<EditorView>();
 
 <template>
   <v-tabs-window-item :value="item.value">
-    <Codemirror v-model="json" :extensions="extensions" disabled @ready="({ view }) => (editorView = view)" />
+    <Codemirror v-model="json" :extensions disabled @ready="({ view }) => (editorView = view)" />
   </v-tabs-window-item>
 </template>

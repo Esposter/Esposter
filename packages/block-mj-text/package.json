@@ -29,5 +29,8 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "vue-tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
   }
 }

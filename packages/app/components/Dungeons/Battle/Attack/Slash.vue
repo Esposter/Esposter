@@ -11,11 +11,11 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
 </script>
 
 <template>
-  <DungeonsBattleAttackContainer v-model:is-active="isActive" :is-to-enemy="isToEnemy">
+  <DungeonsBattleAttackContainer v-model:is-active="isActive" :is-to-enemy>
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy="isToEnemy"
+      :is-to-enemy
       :configuration="{
         type: AttackGameObjectType.Container,
       }"
@@ -30,27 +30,27 @@ const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
           },
         ]
       "
-      :play-animation-key="playAnimationKey"
+      :play-animation-key
     />
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy="isToEnemy"
+      :is-to-enemy
       :configuration="{
         type: AttackGameObjectType.Container,
         position: { x: 30 },
       }"
-      :play-animation-key="playAnimationKey"
+      :play-animation-key
     />
     <DungeonsBattleAttack
       v-model:is-active="isActive"
       :spritesheet-key="SpritesheetKey.Slash"
-      :is-to-enemy="isToEnemy"
+      :is-to-enemy
       :configuration="{
         type: AttackGameObjectType.Container,
         position: { x: -30 },
       }"
-      :play-animation-key="playAnimationKey"
+      :play-animation-key
     />
   </DungeonsBattleAttackContainer>
 </template>

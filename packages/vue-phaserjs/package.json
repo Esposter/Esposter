@@ -31,6 +31,13 @@
     "typecheck": "vue-tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
   },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "parse-tmx": "workspace:*"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
+  },
   "peerDependencies": {
     "phaser": "^3.85.1",
     "phaser3-rex-plugins": "^1.80.7",

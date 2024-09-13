@@ -16,7 +16,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 
 <template>
   <StyledDialog
-    :card-props="cardProps"
+    :card-props
     :confirm-button-props="{ text: 'Delete' }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"
   >

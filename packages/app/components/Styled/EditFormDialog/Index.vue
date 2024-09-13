@@ -58,13 +58,13 @@ watch(editFormRef, (newEditFormRef) => {
     <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header
-          :name="name"
-          :edited-item="editedItem"
-          :original-item="originalItem"
-          :edit-form-ref="editFormRef"
-          :is-edit-form-valid="isEditFormValid"
-          :is-full-screen-dialog="isFullScreenDialog"
-          :is-savable="isSavable"
+          :name
+          :edited-item
+          :original-item
+          :edit-form-ref
+          :is-edit-form-valid
+          :is-full-screen-dialog
+          :is-savable
           @update:edit-form-dialog="
             (value) => {
               dialog = value;

@@ -26,7 +26,7 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
   <ClickerModelItemMenu
     :id="upgrade.id"
     :type="ItemType.Upgrade"
-    :is-affordable="isAffordable"
+    :is-affordable
     :menu-props="{ location: isBought ? 'left center' : 'right center' }"
     :description="displayDescription"
     :flavor-description="displayFlavorDescription"

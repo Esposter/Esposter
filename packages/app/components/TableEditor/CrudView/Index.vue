@@ -29,7 +29,7 @@ const itemTypeKey = computed(() => props.value.headers[0].key);
         <TableEditorCrudViewTopSlot />
       </template>
       <template #[`item.${itemTypeKey}`]="{ item }">
-        <TableEditorCrudViewItemSlot :item="item" />
+        <TableEditorCrudViewItemSlot :item />
       </template>
     </StyledDataTable>
   </v-container>

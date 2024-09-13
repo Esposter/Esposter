@@ -22,6 +22,6 @@ const editorView = shallowRef<EditorView>();
 
 <template>
   <v-tabs-window-item :value="item.value">
-    <Codemirror v-model="emailEditor.mjml" :extensions="extensions" @ready="({ view }) => (editorView = view)" />
+    <Codemirror v-model="emailEditor.mjml" :extensions @ready="({ view }) => (editorView = view)" />
   </v-tabs-window-item>
 </template>

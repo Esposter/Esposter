@@ -35,7 +35,7 @@ const options = useApexOptions(
 <template>
   <StyledCard size-full>
     <div ref="divRef" h-full>
-      <VueApexCharts :="data" :options="options" />
+      <VueApexCharts :="data" :options />
     </div>
   </StyledCard>
 </template>

@@ -18,6 +18,6 @@ const editorView = shallowRef<EditorView>();
 
 <template>
   <StyledCard w-full>
-    <Codemirror v-model="code" :extensions="extensions" disabled @ready="({ view }) => (editorView = view)" />
+    <Codemirror v-model="code" :extensions disabled @ready="({ view }) => (editorView = view)" />
   </StyledCard>
 </template>

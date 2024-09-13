@@ -22,10 +22,10 @@ useConfirmBeforeNavigation(isDirty);
   <StyledEditFormDialog
     v-model="editFormDialog"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
-    :edited-item="editedItem"
-    :is-edit-form-valid="isEditFormValid"
-    :is-full-screen-dialog="isFullScreenDialog"
-    :is-savable="isSavable"
+    :edited-item
+    :is-edit-form-valid
+    :is-full-screen-dialog
+    :is-savable
     @update:edit-form-ref="(value) => (editFormRef = value)"
     @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
     @save="save(editedItem)"
@@ -33,7 +33,7 @@ useConfirmBeforeNavigation(isDirty);
   >
     <v-container fluid>
       <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />
-      <Vjsf v-model="editedItem.chart.configuration" :schema="schema" :options="{ removeAdditional: true }" />
+      <Vjsf v-model="editedItem.chart.configuration" :schema :options="{ removeAdditional: true }" />
     </v-container>
   </StyledEditFormDialog>
 </template>

@@ -7,5 +7,5 @@ const readMoreMembers = await useReadMembers();
 </script>
 
 <template>
-  <EsbabblerModelMemberList :members="memberList" :has-more="hasMore" :read-more-members="readMoreMembers" />
+  <EsbabblerModelMemberList :members="memberList" :has-more :read-more-members />
 </template>

@@ -11,9 +11,9 @@ const { monstersGrid } = storeToRefs(monsterPartySceneStore);
     <DungeonsMonsterPartyPanelListItem
       v-for="(monster, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      :monster="monster"
+      :row-index
+      :column-index
+      :monster
     />
   </template>
 </template>

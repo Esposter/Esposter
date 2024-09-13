@@ -99,20 +99,20 @@ watch(barWidth, (newBarWidth) => {
   <Image :configuration="{ visible: false, texture: '', displayWidth: barDisplayWidth, tween }" />
   <DungeonsUIBarLeftCap
     v-model:display-width="leftCapDisplayWidth"
-    :image-position="imagePosition"
+    :image-position
     :texture="barTextureMap[BarOrigin.Left]"
-    :scale-y="scaleY"
+    :scale-y
   />
   <DungeonsUIBarMiddle
     :image-position="{ ...imagePosition, x: middleX }"
     :display-width="middleDisplayWidth"
     :texture="barTextureMap[BarOrigin.Middle]"
-    :scale-y="scaleY"
+    :scale-y
   />
   <DungeonsUIBarRightCap
     v-model:display-width="rightCapDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapX }"
     :texture="barTextureMap[BarOrigin.Right]"
-    :scale-y="scaleY"
+    :scale-y
   />
 </template>

@@ -5,13 +5,13 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 
 <template>
   <template v-for="(row, rowIndex) in unref(SettingsOptionGrid.grid)" :key="rowIndex">
-    <DungeonsSettingsMenuContentClickableRow :row-index="rowIndex" />
+    <DungeonsSettingsMenuContentClickableRow :row-index />
     <DungeonsSettingsMenuContentText
       v-for="(text, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      :text="text"
+      :row-index
+      :column-index
+      :text
     />
   </template>
   <DungeonsSettingsMenuVolumeSlider />

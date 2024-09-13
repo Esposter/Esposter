@@ -205,7 +205,7 @@ watch(
       col="start-2"
     >
       <VisualRotatingDiv>
-        <component :is="cardTemplate" :card="card" />
+        <component :is="cardTemplate" :card />
       </VisualRotatingDiv>
     </div>
   </div>

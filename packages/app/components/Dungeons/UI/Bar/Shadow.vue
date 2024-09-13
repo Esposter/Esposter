@@ -18,19 +18,15 @@ const rightCapShadowX = computed(() => middleShadowX.value + middleShadowDisplay
 </script>
 
 <template>
-  <DungeonsUIBarLeftCapShadow
-    v-model:display-width="leftCapShadowDisplayWidth"
-    :image-position="imagePosition"
-    :scale-y="scaleY"
-  />
+  <DungeonsUIBarLeftCapShadow v-model:display-width="leftCapShadowDisplayWidth" :image-position :scale-y />
   <DungeonsUIBarMiddleShadow
     :image-position="{ ...imagePosition, x: middleShadowX }"
-    :scale-y="scaleY"
+    :scale-y
     :display-width="middleShadowDisplayWidth"
   />
   <DungeonsUIBarRightCapShadow
     v-model:display-width="rightCapShadowDisplayWidth"
     :image-position="{ ...imagePosition, x: rightCapShadowX }"
-    :scale-y="scaleY"
+    :scale-y
   />
 </template>

@@ -13,5 +13,5 @@ const item = computed(() => baseItem as EmailEditorTabItemCategoryDefinition);
 </script>
 
 <template>
-  <component :is="TabComponentMap[item.type]" h-full :item="item" />
+  <component :is="TabComponentMap[item.type]" h-full :item />
 </template>

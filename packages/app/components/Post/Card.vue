@@ -23,7 +23,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
   <PostConfirmDeleteDialog :post-id="post.id">
     <template #default="{ updateIsOpen }">
       <StyledCard class="card">
-        <PostLikeSection absolute top-2 left-2 :post="post" :is-comment-store="isCommentStore" />
+        <PostLikeSection absolute top-2 left-2 :post :is-comment-store />
         <v-card px-2="!" pt-2="!">
           <v-avatar>
             <v-img v-if="post.user.image" :src="post.user.image" :alt="post.user.name ?? undefined" />
@@ -40,7 +40,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
             v-html="post.description"
           />
           <v-card-actions p-0="!">
-            <PostCommentsButton :post="post" />
+            <PostCommentsButton :post />
             <PostUpdateButton v-if="isCreator" :post-id="post.id" />
             <PostDeleteButton v-if="isCreator" @update:delete-mode="updateIsOpen" />
           </v-card-actions>

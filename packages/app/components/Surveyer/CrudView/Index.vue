@@ -31,7 +31,7 @@ const { searchQuery, surveyList, totalItemsLength } = storeToRefs(surveyerStore)
         <SurveyerCrudViewHeader />
       </template>
       <template #[`item.actions`]="{ item }">
-        <SurveyerCrudViewActionSlot :item="item" />
+        <SurveyerCrudViewActionSlot :item />
       </template>
     </StyledDataTableServer>
   </v-container>

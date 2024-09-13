@@ -23,8 +23,8 @@ const { editor } = defineProps<FooterBarProps>();
 
 <template>
   <div flex items-center pr-2>
-    <slot name="prepend" :editor="editor" />
+    <slot name="prepend" :editor />
     <v-spacer />
-    <slot name="append" :editor="editor" />
+    <slot name="append" :editor />
   </div>
 </template>

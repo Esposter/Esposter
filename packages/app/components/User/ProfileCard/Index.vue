@@ -63,12 +63,12 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
           :key="title"
           v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
           px-4
-          :title="title"
+          :title
           :row="{
             type: row.type,
             value: row.value,
           }"
-          :edit-mode="editMode"
+          :edit-mode
         />
       </v-container>
       <v-card-actions px-4="!">

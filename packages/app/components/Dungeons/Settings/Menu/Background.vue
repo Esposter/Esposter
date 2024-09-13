@@ -5,5 +5,5 @@ const width = useSettingsMenuWidth();
 </script>
 
 <template>
-  <DungeonsUIGlassPanelNineSlice :width="width" :height="MENU_HEIGHT" />
+  <DungeonsUIGlassPanelNineSlice :width :height="MENU_HEIGHT" />
 </template>

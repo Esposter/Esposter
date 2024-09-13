@@ -29,5 +29,5 @@ onUnmounted(() => {
     }"
   />
   <DungeonsBattleMonsterAvailableListContainer v-if="!isEnemy" />
-  <DungeonsBattleMonsterInfoContainer :is-enemy="isEnemy" />
+  <DungeonsBattleMonsterInfoContainer :is-enemy />
 </template>

@@ -34,7 +34,7 @@ const { activePanel } = storeToRefs(battleSceneStore);
         :grid="PlayerBattleMenuOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
         :position="getPanelTextPosition(rowIndex, columnIndex)"
-        :text="text"
+        :text
       />
     </template>
     <DungeonsUIInputCursor

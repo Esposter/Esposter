@@ -30,7 +30,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
   <ClickerModelItemMenu
     :id="building.id"
     :type="ItemType.Building"
-    :is-affordable="isAffordable"
+    :is-affordable
     :menu-props="{ location: 'right center' }"
     :flavor-description="displayFlavorDescription"
     :price="buildingPrice"

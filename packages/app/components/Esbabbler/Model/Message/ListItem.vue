@@ -26,7 +26,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 </script>
 
 <template>
-  <EsbabblerModelMessageConfirmDeleteDialog :message="message">
+  <EsbabblerModelMessageConfirmDeleteDialog :message>
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         v-if="creator.name"
@@ -50,7 +50,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         </v-list-item-title>
         <EsbabblerModelMessageEditor
           v-if="isUpdateMode"
-          :message="message"
+          :message
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
         />
@@ -68,9 +68,9 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         >
           <v-hover v-slot="{ isHovering, props: hoverProps }">
             <EsbabblerModelMessageOptionsMenu
-              :message="message"
-              :is-hovering="isHovering"
-              :hover-props="hoverProps"
+              :message
+              :is-hovering
+              :hover-props
               @update:menu="(value) => (isOptionsChildrenActive = value)"
               @update:update-mode="(value) => (isUpdateMode = value)"
               @update:delete-mode="updateIsOpen"

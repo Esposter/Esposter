@@ -8,9 +8,9 @@ import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/
     <DungeonsTitleMenuContentText
       v-for="(text, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      :text="text"
+      :row-index
+      :column-index
+      :text
     />
   </template>
 </template>

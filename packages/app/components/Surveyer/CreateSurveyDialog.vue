@@ -33,7 +33,7 @@ const resetSurvey = () => {
 
 <template>
   <StyledCreateDialog
-    :card-props="cardProps"
+    :card-props
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });

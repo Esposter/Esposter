@@ -130,5 +130,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <canvas :id="id" />
+  <canvas :id />
 </template>

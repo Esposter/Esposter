@@ -27,11 +27,11 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       v-if="editedItem"
       v-model="editFormDialog"
       :name="originalItem?.name ?? ''"
-      :edited-item="editedItem"
-      :original-item="originalItem"
-      :is-edit-form-valid="isEditFormValid"
-      :is-full-screen-dialog="isFullScreenDialog"
-      :is-savable="isSavable"
+      :edited-item
+      :original-item
+      :is-edit-form-valid
+      :is-full-screen-dialog
+      :is-savable
       @update:edit-form-ref="(value) => (editFormRef = value)"
       @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
       @save="save()"

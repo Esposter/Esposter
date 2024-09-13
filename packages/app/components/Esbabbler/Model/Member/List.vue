@@ -14,7 +14,7 @@ const { hasMore, members, readMoreMembers } = defineProps<MemberListProps>();
 
 <template>
   <v-list overflow-y-auto="!">
-    <EsbabblerModelMemberListItem v-for="member in members" :key="member.id" :member="member" />
+    <EsbabblerModelMemberListItem v-for="member in members" :key="member.id" :member />
     <StyledWaypoint :active="hasMore" @change="readMoreMembers" />
   </v-list>
 </template>

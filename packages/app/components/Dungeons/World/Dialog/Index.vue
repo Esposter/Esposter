@@ -34,7 +34,7 @@ onSceneEvent(SceneEventKey.ShowMessage, (scene) => {
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />
-    <DungeonsWorldDialogText :dialog-message="dialogMessage" />
+    <DungeonsWorldDialogText :dialog-message />
     <DungeonsUIInputPromptCursor :y="DIALOG_HEIGHT - 24" :scale="1.25" />
   </Container>
 </template>

@@ -31,6 +31,6 @@ const menuHeight = computed(() => getMenuHeight(grid.rowSize));
       }"
       @clickoutside="menu = false"
     />
-    <DungeonsUIMenuContent :grid="grid" />
+    <DungeonsUIMenuContent :grid />
   </Container>
 </template>

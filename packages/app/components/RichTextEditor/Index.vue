@@ -41,10 +41,10 @@ onUnmounted(() => editor.value?.destroy());
 <template>
   <div flex flex-col w-full>
     <StyledCard>
-      <RichTextEditorMenuBar :editor="editor" />
+      <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
-      <EditorContent :editor="editor" />
-      <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor="editor">
+      <EditorContent :editor />
+      <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor>
         <template #prepend="editorProps">
           <slot name="prepend-footer" :="editorProps" />
         </template>

@@ -17,15 +17,15 @@ const { grid } = defineProps<ContentProps>();
     <DungeonsUIMenuContentText
       v-for="(text, columnIndex) in row"
       :key="getGridKey(rowIndex, columnIndex)"
-      :grid="grid"
-      :row-index="rowIndex"
-      :column-index="columnIndex"
-      :text="text"
+      :grid
+      :row-index
+      :column-index
+      :text
     />
   </template>
   <DungeonsUIInputCursor
     :cursor-image-key="ImageKey.CursorWhite"
-    :grid="grid"
+    :grid
     :initial-position="INITIAL_MENU_CURSOR_POSITION"
     :position-increment="MENU_CURSOR_POSITION_INCREMENT"
   />

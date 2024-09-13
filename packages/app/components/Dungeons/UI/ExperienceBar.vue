@@ -33,10 +33,10 @@ const barPercentage = computed(() =>
    2. If we are NOT leveling up, we want to reset isSkipAnimations trigger after the tween animation has finished -->
   <DungeonsUIBarContainer
     :type="BarType.Experience"
-    :position="position"
-    :width="width"
-    :scale-y="scaleY"
-    :bar-percentage="barPercentage"
+    :position
+    :width
+    :scale-y
+    :bar-percentage
     :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp"
     @start:display-width="isAnimating = true"
     @update:display-width="

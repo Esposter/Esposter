@@ -22,7 +22,7 @@ const backgroundColor = computed(() => (disabled.value ? "transparent" : "curren
         icon="mdi-send"
         size="small"
         bg-transparent="!"
-        :disabled="disabled"
+        :disabled
         :="tooltipProps"
         @click="
           () => {

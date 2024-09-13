@@ -29,7 +29,7 @@ const isValid = ref(true);
 <template>
   <v-dialog v-model="isOpen">
     <template #activator>
-      <slot name="activator" :is-open="isOpen" :update-is-open="(value: true) => (isOpen = value)" />
+      <slot name="activator" :is-open :update-is-open="(value: true) => (isOpen = value)" />
     </template>
     <v-form
       v-model="isValid"
@@ -41,7 +41,7 @@ const isValid = ref(true);
         }
       "
     >
-      <StyledCard :card-props="cardProps">
+      <StyledCard :card-props>
         <slot />
         <v-card-actions>
           <v-spacer />

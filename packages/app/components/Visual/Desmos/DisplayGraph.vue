@@ -89,7 +89,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div :id="id" w-full h-full />
+  <div :id w-full h-full />
 </template>
 
 <style scoped lang="scss">

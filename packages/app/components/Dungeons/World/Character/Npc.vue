@@ -20,12 +20,12 @@ const isMoving = defineModel<boolean>("isMoving", { required: true });
 
 <template>
   <DungeonsWorldCharacter
-    :id="id"
+    :id
     v-model:direction="direction"
     :position="path[pathIndex]"
     :sprite-configuration="{ texture: asset.key, frame: asset.frame, scale: 4 }"
-    :walking-animation-mapping="walkingAnimationMapping"
-    :single-sided-spritesheet-direction="singleSidedSpritesheetDirection"
+    :walking-animation-mapping
+    :single-sided-spritesheet-direction
     :speed="2"
     :on-movement-started="
       () => {

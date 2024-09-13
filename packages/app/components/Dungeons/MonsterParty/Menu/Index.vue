@@ -26,10 +26,5 @@ onCreate((scene) => {
 </script>
 
 <template>
-  <DungeonsUIMenu
-    v-if="position"
-    v-model:menu="isMenuVisible"
-    :grid="monsterPartyMenuOptionGrid"
-    :position="position"
-  />
+  <DungeonsUIMenu v-if="position" v-model:menu="isMenuVisible" :grid="monsterPartyMenuOptionGrid" :position />
 </template>

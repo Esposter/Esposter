@@ -40,6 +40,6 @@ onCreate((scene) => {
     v-if="position"
     v-model:menu="isMenuVisible"
     :grid="MonsterPartyConfirmationMenuOptionGrid"
-    :position="position"
+    :position
   />
 </template>
