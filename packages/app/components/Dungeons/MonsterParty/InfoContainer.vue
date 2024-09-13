@@ -6,7 +6,7 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
-import { Container, onCreate, Rectangle, Text } from "vue-phaser";
+import { Container, onCreate, Rectangle } from "vue-phaser";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
@@ -57,7 +57,8 @@ watch(
         }
       "
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: 15,
         y: 14,
         text: infoDialogMessage.text,

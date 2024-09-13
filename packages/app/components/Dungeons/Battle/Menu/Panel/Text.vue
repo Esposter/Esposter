@@ -4,7 +4,6 @@ import type { Position } from "grid-engine";
 
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import { Input } from "phaser";
-import { Text } from "vue-phaser";
 
 interface TextProps {
   grid: Grid<TValue, TGrid>;
@@ -18,7 +17,8 @@ const onGridClick = useOnGridClick(grid, () => gridPosition);
 </script>
 
 <template>
-  <DungeonsText    :configuration="{ ...position, text, style: DialogTextStyle }"
+  <DungeonsText
+    :configuration="{ ...position, text, style: DialogTextStyle }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
   />
 </template>

@@ -17,7 +17,7 @@ import {
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
-import { Rectangle, Text } from "vue-phaser";
+import { Rectangle } from "vue-phaser";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;
@@ -83,7 +83,8 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
       }
     "
   />
-  <DungeonsText    :configuration="{
+  <DungeonsText
+    :configuration="{
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y: baseY,
       text: `${volumePercentage}%`,

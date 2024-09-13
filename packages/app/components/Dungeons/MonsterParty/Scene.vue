@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaser";
 
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/getActiveInputResolvers";
 import { useControlsStore } from "@/store/dungeons/controls";
-import { SceneKey } from "vue-phaser";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

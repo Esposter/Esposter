@@ -2,6 +2,7 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
 
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
@@ -9,7 +10,6 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { SceneKey } from "vue-phaser";
 
 let unsubscribes: (() => void)[] = [];
 

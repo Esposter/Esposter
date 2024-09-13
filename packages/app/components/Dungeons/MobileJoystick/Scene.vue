@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SceneKey } from "vue-phaser";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 </script>
 
 <template>

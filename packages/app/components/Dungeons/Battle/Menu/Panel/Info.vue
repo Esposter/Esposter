@@ -4,7 +4,7 @@ import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { onCreate, Text } from "vue-phaser";
+import { onCreate } from "vue-phaser";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);
@@ -19,7 +19,8 @@ onCreate((scene) => {
 
 <template>
   <template v-if="activePanel === ActivePanel.Info || activePanel === ActivePanel.Option">
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: 20,
         y: 468,
         // Display width is computed based on the set text, so we only require @update:display-width listener
@@ -28,7 +29,8 @@ onCreate((scene) => {
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: 20,
         y: 512,
         text: line2Text,

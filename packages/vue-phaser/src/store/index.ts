@@ -2,7 +2,6 @@ import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { Game } from "phaser";
 
 import { useGame } from "@/composables/useGame";
-import { SceneKey } from "@/models/keys/SceneKey";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // @NOTE: A very weird bug will occur here with setInteractive input priority
@@ -15,11 +14,11 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
-  const sceneKey = ref<null | SceneKey>(null);
+  const sceneKey = ref<null | SceneWithPlugins["scene"]["key"]>(null);
   // When we access the root scene key from outside components, it should already be initialized
-  const rootSceneKey = sceneKey as Ref<SceneKey>;
-  const isSameScene = (newSceneKey: SceneKey) => newSceneKey === sceneKey.value;
-  const switchToScene = async (newSceneKey: SceneKey) => {
+  const rootSceneKey = sceneKey as Ref<SceneWithPlugins["scene"]["key"]>;
+  const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
+  const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
 
     const game = useGame();
@@ -33,17 +32,21 @@ export const usePhaserStore = defineStore("phaser", () => {
     game.scene.start(newSceneKey);
   };
 
-  const parallelSceneKeys = ref<SceneKey[]>([]);
-  const launchParallelScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
+  const parallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
+  const prioritizedParallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
+  const launchParallelScene = (scene: SceneWithPlugins, sceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (parallelSceneKeys.value.includes(sceneKey)) return;
 
     scene.scene.bringToTop(sceneKey);
-    // Mobile controls should always be the first to render
-    if (parallelSceneKeys.value.includes(SceneKey.MobileJoystick)) scene.scene.bringToTop(SceneKey.MobileJoystick);
+    // Some scenes like the mobile joystick scene are prioritized to always show first
+    for (const prioritizedParallelSceneKey of prioritizedParallelSceneKeys.value)
+      if (parallelSceneKeys.value.includes(prioritizedParallelSceneKey))
+        scene.scene.bringToTop(prioritizedParallelSceneKey);
+
     scene.scene.launch(sceneKey);
     parallelSceneKeys.value.push(sceneKey);
   };
-  const removeParallelScene = (scene: SceneWithPlugins, sceneKey: SceneKey) => {
+  const removeParallelScene = (scene: SceneWithPlugins, sceneKey: SceneWithPlugins["scene"]["key"]) => {
     const index = parallelSceneKeys.value.indexOf(sceneKey);
     if (index === -1) return;
 

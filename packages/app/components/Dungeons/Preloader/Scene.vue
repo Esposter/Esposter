@@ -10,7 +10,7 @@ import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Rectangle, SceneKey, Text, usePhaserStore } from "vue-phaser";
+import { Rectangle, SceneKey, usePhaserStore } from "vue-phaser";
 import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
@@ -76,7 +76,8 @@ const preload = (scene: SceneWithPlugins) => {
       }"
       immediate
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x,
         y,
         origin: 0.5,
@@ -85,7 +86,8 @@ const preload = (scene: SceneWithPlugins) => {
       }"
       immediate
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x,
         y: y ? y + 50 : undefined,
         origin: 0.5,

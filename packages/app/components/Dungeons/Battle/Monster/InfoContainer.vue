@@ -5,7 +5,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Container, Image, Text } from "vue-phaser";
+import { Container, Image } from "vue-phaser";
 
 interface InfoContainerProps {
   isEnemy: boolean;
@@ -30,7 +30,8 @@ onUnmounted(() => {
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
     <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: 30,
         y: 20,
         text: prettifyName(activeMonster.key),
@@ -42,7 +43,8 @@ onUnmounted(() => {
       }"
       @update:display-width="(value: typeof nameDisplayWidth) => (nameDisplayWidth = value)"
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: levelX,
         y: 23,
         text: `L${activeMonster.stats.level}`,
@@ -52,7 +54,8 @@ onUnmounted(() => {
         },
       }"
     />
-    <DungeonsText      :configuration="{
+    <DungeonsText
+      :configuration="{
         x: 30,
         y: 55,
         text: 'HP',
@@ -65,7 +68,8 @@ onUnmounted(() => {
     />
     <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <template v-if="!isEnemy">
-      <DungeonsText        :configuration="{
+      <DungeonsText
+        :configuration="{
           x: 443,
           y: 80,
           originX: 1,
@@ -77,7 +81,8 @@ onUnmounted(() => {
           },
         }"
       />
-      <DungeonsText        :configuration="{
+      <DungeonsText
+        :configuration="{
           x: 30,
           y: 100,
           text: 'EXP',

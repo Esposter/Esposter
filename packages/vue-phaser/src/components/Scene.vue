@@ -7,6 +7,8 @@ import { Lifecycle } from "@/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/store";
 import { ExternalSceneStore } from "@/store/scene";
 import { getScene } from "@/utils/getScene";
+import { resetLifecycleListeners } from "@/utils/hooks/resetLifecycleListeners";
+import { runLifecycleListeners } from "@/utils/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
 import { Scene, Scenes } from "phaser";
 
@@ -26,54 +28,37 @@ const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value
 const NewScene = class extends Scene {
   create(this: SceneWithPlugins) {
     emit("create", this);
-    const createListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Create];
-    for (const createListener of createListenersMap[this.scene.key]) createListener(this);
-    createListenersMap[this.scene.key] = [];
+    runLifecycleListeners(this, Lifecycle.Create);
   }
 
   init(this: SceneWithPlugins) {
     emit("init", this);
-    const initListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Init];
-    for (const initListener of initListenersMap[this.scene.key]) initListener(this);
-    initListenersMap[this.scene.key] = [];
+    runLifecycleListeners(this, Lifecycle.Init);
   }
 
   preload(this: SceneWithPlugins) {
     emit("preload", this);
-    const preloadListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Preload];
-    for (const preloadListener of preloadListenersMap[this.scene.key]) preloadListener(this);
-    preloadListenersMap[this.scene.key] = [];
+    runLifecycleListeners(this, Lifecycle.Preload);
   }
 
   update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
-    const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
-    for (const updateListener of updateListenersMap[this.scene.key]) updateListener(this);
-
-    const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
-    for (const nextTickListener of nextTickListenersMap[this.scene.key]) nextTickListener(this);
-    nextTickListenersMap[this.scene.key] = [];
+    runLifecycleListeners(this, Lifecycle.Update, false);
+    runLifecycleListeners(this, Lifecycle.NextTick);
   }
 };
 
 const readyListener = () => {
-  ExternalSceneStore.sceneReadyMap[sceneKey] = true;
+  ExternalSceneStore.sceneReadyMap.set(sceneKey, true);
 };
 
 const shutdownListener = () => {
-  const updateListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Update];
-  updateListenersMap[sceneKey] = [];
-
-  const nextTickListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.NextTick];
-  nextTickListenersMap[sceneKey] = [];
-
   const scene = getScene(sceneKey);
-  const shutdownListenersMap = ExternalSceneStore.lifeCycleListenersMap[Lifecycle.Shutdown];
-  for (const shutdownListener of shutdownListenersMap[sceneKey]) shutdownListener(scene);
-  shutdownListenersMap[sceneKey] = [];
+  resetLifecycleListeners(scene, Lifecycle.Update);
+  resetLifecycleListeners(scene, Lifecycle.NextTick);
+  runLifecycleListeners(scene, Lifecycle.Shutdown);
   emit("shutdown", scene);
-
-  ExternalSceneStore.sceneReadyMap[sceneKey] = false;
+  ExternalSceneStore.sceneReadyMap.set(sceneKey, false);
 };
 
 onMounted(async () => {

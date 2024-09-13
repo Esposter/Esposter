@@ -2,6 +2,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaser";
 
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
@@ -13,7 +14,6 @@ import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/sce
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
-import { SceneKey } from "vue-phaser";
 
 export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/input", () => {
   const dialogStore = useDialogStore();

@@ -1,4 +1,4 @@
-import { SceneKey } from "vue-phaser";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 
 export const SceneKeyMap = {
   [SceneKey.Battle]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Scene.vue")),

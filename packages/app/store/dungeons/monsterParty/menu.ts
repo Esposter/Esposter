@@ -1,15 +1,15 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaser";
 
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard } from "@esposter/shared";
-import { SceneKey } from "vue-phaser";
 
 export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();

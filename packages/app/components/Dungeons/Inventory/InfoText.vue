@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuText
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
-import { onCreate, Text } from "vue-phaser";
+import { onCreate } from "vue-phaser";
 
 const infoPanelStore = useInfoPanelStore();
 const { infoDialogMessage } = storeToRefs(infoPanelStore);
@@ -25,7 +25,8 @@ watch(
 </script>
 
 <template>
-  <DungeonsText    :configuration="{
+  <DungeonsText
+    :configuration="{
       x: 25,
       y: 420,
       text: infoDialogMessage.text,

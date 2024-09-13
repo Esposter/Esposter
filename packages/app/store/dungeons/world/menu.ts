@@ -1,14 +1,14 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaser";
 
-import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
-import { SceneKey } from "vue-phaser";
 
 export const useMenuStore = defineStore("dungeons/world/menu", () => {
   const dungeonsStore = useDungeonsStore();
