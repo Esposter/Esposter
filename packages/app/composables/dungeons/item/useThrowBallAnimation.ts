@@ -5,7 +5,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "@/util/time/sleep";
 import { Math } from "phaser";
-import { useTween } from "vue-phaser";
+import { useTween } from "vue-phaserjs";
 
 export const useThrowBallAnimation = async (captureResult: CaptureResult) => {
   const settingsStore = useSettingsStore();

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { TweenBuilderConfiguration } from "vue-phaser";
+import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
-import { Image } from "vue-phaser";
+import { Image } from "vue-phaserjs";
 
 interface MiddleProps {
   displayWidth: number | undefined;

@@ -6,11 +6,11 @@ import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/Positio
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { Position } from "grid-engine";
 import type { Subscription } from "rxjs";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Direction } from "grid-engine";
 import { filter } from "rxjs";
-import { Sprite } from "vue-phaser";
+import { Sprite } from "vue-phaserjs";
 
 export interface CharacterProps {
   id: Character["id"];

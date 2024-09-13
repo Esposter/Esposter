@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import titleScreenBackground from "@/assets/dungeons/scene/title/screenBackground.png";
 import titleText from "@/assets/dungeons/scene/title/text.png";

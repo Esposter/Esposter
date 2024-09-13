@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";

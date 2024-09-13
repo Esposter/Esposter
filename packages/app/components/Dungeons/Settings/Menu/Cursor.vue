@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { Rectangle } from "vue-phaser";
+import { Rectangle } from "vue-phaserjs";
 
 const { width, y, ...configuration } = useSettingsCursorDimensions(() => SettingsOptionGrid.position.value.y);
 </script>

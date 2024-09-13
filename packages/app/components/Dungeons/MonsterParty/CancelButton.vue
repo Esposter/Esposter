@@ -3,7 +3,7 @@ import { ButtonTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/But
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { Input } from "phaser";
-import { Container, Image, Text } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaserjs";
 
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const onGridClick = useOnGridClick(monsterPartyOptionGrid, () => ({

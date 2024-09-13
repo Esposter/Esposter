@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import base from "@/assets/dungeons/UI/joystick/base.png";
 import thumb from "@/assets/dungeons/UI/joystick/thumb.png";

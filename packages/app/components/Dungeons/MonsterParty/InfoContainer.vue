@@ -6,7 +6,7 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
-import { Container, onCreate, Rectangle, Text } from "vue-phaser";
+import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

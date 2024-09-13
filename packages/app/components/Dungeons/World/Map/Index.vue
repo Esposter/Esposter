@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { getScene, onCreate, onShutdown, Tilemap, useInjectSceneKey } from "vue-phaser";
+import { getScene, onCreate, onShutdown, Tilemap, useInjectSceneKey } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);

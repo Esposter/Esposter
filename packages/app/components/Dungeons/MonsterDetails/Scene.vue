@@ -6,7 +6,7 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Image, Text } from "vue-phaser";
+import { Image, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

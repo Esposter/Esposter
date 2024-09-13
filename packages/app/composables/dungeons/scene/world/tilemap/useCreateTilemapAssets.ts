@@ -1,5 +1,5 @@
 import type { Tilemaps } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { Chest } from "@/models/dungeons/data/world/Chest";

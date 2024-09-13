@@ -1,5 +1,5 @@
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
@@ -7,7 +7,7 @@ import { dayjs } from "@/services/dayjs";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
 import { Cameras } from "phaser";
-import { useCameraStore, usePhaserStore } from "vue-phaser";
+import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
 export const useDungeonsStore = defineStore("dungeons", () => {
   const { $client } = useNuxtApp();

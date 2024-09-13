@@ -121,7 +121,7 @@
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.22",
     "vue-codemirror": "^6.1.1",
-    "vue-phaser": "workspace:*",
+    "vue-phaserjs": "workspace:*",
     "vue-router": "^4.4.4",
     "vue-waypoint": "^4.3.0",
     "vue3-apexcharts": "^1.6.0",
@@ -133,8 +133,8 @@
     "zod-to-json-schema": "^3.23.3"
   },
   "dependenciesComments": {
-    "class-transformer": "Remove this when es decorators are released",
-    "@auth/core": "upgrading breaks authjs-nuxt"
+    "class-transformer": "@TODO: Remove when es decorators are released",
+    "@auth/core": "@TODO: Upgrading breaks authjs-nuxt"
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.5.7",
@@ -173,6 +173,6 @@
     "vuetify-nuxt-module": "^0.18.2"
   },
   "devDependenciesComments": {
-    "nuxt": "upgrading breaks phaser"
+    "nuxt": "@TODO: Upgrading breaks phaser"
   }
 }

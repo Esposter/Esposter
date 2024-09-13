@@ -1,6 +1,6 @@
 import type { Controls } from "@/models/dungeons/input/Controls";
 import type { Types } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { BaseControls } from "@/models/dungeons/input/BaseControls";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";

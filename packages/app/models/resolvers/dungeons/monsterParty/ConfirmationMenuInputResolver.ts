@@ -1,5 +1,5 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { useConfirmationMenuStore } from "@/store/dungeons/monsterParty/confirmationMenu";

@@ -1,5 +1,5 @@
 import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "@/generated/tiled/propertyTypes/class/EncounterObjectProperty";

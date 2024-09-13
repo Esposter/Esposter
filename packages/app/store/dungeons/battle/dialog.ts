@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useDialogStore } from "@/store/dungeons/dialog";
 

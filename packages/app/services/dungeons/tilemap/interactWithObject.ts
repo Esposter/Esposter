@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";

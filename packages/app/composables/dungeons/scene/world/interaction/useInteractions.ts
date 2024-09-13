@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { interactWithObject } from "@/services/dungeons/tilemap/interactWithObject";
 

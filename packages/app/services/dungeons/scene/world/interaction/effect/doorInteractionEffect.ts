@@ -13,7 +13,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { NotFoundError } from "@esposter/shared";
 import { Cameras } from "phaser";
-import { useCameraStore } from "vue-phaser";
+import { useCameraStore } from "vue-phaserjs";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const teleportObject = useGetInteractiveObject(teleportObjects);

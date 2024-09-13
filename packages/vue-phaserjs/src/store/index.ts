@@ -4,8 +4,7 @@ import type { Game } from "phaser";
 import { useGame } from "@/composables/useGame";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  // @NOTE: A very weird bug will occur here with setInteractive input priority
-  // if the game is a ref >:C
+  // @NOTE: A very weird bug will occur here with setInteractive input priority if the game is a ref >:C
   let baseGame: Game | null = null;
   const game = computed({
     get: () => baseGame,

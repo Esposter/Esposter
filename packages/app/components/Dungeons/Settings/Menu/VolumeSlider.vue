@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RectangleConfiguration } from "vue-phaser";
+import type { RectangleConfiguration } from "vue-phaserjs";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
@@ -17,7 +17,7 @@ import {
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { Input } from "phaser";
-import { Rectangle, Text } from "vue-phaser";
+import { Rectangle, Text } from "vue-phaserjs";
 
 const volumeStore = useVolumeStore();
 const { setVolume } = volumeStore;

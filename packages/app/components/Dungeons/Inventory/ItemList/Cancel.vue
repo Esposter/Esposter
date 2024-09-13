@@ -3,7 +3,7 @@ import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuText
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { Input } from "phaser";
-import { Rectangle, Text } from "vue-phaser";
+import { Rectangle, Text } from "vue-phaserjs";
 
 const emit = defineEmits<{ click: [] }>();
 </script>

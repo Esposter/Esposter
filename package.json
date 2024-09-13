@@ -20,7 +20,7 @@
     "typecheck": "lerna run typecheck",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm build --no-private && pnpm typecheck --no-private && pnpm lint:fix --no-private && lerna publish --yes",
+    "release": "pnpm build --no-private && pnpm lint:fix --no-private && pnpm typecheck --no-private && lerna publish --yes",
     "refresh:lockfile": "pnpm pwsh scripts/refreshLockfile.ps1",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
@@ -31,8 +31,11 @@
     "is-mobile": "^4.0.0",
     "parse-tmx": "workspace:*",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vue": "^3.5.0-beta.1",
+    "vue": "3.5.0-beta.1",
     "xml2js": "^0.6.2"
+  },
+  "dependenciesComments": {
+    "vue": "@TODO: Upgrade breaks pinia writable computed type"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -43,9 +46,12 @@
     "lerna": "^8.1.8",
     "rollup": "^4.21.3",
     "type-fest": "^4.26.1",
-    "typescript": "^5.4.5",
+    "typescript": "5.4.5",
     "vite": "^5.4.4",
     "vue-tsc": "^1.8.27"
+  },
+  "devDependenciesComments": {
+    "typescript": "@TODO: Upgrading breaks everything"
   },
   "engines": {
     "node": "^22.8.0"

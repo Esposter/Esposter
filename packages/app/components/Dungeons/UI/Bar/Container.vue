@@ -5,7 +5,7 @@ import type { Position } from "grid-engine";
 import type { Tweens } from "phaser";
 
 import { clamp } from "@vueuse/core";
-import { Container } from "vue-phaser";
+import { Container } from "vue-phaserjs";
 
 interface BarContainerProps {
   barPercentage: number;

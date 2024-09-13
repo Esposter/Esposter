@@ -6,7 +6,7 @@ import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Input } from "phaser";
-import { Container, Rectangle } from "vue-phaser";
+import { Container, Rectangle } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

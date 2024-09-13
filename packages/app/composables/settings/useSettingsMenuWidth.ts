@@ -1,5 +1,5 @@
 import { MENU_HORIZONTAL_PADDING } from "@/services/dungeons/scene/settings/constants";
-import { onCreate } from "vue-phaser";
+import { onCreate } from "vue-phaserjs";
 
 export const useSettingsMenuWidth = (onComplete?: (width: number) => void) => {
   const width = ref<number>();

@@ -7,7 +7,7 @@ import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "@/store/dungeons/controls";
-import { getScene, Image, useInjectSceneKey } from "vue-phaser";
+import { getScene, Image, useInjectSceneKey } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

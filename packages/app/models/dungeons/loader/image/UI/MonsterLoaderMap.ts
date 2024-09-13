@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import aquavalor from "@/assets/dungeons/UI/monsters/aquavalor.png";
 import carnodusk from "@/assets/dungeons/UI/monsters/carnodusk.png";

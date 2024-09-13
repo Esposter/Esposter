@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="TValue, TGrid extends readonly (readonly TValue[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
-import type { ImageConfiguration } from "vue-phaser";
+import type { ImageConfiguration } from "vue-phaserjs";
 
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { Image } from "vue-phaser";
+import { Image } from "vue-phaserjs";
 
 interface CursorProps {
   cursorImageKey?: Extract<ImageKey, "CursorWhite">;

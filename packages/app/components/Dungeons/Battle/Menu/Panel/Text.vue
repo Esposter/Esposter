@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
 import { Input } from "phaser";
-import { Text } from "vue-phaser";
+import { Text } from "vue-phaserjs";
 
 interface TextProps {
   grid: Grid<TValue, TGrid>;

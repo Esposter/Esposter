@@ -6,13 +6,13 @@ import type { Scene } from "phaser";
 import type SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
 import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
 
-import "vue-phaser";
+import "vue-phaserjs";
 
 type BaseAnimationKeyMap = {
   [P in keyof typeof SpritesheetKey | keyof typeof TilesetKey]: P;
 };
 
-declare module "vue-phaser" {
+declare module "vue-phaserjs" {
   interface ScenePlugins {
     gridEngine: GridEngine;
     sliderPlugin: SliderPlugin;

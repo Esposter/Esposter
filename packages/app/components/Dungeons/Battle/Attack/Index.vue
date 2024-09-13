@@ -2,12 +2,12 @@
 import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import type { Position } from "grid-engine";
 import type { Types } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import { getAttackPosition } from "@/services/dungeons/scene/battle/attack/getAttackPosition";
 import { Animations } from "phaser";
-import { Sprite, useAnimations } from "vue-phaser";
+import { Sprite, useAnimations } from "vue-phaserjs";
 
 interface AttackProps {
   configuration:

@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import homeBuilding1 from "@/assets/dungeons/scene/world/Home/HomeBuilding1/tilemap.json";
 import homeBuilding2 from "@/assets/dungeons/scene/world/Home/HomeBuilding2/tilemap.json";

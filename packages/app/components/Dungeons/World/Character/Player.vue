@@ -12,7 +12,7 @@ import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
-import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaser";
+import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
 
 const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);

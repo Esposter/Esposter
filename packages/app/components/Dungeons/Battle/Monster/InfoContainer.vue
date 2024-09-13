@@ -5,7 +5,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Container, Image, Text } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaserjs";
 
 interface InfoContainerProps {
   isEnemy: boolean;

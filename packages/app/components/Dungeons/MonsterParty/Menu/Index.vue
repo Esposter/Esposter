@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { onCreate } from "vue-phaser";
+import { onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);

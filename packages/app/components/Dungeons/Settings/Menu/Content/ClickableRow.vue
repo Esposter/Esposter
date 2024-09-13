@@ -4,7 +4,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
-import { Rectangle } from "vue-phaser";
+import { Rectangle } from "vue-phaserjs";
 
 interface ContentTextProps {
   rowIndex: number;

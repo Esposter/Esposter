@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { onCreate } from "vue-phaser";
+import { onCreate } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);

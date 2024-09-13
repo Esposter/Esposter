@@ -2,7 +2,7 @@
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "@/services/dayjs";
 import { useDialogStore } from "@/store/dungeons/dialog";
-import { Image } from "vue-phaser";
+import { Image } from "vue-phaserjs";
 
 interface InputPromptCursorProps {
   scale?: number;

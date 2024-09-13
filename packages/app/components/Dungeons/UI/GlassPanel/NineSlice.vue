@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GLASS_PANEL_CORNER_CUT_LENGTH } from "@/services/dungeons/UI/glassPanel/constants";
-import { Nineslice } from "vue-phaser";
+import { Nineslice } from "vue-phaserjs";
 
 interface GlassPanelNineSliceProps {
   height?: number;

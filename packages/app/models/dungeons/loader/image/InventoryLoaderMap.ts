@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import background from "@/assets/dungeons/scene/inventory/background.png";
 import bag from "@/assets/dungeons/scene/inventory/bag.png";

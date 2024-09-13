@@ -6,7 +6,7 @@ import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { Input } from "phaser";
-import { Image, onCreate } from "vue-phaser";
+import { Image, onCreate } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

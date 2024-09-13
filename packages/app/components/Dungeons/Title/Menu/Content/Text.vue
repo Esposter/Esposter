@@ -8,7 +8,7 @@ import {
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { Input } from "phaser";
-import { Text } from "vue-phaser";
+import { Text } from "vue-phaserjs";
 
 interface ContentTextProps {
   columnIndex: number;

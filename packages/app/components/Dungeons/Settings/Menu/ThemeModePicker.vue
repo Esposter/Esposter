@@ -11,7 +11,7 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
-import { Image, Text } from "vue-phaser";
+import { Image, Text } from "vue-phaserjs";
 
 const colorPickerStore = useColorPickerStore();
 const { updateThemeModeSetting } = colorPickerStore;

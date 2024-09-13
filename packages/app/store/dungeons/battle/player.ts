@@ -1,5 +1,5 @@
 import type { Position } from "grid-engine";
-import type { TweenBuilderConfiguration } from "vue-phaser";
+import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";

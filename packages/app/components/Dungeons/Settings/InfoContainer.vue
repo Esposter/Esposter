@@ -6,7 +6,7 @@ import {
   MENU_VERTICAL_PADDING,
 } from "@/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
-import { Container, onCreate, Text } from "vue-phaser";
+import { Container, onCreate, Text } from "vue-phaserjs";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);

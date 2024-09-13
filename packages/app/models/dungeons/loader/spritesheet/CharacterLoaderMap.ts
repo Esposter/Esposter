@@ -1,5 +1,5 @@
 import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import character from "@/assets/dungeons/thirdParty/axulart/character/custom.png";
 import npc from "@/assets/dungeons/thirdParty/parabellumGames/characters.png";

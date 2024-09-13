@@ -10,7 +10,7 @@ import {
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { Container, Rectangle } from "vue-phaser";
+import { Container, Rectangle } from "vue-phaserjs";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

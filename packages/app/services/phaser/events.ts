@@ -5,7 +5,7 @@ import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import type { Direction, Position } from "grid-engine";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import EventEmitter from "eventemitter3";
 

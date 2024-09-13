@@ -1,5 +1,5 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";

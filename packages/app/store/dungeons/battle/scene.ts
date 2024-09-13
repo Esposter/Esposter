@@ -1,6 +1,6 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";

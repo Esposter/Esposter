@@ -2,7 +2,7 @@
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { Container, Image, onCreate } from "vue-phaser";
+import { Container, Image, onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { monsters } = storeToRefs(monsterPartySceneStore);

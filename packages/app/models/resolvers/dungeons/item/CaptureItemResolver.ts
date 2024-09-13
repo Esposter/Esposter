@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import { StateName } from "@/models/dungeons/state/battle/StateName";

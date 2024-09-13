@@ -6,7 +6,7 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
-import { Container, Image, Text } from "vue-phaser";
+import { Container, Image, Text } from "vue-phaserjs";
 
 interface PanelListItemProps {
   columnIndex: number;

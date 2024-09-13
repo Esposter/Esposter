@@ -1,5 +1,5 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
-import type { SceneWithPlugins } from "vue-phaser";
+import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { dayjs } from "@/services/dayjs";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";

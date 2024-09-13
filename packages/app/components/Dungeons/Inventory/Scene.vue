@@ -3,7 +3,7 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
-import { Image } from "vue-phaser";
+import { Image } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);

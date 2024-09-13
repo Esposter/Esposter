@@ -7,7 +7,7 @@ import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scen
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { onCreate } from "vue-phaser";
+import { onCreate } from "vue-phaserjs";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);
