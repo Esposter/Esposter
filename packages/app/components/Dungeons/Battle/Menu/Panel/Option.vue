@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { getGridKey } from "@/services/dungeons/getGridKey";
-import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
@@ -9,6 +8,7 @@ import {
   MENU_PADDING,
 } from "@/services/dungeons/scene/battle/menu/constants";
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
+import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { Container, Rectangle } from "vue-phaser";
 

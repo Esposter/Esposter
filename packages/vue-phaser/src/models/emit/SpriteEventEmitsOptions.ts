@@ -5,5 +5,4 @@ import type { UpdateEvent } from "@/utils/types/UpdateEvent";
 
 export type SpriteEventEmitsOptions = {
   [P in UpdateEvent<keyof SpriteConfiguration>]: [SpriteConfiguration[ExtractUpdateEvent<P>]?];
-} & GameObjectEventMapEmitsOptions &
-  Record<string, unknown[]>;
+} & GameObjectEventMapEmitsOptions;

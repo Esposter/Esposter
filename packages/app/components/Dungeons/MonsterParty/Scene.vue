@@ -5,7 +5,7 @@ import { getActiveInputResolvers } from "@/services/dungeons/scene/monsterParty/
 import { useControlsStore } from "@/store/dungeons/controls";
 import { SceneKey } from "vue-phaser";
 
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const inputResolvers = getActiveInputResolvers();
 

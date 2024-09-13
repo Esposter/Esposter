@@ -6,9 +6,9 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { Input } from "phaser";
-import { Container, Rectangle, Text, onCreate } from "vue-phaser";
+import { Container, onCreate, Rectangle, Text } from "vue-phaser";
 
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 // It's unfortunate, but we have to access the internals
 // when we handle confirm inputs since we don't know where it comes from

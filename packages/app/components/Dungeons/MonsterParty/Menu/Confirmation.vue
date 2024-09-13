@@ -2,9 +2,9 @@
 import type { Position } from "grid-engine";
 
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
-import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
-import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
+import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
+import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { onCreate } from "vue-phaser";

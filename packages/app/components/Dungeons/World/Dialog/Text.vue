@@ -2,8 +2,8 @@
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
-import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { Text } from "vue-phaser";
 
 interface DialogTextProps {

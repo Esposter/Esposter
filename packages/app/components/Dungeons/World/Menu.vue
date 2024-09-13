@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
+import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMenuStore } from "@/store/dungeons/world/menu";
 import { getScene, useInjectSceneKey } from "vue-phaser";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Monster } from "@/models/dungeons/monster/Monster";
 
-import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";

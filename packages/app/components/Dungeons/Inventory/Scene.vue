@@ -4,7 +4,7 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
 import { Image, SceneKey } from "vue-phaser";
 
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const inventoryInputStore = useInventoryInputStore();
 const { onPlayerInput } = inventoryInputStore;

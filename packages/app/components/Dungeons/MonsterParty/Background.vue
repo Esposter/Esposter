@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { Rectangle, TileSprite, onCreate } from "vue-phaser";
+import { onCreate, Rectangle, TileSprite } from "vue-phaser";
 
 const width = ref<number>();
 const height = ref<number>();

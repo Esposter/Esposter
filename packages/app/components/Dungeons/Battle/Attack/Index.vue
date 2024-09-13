@@ -49,7 +49,7 @@ const animations = createAnimationConfigurations ? useAnimations(createAnimation
     }"
     immediate
     @[`${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`]="
-      {
+      () => {
         isActive = false;
         frame = 0;
       }

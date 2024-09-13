@@ -7,7 +7,7 @@ import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/sce
 import { prettifyName } from "@/util/text/prettifyName";
 import { Image, SceneKey, Text } from "vue-phaser";
 
-const controlsStore= useControlsStore();
+const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
@@ -16,7 +16,10 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
 </script>
 
 <template>
-  <DungeonsScene :scene-key="SceneKey.MonsterDetails" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
+  <DungeonsScene
+    :scene-key="SceneKey.MonsterDetails"
+    @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
+  >
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
