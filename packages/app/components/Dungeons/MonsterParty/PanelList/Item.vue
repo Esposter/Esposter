@@ -47,8 +47,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         scale: 0.35,
       }"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 162,
         y: 36,
         text: prettifyName(monster.key),
@@ -58,8 +57,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         },
       }"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 26,
         y: 116,
         text: `LV. ${monster.stats.level}`,
@@ -69,8 +67,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
         },
       }"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 164,
         y: 66,
         text: 'HP',
@@ -87,8 +84,7 @@ const barPercentage = computed(() => (monster.status.hp / monster.stats.maxHp) *
       :width="252"
       :bar-percentage="barPercentage"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 458,
         y: 95,
         originX: 1,

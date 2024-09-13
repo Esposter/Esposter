@@ -19,8 +19,7 @@ onCreate((scene) => {
 
 <template>
   <template v-if="activePanel === ActivePanel.Info || activePanel === ActivePanel.Option">
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 20,
         y: 468,
         // Display width is computed based on the set text, so we only require @update:display-width listener
@@ -29,8 +28,7 @@ onCreate((scene) => {
       }"
       @update:display-width="(value: typeof line1TextDisplayWidth) => (line1TextDisplayWidth = value)"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 20,
         y: 512,
         text: line2Text,

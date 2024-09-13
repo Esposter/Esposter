@@ -38,8 +38,7 @@ const rightCursorX = textX + padding;
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.LEFT)"
   />
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: textX,
       y:
         INITIAL_SETTINGS_POSITION.y +

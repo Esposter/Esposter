@@ -55,8 +55,7 @@ const versionY = ref<number>();
       }"
     />
     <DungeonsTitleMenuContainer />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: versionX,
         y: versionY,
         text: `ver: ${buildVersion}`,

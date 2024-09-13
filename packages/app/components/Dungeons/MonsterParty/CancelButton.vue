@@ -24,8 +24,7 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 66.5,
         y: 20.6,
         origin: 0.5,

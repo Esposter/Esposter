@@ -17,8 +17,7 @@ const emit = defineEmits<{ click: [] }>();
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="emit('click')"
   />
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: INITIAL_CURSOR_POSITION.x + 20,
       text: PlayerSpecialInput.Cancel,
       style: MenuTextStyle,

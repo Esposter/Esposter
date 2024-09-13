@@ -18,8 +18,7 @@ const onGridClick = useOnGridClick(grid, () => gridPosition);
 </script>
 
 <template>
-  <Text
-    :configuration="{ ...position, text, style: DialogTextStyle }"
+  <DungeonsText    :configuration="{ ...position, text, style: DialogTextStyle }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
   />
 </template>

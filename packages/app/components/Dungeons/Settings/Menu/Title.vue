@@ -7,5 +7,5 @@ const x = ref<number>();
 </script>
 
 <template>
-  <Text :configuration="{ x, y: 20, origin: 0.5, text: 'Settings', style: MenuTextStyle }" />
+  <DungeonsText:configuration="{ x, y: 20, origin: 0.5, text: 'Settings', style: MenuTextStyle }" />
 </template>

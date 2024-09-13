@@ -25,8 +25,7 @@ watch(
 </script>
 
 <template>
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: 25,
       y: 420,
       text: infoDialogMessage.text,

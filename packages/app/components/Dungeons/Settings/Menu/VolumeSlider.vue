@@ -83,8 +83,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
       }
     "
   />
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: INITIAL_SETTINGS_VALUE_POSITION.x + 340,
       y: baseY,
       text: `${volumePercentage}%`,

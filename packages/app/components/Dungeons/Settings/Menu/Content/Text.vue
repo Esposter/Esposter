@@ -36,8 +36,7 @@ const onGridClick = useOnGridClick(
 </script>
 
 <template>
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x:
         columnIndex === 0
           ? INITIAL_SETTINGS_POSITION.x

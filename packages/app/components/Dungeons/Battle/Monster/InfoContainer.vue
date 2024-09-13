@@ -30,8 +30,7 @@ onUnmounted(() => {
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
     <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 30,
         y: 20,
         text: prettifyName(activeMonster.key),
@@ -43,8 +42,7 @@ onUnmounted(() => {
       }"
       @update:display-width="(value: typeof nameDisplayWidth) => (nameDisplayWidth = value)"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: levelX,
         y: 23,
         text: `L${activeMonster.stats.level}`,
@@ -54,8 +52,7 @@ onUnmounted(() => {
         },
       }"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 30,
         y: 55,
         text: 'HP',
@@ -68,8 +65,7 @@ onUnmounted(() => {
     />
     <DungeonsUIBarContainer :type="BarType.Health" :position="{ x: 34, y: 34 }" :bar-percentage="healthBarPercentage" />
     <template v-if="!isEnemy">
-      <Text
-        :configuration="{
+      <DungeonsText        :configuration="{
           x: 443,
           y: 80,
           originX: 1,
@@ -81,8 +77,7 @@ onUnmounted(() => {
           },
         }"
       />
-      <Text
-        :configuration="{
+      <DungeonsText        :configuration="{
           x: 30,
           y: 100,
           text: 'EXP',

@@ -76,8 +76,7 @@ const preload = (scene: SceneWithPlugins) => {
       }"
       immediate
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x,
         y,
         origin: 0.5,
@@ -86,8 +85,7 @@ const preload = (scene: SceneWithPlugins) => {
       }"
       immediate
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x,
         y: y ? y + 50 : undefined,
         origin: 0.5,

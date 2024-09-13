@@ -18,8 +18,7 @@ const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex })
 </script>
 
 <template>
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: INITIAL_MENU_CURSOR_POSITION.x + MENU_CURSOR_POSITION_INCREMENT.x * columnIndex + 20,
       y: INITIAL_MENU_CURSOR_POSITION.y + MENU_CURSOR_POSITION_INCREMENT.y * rowIndex - 18,
       text,

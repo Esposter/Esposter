@@ -17,8 +17,7 @@ const y = 12;
 
 <template>
   <template v-if="dialogMessage.title">
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x,
         y,
         text: dialogMessage.title,
@@ -28,8 +27,7 @@ const y = 12;
         },
       }"
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x,
         y: y + DialogTextStyle.fontSize,
         text: dialogMessage.text,
@@ -40,8 +38,7 @@ const y = 12;
       }"
     />
   </template>
-  <Text
-    v-else
+  <DungeonsText    v-else
     :configuration="{
       x,
       y,

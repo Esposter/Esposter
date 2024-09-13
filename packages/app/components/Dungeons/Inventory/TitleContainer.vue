@@ -21,6 +21,6 @@ const panelHeight = 64;
         alpha: 0.6,
       }"
     />
-    <Text :configuration="{ x: 116, y: 28, origin: 0.5, text: 'Items', style: MenuTextStyle }" />
+    <DungeonsText:configuration="{ x: 116, y: 28, origin: 0.5, text: 'Items', style: MenuTextStyle }" />
   </Container>
 </template>

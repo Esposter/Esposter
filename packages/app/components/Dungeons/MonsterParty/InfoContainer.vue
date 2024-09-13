@@ -57,8 +57,7 @@ watch(
         }
       "
     />
-    <Text
-      :configuration="{
+    <DungeonsText      :configuration="{
         x: 15,
         y: 14,
         text: infoDialogMessage.text,

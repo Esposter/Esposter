@@ -22,8 +22,7 @@ const isValid = computed(() => unref(PlayerTitleMenuOptionGrid.validate({ x: col
 </script>
 
 <template>
-  <Text
-    :configuration="{
+  <DungeonsText    :configuration="{
       x: MENU_BACKGROUND_WIDTH / 2,
       y: INITIAL_CURSOR_POSITION.y + CURSOR_POSITION_INCREMENT.y * rowIndex - 1,
       origin: 0.5,
