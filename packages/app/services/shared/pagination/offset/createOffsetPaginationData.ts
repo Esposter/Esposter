@@ -29,7 +29,8 @@ export const createOffsetPaginationData = <TItem extends ItemMetadata>(items?: R
   };
 
   return {
-    hasMore,
+    // @TODO: https://github.com/vuejs/pinia/issues/2767
+    hasMore: hasMore as Ref<typeof hasMore.value>,
     initializeOffsetPaginationData,
     itemList,
     resetOffsetPaginationData,
