@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* package imports ([0d975a9](https://github.com/Esposter/Esposter/commit/0d975a9dc923ef8cd18d189820d5678a3cae6279))
+
+
+
+
+
 # [1.19.0](https://github.com/Esposter/Esposter/compare/v1.18.0...v1.19.0) (2024-09-13)
 
 

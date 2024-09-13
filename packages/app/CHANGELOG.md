@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
+
+
+### Bug Fixes
+
+* package imports ([4602c42](https://github.com/Esposter/Esposter/commit/4602c42e695aa12043b8694c25b8f20e667fec44))
+
+
+### Features
+
+* Upgrade vue-tsc to v2 + enable same name shorthand + fix up workspace packages ([749c3c2](https://github.com/Esposter/Esposter/commit/749c3c2a8f99518460f624c80433fa7dae52326b))
+
+
+
+
+
 # [1.19.0](https://github.com/Esposter/Esposter/compare/v1.18.0...v1.19.0) (2024-09-13)
 
 
