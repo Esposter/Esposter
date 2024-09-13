@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+
 import { useGame } from "@/lib/phaser/composables/useGame";
 import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
 import { Lifecycle } from "@/lib/phaser/models/lifecycle/Lifecycle";
@@ -10,10 +12,9 @@ import { getScene } from "@/lib/phaser/util/getScene";
 import { InjectionKeyMap } from "@/lib/phaser/util/InjectionKeyMap";
 import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
-import { Cameras, Scenes } from "phaser";
+import { Cameras, Scene, Scenes } from "phaser";
 
 interface SceneProps {
   autoStart?: true;
@@ -41,7 +42,7 @@ const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const volumeStore = useVolumeStore();
 const { volumePercentage } = storeToRefs(volumeStore);
-const NewScene = class extends SceneWithPlugins {
+const NewScene = class extends Scene {
   create(this: SceneWithPlugins) {
     emit("create", this);
     // MobileJoystick is an always active side scene

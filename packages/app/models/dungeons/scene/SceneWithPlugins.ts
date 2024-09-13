@@ -1,7 +1,7 @@
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { ScenePlugins } from "@/models/dungeons/scene/ScenePlugins";
+import type { Scene } from "phaser";
 
-import { applyScenePluginsMixin } from "@/models/dungeons/scene/ScenePlugins";
-import { Scene } from "phaser";
-
-export type SceneWithPlugins = { scene: { key: SceneKey } } & typeof SceneWithPlugins.prototype;
-export const SceneWithPlugins = applyScenePluginsMixin(Scene);
+export interface SceneWithPlugins extends Scene, ScenePlugins {
+  scene: { key: SceneKey } & Scene["scene"];
+}
