@@ -3,6 +3,7 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaser";
 
 import { FontKey } from "@/models/dungeons/keys/FontKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
@@ -10,7 +11,7 @@ import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
-import { Rectangle, SceneKey, usePhaserStore } from "vue-phaser";
+import { Rectangle, usePhaserStore } from "vue-phaser";
 import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
