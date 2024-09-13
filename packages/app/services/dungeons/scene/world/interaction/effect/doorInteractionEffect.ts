@@ -3,7 +3,6 @@ import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 
 import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/TeleportObjectProperty";
-import { useCameraStore } from "@/lib/phaser/store/camera";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
@@ -14,6 +13,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { NotFoundError } from "@esposter/shared";
 import { Cameras } from "phaser";
+import { useCameraStore } from "vue-phaser";
 
 export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const teleportObject = useGetInteractiveObject(teleportObjects);

@@ -1,9 +1,9 @@
-import { useTween } from "@/lib/phaser/composables/useTween";
 import { dayjs } from "@/services/dayjs";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
+import { useTween } from "vue-phaser";
 
 export const useMonsterInfoContainerAppearTween = (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();

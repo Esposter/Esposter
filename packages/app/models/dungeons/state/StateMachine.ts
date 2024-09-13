@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { State } from "@/models/dungeons/state/State";
+import type { SceneWithPlugins } from "vue-phaser";
 
 export class StateMachine<TStateName extends string> {
   currentState: State<null | TStateName> = { name: null };

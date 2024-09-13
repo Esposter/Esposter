@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
-import Image from "@/lib/phaser/components/Image.vue";
-import Scene from "@/lib/phaser/components/Scene.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { prettifyName } from "@/util/text/prettifyName";
+import { Image, Text } from "vue-phaser";
 
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { onPlayerInput } = monsterDetailsSceneStore;
 const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
@@ -19,7 +17,10 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.MonsterDetails" @update="(scene) => onPlayerInput(scene, controls.getInput(true))">
+  <DungeonsScene
+    :scene-key="SceneKey.MonsterDetails"
+    @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
+  >
     <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
@@ -77,5 +78,5 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
     />
     <DungeonsUIExperienceBar :position="{ x: 70, y: 200 }" :bar-percentage="barPercentage" />
     <DungeonsMonsterDetailsAttackList />
-  </Scene>
+  </DungeonsScene>
 </template>

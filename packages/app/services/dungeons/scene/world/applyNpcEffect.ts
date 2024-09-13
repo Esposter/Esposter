@@ -1,6 +1,6 @@
 import type { Effect } from "@/models/dungeons/npc/effect/Effect";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import { dayjs } from "@/services/dayjs";

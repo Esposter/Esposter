@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
+import { onShutdown } from "vue-phaser";
 
 export const useSlider = (scene: SceneWithPlugins, ...args: Parameters<SliderPlugin["add"]>) => {
   const slider = scene.sliderPlugin.add(...args);

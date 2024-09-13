@@ -1,10 +1,8 @@
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import { useInitializeControls } from "@/lib/phaser/composables/useInitializeControls";
-import { usePhaserStore } from "@/lib/phaser/store";
-import { getScene } from "@/lib/phaser/util/getScene";
 import { useSceneStore } from "@/store/dungeons/scene";
+import { getScene, usePhaserStore } from "vue-phaser";
 
 export const usePreviousScene = (currentSceneKey: SceneKey) => {
   const phaserStore = usePhaserStore();

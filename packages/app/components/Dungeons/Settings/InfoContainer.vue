@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import Container from "@/lib/phaser/components/Container.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import {
   INITIAL_SETTINGS_POSITION,
   MENU_HEIGHT,
   MENU_VERTICAL_PADDING,
 } from "@/services/dungeons/scene/settings/constants";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
+import { Container, onCreate, Text } from "vue-phaser";
 
 const settingsSceneStore = useSettingsSceneStore();
 const { infoText } = storeToRefs(settingsSceneStore);

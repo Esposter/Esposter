@@ -3,9 +3,9 @@ import type { Item } from "@/models/dungeons/item/Item";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import type { Direction, Position } from "grid-engine";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import EventEmitter from "eventemitter3";
 

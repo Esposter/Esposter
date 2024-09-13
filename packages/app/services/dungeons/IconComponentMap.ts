@@ -1,6 +1,6 @@
 import Anime from "@/assets/anime/icons/Anime.vue";
 import DungeonGate from "@/assets/dungeons/icons/DungeonGate.vue";
-import { toKebabCase } from "@/util/text/toKebabCase";
+import { toKebabCase } from "@esposter/shared";
 
 const ComponentMap: Record<string, Component> = {
   Anime,

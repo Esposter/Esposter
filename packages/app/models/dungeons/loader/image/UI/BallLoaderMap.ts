@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import cosmoBall from "@/assets/dungeons/UI/balls/cosmoBall.png";
 import damagedBall from "@/assets/dungeons/UI/balls/damagedBall.png";

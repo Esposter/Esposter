@@ -4,8 +4,8 @@ import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from 
 import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { uuidValidateV4 } from "@esposter/shared";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $client } = useNuxtApp();

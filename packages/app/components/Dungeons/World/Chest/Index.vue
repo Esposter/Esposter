@@ -2,9 +2,8 @@
 import type { Chest } from "@/models/dungeons/data/world/Chest";
 import type { Position } from "grid-engine";
 
-import Sprite from "@/lib/phaser/components/Sprite.vue";
-import { useAnimations } from "@/lib/phaser/composables/useAnimations";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import { Sprite, useAnimations } from "vue-phaser";
 
 interface ChestProps {
   chest: Chest;

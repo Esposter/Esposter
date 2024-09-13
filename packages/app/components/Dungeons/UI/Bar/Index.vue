@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import type { TweenBuilderConfiguration } from "@/lib/phaser/models/configuration/shared/TweenBuilderConfiguration";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { Tweens } from "phaser";
+import type { TweenBuilderConfiguration } from "vue-phaser";
 
-import Image from "@/lib/phaser/components/Image.vue";
-import { useTween } from "@/lib/phaser/composables/useTween";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { dayjs } from "@/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
+import { Image, useTween } from "vue-phaser";
 
 interface BarProps {
   barPercentage: number;

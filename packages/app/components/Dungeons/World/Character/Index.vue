@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import type { SpriteProps } from "@/lib/phaser/components/Sprite.vue";
 import type { MovementStarted } from "@/models/dungeons/gridEngine/MovementStarted";
 import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopped";
 import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
 import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/PositionChangeStarted";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Character } from "@/models/dungeons/scene/world/Character";
 import type { Position } from "grid-engine";
 import type { Subscription } from "rxjs";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import Sprite from "@/lib/phaser/components/Sprite.vue";
 import { Direction } from "grid-engine";
 import { filter } from "rxjs";
+import { Sprite } from "vue-phaser";
 
 export interface CharacterProps {
   id: Character["id"];
-  onComplete?: SpriteProps["onComplete"];
+  onComplete?: InstanceType<typeof Sprite>["$props"]["onComplete"];
   onMovementStarted?: (scene: SceneWithPlugins, ...args: Parameters<MovementStarted>) => ReturnType<MovementStarted>;
   onMovementStopped?: (scene: SceneWithPlugins, ...args: Parameters<MovementStopped>) => ReturnType<MovementStopped>;
   onPositionChangeFinished?: (
@@ -28,7 +27,7 @@ export interface CharacterProps {
   ) => ReturnType<PositionChangeStarted>;
   singleSidedSpritesheetDirection?: Character["singleSidedSpritesheetDirection"];
   speed?: number;
-  spriteConfiguration: SpriteProps["configuration"];
+  spriteConfiguration: InstanceType<typeof Sprite>["$props"]["configuration"];
   walkingAnimationMapping: Character["walkingAnimationMapping"];
 }
 

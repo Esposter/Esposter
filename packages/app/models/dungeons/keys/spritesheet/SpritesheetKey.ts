@@ -1,6 +1,6 @@
 import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
 import { CharacterKey } from "@/models/dungeons/keys/spritesheet/CharacterKey";
-import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@esposter/shared";
 import { z } from "zod";
 
 export const SpritesheetKey = mergeObjectsStrict(AttackKey, CharacterKey);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { onCreate } from "vue-phaser";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);

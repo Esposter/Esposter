@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { interactWithObject } from "@/services/dungeons/tilemap/interactWithObject";
 

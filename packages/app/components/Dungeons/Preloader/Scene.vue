@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
-import Scene from "@/lib/phaser/components/Scene.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { usePhaserStore } from "@/lib/phaser/store";
 import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
@@ -15,6 +11,7 @@ import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettifyName } from "@/util/text/prettifyName";
+import { Rectangle, Text, usePhaserStore } from "vue-phaser";
 import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
@@ -58,7 +55,7 @@ const preload = (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.Preloader" auto-start @preload="preload">
+  <DungeonsScene :scene-key="SceneKey.Preloader" auto-start @preload="preload">
     <Rectangle
       :configuration="{
         x,
@@ -100,5 +97,5 @@ const preload = (scene: SceneWithPlugins) => {
       }"
       immediate
     />
-  </Scene>
+  </DungeonsScene>
 </template>

@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
-import { useInjectSceneKey } from "@/lib/phaser/composables/useInjectSceneKey";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
-import { onNextTick } from "@/lib/phaser/hooks/onNextTick";
-import { onShutdown } from "@/lib/phaser/hooks/onShutdown";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
@@ -16,6 +12,7 @@ import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
+import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaser";
 
 const playerStore = usePlayerStore();
 const { player } = storeToRefs(playerStore);

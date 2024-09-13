@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import {
   CONTENT_MENU_WIDTH,
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
   MENU_PADDING,
 } from "@/services/dungeons/scene/inventory/constants";
+import { Container, Rectangle } from "vue-phaser";
 
 const itemOptionGrid = useItemOptionGrid();
 const panelHeight = 360;

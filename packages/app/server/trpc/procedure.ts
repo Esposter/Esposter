@@ -3,7 +3,7 @@ import type { z } from "zod";
 import { db } from "@/db";
 import { publicProcedure } from "@/server/trpc";
 import { isAuthed } from "@/server/trpc/middleware/auth";
-import { UUIDV4_REGEX } from "@/util/id/uuid/constants";
+import { UUIDV4_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const authedProcedure = publicProcedure.use(isAuthed);

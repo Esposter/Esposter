@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 export interface State<TStateName extends null | string> {
   name: TStateName;

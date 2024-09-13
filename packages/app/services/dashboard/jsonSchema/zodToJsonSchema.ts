@@ -1,5 +1,5 @@
 import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
-import type { TupleSlice } from "@/util/types/TupleSlice";
+import type { TupleSlice } from "@esposter/shared";
 import type { z } from "zod";
 
 import { recursiveAssignTitle } from "@/services/dashboard/jsonSchema/recusiveAssignTitle";

@@ -1,6 +1,6 @@
 import type { RouteLocationNormalized } from "vue-router";
 
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "@esposter/shared";
 
 export const validate = (route: RouteLocationNormalized) => {
   const id = route.params.id;

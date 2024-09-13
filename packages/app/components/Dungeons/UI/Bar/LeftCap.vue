@@ -2,7 +2,7 @@
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
-import Image from "@/lib/phaser/components/Image.vue";
+import { Image } from "vue-phaser";
 
 interface LeftCapProps {
   imagePosition: ImagePosition;

@@ -25,8 +25,5 @@
     "typecheck": "tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
-  "devDependencies": {
-    "@esposter/configuration": "workspace:*"
-  },
   "gitHead": "000547393d835453249a06f46fc9e652eea3119e"
 }

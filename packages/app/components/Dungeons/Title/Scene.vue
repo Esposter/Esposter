@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
-import Scene from "@/lib/phaser/components/Scene.vue";
-import Text from "@/lib/phaser/components/Text.vue";
-import { useInputStore } from "@/lib/phaser/store/input";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { useControlsStore } from "@/store/dungeons/controls";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
+import { Image, Text } from "vue-phaser";
 
 const buildVersion = await useBuildVersion();
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const titleSceneStore = useTitleSceneStore();
 const { onPlayerInput } = titleSceneStore;
 const x = ref<number>();
@@ -20,7 +18,7 @@ const versionY = ref<number>();
 </script>
 
 <template>
-  <Scene
+  <DungeonsScene
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {
@@ -66,5 +64,5 @@ const versionY = ref<number>();
         style: { color: 'white', fontSize: 24 },
       }"
     />
-  </Scene>
+  </DungeonsScene>
 </template>

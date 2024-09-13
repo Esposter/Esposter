@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Container from "@/lib/phaser/components/Container.vue";
-import Rectangle from "@/lib/phaser/components/Rectangle.vue";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { getGridKey } from "@/services/dungeons/getGridKey";
 import {
@@ -12,6 +10,7 @@ import {
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { Container, Rectangle } from "vue-phaser";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

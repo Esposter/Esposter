@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
-import Scene from "@/lib/phaser/components/Scene.vue";
-import { useCameraStore } from "@/lib/phaser/store/camera";
-import { useInputStore } from "@/lib/phaser/store/input";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { dayjs } from "@/services/dayjs";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { useCameraStore } from "vue-phaser";
 
 const cameraStore = useCameraStore();
 const { fadeIn } = cameraStore;
-const inputStore = useInputStore();
-const { controls } = storeToRefs(inputStore);
+const controlsStore = useControlsStore();
+const { controls } = storeToRefs(controlsStore);
 const inputResolvers = getActiveInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
@@ -30,7 +29,7 @@ const update = async (scene: SceneWithPlugins) => {
 </script>
 
 <template>
-  <Scene :scene-key="SceneKey.World" @create="create" @update="update">
+  <DungeonsScene :scene-key="SceneKey.World" @create="create" @update="update">
     <DungeonsWorldMap />
     <DungeonsWorldCharacterPlayer />
     <DungeonsWorldNpcList />
@@ -38,5 +37,5 @@ const update = async (scene: SceneWithPlugins) => {
     <DungeonsWorldMapForeground />
     <DungeonsWorldDialog />
     <DungeonsWorldMenu />
-  </Scene>
+  </DungeonsScene>
 </template>

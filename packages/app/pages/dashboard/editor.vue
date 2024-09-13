@@ -2,7 +2,7 @@
 import { VisualType } from "@/models/dashboard/VisualType";
 import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { uuidValidateV4 } from "@/util/id/uuid/uuidValidateV4";
+import { uuidValidateV4 } from "@esposter/shared";
 
 defineRouteRules({ ssr: false });
 

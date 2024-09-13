@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/title/styles/MenuTextStyle";
-import Text from "@/lib/phaser/components/Text.vue";
 import {
   CURSOR_POSITION_INCREMENT,
   INITIAL_CURSOR_POSITION,
@@ -9,6 +8,7 @@ import {
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
 import { Input } from "phaser";
+import { Text } from "vue-phaser";
 
 interface ContentTextProps {
   columnIndex: number;

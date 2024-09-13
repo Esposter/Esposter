@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import battleForestBackground from "@/assets/dungeons/scene/battle/forestBackground.png";
 import { BattleKey } from "@/models/dungeons/keys/image/BattleKey";

@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Geom, Math } from "phaser";

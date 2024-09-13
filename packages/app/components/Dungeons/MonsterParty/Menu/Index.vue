@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Position } from "grid-engine";
 
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { onCreate } from "vue-phaser";
 
 const monsterPartySceneStore = useMonsterPartySceneStore();
 const { sceneMode } = storeToRefs(monsterPartySceneStore);

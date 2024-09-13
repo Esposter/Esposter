@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import iceAttackActive from "@/assets/dungeons/thirdParty/pimen/iceAttack/active.png";
 import iceAttackStart from "@/assets/dungeons/thirdParty/pimen/iceAttack/start.png";

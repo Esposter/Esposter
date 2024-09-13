@@ -1,8 +1,8 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { calculateExperienceGain } from "@/services/dungeons/monster/calculateExperienceGain";

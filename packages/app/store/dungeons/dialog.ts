@@ -1,7 +1,7 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";

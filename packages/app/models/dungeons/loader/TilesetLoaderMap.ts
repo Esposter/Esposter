@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { AXULART_FOLDER_PATH, FIRST_PARTY_FOLDER_PATH } from "@/services/esposter/constants";

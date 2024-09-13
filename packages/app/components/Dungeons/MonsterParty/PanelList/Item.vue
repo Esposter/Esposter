@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import type { Monster } from "@/models/dungeons/monster/Monster";
 
-import Container from "@/lib/phaser/components/Container.vue";
-import Image from "@/lib/phaser/components/Image.vue";
-import Text from "@/lib/phaser/components/Text.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettifyName } from "@/util/text/prettifyName";
 import deepEqual from "fast-deep-equal";
 import { Input } from "phaser";
+import { Container, Image, Text } from "vue-phaser";
 
 interface PanelListItemProps {
   columnIndex: number;

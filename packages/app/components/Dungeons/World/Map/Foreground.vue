@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Image from "@/lib/phaser/components/Image.vue";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { Image } from "vue-phaser";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);

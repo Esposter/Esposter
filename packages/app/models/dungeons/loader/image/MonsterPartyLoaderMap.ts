@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { Loader } from "phaser";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import monsterPartyBackground from "@/assets/dungeons/scene/monsterParty/background.png";
 import monsterDetailsBackground from "@/assets/dungeons/scene/monsterParty/monsterDetailsBackground.png";

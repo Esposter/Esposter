@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MonsterAttackTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MonsterAttackTextStyle";
-import Text from "@/lib/phaser/components/Text.vue";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
+import { Text } from "vue-phaser";
 
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
 const { attackNameList } = storeToRefs(monsterDetailsSceneStore);

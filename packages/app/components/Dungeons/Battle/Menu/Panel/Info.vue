@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { DialogTextStyle } from "@/assets/dungeons/styles/DialogTextStyle";
-import Text from "@/lib/phaser/components/Text.vue";
-import { onCreate } from "@/lib/phaser/hooks/onCreate";
 import { ActivePanel } from "@/models/dungeons/scene/battle/menu/ActivePanel";
 import { WORD_PADDING } from "@/services/dungeons/UI/constants";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
+import { onCreate, Text } from "vue-phaser";
 
 const battleSceneStore = useBattleSceneStore();
 const { activePanel } = storeToRefs(battleSceneStore);

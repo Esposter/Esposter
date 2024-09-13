@@ -1,4 +1,4 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";

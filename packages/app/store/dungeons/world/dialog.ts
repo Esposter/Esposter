@@ -1,5 +1,5 @@
-import type { SceneWithPlugins } from "@/models/dungeons/scene/SceneWithPlugins";
 import type { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import type { SceneWithPlugins } from "vue-phaser";
 
 import { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import { DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";

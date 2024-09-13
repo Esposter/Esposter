@@ -1,5 +1,5 @@
 import { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
-import { mergeObjectsStrict } from "@/util/object/mergeObjectsStrict";
+import { mergeObjectsStrict } from "@esposter/shared";
 
 export const ExtraTilesetKey = {
   Dungeon: "Dungeon",
