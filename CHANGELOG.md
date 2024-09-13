@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+
+### Features
+
+* Upgrade typescript ([61c3d96](https://github.com/Esposter/Esposter/commit/61c3d96efcc02bbcbfbb85fa4b0fbd652f9129ba))
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

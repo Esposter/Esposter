@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "1.20.0",
+  "version": "1.20.1",
   "description": "Shareable configuration",
   "private": true,
   "type": "module",
