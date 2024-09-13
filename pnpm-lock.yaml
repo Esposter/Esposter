@@ -331,6 +331,9 @@ importers:
         specifier: ^3.23.3
         version: 3.23.3(zod@3.23.8)
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@nuxt/eslint':
         specifier: ^0.5.7
         version: 0.5.7(eslint@9.10.0(jiti@1.21.6))(magicast@0.3.4)(rollup@4.21.3)(typescript@5.4.5)(vite@5.4.4(@types/node@22.5.4)(sass@1.78.0)(terser@5.29.2))(webpack-sources@3.2.3)

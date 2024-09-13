@@ -139,6 +139,7 @@
     "@auth/core": "@TODO: Upgrading breaks authjs-nuxt"
   },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.5.7",
     "@nuxt/fonts": "^0.8.0",
     "@nuxt/scripts": "^0.6.6",
