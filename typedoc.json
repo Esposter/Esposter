@@ -6,6 +6,6 @@
     "entryPoints": ["src/index.ts"],
     "includeVersion": true
   },
-  "exclude": ["packages/app", "packages/configuration"],
+  "exclude": ["packages/app"],
   "out": "packages/app/public/docs"
 }

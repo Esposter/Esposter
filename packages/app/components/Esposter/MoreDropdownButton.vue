@@ -5,71 +5,57 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { mergeProps } from "vue";
 
 const { session, signOut, status } = useAuth();
-
-const items = computed<ListItem[]>(() =>
-  status.value === "unauthenticated"
+const items = computed<ListItem[]>(() => {
+  const commonItems: ListItem[] = [
+    {
+      href: RoutePath.About,
+      icon: "mdi-information",
+      title: "About",
+    },
+    {
+      href: RoutePath.Docs,
+      icon: "mdi-book-open-page-variant",
+      title: "Documentation",
+    },
+    {
+      href: RoutePath.Anime,
+      icon: "custom:anime",
+      title: "Anime",
+    },
+    {
+      href: RoutePath.PrivacyPolicy,
+      icon: "mdi-lock",
+      title: "Privacy Policy",
+    },
+    {
+      href: RoutePath.TermsAndConditions,
+      icon: "mdi-shield-lock",
+      title: "Terms & Conditions",
+    },
+  ];
+  return status.value === "unauthenticated"
     ? [
         {
           href: RoutePath.Login,
           icon: "mdi-login",
           title: "Login",
         },
-        {
-          href: RoutePath.About,
-          icon: "mdi-information",
-          title: "About",
-        },
-        {
-          href: RoutePath.Anime,
-          icon: "custom:anime",
-          title: "Anime",
-        },
-        {
-          href: RoutePath.PrivacyPolicy,
-          icon: "mdi-lock",
-          title: "Privacy Policy",
-        },
-        {
-          href: RoutePath.TermsAndConditions,
-          icon: "mdi-shield-lock",
-          title: "Terms & Conditions",
-        },
+        ...commonItems,
       ]
-    : status.value === "authenticated"
-      ? [
-          {
-            href: RoutePath.UserSettings,
-            icon: "mdi-cog",
-            title: "Settings",
-          },
-          {
-            href: RoutePath.About,
-            icon: "mdi-information",
-            title: "About",
-          },
-          {
-            href: RoutePath.Anime,
-            icon: "custom:anime",
-            title: "Anime",
-          },
-          {
-            href: RoutePath.PrivacyPolicy,
-            icon: "mdi-lock",
-            title: "Privacy Policy",
-          },
-          {
-            href: RoutePath.TermsAndConditions,
-            icon: "mdi-shield-lock",
-            title: "Terms & Conditions",
-          },
-          {
-            icon: "mdi-logout",
-            onClick: signOut,
-            title: "Logout",
-          },
-        ]
-      : [],
-);
+    : [
+        {
+          href: RoutePath.UserSettings,
+          icon: "mdi-cog",
+          title: "Settings",
+        },
+        ...commonItems,
+        {
+          icon: "mdi-logout",
+          onClick: signOut,
+          title: "Logout",
+        },
+      ];
+});
 const menu = ref(false);
 </script>
 
