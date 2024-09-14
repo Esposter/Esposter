@@ -66,7 +66,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
-          <v-hover v-slot="{ isHovering, props: hoverProps }">
+          <v-hover #default="{ isHovering, props: hoverProps }">
             <EsbabblerModelMessageOptionsMenu
               :message
               :is-hovering

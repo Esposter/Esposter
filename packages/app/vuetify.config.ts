@@ -89,6 +89,7 @@ const defaults: Defaults = {
   },
   VDialog: { maxWidth: "100%", width: 500 },
   VFileInput: { variant: "outlined" },
+  VListItem: { active: false },
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },
