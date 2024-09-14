@@ -14,8 +14,7 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
   if (!component) return {};
 
   const result: Record<string, Component> = {};
-  // @TODO: Remove this cast once vuetify/components import is fixed
-  const props = VuetifyComponentMap[component as keyof typeof VuetifyComponentMap].props as Record<
+  const props = VuetifyComponentMap[component].props as Record<
     string,
     { type?: Constructor<unknown> | Constructor<unknown>[] }
   >;

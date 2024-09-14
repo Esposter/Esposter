@@ -26,10 +26,4 @@ export const vite: NuxtConfig["vite"] = {
   },
   // Required for parse-tmx
   plugins: [nodePolyfills({ include: ["zlib"] })],
-  // @TODO: Remove this in vue 3.5
-  vue: {
-    script: {
-      propsDestructure: true,
-    },
-  },
 };
