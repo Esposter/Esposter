@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+
+### Bug Fixes
+
+* add back prop destructure option for now ([013f1f6](https://github.com/Esposter/Esposter/commit/013f1f67ea5bd9530d6cd6d4cb96d3843a32f357))
+* add back scripts ([813918b](https://github.com/Esposter/Esposter/commit/813918b70cf608574c1937ff4cddf434b8cd0d65))
+* add file ([cace75d](https://github.com/Esposter/Esposter/commit/cace75db2cb0b9cb4ee41101afd99ce0632498f8))
+* add read from env ([44bf360](https://github.com/Esposter/Esposter/commit/44bf3609f2c466807a5de617e51611a6e9cc2f74))
+* command ([720a7d1](https://github.com/Esposter/Esposter/commit/720a7d1b25e1c566da2efa5b3f7826f3be776484))
+* docs is external ([a507057](https://github.com/Esposter/Esposter/commit/a507057e043a97d4c5e213e772cea5c058758531))
+* don't specify hosted base url if env doesn't exist ([222d956](https://github.com/Esposter/Esposter/commit/222d956ea389bb00ef48db871dfa60888f53ab11))
+* exclude file ([4168244](https://github.com/Esposter/Esposter/commit/4168244768cbcd45bb463682374b9e48dbf23e34))
+* handle if env doesn't exist in pipeline ([6db801d](https://github.com/Esposter/Esposter/commit/6db801d2cea828d7788358f4750bc979ef1b89d8))
+* remove now unnecessary casts ([60564a0](https://github.com/Esposter/Esposter/commit/60564a0e83bed0985f74b810b6f9660db92a47f8))
+* scripts ([cf10240](https://github.com/Esposter/Esposter/commit/cf1024024f63df70ecb703b91ab3fa8188b17ef9))
+* scripts ([feedb93](https://github.com/Esposter/Esposter/commit/feedb93bd6cebad5e20bd0b18a7d6db460f49c37))
+* use back original tsconfig ([0d01770](https://github.com/Esposter/Esposter/commit/0d0177054c770bdc59b7ac5d5f993dbc62793f87))
+* use cross-platform-compatible scripts ([de5c87b](https://github.com/Esposter/Esposter/commit/de5c87bc33d7b321dedfa8f9537d5ad95d4a942d))
+
+
+
+
+
 # [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
 
 

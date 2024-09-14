@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+
+### Bug Fixes
+
+* add back prop destructure option for now ([013f1f6](https://github.com/Esposter/Esposter/commit/013f1f67ea5bd9530d6cd6d4cb96d3843a32f357))
+* add read from env ([44bf360](https://github.com/Esposter/Esposter/commit/44bf3609f2c466807a5de617e51611a6e9cc2f74))
+* docs is external ([a507057](https://github.com/Esposter/Esposter/commit/a507057e043a97d4c5e213e772cea5c058758531))
+* remove now unnecessary casts ([60564a0](https://github.com/Esposter/Esposter/commit/60564a0e83bed0985f74b810b6f9660db92a47f8))
+* use back original tsconfig ([0d01770](https://github.com/Esposter/Esposter/commit/0d0177054c770bdc59b7ac5d5f993dbc62793f87))
+
+
+
+
+
 # [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
 
 
