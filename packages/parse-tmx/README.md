@@ -1,4 +1,4 @@
-# parse-tmx [![NPM Version](https://img.shields.io/npm/v/parse-tmx.svg?style=flat)](https://www.npmjs.org/package/parse-tmx)
+# parse-tmx
 
 <p>
   <a href="https://www.npmjs.com/package/parse-tmx">
@@ -7,7 +7,7 @@
   <a href="https://www.npmjs.com/package/parse-tmx">
     <img src="https://img.shields.io/npm/dm/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
   </a>
-  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
+  <a href="https://github.com/Esposter/Esposter/tree/main/LICENSE">
     <img src="https://img.shields.io/github/license/parse-tmx/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
   </a>
 </p>
@@ -126,4 +126,4 @@ Parser only supports embedded tilesets. At the moment, external tilesets are not
 
 ## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
+[Apache-2.0 licensed](https://github.com/Esposter/Esposter/tree/main/LICENSE)
