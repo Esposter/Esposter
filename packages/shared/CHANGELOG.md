@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Features
+
+* Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+
+
+
+
+
 ## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
 
 **Note:** Version bump only for package @esposter/shared

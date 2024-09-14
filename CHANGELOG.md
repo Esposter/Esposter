@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* actually on second thought, we want latest docs so just rebuild everytime, it's pretty quick anyways ([d00cf37](https://github.com/Esposter/Esposter/commit/d00cf37adf9601ab19a0660bac9aee52957cf5e2))
+* cache docs instead to optimise perf ([e1fbae7](https://github.com/Esposter/Esposter/commit/e1fbae7dba7e411b42582262d909a5fb0d964e08))
+* imports + moving input active setter to lib ([2a62a9b](https://github.com/Esposter/Esposter/commit/2a62a9b01d40d8f615639f2df4d2a285cfacdb14))
+* license ([b3e06ac](https://github.com/Esposter/Esposter/commit/b3e06ac20fa8bbebf16d6d1d125dba207a659fe8))
+* lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
+* move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
+* readme ([a32ba22](https://github.com/Esposter/Esposter/commit/a32ba22983630d49ed721d27d71215bcf5ebecfe))
+* readme ([c8e3c2a](https://github.com/Esposter/Esposter/commit/c8e3c2a5b930275463d09f51ecd896c24009d380))
+
+
+### Features
+
+* Add documentation btn ([c3eb7f3](https://github.com/Esposter/Esposter/commit/c3eb7f3b5fb5ae8fd098d206055b173b588caf76))
+* Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+* Update parse-tmx doc ([6eb8b77](https://github.com/Esposter/Esposter/commit/6eb8b7760a0ffd28ba9d0ddb73790dae5aaa2a3d))
+
+
+
+
+
 ## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
 
 **Note:** Version bump only for package esposter
