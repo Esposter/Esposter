@@ -22,7 +22,13 @@
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "release": "pnpm build --no-private && pnpm lint:fix --no-private && pnpm typecheck --no-private && lerna publish --yes",
-    "refresh:lockfile": "rimraf -g pnpm-lock.yaml **/node_modules && pnpm i"
+    "pwsh": "pwsh -ExecutionPolicy Unrestricted"
+  },
+  "cross-os": {
+    "refresh:lockfile": {
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1",
+      "linux": "./scripts/refreshLockfile.sh"
+    }
   },
   "dependencies": {
     "data-urls": "^5.0.0",
@@ -34,6 +40,7 @@
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
+    "cross-os": "^1.5.0",
     "ctix": "^2.6.4",
     "eslint": "^9.10.0",
     "lerna": "^8.1.8",
