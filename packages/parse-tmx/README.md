@@ -25,7 +25,7 @@ A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
-```sh
+```bash
 pnpm i parse-tmx
 ```
 
