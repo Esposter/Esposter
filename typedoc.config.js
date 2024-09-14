@@ -1,9 +1,8 @@
 import { config } from "dotenv";
 
 config({ path: "packages/app/.env" });
-
 /** @type {Partial<import('typedoc').TypeDocOptions>} */
-export default {
+const typedocConfiguration = {
   entryPoints: ["packages/*"],
   name: "Documentation",
   entryPointStrategy: "packages",
@@ -12,7 +11,12 @@ export default {
     includeVersion: true,
   },
   exclude: ["packages/app", "packages/configuration"],
-  hostedBaseUrl: process.env.BASE_URL ? `${process.env.BASE_URL}/docs` : undefined,
-  useHostedBaseUrlForAbsoluteLinks: Boolean(process.env.BASE_URL),
   out: "packages/app/public/docs",
-};
+}
+
+if (process.env.BASE_URL) {
+  typedocConfiguration.hostedBaseUrl = `${process.env.BASE_URL}/docs`;
+  typedocConfiguration.useHostedBaseUrlForAbsoluteLinks = true;
+}
+
+export default typedocConfiguration;
