@@ -24,7 +24,6 @@ export default defineNuxtConfig({
   imports,
   modules,
   nitro,
-
   pwa,
   runtimeConfig,
   security,
