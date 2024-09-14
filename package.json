@@ -14,14 +14,17 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "lerna run build --ignore @esposter/app && pnpm run docs && lerna run build --scope=@esposter/app",
+    "build": "pnpm build:packages && pnpm run docs && lerna run build --scope=@esposter/app",
+    "build:packages": "lerna run build --ignore @esposter/app",
     "docs": "typedoc",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "typecheck": "lerna run typecheck",
+    "typecheck:packages": "lerna run typecheck --ignore @esposter/app",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm build --no-private && pnpm lint:fix --no-private && pnpm typecheck --no-private && lerna publish --yes",
+    "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
+    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "cross-os refresh:lockfile",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
