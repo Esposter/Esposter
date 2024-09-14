@@ -22,6 +22,7 @@
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "release": "pnpm build --no-private && pnpm lint:fix --no-private && pnpm typecheck --no-private && lerna publish --yes",
+    "refresh:lockfile": "cross-os refresh:lockfile",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "cross-os": {
