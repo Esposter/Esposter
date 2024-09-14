@@ -1,15 +1,38 @@
 # parse-tmx [![NPM Version](https://img.shields.io/npm/v/parse-tmx.svg?style=flat)](https://www.npmjs.org/package/parse-tmx)
 
+<p>
+  <a href="https://www.npmjs.com/package/parse-tmx">
+    <img src="https://img.shields.io/npm/v/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Version">
+  </a>
+  <a href="https://www.npmjs.com/package/parse-tmx">
+    <img src="https://img.shields.io/npm/dm/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
+  </a>
+  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/parse-tmx/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
+  </a>
+</p>
+
 Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
 
-## Installation
+Table of Contents
+🚀 Getting Started
+📖 Documentation
+⚖️ License
+
+---
+
+## <a name="getting-started">🚀 Getting Started</a>
 
 ```sh
 pnpm i parse-tmx
 ```
 
-## Usage
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/parse_tmx.html) to level up.
+
+### Usage
 
 The basic implementation:
 
@@ -28,11 +51,11 @@ const loadMap = async () => {
 };
 ```
 
-### Important
+#### Important
 
 Parser only supports embedded tilesets. At the moment, external tilesets are not supported!
 
-## Example data
+### Example data
 
 [TMX Map Format documentation](https://doc.mapeditor.org/en/stable/reference/tmx-map-format/)
 
@@ -101,6 +124,6 @@ Parser only supports embedded tilesets. At the moment, external tilesets are not
 }
 ```
 
-## License
+## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](../../LICENSE).
+[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
