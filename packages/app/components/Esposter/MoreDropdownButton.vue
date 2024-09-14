@@ -13,6 +13,7 @@ const items = computed<ListItem[]>(() => {
       title: "About",
     },
     {
+      external: true,
       href: RoutePath.Docs,
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
@@ -84,23 +85,24 @@ const menu = ref(false);
     </template>
     <v-list min-width="250">
       <NuxtInvisibleLink
-        v-for="item in items"
-        :key="item.title"
-        :to="item.href"
+        v-for="{ external, icon, title, href, onClick } in items"
+        :key="title"
+        :to="href"
+        :external
         @click="
           async () => {
-            await item.onClick?.();
+            await onClick?.();
             menu = false;
           }
         "
       >
-        <v-list-item :value="item.title">
+        <v-list-item :value="title">
           <template #prepend>
             <v-avatar color="background">
-              <v-icon :icon="item.icon" />
+              <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ item.title }}</v-list-item-title>
+          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>
