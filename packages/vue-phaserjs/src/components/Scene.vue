@@ -5,12 +5,14 @@ import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import { useGame } from "@/composables/useGame";
 import { Lifecycle } from "@/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/store";
+import { useCameraStore } from "@/store/camera";
+import { useInputStore } from "@/store/input";
 import { ExternalSceneStore } from "@/store/scene";
 import { getScene } from "@/utils/getScene";
 import { resetLifecycleListeners } from "@/utils/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "@/utils/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
-import { Scene, Scenes } from "phaser";
+import { Cameras, Scene, Scenes } from "phaser";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
@@ -23,6 +25,10 @@ const emit = defineEmits<{
 }>();
 const phaserStore = usePhaserStore();
 const { isSameScene, switchToScene } = phaserStore;
+const cameraStore = useCameraStore();
+const { isFading } = storeToRefs(cameraStore);
+const inputStore = useInputStore();
+const { isInputActive } = storeToRefs(inputStore);
 const { parallelSceneKeys } = storeToRefs(phaserStore);
 const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
 const NewScene = class extends Scene {
@@ -31,6 +37,7 @@ const NewScene = class extends Scene {
     runLifecycleListeners(this, Lifecycle.Create);
     this.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
     this.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
+    if (!isInputActive.value) isInputActive.value = true;
   }
 
   init(this: SceneWithPlugins) {
