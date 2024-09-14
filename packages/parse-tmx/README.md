@@ -7,7 +7,7 @@
   <a href="https://www.npmjs.com/package/parse-tmx">
     <img src="https://img.shields.io/npm/dm/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
   </a>
-  <a href="https://github.com/Esposter/Esposter/tree/main/LICENSE">
+  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/parse-tmx/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
   </a>
 </p>
@@ -15,10 +15,11 @@
 Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
 
-Table of Contents
-🚀 Getting Started
-📖 Documentation
-⚖️ License
+### Table of Contents
+
+- 🚀 [Getting Started](#getting-started)
+- 📖 [Documentation](#documentation)
+- ⚖️ [License](#license)
 
 ---
 
@@ -126,4 +127,4 @@ Parser only supports embedded tilesets. At the moment, external tilesets are not
 
 ## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](https://github.com/Esposter/Esposter/tree/main/LICENSE)
+[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
