@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/npm/dm/vue-phaserjs.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
   </a>
   <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/vue-phaserjs/vue-phaserjs.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
+    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
   </a>
 </p>
 

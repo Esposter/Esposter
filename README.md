@@ -1,5 +1,11 @@
 # [Esposter](https://esposter.com)
 
+<p>
+  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
+  </a>
+</p>
+
 ### Table of Contents
 
 - 📖 [Documentation](#documentation)
