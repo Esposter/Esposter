@@ -12,7 +12,7 @@ export default {
     includeVersion: true,
   },
   exclude: ["packages/app", "packages/configuration"],
-  hostedBaseUrl: `${process.env.BASE_URL}/docs`,
-  useHostedBaseUrlForAbsoluteLinks: true,
+  hostedBaseUrl: process.env.BASE_URL ? `${process.env.BASE_URL}/docs` : undefined,
+  useHostedBaseUrlForAbsoluteLinks: Boolean(process.env.BASE_URL),
   out: "packages/app/public/docs",
 };
