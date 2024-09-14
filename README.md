@@ -2,7 +2,6 @@
 
 ### Table of Contents
 
-- 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
 - ⚖️ [License](#license)
