@@ -29,6 +29,8 @@ const NewScene = class extends Scene {
   create(this: SceneWithPlugins) {
     emit("create", this);
     runLifecycleListeners(this, Lifecycle.Create);
+    this.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+    this.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   }
 
   init(this: SceneWithPlugins) {
@@ -52,13 +54,25 @@ const readyListener = () => {
   ExternalSceneStore.sceneReadyMap.set(sceneKey, true);
 };
 
+const fadeInCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
+};
+
+const fadeOutCompleteListener = () => {
+  isFading.value = false;
+  if (!isInputActive.value) isInputActive.value = true;
+};
+
 const shutdownListener = () => {
   const scene = getScene(sceneKey);
   resetLifecycleListeners(scene, Lifecycle.Update);
   resetLifecycleListeners(scene, Lifecycle.NextTick);
   runLifecycleListeners(scene, Lifecycle.Shutdown);
-  emit("shutdown", scene);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
   ExternalSceneStore.sceneReadyMap.set(sceneKey, false);
+  emit("shutdown", scene);
 };
 
 onMounted(async () => {

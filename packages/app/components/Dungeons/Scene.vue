@@ -39,25 +39,6 @@ const initializeRootScene = (scene: SceneWithPlugins) => {
 
   initializeSoundSetting(scene, settings.value.Sound);
   initializeVolumeSetting(scene, settings.value.Volume);
-
-  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
-};
-
-const onShutdown = (scene: SceneWithPlugins) => {
-  emit("shutdown", scene);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
-};
-
-const fadeInCompleteListener = () => {
-  isFading.value = false;
-  if (!isInputActive.value) isInputActive.value = true;
-};
-
-const fadeOutCompleteListener = () => {
-  isFading.value = false;
-  if (!isInputActive.value) isInputActive.value = true;
 };
 
 const initializeSoundSetting = (scene: SceneWithPlugins, soundSetting: SoundSetting) => {
@@ -88,7 +69,7 @@ watch(volumePercentage, (newVolumePercentage) => {
     @init="(...args) => emit('init', ...args)"
     @preload="(...args) => emit('preload', ...args)"
     @update="(...args) => emit('update', ...args)"
-    @shutdown="onShutdown"
+    @shutdown="(...args) => emit('shutdown', ...args)"
   >
     <slot />
   </Scene>
