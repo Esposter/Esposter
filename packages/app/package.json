@@ -29,13 +29,12 @@
     "lint:fix": "cross-env TIMING=1 eslint --config eslint.light.config.js --fix .",
     "lint:all": "cross-env TIMING=1 eslint .",
     "lint:all:fix": "cross-env TIMING=1 eslint --fix .",
-    "db:run": "pnpm script:run node_modules/drizzle-kit/bin.cjs",
+    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm db:run generate",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "gen-env": "gen-env-types .env -o env.d.ts -e .",
-    "tiled:gen": "pnpm script:run scripts/tiled/generate.ts",
-    "script:run": "tsx --tsconfig tsconfig.script.json"
+    "tiled:gen": "tsx scripts/tiled/generate.ts"
   },
   "scriptsComments": {
     "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
