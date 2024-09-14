@@ -20,7 +20,7 @@
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "typecheck": "lerna run typecheck",
-    "typecheck:packages": "lerna run typecheck --ignore @esposter/app",
+    "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
