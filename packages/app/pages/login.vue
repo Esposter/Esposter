@@ -71,7 +71,7 @@ const providerProps = ref<ProviderProps[]>([
               @click="signIn(provider)"
             >
               <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-              <span class="text-#fff" font-bold mx-auto>{{ toTitleCase(provider) }}</span>
+              <span font-bold text-white mx-auto>{{ toTitleCase(provider) }}</span>
             </button>
           </template>
         </v-container>

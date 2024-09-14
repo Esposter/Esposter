@@ -49,7 +49,7 @@ const onGridClick = useOnGridClick(
         color:
           settings[SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) as keyof typeof settings] === text
             ? '#ff2222'
-            : '#fff',
+            : 'white',
       },
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="onGridClick"
