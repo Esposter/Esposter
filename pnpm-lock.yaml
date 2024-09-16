@@ -353,8 +353,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(encoding@0.1.13)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.29.2))(webpack-sources@3.2.3)
       '@nuxt/scripts':
-        specifier: ^0.9.2
-        version: 0.9.2(dmhpob5zp2nudnyl75qusmlzge)
+        specifier: 0.6.6
+        version: 0.6.6(dmhpob5zp2nudnyl75qusmlzge)
       '@nuxt/test-utils':
         specifier: ^3.14.2
         version: 3.14.2(@vue/test-utils@2.4.6)(h3@1.12.0)(happy-dom@15.7.4)(magicast@0.3.4)(nitropack@2.9.7(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(encoding@0.1.13)(magicast@0.3.4)(webpack-sources@3.2.3)(xml2js@0.6.2))(rollup@4.21.3)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.29.2))(vitest@2.1.1(@types/node@22.5.5)(happy-dom@15.7.4)(sass@1.78.0)(terser@5.29.2))(vue-router@4.4.5(vue@3.5.5(typescript@5.6.2)))(vue@3.5.5(typescript@5.6.2))(webpack-sources@3.2.3)
@@ -2713,8 +2713,8 @@ packages:
     resolution: {integrity: sha512-CCZgpm+MkqtOMDEgF9SWgGPBXlQ01hV/6+2reDEpJuqFPGzV8HYKPBcIFvn7/z5ahtgutHLzjP71Na+hYcqSpw==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  '@nuxt/scripts@0.9.2':
-    resolution: {integrity: sha512-2BgLzVNotv8a8j3E+dTsVvGqs/XE8TKoALj5Z7Vi+t8nvxXUHJZtiPQl2Srs8UYW+2kCQOcrSbNOrZLMkGC5jQ==}
+  '@nuxt/scripts@0.6.6':
+    resolution: {integrity: sha512-x2lC9L+zdyQEa3QiN0k86X8d2MD9nQTSRBFf3y0t1jEw0wi9MCijUAsBNX+T+ycGXt1yqXNiZlkcty1NGPFS5w==}
 
   '@nuxt/telemetry@2.5.3':
     resolution: {integrity: sha512-Ghv2MgWbJcUM9G5Dy3oQP0cJkUwEgaiuQxEF61FXJdn0a69Q4StZEP/hLF0MWPM9m6EvAwI7orxkJHM7MrmtVg==}
@@ -3287,6 +3287,9 @@ packages:
   '@rushstack/ts-command-line@4.22.6':
     resolution: {integrity: sha512-QSRqHT/IfoC5nk9zn6+fgyqOPXHME0BfchII9EUPR19pocsNp/xSbeBCbD3PIR2Lg+Q5qk7OFqk1VhWPMdKHJg==}
 
+  '@shikijs/core@1.12.1':
+    resolution: {integrity: sha512-biCz/mnkMktImI6hMfMX3H9kOeqsInxWEyCHbSlL8C/2TR1FqfmGxTLRNwYCKsyCyxWLbB8rEqXRVZuyxuLFmA==}
+
   '@shikijs/core@1.17.6':
     resolution: {integrity: sha512-9ztslig6/YmCg/XwESAXbKjAjOhaq6HVced9NY6qcbDz1X5g/S90Wco2vMjBNX/6V71ASkzri76JewSGPa7kiQ==}
 
@@ -3693,8 +3696,8 @@ packages:
   '@types/xml2js@0.4.14':
     resolution: {integrity: sha512-4YnrRemBShWRO2QjvUin8ESA41rH+9nQGLUGZV/1IDhi3SL9OhdpNC/MrulTWuptXKwhx/aDxE7toV0f/ypIXQ==}
 
-  '@types/youtube@0.1.0':
-    resolution: {integrity: sha512-Pg33m3X2mFgdmhtvzOlAfUfgOa3341N3/2JCrVY/mXVxb4hagcqqEG6w4vGCfB64StQNWHSj/T8Eotb1Rko/FQ==}
+  '@types/youtube@0.0.50':
+    resolution: {integrity: sha512-d4GpH4uPYp9W07kc487tiq6V/EUHl18vZWFMbQoe4Sk9LXEWzFi/BMf9x7TI4m7/j7gU3KeX8H6M8aPBgykeLw==}
 
   '@typescript-eslint/eslint-plugin@8.5.0':
     resolution: {integrity: sha512-lHS5hvz33iUFQKuPFGheAB84LwcJ60G8vKnEhnfcK1l8kGVLro2SFYW6K0/tj8FUhRJ0VHyg1oAfg50QGbPPHw==}
@@ -8902,6 +8905,9 @@ packages:
   shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
 
+  shiki@1.12.1:
+    resolution: {integrity: sha512-nwmjbHKnOYYAe1aaQyEBHvQymJgfm86ZSS7fT8OaPRr4sbAcBNz7PbfAikMEFSDQ6se2j2zobkXvVKcBOm0ysg==}
+
   shiki@1.17.6:
     resolution: {integrity: sha512-RejGugKpDM75vh6YtF9R771acxHRDikC/01kxsUGW+Pnaz3pTY+c8aZB5CnD7p0vuFPs1HaoAIU/4E+NCfS+mQ==}
 
@@ -9967,8 +9973,8 @@ packages:
     peerDependencies:
       '@vue/compiler-core': ^3.3
 
-  valibot@0.42.0:
-    resolution: {integrity: sha512-igMdmHXxDiQY714ssh9bGisMqJ2yg7sko1KOmv/omnrIacGtP6mGrbvVT1IuV1bDrHyG9ybgpHwG1UElDiDCLg==}
+  valibot@0.37.0:
+    resolution: {integrity: sha512-FQz52I8RXgFgOHym3XHYSREbNtkgSjF9prvMFH1nBsRyfL6SfCzoT1GuSDTlbsuPubM7/6Kbw0ZMQb8A+V+VsQ==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -13667,7 +13673,7 @@ snapshots:
       - supports-color
       - webpack-sources
 
-  '@nuxt/scripts@0.9.2(dmhpob5zp2nudnyl75qusmlzge)':
+  '@nuxt/scripts@0.6.6(dmhpob5zp2nudnyl75qusmlzge)':
     dependencies:
       '@nuxt/devtools-kit': 1.4.2(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.29.2))(webpack-sources@3.2.3)
       '@nuxt/devtools-ui-kit': 1.4.2(qqxuhvit34rc7y667zxkbwrihy)
@@ -13675,9 +13681,9 @@ snapshots:
       '@types/google.maps': 3.58.0
       '@types/stripe-v3': 3.1.33
       '@types/vimeo__player': 2.18.3
-      '@types/youtube': 0.1.0
+      '@types/youtube': 0.0.50
       '@unhead/vue': 1.11.6(vue@3.5.5(typescript@5.6.2))
-      '@vueuse/core': 11.1.0(vue@3.5.5(typescript@5.6.2))
+      '@vueuse/core': 10.11.1(vue@3.5.5(typescript@5.6.2))
       consola: 3.2.3
       defu: 6.1.4
       h3: 1.12.0
@@ -13688,7 +13694,7 @@ snapshots:
       pathe: 1.1.2
       pkg-types: 1.2.0
       semver: 7.6.3
-      shiki: 1.17.6
+      shiki: 1.12.1
       sirv: 2.0.4
       std-env: 3.7.0
       third-party-capital: 2.3.0
@@ -13696,7 +13702,7 @@ snapshots:
       unimport: 3.12.0(rollup@4.21.3)(webpack-sources@3.2.3)
       unplugin: 1.14.1(webpack-sources@3.2.3)
       unstorage: 1.12.0(@azure/data-tables@13.2.2)(@azure/storage-blob@12.24.0)(ioredis@5.4.1)
-      valibot: 0.42.0(typescript@5.6.2)
+      valibot: 0.37.0(typescript@5.6.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -14345,6 +14351,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  '@shikijs/core@1.12.1':
+    dependencies:
+      '@types/hast': 3.0.4
+
   '@shikijs/core@1.17.6':
     dependencies:
       '@shikijs/engine-javascript': 1.17.6
@@ -14794,7 +14804,7 @@ snapshots:
     dependencies:
       '@types/node': 22.5.4
 
-  '@types/youtube@0.1.0': {}
+  '@types/youtube@0.0.50': {}
 
   '@typescript-eslint/eslint-plugin@8.5.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.6.2))(eslint@9.10.0(jiti@1.21.6))(typescript@5.6.2)':
     dependencies:
@@ -21230,6 +21240,11 @@ snapshots:
 
   shell-quote@1.8.1: {}
 
+  shiki@1.12.1:
+    dependencies:
+      '@shikijs/core': 1.12.1
+      '@types/hast': 3.0.4
+
   shiki@1.17.6:
     dependencies:
       '@shikijs/core': 1.17.6
@@ -22383,7 +22398,7 @@ snapshots:
     dependencies:
       '@vue/compiler-core': 3.5.6
 
-  valibot@0.42.0(typescript@5.6.2):
+  valibot@0.37.0(typescript@5.6.2):
     optionalDependencies:
       typescript: 5.6.2
 
