@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
-  "version": "1.21.2",
+  "version": "1.21.3",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -142,7 +142,7 @@
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.5.7",
     "@nuxt/fonts": "^0.8.0",
-    "@nuxt/scripts": "0.6.6",
+    "@nuxt/scripts": "^0.9.2",
     "@nuxt/test-utils": "^3.14.2",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
@@ -176,7 +176,6 @@
     "vuetify-nuxt-module": "^0.18.3"
   },
   "devDependenciesComments": {
-    "@nuxt/scripts": "@TODO: Upgrading breaks typechecking",
     "nuxt": "@TODO: Upgrading breaks phaser"
   }
 }
