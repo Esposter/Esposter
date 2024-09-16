@@ -211,10 +211,10 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ## <a name="local-development">🏠 Local Development</a>
 
-1. Install the js dependencies:
+1. Install the js dependencies and build the packages:
 
 ```bash
-pnpm i
+pnpm i && pnpm build:packages
 ```
 
 2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
