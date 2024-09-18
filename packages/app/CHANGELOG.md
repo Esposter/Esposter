@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* revert @nuxt/scripts ver ([9940713](https://github.com/Esposter/Esposter/commit/994071312ee14f0541e420c6c6eabc0d97656150))
+
+
+
+
+
 ## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
 
 

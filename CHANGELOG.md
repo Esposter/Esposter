@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* description ([cd55c53](https://github.com/Esposter/Esposter/commit/cd55c537f89259fb214290cfacb09b248dcb55f0))
+* pnpm lock for types/node ([2d6ae62](https://github.com/Esposter/Esposter/commit/2d6ae6291b16c1ac9caca45827d43caa8b7db4bc))
+* revert @nuxt/scripts ver ([9940713](https://github.com/Esposter/Esposter/commit/994071312ee14f0541e420c6c6eabc0d97656150))
+
+
+
+
+
 ## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
 
 
