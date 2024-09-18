@@ -8,8 +8,8 @@ import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { sleep } from "@/util/time/sleep";
 import { Cameras } from "phaser";
+import { sleep } from "vue-phaserjs";
 
 export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: Effect | undefined) => {
   if (!effect) return;
@@ -39,7 +39,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
     case EffectType.SceneFade:
       scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
       scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
-        await sleep(dayjs.duration(1, "seconds").asMilliseconds());
+        await sleep(scene, dayjs.duration(1, "seconds").asMilliseconds());
         scene.cameras.main.fadeIn(dayjs.duration(1, "seconds").asMilliseconds());
         scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
           onComplete();

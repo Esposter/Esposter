@@ -1,13 +1,14 @@
+import type { SceneWithPlugins } from "vue-phaserjs";
+
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { dayjs } from "@/services/dayjs";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { sleep } from "@/util/time/sleep";
 import { Math } from "phaser";
-import { useTween } from "vue-phaserjs";
+import { sleep, useTween } from "vue-phaserjs";
 
-export const useThrowBallAnimation = async (captureResult: CaptureResult) => {
+export const useThrowBallAnimation = async (scene: SceneWithPlugins, captureResult: CaptureResult) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   const ballStore = useBallStore();
@@ -91,7 +92,7 @@ export const useThrowBallAnimation = async (captureResult: CaptureResult) => {
   await playThrowBallAnimation();
   await playCatchEnemyAnimation();
   await playShakeBallAnimation();
-  await sleep(dayjs.duration(0.5, "seconds").asMilliseconds());
+  await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
   isVisible.value = false;
   if (captureResult !== CaptureResult.Success) await playCatchEnemyFailedAnimation();
 };
