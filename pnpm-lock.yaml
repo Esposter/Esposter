@@ -223,8 +223,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       grid-engine:
-        specifier: ^2.45.0
-        version: 2.45.0(phaser@3.85.2)
+        specifier: ^2.45.4
+        version: 2.45.4(phaser@3.85.2)
       grid-layout-plus:
         specifier: ^1.0.5
         version: 1.0.5(vue@3.5.5(typescript@5.6.2))
@@ -6485,10 +6485,10 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  grid-engine@2.45.0:
-    resolution: {integrity: sha512-2Zh+cTf/DIbFCibmrPhQMIjgtwsFwmbn1pkMb+8adfVd4K8oI2/nlTqkdNWSX7ACFzvfkLmUODcopzM4zN4x1A==}
+  grid-engine@2.45.4:
+    resolution: {integrity: sha512-J579YYjP1St/en/ko88FtPw8VCTa8NrfQDuY/pIPtnkHGEoMsXMUDjyAcCJvhvXSQD/6L7Zw73HsfFmVl4hOyQ==}
     peerDependencies:
-      phaser: ~3.80.1
+      phaser: ~3.85.2
 
   grid-layout-plus@1.0.5:
     resolution: {integrity: sha512-5EUNN4soj4k/yiFw3Y6u9PLRyOrDu/uBUaVLZ9MsoPWicSLRIin+EBnF8SUKnA9mjIhrDdYRG7sJSbdaXCHdPg==}
@@ -18429,7 +18429,7 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  grid-engine@2.45.0(phaser@3.85.2):
+  grid-engine@2.45.4(phaser@3.85.2):
     dependencies:
       mnemonist: 0.39.8
       phaser: 3.85.2
