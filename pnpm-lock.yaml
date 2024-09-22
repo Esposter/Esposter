@@ -211,8 +211,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.8.0)(postgres@3.4.4))(zod@3.23.8)
       emoji-mart-vue-fast:
-        specifier: ^15.0.2
-        version: 15.0.2(vue@3.5.7(typescript@5.6.2))
+        specifier: ^15.0.3
+        version: 15.0.3(vue@3.5.7(typescript@5.6.2))
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -1367,10 +1367,6 @@ packages:
 
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
-
-  '@babel/runtime@7.24.5':
-    resolution: {integrity: sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.25.6':
     resolution: {integrity: sha512-VBj9MYyDb9tuLq7yzqjgzt6Q+IBQLrGZfdjOekyEirZPHxXWoTSGUTMrpsfi58Up73d13NfYLv8HT9vmznjzhQ==}
@@ -5732,8 +5728,8 @@ packages:
   elliptic@6.5.7:
     resolution: {integrity: sha512-ESVCtTwiA+XhY3wyh24QqRGBoP3rEdDUl3EDUUo9tft074fi19IrdpH7hLCMMP3CIj7jb3W96rn8lt/BqIlt5Q==}
 
-  emoji-mart-vue-fast@15.0.2:
-    resolution: {integrity: sha512-q7VaE6yRrlQd+jpHPToh1XnIatgACkQjBj0vQ7uNaWrbVsKlhZaOsqZVoegT5IZt5XkYoR2x4MHMNep/BJP9rw==}
+  emoji-mart-vue-fast@15.0.3:
+    resolution: {integrity: sha512-PBCzUb2iSLIF8LBHvp63vB3EWhrpGs0fg2JcHnHVKVNFOQeahkbU2NpkCtwFFa/Ed3ODKGUG9mcTzws4owxj4w==}
     peerDependencies:
       vue: '>2.0.0'
 
@@ -11819,10 +11815,6 @@ snapshots:
 
   '@babel/regjsgen@0.8.0': {}
 
-  '@babel/runtime@7.24.5':
-    dependencies:
-      regenerator-runtime: 0.14.1
-
   '@babel/runtime@7.25.6':
     dependencies:
       regenerator-runtime: 0.14.1
@@ -17391,9 +17383,9 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
-  emoji-mart-vue-fast@15.0.2(vue@3.5.7(typescript@5.6.2)):
+  emoji-mart-vue-fast@15.0.3(vue@3.5.7(typescript@5.6.2)):
     dependencies:
-      '@babel/runtime': 7.24.5
+      '@babel/runtime': 7.25.6
       core-js: 3.36.0
       vue: 3.5.7(typescript@5.6.2)
 
