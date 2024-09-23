@@ -25,7 +25,8 @@
     "lint:fix": "lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "cross-os refresh:lockfile",
+    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
+    "cross-os": "node scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "cross-os": {
@@ -44,7 +45,6 @@
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
-    "cross-os": "^1.5.0",
     "ctix": "^2.6.4",
     "dotenv": "^16.4.5",
     "eslint": "^9.11.0",

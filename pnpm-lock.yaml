@@ -30,9 +30,6 @@ importers:
       '@types/xml2js':
         specifier: ^0.4.14
         version: 0.4.14
-      cross-os:
-        specifier: ^1.5.0
-        version: 1.5.0
       ctix:
         specifier: ^2.6.4
         version: 2.6.4(prettier-plugin-organize-imports@3.2.4(prettier@3.3.3)(typescript@5.6.2))(prettier@3.3.3)(typescript@5.6.2)
@@ -5230,10 +5227,6 @@ packages:
 
   cross-fetch@4.0.0:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
-
-  cross-os@1.5.0:
-    resolution: {integrity: sha512-zjiZPGuzghQzjcymlI7oUh5iDCRlhfi9UBqkCmqxnnx/5B+K1+BgIm0YU+fua7GC+RoeywS0qsoEavRM+Kahxw==}
-    hasBin: true
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -17009,8 +17002,6 @@ snapshots:
       node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
-
-  cross-os@1.5.0: {}
 
   cross-spawn@7.0.3:
     dependencies:
