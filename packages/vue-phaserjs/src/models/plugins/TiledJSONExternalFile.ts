@@ -52,6 +52,8 @@ export class TiledJSONExternalFile extends MultiFile {
     if (!this.isReadyToProcess()) return;
 
     const [tilemapFile, ...tilesetFiles] = this.files;
+    if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
+
     for (const tilesetFile of tilesetFiles) {
       const response = tilesetFile.xhrLoader?.responseText;
       if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
@@ -84,46 +86,46 @@ export class TiledJSONExternalFile extends MultiFile {
 
     this.pending--;
 
-    if (file.type === "json" && Object.hasOwn(file.data, "tilesets")) {
-      //  Inspect the data for the files to now load
-      const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
-      const config = this.config;
-      const loader = this.loader;
-      const currentBaseURL = loader.baseURL;
-      const currentPath = loader.path;
-      const currentPrefix = loader.prefix;
-      const baseURL = GetFastValue(config, "baseURL", currentBaseURL);
-      const path = GetFastValue(config, "path", currentPath);
-      const prefix = GetFastValue(config, "prefix", currentPrefix);
-      const tilesetXhrSettings = GetFastValue(config, "tilesetXhrSettings");
+    if (!(file.type === "json" && Object.hasOwn(file.data, "tilesets"))) return;
 
-      loader.setBaseURL(baseURL);
-      loader.setPath(path);
-      loader.setPrefix(prefix);
+    //  Inspect the data for the files to now load
+    const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
+    const config = this.config;
+    const loader = this.loader;
+    const currentBaseURL = loader.baseURL;
+    const currentPath = loader.path;
+    const currentPrefix = loader.prefix;
+    const baseURL = GetFastValue(config, "baseURL", currentBaseURL);
+    const path = GetFastValue(config, "path", currentPath);
+    const prefix = GetFastValue(config, "prefix", currentPrefix);
+    const tilesetXhrSettings = GetFastValue(config, "tilesetXhrSettings");
 
-      for (const [index, tileset] of tilesets.entries()) {
-        // Tileset is relative to the tilemap filename, but we will expose our tilesets
-        // in nuxt's public folder, so we just need to get the relative path past that
-        const publicString = "public";
-        const pathIndex = tileset.source.indexOf(publicString);
-        if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
+    loader.setBaseURL(baseURL);
+    loader.setPath(path);
+    loader.setPrefix(prefix);
 
-        const relativePath = tileset.source.substring(pathIndex + publicString.length);
-        const tilesetFile = new TilesetFile(
-          index,
-          loader,
-          `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
-          relativePath,
-          tilesetXhrSettings,
-        );
-        this.addToMultiFile(tilesetFile);
-        loader.addFile(tilesetFile);
-      }
+    for (const [index, tileset] of tilesets.entries()) {
+      // Tileset is relative to the tilemap filename, but we will expose our tilesets
+      // in nuxt's public folder, so we just need to get the relative path past that
+      const publicString = "public";
+      const pathIndex = tileset.source.indexOf(publicString);
+      if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
-      //  Reset the loader settings
-      loader.setBaseURL(currentBaseURL);
-      loader.setPath(currentPath);
-      loader.setPrefix(currentPrefix);
+      const relativePath = tileset.source.substring(pathIndex + publicString.length);
+      const tilesetFile = new TilesetFile(
+        index,
+        loader,
+        `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
+        relativePath,
+        tilesetXhrSettings,
+      );
+      this.addToMultiFile(tilesetFile);
+      loader.addFile(tilesetFile);
     }
+
+    //  Reset the loader settings
+    loader.setBaseURL(currentBaseURL);
+    loader.setPath(currentPath);
+    loader.setPrefix(currentPrefix);
   }
 }
