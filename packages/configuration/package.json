@@ -22,7 +22,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-typescript": "^12.1.0",
     "@unocss/eslint-config": "^0.62.4",
     "@vitejs/plugin-vue": "^5.1.4",
     "eslint-config-prettier": "^9.1.0",
