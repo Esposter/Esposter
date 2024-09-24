@@ -19,7 +19,7 @@ const displayNoPoints = computed(() => formatNumberLong(game.value.noPoints, 3))
       <ClickerModelStoreHeader pt-4 />
       <ClickerModelStoreList />
     </template>
-    <v-container h-full flex justify-center flex-col items-center>
+    <v-container h-full flex justify-center items-center flex-col>
       <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />
