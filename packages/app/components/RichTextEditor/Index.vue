@@ -12,11 +12,11 @@ interface RichTextEditorProps {
   extensions?: AnyExtension[];
   height?: string;
   limit: number;
-  placeholder: string;
+  placeholder?: string;
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { extensions, height = "15rem", limit, placeholder } = defineProps<RichTextEditorProps>();
+const { extensions, height = "15rem", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
@@ -46,7 +46,8 @@ onUnmounted(() => editor.value?.destroy());
       <EditorContent :editor />
       <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor>
         <template #prepend="editorProps">
-          <slot name="prepend-footer" :="editorProps" />
+          <slot v-if="slots['prepend-footer']" name="prepend-footer" :="editorProps" />
+          <RichTextEditorCustomEmojiPickerButton v-else :editor="editorProps.editor" tooltip="Select an emoji" />
         </template>
         <template #append="editorProps">
           <slot name="append-footer" :="editorProps" />
