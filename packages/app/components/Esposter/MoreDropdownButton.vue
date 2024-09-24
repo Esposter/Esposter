@@ -85,7 +85,7 @@ const menu = ref(false);
     </template>
     <v-list min-width="250">
       <NuxtInvisibleLink
-        v-for="{ external, icon, title, href, onClick } in items"
+        v-for="{ external, icon, title, href, onClick } of items"
         :key="title"
         :to="href"
         :external

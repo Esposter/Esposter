@@ -4,9 +4,9 @@ import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in unref(PlayerTitleMenuOptionGrid.grid)" :key="rowIndex">
+  <template v-for="(row, rowIndex) of unref(PlayerTitleMenuOptionGrid.grid)" :key="rowIndex">
     <DungeonsTitleMenuContentText
-      v-for="(text, columnIndex) in row"
+      v-for="(text, columnIndex) of row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index
       :column-index

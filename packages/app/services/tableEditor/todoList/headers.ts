@@ -6,7 +6,7 @@ import { tableEditorHeaders } from "@/services/tableEditor/headers";
 
 export const todoListHeaders: DataTableHeader[] = [
   ...tableEditorHeaders,
-  { key: "notes", sortable: false, title: "Notes" },
+  { isRichText: true, key: "notes", sortable: false, title: "Notes" },
   {
     key: "dueAt",
     title: "Due Date",

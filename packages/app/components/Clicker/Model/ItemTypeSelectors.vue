@@ -10,7 +10,7 @@ const { surface } = useColors();
 </script>
 
 <template>
-  <v-tooltip v-for="clickerType in Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
+  <v-tooltip v-for="clickerType of Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
     <template #activator="{ props }">
       <v-btn class="border-sm" :="props" :active="game.type === clickerType" @click="game.type = clickerType">
         <svg size-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

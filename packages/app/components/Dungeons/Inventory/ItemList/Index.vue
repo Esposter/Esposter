@@ -5,9 +5,9 @@ const itemOptionGrid = useItemOptionGrid();
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in unref(itemOptionGrid.grid)" :key="rowIndex">
+  <template v-for="(row, rowIndex) of unref(itemOptionGrid.grid)" :key="rowIndex">
     <DungeonsInventoryItemListItemContainer
-      v-for="(item, columnIndex) in row"
+      v-for="(item, columnIndex) of row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index
       :column-index

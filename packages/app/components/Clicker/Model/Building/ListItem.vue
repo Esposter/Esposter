@@ -38,7 +38,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
   >
     <template v-if="hasBuildingStatsHtml" #append-text>
       <div px-8>
-        <div v-for="(buildingStatHtml, index) in buildingStatsHtml" :key="index" rd mt-1 px-1>
+        <div v-for="(buildingStatHtml, index) of buildingStatsHtml" :key="index" rd mt-1 px-1>
           <div v-html="buildingStatHtml" />
         </div>
       </div>

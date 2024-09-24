@@ -10,7 +10,7 @@ const { background, border, surface } = useColors();
 <template>
   <v-container flex-1 fluid>
     <GridLayout v-model:layout="visualList" :col-num="noColumns" :row-height="40" :use-style-cursor="false">
-      <GridItem v-for="{ id, type, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
+      <GridItem v-for="{ id, type, x, y, w, h } of visualList" :key="id" :i="id" :x :y :w :h>
         <DashboardVisualPreviewContainer :id size-full :type />
       </GridItem>
     </GridLayout>

@@ -123,7 +123,7 @@ const onSelect = async (emoji: string) => {
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item v-for="item in items" :key="item.title" @click="item.onClick">
+          <v-list-item v-for="item of items" :key="item.title" @click="item.onClick">
             <span :class="item.color ? `text-${item.color}` : undefined">{{ item.title }}</span>
             <template #append>
               <v-icon size="small" :icon="item.icon" :color="item.color ?? undefined" />

@@ -197,7 +197,7 @@ watch(
 <template>
   <div grid flex-1 grid-cols-2>
     <div
-      v-for="(card, index) in cards"
+      v-for="(card, index) of cards"
       :key="index"
       :style="{ zIndex: cardIds.length - cardIds.indexOf(index) }"
       :class="classes[cardIds.indexOf(index)]"

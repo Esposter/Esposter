@@ -12,7 +12,7 @@ const chestEntries = computed(() =>
 
 <template>
   <DungeonsWorldChest
-    v-for="[position, chest] in chestEntries"
+    v-for="[position, chest] of chestEntries"
     :key="getPositionId(position)"
     :position="{
       x: position.x * ExternalWorldSceneStore.tilemap.tileWidth,

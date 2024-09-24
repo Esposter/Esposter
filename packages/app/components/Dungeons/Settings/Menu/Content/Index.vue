@@ -4,10 +4,10 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in unref(SettingsOptionGrid.grid)" :key="rowIndex">
+  <template v-for="(row, rowIndex) of unref(SettingsOptionGrid.grid)" :key="rowIndex">
     <DungeonsSettingsMenuContentClickableRow :row-index />
     <DungeonsSettingsMenuContentText
-      v-for="(text, columnIndex) in row"
+      v-for="(text, columnIndex) of row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index
       :column-index

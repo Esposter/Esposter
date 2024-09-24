@@ -10,7 +10,7 @@ const { roomsSearched } = storeToRefs(roomStore);
 <template>
   <v-list>
     <NuxtInvisibleLink
-      v-for="room in roomsSearched"
+      v-for="room of roomsSearched"
       :key="room.id"
       :to="RoutePath.Messages(room.id)"
       @click="emit('update:room')"

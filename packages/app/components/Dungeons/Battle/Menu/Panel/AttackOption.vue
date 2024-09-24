@@ -28,9 +28,9 @@ const attackOptionGrid = useAttackOptionGrid();
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"
     />
-    <template v-for="(row, rowIndex) in unref(attackOptionGrid.grid)" :key="rowIndex">
+    <template v-for="(row, rowIndex) of unref(attackOptionGrid.grid)" :key="rowIndex">
       <DungeonsBattleMenuPanelText
-        v-for="(attack, columnIndex) in row"
+        v-for="(attack, columnIndex) of row"
         :key="getGridKey(rowIndex, columnIndex)"
         :grid="attackOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"

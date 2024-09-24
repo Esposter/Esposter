@@ -21,7 +21,7 @@ const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.v
     </template>
     <v-list>
       <v-list-item
-        v-for="icd in itemCategoryDefinitions"
+        v-for="icd of itemCategoryDefinitions"
         :key="icd.value"
         @click="
           () => {

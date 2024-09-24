@@ -21,7 +21,7 @@ const { hasMore, postList } = storeToRefs(postStore);
     >
       <v-container>
         <v-row>
-          <v-col v-for="post in postList" :key="post.id" cols="12">
+          <v-col v-for="post of postList" :key="post.id" cols="12">
             <PostCard :post />
           </v-col>
         </v-row>

@@ -27,9 +27,9 @@ const { activePanel } = storeToRefs(battleSceneStore);
         strokeStyle: [MENU_PADDING * 2, 0x905ac2],
       }"
     />
-    <template v-for="(row, rowIndex) in unref(PlayerBattleMenuOptionGrid.grid)" :key="rowIndex">
+    <template v-for="(row, rowIndex) of unref(PlayerBattleMenuOptionGrid.grid)" :key="rowIndex">
       <DungeonsBattleMenuPanelText
-        v-for="(text, columnIndex) in row"
+        v-for="(text, columnIndex) of row"
         :key="getGridKey(rowIndex, columnIndex)"
         :grid="PlayerBattleMenuOptionGrid"
         :grid-position="{ x: columnIndex, y: rowIndex }"
