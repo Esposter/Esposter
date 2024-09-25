@@ -67,8 +67,8 @@ importers:
         specifier: 0.21.0
         version: 0.21.0
       '@auth/drizzle-adapter':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.5.2
+        version: 1.5.2
       '@azure/data-tables':
         specifier: ^13.2.2
         version: 13.2.2
@@ -575,8 +575,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/core@0.35.0':
-    resolution: {integrity: sha512-XvMALiYn5ZQd1hVeG1t+jCU89jRrc7ortl/05wkBrPHnRWZScxAK5jKuzBz+AOBQXewDjYcMpzeF5tTqg6rDhQ==}
+  '@auth/core@0.35.2':
+    resolution: {integrity: sha512-4PSrmSkZNMNQEHq86jARBYqls/9G2ECGMJmlazXxkRpZWgtKMUBXF1HUPz82cxy3qFXZ9/HPEiGIEGtIvu4YGQ==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -589,8 +589,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/drizzle-adapter@1.5.0':
-    resolution: {integrity: sha512-JLeooOEoCulPjoLJa2IBKX8RSgSfkhmyaAeO8Xr37y+fitsEvJNqe0SsaRw3D8nXDasppSaop4uUT3ViXP+OZw==}
+  '@auth/drizzle-adapter@1.5.2':
+    resolution: {integrity: sha512-euc74EyFDugdD2hzHlsZHxJ5MaTW/BHZIkrODa1BZ96VjSUAthKQmb5mX7e+Rj6Eb9PfO2OhSnPyxyXNhFkfjw==}
 
   '@azure/abort-controller@2.1.0':
     resolution: {integrity: sha512-SYtcG13aiV7znycu6plCClWUzD9BBtfnsbIxT89nkkRvQRB4n0kuZyJJvJ7hqdKOn7x7YoGKZ9lVStLJpLnOFw==}
@@ -10846,7 +10846,7 @@ snapshots:
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
 
-  '@auth/core@0.35.0':
+  '@auth/core@0.35.2':
     dependencies:
       '@panva/hkdf': 1.1.1
       '@types/cookie': 0.6.0
@@ -10856,9 +10856,9 @@ snapshots:
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
 
-  '@auth/drizzle-adapter@1.5.0':
+  '@auth/drizzle-adapter@1.5.2':
     dependencies:
-      '@auth/core': 0.35.0
+      '@auth/core': 0.35.2
     transitivePeerDependencies:
       - '@simplewebauthn/browser'
       - '@simplewebauthn/server'
