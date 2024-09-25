@@ -14,7 +14,7 @@ export class HealItemResolver extends AItemResolver {
     super(ItemEffectType.Heal);
   }
 
-  async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+  override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { showMessages } = infoPanelStore;
     const oldHp = monster.value.status.hp;
@@ -27,7 +27,7 @@ export class HealItemResolver extends AItemResolver {
     );
   }
 
-  isActive(_item: Ref<Item>, monster: Ref<Monster>) {
+  override isActive(_item: Ref<Item>, monster: Ref<Monster>) {
     const infoPanelStore = useInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(infoPanelStore);
 

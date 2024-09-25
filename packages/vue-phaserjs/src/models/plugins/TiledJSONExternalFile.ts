@@ -80,7 +80,7 @@ export class TiledJSONExternalFile extends MultiFile {
     for (const file of this.files) file.pendingDestroy();
   }
 
-  onFileComplete(file: TilemapFile) {
+  override onFileComplete(file: TilemapFile) {
     const index = this.files.indexOf(file);
     if (index === -1) return;
 

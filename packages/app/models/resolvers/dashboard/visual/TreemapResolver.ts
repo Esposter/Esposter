@@ -9,7 +9,7 @@ export class TreemapResolver extends AVisualTypeResolver {
     super(VisualType.Treemap);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.legend = defu(
       {
         show: false,

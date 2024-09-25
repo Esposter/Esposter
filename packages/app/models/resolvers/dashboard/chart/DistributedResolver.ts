@@ -10,7 +10,7 @@ export class DistributedResolver<T extends BasicChartConfiguration> extends ACha
     super(ChartType.Distributed);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.plotOptions = defu(
       {
         treemap: {

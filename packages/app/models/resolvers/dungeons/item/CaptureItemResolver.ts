@@ -19,7 +19,7 @@ export class CaptureItemResolver extends AItemResolver {
     super(ItemEffectType.Capture);
   }
 
-  handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+  override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
     // Unfortunately we can't really enforce in compile-time that all capture item ids
@@ -30,7 +30,7 @@ export class CaptureItemResolver extends AItemResolver {
     );
   }
 
-  isActive(item: Ref<Item>, _monster: Ref<Monster>) {
+  override isActive(item: Ref<Item>, _monster: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsters } = storeToRefs(monsterPartySceneStore);
 

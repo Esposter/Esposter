@@ -9,7 +9,7 @@ export class ScatterResolver extends AVisualTypeResolver {
     super(VisualType.Scatter);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu<ApexChart, (ApexChart | undefined)[]>(
       {
         enabled: true,

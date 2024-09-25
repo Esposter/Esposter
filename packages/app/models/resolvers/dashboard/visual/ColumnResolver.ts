@@ -10,7 +10,7 @@ export class ColumnResolver extends AVisualTypeResolver {
     super(VisualType.Column);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu(
       {
         type: uncapitalize(VisualType.Bar),

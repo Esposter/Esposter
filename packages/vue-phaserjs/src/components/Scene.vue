@@ -50,7 +50,7 @@ const NewScene = class extends Scene {
     runLifecycleListeners(this, Lifecycle.Preload);
   }
 
-  update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
+  override update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
     emit("update", this, ...args);
     runLifecycleListeners(this, Lifecycle.Update, false);
     runLifecycleListeners(this, Lifecycle.NextTick);
