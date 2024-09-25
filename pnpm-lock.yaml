@@ -347,8 +347,8 @@ importers:
         specifier: ^0.5.7
         version: 0.5.7(eslint@9.11.1(jiti@1.21.6))(magicast@0.3.4)(rollup@4.21.3)(typescript@5.6.2)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)
       '@nuxt/fonts':
-        specifier: ^0.9.1
-        version: 0.9.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.25.0)(encoding@0.1.13)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)
+        specifier: ^0.9.2
+        version: 0.9.2(@azure/data-tables@13.2.2)(@azure/storage-blob@12.25.0)(encoding@0.1.13)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)
       '@nuxt/scripts':
         specifier: 0.6.6
         version: 0.6.6(5k5pvka2bb3cebv4k4d25fbfae)
@@ -2816,8 +2816,8 @@ packages:
       vite-plugin-eslint2:
         optional: true
 
-  '@nuxt/fonts@0.9.1':
-    resolution: {integrity: sha512-aOA81/2lSAb+rWRXXs607UqrAOzWZxuToUAEHLm/OyhhgJduW0JHh7A8WbI9ls9MtcwdtHV4/Ag8O3ct0cQ+9Q==}
+  '@nuxt/fonts@0.9.2':
+    resolution: {integrity: sha512-RMekoJh5AIaKG3tu0YaCdru3eTqNdXn6v7ggh5cdG4rWugr59HzihZ6n4C2Pkkv6nxOP4DOhxxdOwcZwXZM5vQ==}
 
   '@nuxt/kit@3.11.1':
     resolution: {integrity: sha512-8VVlhaY4N+wipgHmSXP+gLM+esms9TEBz13I/J++PbOUJuf2cJlUUTyqMoRVL0xudVKK/8fJgSndRkyidy1m2w==}
@@ -13692,7 +13692,7 @@ snapshots:
       - vite
       - webpack-sources
 
-  '@nuxt/fonts@0.9.1(@azure/data-tables@13.2.2)(@azure/storage-blob@12.25.0)(encoding@0.1.13)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)':
+  '@nuxt/fonts@0.9.2(@azure/data-tables@13.2.2)(@azure/storage-blob@12.25.0)(encoding@0.1.13)(ioredis@5.4.1)(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)':
     dependencies:
       '@nuxt/devtools-kit': 1.5.1(magicast@0.3.4)(rollup@4.21.3)(vite@5.4.6(@types/node@22.7.0)(sass@1.79.3)(terser@5.29.2))(webpack-sources@3.2.3)
       '@nuxt/kit': 3.13.2(magicast@0.3.4)(rollup@4.21.3)(webpack-sources@3.2.3)
