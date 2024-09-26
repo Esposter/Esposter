@@ -1,8 +1,8 @@
 import unocss from "@unocss/eslint-config/flat";
+import vitest from "@vitest/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
 import pinia from "eslint-plugin-pinia";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import vitest from "eslint-plugin-vitest";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
