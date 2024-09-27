@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@auth/core": "0.21.0",
-    "@auth/drizzle-adapter": "^1.5.2",
+    "@auth/drizzle-adapter": "^1.5.3",
     "@azure/data-tables": "^13.2.2",
     "@azure/storage-blob": "^12.25.0",
     "@codemirror/lang-vue": "^0.1.3",
