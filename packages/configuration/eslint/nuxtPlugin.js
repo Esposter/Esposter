@@ -9,11 +9,17 @@ export default tseslint.config(
   pinia.configs["all-flat"],
   unocss,
   {
-    files: ["**.test.ts"],
+    files: ["**/**.test.ts"],
     plugins: {
       vitest,
     },
-    rules: vitest.configs.all.rules,
+    rules: {
+      ...vitest.configs.all.rules,
+      "vitest/consistent-test-it": ["error", { fn: "test" }],
+      "vitest/max-expects": "off",
+      "vitest/no-hooks": "off",
+      "vitest/require-hook": "off"
+    },
     settings: {
       vitest: {
         typecheck: true,
@@ -31,7 +37,7 @@ export default tseslint.config(
       "import/consistent-type-specifier-style": "error",
       "object-shorthand": ["error", "always"],
       "perfectionist/sort-vue-attributes": "off",
-      "pinia/require-setup-store-properties-export": "off"
+      "pinia/require-setup-store-properties-export": "off",
     },
   },
   eslintPluginPrettierRecommended,

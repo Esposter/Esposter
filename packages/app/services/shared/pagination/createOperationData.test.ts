@@ -2,7 +2,7 @@ import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe("Create Operation Data", () => {
+describe("createOperationData", () => {
   let operationData: ReturnType<typeof createOperationData<TodoListItem>>;
 
   beforeEach(() => {
@@ -15,30 +15,36 @@ describe("Create Operation Data", () => {
   });
 
   test("pushes", () => {
+    expect.hasAssertions();
+
     const { itemList, pushItemList } = operationData;
     const newItem = new TodoListItem();
 
-    expect(itemList.value.length).toStrictEqual(0);
+    expect(itemList.value).toHaveLength(0);
 
     pushItemList(newItem);
 
-    expect(itemList.value.length).toStrictEqual(1);
+    expect(itemList.value).toHaveLength(1);
     expect(itemList.value[0]).toStrictEqual(newItem);
   });
 
   test("creates", () => {
+    expect.hasAssertions();
+
     const { createItem, itemList } = operationData;
     const newItem = new TodoListItem();
 
-    expect(itemList.value.length).toStrictEqual(0);
+    expect(itemList.value).toHaveLength(0);
 
     createItem(newItem);
 
-    expect(itemList.value.length).toStrictEqual(1);
+    expect(itemList.value).toHaveLength(1);
     expect(itemList.value[0]).toStrictEqual(newItem);
   });
 
   test("updates", () => {
+    expect.hasAssertions();
+
     const { createItem, itemList, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
@@ -47,6 +53,7 @@ describe("Create Operation Data", () => {
     createItem(newItem);
 
     expect(itemList.value[0].name).not.toStrictEqual(updatedName);
+
     vi.advanceTimersByTime(msPassed);
     updateItem({ ...newItem, name: updatedName });
 
@@ -55,14 +62,16 @@ describe("Create Operation Data", () => {
   });
 
   test("deletes", () => {
+    expect.hasAssertions();
+
     const { createItem, deleteItem, itemList } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
 
-    expect(itemList.value.length).toStrictEqual(1);
+    expect(itemList.value).toHaveLength(1);
 
     deleteItem(newItem.id);
 
-    expect(itemList.value.length).toStrictEqual(0);
+    expect(itemList.value).toHaveLength(0);
   });
 });
