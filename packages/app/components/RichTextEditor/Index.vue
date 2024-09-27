@@ -44,7 +44,7 @@ onUnmounted(() => editor.value?.destroy());
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
       <EditorContent :editor />
-      <RichTextEditorFooterBar v-if="slots['prepend-footer'] || slots['append-footer']" :editor>
+      <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
           <slot v-if="slots['prepend-footer']" name="prepend-footer" :="editorProps" />
           <RichTextEditorCustomEmojiPickerButton v-else :editor="editorProps.editor" tooltip="Select an emoji" />
