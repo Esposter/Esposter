@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { Controls } from "@vue-flow/controls";
@@ -28,8 +29,8 @@ const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
         <Controls position="top-right" />
         <MiniMap />
         <FlowchartEditorDropzoneBackground />
-        <template #node-resizable="{ data }">
-          <ResizableNode :data />
+        <template #[`node-${DEFAULT_NODE_TYPE}`]="{ data }">
+          <FlowchartEditorBaseNode :data />
         </template>
       </VueFlow>
     </div>
