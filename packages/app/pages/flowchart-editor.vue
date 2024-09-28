@@ -9,15 +9,25 @@ defineRouteRules({ ssr: false });
 
 const flowchartEditorStore = useFlowchartEditorStore();
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
+const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 </script>
 
 <template>
   <NuxtLayout>
-    <div class="bg-surface" h-full>
-      <VueFlow v-model:nodes="flowchartEditor.nodes" v-model:edges="flowchartEditor.edges">
+    <template #left>
+      <FlowchartEditorSideBar />
+    </template>
+    <div class="bg-surface" h-full @drop="onDrop">
+      <VueFlow
+        v-model:nodes="flowchartEditor.nodes"
+        v-model:edges="flowchartEditor.edges"
+        @dragover="onDragOver"
+        @dragleave="onDragLeave"
+      >
         <Background />
-        <Controls />
+        <Controls position="top-right" />
         <MiniMap />
+        <FlowchartEditorDropzoneBackground />
         <template #node-resizable="{ data }">
           <ResizableNode :data />
         </template>
