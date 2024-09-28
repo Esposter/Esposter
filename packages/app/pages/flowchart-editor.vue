@@ -63,3 +63,9 @@ onNodesChange(async () => {
 @import "@vue-flow/minimap/dist/style.css";
 @import "@vue-flow/node-resizer/dist/style.css";
 </style>
+
+<style scoped lang="scss">
+:deep(.selected .line) {
+  border-style: dashed;
+}
+</style>

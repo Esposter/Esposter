@@ -13,8 +13,10 @@ const { text } = useColors();
 </script>
 
 <template>
-  <NodeResizer :min-width="100" :min-height="30" :color="text" />
-  <Handle type="target" :position="Position.Left" />
-  <div p-2>{{ data.label }}</div>
-  <Handle type="source" :position="Position.Right" />
+  <div size-full>
+    <NodeResizer :min-width="100" :min-height="30" :color="text" />
+    <Handle type="target" :position="Position.Left" />
+    <div p-2>{{ data.label }}</div>
+    <Handle type="source" :position="Position.Right" />
+  </div>
 </template>
