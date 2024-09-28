@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* lint ([7cf8e80](https://github.com/Esposter/Esposter/commit/7cf8e802d2ee7c86acecfdcf402d99e625580ca6))
+* move lib to script file ([73b7d6d](https://github.com/Esposter/Esposter/commit/73b7d6dc4bbe3ddc5d79a735806d70f2dc48b87e))
+* remove wrong v-if ([428cd3b](https://github.com/Esposter/Esposter/commit/428cd3b839d616906d3407d6e28966edd78595a1))
+* tilemap file checks ([d6bd86a](https://github.com/Esposter/Esposter/commit/d6bd86a5eeba9ea23d66296625b868d06f08e8f7))
+* vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
+
+
+### Features
+
+* Add flowchart ([dd691a6](https://github.com/Esposter/Esposter/commit/dd691a614811bcbc8cbc4eed319923f474c3e759))
+* Add rich text to todolist + migrate v-for to use of ([4353429](https://github.com/Esposter/Esposter/commit/4353429857a6a852f9a0421da413b475543884d9))
+
+
+
+
+
 ## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
 
 
