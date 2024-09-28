@@ -112,7 +112,7 @@
     "parse-tmx": "workspace:*",
     "pathe": "^1.1.2",
     "phaser": "^3.85.2",
-    "phaser3-rex-plugins": "^1.80.7",
+    "phaser3-rex-plugins": "^1.80.8",
     "pinia": "^2.2.2",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.4",
