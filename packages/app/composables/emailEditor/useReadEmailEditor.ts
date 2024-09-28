@@ -31,5 +31,7 @@ export const useReadEmailEditor = async () => {
     },
   );
 
-  watchTracker(emailEditorChangedTracker, saveEmailEditor);
+  watchTracker(emailEditorChangedTracker, async () => {
+    await saveEmailEditor();
+  });
 };
