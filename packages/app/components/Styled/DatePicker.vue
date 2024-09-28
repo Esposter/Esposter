@@ -2,7 +2,6 @@
 import type { EmitEvents, ModelValue, VueDatePickerProps } from "@vuepic/vue-datepicker";
 
 import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
 
 interface StyledDatePickerProps {
   datePickerProps?: VueDatePickerProps;
@@ -23,6 +22,10 @@ const { border, surface } = useColors();
     </template>
   </VueDatePicker>
 </template>
+
+<style lang="scss">
+@import "@vuepic/vue-datepicker/dist/main.css";
+</style>
 
 <style scoped lang="scss">
 :deep(.dp__input) {

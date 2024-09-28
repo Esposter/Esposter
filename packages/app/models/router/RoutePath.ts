@@ -8,6 +8,7 @@ export const RoutePath = {
   Docs: "/docs",
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
+  FlowchartEditor: "/flowchart-editor",
   Github: "https://github.com/Esposter/Esposter",
   Index: "/",
   Login: "/login",
