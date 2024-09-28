@@ -13,7 +13,7 @@ export const parseNode = <
   TNode extends TMXGroupLayerNode | TMXLayerNode,
   TParsedNode = TNode extends TMXLayerNode ? TMXLayerParsed : TMXGroupLayerParsed,
 >(
-  node: TMXGroupLayerNode | TMXLayerNode,
+  node: TNode,
   expectedCount: number,
   translateFlips: boolean,
 ): Promise<TParsedNode> | TParsedNode => {

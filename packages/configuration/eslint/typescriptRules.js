@@ -6,11 +6,13 @@ export default {
     ...tseslint.configs.strictTypeChecked.map((c) => {
       const rules = c.rules ?? {};
       delete rules["@typescript-eslint/no-base-to-string"];
+      delete rules["@typescript-eslint/no-empty-object-type"];
       delete rules["@typescript-eslint/no-redundant-type-constituents"];
       delete rules["@typescript-eslint/no-unsafe-argument"];
       delete rules["@typescript-eslint/no-unsafe-assignment"];
       delete rules["@typescript-eslint/no-unsafe-call"];
       delete rules["@typescript-eslint/no-unsafe-enum-comparison"];
+      delete rules["@typescript-eslint/no-unsafe-function-type"];
       delete rules["@typescript-eslint/no-unsafe-member-access"];
       delete rules["@typescript-eslint/no-unsafe-return"];
       delete rules["@typescript-eslint/no-unused-vars"];
@@ -36,9 +38,10 @@ export default {
   // "@typescript-eslint/naming-convention": [
   //   "error",
   //   {
+  //     format: ["camelCase", "UPPER_CASE"],
   //     selector: "variable",
-  //     format: ["strictCamelCase", "UPPER_CASE"],
-  //     types: ["boolean", "number", "string", "array"],
+  //     types: ["array", "boolean", "number", "string"],
+  //     leadingUnderscore: "allow",
   //   },
   // ],
 };
