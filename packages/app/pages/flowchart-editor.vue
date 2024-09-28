@@ -1,16 +1,31 @@
 <script setup lang="ts">
+import { dayjs } from "@/services/dayjs";
 import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { Controls } from "@vue-flow/controls";
-import { VueFlow } from "@vue-flow/core";
+import { useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 
 defineRouteRules({ ssr: false });
 
 const flowchartEditorStore = useFlowchartEditorStore();
+const { saveFlowchartEditor } = flowchartEditorStore;
+const debouncedSaveFlowChartEditor = useDebounceFn(
+  () => saveFlowchartEditor(),
+  dayjs.duration(1, "second").asMilliseconds(),
+);
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
+const { onEdgesChange, onNodesChange } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
+
+onEdgesChange(async () => {
+  await debouncedSaveFlowChartEditor();
+});
+
+onNodesChange(async () => {
+  await debouncedSaveFlowChartEditor();
+});
 </script>
 
 <template>
