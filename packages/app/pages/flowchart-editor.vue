@@ -9,6 +9,7 @@ import { MiniMap } from "@vue-flow/minimap";
 
 defineRouteRules({ ssr: false });
 
+await useReadFlowchartEditor();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { saveFlowchartEditor } = flowchartEditorStore;
 const debouncedSaveFlowChartEditor = useDebounceFn(
