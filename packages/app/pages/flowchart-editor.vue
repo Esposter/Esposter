@@ -3,7 +3,6 @@ import { dayjs } from "@/services/dayjs";
 import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
-import { Controls } from "@vue-flow/controls";
 import { useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 
@@ -17,8 +16,12 @@ const debouncedSaveFlowChartEditor = useDebounceFn(
   dayjs.duration(1, "second").asMilliseconds(),
 );
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
-const { onEdgesChange, onNodesChange } = useVueFlow();
+const { addEdges, onConnect, onEdgesChange, onNodesChange } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
+
+onConnect((connection) => {
+  addEdges(connection);
+});
 
 onEdgesChange(async () => {
   await debouncedSaveFlowChartEditor();
@@ -42,8 +45,8 @@ onNodesChange(async () => {
         @dragleave="onDragLeave"
       >
         <Background />
-        <Controls position="top-right" />
-        <MiniMap />
+        <FlowchartEditorControls />
+        <MiniMap class="bg-surface" />
         <FlowchartEditorDropzoneBackground />
         <template #[`node-${DEFAULT_NODE_TYPE}`]="{ data }">
           <FlowchartEditorBaseNode :data />
