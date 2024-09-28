@@ -11,7 +11,7 @@ export interface PostUpsertFormProps {
 
 const { initialValues = { description: "", title: "" } } = defineProps<PostUpsertFormProps>();
 const emit = defineEmits<{
-  submit: [submitEventPromise: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
+  submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
 const title = ref(initialValues.title);
 const description = ref(initialValues.description);
@@ -20,14 +20,7 @@ const isValid = ref(true);
 
 <template>
   <StyledCard>
-    <v-form
-      v-model="isValid"
-      @submit.prevent="
-        (event) => {
-          emit('submit', event, { title, description });
-        }
-      "
-    >
+    <v-form v-model="isValid" @submit.prevent="emit('submit', $event, { title, description })">
       <v-container>
         <v-row>
           <v-col>

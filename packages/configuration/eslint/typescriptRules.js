@@ -38,7 +38,7 @@ export default {
   // "@typescript-eslint/naming-convention": [
   //   "error",
   //   {
-  //     format: ["camelCase", "UPPER_CASE"],
+  //     format: ["camelCase", "PascalCase", "UPPER_CASE"],
   //     selector: "variable",
   //     types: ["array", "boolean", "number", "string"],
   //     leadingUnderscore: "allow",
