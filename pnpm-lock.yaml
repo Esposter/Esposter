@@ -196,8 +196,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(ajv@8.17.1)
       apexcharts:
-        specifier: ^3.53.0
-        version: 3.53.0
+        specifier: ^3.54.0
+        version: 3.54.0
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -335,7 +335,7 @@ importers:
         version: 4.3.0(vue@3.5.10(typescript@5.6.2))
       vue3-apexcharts:
         specifier: ^1.6.0
-        version: 1.6.0(apexcharts@3.53.0)(vue@3.5.10(typescript@5.6.2))
+        version: 1.6.0(apexcharts@3.54.0)(vue@3.5.10(typescript@5.6.2))
       vuetify:
         specifier: ^3.7.2
         version: 3.7.2(typescript@5.6.2)(vite-plugin-vuetify@2.0.4)(vue@3.5.10(typescript@5.6.2))
@@ -4752,8 +4752,8 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apexcharts@3.53.0:
-    resolution: {integrity: sha512-QESZHZY3w9LPQ64PGh1gEdfjYjJ5Jp+Dfy0D/CLjsLOPTpXzdxwlNMqRj+vPbTcP0nAHgjWv1maDqcEq6u5olw==}
+  apexcharts@3.54.0:
+    resolution: {integrity: sha512-ZgI/seScffjLpwNRX/gAhIkAhpCNWiTNsdICv7qxnF0xisI23XSsaENUKIcMlyP1rbe8ECgvybDnp7plZld89A==}
 
   aproba@2.0.0:
     resolution: {integrity: sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==}
@@ -16551,7 +16551,7 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  apexcharts@3.53.0:
+  apexcharts@3.54.0:
     dependencies:
       '@yr/monotone-cubic-spline': 1.0.3
       svg.draggable.js: 2.2.2
@@ -23491,9 +23491,9 @@ snapshots:
     dependencies:
       vue: 3.5.10(typescript@5.6.2)
 
-  vue3-apexcharts@1.6.0(apexcharts@3.53.0)(vue@3.5.10(typescript@5.6.2)):
+  vue3-apexcharts@1.6.0(apexcharts@3.54.0)(vue@3.5.10(typescript@5.6.2)):
     dependencies:
-      apexcharts: 3.53.0
+      apexcharts: 3.54.0
       vue: 3.5.10(typescript@5.6.2)
 
   vue@3.5.10(typescript@5.6.2):
