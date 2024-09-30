@@ -313,8 +313,8 @@ importers:
         specifier: ^0.169.0
         version: 0.169.0
       three-globe:
-        specifier: ^2.31.3
-        version: 2.31.3(three@0.169.0)
+        specifier: ^2.32.0
+        version: 2.32.0(three@0.169.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -9661,23 +9661,17 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-fatline@0.7.0:
-    resolution: {integrity: sha512-IG3mA1gNO1ccT/O8ou9rBnYJQynCreCZn12IfuyFoWNN9+0DrrSENlXk46I7TQfNBKCgwsHpzucJ2qyPC3I/dQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      three: '>=0.154.0'
-
   three-geojson-geometry@1.3.2:
     resolution: {integrity: sha512-eJflV+2KLDrQNHAbEhvXadF355LYat3izE2sD3Qt1L6Sw41LZ7Nwc/FV9T/z1edeZVQxydeYpmWBsYsFzsPEHA==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.31.3:
-    resolution: {integrity: sha512-SxzI6k9KILp+f2Sa+GcMgQlyxhU1688OA436i4ojhvrd1M6RP0mjr2SM20yJek5ib/bkNA5o96XbNPAM3mqkBA==}
+  three-globe@2.32.0:
+    resolution: {integrity: sha512-iHiEY8GsDA51j2BhdTS9LuhOGZXPYGfNxR6F8LtnFed5oC2pkwq15p3osXQw07BRCqKoApOkBUhw6W4Jy1FJFQ==}
     engines: {node: '>=12'}
     peerDependencies:
-      three: '>=0.125'
+      three: '>=0.154'
 
   three@0.169.0:
     resolution: {integrity: sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==}
@@ -22381,17 +22375,13 @@ snapshots:
       earcut: 2.2.4
       three: 0.169.0
 
-  three-fatline@0.7.0(three@0.169.0):
-    dependencies:
-      three: 0.169.0
-
   three-geojson-geometry@1.3.2(three@0.169.0):
     dependencies:
       d3-geo: 3.1.1
       earcut: 2.2.4
       three: 0.169.0
 
-  three-globe@2.31.3(three@0.169.0):
+  three-globe@2.32.0(three@0.169.0):
     dependencies:
       '@tweenjs/tween.js': 23.1.3
       accessor-fn: 1.5.0
@@ -22408,7 +22398,6 @@ snapshots:
       kapsule: 1.14.5
       three: 0.169.0
       three-conic-polygon-geometry: 1.6.3(three@0.169.0)
-      three-fatline: 0.7.0(three@0.169.0)
       three-geojson-geometry: 1.3.2(three@0.169.0)
       tinycolor2: 1.6.0
       yaot: 1.1.3
