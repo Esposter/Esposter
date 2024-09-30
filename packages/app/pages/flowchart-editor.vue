@@ -33,7 +33,7 @@ onNodesChange(async () => {
 </script>
 
 <template>
-  <NuxtLayout>
+  <NuxtLayout :scrim="false">
     <template #left>
       <FlowchartEditorSideBar />
     </template>
@@ -45,6 +45,7 @@ onNodesChange(async () => {
         @dragleave="onDragLeave"
       >
         <Background />
+        <FlowchartEditorSideBarButton />
         <FlowchartEditorControls />
         <MiniMap class="bg-surface" />
         <FlowchartEditorDropzoneBackground />
