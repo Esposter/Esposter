@@ -44,6 +44,21 @@ const items = computed<MenuItem[]>(() => [
     onClick: () => editor?.chain().focus().toggleOrderedList().run(),
     title: "Ordered List",
   },
+  {
+    isDivider: true,
+  },
+  {
+    disabled: !editor?.can().undo(),
+    icon: "mdi-undo",
+    onClick: () => editor?.chain().focus().undo().run(),
+    title: "Undo",
+  },
+  {
+    disabled: !editor?.can().redo(),
+    icon: "mdi-redo",
+    onClick: () => editor?.chain().focus().redo().run(),
+    title: "Redo",
+  },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
