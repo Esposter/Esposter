@@ -343,8 +343,8 @@ importers:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^8.0.5
-        version: 8.0.5
+        specifier: ^8.0.6
+        version: 8.0.6
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -10773,8 +10773,8 @@ packages:
   worker-timers-worker@8.0.4:
     resolution: {integrity: sha512-uNkFEffJvwYs/7S/DRoFNBT6ln5CBXMc3a6m5aB3YVU+uqSoE+LD/QU9hk7hn2zI4H6m8alWKGFygY6+/FZP6w==}
 
-  worker-timers@8.0.5:
-    resolution: {integrity: sha512-VQ4kUuRKpEbMu421o1/SdLhKk1YhNEFnZZLLe0h+r69CFd42C4R2WpC4afghsqwXebOY6t+a6nl7f35WzacZ9Q==}
+  worker-timers@8.0.6:
+    resolution: {integrity: sha512-7aioqjpNu6eLvVdoo8/wlTg8RrNOH60sWHNR/5KUY6Gd+I0Ukk4rxTQirKG6Ii3k3EaUTcYYuTU4/FT2oa4BuQ==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -23778,7 +23778,7 @@ snapshots:
       '@babel/runtime': 7.25.6
       tslib: 2.7.0
 
-  worker-timers@8.0.5:
+  worker-timers@8.0.6:
     dependencies:
       '@babel/runtime': 7.25.6
       tslib: 2.7.0
