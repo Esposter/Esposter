@@ -60,7 +60,7 @@
     "@hebilicious/authjs-nuxt": "^0.3.5",
     "@koumoul/vjsf": "^3.0.0-beta.46",
     "@mdi/font": "^7.4.47",
-    "@pinia/nuxt": "^0.5.4",
+    "@pinia/nuxt": "^0.5.5",
     "@tiptap/core": "^2.7.4",
     "@tiptap/extension-character-count": "^2.7.4",
     "@tiptap/extension-link": "^2.7.4",
