@@ -113,7 +113,7 @@
     "pathe": "^1.1.2",
     "phaser": "^3.85.2",
     "phaser3-rex-plugins": "^1.80.8",
-    "pinia": "^2.2.3",
+    "pinia": "^2.2.4",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.4",
     "rxjs": "^7.8.1",
