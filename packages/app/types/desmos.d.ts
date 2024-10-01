@@ -188,6 +188,7 @@ declare namespace Desmos {
      * Similar to GraphingCalculator.screenshot, but asynchronous. Rather than returning a PNG data URI directly,
      * callback will be called with the either a URI string or SVG string as its argument.
      */
+    asyncScreenshot(callback: (dataUri: string) => void): void;
     asyncScreenshot(
       opts: {
         /**
@@ -214,7 +215,6 @@ declare namespace Desmos {
       } & Parameters<Calculator["screenshot"]>[0],
       callback: (dataUri: string) => void,
     ): void;
-    asyncScreenshot(callback: (dataUri: string) => void): void;
 
     /**
      * Clear the undo/redo history. Does not affect the current state.
@@ -312,7 +312,7 @@ declare namespace Desmos {
     /**
      * Convert math coordinates to pixel coordinates.
      */
-    mathToPixels<C extends { x: number } | { x: number; y: number } | { y: number }>(coords: C): C;
+    mathToPixels<C extends { x: number; y: number } | { x: number } | { y: number }>(coords: C): C;
     /**
      * Update the settings.randomSeed property to a new random value.
      */
@@ -327,7 +327,7 @@ declare namespace Desmos {
     /**
      * Convert pixel coordinates to math coordinates.
      */
-    pixelsToMath<C extends { x: number } | { x: number; y: number } | { y: number }>(coords: C): C;
+    pixelsToMath<C extends { x: number; y: number } | { x: number } | { y: number }>(coords: C): C;
     /**
      * Advance to the next state in the undo/redo history, if available.
      */

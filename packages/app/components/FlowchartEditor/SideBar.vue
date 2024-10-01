@@ -9,10 +9,10 @@ const { text } = useColors();
 
 <template>
   <div flex flex-col h-full>
-    <v-list flex-1 flex flex-col items-center gap-y-4>
+    <v-list flex flex-col items-center flex-1 gap-y-4>
       <v-list-item class="text-h5">Components</v-list-item>
       <v-list-item
-        class="vue-flow__node-default bg-surface"
+        class="bg-surface vue-flow__node-default"
         cursor-pointer
         :draggable="true"
         @dragstart="onDragStart($event)"

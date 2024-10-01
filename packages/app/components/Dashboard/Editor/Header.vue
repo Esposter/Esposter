@@ -14,7 +14,7 @@ const { visualType } = storeToRefs(visualStore);
 <template>
   <v-toolbar>
     <v-toolbar-title px-4 font-bold="!">
-      <div pt-4 flex flex-col justify-between gap-y-4>
+      <div pt-4 flex flex-col gap-y-4 justify-between>
         <div>Dashboard Editor</div>
         <div w-full flex items-center>
           <v-select
