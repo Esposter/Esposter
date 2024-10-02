@@ -54,8 +54,7 @@ export const usePhaserStore = defineStore("phaser", () => {
   };
 
   return {
-    // @TODO: https://github.com/vuejs/pinia/issues/2767
-    game: game as Ref<typeof game.value>,
+    game,
     isSameScene,
     launchParallelScene,
     parallelSceneKeys,

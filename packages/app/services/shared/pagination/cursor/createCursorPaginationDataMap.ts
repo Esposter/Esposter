@@ -46,11 +46,10 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
   };
 
   return {
-    // @TODO: https://github.com/vuejs/pinia/issues/2767
-    hasMore: hasMore as Ref<typeof hasMore.value>,
+    hasMore,
     initializeCursorPaginationData,
     itemList,
-    nextCursor: nextCursor as Ref<typeof nextCursor.value>,
+    nextCursor,
     resetCursorPaginationData,
   };
 };
