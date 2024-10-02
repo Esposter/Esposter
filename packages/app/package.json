@@ -134,7 +134,7 @@
     "vue3-apexcharts": "^1.6.0",
     "vuetify": "^3.7.2",
     "webfontloader": "^1.6.28",
-    "worker-timers": "^8.0.6",
+    "worker-timers": "^8.0.7",
     "ws": "^8.18.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.3"
