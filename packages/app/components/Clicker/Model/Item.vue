@@ -7,9 +7,5 @@ const clickerItemProperties = useClickerItemProperties();
 </script>
 
 <template>
-  <component
-    :is="clickerItemProperties.iconComponent"
-    :="svgGroupProps"
-    @click="(event: MouseEvent) => emit('click', event)"
-  />
+  <component :is="clickerItemProperties.iconComponent" :="svgGroupProps" @click="emit('click', $event)" />
 </template>

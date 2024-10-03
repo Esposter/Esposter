@@ -27,7 +27,7 @@ const hasEmojis = computed(() => emojis.value.length > 0);
 <template>
   <div v-if="hasEmojis" flex mt-2 flex-wrap gap-1>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } in emojis"
+      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"

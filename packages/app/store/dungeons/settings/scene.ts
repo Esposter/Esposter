@@ -53,10 +53,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       if (autoUpdateGridX) {
         autoUpdateGridX = false;
         return;
-      }
+      } else if (selectedSettingsOption.value === SettingsOption.Close) return;
 
       await setSettings(
-        selectedSettingsOption.value as keyof typeof settingsStore.settings,
+        selectedSettingsOption.value,
         SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
       );
     },

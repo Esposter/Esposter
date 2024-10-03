@@ -9,7 +9,7 @@ const { attackNameList } = storeToRefs(monsterDetailsSceneStore);
 
 <template>
   <Text
-    v-for="(text, index) in attackNameList"
+    v-for="(text, index) of attackNameList"
     :key="text"
     :configuration="{ x: 560, y: 80 * index + 82, text, style: MonsterAttackTextStyle }"
   />

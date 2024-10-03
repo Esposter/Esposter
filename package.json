@@ -14,40 +14,51 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "lerna run build",
+    "build": "pnpm build:packages && pnpm run docs && lerna run build --scope=@esposter/app",
+    "build:packages": "lerna run build --ignore @esposter/app",
+    "docs": "typedoc",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "typecheck": "lerna run typecheck",
+    "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "release": "pnpm build --no-private && pnpm lint:fix --no-private && pnpm typecheck --no-private && lerna publish --yes",
-    "refresh:lockfile": "pnpm pwsh scripts/refreshLockfile.ps1",
+    "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
+    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
+    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
+    "cross-os": "node scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
+  },
+  "cross-os": {
+    "refresh:lockfile": {
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1",
+      "linux": "./scripts/refreshLockfile.sh"
+    }
   },
   "dependencies": {
     "data-urls": "^5.0.0",
     "is-mobile": "^4.0.0",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vue": "3.5.0-beta.1",
+    "vue": "^3.5.11",
     "xml2js": "^0.6.2"
-  },
-  "dependenciesComments": {
-    "vue": "@TODO: Upgrade breaks pinia writable computed type"
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/xml2js": "^0.4.14",
-    "ctix": "^2.6.4",
-    "eslint": "^9.10.0",
+    "ctix": "^2.7.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.11.1",
     "lerna": "^8.1.8",
-    "rollup": "^4.21.3",
+    "rollup": "^4.24.0",
     "type-fest": "^4.26.1",
+    "typedoc": "^0.26.7",
     "typescript": "^5.6.2",
-    "vite": "^5.4.5",
+    "vite": "^5.4.8",
     "vue-tsc": "^2.1.6"
   },
   "engines": {
-    "node": "^22.8.0"
+    "node": "^22.9.0",
+    "pnpm": "^9.12.0"
   },
-  "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"
+  "packageManager": "pnpm@9.12.0+sha512.4abf725084d7bcbafbd728bfc7bee61f2f791f977fd87542b3579dcb23504d170d46337945e4c66485cd12d588a0c0e570ed9c477e7ccdd8507cf05f3f92eaca"
 }

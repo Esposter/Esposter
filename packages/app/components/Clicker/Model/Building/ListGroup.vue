@@ -21,6 +21,6 @@ const hasBuildings = computed(() => buildings.length > 0);
         <v-list-item-title font-bold="!">Buildings</v-list-item-title>
       </v-list-item>
     </template>
-    <ClickerModelBuildingListItem v-for="building in buildings" :key="building.id" :building />
+    <ClickerModelBuildingListItem v-for="building of buildings" :key="building.id" :building />
   </v-list-group>
 </template>

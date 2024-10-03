@@ -44,13 +44,28 @@ const items = computed<MenuItem[]>(() => [
     onClick: () => editor?.chain().focus().toggleOrderedList().run(),
     title: "Ordered List",
   },
+  {
+    isDivider: true,
+  },
+  {
+    disabled: !editor?.can().undo(),
+    icon: "mdi-undo",
+    onClick: () => editor?.chain().focus().undo().run(),
+    title: "Undo",
+  },
+  {
+    disabled: !editor?.can().redo(),
+    icon: "mdi-redo",
+    onClick: () => editor?.chain().focus().redo().run(),
+    title: "Redo",
+  },
 ]);
 const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
 
 <template>
   <div w-full flex flex-wrap>
-    <template v-for="(item, index) in items" :key="index">
+    <template v-for="(item, index) of items" :key="index">
       <v-divider v-if="isDivider(item)" h-8="!" self-center="!" thickness="2" vertical />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">

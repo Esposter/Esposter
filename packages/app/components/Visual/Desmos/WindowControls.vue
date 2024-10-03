@@ -6,14 +6,12 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
   <div class="v-window__controls" fixed="!" top-auto="!" bottom-0="!">
     <v-tooltip location="right center" text="Left">
       <template #activator="{ props }">
-        <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
-        <v-btn icon="mdi-chevron-left" size="small" :="props" @click="(event) => emit('clickLeft', event)" />
+        <v-btn icon="mdi-chevron-left" size="small" :="props" @click="emit('clickLeft', $event)" />
       </template>
     </v-tooltip>
     <v-tooltip location="left center" text="Right">
       <template #activator="{ props }">
-        <!-- @vue-ignore @TODO: Remove this when typescript + vue-tsc is fixed... some day. -->
-        <v-btn icon="mdi-chevron-right" size="small" :="props" @click="(event) => emit('clickRight', event)" />
+        <v-btn icon="mdi-chevron-right" size="small" :="props" @click="emit('clickRight', $event)" />
       </template>
     </v-tooltip>
   </div>

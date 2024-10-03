@@ -3,6 +3,140 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* lint ([7cf8e80](https://github.com/Esposter/Esposter/commit/7cf8e802d2ee7c86acecfdcf402d99e625580ca6))
+* move lib to script file ([73b7d6d](https://github.com/Esposter/Esposter/commit/73b7d6dc4bbe3ddc5d79a735806d70f2dc48b87e))
+* remove wrong v-if ([428cd3b](https://github.com/Esposter/Esposter/commit/428cd3b839d616906d3407d6e28966edd78595a1))
+* tilemap file checks ([d6bd86a](https://github.com/Esposter/Esposter/commit/d6bd86a5eeba9ea23d66296625b868d06f08e8f7))
+* vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
+
+
+### Features
+
+* Add flowchart ([dd691a6](https://github.com/Esposter/Esposter/commit/dd691a614811bcbc8cbc4eed319923f474c3e759))
+* Add rich text to todolist + migrate v-for to use of ([4353429](https://github.com/Esposter/Esposter/commit/4353429857a6a852f9a0421da413b475543884d9))
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+
+### Bug Fixes
+
+* add sleep func as part of lib and use scene delayedcall ([0965cc3](https://github.com/Esposter/Esposter/commit/0965cc30ff94760ae390f30f2e5d3b3bed12c5e7))
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* description ([cd55c53](https://github.com/Esposter/Esposter/commit/cd55c537f89259fb214290cfacb09b248dcb55f0))
+* pnpm lock for types/node ([2d6ae62](https://github.com/Esposter/Esposter/commit/2d6ae6291b16c1ac9caca45827d43caa8b7db4bc))
+* revert @nuxt/scripts ver ([9940713](https://github.com/Esposter/Esposter/commit/994071312ee14f0541e420c6c6eabc0d97656150))
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* order + add tests ([720e668](https://github.com/Esposter/Esposter/commit/720e66852aa42267927430342fd490bf36bc3114))
+* Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package esposter
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+
+### Bug Fixes
+
+* add back prop destructure option for now ([013f1f6](https://github.com/Esposter/Esposter/commit/013f1f67ea5bd9530d6cd6d4cb96d3843a32f357))
+* add back scripts ([813918b](https://github.com/Esposter/Esposter/commit/813918b70cf608574c1937ff4cddf434b8cd0d65))
+* add file ([cace75d](https://github.com/Esposter/Esposter/commit/cace75db2cb0b9cb4ee41101afd99ce0632498f8))
+* add read from env ([44bf360](https://github.com/Esposter/Esposter/commit/44bf3609f2c466807a5de617e51611a6e9cc2f74))
+* command ([720a7d1](https://github.com/Esposter/Esposter/commit/720a7d1b25e1c566da2efa5b3f7826f3be776484))
+* docs is external ([a507057](https://github.com/Esposter/Esposter/commit/a507057e043a97d4c5e213e772cea5c058758531))
+* don't specify hosted base url if env doesn't exist ([222d956](https://github.com/Esposter/Esposter/commit/222d956ea389bb00ef48db871dfa60888f53ab11))
+* exclude file ([4168244](https://github.com/Esposter/Esposter/commit/4168244768cbcd45bb463682374b9e48dbf23e34))
+* handle if env doesn't exist in pipeline ([6db801d](https://github.com/Esposter/Esposter/commit/6db801d2cea828d7788358f4750bc979ef1b89d8))
+* remove now unnecessary casts ([60564a0](https://github.com/Esposter/Esposter/commit/60564a0e83bed0985f74b810b6f9660db92a47f8))
+* scripts ([cf10240](https://github.com/Esposter/Esposter/commit/cf1024024f63df70ecb703b91ab3fa8188b17ef9))
+* scripts ([feedb93](https://github.com/Esposter/Esposter/commit/feedb93bd6cebad5e20bd0b18a7d6db460f49c37))
+* use back original tsconfig ([0d01770](https://github.com/Esposter/Esposter/commit/0d0177054c770bdc59b7ac5d5f993dbc62793f87))
+* use cross-platform-compatible scripts ([de5c87b](https://github.com/Esposter/Esposter/commit/de5c87bc33d7b321dedfa8f9537d5ad95d4a942d))
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* actually on second thought, we want latest docs so just rebuild everytime, it's pretty quick anyways ([d00cf37](https://github.com/Esposter/Esposter/commit/d00cf37adf9601ab19a0660bac9aee52957cf5e2))
+* cache docs instead to optimise perf ([e1fbae7](https://github.com/Esposter/Esposter/commit/e1fbae7dba7e411b42582262d909a5fb0d964e08))
+* imports + moving input active setter to lib ([2a62a9b](https://github.com/Esposter/Esposter/commit/2a62a9b01d40d8f615639f2df4d2a285cfacdb14))
+* license ([b3e06ac](https://github.com/Esposter/Esposter/commit/b3e06ac20fa8bbebf16d6d1d125dba207a659fe8))
+* lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
+* move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
+* readme ([a32ba22](https://github.com/Esposter/Esposter/commit/a32ba22983630d49ed721d27d71215bcf5ebecfe))
+* readme ([c8e3c2a](https://github.com/Esposter/Esposter/commit/c8e3c2a5b930275463d09f51ecd896c24009d380))
+
+
+### Features
+
+* Add documentation btn ([c3eb7f3](https://github.com/Esposter/Esposter/commit/c3eb7f3b5fb5ae8fd098d206055b173b588caf76))
+* Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+* Update parse-tmx doc ([6eb8b77](https://github.com/Esposter/Esposter/commit/6eb8b7760a0ffd28ba9d0ddb73790dae5aaa2a3d))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package esposter
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+
+### Features
+
+* Upgrade typescript ([61c3d96](https://github.com/Esposter/Esposter/commit/61c3d96efcc02bbcbfbb85fa4b0fbd652f9129ba))
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

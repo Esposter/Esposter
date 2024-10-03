@@ -22,6 +22,6 @@ const hasUpgrades = computed(() => upgrades.length > 0);
         <v-list-item-title font-bold="!">Upgrades</v-list-item-title>
       </v-list-item>
     </template>
-    <ClickerModelUpgradeListItem v-for="upgrade in upgrades" :key="upgrade.id" :upgrade :is-bought />
+    <ClickerModelUpgradeListItem v-for="upgrade of upgrades" :key="upgrade.id" :upgrade :is-bought />
   </v-list-group>
 </template>

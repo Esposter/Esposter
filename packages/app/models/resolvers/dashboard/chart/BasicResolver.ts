@@ -11,6 +11,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
   constructor() {
     super(ChartType.Basic);
   }
+
   handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
     apexOptions.chart = defu(
       {

@@ -17,7 +17,7 @@ export const CatchMonster: State<StateName> = {
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
     const captureResult = generateCaptureResult(activeMonster.value);
-    await useThrowBallAnimation(captureResult);
+    await useThrowBallAnimation(scene, captureResult);
 
     if (captureResult === CaptureResult.Success) {
       const monsterPartySceneStore = useMonsterPartySceneStore();

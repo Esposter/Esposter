@@ -47,7 +47,7 @@ watch(
   <div>
     <StyledCard overflow-y-auto="!" :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
-        v-for="(item, index) in items"
+        v-for="(item, index) of items"
         :key="item.id"
         :style="{ backgroundColor: infoOpacity10 }"
         justify-start="!"

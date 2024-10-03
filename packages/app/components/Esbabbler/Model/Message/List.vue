@@ -15,7 +15,7 @@ const { hasMore, messages, readMoreMessages } = defineProps<MessageListProps>();
 <template>
   <v-list flex-1 flex basis-full flex-col-reverse overflow-y-auto="!" lines="two">
     <EsbabblerModelMessageListItemContainer
-      v-for="(message, index) in messages"
+      v-for="(message, index) of messages"
       :key="message.rowKey"
       :current-message="message"
       :next-message="messages[index + 1]"

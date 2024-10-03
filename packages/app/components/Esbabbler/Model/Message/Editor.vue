@@ -63,9 +63,6 @@ const keyboardExtension = new Extension({
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
   >
-    <template #prepend-footer="editorProps">
-      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
-    </template>
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
       <StyledButton

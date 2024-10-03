@@ -5,71 +5,58 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { mergeProps } from "vue";
 
 const { session, signOut, status } = useAuth();
-
-const items = computed<ListItem[]>(() =>
-  status.value === "unauthenticated"
+const items = computed<ListItem[]>(() => {
+  const commonItems: ListItem[] = [
+    {
+      href: RoutePath.About,
+      icon: "mdi-information",
+      title: "About",
+    },
+    {
+      external: true,
+      href: RoutePath.Docs,
+      icon: "mdi-book-open-page-variant",
+      title: "Documentation",
+    },
+    {
+      href: RoutePath.Anime,
+      icon: "custom:anime",
+      title: "Anime",
+    },
+    {
+      href: RoutePath.PrivacyPolicy,
+      icon: "mdi-lock",
+      title: "Privacy Policy",
+    },
+    {
+      href: RoutePath.TermsAndConditions,
+      icon: "mdi-shield-lock",
+      title: "Terms & Conditions",
+    },
+  ];
+  return status.value === "unauthenticated"
     ? [
         {
           href: RoutePath.Login,
           icon: "mdi-login",
           title: "Login",
         },
-        {
-          href: RoutePath.About,
-          icon: "mdi-information",
-          title: "About",
-        },
-        {
-          href: RoutePath.Anime,
-          icon: "custom:anime",
-          title: "Anime",
-        },
-        {
-          href: RoutePath.PrivacyPolicy,
-          icon: "mdi-lock",
-          title: "Privacy Policy",
-        },
-        {
-          href: RoutePath.TermsAndConditions,
-          icon: "mdi-shield-lock",
-          title: "Terms & Conditions",
-        },
+        ...commonItems,
       ]
-    : status.value === "authenticated"
-      ? [
-          {
-            href: RoutePath.UserSettings,
-            icon: "mdi-cog",
-            title: "Settings",
-          },
-          {
-            href: RoutePath.About,
-            icon: "mdi-information",
-            title: "About",
-          },
-          {
-            href: RoutePath.Anime,
-            icon: "custom:anime",
-            title: "Anime",
-          },
-          {
-            href: RoutePath.PrivacyPolicy,
-            icon: "mdi-lock",
-            title: "Privacy Policy",
-          },
-          {
-            href: RoutePath.TermsAndConditions,
-            icon: "mdi-shield-lock",
-            title: "Terms & Conditions",
-          },
-          {
-            icon: "mdi-logout",
-            onClick: signOut,
-            title: "Logout",
-          },
-        ]
-      : [],
-);
+    : [
+        {
+          href: RoutePath.UserSettings,
+          icon: "mdi-cog",
+          title: "Settings",
+        },
+        ...commonItems,
+        {
+          icon: "mdi-logout",
+          onClick: signOut,
+          title: "Logout",
+        },
+      ];
+});
 const menu = ref(false);
 </script>
 
@@ -98,23 +85,24 @@ const menu = ref(false);
     </template>
     <v-list min-width="250">
       <NuxtInvisibleLink
-        v-for="item in items"
-        :key="item.title"
-        :to="item.href"
+        v-for="{ external, icon, title, href, onClick } of items"
+        :key="title"
+        :to="href"
+        :external
         @click="
           async () => {
-            await item.onClick?.();
+            await onClick?.();
             menu = false;
           }
         "
       >
-        <v-list-item :value="item.title">
+        <v-list-item :value="title">
           <template #prepend>
             <v-avatar color="background">
-              <v-icon :icon="item.icon" />
+              <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ item.title }}</v-list-item-title>
+          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

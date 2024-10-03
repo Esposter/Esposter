@@ -14,9 +14,12 @@ const InitialSettings = {
   [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
   [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
-} satisfies Settings;
+};
 export const getInitialSettings = () => structuredClone(InitialSettings);
-export type Settings = Record<Exclude<SettingsOption, SettingsOption.Close>, unknown>;
+export type Settings = Record<
+  Exclude<SettingsOption, SettingsOption.Close>,
+  (typeof InitialSettings)[keyof typeof InitialSettings]
+>;
 
 export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,

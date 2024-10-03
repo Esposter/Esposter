@@ -3,6 +3,119 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* lint ([7cf8e80](https://github.com/Esposter/Esposter/commit/7cf8e802d2ee7c86acecfdcf402d99e625580ca6))
+* remove wrong v-if ([428cd3b](https://github.com/Esposter/Esposter/commit/428cd3b839d616906d3407d6e28966edd78595a1))
+* vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
+
+
+### Features
+
+* Add flowchart ([dd691a6](https://github.com/Esposter/Esposter/commit/dd691a614811bcbc8cbc4eed319923f474c3e759))
+* Add rich text to todolist + migrate v-for to use of ([4353429](https://github.com/Esposter/Esposter/commit/4353429857a6a852f9a0421da413b475543884d9))
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+
+### Bug Fixes
+
+* add sleep func as part of lib and use scene delayedcall ([0965cc3](https://github.com/Esposter/Esposter/commit/0965cc30ff94760ae390f30f2e5d3b3bed12c5e7))
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* revert @nuxt/scripts ver ([9940713](https://github.com/Esposter/Esposter/commit/994071312ee14f0541e420c6c6eabc0d97656150))
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* order + add tests ([720e668](https://github.com/Esposter/Esposter/commit/720e66852aa42267927430342fd490bf36bc3114))
+* Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/app
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+
+### Bug Fixes
+
+* add back prop destructure option for now ([013f1f6](https://github.com/Esposter/Esposter/commit/013f1f67ea5bd9530d6cd6d4cb96d3843a32f357))
+* add read from env ([44bf360](https://github.com/Esposter/Esposter/commit/44bf3609f2c466807a5de617e51611a6e9cc2f74))
+* docs is external ([a507057](https://github.com/Esposter/Esposter/commit/a507057e043a97d4c5e213e772cea5c058758531))
+* remove now unnecessary casts ([60564a0](https://github.com/Esposter/Esposter/commit/60564a0e83bed0985f74b810b6f9660db92a47f8))
+* use back original tsconfig ([0d01770](https://github.com/Esposter/Esposter/commit/0d0177054c770bdc59b7ac5d5f993dbc62793f87))
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* actually on second thought, we want latest docs so just rebuild everytime, it's pretty quick anyways ([d00cf37](https://github.com/Esposter/Esposter/commit/d00cf37adf9601ab19a0660bac9aee52957cf5e2))
+* cache docs instead to optimise perf ([e1fbae7](https://github.com/Esposter/Esposter/commit/e1fbae7dba7e411b42582262d909a5fb0d964e08))
+* imports + moving input active setter to lib ([2a62a9b](https://github.com/Esposter/Esposter/commit/2a62a9b01d40d8f615639f2df4d2a285cfacdb14))
+* lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
+* move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
+
+
+### Features
+
+* Add documentation btn ([c3eb7f3](https://github.com/Esposter/Esposter/commit/c3eb7f3b5fb5ae8fd098d206055b173b588caf76))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/app
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/app
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

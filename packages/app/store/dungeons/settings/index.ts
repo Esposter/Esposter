@@ -12,11 +12,11 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     },
   });
   const setSettings = async (
-    settingsOption: keyof typeof settings.value,
+    settingsOption: Exclude<SettingsOption, SettingsOption.Close>,
     value: (typeof settings.value)[typeof settingsOption],
   ) => {
-    // Doing this casting hack here because we'll assume
-    // that the correct settings option + value will always be passed in
+    // Doing this casting hack here because we'll assume that
+    // the correct settings option + value will always be passed in
     settings.value[settingsOption] = value as never;
     await saveGame();
   };

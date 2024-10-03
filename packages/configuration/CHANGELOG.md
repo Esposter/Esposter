@@ -3,6 +3,89 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* lint ([7cf8e80](https://github.com/Esposter/Esposter/commit/7cf8e802d2ee7c86acecfdcf402d99e625580ca6))
+* vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

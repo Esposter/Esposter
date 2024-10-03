@@ -6,17 +6,20 @@ import {
   VuetifyComponentItemType,
   vuetifyComponentItemTypeSchema,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-// import { vuetifyComponentTypeSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import {
+  VuetifyComponentType,
+  vuetifyComponentTypeSchema,
+} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
-  // @TODO: We actually can't use this type because nuxt cannot load css in the server properly
-  // component: VuetifyComponentType[keyof VuetifyComponentType] = VuetifyComponentType["v-alert"];
-  component = "v-alert";
+  component: VuetifyComponentType = VuetifyComponentType["v-alert"];
   props: Record<string, unknown> = {};
   type = VuetifyComponentItemType.VuetifyComponent;
 }
 
 export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
-  .merge(z.object({ component: z.string(), props: z.record(z.unknown()) })) satisfies z.ZodType<VuetifyComponentItem>;
+  .merge(
+    z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.unknown()) }),
+  ) satisfies z.ZodType<VuetifyComponentItem>;

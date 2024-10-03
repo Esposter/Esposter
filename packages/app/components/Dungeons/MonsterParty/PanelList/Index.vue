@@ -7,9 +7,9 @@ const { monstersGrid } = storeToRefs(monsterPartySceneStore);
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in monstersGrid" :key="rowIndex">
+  <template v-for="(row, rowIndex) of monstersGrid" :key="rowIndex">
     <DungeonsMonsterPartyPanelListItem
-      v-for="(monster, columnIndex) in row"
+      v-for="(monster, columnIndex) of row"
       :key="getGridKey(rowIndex, columnIndex)"
       :row-index
       :column-index

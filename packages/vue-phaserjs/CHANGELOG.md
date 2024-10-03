@@ -3,6 +3,101 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* tilemap file checks ([d6bd86a](https://github.com/Esposter/Esposter/commit/d6bd86a5eeba9ea23d66296625b868d06f08e8f7))
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+
+### Bug Fixes
+
+* add sleep func as part of lib and use scene delayedcall ([0965cc3](https://github.com/Esposter/Esposter/commit/0965cc30ff94760ae390f30f2e5d3b3bed12c5e7))
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+
+### Bug Fixes
+
+* description ([cd55c53](https://github.com/Esposter/Esposter/commit/cd55c537f89259fb214290cfacb09b248dcb55f0))
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* imports + moving input active setter to lib ([2a62a9b](https://github.com/Esposter/Esposter/commit/2a62a9b01d40d8f615639f2df4d2a285cfacdb14))
+* license ([b3e06ac](https://github.com/Esposter/Esposter/commit/b3e06ac20fa8bbebf16d6d1d125dba207a659fe8))
+* move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
+
+
+### Features
+
+* Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

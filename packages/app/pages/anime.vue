@@ -13,7 +13,7 @@ const carousel = ref(0);
   <NuxtLayout>
     <v-container p-0="!" h-full fluid>
       <v-carousel v-model="carousel" height="100%" :touch="false" :show-arrows="false" hide-delimiters>
-        <v-carousel-item v-for="(drawing, index) in drawings" :key="index">
+        <v-carousel-item v-for="(drawing, index) of drawings" :key="index">
           <component
             :is="drawing"
             @click-left="carousel = mod(carousel - 1, drawings.length)"

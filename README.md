@@ -1,6 +1,22 @@
 # [Esposter](https://esposter.com)
 
-## Frontend
+<p>
+  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
+  </a>
+</p>
+
+### Table of Contents
+
+- 📖 [Documentation](#documentation)
+- 🏠 [Local Development](#local-development)
+- ⚖️ [License](#license)
+
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs) to level up.
+
+### Frontend
 
 <table>
   <thead>
@@ -70,7 +86,7 @@
   </tbody>
 </table>
 
-## Backend
+### Backend
 
 <table>
   <thead>
@@ -139,7 +155,7 @@
   </tbody>
 </table>
 
-## Hosting & Domain Providers
+### Hosting & Domain Providers
 
 <table>
   <thead>
@@ -180,7 +196,7 @@
   </tbody>
 </table>
 
-## VSCode Extensions
+### VSCode Extensions
 
 | Name                       | Link                                                                           |
 | -------------------------- | ------------------------------------------------------------------------------ |
@@ -193,31 +209,17 @@
 | Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments |
 | Dark++ Italic              | https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic    |
 
-## Setup
+## <a name="local-development">🏠 Local Development</a>
 
-1. Install the js dependencies:
-
-```bash
-pnpm i
-```
-
-2. Change to the app directory:
+1. Install the js dependencies and build the packages:
 
 ```bash
-cd packages/app
+pnpm i && pnpm build:packages
 ```
 
-### Development Server
+2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
 
-1. Install PostgreSQL + PgAdmin on https://www.postgresql.org/download
-
-2. Add `.env` file according to `.env.example`
-
-3. Start the development server on <http://localhost:3000>
-
-```bash
-pnpm dev
-```
+3. Add `.env` file according to `.env.example` in `packages/app` directory.
 
 ### Production
 
@@ -235,14 +237,29 @@ pnpm preview
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-## Architecture
+### Development Server
+
+1. Change to the app directory:
+
+```bash
+cd packages/app
+```
+
+2. Start the development server on <http://localhost:3000>
+
+```bash
+pnpm dev
+```
+
+### Architecture
 
 Esposter is a lerna + pnpm workspaces monorepo.
-
-### Packages
-
 Packages are used directly by the nuxt application via `workspace:*`.
 
-## Tools
+### Tools
 
 https://devina.io/svg-minifier
+
+## <a name="license">⚖️ License</a>
+
+[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)

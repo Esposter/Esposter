@@ -28,9 +28,6 @@ const keyboardExtension = new Extension({
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
   >
-    <template #prepend-footer="editorProps">
-      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
-    </template>
     <template #append-footer="editorProps">
       <RichTextEditorCustomSendMessageButton :="editorProps" />
     </template>

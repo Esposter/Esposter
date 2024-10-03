@@ -1,7 +1,7 @@
 {
   "name": "vue-phaserjs",
-  "version": "1.20.0",
-  "description": "vue + phaser",
+  "version": "1.22.0",
+  "description": "A component library to integrate Phaser Framework with Vue.",
   "type": "module",
   "keywords": [
     "vue",
@@ -39,12 +39,9 @@
     "@esposter/configuration": "workspace:*"
   },
   "peerDependencies": {
-    "phaser": "^3.85.1",
-    "phaser3-rex-plugins": "^1.80.7",
-    "pinia": "^2.2.2",
-    "vue": "3.5.0-beta.1"
-  },
-  "dependenciesComments": {
-    "vue": "@TODO: Upgrade breaks pinia writable computed type"
+    "phaser": "^3.85.2",
+    "phaser3-rex-plugins": "^1.80.8",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.11"
   }
 }

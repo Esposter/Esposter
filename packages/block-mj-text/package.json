@@ -1,7 +1,7 @@
 {
   "name": "@esposter/block-mj-text",
-  "version": "1.20.0",
-  "description": "mj-text block",
+  "version": "1.22.0",
+  "description": "A library that contains a mj-text block vue component.",
   "type": "module",
   "keywords": [
     "mjml"

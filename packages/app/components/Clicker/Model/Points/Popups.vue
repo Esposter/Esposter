@@ -6,5 +6,5 @@ const { popups } = storeToRefs(popupStore);
 </script>
 
 <template>
-  <ClickerModelPointsPopup v-for="{ id, ...popupProps } in popups" :key="id" :="popupProps" />
+  <ClickerModelPointsPopup v-for="{ id, ...popupProps } of popups" :key="id" :="popupProps" />
 </template>

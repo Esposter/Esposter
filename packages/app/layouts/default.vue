@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import type { CSSProperties } from "vue";
+import type { VNavigationDrawer } from "vuetify/components";
 
 import { useLayoutStore } from "@/store/layout";
 
-interface DefaultLayoutProps {
+interface DefaultProps {
   mainStyle?: CSSProperties;
+  scrim?: VNavigationDrawer["scrim"];
 }
 
-const { mainStyle } = defineProps<DefaultLayoutProps>();
+const { mainStyle, scrim } = defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: (props: Record<string, never>) => unknown;
   footer?: (props: Record<string, never>) => unknown;
   left?: (props: Record<string, never>) => unknown;
   right?: (props: Record<string, never>) => unknown;
 }>();
-
 const { mobile } = useDisplay();
 const router = useRouter();
 const layoutStore = useLayoutStore();
@@ -33,6 +34,7 @@ router.beforeEach(() => {
       v-if="slots.left"
       app
       :model-value="leftDrawerOpen"
+      :scrim
       @update:model-value="
         (value) => {
           leftDrawerOpen = value;
@@ -48,6 +50,7 @@ router.beforeEach(() => {
       app
       location="right"
       :model-value="rightDrawerOpen"
+      :scrim
       @update:model-value="
         (value) => {
           rightDrawerOpen = value;

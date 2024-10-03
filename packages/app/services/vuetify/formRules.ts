@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { ArrayElement } from "type-fest/source/internal";
 import type { VValidation } from "vuetify/components";
 

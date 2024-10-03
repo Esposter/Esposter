@@ -7,7 +7,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
 
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-    <ClickerSvgGroup :="svgGroupProps" @click="(event) => emit('click', event)">
+    <ClickerSvgGroup :="svgGroupProps" @click="emit('click', $event)">
       <path
         d="M609.2 336.8c21.4 0 39-17.4 39-39 0-21.4-17.4-39-39-39h-194.6c-21.4 0-39 17.4-39 39 0 21.4 17.4 39 39 39h194.6z"
         fill="#E6E7E8"

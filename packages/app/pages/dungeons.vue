@@ -71,7 +71,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
         },
       }"
     >
-      <component :is="component" v-for="[sceneKey, component] in Object.entries(SceneKeyMap)" :key="sceneKey" />
+      <component :is="component" v-for="[sceneKey, component] of Object.entries(SceneKeyMap)" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 
+import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
@@ -15,7 +16,7 @@ const { editedItem } = storeToRefs(tableEditorStore);
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
       </v-col>
       <v-col cols="12">
-        <v-textarea v-model="editedItem.notes" label="Notes" auto-grow />
+        <RichTextEditor v-model="editedItem.notes" :limit="NOTES_MAX_LENGTH" />
       </v-col>
       <v-col cols="12">
         <StyledDatePicker

@@ -6,13 +6,17 @@ import { useClickerStore } from "@/store/clicker";
 
 const clickerStore = useClickerStore();
 const { game } = storeToRefs(clickerStore);
-const { surface } = useColors();
 </script>
 
 <template>
-  <v-tooltip v-for="clickerType in Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
+  <v-tooltip v-for="clickerType of Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
     <template #activator="{ props }">
-      <v-btn class="border-sm" :="props" :active="game.type === clickerType" @click="game.type = clickerType">
+      <v-btn
+        class="bg-surface border-sm"
+        :="props"
+        :active="game.type === clickerType"
+        @click="game.type = clickerType"
+      >
         <svg size-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <g>
             <component :is="IconComponentMap[clickerType]" />
@@ -24,11 +28,7 @@ const { surface } = useColors();
 </template>
 
 <style scoped lang="scss">
-.v-btn {
-  background-color: v-bind(surface) !important;
-
-  &:not(:first-of-type) {
-    margin-left: 1rem;
-  }
+.v-btn:not(:first-of-type) {
+  margin-left: 1rem;
 }
 </style>

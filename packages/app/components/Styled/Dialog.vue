@@ -21,7 +21,7 @@ defineSlots<{
   default: (props: Record<string, never>) => unknown;
 }>();
 const { cardProps, confirmButtonAttrs, confirmButtonProps } = defineProps<StyledDialogProps>();
-const emit = defineEmits<{ submit: [submitEventPromise: SubmitEventPromise, onComplete: () => void] }>();
+const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
 const isOpen = ref(false);
 const isValid = ref(true);
 </script>
@@ -34,11 +34,9 @@ const isValid = ref(true);
     <v-form
       v-model="isValid"
       @submit.prevent="
-        (event) => {
-          emit('submit', event, () => {
-            isOpen = false;
-          });
-        }
+        emit('submit', $event, () => {
+          isOpen = false;
+        })
       "
     >
       <StyledCard :card-props>

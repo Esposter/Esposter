@@ -13,9 +13,9 @@ const { grid } = defineProps<ContentProps>();
 </script>
 
 <template>
-  <template v-for="(row, rowIndex) in unref(grid.grid)" :key="rowIndex">
+  <template v-for="(row, rowIndex) of unref(grid.grid)" :key="rowIndex">
     <DungeonsUIMenuContentText
-      v-for="(text, columnIndex) in row"
+      v-for="(text, columnIndex) of row"
       :key="getGridKey(rowIndex, columnIndex)"
       :grid
       :row-index

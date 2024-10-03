@@ -45,7 +45,7 @@ watch(
 </script>
 
 <template>
-  <div v-for="rotatingDivId in rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" absolute size-50 top-0>
+  <div v-for="rotatingDivId of rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" absolute size-50 top-0>
     <v-img absolute select-none rotate-135 width="2rem" height="2rem" :src="icon" :alt="Target.Cursor" />
   </div>
 </template>

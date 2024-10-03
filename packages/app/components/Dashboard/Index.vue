@@ -20,7 +20,7 @@ const layout = ref(structuredClone(toDeepRaw(visualList.value)));
       :is-resizable="false"
       responsive
     >
-      <GridItem v-for="{ id, type, chart, x, y, w, h } in visualList" :key="id" :i="id" :x :y :w :h>
+      <GridItem v-for="{ id, type, chart, x, y, w, h } of visualList" :key="id" :i="id" :x :y :w :h>
         <DashboardVisual :type :chart />
       </GridItem>
     </GridLayout>
