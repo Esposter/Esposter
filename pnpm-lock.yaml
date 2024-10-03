@@ -479,8 +479,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4)(terser@5.29.2))(vue@3.5.10(typescript@5.6.2))
       '@vitest/eslint-plugin':
-        specifier: ^1.1.4
-        version: 1.1.4(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2))(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.4)(terser@5.29.2))
+        specifier: ^1.1.5
+        version: 1.1.5(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2))(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.4)(terser@5.29.2))
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.11.1(jiti@2.0.0))
@@ -4312,19 +4312,15 @@ packages:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.1.4':
-    resolution: {integrity: sha512-kudjgefmJJ7xQ2WfbUU6pZbm7Ou4gLYRaao/8Ynide3G0QhVKHd978sDyWX4KOH0CCMH9cyrGAkFd55eGzJ48Q==}
+  '@vitest/eslint-plugin@1.1.5':
+    resolution: {integrity: sha512-a02F1HAJ/A1ietP96QDxkRqZROdgCJvNXSkmHAXTcTHnmj9Hh2gqi7x4M+miOj1sDIef2qGqE8zmMBb2PgTE8w==}
     peerDependencies:
       '@typescript-eslint/utils': '>= 8.0'
       eslint: '>= 8.57.0'
       typescript: '>= 5.0.0'
       vitest: '*'
     peerDependenciesMeta:
-      '@typescript-eslint/utils':
-        optional: true
       typescript:
-        optional: true
-      vitest:
         optional: true
 
   '@vitest/expect@2.1.2':
@@ -16000,13 +15996,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.4(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2))(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.4)(terser@5.29.2))':
+  '@vitest/eslint-plugin@1.1.5(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2))(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2)(vitest@2.1.2(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.4)(terser@5.29.2))':
     dependencies:
-      eslint: 9.11.1(jiti@2.0.0)
-    optionalDependencies:
       '@typescript-eslint/utils': 8.8.0(eslint@9.11.1(jiti@2.0.0))(typescript@5.6.2)
-      typescript: 5.6.2
+      eslint: 9.11.1(jiti@2.0.0)
       vitest: 2.1.2(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.4)(terser@5.29.2)
+    optionalDependencies:
+      typescript: 5.6.2
 
   '@vitest/expect@2.1.2':
     dependencies:
@@ -21654,7 +21650,7 @@ snapshots:
 
   regenerator-transform@0.15.2:
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.25.7
 
   regex@4.3.2: {}
 
@@ -23682,7 +23678,7 @@ snapshots:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.17.1)
       '@babel/core': 7.25.2
       '@babel/preset-env': 7.24.0(@babel/core@7.25.2)
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.25.7
       '@rollup/plugin-babel': 5.3.1(@babel/core@7.25.2)(rollup@2.79.1)
       '@rollup/plugin-node-resolve': 11.2.1(rollup@2.79.1)
       '@rollup/plugin-replace': 2.4.2(rollup@2.79.1)
