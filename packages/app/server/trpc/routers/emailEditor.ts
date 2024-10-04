@@ -21,7 +21,7 @@ export const emailEditorRouter = router({
     } catch {
       // We need to catch the case where the user is reading for the very first time
       // and there is no game saved yet
-      return new EmailEditor();
+      return undefined;
     }
   }),
   saveEmailEditor: authedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {

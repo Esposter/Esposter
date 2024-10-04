@@ -1,11 +1,10 @@
+import type { ProjectData } from "grapesjs";
 import type { Except } from "type-fest";
+import type { z } from "zod";
 
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
-import { z } from "zod";
 
-export class BaseEmailEditor {
-  mjml = "";
-
+export class BaseEmailEditor implements ProjectData {
   toJSON() {
     return JSON.stringify({ ...this });
   }
@@ -14,8 +13,4 @@ export class BaseEmailEditor {
 export type EmailEditor = typeof EmailEditor.prototype;
 export const EmailEditor = applyItemMetadataMixin(BaseEmailEditor);
 
-export const emailEditorSchema = z
-  .object({
-    mjml: z.string(),
-  })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Except<EmailEditor, "toJSON">>;
+export const emailEditorSchema = itemMetadataSchema satisfies z.ZodType<Except<EmailEditor, "toJSON">>;

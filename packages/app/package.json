@@ -98,6 +98,8 @@
     "eventemitter3": "^5.0.1",
     "fast-deep-equal": "^3.1.3",
     "fuse.js": "^7.0.0",
+    "grapesjs": "^0.21.13",
+    "grapesjs-mjml": "^1.0.6",
     "grid-engine": "^2.45.4",
     "grid-layout-plus": "^1.0.5",
     "gsap": "^3.12.5",
