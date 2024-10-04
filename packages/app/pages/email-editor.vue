@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
+import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import grapesJS from "grapesjs";
 import grapesJSMJML from "grapesjs-mjml";
@@ -22,6 +23,11 @@ const { trigger } = watchTriggerable(status, (newStatus) => {
     height: "100%",
     plugins: [grapesJSMJML],
     storageManager: {
+      options: {
+        local: {
+          key: EMAIL_EDITOR_LOCAL_STORAGE_KEY,
+        },
+      },
       type: status.value === "authenticated" ? "remote" : "local",
     },
   });
