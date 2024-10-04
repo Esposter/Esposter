@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { EmailEditor } from "@/models/emailEditor/EmailEditor";
 import type { Editor } from "grapesjs";
 
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -28,8 +27,13 @@ const { trigger } = watchTriggerable(status, (newStatus) => {
   });
   editor.Storage.add("remote", {
     load: () => readEmailEditor(),
-    store: (data) => saveEmailEditor(data as EmailEditor),
+    store: (data) => saveEmailEditor(data),
   });
+  editor.setComponents(`
+      <mjml>
+        <mj-body>
+        </mj-body>
+      </mjml>`);
 });
 
 onMounted(() => {
