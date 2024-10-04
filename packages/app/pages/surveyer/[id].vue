@@ -14,21 +14,19 @@
 // const survey = await useReadSurveyFromRoute();
 // const { status } = useAuth();
 // const surveyerStore = useSurveyStore();
-// const { autoSave, updateSurvey } = surveyerStore;
+// const { updateSurvey } = surveyerStore;
 // const creator = new SurveyCreatorModel({ isAutoSave: true, showLogicTab: true });
 // creator.text = survey.model;
 // creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
 //   survey.model = creator.text;
-//   survey.updatedAt = new Date();
 
 //   if (status.value === "authenticated")
 //     try {
-//       await updateSurvey(survey);
-//       callback(saveNo, true);
+//       const isSuccessful = await updateSurvey(survey);
+//       callback(saveNo, isSuccessful);
 //     } catch {
 //       callback(saveNo, false);
 //     }
-//   else if (status.value === "unauthenticated") callback(saveNo, autoSave(survey));
 // };
 </script>
 
