@@ -19,8 +19,6 @@ export const flowchartEditorRouter = router({
       const json = await streamToText(response.readableStreamBody);
       return Object.assign(new FlowchartEditor(), jsonDateParse(json));
     } catch {
-      // We need to catch the case where the user is reading for the very first time
-      // and there is no game saved yet
       return new FlowchartEditor();
     }
   }),
