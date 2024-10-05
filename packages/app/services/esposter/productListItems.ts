@@ -14,9 +14,14 @@ export const productListItems: ListItem[] = [
     title: "Table Editor",
   },
   {
-    href: RoutePath.Surveyer,
-    icon: "mdi-text-box-edit",
-    title: "Surveyer",
+    href: RoutePath.EmailEditor,
+    icon: "mdi-email-edit",
+    title: "Email Editor",
+  },
+  {
+    href: RoutePath.WebpageEditor,
+    icon: "mdi-language-html5",
+    title: "Webpage Editor",
   },
   {
     href: RoutePath.FlowchartEditor,
@@ -24,14 +29,14 @@ export const productListItems: ListItem[] = [
     title: "Flowchart Editor",
   },
   {
-    href: RoutePath.EmailEditor,
-    icon: "mdi-email-edit",
-    title: "Email Editor",
-  },
-  {
     href: RoutePath.DashboardEditor,
     icon: "mdi-view-dashboard-edit",
     title: "Dashboard Editor",
+  },
+  {
+    href: RoutePath.Surveyer,
+    icon: "mdi-text-box-edit",
+    title: "Surveyer",
   },
   {
     href: RoutePath.Clicker,
