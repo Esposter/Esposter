@@ -291,6 +291,9 @@ importers:
       howler:
         specifier: ^2.2.4
         version: 2.2.4
+      js-beautify:
+        specifier: ^1.15.1
+        version: 1.15.1
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -430,6 +433,9 @@ importers:
       '@types/howler':
         specifier: ^2.2.12
         version: 2.2.12
+      '@types/js-beautify':
+        specifier: ^1.14.3
+        version: 1.14.3
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
@@ -3871,6 +3877,9 @@ packages:
 
   '@types/jquery@3.5.31':
     resolution: {integrity: sha512-rf/iB+cPJ/YZfMwr+FVuQbm7IaWC4y3FVYfVDxRGqmUCFjjPII0HWaP0vTPJGp6m4o13AXySCcMbWfrWtBFAKw==}
+
+  '@types/js-beautify@1.14.3':
+    resolution: {integrity: sha512-FMbQHz+qd9DoGvgLHxeqqVPaNRffpIu5ZjozwV8hf9JAGpIOzuAf4wGbRSo8LNITHqGjmmVjaMggTT5P4v4IHg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -8175,11 +8184,6 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  nopt@7.2.0:
-    resolution: {integrity: sha512-CVDtwCdhYIvnAzFoJ6NJ6dX3oga9/HyciQDnG1vQDjSLMeKLJ4A93ZqYKDrgYSr1FBY5/hMYC+2VCi24pgpkGA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    hasBin: true
-
   nopt@7.2.1:
     resolution: {integrity: sha512-taM24ViiimT/XntxbPyJQzCG+p4EKOpgD3mxFwW38mGjVUrfERQOeY4EDHjdnptttfHuHQXFx+lTP08Q+mLa/w==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -10012,9 +10016,6 @@ packages:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
 
-  tslib@2.6.2:
-    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
   tslib@2.7.0:
     resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
 
@@ -11136,7 +11137,7 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 2.1.0
       '@azure/core-util': 1.8.0
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-client@1.9.0':
     dependencies:
@@ -11146,7 +11147,7 @@ snapshots:
       '@azure/core-tracing': 1.1.0
       '@azure/core-util': 1.8.0
       '@azure/logger': 1.1.0
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
@@ -11167,7 +11168,7 @@ snapshots:
 
   '@azure/core-paging@1.6.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-rest-pipeline@1.15.0':
     dependencies:
@@ -11178,13 +11179,13 @@ snapshots:
       '@azure/logger': 1.1.0
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
   '@azure/core-tracing@1.1.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-tracing@1.1.2':
     dependencies:
@@ -11198,7 +11199,7 @@ snapshots:
   '@azure/core-xml@1.4.0':
     dependencies:
       fast-xml-parser: 4.3.6
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-xml@1.4.3':
     dependencies:
@@ -11214,14 +11215,14 @@ snapshots:
       '@azure/core-tracing': 1.1.0
       '@azure/core-xml': 1.4.0
       '@azure/logger': 1.1.0
-      tslib: 2.6.2
+      tslib: 2.7.0
       uuid: 8.3.2
     transitivePeerDependencies:
       - supports-color
 
   '@azure/logger@1.1.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/storage-blob@12.25.0':
     dependencies:
@@ -15369,6 +15370,8 @@ snapshots:
     dependencies:
       '@types/sizzle': 2.3.8
 
+  '@types/js-beautify@1.14.3': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/jsonfile@6.1.4':
@@ -16439,9 +16442,9 @@ snapshots:
   '@vue/language-core@2.1.6(typescript@5.6.2)':
     dependencies:
       '@volar/language-core': 2.4.4
-      '@vue/compiler-dom': 3.5.10
+      '@vue/compiler-dom': 3.5.11
       '@vue/compiler-vue2': 2.7.16
-      '@vue/shared': 3.5.10
+      '@vue/shared': 3.5.11
       computeds: 0.0.1
       minimatch: 9.0.5
       muggle-string: 0.4.1
@@ -19858,7 +19861,7 @@ snapshots:
       editorconfig: 1.0.4
       glob: 10.4.3
       js-cookie: 3.0.5
-      nopt: 7.2.0
+      nopt: 7.2.1
 
   js-cookie@3.0.5: {}
 
@@ -20736,10 +20739,6 @@ snapshots:
   nopt@5.0.0:
     dependencies:
       abbrev: 1.1.1
-
-  nopt@7.2.0:
-    dependencies:
-      abbrev: 2.0.0
 
   nopt@7.2.1:
     dependencies:
@@ -22140,7 +22139,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   safe-array-concat@1.1.2:
     dependencies:
@@ -22895,8 +22894,6 @@ snapshots:
       json5: 2.2.3
       minimist: 1.2.8
       strip-bom: 3.0.0
-
-  tslib@2.6.2: {}
 
   tslib@2.7.0: {}
 

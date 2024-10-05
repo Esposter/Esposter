@@ -19,6 +19,7 @@ import grapesJSTooltip from "grapesjs-tooltip";
 import grapesJSTouch from "grapesjs-touch";
 import grapesJSTuiImageEditor from "grapesjs-tui-image-editor";
 import grapesJSTyped from "grapesjs-typed";
+import { css as cssFormat, html as htmlFormat } from "js-beautify";
 
 defineRouteRules({ ssr: false });
 
@@ -62,9 +63,12 @@ const { trigger } = watchTriggerable(status, (newStatus) => {
       }),
       grapesJSStyleBg,
       usePlugin(grapesJSPresetWebpage, {
-        modalImportContent: (editor: Editor) => `${editor.getHtml()}<style>${editor.getCss()}</style>`,
-        modalImportLabel:
-          '<div style="margin-bottom: 10px; font-size: 13px;">Paste here your HTML/CSS and click Import</div>',
+        modalImportContent: (editor: Editor) => {
+          const html = editor.getHtml();
+          const css = editor.getCss();
+          return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
+        },
+        modalImportLabel: '<div class="text-subtitle-2" mb-2.5>Paste here your HTML/CSS and click Import</div>',
         modalImportTitle: "Import Template",
       }),
     ],
