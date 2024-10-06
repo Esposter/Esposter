@@ -147,7 +147,7 @@
     "vue-phaserjs": "workspace:*",
     "vue-router": "^4.4.5",
     "vue-waypoint": "^4.3.0",
-    "vue3-apexcharts": "^1.6.0",
+    "vue3-apexcharts": "^1.7.0",
     "vuetify": "^3.7.2",
     "webfontloader": "^1.6.28",
     "worker-timers": "^8.0.7",
