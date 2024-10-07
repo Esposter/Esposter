@@ -18,11 +18,10 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 const runtimeConfig = useRuntimeConfig();
 
 export const authOptions: AuthConfig = {
+  // @TODO
   // @ts-expect-error mismatching @auth/core versions we ignore for now
   adapter: DrizzleAdapter(db, {
     accountsTable: accounts,
-    // @TODO
-    // @ts-expect-error https://github.com/nextauthjs/next-auth/issues/11490
     authenticatorsTable: authenticators,
     sessionsTable: sessions,
     usersTable: users,
