@@ -8,7 +8,7 @@ export const usePhaserStore = defineStore("phaser", () => {
   let baseGame: Game | null = null;
   const game = computed({
     get: () => baseGame,
-    set: (newGame: Game | null) => {
+    set: (newGame) => {
       baseGame = newGame;
     },
   });
