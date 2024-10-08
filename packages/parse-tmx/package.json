@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/node": "^22.7.4"
+    "@types/node": "^22.7.5"
   }
 }
