@@ -36,7 +36,7 @@ const { text } = useColors();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div class="border" py-2 mx-4 rd-lg shadow-md>
+    <div class="border" shadow-md py-2 mx-4 rd-lg>
       <slot name="messagePreview" />
     </div>
   </StyledDeleteDialog>
