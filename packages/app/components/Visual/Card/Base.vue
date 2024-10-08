@@ -18,8 +18,7 @@ const { sm, xs } = useDisplay();
     justify-center
     items-center
     text-center
-    font-montserrat
-    font-italic
+    font="[Montserrat] italic"
     p-4
     :card-props="{ minHeight: '200' }"
   >

@@ -1,3 +1,3 @@
 <template>
-  <div class="text-h4" font-bold flex justify-center>Inventory</div>
+  <div class="text-h4" flex justify-center font-bold>Inventory</div>
 </template>

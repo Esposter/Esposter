@@ -24,14 +24,13 @@ const { "on-surface": onSurface, surface } = useColors();
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
             class="border-sm item"
+            p-4
             h-full
             flex
             justify-center
             items-center
             text-center
-            font-montserrat
-            font-italic
-            p-4
+            font="[Montserrat] italic"
             cursor-pointer
             rd-1
           >
