@@ -512,12 +512,6 @@ importers:
         specifier: ^0.18.3
         version: 0.18.3(magicast@0.3.4)(rollup@4.21.3)(typescript@5.6.2)(vite@5.4.8(@types/node@22.7.5)(sass@1.79.4)(terser@5.29.2))(vue@3.5.10(typescript@5.6.2))(webpack-sources@3.2.3)
 
-  packages/block-mj-text:
-    devDependencies:
-      '@esposter/configuration':
-        specifier: workspace:*
-        version: link:../configuration
-
   packages/configuration:
     devDependencies:
       '@rollup/plugin-typescript':
