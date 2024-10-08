@@ -11,14 +11,8 @@ import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  createEntity,
-  deleteEntity,
-  getTableClient,
-  getTopNEntities,
-  updateEntity,
-} from "@/services/azure/table";
+import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
+import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";
 import { emojiEventEmitter } from "@/services/esbabbler/events/emoji";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/time/now";

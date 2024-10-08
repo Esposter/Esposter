@@ -10,7 +10,7 @@ import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/c
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
-import { DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
+import { AZURE_DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
@@ -111,27 +111,27 @@ export const roomRouter = router({
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
       let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
+        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
       });
       if (invites.length > 0) return invites[0].rowKey;
 
       // Generate non-colliding invite code
       let inviteCode = generateCode(8);
       invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
+        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
       });
 
       while (invites.length > 0) {
         inviteCode = generateCode(8);
         invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-          filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
+          filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
         });
       }
 
       const createdAt = new Date();
       const newInvite = new InviteEntity({
         createdAt,
-        partitionKey: DEFAULT_PARTITION_KEY,
+        partitionKey: AZURE_DEFAULT_PARTITION_KEY,
         roomId,
         rowKey: inviteCode,
         updatedAt: createdAt,
@@ -142,7 +142,7 @@ export const roomRouter = router({
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<boolean>(async ({ ctx, input }) => {
     const inviteClient = await getTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-      filter: `PartitionKey eq '${DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
+      filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
     });
     if (invites.length === 0) return false;
 

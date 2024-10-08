@@ -4,6 +4,7 @@ import type { TableEntity, TableEntityQueryOptions } from "@azure/data-tables";
 import type { TupleSlice } from "@esposter/shared";
 import type { Constructor } from "type-fest";
 
+import { AZURE_SELF_DESTRUCT_TIMER, AZURE_SELF_DESTRUCT_TIMER_SMALL } from "@/services/azure/constants";
 import { dayjs } from "@/services/dayjs";
 import { now } from "@/util/time/now";
 import { TableClient } from "@azure/data-tables";
@@ -89,14 +90,6 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
 
   return [];
 };
-
-// Crazy big timestamps for calculating reverse-ticked timestamps.
-// It also indicates how long before azure table storage
-// completely ***ks up trying to insert a negative partition / row key
-export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
-export const AZURE_SELF_DESTRUCT_TIMER_SMALL = "9".repeat(15);
-export const AZURE_MAX_BATCH_SIZE = 100;
-export const AZURE_MAX_PAGE_SIZE = 1000;
 
 export const getReverseTickedDay = (createdAt: Date) =>
   (BigInt(AZURE_SELF_DESTRUCT_TIMER_SMALL) - BigInt(dayjs(createdAt).format("YYYYMMDD"))).toString();

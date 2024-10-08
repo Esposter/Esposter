@@ -11,7 +11,8 @@ import {
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { AZURE_MAX_PAGE_SIZE, createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
+import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
+import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { replyEventEmitter } from "@/services/esbabbler/events/reply";
 import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { now } from "@/util/time/now";
