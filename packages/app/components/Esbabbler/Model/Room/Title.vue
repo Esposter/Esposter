@@ -8,6 +8,8 @@ const editedRoomName = ref(currentRoomName.value);
 const isUpdateMode = ref(false);
 const titleRef = ref<HTMLDivElement>();
 const titleHovered = ref(false);
+const { text } = useColors();
+const borderColor = computed(() => (!isUpdateMode.value && titleHovered.value ? text.value : "transparent"));
 const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !editedRoomName.value || editedRoomName.value === currentRoomName.value) return;
@@ -30,11 +32,11 @@ onClickOutside(titleRef, () => {
 <template>
   <div
     ref="titleRef"
+    class="border"
+    px-1
     flex
     items-center
-    px-1
-    :w="isUpdateMode ? 'full' : ''"
-    :b="!isUpdateMode && titleHovered ? '1 solid' : '1 solid transparent'"
+    :w="isUpdateMode ? 'full' : undefined"
     rd
     @mouseenter="titleHovered = true"
     @mouseleave="titleHovered = false"
@@ -54,3 +56,9 @@ onClickOutside(titleRef, () => {
     </v-toolbar-title>
   </div>
 </template>
+
+<style scoped lang="scss">
+.border {
+  border: 1px $border-style-root v-bind(borderColor);
+}
+</style>
