@@ -106,7 +106,7 @@ const onSelect = async (emoji: string) => {
           <v-btn
             v-if="isCreator"
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-pencil"
             size="small"
             :="tooltipProps"
@@ -118,7 +118,7 @@ const onSelect = async (emoji: string) => {
         <template #activator="{ props: menuProps }">
           <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">
-              <v-btn m-0="!" rd-0="!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+              <v-btn m-0="!" rd-none="!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
             </template>
           </v-tooltip>
         </template>

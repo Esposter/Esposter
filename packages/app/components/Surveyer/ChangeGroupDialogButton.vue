@@ -30,7 +30,7 @@ const group = ref(survey.group);
         <template #activator="{ props: tooltipProps }">
           <v-btn
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-folder-arrow-left-right"
             size="small"
             :="tooltipProps"

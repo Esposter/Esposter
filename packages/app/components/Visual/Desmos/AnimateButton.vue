@@ -11,7 +11,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
         fixed="!"
         bottom-2
         left-1
-        rd-1="!"
+        rd="!"
         icon="mdi-draw"
         size="small"
         color="white"

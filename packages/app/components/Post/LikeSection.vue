@@ -21,7 +21,7 @@ const unliked = computed(() => post.likes.some((l) => l.userId === session.value
   <div flex flex-col items-center>
     <v-btn
       p-0="!"
-      rd-1="!"
+      rd="!"
       bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"
@@ -43,7 +43,7 @@ const unliked = computed(() => post.likes.some((l) => l.userId === session.value
     {{ post.noLikes }}
     <v-btn
       p-0="!"
-      rd-1="!"
+      rd="!"
       bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"

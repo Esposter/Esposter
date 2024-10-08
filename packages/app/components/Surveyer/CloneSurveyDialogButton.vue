@@ -17,7 +17,7 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
         <template #activator="{ props: activatorProps }">
           <v-btn
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-file-multiple"
             size="small"
             :="activatorProps"

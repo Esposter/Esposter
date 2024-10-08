@@ -32,7 +32,7 @@ const { "on-surface": onSurface, surface } = useColors();
             text-center
             font="[Montserrat] italic"
             cursor-pointer
-            rd-1
+            rd
           >
             {{ card.text }}
           </div>

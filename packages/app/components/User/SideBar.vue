@@ -15,7 +15,7 @@ const route = useRoute();
       <v-list-item
         v-for="{ title, href } of items"
         :key="href"
-        rd-1="!"
+        rd="!"
         :active="route.path === href"
         @click="navigateTo(href)"
       >

@@ -34,7 +34,8 @@ onClickOutside(titleRef, () => {
     items-center
     px-1
     :w="isUpdateMode ? 'full' : ''"
-    :b="!isUpdateMode && titleHovered ? '1 solid rd' : '1 solid transparent rd'"
+    :b="!isUpdateMode && titleHovered ? '1 solid' : '1 solid transparent'"
+    rd
     @mouseenter="titleHovered = true"
     @mouseleave="titleHovered = false"
   >
