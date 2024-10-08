@@ -30,7 +30,7 @@ const { onPlayerInput } = battleSceneStore;
     "
     @shutdown="
       async () => {
-        await battleStateMachine.setState(null);
+        await battleStateMachine.setState(undefined);
       }
     "
   >

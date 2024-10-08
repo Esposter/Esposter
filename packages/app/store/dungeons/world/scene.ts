@@ -7,8 +7,8 @@ import { useDungeonsStore } from "@/store/dungeons";
 
 // We will create the tilemap and its metadata in the world scene vue component
 export const ExternalWorldSceneStore = {
-  objectLayerMap: new Map<ObjectgroupName, null | Tilemaps.ObjectLayer>(),
-  tilemap: null as unknown as Tilemaps.Tilemap,
+  objectLayerMap: new Map<ObjectgroupName, Tilemaps.ObjectLayer | undefined>(),
+  tilemap: undefined as unknown as Tilemaps.Tilemap,
   // Each tilemap may or may not use any number of layers that it likes
   tilemapKeyLayerMap: new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>(),
 };

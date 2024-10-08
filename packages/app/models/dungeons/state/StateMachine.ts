@@ -2,7 +2,7 @@ import type { State } from "@/models/dungeons/state/State";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 export class StateMachine<TStateName extends string> {
-  currentState: State<null | TStateName> = { name: null };
+  currentState: State<TStateName | undefined> = { name: undefined };
   scene!: SceneWithPlugins;
   stateMap: Record<TStateName, State<TStateName>>;
 
@@ -10,10 +10,10 @@ export class StateMachine<TStateName extends string> {
     this.stateMap = stateMap;
   }
 
-  async setState(stateName: null | TStateName) {
+  async setState(stateName: TStateName | undefined) {
     if (stateName === this.currentState.name) return;
 
-    const state = stateName === null ? { name: null } : this.stateMap[stateName];
+    const state = stateName === undefined ? { name: undefined } : this.stateMap[stateName];
     await this.currentState.onExit?.(this.scene);
     this.currentState = state;
     await this.currentState.onEnter?.(this.scene);

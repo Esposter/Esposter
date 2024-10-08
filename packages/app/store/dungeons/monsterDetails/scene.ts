@@ -11,7 +11,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
   // We'll ensure that we populate the selected monster everytime before we enter the scene
-  const selectedMonster = ref<Monster>() as Ref<Monster>;
+  const selectedMonster = ref() as Ref<Monster>;
   const attacks = computed(() => selectedMonster.value.attackIds.map(getAttack));
   const attackNameList = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.id));
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
