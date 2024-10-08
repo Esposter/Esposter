@@ -26,7 +26,7 @@ describe("tableEditorStore", () => {
     const newItem = new TodoListItem();
     createItem(newItem);
 
-    expect(editedItem.value).toBeNull();
+    expect(editedItem.value).toBeUndefined();
     expect(editedIndex.value).toBe(-1);
     expect(editFormDialog.value).toBeFalsy();
     expect(router.currentRoute.value.query).toStrictEqual({});
@@ -128,13 +128,13 @@ describe("tableEditorStore", () => {
     const { editedIndex, editedItem } = storeToRefs(tableEditorStore);
     const { resetItem } = tableEditorStore;
 
-    expect(editedItem.value).toBeNull();
+    expect(editedItem.value).toBeUndefined();
     expect(editedIndex.value).toBe(-1);
     expect(router.currentRoute.value.query).toStrictEqual({});
 
     await resetItem();
 
-    expect(editedItem.value).toBeNull();
+    expect(editedItem.value).toBeUndefined();
     expect(editedIndex.value).toBe(-1);
     expect(router.currentRoute.value.query).toStrictEqual({});
   });
