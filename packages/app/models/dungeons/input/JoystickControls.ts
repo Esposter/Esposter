@@ -6,7 +6,7 @@ import { mapCursorKeysToDirection } from "@/services/dungeons/UI/input/mapCursor
 import { Direction } from "grid-engine";
 
 export class JoystickControls extends BaseControls implements Controls {
-  cursorKeys: BaseCursorKeys | null = null;
+  cursorKeys?: BaseCursorKeys;
 
   getInput(justDown?: true) {
     const input = super.getInput();

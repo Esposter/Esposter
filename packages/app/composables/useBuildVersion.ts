@@ -1,7 +1,8 @@
-const buildVersion: null | number = null;
+let buildVersion: number | undefined;
 
-export const useBuildVersion = () => {
-  if (buildVersion !== null) return buildVersion;
+export const useBuildVersion = async () => {
+  if (buildVersion !== undefined) return buildVersion;
   const { $client } = useNuxtApp();
-  return $client.app.buildVersion.query();
+  buildVersion = await $client.app.buildVersion.query();
+  return buildVersion;
 };

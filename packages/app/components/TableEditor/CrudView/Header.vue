@@ -9,7 +9,7 @@ const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const { editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
   storeToRefs(tableEditorStore);
-const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : null));
+const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
 </script>
 
 <template>

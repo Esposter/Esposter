@@ -18,7 +18,7 @@ const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
 let calculator: Desmos.Calculator;
-const expressionPanel = ref<HTMLDivElement | null>(null);
+const expressionPanel = ref<HTMLDivElement>();
 const componentsToRender = computed<Parameters<typeof h>[]>(() => {
   const WindowControlsComponent: Parameters<typeof h> = [
     WindowControls,
@@ -72,6 +72,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
+
   calculator = await GraphingCalculator(element, {
     border: false,
     expressionsCollapsed: true,
@@ -83,7 +84,10 @@ onMounted(async () => {
     trace: false,
   });
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
-  expressionPanel.value = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+  const newExpressionPanel = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+  if (!newExpressionPanel) return;
+
+  expressionPanel.value = newExpressionPanel;
   render(componentsToRender.value);
 });
 </script>

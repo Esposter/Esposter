@@ -7,7 +7,7 @@ const editFormComponentFilepathEntries = Object.entries<Component>(
 export const useEditFormComponent = (itemType: string) => {
   const tableEditorStore = useTableEditorStore();
   const { tableEditorType } = storeToRefs(tableEditorStore);
-  let editFormComponent: Component | null = null;
+  let editFormComponent: Component | undefined;
 
   for (const [filepath, component] of editFormComponentFilepathEntries)
     if (typeof filepath === "string" && filepath.includes(`${tableEditorType.value}/Item/${itemType}`))

@@ -16,7 +16,7 @@ interface HeaderProps<T> {
   isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
-  originalItem: null | T;
+  originalItem?: T;
 }
 
 const { editedItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =

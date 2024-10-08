@@ -1,7 +1,7 @@
 import Fragment from "@/components/Fragment.vue";
 import { render } from "vue";
 // https://github.com/vuejs/rfcs/discussions/582
-export const useRender = (container: Ref<Element | null>) => {
+export const useRender = (container: Ref<Element | undefined>) => {
   const globalAppContext = getCurrentInstance()?.appContext ?? null;
 
   onUnmounted(() => {
