@@ -62,12 +62,12 @@ export const getEntity = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   cls: Constructor<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
-): Promise<null | TEntity> => {
+): Promise<TEntity | undefined> => {
   try {
     const entity = await tableClient.getEntity<TEntity>(...args);
     return plainToInstance(cls, entity);
   } catch {
-    return null;
+    return undefined;
   }
 };
 
@@ -79,13 +79,15 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
 ): Promise<TEntity[]> => {
   const listResults = tableClient.listEntities<TEntity>({ queryOptions });
   const iterator = listResults.byPage({ maxPageSize: topN });
-  // Take the first page as the topEntries result
-  // This only sends a single request to the service
-  const firstPage = (await iterator.next()).value as (string | TEntity)[] | null;
-  if (!firstPage) return [];
-  // Filter out metadata like continuation token
-  // before deserializing the json to handle transforming Date objects
-  return plainToInstance(cls, firstPage.slice(0, topN));
+
+  for await (const page of iterator) {
+    // Filter out metadata like continuation token before deserializing the json
+    // Take the first page as the topEntries result
+    // This only sends a single request to the service
+    return plainToInstance(cls, page.slice(0, topN));
+  }
+
+  return [];
 };
 
 // Crazy big timestamps for calculating reverse-ticked timestamps.

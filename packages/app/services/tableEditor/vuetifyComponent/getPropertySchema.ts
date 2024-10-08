@@ -1,7 +1,7 @@
 import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
 import type { Constructor } from "type-fest";
 
-export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<never> | null => {
+export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<object> | undefined => {
   switch (type) {
     case Boolean:
       return {
@@ -19,6 +19,6 @@ export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<never>
         type: "string",
       };
     default:
-      return null;
+      return undefined;
   }
 };

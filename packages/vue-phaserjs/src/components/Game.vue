@@ -36,7 +36,7 @@ onUnmounted(() => {
   const game = useGame();
   game.events.off("ready", readyListener);
   game.destroy(true);
-  storeGame.value = null;
+  storeGame.value = undefined;
 });
 </script>
 
