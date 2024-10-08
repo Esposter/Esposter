@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
+
+
+### Bug Fixes
+
+* add back background ([93b6eca](https://github.com/Esposter/Esposter/commit/93b6eca9718da2d574778e4722683ae1bc40f357))
+* classify border styles to be more consistent ([a221fe5](https://github.com/Esposter/Esposter/commit/a221fe585112c5e2eaa11f0028ac68cf727c0dc6))
+* lint ([2b6c450](https://github.com/Esposter/Esposter/commit/2b6c4509c4ed32ea72b7eed0a64f409a1003bb1a))
+* local storage key ([afa9d56](https://github.com/Esposter/Esposter/commit/afa9d561dbf972609158e8a84809517ddefa77e3))
+* more border styles consistency ([1a5edaf](https://github.com/Esposter/Esposter/commit/1a5edaf3b968e8538f3766f392332c599b450f12))
+* more types ([8235f37](https://github.com/Esposter/Esposter/commit/8235f37b8fcd1a4b77899b2b867dea63cef661a1))
+* move anything frontend to only use undefined instead of null for consistency ([f8d9305](https://github.com/Esposter/Esposter/commit/f8d93052c401f285343d5c69bce2b91182548083))
+* remove now unnecessary ts expect error ([e8a51eb](https://github.com/Esposter/Esposter/commit/e8a51eb525f02d504808b18005285a1d3fc1c7b4))
+* resetting viewport ([3f478d8](https://github.com/Esposter/Esposter/commit/3f478d8cb948c7853f152d6b017694f314695f7b))
+* saving ([377c047](https://github.com/Esposter/Esposter/commit/377c047f268e6ab07525052607cc4a2890b9567b))
+* some pinia todos ([7efdc7f](https://github.com/Esposter/Esposter/commit/7efdc7f569dc8cf8b825195522d770203bd5f3a8))
+* survey updates ([9bd40e4](https://github.com/Esposter/Esposter/commit/9bd40e4136f2ca2155628b34b19628a83d5eadfd))
+* types ([d111b55](https://github.com/Esposter/Esposter/commit/d111b55d42168f5520592a737d06e781fa687d1c))
+* types ([56c2115](https://github.com/Esposter/Esposter/commit/56c2115249412c93334fcdab96fa6f9231d1759c))
+* unocss config ([e4e0a1d](https://github.com/Esposter/Esposter/commit/e4e0a1df03134acaf1ad8b95c7c6a6684b1b6b23))
+* use  and fix up some [@vue-ignores](https://github.com/vue-ignores) ([e3ec037](https://github.com/Esposter/Esposter/commit/e3ec037f13c829130d0e0f968f95cb362e80d8d5))
+* use custom node + add header ([4c0e0f0](https://github.com/Esposter/Esposter/commit/4c0e0f03102bc655bf7475eb59982c81f86f244b))
+
+
+### Features
+
+* Add connect + colors ([94cb08e](https://github.com/Esposter/Esposter/commit/94cb08e4fffa2654f2dd0302dfc809286912aae3))
+* Add debounced autosave ([db835fa](https://github.com/Esposter/Esposter/commit/db835faa44cdd830522cbcf0e6a3b9b48027531a))
+* Add dnd ([d3326ca](https://github.com/Esposter/Esposter/commit/d3326ca76033f6bd63fc9b01bed6fe34d42bd1a5))
+* Add easy identification of node being updated ([b64f0bb](https://github.com/Esposter/Esposter/commit/b64f0bbfdfa0e06db3d84e2a87588e4737214bab))
+* Add fully featured email editor ([758924b](https://github.com/Esposter/Esposter/commit/758924bf43800df64f0d59402a670c831cd55603))
+* Add fully featured webpage editor ([2a151a3](https://github.com/Esposter/Esposter/commit/2a151a34e68301566f6f017e80f8900ecb1e5d4f))
+* Add loading data ([456d908](https://github.com/Esposter/Esposter/commit/456d908b51126d413ec6b865d2565355f9898c56))
+* Add sidebar button to support mobile ([63f9cd2](https://github.com/Esposter/Esposter/commit/63f9cd2a970de5b87045b33034a4c7e2afec648f))
+* Add undo/redo ([323357d](https://github.com/Esposter/Esposter/commit/323357d7f51f150b3979967075b09aa87b36983e))
+* finish converting remaining non-db related frontend stuff all from null to undefined ([fad154c](https://github.com/Esposter/Esposter/commit/fad154cda273182dc7972897cc42adda5ec6866a))
+* format html/css output ([c60ff96](https://github.com/Esposter/Esposter/commit/c60ff96c460ecc803b881aff48805d07f76cc5ad))
+
+
+
+
+
 # [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
 
 

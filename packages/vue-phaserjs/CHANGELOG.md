@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
+
+
+### Bug Fixes
+
+* move anything frontend to only use undefined instead of null for consistency ([f8d9305](https://github.com/Esposter/Esposter/commit/f8d93052c401f285343d5c69bce2b91182548083))
+* some pinia todos ([7efdc7f](https://github.com/Esposter/Esposter/commit/7efdc7f569dc8cf8b825195522d770203bd5f3a8))
+* types ([d111b55](https://github.com/Esposter/Esposter/commit/d111b55d42168f5520592a737d06e781fa687d1c))
+
+
+
+
+
 # [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
 
 

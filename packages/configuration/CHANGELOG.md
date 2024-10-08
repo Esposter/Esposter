@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
+
+
+### Bug Fixes
+
+* lint ([2b6c450](https://github.com/Esposter/Esposter/commit/2b6c4509c4ed32ea72b7eed0a64f409a1003bb1a))
+* types ([56c2115](https://github.com/Esposter/Esposter/commit/56c2115249412c93334fcdab96fa6f9231d1759c))
+* use  and fix up some [@vue-ignores](https://github.com/vue-ignores) ([e3ec037](https://github.com/Esposter/Esposter/commit/e3ec037f13c829130d0e0f968f95cb362e80d8d5))
+
+
+
+
+
 # [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
 
 
