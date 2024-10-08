@@ -16,7 +16,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Room);
-  const currentRoomId = ref<null | string>(null);
+  const currentRoomId = ref();
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);

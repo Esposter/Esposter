@@ -168,7 +168,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.5.7",
-    "@nuxt/fonts": "^0.9.2",
+    "@nuxt/fonts": "^0.10.0",
     "@nuxt/scripts": "0.6.6",
     "@nuxt/test-utils": "^3.14.3",
     "@types/dedent": "^0.7.2",
@@ -184,7 +184,7 @@
     "@types/three": "^0.169.0",
     "@types/webfontloader": "^1.6.38",
     "@types/ws": "^8.5.12",
-    "@unocss/nuxt": "^0.63.3",
+    "@unocss/nuxt": "^0.63.4",
     "@vite-pwa/nuxt": "^0.10.5",
     "@vitest/coverage-v8": "^2.1.2",
     "@vue/test-utils": "^2.4.6",
@@ -199,7 +199,7 @@
     "prettier": "^3.3.3",
     "sass": "^1.79.4",
     "tsx": "^4.19.1",
-    "unocss": "^0.63.3",
+    "unocss": "^0.63.4",
     "vitest": "^2.1.2",
     "vuetify-nuxt-module": "^0.18.3"
   },

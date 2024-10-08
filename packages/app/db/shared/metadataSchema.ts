@@ -1,5 +1,3 @@
-import type { pgTable } from "drizzle-orm/pg-core";
-
 import { timestamp } from "drizzle-orm/pg-core";
 
 export const metadataSchema = {
@@ -8,4 +6,4 @@ export const metadataSchema = {
   updatedAt: timestamp("updatedAt", { mode: "date" })
     .notNull()
     .$onUpdateFn(() => new Date()),
-} satisfies Parameters<typeof pgTable>[1];
+};
