@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { SVGAttributes } from "vue";
-
 export interface ClickerSvgGroupProps {
-  gAttrs?: SVGAttributes;
+  gAttrs?: Record<string, unknown>;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();

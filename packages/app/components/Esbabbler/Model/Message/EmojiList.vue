@@ -38,6 +38,8 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       z-1
       w-fit
       px-2
+      origin-center
+      active:scale-95
       @click="
         isReacted
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
@@ -56,10 +58,6 @@ const hasEmojis = computed(() => emojis.value.length > 0);
 .reacted {
   background-color: v-bind(infoOpacity10);
   border: 1px $border-style-root v-bind(info);
-
-  &:active {
-    transform: $click-shrink;
-  }
 }
 
 .not-reacted {
@@ -69,10 +67,6 @@ const hasEmojis = computed(() => emojis.value.length > 0);
   &:hover {
     background-color: v-bind(surfaceOpacity80);
     border: 1px $border-style-root v-bind(border);
-  }
-
-  &:active {
-    transform: $click-shrink;
   }
 }
 </style>
