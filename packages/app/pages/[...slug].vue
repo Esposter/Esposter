@@ -28,9 +28,7 @@ onMounted(() => {
       justify-center
       items-center
       flex-col
-      bg-center
-      bg-cover
-      bg-black
+      bg="center cover black"
     >
       <div flex flex-col items-center z-1 mt-25>
         <div text="#ddd" text-center text-5xl>Lost in space?</div>
