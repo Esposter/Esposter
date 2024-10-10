@@ -9,7 +9,7 @@ export default tseslint.config(
   pinia.configs["all-flat"],
   unocss,
   {
-    files: ["**/**.test.ts"],
+    files: ["**/**.test.ts", "**/**.test-d.ts"],
     plugins: {
       vitest,
     },

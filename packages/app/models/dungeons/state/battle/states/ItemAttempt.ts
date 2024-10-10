@@ -8,7 +8,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useSceneStore } from "@/store/dungeons/scene";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 let unsubscribes: (() => void)[] = [];
 
@@ -36,7 +36,7 @@ export const ItemAttempt: State<StateName> = {
       for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
         removeScene(scene, previousSceneKey.value);
       switchToPreviousScene(scene);
-      await showMessages(battleScene, [`You used ${prettifyName(item.id)} on ${prettifyName(monster.key)}.`]);
+      await showMessages(battleScene, [`You used ${prettify(item.id)} on ${prettify(monster.key)}.`]);
       await onComplete();
     });
     usePhaserListener("unuseItem", async () => {

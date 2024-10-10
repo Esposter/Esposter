@@ -7,7 +7,7 @@ import ConfirmDeleteDialogButton from "@/components/Styled/EditFormDialog/Confir
 import ErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import SaveButton from "@/components/Styled/EditFormDialog/SaveButton.vue";
 import ToggleFullScreenDialogButton from "@/components/Styled/EditFormDialog/ToggleFullScreenDialogButton.vue";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
   editedItem: T;
@@ -21,7 +21,7 @@ interface HeaderProps<T> {
 
 const { editedItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<HeaderProps<T>>();
-const itemType = computed(() => prettifyName(editedItem.type));
+const itemType = computed(() => prettify(editedItem.type));
 const emit = defineEmits<{
   delete: [onComplete: () => void];
   save: [];

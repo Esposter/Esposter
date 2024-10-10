@@ -7,7 +7,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { sleep } from "vue-phaserjs";
 
 export const PlayerAttack: State<StateName> = {
@@ -23,10 +23,7 @@ export const PlayerAttack: State<StateName> = {
     const attack = attackOptionGrid.value;
     if (!attack) return;
 
-    await showMessageNoInputRequired(
-      scene,
-      `${prettifyName(activeMonster.value.key)} used ${prettifyName(attack.id)}.`,
-    );
+    await showMessageNoInputRequired(scene, `${prettify(activeMonster.value.key)} used ${prettify(attack.id)}.`);
     await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
     await useAttackAnimation(scene, attack, true);
     await takeDamage(calculateDamage(activeMonster.value.stats.attack));

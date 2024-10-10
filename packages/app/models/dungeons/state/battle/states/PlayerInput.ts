@@ -5,7 +5,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { useInfoPanelStore } from "@/store/dungeons/battle/infoPanel";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 export const PlayerInput: State<StateName> = {
   name: StateName.PlayerInput,
@@ -19,7 +19,7 @@ export const PlayerInput: State<StateName> = {
 
     activePanel.value = ActivePanel.Option;
     line1DialogMessage.value.text = "What should";
-    line2Text.value = `${prettifyName(activeMonster.value.key)} do next?`;
+    line2Text.value = `${prettify(activeMonster.value.key)} do next?`;
   },
   onExit: () => {
     const infoPanelStore = useInfoPanelStore();

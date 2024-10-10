@@ -4,7 +4,7 @@ import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 
 interface InfoContainerProps {
@@ -34,7 +34,7 @@ onUnmounted(() => {
       :configuration="{
         x: 30,
         y: 20,
-        text: prettifyName(activeMonster.key),
+        text: prettify(activeMonster.key),
         style: {
           color: '#7e3d3f',
           fontSize: 32,

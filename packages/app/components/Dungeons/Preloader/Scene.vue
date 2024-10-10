@@ -10,7 +10,7 @@ import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/Sprit
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 import { load } from "webfontloader";
 
@@ -39,7 +39,7 @@ const preload = (scene: SceneWithPlugins) => {
   });
 
   scene.load.on("fileprogress", (file: Loader.File) => {
-    assetText.value = `Loading asset: ${prettifyName(file.key)}`;
+    assetText.value = `Loading asset: ${prettify(file.key)}`;
   });
 
   scene.load.on("complete", async () => {

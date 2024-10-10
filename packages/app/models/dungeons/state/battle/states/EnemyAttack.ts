@@ -9,7 +9,7 @@ import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { pickRandomValue } from "@/util/math/random/pickRandomValue";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { sleep } from "vue-phaserjs";
 
 export const EnemyAttack: State<StateName> = {
@@ -26,7 +26,7 @@ export const EnemyAttack: State<StateName> = {
 
     await showMessageNoInputRequired(
       scene,
-      `Enemy ${prettifyName(activeMonster.value.key)} used ${prettifyName(randomAttackId)}.`,
+      `Enemy ${prettify(activeMonster.value.key)} used ${prettify(randomAttackId)}.`,
     );
     await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
     await useAttackAnimation(scene, randomAttack, false);

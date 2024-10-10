@@ -4,14 +4,14 @@ import type { Except } from "type-fest";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 const todoListItemTypeItemCategoryDefinitionMap = {
   [TodoListItemType.Todo]: {
     create: () => new TodoListItem(),
     icon: "mdi-check",
     targetTypeKey: "type",
-    title: prettifyName(TodoListItemType.Todo),
+    title: prettify(TodoListItemType.Todo),
   },
 } as const satisfies Record<TodoListItemType, Except<ItemCategoryDefinition<TodoListItem>, "value">>;
 

@@ -4,7 +4,7 @@ import type { Item } from "@/models/dungeons/item/Item";
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";
 import { DISABLED_OPACITY } from "@/services/vuetify/constants";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { Input } from "phaser";
 import { Container, Rectangle, Text } from "vue-phaserjs";
 
@@ -37,7 +37,7 @@ const alpha = computed(() => {
     <Text
       :configuration="{
         x: INITIAL_CURSOR_POSITION.x + 20,
-        text: prettifyName(item.id),
+        text: prettify(item.id),
         style: MenuTextStyle,
       }"
     />
