@@ -281,7 +281,7 @@ importers:
         version: 2.0.1
       grid-engine:
         specifier: ^2.45.4
-        version: 2.45.4(phaser@3.85.2)
+        version: 2.45.4(phaser@3.86.0)
       grid-layout-plus:
         specifier: ^1.0.5
         version: 1.0.5(vue@3.5.10(typescript@5.6.3))
@@ -322,8 +322,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       phaser:
-        specifier: ^3.85.2
-        version: 3.85.2
+        specifier: ^3.86.0
+        version: 3.86.0
       phaser3-rex-plugins:
         specifier: ^1.80.8
         version: 1.80.8(encoding@0.1.13)
@@ -585,8 +585,8 @@ importers:
         specifier: workspace:*
         version: link:../parse-tmx
       phaser:
-        specifier: ^3.85.2
-        version: 3.85.2
+        specifier: ^3.86.0
+        version: 3.86.0
       phaser3-rex-plugins:
         specifier: ^1.80.8
         version: 1.80.8(encoding@0.1.13)
@@ -8630,8 +8630,8 @@ packages:
   phaser3-rex-plugins@1.80.8:
     resolution: {integrity: sha512-/uZMauVrOC/uiywQF37yH5Q6eUMOL2knMCnfEDWnc5ek40jvQOKjsenjB6q6hYuMvV54C8m0q2p1oL6B/rz12g==}
 
-  phaser@3.85.2:
-    resolution: {integrity: sha512-bD/58E1gvCsEH0Lftb2BiJ8FQ86kb8HHOS656lLXPwg8ZXkskZGsfdyQO21Y57+neGOUEaUthSFfDyVULy5B1g==}
+  phaser@3.86.0:
+    resolution: {integrity: sha512-A7rog3GhXYcWsPimteQmudyY6W0fx0eviOoo9Cwpzae1RPeJBDkhmWv5IFrQO9dL+T907E4dprQPnd2D4WhoEw==}
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -19315,10 +19315,10 @@ snapshots:
 
   grapick@0.1.13: {}
 
-  grid-engine@2.45.4(phaser@3.85.2):
+  grid-engine@2.45.4(phaser@3.86.0):
     dependencies:
       mnemonist: 0.39.8
-      phaser: 3.85.2
+      phaser: 3.86.0
       rxjs: 7.8.1
       tiled-property-flattener: 1.1.1
 
@@ -21466,7 +21466,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  phaser@3.85.2:
+  phaser@3.86.0:
     dependencies:
       eventemitter3: 5.0.1
 
