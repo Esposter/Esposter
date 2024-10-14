@@ -20,7 +20,7 @@ const { "on-surface": onSurface, surface } = useColors();
     p-4="!"
   >
     <div class="scene" h-64>
-      <div class="grid" h-full grid px-4 gap-x-4 list-none>
+      <div class="grid" h-full px-4 grid gap-x-4 list-none>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
             class="border-sm item"
