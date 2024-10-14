@@ -6,12 +6,11 @@ import { useUserStore } from "@/store/user";
 
 definePageMeta({ middleware: "auth" });
 
-const { $client } = useNuxtApp();
+await useReadUser();
+
 const { smAndDown } = useDisplay();
 const userStore = useUserStore();
 const { authUser } = storeToRefs(userStore);
-authUser.value = await $client.user.readUser.query();
-
 const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
 </script>
 
@@ -20,7 +19,7 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
     <v-container>
       <v-row>
         <v-col>
-          <UserIntroductionCard />
+          <UserIntroductionCard v-if="authUser" :user="authUser" />
         </v-col>
       </v-row>
       <v-row>

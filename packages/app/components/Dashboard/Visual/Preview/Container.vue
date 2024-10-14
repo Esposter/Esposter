@@ -2,6 +2,7 @@
 import type { Visual } from "@/models/dashboard/Visual";
 
 import { useVisualStore } from "@/store/dashboard/visual";
+import { useTemplateRef } from "vue";
 
 interface VisualPreviewContainerProps {
   id: Visual["id"];
@@ -12,15 +13,15 @@ const { id, type } = defineProps<VisualPreviewContainerProps>();
 const visualStore = useVisualStore();
 const { editItem } = visualStore;
 const { editedItem } = storeToRefs(visualStore);
-const divRef = ref<HTMLDivElement>();
+const container = useTemplateRef("container");
 
-onClickExceptDrag(divRef, () => {
+onClickExceptDrag(container, () => {
   editItem(id);
 });
 </script>
 
 <template>
-  <div ref="divRef">
+  <div ref="container">
     <DashboardVisualPreview :type />
     <DashboardVisualPreviewRemoveButton :id :type />
     <DashboardVisualPreviewEditFormDialog v-if="editedItem?.id === id" v-model="editedItem" />

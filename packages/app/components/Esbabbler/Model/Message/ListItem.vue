@@ -2,8 +2,6 @@
 import type { User } from "@/db/schema/users";
 import type { MessageEntity } from "@/models/esbabbler/message";
 
-import { dayjs } from "@/services/dayjs";
-
 interface MessageListItemProps {
   creator: User;
   message: MessageEntity;
@@ -14,7 +12,7 @@ const messageHtml = computed(() => {
   const newMessage = useRefreshMentions(message.message);
   return newMessage;
 });
-const displayCreatedAt = computed(() => dayjs(message.createdAt).format("h:mm A"));
+const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);

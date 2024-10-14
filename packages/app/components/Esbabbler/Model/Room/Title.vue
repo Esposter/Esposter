@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/esbabbler/room";
+import { useTemplateRef } from "vue";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const editedRoomName = ref(currentRoomName.value);
 const isUpdateMode = ref(false);
-const titleRef = ref<HTMLDivElement>();
+const title = useTemplateRef("title");
 const titleHovered = ref(false);
 const { text } = useColors();
 const borderColor = computed(() => (!isUpdateMode.value && titleHovered.value ? text.value : "transparent"));
@@ -24,14 +25,14 @@ const onUpdateRoom = async () => {
   }
 };
 
-onClickOutside(titleRef, () => {
+onClickOutside(title, () => {
   if (isUpdateMode.value) void onUpdateRoom();
 });
 </script>
 
 <template>
   <div
-    ref="titleRef"
+    ref="title"
     class="border"
     px-1
     flex

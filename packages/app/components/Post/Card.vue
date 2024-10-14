@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/db/schema/posts";
 
-import { dayjs } from "@/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
@@ -14,7 +13,7 @@ interface PostCardProps {
 const { isCommentStore, post } = defineProps<PostCardProps>();
 const { session } = useAuth();
 const { surfaceOpacity80 } = useColors();
-const createdAt = computed(() => dayjs(post.createdAt).fromNow());
+const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => session.value?.user.id === post.userId);
 const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));
 </script>
@@ -28,7 +27,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
           <v-avatar>
             <v-img v-if="post.user.image" :src="post.user.image" :alt="post.user.name ?? undefined" />
           </v-avatar>
-          Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+          Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
           <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
             {{ post.title }}
           </v-card-title>
@@ -52,7 +51,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
         <v-avatar>
           <v-img v-if="post.user.image" :src="post.user.image" :alt="post.user.name ?? undefined" />
         </v-avatar>
-        Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+        Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
         <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
           {{ post.title }}
         </v-card-title>

@@ -28,7 +28,7 @@ export const vite: NuxtConfig["vite"] = {
   },
   // Required for parse-tmx
   plugins: [nodePolyfills({ include: ["zlib"] })],
-  // @TODO: Remove this in vue 3.5
+  // @TODO: Remove this and useTemplateRef imports in vue 3.5 when nuxt no longer breaks things
   vue: {
     script: {
       propsDestructure: true,

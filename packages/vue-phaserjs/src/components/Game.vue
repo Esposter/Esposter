@@ -19,7 +19,7 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
 const { game: storeGame } = storeToRefs(phaserStore);
-const canvasRoot = ref<HTMLDivElement>();
+const canvasRoot = useTemplateRef("canvasRoot");
 const isReady = ref(false);
 
 const readyListener = () => {
