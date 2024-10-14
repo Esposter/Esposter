@@ -71,10 +71,8 @@ export const roomRouter = router({
     .mutation<UserToRoom[]>(({ input: { roomId, userIds } }) =>
       db.transaction(async (tx) => {
         const newMembers: UserToRoom[] = [];
-        for await (const members of userIds.map((userId) =>
-          tx.insert(usersToRooms).values({ roomId, userId }).returning(),
-        )) {
-          const newMember = members.find(Boolean);
+        for (const userId of userIds) {
+          const newMember = (await tx.insert(usersToRooms).values({ roomId, userId }).returning()).find(Boolean);
           if (!newMember) continue;
           newMembers.push(newMember);
         }
