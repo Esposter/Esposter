@@ -23,7 +23,7 @@ jobs:
       - name: Build Nuxt 3
         run: pnpm build
 
-      - name: Run Typechecking
+      - name: Run Typecheck
         run: pnpm typecheck
 
       - name: Run Tests
