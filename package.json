@@ -24,7 +24,7 @@
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
-    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
+    "release": "pnpm lint:fix:packages && pnpm build:packages && pnpm typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "pnpm cross-os refresh:lockfile",
     "cross-os": "node scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
