@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-switch-case */
 import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";
