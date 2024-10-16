@@ -51,7 +51,7 @@
     "lerna": "^8.1.8",
     "rollup": "^4.24.0",
     "type-fest": "^4.26.1",
-    "typedoc": "^0.26.9",
+    "typedoc": "^0.26.10",
     "typescript": "^5.6.3",
     "vite": "^5.4.9",
     "vue-tsc": "^2.1.6"
