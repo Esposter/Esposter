@@ -6,25 +6,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - run: corepack enable
-      - uses: actions/setup-node@v4
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install node & pnpm
+        uses: actions/setup-node@v4
         with:
           node-version-file: package.json
           cache: pnpm
 
-      - name: Install Node Modules
+      - name: Install dependencies
         run: pnpm i
 
-      - name: Build Nuxt 3
+      - name: Build
         run: pnpm build
 
-      - name: Run Lint
+      - name: Lint
         run: pnpm lint
 
-      - name: Run Typecheck
+      - name: Typecheck
         run: pnpm typecheck
 
-      - name: Run Tests
+      - name: Test
         run: pnpm test
