@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.2](https://github.com/Esposter/Esposter/compare/v1.24.1...v1.24.2) (2024-10-17)
+
+
+### Bug Fixes
+
+* name ([74e8cd0](https://github.com/Esposter/Esposter/commit/74e8cd0dd352844305ec9a76f864bdbac189e1f0))
+
+
+
+
+
 ## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
 
 
