@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* lint ([99efc7e](https://github.com/Esposter/Esposter/commit/99efc7e8c074e2a66916c58c0ecc0a5c332becee))
+* name ([037a380](https://github.com/Esposter/Esposter/commit/037a3803942fd114a431143ae8a5d72eeeab511b))
+* run lint first before build ([f4a8854](https://github.com/Esposter/Esposter/commit/f4a8854755662371ca8a785e1137d21f7290be12))
+* still need to run lint after build lol ([528e4c3](https://github.com/Esposter/Esposter/commit/528e4c35a8ec6ba8823e4521b1554ade42858a74))
+* Update drizzle-orm + fix up base table func ([1feaf8e](https://github.com/Esposter/Esposter/commit/1feaf8e470a0bb78826de72b78d9960e922da80c))
+
+
+### Features
+
+* Add github release ([31ffbae](https://github.com/Esposter/Esposter/commit/31ffbae12b86c00812da4b9a4103ff8804006cd1))
+
+
+
+
+
+
 # [1.24.0](https://github.com/Esposter/Esposter/compare/v1.23.0...v1.24.0) (2024-10-14)
 
 

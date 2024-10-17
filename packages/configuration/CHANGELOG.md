@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* lint ([99efc7e](https://github.com/Esposter/Esposter/commit/99efc7e8c074e2a66916c58c0ecc0a5c332becee))
+
+
+
+
+
+
 # [1.24.0](https://github.com/Esposter/Esposter/compare/v1.23.0...v1.24.0) (2024-10-14)
 
 
