@@ -28,9 +28,6 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel) onCancel(scene);
         else
           switch (itemOptionGrid.value.effect.type) {
-            case ItemEffectType.Heal:
-              launchScene(scene, SceneKey.MonsterParty);
-              break;
             // We assume that you can only call capture items in the battle scene (which is the previous scene)
             case ItemEffectType.Capture: {
               const enemyStore = useEnemyStore();
@@ -38,6 +35,9 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
               useItem(scene, toRef(itemOptionGrid.value), activeMonster);
               break;
             }
+            case ItemEffectType.Heal:
+              launchScene(scene, SceneKey.MonsterParty);
+              break;
             default:
               exhaustiveGuard(itemOptionGrid.value.effect.type);
           }

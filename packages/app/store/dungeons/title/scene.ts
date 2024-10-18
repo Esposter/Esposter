@@ -24,16 +24,16 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (PlayerTitleMenuOptionGrid.value) {
-        case PlayerTitleMenuOption["New Game"]:
-          dungeonsStore.save = new Save();
-          fadeSwitchToScene(scene, SceneKey.World);
-          return;
         case PlayerTitleMenuOption.Continue:
           dungeonsStore.save = dungeonsStore.game.saves[0];
           fadeSwitchToScene(scene, SceneKey.World);
           return;
         case PlayerTitleMenuOption.Settings:
           fadeSwitchToScene(scene, SceneKey.Settings);
+          return;
+        case PlayerTitleMenuOption["New Game"]:
+          dungeonsStore.save = new Save();
+          fadeSwitchToScene(scene, SceneKey.World);
           return;
         default:
           exhaustiveGuard(PlayerTitleMenuOptionGrid.value);

@@ -27,18 +27,13 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (monsterPartyMenuOptionGrid.value) {
+        case MenuOption.Cancel:
+          onCancel();
+          break;
         case MenuOption.Move: {
           monsterPartySceneStore.monsterIdToMove = monsterPartyOptionGrid.value.id;
           monsterPartySceneStore.sceneMode = SceneMode.Move;
           infoPanelStore.infoDialogMessage.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
-          break;
-        }
-        case MenuOption.Summary: {
-          const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-          const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
-          const { launchScene } = usePreviousScene(scene.scene.key);
-          selectedMonster.value = monsterPartyOptionGrid.value;
-          launchScene(scene, SceneKey.MonsterDetails);
           break;
         }
         case MenuOption.Release:
@@ -51,9 +46,14 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
           monsterPartySceneStore.sceneMode = SceneMode.Confirmation;
           infoPanelStore.infoDialogMessage.text = `Release ${monsterPartyOptionGrid.value.key}?`;
           break;
-        case MenuOption.Cancel:
-          onCancel();
+        case MenuOption.Summary: {
+          const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
+          const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
+          const { launchScene } = usePreviousScene(scene.scene.key);
+          selectedMonster.value = monsterPartyOptionGrid.value;
+          launchScene(scene, SceneKey.MonsterDetails);
           break;
+        }
         default:
           exhaustiveGuard(monsterPartyMenuOptionGrid.value);
       }
