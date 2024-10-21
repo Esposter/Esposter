@@ -235,8 +235,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       grapesjs:
-        specifier: ^0.21.13
-        version: 0.21.13
+        specifier: ^0.22.1
+        version: 0.22.1
       grapesjs-blocks-basic:
         specifier: ^1.0.2
         version: 1.0.2
@@ -6901,8 +6901,8 @@ packages:
   grapesjs-typed@2.0.1:
     resolution: {integrity: sha512-3Z5hATX/Zp9PkdOv94RtIzqB/n1mMUdTO5X/ZyNUMzSmGZG4CHtTmw3bIQDIkrSTWdbcqInlbFPzvzKYr4rKaw==}
 
-  grapesjs@0.21.13:
-    resolution: {integrity: sha512-Qfl2kL7DV9kX+ihUUgAM2LtzkFUmZQYrMLol6/uENCkUE2ndB/Ebtf5UUx7UXWT3txDs4UiWIojYCvmmxTv4XA==}
+  grapesjs@0.22.1:
+    resolution: {integrity: sha512-s45IC11cQZKvNc7ySjO5RN/CYkMFLzr3hYZI+JOWreK9vY1BMhKBLQpix4629j2kZOEc2w8LNNe0qKwsh3W2uA==}
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -7034,6 +7034,9 @@ packages:
 
   howler@2.2.4:
     resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
+
+  html-entities@1.4.0:
+    resolution: {integrity: sha512-8nxjcBcd8wovbeKx7h3wTji4e6+rhaVuPNpMqwWgnHh+N9ToqsCs6XztWRBPQ+UtzsoMAdKZtUENoVzU/EMtZA==}
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
@@ -8950,8 +8953,8 @@ packages:
       bluebird:
         optional: true
 
-  promise-polyfill@8.1.3:
-    resolution: {integrity: sha512-MG5r82wBzh7pSKDRa9y+vllNHz3e3d4CNj1PQE4BQYxLme0gKYYBm9YENq+UkEikyZ0XbiGWxYlVw3Rl9O/U8g==}
+  promise-polyfill@8.3.0:
+    resolution: {integrity: sha512-H5oELycFml5yto/atYqmjyigJoAo3+OXwolYiH7OfQuYlAqhxNvTfiNMbV9hsC6Yp83yE5r2KTVmtrG6R9i6Pg==}
 
   promise-retry@2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
@@ -19259,14 +19262,15 @@ snapshots:
 
   grapesjs-typed@2.0.1: {}
 
-  grapesjs@0.21.13:
+  grapesjs@0.22.1:
     dependencies:
       '@types/backbone': 1.4.15
       backbone: 1.4.1
       backbone-undo: 0.2.6
       codemirror: 5.63.0
       codemirror-formatting: 1.0.0
-      promise-polyfill: 8.1.3
+      html-entities: 1.4.0
+      promise-polyfill: 8.3.0
       underscore: 1.13.1
 
   graphemer@1.4.0: {}
@@ -19419,6 +19423,8 @@ snapshots:
       lru-cache: 10.4.3
 
   howler@2.2.4: {}
+
+  html-entities@1.4.0: {}
 
   html-escaper@2.0.2: {}
 
@@ -21725,7 +21731,7 @@ snapshots:
 
   promise-inflight@1.0.1: {}
 
-  promise-polyfill@8.1.3: {}
+  promise-polyfill@8.3.0: {}
 
   promise-retry@2.0.1:
     dependencies:
