@@ -24,7 +24,7 @@ const { border, surface } = useColors();
 </template>
 
 <style lang="scss">
-@import "@vuepic/vue-datepicker/dist/main.css";
+@use "@vuepic/vue-datepicker/dist/main.css";
 </style>
 
 <style scoped lang="scss">

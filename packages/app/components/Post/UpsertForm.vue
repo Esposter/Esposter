@@ -30,7 +30,11 @@ const isValid = ref(true);
               placeholder="Title"
               autofocus
               :counter="POST_TITLE_MAX_LENGTH"
-              :rules="[formRules.required, formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH)]"
+              :rules="[
+                formRules.required,
+                formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH),
+                formRules.isNotProfanity,
+              ]"
             />
           </v-col>
         </v-row>

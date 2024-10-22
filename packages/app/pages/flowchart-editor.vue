@@ -58,11 +58,11 @@ onNodesChange(async () => {
 </template>
 
 <style lang="scss">
-@import "@vue-flow/controls/dist/style.css";
-@import "@vue-flow/core/dist/style.css";
-@import "@vue-flow/core/dist/theme-default.css";
-@import "@vue-flow/minimap/dist/style.css";
-@import "@vue-flow/node-resizer/dist/style.css";
+@use "@vue-flow/controls/dist/style.css" as *;
+@use "@vue-flow/core/dist/style.css" as *;
+@use "@vue-flow/core/dist/theme-default.css";
+@use "@vue-flow/minimap/dist/style.css" as *;
+@use "@vue-flow/node-resizer/dist/style.css" as *;
 </style>
 
 <style scoped lang="scss">

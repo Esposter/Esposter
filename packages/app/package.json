@@ -124,6 +124,7 @@
     "nitropack": "^2.9.7",
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.13",
+    "obscenity": "^0.4.0",
     "omit-deep-lodash": "^1.1.7",
     "parse-tmx": "workspace:*",
     "pathe": "^1.1.2",

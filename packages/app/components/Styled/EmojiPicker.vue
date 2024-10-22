@@ -52,5 +52,5 @@ const onEmojiSelect = (emoji: { native: string }) => {
 </template>
 
 <style lang="scss">
-@import "emoji-mart-vue-fast/css/emoji-mart.css";
+@use "emoji-mart-vue-fast/css/emoji-mart.css";
 </style>

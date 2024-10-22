@@ -391,7 +391,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-@import "grapesjs/dist/css/grapes.min.css";
+@use "grapesjs/dist/css/grapes.min.css";
 </style>
 
 <style scoped lang="scss">

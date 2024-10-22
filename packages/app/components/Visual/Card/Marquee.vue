@@ -43,6 +43,7 @@ const { "on-surface": onSurface, surface } = useColors();
 </template>
 
 <style scoped lang="scss">
+@use "sass:math";
 // @NOTE: Make sure to manually change this when the total number of cards are changed
 // Unfortunately we have to do this manually because sass generates the css at compile-time and is "static"
 // whereas we cannot use vue props as an index for sass loops since vue props are run-time and are "dynamic" :C
@@ -61,7 +62,7 @@ $card-length: 6;
 }
 
 .grid {
-  --rows: #{ceil(calc($card-length / 2))};
+  --rows: #{math.ceil(calc($card-length / 2))};
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
@@ -115,7 +116,7 @@ $card-length: 6;
 
 @for $i from 1 through $card-length {
   .item-container:nth-of-type(#{$i}) {
-    --index: #{floor(calc(($i - 1) / 2))};
+    --index: #{math.floor(calc(($i - 1) / 2))};
   }
 }
 
