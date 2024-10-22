@@ -13,4 +13,6 @@ export class BaseEmailEditor implements ProjectData {
 export type EmailEditor = typeof EmailEditor.prototype;
 export const EmailEditor = applyItemMetadataMixin(BaseEmailEditor);
 
-export const emailEditorSchema = z.record(z.string(), z.unknown()) satisfies z.ZodType<Except<ProjectData, "toJSON">>;
+export const emailEditorSchema = z.record(z.string().min(1), z.unknown()) satisfies z.ZodType<
+  Except<ProjectData, "toJSON">
+>;

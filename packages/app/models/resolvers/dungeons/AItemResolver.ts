@@ -25,9 +25,7 @@ export abstract class AItemResolver {
     inventory.value.splice(index, 1);
   }
 
-  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>) {
-    return new Promise<void>(() => {});
-  }
+  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): Promise<void> | void {}
 
   isActive(_item: Ref<Item>, _monster: Ref<Monster>): boolean {
     return true;

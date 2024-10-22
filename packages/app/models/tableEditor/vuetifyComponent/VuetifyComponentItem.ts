@@ -21,5 +21,5 @@ export class VuetifyComponentItem extends ATableEditorItemEntity implements Item
 export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
   .merge(
-    z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.unknown()) }),
+    z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.string().min(1), z.unknown()) }),
   ) satisfies z.ZodType<VuetifyComponentItem>;

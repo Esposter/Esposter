@@ -13,4 +13,6 @@ export class BaseWebpageEditor implements ProjectData {
 export type WebpageEditor = typeof WebpageEditor.prototype;
 export const WebpageEditor = applyItemMetadataMixin(BaseWebpageEditor);
 
-export const webpageEditorSchema = z.record(z.string(), z.unknown()) satisfies z.ZodType<Except<ProjectData, "toJSON">>;
+export const webpageEditorSchema = z.record(z.string().min(1), z.unknown()) satisfies z.ZodType<
+  Except<ProjectData, "toJSON">
+>;
