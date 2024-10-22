@@ -17,7 +17,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
-let calculator: Desmos.Calculator;
+let calculator: Desmos.Calculator | undefined;
 const expressionPanel = ref<HTMLDivElement>();
 const componentsToRender = computed<Parameters<typeof h>[]>(() => {
   const WindowControlsComponent: Parameters<typeof h> = [
@@ -45,14 +45,14 @@ const animate = () => {
   // Ignore warnings from updateSettings about
   // unsupported extraneous calculator settings which is fine
   ignoreWarn(() => {
-    calculator.updateSettings(savedSettings);
+    calculator?.updateSettings(savedSettings);
   });
 
   const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
   let i = 0;
   const { pause } = useIntervalFn(() => {
     const expression = expressions[i++];
-    calculator.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
+    calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
     if (i === expressions.length) {
       pause();
       isAnimating.value = false;

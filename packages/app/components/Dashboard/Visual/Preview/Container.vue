@@ -2,6 +2,7 @@
 import type { Visual } from "@/models/dashboard/Visual";
 
 import { useVisualStore } from "@/store/dashboard/visual";
+import { getSync } from "@/util/getSync";
 import { useTemplateRef } from "vue";
 
 interface VisualPreviewContainerProps {
@@ -15,9 +16,12 @@ const { editItem } = visualStore;
 const { editedItem } = storeToRefs(visualStore);
 const container = useTemplateRef("container");
 
-onClickExceptDrag(container, () => {
-  editItem(id);
-});
+onClickExceptDrag(
+  container,
+  getSync(async () => {
+    await editItem(id);
+  }),
+);
 </script>
 
 <template>

@@ -87,7 +87,6 @@ watch(barWidth, (newBarWidth) => {
       emit("start:display-width", tween);
     },
     onUpdate: (_tween, _key, _target, displayWidth) => {
-      if (isSkipAnimations) return;
       updateDisplayWidth(displayWidth);
     },
   });

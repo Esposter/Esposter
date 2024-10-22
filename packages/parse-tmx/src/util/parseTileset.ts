@@ -13,7 +13,7 @@ export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
 
   const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
 
-  for (const childNode of $$ ?? []) {
+  for (const childNode of $$) {
     const tmxNodeType = childNode["#name"] as TMXNodeType;
     if (tmxNodeType !== TMXNodeType.Image) continue;
 

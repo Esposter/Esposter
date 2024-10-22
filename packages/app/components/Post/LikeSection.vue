@@ -5,7 +5,7 @@ import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
 interface PostLikeSectionProps {
-  isCommentStore?: true;
+  isCommentStore?: boolean;
   post: PostWithRelations;
 }
 

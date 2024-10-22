@@ -2,6 +2,7 @@
 import { dayjs } from "@/services/dayjs";
 import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
+import { getSync } from "@/util/getSync";
 import { Background } from "@vue-flow/background";
 import { useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
@@ -23,13 +24,17 @@ onConnect((connection) => {
   addEdges(connection);
 });
 
-onEdgesChange(async () => {
-  await debouncedSaveFlowChartEditor();
-});
+onEdgesChange(
+  getSync(async () => {
+    await debouncedSaveFlowChartEditor();
+  }),
+);
 
-onNodesChange(async () => {
-  await debouncedSaveFlowChartEditor();
-});
+onNodesChange(
+  getSync(async () => {
+    await debouncedSaveFlowChartEditor();
+  }),
+);
 </script>
 
 <template>

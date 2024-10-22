@@ -13,7 +13,7 @@ const errorMessage = computed(() => {
 
   const element = document.querySelector(`label[for="${error.id}"]`);
   if (!element) return "";
-  return `${element.textContent}: ${editFormRef?.errors[0]?.errorMessages[0]}`;
+  return `${element.textContent}: ${editFormRef.errors[0]?.errorMessages[0]}`;
 });
 </script>
 

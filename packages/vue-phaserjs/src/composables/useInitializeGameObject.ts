@@ -69,6 +69,6 @@ export const useInitializeGameObject = <
   onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
     for (const eventStopHandler of eventStopHandlers) eventStopHandler();
-    if (gameObject) gameObject.destroy();
+    gameObject.destroy();
   });
 };

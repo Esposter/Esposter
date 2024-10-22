@@ -11,7 +11,7 @@ export const isPlainObject = (object: unknown): object is object => {
   // the "constructor" property of certain host objects, ie. |window.location|
   // https://bugzilla.mozilla.org/show_bug.cgi?id=814622
   try {
-    if (object.constructor && !Object.hasOwn(object.constructor.prototype, "isPrototypeOf")) return false;
+    if (!Object.hasOwn(object.constructor.prototype, "isPrototypeOf")) return false;
   } catch {
     return false;
   }
