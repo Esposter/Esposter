@@ -21,10 +21,6 @@ export default {
       // Rules we actually want to keep for ts files but conflict with vue files in the script setup section
       delete rules["@typescript-eslint/restrict-plus-operands"];
       delete rules["@typescript-eslint/restrict-template-expressions"];
-      // Computationally expensive
-      delete rules["@typescript-eslint/no-floating-promises"];
-      delete rules["@typescript-eslint/no-misused-promises"];
-      delete rules["@typescript-eslint/no-unnecessary-condition"];
       return rules;
     }),
     ...tseslint.configs.stylisticTypeChecked.map((c) => {

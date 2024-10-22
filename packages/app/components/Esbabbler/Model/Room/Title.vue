@@ -2,6 +2,7 @@
 import { ROOM_NAME_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { getSync } from "@/util/getSync";
 import { useTemplateRef } from "vue";
 
 const roomStore = useRoomStore();
@@ -27,9 +28,12 @@ const onUpdateRoom = async () => {
   }
 };
 
-onClickOutside(title, () => {
-  if (isUpdateMode.value) void onUpdateRoom();
-});
+onClickOutside(
+  title,
+  getSync(async () => {
+    if (isUpdateMode.value) await onUpdateRoom();
+  }),
+);
 </script>
 
 <template>

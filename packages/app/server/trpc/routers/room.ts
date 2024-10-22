@@ -197,8 +197,8 @@ export const roomRouter = router({
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
     const query = db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
-    if (cursor) void query.where(getCursorWhere(rooms, cursor, sortBy));
-    void query.orderBy(...parseSortByToSql(rooms, sortBy));
+    if (cursor) query.where(getCursorWhere(rooms, cursor, sortBy));
+    query.orderBy(...parseSortByToSql(rooms, sortBy));
 
     const joinedRooms = await query.limit(limit + 1);
     const resultRooms = joinedRooms.map((jr) => jr.Room);

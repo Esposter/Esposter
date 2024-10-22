@@ -1,7 +1,6 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
-import type { EventEmitter } from "eventemitter3";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
@@ -16,6 +15,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
+import { getSync } from "@/util/getSync";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
@@ -44,10 +44,7 @@ export const GainExperience: State<StateName> = {
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
       // will be triggered by the experience bar once it reaches 100%
-      const levelUpListener: EventEmitter.EventListener<PhaserEvents, "levelUp"> = async (
-        { key, stats },
-        onComplete,
-      ) => {
+      const levelUpListener: PhaserEvents["levelUp"] = getSync(async ({ key, stats }, onComplete) => {
         const showLevelUpMessage = async () => {
           await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
           onComplete();
@@ -59,12 +56,15 @@ export const GainExperience: State<StateName> = {
         else levelUp(activeMonster.value);
 
         await showLevelUpMessage();
-      };
-      phaserEventEmitter.on("levelUp", levelUpListener);
-      phaserEventEmitter.once("levelUpComplete", async () => {
-        phaserEventEmitter.off("levelUp", levelUpListener);
-        await onComplete();
       });
+      phaserEventEmitter.on("levelUp", levelUpListener);
+      phaserEventEmitter.once(
+        "levelUpComplete",
+        getSync(async () => {
+          phaserEventEmitter.off("levelUp", levelUpListener);
+          await onComplete();
+        }),
+      );
       activeMonster.value.status.exp += experienceGain;
       return;
     }

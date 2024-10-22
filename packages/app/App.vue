@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { VSonner } from "vuetify-sonner";
+
 const { "primary-lighten-1": primaryLighten1 } = useColors();
 </script>
 
@@ -12,6 +14,9 @@ const { "primary-lighten-1": primaryLighten1 } = useColors();
       </NuxtSEO>
     </NuxtTheme>
     <VitePwaManifest />
+    <ClientOnly>
+      <VSonner />
+    </ClientOnly>
   </v-app>
 </template>
 

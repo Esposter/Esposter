@@ -4,7 +4,7 @@ import { chestSchema } from "@/models/dungeons/data/world/Chest";
 import { z } from "zod";
 
 export class WorldData {
-  chestMap: Record<string, Chest> = {};
+  chestMap: Record<string, Chest | undefined> = {};
 }
 
 export const worldDataSchema = z.object({

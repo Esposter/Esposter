@@ -390,6 +390,9 @@ importers:
       vuetify:
         specifier: ^3.7.3
         version: 3.7.3(typescript@5.6.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.10(typescript@5.6.3))
+      vuetify-sonner:
+        specifier: ^0.3.19
+        version: 0.3.19(vue@3.5.10(typescript@5.6.3))(vuetify@3.7.3)
       webfontloader:
         specifier: ^1.6.28
         version: 1.6.28
@@ -10804,6 +10807,9 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
+  vue-sonner@1.1.2:
+    resolution: {integrity: sha512-yg4f5s0a3oiiI7cNvO0Dajux1Y7s04lxww3vnQtnwQawJ3KqaKA9RIRMdI9wGTosRGIOwgYFniFRGl4+IuKPZw==}
+
   vue-tsc@2.1.6:
     resolution: {integrity: sha512-f98dyZp5FOukcYmbFpuSCJ4Z0vHSOSmxGttZJCsFeX0M4w/Rsq0s4uKXjcSRsZqsRgQa6z7SfuO+y0HVICE57Q==}
     hasBin: true
@@ -10839,6 +10845,12 @@ packages:
 
   vuetify-nuxt-module@0.18.3:
     resolution: {integrity: sha512-Mv5mcqfqk5dR9oVJiITXn5p4NmDzp57AR2Txf/0iIoAjFlMsDWzTpUvn9ELTzDI3Z0LjiYVqptwxrOlMcju2Wg==}
+
+  vuetify-sonner@0.3.19:
+    resolution: {integrity: sha512-Fn13UyP0Lzh9B10doHX8friWGgj0+dkRXd2fysLhtako/qEBY9nvwqKIUmGM0cUdjAUxioj7EcGod3l5qVPJVg==}
+    peerDependencies:
+      vue: ^3.3.0
+      vuetify: ^3.3.0
 
   vuetify@3.7.3:
     resolution: {integrity: sha512-bpuvBpZl1/+nLlXDgdVXekvMNR6W/ciaoa8CYlpeAzAARbY8zUFSoBq05JlLhkIHI58AnzKVy4c09d0OtfYAPg==}
@@ -24032,6 +24044,8 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.10(typescript@5.6.3)
 
+  vue-sonner@1.1.2: {}
+
   vue-tsc@2.1.6(typescript@5.6.3):
     dependencies:
       '@volar/typescript': 2.4.4
@@ -24090,6 +24104,12 @@ snapshots:
       - vue
       - webpack-plugin-vuetify
       - webpack-sources
+
+  vuetify-sonner@0.3.19(vue@3.5.10(typescript@5.6.3))(vuetify@3.7.3):
+    dependencies:
+      vue: 3.5.10(typescript@5.6.3)
+      vue-sonner: 1.1.2
+      vuetify: 3.7.3(typescript@5.6.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.10(typescript@5.6.3))
 
   vuetify@3.7.3(typescript@5.6.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.10(typescript@5.6.3)):
     dependencies:

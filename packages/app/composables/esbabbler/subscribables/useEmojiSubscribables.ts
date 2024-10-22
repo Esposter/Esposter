@@ -2,6 +2,7 @@ import type { Unsubscribable } from "@trpc/server/observable";
 
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { getSync } from "@/util/getSync";
 
 export const useEmojiSubscribables = () => {
   const { $client } = useNuxtApp();
@@ -20,25 +21,28 @@ export const useEmojiSubscribables = () => {
     createEmojiUnsubscribable.value = $client.emoji.onCreateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
-          void createEmoji(data);
-        },
+        onData: (data) =>
+          getSync(async () => {
+            await createEmoji(data);
+          }),
       },
     );
     updateEmojiUnsubscribable.value = $client.emoji.onUpdateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
-          void updateEmoji(data);
-        },
+        onData: (data) =>
+          getSync(async () => {
+            await updateEmoji(data);
+          }),
       },
     );
     deleteEmojiUnsubscribable.value = $client.emoji.onDeleteEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
-          void deleteEmoji(data);
-        },
+        onData: (data) =>
+          getSync(async () => {
+            await deleteEmoji(data);
+          }),
       },
     );
   });

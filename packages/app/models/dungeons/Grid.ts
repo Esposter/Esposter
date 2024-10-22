@@ -19,7 +19,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
       const value = this.getValue(position);
       // We want to skip grid values that don't exist
       if (value === null || value === undefined) return false;
-      return validate?.bind(this)?.(position) ?? true;
+      return validate?.bind(this)(position) ?? true;
     };
     this._validate = (...args) => unref(this.validate(...args));
     this.grid = grid;

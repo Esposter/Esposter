@@ -15,14 +15,14 @@ type SceneEvents = {
 };
 
 export interface PhaserEvents extends SceneEvents {
-  levelUp: (monster: Monster, onComplete: () => void) => Promise<void>;
-  levelUpComplete: () => Promise<void>;
+  levelUp: (monster: Monster, onComplete: () => void) => void;
+  levelUpComplete: () => void;
   playerMonsterInfoContainerAppear: () => void;
   playerTeleport: (position: Position, direction?: Direction) => void;
-  switchMonster: (monster: Monster) => Promise<void>;
-  unswitchMonster: () => Promise<void>;
-  unuseItem: () => Promise<void>;
-  useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => Promise<void>;
+  switchMonster: (monster: Monster) => void;
+  unswitchMonster: () => void;
+  unuseItem: () => void;
+  useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => void;
 }
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();

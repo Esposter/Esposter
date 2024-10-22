@@ -14,12 +14,12 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   const itemOptionGrid = useItemOptionGrid();
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
-  const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+  const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
+    if (isPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
-  const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = async (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Cancel:
         onCancel(scene);
@@ -32,7 +32,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
             case ItemEffectType.Capture: {
               const enemyStore = useEnemyStore();
               const { activeMonster } = storeToRefs(enemyStore);
-              useItem(scene, toRef(itemOptionGrid.value), activeMonster);
+              await useItem(scene, toRef(itemOptionGrid.value), activeMonster);
               break;
             }
             case ItemEffectType.Heal:

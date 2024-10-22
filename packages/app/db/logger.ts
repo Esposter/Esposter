@@ -4,7 +4,7 @@ import dedent from "dedent";
 import { highlight } from "sql-highlight";
 
 export class DrizzleLogger implements Logger {
-  logQuery(query: string, params: unknown[]): void {
+  logQuery(query: string, params: unknown[]) {
     console.log(
       highlight(dedent`Query:
     ${query}

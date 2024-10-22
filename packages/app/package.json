@@ -150,6 +150,7 @@
     "vue-waypoint": "^4.3.0",
     "vue3-apexcharts": "^1.7.0",
     "vuetify": "^3.7.3",
+    "vuetify-sonner": "^0.3.19",
     "webfontloader": "^1.6.28",
     "worker-timers": "^8.0.8",
     "ws": "^8.18.0",
