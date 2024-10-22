@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { posts } from "@/db/schema/posts";
 import { likes, selectLikeSchema } from "@/db/schema/users";
 import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { ranking } from "@/services/post/ranking";
 import { and, eq } from "drizzle-orm";
 

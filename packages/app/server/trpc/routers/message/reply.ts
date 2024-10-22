@@ -9,7 +9,7 @@ import {
   messageReplyMetadataSchema,
 } from "@/models/esbabbler/message/reply";
 import { router } from "@/server/trpc";
-import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";

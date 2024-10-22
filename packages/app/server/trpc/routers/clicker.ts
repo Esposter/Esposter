@@ -3,7 +3,7 @@ import { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
 import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
 import { publicProcedure, router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
 import { streamToText } from "@/util/text/streamToText";

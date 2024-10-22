@@ -7,7 +7,7 @@ import { AzureContainer } from "@/models/azure/blob";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";

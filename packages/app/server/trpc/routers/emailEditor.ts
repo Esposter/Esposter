@@ -1,7 +1,7 @@
 import { AzureContainer } from "@/models/azure/blob";
 import { EmailEditor, emailEditorSchema } from "@/models/emailEditor/EmailEditor";
 import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/emailEditor/constants";
 import { streamToText } from "@/util/text/streamToText";

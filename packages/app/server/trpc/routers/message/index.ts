@@ -7,7 +7,7 @@ import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
-import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import {
   createEntity,
   deleteEntity,

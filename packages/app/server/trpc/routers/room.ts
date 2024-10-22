@@ -9,7 +9,9 @@ import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/mod
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
-import { authedProcedure, getRoomOwnerProcedure, getRoomUserProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
+import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
 import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";

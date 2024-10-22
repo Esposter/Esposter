@@ -9,7 +9,7 @@ import {
 } from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { router } from "@/server/trpc";
-import { getRoomUserProcedure } from "@/server/trpc/procedure";
+import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
 import { createEntity, deleteEntity, getTableClient, getTopNEntities, updateEntity } from "@/services/azure/table";

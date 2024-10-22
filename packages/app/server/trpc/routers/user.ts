@@ -4,7 +4,7 @@ import type { z } from "zod";
 import { db } from "@/db";
 import { selectUserSchema, users } from "@/db/schema/users";
 import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { eq } from "drizzle-orm";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();

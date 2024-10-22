@@ -6,7 +6,7 @@ import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { publicProcedure, router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure";
+import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
