@@ -9,6 +9,7 @@ import {
   messageReplyMetadataSchema,
 } from "@/models/esbabbler/message/reply";
 import { router } from "@/server/trpc";
+import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
@@ -23,30 +24,22 @@ const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id })
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
 
 const createReplyInputSchema = messageReplyMetadataSchema.pick({
-  messageReplyRowKey: true,
+  message: true,
   messageRowKey: true,
   partitionKey: true,
-  rowKey: true,
 });
 export type CreateReplyInput = z.infer<typeof createReplyInputSchema>;
 
 export const replyRouter = router({
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
+    .use(getProfanityFilterMiddleware(createReplyInputSchema, ["message"]))
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
-      const { messageReplyRowKey, messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;
-      const replies = await getTopNEntities(messagesMetadataClient, 1, MessageReplyMetadataEntity, {
-        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Reply}' and ${messageRowKey} eq '${input.messageRowKey}' and ${messageReplyRowKey} eq '${input.messageReplyRowKey}'`,
-      });
-      if (replies.length > 0) return null;
-
       const createdAt = new Date();
       const newReply = new MessageReplyMetadataEntity({
+        ...input,
         createdAt,
-        messageReplyRowKey: input.messageReplyRowKey,
-        messageRowKey: input.messageRowKey,
-        partitionKey: input.partitionKey,
         rowKey: now(),
         type: MessageMetadataType.Reply,
         updatedAt: createdAt,

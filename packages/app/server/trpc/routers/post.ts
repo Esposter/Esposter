@@ -7,6 +7,7 @@ import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/c
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { ranking } from "@/services/post/ranking";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
@@ -52,7 +53,7 @@ const deleteCommentInputSchema = selectPostSchema.shape.id;
 export type DeleteCommentInput = z.infer<typeof deleteCommentInputSchema>;
 
 export const postRouter = router({
-  createComment: authedProcedure
+  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
     .input(createCommentInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
       const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
@@ -84,7 +85,7 @@ export const postRouter = router({
       });
       return newCommentWithRelations ?? null;
     }),
-  createPost: authedProcedure
+  createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"])
     .input(createPostInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
       const createdAt = new Date();
@@ -162,7 +163,7 @@ export const postRouter = router({
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);
     }),
-  updateComment: authedProcedure
+  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"])
     .input(updateCommentInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedComment = (
@@ -178,7 +179,7 @@ export const postRouter = router({
       });
       return updatedCommentWithRelations ?? null;
     }),
-  updatePost: authedProcedure
+  updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
     .input(updatePostInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
       const post = await db.query.posts.findFirst({

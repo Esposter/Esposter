@@ -7,6 +7,7 @@ import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
+import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import {
   createEntity,
@@ -61,6 +62,7 @@ export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
+    .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
     .mutation(async ({ ctx, input }) => {
       const createdAt = new Date();
@@ -131,6 +133,7 @@ export const messageRouter = router({
       return getCursorPaginationData(messages, limit, sortBy);
     }),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
+    .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await getTableClient(AzureTable.Messages);

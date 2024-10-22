@@ -46,7 +46,11 @@ watch(
         v-if="editMode"
         v-model="modelValue"
         size="small"
-        :rules="[formRules.required, formRules.requireAtMostNCharacters(USER_NAME_MAX_LENGTH)]"
+        :rules="[
+          formRules.required,
+          formRules.requireAtMostNCharacters(USER_NAME_MAX_LENGTH),
+          formRules.isNotProfanity,
+        ]"
       />
       <template v-else>
         {{ row.value }}

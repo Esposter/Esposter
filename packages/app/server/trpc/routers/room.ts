@@ -10,6 +10,7 @@ import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/c
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
@@ -81,20 +82,22 @@ export const roomRouter = router({
         return newMembers;
       }),
     ),
-  createRoom: authedProcedure.input(createRoomInputSchema).mutation<null | Room>(({ ctx, input }) =>
-    db.transaction(async (tx) => {
-      const newRoom = (
-        await tx
-          .insert(rooms)
-          .values({ ...input, userId: ctx.session.user.id })
-          .returning()
-      ).find(Boolean);
-      if (!newRoom) return null;
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"])
+    .input(createRoomInputSchema)
+    .mutation<null | Room>(({ ctx, input }) =>
+      db.transaction(async (tx) => {
+        const newRoom = (
+          await tx
+            .insert(rooms)
+            .values({ ...input, userId: ctx.session.user.id })
+            .returning()
+        ).find(Boolean);
+        if (!newRoom) return null;
 
-      await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.session.user.id });
-      return newRoom;
-    }),
-  ),
+        await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.session.user.id });
+        return newRoom;
+      }),
+    ),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<null | Room>(async ({ ctx, input }) => {
     const deletedRoom = (
       await db
@@ -201,7 +204,7 @@ export const roomRouter = router({
     const resultRooms = joinedRooms.map((jr) => jr.Room);
     return getCursorPaginationData(resultRooms, limit, sortBy);
   }),
-  updateRoom: authedProcedure
+  updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"])
     .input(updateRoomInputSchema)
     .mutation<null | Room>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (

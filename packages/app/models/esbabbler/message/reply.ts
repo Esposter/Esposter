@@ -6,7 +6,7 @@ import { getPropertyNames } from "@/services/shared/getPropertyNames";
 import { z } from "zod";
 
 export class MessageReplyMetadataEntity extends MessageMetadataEntity {
-  messageReplyRowKey!: string;
+  message!: string;
 
   constructor(init: CompositeKeyEntity & Partial<MessageReplyMetadataEntity>) {
     super();
@@ -17,5 +17,8 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity {
 export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageReplyMetadataEntity>();
 
 export const messageReplyMetadataSchema = messageMetadataSchema.merge(
-  z.object({ messageReplyRowKey: messageSchema.shape.rowKey }),
+  z.object({
+    message: messageSchema.shape.message,
+    messageReplyRowKey: messageSchema.shape.rowKey,
+  }),
 ) satisfies z.ZodType<MessageReplyMetadataEntity>;

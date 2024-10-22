@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ROOM_NAME_MAX_LENGTH } from "@/services/esbabbler/constants";
+import { formRules } from "@/services/vuetify/formRules";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useTemplateRef } from "vue";
 
@@ -50,6 +52,12 @@ onClickOutside(title, () => {
       hide-details
       autofocus
       text-xl
+      :rules="[
+        formRules.required,
+        formRules.requireAtMostNCharacters(ROOM_NAME_MAX_LENGTH),
+        formRules.isNotEqual(currentRoomName),
+        formRules.isNotProfanity,
+      ]"
       @keydown.enter="onUpdateRoom"
     />
     <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">

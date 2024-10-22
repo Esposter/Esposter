@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { selectUserSchema, users } from "@/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { eq } from "drizzle-orm";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();
@@ -33,10 +34,12 @@ export const userRouter = router({
         // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/1163
       }) as Promise<undefined | User>,
   ),
-  updateUser: authedProcedure.input(updateUserInputSchema).mutation<null | User>(async ({ ctx, input }) => {
-    const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning()).find(
-      Boolean,
-    );
-    return updatedUser ?? null;
-  }),
+  updateUser: getProfanityFilterProcedure(updateUserInputSchema, ["name"])
+    .input(updateUserInputSchema)
+    .mutation<null | User>(async ({ ctx, input }) => {
+      const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning()).find(
+        Boolean,
+      );
+      return updatedUser ?? null;
+    }),
 });
