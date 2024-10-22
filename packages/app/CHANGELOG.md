@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.25.0](https://github.com/Esposter/Esposter/compare/v1.24.2...v1.25.0) (2024-10-22)
+
+
+### Bug Fixes
+
+* lint ([7bdea2f](https://github.com/Esposter/Esposter/commit/7bdea2f6b67423bfae6a4617faea2c5c50df10c9))
+* lint for vue files and remaining packages ([11bb52f](https://github.com/Esposter/Esposter/commit/11bb52fbe53725a6fd1f835f9ce128a7a911b276))
+* remaining lint stuff ([d95927e](https://github.com/Esposter/Esposter/commit/d95927ec38e9b7a371af7ba801ed3b61c6f60d4e))
+
+
+### Features
+
+* Add profanity filters to all inputs ([d83351d](https://github.com/Esposter/Esposter/commit/d83351d68237a16edb3ce99190bfcf3331f1e595))
+
+
+
+
+
 ## [1.24.2](https://github.com/Esposter/Esposter/compare/v1.24.1...v1.24.2) (2024-10-17)
 
 **Note:** Version bump only for package @esposter/app
