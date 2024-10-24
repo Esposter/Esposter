@@ -152,7 +152,7 @@
     "vuetify": "^3.7.3",
     "vuetify-sonner": "^0.3.19",
     "webfontloader": "^1.6.28",
-    "worker-timers": "^8.0.8",
+    "worker-timers": "^8.0.9",
     "ws": "^8.18.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.3"
