@@ -132,7 +132,7 @@
     "phaser3-rex-plugins": "^1.80.9",
     "pinia": "^2.2.4",
     "pluralize": "^8.0.0",
-    "postgres": "^3.4.4",
+    "postgres": "^3.4.5",
     "rxjs": "^7.8.1",
     "sql-highlight": "^6.0.0",
     "superjson": "^2.2.1",
