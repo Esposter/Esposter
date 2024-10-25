@@ -397,8 +397,8 @@ importers:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^8.0.9
-        version: 8.0.9
+        specifier: ^8.0.10
+        version: 8.0.10
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -1395,6 +1395,10 @@ packages:
 
   '@babel/runtime@7.25.9':
     resolution: {integrity: sha512-4zpTHZ9Cm6L9L+uIqghQX8ZXg8HKFcjYO3qHoO8zTmRm6HQUJ8SSJ+KRvbMBZn0EGVlT4DRYeQ/6hjlyXBh+Kg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.26.0':
+    resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/standalone@7.24.0':
@@ -6553,8 +6557,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-unique-numbers@9.0.12:
-    resolution: {integrity: sha512-JqgarO1xntlhL8YNyJyhn7nppgmXmXnH9ZWyTKyEIZywFgNEOv4Px0TY/sHSED41+2a4ZB9lbLDEdg+IfGStAA==}
+  fast-unique-numbers@9.0.13:
+    resolution: {integrity: sha512-N0senlRaQ01Xl9fZH+bG7YrHMNlm5Evzfh1qxQHf+3BqG6iZdk2Wg+nhsL6Yv7qt28tgm57s23fywA0V5cmICg==}
     engines: {node: '>=18.2.0'}
 
   fast-uri@3.0.1:
@@ -11049,14 +11053,14 @@ packages:
   workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
 
-  worker-timers-broker@7.1.5:
-    resolution: {integrity: sha512-QJECHkuCoe02J6rG4/7SK2CcEs8embc4M8qumNg4sbXjCuzrXaJFUBSwOoGaJpxWocOjktqEKtgScL6fDOltfg==}
+  worker-timers-broker@7.1.6:
+    resolution: {integrity: sha512-vx6R+5aEJcE0FyCTTDoNeEQUj5P62els+pCG3LTgUtlgy6Lko37sl7O3ZpKt2XwSkdkKEgRo+803LkFbr8pK6A==}
 
-  worker-timers-worker@8.0.7:
-    resolution: {integrity: sha512-ATUs6l3X7QCIVE8Uo2yDaDhaJkZHtfsCyaI5LieHBbdGN46EpygKcw58xgRJp5IhppSobJc8WiuKlgybxqRYHg==}
+  worker-timers-worker@8.0.8:
+    resolution: {integrity: sha512-3FoE8xTak5qJGNbULiPzqADsF/tg+DBcAaxys5wv0pb2L+laAHsnn9BHIEdjV6Hels+ZeiQK6hkQVwKFaRps7Q==}
 
-  worker-timers@8.0.9:
-    resolution: {integrity: sha512-/PlktApkgfhbiwLwuX+NW8Rzd7wj4zNhkZQo/5ssF0gooAN5KNY4Jlu23odtNUlca9yJ/dnSp5a1zIDf9opq5Q==}
+  worker-timers@8.0.10:
+    resolution: {integrity: sha512-qfFiC+8hCoPBAfKnD2X3rbqc6Po9McxkfTeL9do4oIyckiab7nWW6aWaU4v2t3n4f215gTQHtLMJ/GtOlVAW6A==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -12299,6 +12303,10 @@ snapshots:
       regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.25.9':
+    dependencies:
+      regenerator-runtime: 0.14.1
+
+  '@babel/runtime@7.26.0':
     dependencies:
       regenerator-runtime: 0.14.1
 
@@ -18987,9 +18995,9 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-unique-numbers@9.0.12:
+  fast-unique-numbers@9.0.13:
     dependencies:
-      '@babel/runtime': 7.25.9
+      '@babel/runtime': 7.26.0
       tslib: 2.8.0
 
   fast-uri@3.0.1: {}
@@ -24405,24 +24413,24 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.0.0
 
-  worker-timers-broker@7.1.5:
+  worker-timers-broker@7.1.6:
     dependencies:
-      '@babel/runtime': 7.25.9
-      fast-unique-numbers: 9.0.12
+      '@babel/runtime': 7.26.0
+      fast-unique-numbers: 9.0.13
       tslib: 2.8.0
-      worker-timers-worker: 8.0.7
+      worker-timers-worker: 8.0.8
 
-  worker-timers-worker@8.0.7:
+  worker-timers-worker@8.0.8:
     dependencies:
-      '@babel/runtime': 7.25.9
+      '@babel/runtime': 7.26.0
       tslib: 2.8.0
 
-  worker-timers@8.0.9:
+  worker-timers@8.0.10:
     dependencies:
-      '@babel/runtime': 7.25.9
+      '@babel/runtime': 7.26.0
       tslib: 2.8.0
-      worker-timers-broker: 7.1.5
-      worker-timers-worker: 8.0.7
+      worker-timers-broker: 7.1.6
+      worker-timers-worker: 8.0.8
 
   wrap-ansi@6.2.0:
     dependencies:
