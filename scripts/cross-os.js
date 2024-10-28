@@ -11,7 +11,7 @@ const script = process.argv[2];
 const args = process.argv.slice(3, process.argv.length);
 const { platform } = process;
 const command = packageJson[property][script][platform];
-if (!command) throw new Error(`script: "${error}" not found for the current platform: ${platform}`);
+if (!command) throw new Error(`script: "${script}" not found for the current platform: ${platform}`);
 
 const proc = spawn(command, args, { stdio: "inherit", shell: true });
 proc.on("exit", (code) => process.exit(code));
