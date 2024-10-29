@@ -28,8 +28,7 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 
   return {
-    // @TODO: https://github.com/vuejs/pinia/issues/2767
-    activeMonster: activeMonster as Ref<typeof activeMonster.value>,
+    activeMonster,
     attacks,
     initialMonsterInfoContainerPosition,
     initialMonsterPosition,
