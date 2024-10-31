@@ -140,7 +140,7 @@
     "survey-creator-core": "^1.12.7",
     "survey-creator-vue": "^1.12.7",
     "survey-vue3-ui": "^1.12.7",
-    "three": "^0.169.0",
+    "three": "^0.170.0",
     "three-globe": "^2.34.3",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^0.10.22",
