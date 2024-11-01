@@ -594,8 +594,8 @@ importers:
         specifier: ^3.86.0
         version: 3.86.0
       phaser3-rex-plugins:
-        specifier: ^1.80.9
-        version: 1.80.9(encoding@0.1.13)
+        specifier: ^1.80.10
+        version: 1.80.10(encoding@0.1.13)(graphology-types@0.24.7)
       pinia:
         specifier: ^2.2.5
         version: 2.2.5(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))
@@ -8677,9 +8677,6 @@ packages:
 
   phaser3-rex-plugins@1.80.10:
     resolution: {integrity: sha512-7qpWkpFmXobkpMSFEIRcVnotpAYZDksGzgCuZrzDAy+vtmKex5bTdSEZ8UDYYwYgkuAhVoMsveFF6oDfGOSY4Q==}
-
-  phaser3-rex-plugins@1.80.9:
-    resolution: {integrity: sha512-yx+WSAf4MOF2AimVL/Dv7eN65/YuO4LVNlYihDP0tAgFfCoTBunAd0YDbv82eoSkOAd0gy6w3Qh71p3kq1eRTA==}
 
   phaser@3.86.0:
     resolution: {integrity: sha512-A7rog3GhXYcWsPimteQmudyY6W0fx0eviOoo9Cwpzae1RPeJBDkhmWv5IFrQO9dL+T907E4dprQPnd2D4WhoEw==}
@@ -21560,18 +21557,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - graphology-types
-
-  phaser3-rex-plugins@1.80.9(encoding@0.1.13):
-    dependencies:
-      eventemitter3: 3.1.2
-      i18next: 22.5.1
-      i18next-http-backend: 2.5.2(encoding@0.1.13)
-      js-yaml: 4.1.0
-      mustache: 4.2.0
-      papaparse: 5.4.1
-      webfontloader: 1.6.28
-    transitivePeerDependencies:
-      - encoding
 
   phaser@3.86.0:
     dependencies:
