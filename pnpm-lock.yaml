@@ -397,8 +397,8 @@ importers:
         specifier: ^1.6.28
         version: 1.6.28
       worker-timers:
-        specifier: ^8.0.10
-        version: 8.0.10
+        specifier: ^8.0.11
+        version: 8.0.11
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -522,7 +522,7 @@ importers:
     devDependencies:
       '@rollup/plugin-typescript':
         specifier: ^12.1.1
-        version: 12.1.1(rollup@4.24.3)(tslib@2.8.0)(typescript@5.6.3)
+        version: 12.1.1(rollup@4.24.3)(tslib@2.8.1)(typescript@5.6.3)
       '@unocss/eslint-config':
         specifier: ^0.63.6
         version: 0.63.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
@@ -6531,8 +6531,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-unique-numbers@9.0.13:
-    resolution: {integrity: sha512-N0senlRaQ01Xl9fZH+bG7YrHMNlm5Evzfh1qxQHf+3BqG6iZdk2Wg+nhsL6Yv7qt28tgm57s23fywA0V5cmICg==}
+  fast-unique-numbers@9.0.14:
+    resolution: {integrity: sha512-UyRRMWsvgTfawWMoxmqdRshB32JiSAvyv1SM0LT1CXUShPQ8PXG7euhiKoBbIUzRkvibrktqsYh9bzgkzZ/mww==}
     engines: {node: '>=18.2.0'}
 
   fast-uri@3.0.1:
@@ -10048,6 +10048,9 @@ packages:
   tslib@2.8.0:
     resolution: {integrity: sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   tsx@4.19.2:
     resolution: {integrity: sha512-pOUl6Vo2LUq/bSa8S5q7b91cgNSjctn9ugq/+Mvow99qW6x/UZYwzxy/3NmqoT66eHYfCVvFvACC58UBPFf28g==}
     engines: {node: '>=18.0.0'}
@@ -10966,14 +10969,14 @@ packages:
   workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
 
-  worker-timers-broker@7.1.6:
-    resolution: {integrity: sha512-vx6R+5aEJcE0FyCTTDoNeEQUj5P62els+pCG3LTgUtlgy6Lko37sl7O3ZpKt2XwSkdkKEgRo+803LkFbr8pK6A==}
+  worker-timers-broker@7.1.7:
+    resolution: {integrity: sha512-Q/lggYidPVlKfcU3FTJ4mYyOdkTdYoYGOvZRCVSTlldRFW36cQb6vJRki9GSmDU8najem99G7Dh+43flChK37w==}
 
-  worker-timers-worker@8.0.8:
-    resolution: {integrity: sha512-3FoE8xTak5qJGNbULiPzqADsF/tg+DBcAaxys5wv0pb2L+laAHsnn9BHIEdjV6Hels+ZeiQK6hkQVwKFaRps7Q==}
+  worker-timers-worker@8.0.9:
+    resolution: {integrity: sha512-e0hpi44eHXfZYXVKP9xfINEeP1jo2k3lHnO5fGvHtqan6Opy/vdGxCbXoq6CND6XLal29B+4VtTSA/VU4rvMoQ==}
 
-  worker-timers@8.0.10:
-    resolution: {integrity: sha512-qfFiC+8hCoPBAfKnD2X3rbqc6Po9McxkfTeL9do4oIyckiab7nWW6aWaU4v2t3n4f215gTQHtLMJ/GtOlVAW6A==}
+  worker-timers@8.0.11:
+    resolution: {integrity: sha512-5+8k3Qmppmm7CkTHj4ALIK4SHbakGyhez7TP+9MqSdToaat35VgCrQKzU/9TBCFcRy65fHkKoum53LpFVGt50Q==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -14790,14 +14793,14 @@ snapshots:
     optionalDependencies:
       rollup: 4.24.3
 
-  '@rollup/plugin-typescript@12.1.1(rollup@4.24.3)(tslib@2.8.0)(typescript@5.6.3)':
+  '@rollup/plugin-typescript@12.1.1(rollup@4.24.3)(tslib@2.8.1)(typescript@5.6.3)':
     dependencies:
       '@rollup/pluginutils': 5.1.2(rollup@4.24.3)
       resolve: 1.22.8
       typescript: 5.6.3
     optionalDependencies:
       rollup: 4.24.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@rollup/pluginutils@3.1.0(rollup@2.79.1)':
     dependencies:
@@ -18833,10 +18836,10 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-unique-numbers@9.0.13:
+  fast-unique-numbers@9.0.14:
     dependencies:
       '@babel/runtime': 7.26.0
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   fast-uri@3.0.1: {}
 
@@ -22935,6 +22938,8 @@ snapshots:
 
   tslib@2.8.0: {}
 
+  tslib@2.8.1: {}
+
   tsx@4.19.2:
     dependencies:
       esbuild: 0.23.1
@@ -24151,24 +24156,24 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.0.0
 
-  worker-timers-broker@7.1.6:
+  worker-timers-broker@7.1.7:
     dependencies:
       '@babel/runtime': 7.26.0
-      fast-unique-numbers: 9.0.13
-      tslib: 2.8.0
-      worker-timers-worker: 8.0.8
+      fast-unique-numbers: 9.0.14
+      tslib: 2.8.1
+      worker-timers-worker: 8.0.9
 
-  worker-timers-worker@8.0.8:
+  worker-timers-worker@8.0.9:
     dependencies:
       '@babel/runtime': 7.26.0
-      tslib: 2.8.0
+      tslib: 2.8.1
 
-  worker-timers@8.0.10:
+  worker-timers@8.0.11:
     dependencies:
       '@babel/runtime': 7.26.0
-      tslib: 2.8.0
-      worker-timers-broker: 7.1.6
-      worker-timers-worker: 8.0.8
+      tslib: 2.8.1
+      worker-timers-broker: 7.1.7
+      worker-timers-worker: 8.0.9
 
   wrap-ansi@6.2.0:
     dependencies:
