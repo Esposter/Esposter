@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
+
+
+### Bug Fixes
+
+* small script log ([0673244](https://github.com/Esposter/Esposter/commit/0673244178a16f67d1683b9a94745c0e3be169d2))
+
+
+### Features
+
+* add getting random values cuz it's cool ([3d4968d](https://github.com/Esposter/Esposter/commit/3d4968d1597088897b97272d65d0d7dc04dbb2a3))
+
+
+
+
+
 # [1.25.0](https://github.com/Esposter/Esposter/compare/v1.24.2...v1.25.0) (2024-10-22)
 
 
