@@ -467,8 +467,8 @@ importers:
         specifier: ^0.63.6
         version: 0.63.6(magicast@0.3.4)(postcss@8.4.38)(rollup@4.24.3)(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(webpack-sources@3.2.3)(webpack@5.90.3(esbuild@0.23.1))
       '@vite-pwa/nuxt':
-        specifier: ^0.10.5
-        version: 0.10.5(magicast@0.3.4)(rollup@4.24.3)(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(webpack-sources@3.2.3)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        specifier: ^0.10.6
+        version: 0.10.6(magicast@0.3.4)(rollup@4.24.3)(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(webpack-sources@3.2.3)(workbox-build@7.0.0)(workbox-window@7.0.0)
       '@vitest/coverage-v8':
         specifier: ^2.1.4
         version: 2.1.4(vitest@2.1.4(@types/node@22.8.6)(happy-dom@15.7.4)(sass@1.80.5)(terser@5.29.2))
@@ -2874,10 +2874,6 @@ packages:
     resolution: {integrity: sha512-aNRD1ylzijY0oYolldNcZJXVyxdGzNTl+Xd0UYyFQCu9f4wqUZqQ9l+b7arCEzchr96pMK0xdpvLcS3xo1wDcw==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  '@nuxt/kit@3.13.0':
-    resolution: {integrity: sha512-gbhSbDvYfkGQ0R2ztqTLQLHRMv+7g50kAKKuN6mbF4tL9jg7NPnQ8bAarn2I4Qx8xtmwO+qY1ABkmYMn5S1CpA==}
-    engines: {node: ^14.18.0 || >=16.10.0}
-
   '@nuxt/kit@3.13.1':
     resolution: {integrity: sha512-FkUL349lp/3nVfTIyws4UDJ3d2jyv5Pk1DC1HQUCOkSloYYMdbRcQAUcb4fe2TCLNWvHM+FhU8jnzGTzjALZYA==}
     engines: {node: ^14.18.0 || >=16.10.0}
@@ -2896,10 +2892,6 @@ packages:
 
   '@nuxt/schema@3.12.4':
     resolution: {integrity: sha512-H7FwBV4ChssMaeiLyPdVLOLUa0326ebp3pNbJfGgFt7rSoKh1MmgjorecA8JMxOQZziy3w6EELf4+5cgLh/F1w==}
-    engines: {node: ^14.18.0 || >=16.10.0}
-
-  '@nuxt/schema@3.13.0':
-    resolution: {integrity: sha512-JBGSjF9Hd8guvTV2312eM1RulCMJc50yR3CeMZPLDsI02A8TXQnABS8EbgvGRvxD43q/ITjj21B2ffG1wEVrnQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
   '@nuxt/schema@3.13.1':
@@ -4362,8 +4354,8 @@ packages:
   '@vexip-ui/utils@2.16.0':
     resolution: {integrity: sha512-AMiMs9fF8C2Ya3mvoV/W5isaNg/qjTH1zQ8aDsn1VZ5v5Hcf7Nw1D7WjXAhm20dJ23GbSbLaAwUA9wCncRCPRw==}
 
-  '@vite-pwa/nuxt@0.10.5':
-    resolution: {integrity: sha512-I+qTkgQB2lvpoKQGgARgszsV/rBDys2xstczmTIgYoaNPALz2+zkhN/O8Fl8QI2ZHBL+ZnfpSOCOm/77ugrFHg==}
+  '@vite-pwa/nuxt@0.10.6':
+    resolution: {integrity: sha512-yQTrMNLz2KuroEaqstHYvylT258BgYryON1tC2MQGCG8VVyWXfmYZPeffid/zCE8pkKMQpp6e9owKUyVLgT5xg==}
     peerDependencies:
       '@vite-pwa/assets-generator': ^0.2.6
     peerDependenciesMeta:
@@ -6552,14 +6544,6 @@ packages:
 
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
-
-  fdir@6.3.0:
-    resolution: {integrity: sha512-QOnuT+BOtivR77wYvCWHfGt9s4Pz1VIMbD463vegT5MLqNXy8rYFT/lPVEqf/bhYeT6qmqrNHhsX+rWwe3rOCQ==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fdir@6.4.0:
     resolution: {integrity: sha512-3oB133prH1o4j/L5lLW7uOCF1PlD+/It2L0eL/iAqWMB91RBbqTewABqxhj0ibBd90EEmWZq7ntIWzVaWcXTGQ==}
@@ -9956,10 +9940,6 @@ packages:
 
   tinyexec@0.3.1:
     resolution: {integrity: sha512-WiCJLEECkO18gwqIp6+hJg0//p23HXp4S+gGtAKu3mI2F2/sXC4FvHvXvB0zJVVaTPhx1/tOwdbRsa1sOBIKqQ==}
-
-  tinyglobby@0.2.6:
-    resolution: {integrity: sha512-NbBoFBpqfcgd1tCiO8Lkfdk+xrA7mlLR9zgvZcZWQQwU63XAfUePyd6wZBaU93Hqw347lHnwFzttAkemHzzz4g==}
-    engines: {node: '>=12.0.0'}
 
   tinyglobby@0.2.9:
     resolution: {integrity: sha512-8or1+BGEdk1Zkkw2ii16qSS7uVrQJPre5A9o/XkWPATkk23FZh/15BKFxPnlTy6vkljZxLqYCzzBMj30ZrSvjw==}
@@ -14063,34 +14043,6 @@ snapshots:
       - supports-color
       - webpack-sources
 
-  '@nuxt/kit@3.13.0(magicast@0.3.4)(rollup@4.24.3)(webpack-sources@3.2.3)':
-    dependencies:
-      '@nuxt/schema': 3.13.0(rollup@4.24.3)(webpack-sources@3.2.3)
-      c12: 1.11.2(magicast@0.3.4)
-      consola: 3.2.3
-      defu: 6.1.4
-      destr: 2.0.3
-      globby: 14.0.2
-      hash-sum: 2.0.0
-      ignore: 5.3.2
-      jiti: 1.21.6
-      klona: 2.0.6
-      knitwork: 1.1.0
-      mlly: 1.7.2
-      pathe: 1.1.2
-      pkg-types: 1.2.0
-      scule: 1.3.0
-      semver: 7.6.3
-      ufo: 1.5.4
-      unctx: 2.3.1(webpack-sources@3.2.3)
-      unimport: 3.13.1(rollup@4.24.3)(webpack-sources@3.2.3)
-      untyped: 1.4.2
-    transitivePeerDependencies:
-      - magicast
-      - rollup
-      - supports-color
-      - webpack-sources
-
   '@nuxt/kit@3.13.1(magicast@0.3.4)(rollup@4.24.3)(webpack-sources@3.2.3)':
     dependencies:
       '@nuxt/schema': 3.13.1(rollup@4.24.3)(webpack-sources@3.2.3)
@@ -14213,25 +14165,6 @@ snapshots:
       - webpack-sources
 
   '@nuxt/schema@3.12.4(rollup@4.24.3)(webpack-sources@3.2.3)':
-    dependencies:
-      compatx: 0.1.8
-      consola: 3.2.3
-      defu: 6.1.4
-      hookable: 5.5.3
-      pathe: 1.1.2
-      pkg-types: 1.2.0
-      scule: 1.3.0
-      std-env: 3.7.0
-      ufo: 1.5.4
-      uncrypto: 0.1.3
-      unimport: 3.13.1(rollup@4.24.3)(webpack-sources@3.2.3)
-      untyped: 1.4.2
-    transitivePeerDependencies:
-      - rollup
-      - supports-color
-      - webpack-sources
-
-  '@nuxt/schema@3.13.0(rollup@4.24.3)(webpack-sources@3.2.3)':
     dependencies:
       compatx: 0.1.8
       consola: 3.2.3
@@ -16191,9 +16124,9 @@ snapshots:
 
   '@vexip-ui/utils@2.16.0': {}
 
-  '@vite-pwa/nuxt@0.10.5(magicast@0.3.4)(rollup@4.24.3)(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(webpack-sources@3.2.3)(workbox-build@7.0.0)(workbox-window@7.0.0)':
+  '@vite-pwa/nuxt@0.10.6(magicast@0.3.4)(rollup@4.24.3)(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(webpack-sources@3.2.3)(workbox-build@7.0.0)(workbox-window@7.0.0)':
     dependencies:
-      '@nuxt/kit': 3.13.0(magicast@0.3.4)(rollup@4.24.3)(webpack-sources@3.2.3)
+      '@nuxt/kit': 3.13.2(magicast@0.3.4)(rollup@4.24.3)(webpack-sources@3.2.3)
       pathe: 1.1.2
       ufo: 1.5.4
       vite-plugin-pwa: 0.20.5(vite@5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2))(workbox-build@7.0.0)(workbox-window@7.0.0)
@@ -18914,10 +18847,6 @@ snapshots:
   fastq@1.17.1:
     dependencies:
       reusify: 1.0.4
-
-  fdir@6.3.0(picomatch@4.0.2):
-    optionalDependencies:
-      picomatch: 4.0.2
 
   fdir@6.4.0(picomatch@4.0.2):
     optionalDependencies:
@@ -22919,11 +22848,6 @@ snapshots:
 
   tinyexec@0.3.1: {}
 
-  tinyglobby@0.2.6:
-    dependencies:
-      fdir: 6.3.0(picomatch@4.0.2)
-      picomatch: 4.0.2
-
   tinyglobby@0.2.9:
     dependencies:
       fdir: 6.4.0(picomatch@4.0.2)
@@ -23733,7 +23657,7 @@ snapshots:
     dependencies:
       debug: 4.3.7
       pretty-bytes: 6.1.1
-      tinyglobby: 0.2.6
+      tinyglobby: 0.2.9
       vite: 5.4.10(@types/node@22.8.6)(sass@1.80.5)(terser@5.29.2)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
