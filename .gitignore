@@ -1,43 +1,41 @@
-# build artifacts
+# Build artifacts
 **/src/index.ts
 **/src/components/index.ts
 **/public/docs
 
-# nuxt 3
-.nuxt
-.nitro
-.cache
-.output
-
-# dependencies
-node_modules
-.pnp
-.pnp.js
-
-# testing
+# Testing
 coverage
 vitest.config.*.timestamp*
 
-# production
-dist
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-*.log*
-
-# env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# local db
+# Local db
 *.db
 *.db-journal
 
 # Tiled
 *.tiled-session
+
+# Nuxt 3
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
+
