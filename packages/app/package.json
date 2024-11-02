@@ -185,7 +185,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/three": "^0.169.0",
     "@types/webfontloader": "^1.6.38",
-    "@types/ws": "^8.5.12",
+    "@types/ws": "^8.5.13",
     "@unocss/nuxt": "^0.63.6",
     "@vite-pwa/nuxt": "^0.10.6",
     "@vitest/coverage-v8": "^2.1.4",
