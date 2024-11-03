@@ -121,7 +121,7 @@
     "markdown-it": "^14.1.0",
     "marked": "^14.1.3",
     "mjml-browser": "^4.15.3",
-    "nitropack": "^2.9.7",
+    "nitropack": "2.9.7",
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.13",
     "obscenity": "^0.4.0",
@@ -165,7 +165,8 @@
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "class-transformer": "@TODO: Remove when es decorators are released",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "markdown-it": "https://github.com/json-layout/json-layout/issues/5"
+    "markdown-it": "https://github.com/json-layout/json-layout/issues/5",
+    "nitropack": "@TODO: Cannot useRuntimeConfig on ts files anymore"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
