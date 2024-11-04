@@ -172,8 +172,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(@vue-flow/core@1.41.4(vue@3.5.10(typescript@5.6.3)))(vue@3.5.10(typescript@5.6.3))
       '@vuepic/vue-datepicker':
-        specifier: ^9.0.3
-        version: 9.0.3(vue@3.5.10(typescript@5.6.3))
+        specifier: ^10.0.0
+        version: 10.0.0(vue@3.5.10(typescript@5.6.3))
       '@vueuse/core':
         specifier: ^11.2.0
         version: 11.2.0(vue@3.5.10(typescript@5.6.3))
@@ -4694,8 +4694,8 @@ packages:
   '@vue/test-utils@2.4.6':
     resolution: {integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==}
 
-  '@vuepic/vue-datepicker@9.0.3':
-    resolution: {integrity: sha512-OtCAKG+CkVBpCwnPx7/BGRF+/z+jDzNl2cMBpcr8j2NkAN+13xkUt7sctbOVKbG/jhuXtKoUSedI69e0cDXPXw==}
+  '@vuepic/vue-datepicker@10.0.0':
+    resolution: {integrity: sha512-ujlk3ahftVQpyCJ8hq7TmOOHrf/XFJI1ZcAh/FRB5Ci62Vq5HmHf6xux5KVi5SPUFRTJY78m+uDhYy1M+8RZ9w==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
@@ -5895,8 +5895,8 @@ packages:
     resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
     engines: {node: '>= 0.4'}
 
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   dateformat@3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
@@ -16754,9 +16754,9 @@ snapshots:
       js-beautify: 1.15.1
       vue-component-type-helpers: 2.0.14
 
-  '@vuepic/vue-datepicker@9.0.3(vue@3.5.10(typescript@5.6.3))':
+  '@vuepic/vue-datepicker@10.0.0(vue@3.5.10(typescript@5.6.3))':
     dependencies:
-      date-fns: 3.6.0
+      date-fns: 4.1.0
       vue: 3.5.10(typescript@5.6.3)
 
   '@vuetify/loader-shared@2.0.3(vue@3.5.10(typescript@5.6.3))(vuetify@3.7.3)':
@@ -18231,7 +18231,7 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
-  date-fns@3.6.0: {}
+  date-fns@4.1.0: {}
 
   dateformat@3.0.3: {}
 
