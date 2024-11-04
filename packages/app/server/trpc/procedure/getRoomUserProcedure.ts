@@ -1,6 +1,5 @@
 import type { z } from "zod";
 
-import { db } from "@/db";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { UUIDV4_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -19,7 +18,7 @@ export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
     const roomId = value.match(UUIDV4_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isMember = await db.query.usersToRooms.findFirst({
+    const isMember = await ctx.db.query.usersToRooms.findFirst({
       where: (usersToRooms, { and, eq }) =>
         and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
     });

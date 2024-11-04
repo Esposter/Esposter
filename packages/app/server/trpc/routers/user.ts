@@ -1,8 +1,7 @@
-import type { User } from "@/db/schema/users";
+import type { User } from "@/server/db/schema/users";
 import type { z } from "zod";
 
-import { db } from "@/db";
-import { selectUserSchema, users } from "@/db/schema/users";
+import { selectUserSchema, users } from "@/server/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -17,7 +16,7 @@ export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 export const userRouter = router({
   readUser: authedProcedure.input(readUserInputSchema).query(
     ({ ctx, input }) =>
-      db.query.users.findFirst({
+      ctx.db.query.users.findFirst({
         columns: {
           createdAt: true,
           deletedAt: true,
@@ -37,9 +36,9 @@ export const userRouter = router({
   updateUser: getProfanityFilterProcedure(updateUserInputSchema, ["name"])
     .input(updateUserInputSchema)
     .mutation<null | User>(async ({ ctx, input }) => {
-      const updatedUser = (await db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning()).find(
-        Boolean,
-      );
+      const updatedUser = (
+        await ctx.db.update(users).set(input).where(eq(users.id, ctx.session.user.id)).returning()
+      ).find(Boolean);
       return updatedUser ?? null;
     }),
 });

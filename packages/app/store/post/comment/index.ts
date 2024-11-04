@@ -1,4 +1,4 @@
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
 
 import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";

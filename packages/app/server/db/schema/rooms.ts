@@ -1,5 +1,5 @@
-import { users, usersToRooms } from "@/db/schema/users";
-import { pgTable } from "@/db/shared/pgTable";
+import { users, usersToRooms } from "@/server/db/schema/users";
+import { pgTable } from "@/server/db/shared/pgTable";
 import { ROOM_NAME_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { relations } from "drizzle-orm";
 import { text, uuid } from "drizzle-orm/pg-core";

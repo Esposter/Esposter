@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { User } from "@/db/schema/users";
 import type { MessageEntity } from "@/models/esbabbler/message";
+import type { User } from "@/server/db/schema/users";
 
 interface MessageListItemProps {
   creator: User;

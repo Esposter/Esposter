@@ -1,5 +1,5 @@
-import type { Survey } from "@/db/schema/surveys";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import type { Survey } from "@/server/db/schema/surveys";
 
 import { dayjs } from "@/services/dayjs";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@/db/schema/rooms";
+import type { Room } from "@/server/db/schema/rooms";
 
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Post } from "@/db/schema/posts";
+import type { Post } from "@/server/db/schema/posts";
 import type { SubmitEventPromise } from "vuetify";
 
 import { POST_TITLE_MAX_LENGTH } from "@/services/post/constants";

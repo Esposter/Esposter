@@ -1,11 +1,11 @@
 import type { CompositeKey } from "@/models/azure";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 
-import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable } from "@/models/azure/table";
 import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
+import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";

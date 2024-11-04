@@ -3,18 +3,18 @@ import type { AdapterUser } from "@auth/core/adapters";
 import type { Session } from "@auth/core/types";
 
 import { NuxtAuthHandler } from "#auth";
-import { db } from "@/db";
-import { accounts } from "@/db/schema/accounts";
-import { authenticators } from "@/db/schema/authenticators";
-import { sessions } from "@/db/schema/sessions";
-import { users } from "@/db/schema/users";
-import { verificationTokens } from "@/db/schema/verificationTokens";
 import { RoutePath } from "@/models/router/RoutePath";
+import { accounts } from "@/server/db/schema/accounts";
+import { authenticators } from "@/server/db/schema/authenticators";
+import { sessions } from "@/server/db/schema/sessions";
+import { users } from "@/server/db/schema/users";
+import { verificationTokens } from "@/server/db/schema/verificationTokens";
 import FacebookProvider from "@auth/core/providers/facebook";
 import GithubProvider from "@auth/core/providers/github";
 import GoogleProvider from "@auth/core/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
+const db = useDb();
 const runtimeConfig = useRuntimeConfig();
 
 export const authOptions: AuthConfig = {

@@ -1,6 +1,5 @@
 import type { CustomTableClient } from "@/models/azure/table";
 
-import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable } from "@/models/azure/table";
 import {
   MessageEmojiMetadataEntity,
@@ -8,6 +7,7 @@ import {
   messageEmojiMetadataSchema,
 } from "@/models/esbabbler/message/emoji";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
+import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";

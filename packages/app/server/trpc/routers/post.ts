@@ -1,10 +1,9 @@
-import type { Post, PostWithRelations } from "@/db/schema/posts";
+import type { Post, PostWithRelations } from "@/server/db/schema/posts";
 
-import { db } from "@/db";
-import { PostRelations, posts, selectPostSchema } from "@/db/schema/posts";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
+import { PostRelations, posts, selectPostSchema } from "@/server/db/schema/posts";
 import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -56,10 +55,10 @@ export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
     .input(createCommentInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
-      const parentPost = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
+      const parentPost = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
       if (!parentPost) throw new NotFoundError(`Parent ${DatabaseEntityType.Post}`, input.parentId);
 
-      const newComment = await db.transaction(async (tx) => {
+      const newComment = await ctx.db.transaction(async (tx) => {
         const createdAt = new Date();
         const newComment = (
           await tx
@@ -79,7 +78,7 @@ export const postRouter = router({
           .where(eq(posts.id, parentPost.id));
         return newComment;
       });
-      const newCommentWithRelations = await db.query.posts.findFirst({
+      const newCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newComment.id),
         with: PostRelations,
       });
@@ -90,7 +89,7 @@ export const postRouter = router({
     .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
       const createdAt = new Date();
       const newPost = (
-        await db
+        await ctx.db
           .insert(posts)
           .values({
             ...input,
@@ -100,7 +99,7 @@ export const postRouter = router({
           })
           .returning({ id: posts.id })
       )[0];
-      const newPostWithRelations = await db.query.posts.findFirst({
+      const newPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newPost.id),
         with: PostRelations,
       });
@@ -108,7 +107,7 @@ export const postRouter = router({
     }),
   deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<null | Post>(
     async ({ ctx, input }) =>
-      await db.transaction(async (tx) => {
+      await ctx.db.transaction(async (tx) => {
         const deletedComment = (
           await tx
             .delete(posts)
@@ -118,7 +117,7 @@ export const postRouter = router({
         const postId = deletedComment?.parentId;
         if (!postId) return null;
         // Update number of comments
-        const post = await db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
+        const post = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
         if (!post) return deletedComment;
 
         await tx
@@ -130,7 +129,7 @@ export const postRouter = router({
   ),
   deletePost: authedProcedure.input(deletePostInputSchema).mutation<null | Post>(
     async ({ ctx, input }) =>
-      await db.transaction(async (tx) => {
+      await ctx.db.transaction(async (tx) => {
         const deletedPost = (
           await tx
             .delete(posts)
@@ -145,17 +144,17 @@ export const postRouter = router({
   ),
   readPost: publicProcedure
     .input(readPostInputSchema)
-    .query(({ input }) =>
-      db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
+    .query(({ ctx, input }) =>
+      ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
     ),
   readPosts: publicProcedure
     .input(readPostsInputSchema)
-    .query(async ({ input: { cursor, limit, parentId, sortBy } }) => {
+    .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
       const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
 
-      const resultPosts: PostWithRelations[] = await db.query.posts.findMany({
+      const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
         orderBy: parseSortByToSql(posts, sortBy),
         where,
@@ -167,13 +166,13 @@ export const postRouter = router({
     .input(updateCommentInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedComment = (
-        await db
+        await ctx.db
           .update(posts)
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       )[0];
-      const updatedCommentWithRelations = await db.query.posts.findFirst({
+      const updatedCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });
@@ -182,20 +181,20 @@ export const postRouter = router({
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
     .input(updatePostInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
-      const post = await db.query.posts.findFirst({
+      const post = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
       });
       if (!post)
         throw new NotFoundError(DatabaseEntityType.Post, `${posts.id}, you might be trying to update a comment`);
 
       const updatedPost = (
-        await db
+        await ctx.db
           .update(posts)
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       )[0];
-      const updatedPostWithRelations = await db.query.posts.findFirst({
+      const updatedPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });

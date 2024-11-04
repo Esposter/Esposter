@@ -1,4 +1,4 @@
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateLikeInput, DeleteLikeInput, UpdateLikeInput } from "@/server/trpc/routers/like";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {

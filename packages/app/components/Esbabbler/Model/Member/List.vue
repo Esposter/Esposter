@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@/db/schema/users";
+import type { User } from "@/server/db/schema/users";
 
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 

@@ -1,6 +1,5 @@
 import type { CustomTableClient } from "@/models/azure/table";
 
-import { selectRoomSchema } from "@/db/schema/rooms";
 import { AzureTable } from "@/models/azure/table";
 import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import {
@@ -8,6 +7,7 @@ import {
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataSchema,
 } from "@/models/esbabbler/message/reply";
+import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
