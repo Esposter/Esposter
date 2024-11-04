@@ -1,8 +1,8 @@
 import { AzureContainer } from "@/models/azure/blob";
 import { EmailEditor, emailEditorSchema } from "@/models/emailEditor/EmailEditor";
+import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/emailEditor/constants";
 import { streamToText } from "@/util/text/streamToText";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
@@ -10,7 +10,7 @@ import { jsonDateParse } from "@/util/time/jsonDateParse";
 export const emailEditorRouter = router({
   readEmailEditor: authedProcedure.query<EmailEditor>(async ({ ctx }) => {
     try {
-      const containerClient = await getContainerClient(AzureContainer.EmailEditorAssets);
+      const containerClient = await useContainerClient(AzureContainer.EmailEditorAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
@@ -23,7 +23,7 @@ export const emailEditorRouter = router({
     }
   }),
   saveEmailEditor: authedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {
-    const client = await getContainerClient(AzureContainer.EmailEditorAssets);
+    const client = await useContainerClient(AzureContainer.EmailEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));
   }),

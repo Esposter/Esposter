@@ -16,6 +16,6 @@ export interface AzureTableEntityMap {
   [AzureTable.MessagesMetadata]: MessageMetadataEntity;
 }
 
-// We add a fake property to preserve the entity type when running getTableClient
+// We add a fake property to preserve the entity type when for the table client
 // because the entity type should always be tied to the table 1-1
 export type CustomTableClient<TEntity extends CompositeKey> = { entityType: TEntity } & TableClient;

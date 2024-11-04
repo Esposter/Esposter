@@ -7,13 +7,14 @@ import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/c
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { rooms, selectRoomSchema } from "@/server/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/server/db/schema/users";
+import { AZURE_DEFAULT_PARTITION_KEY } from "@/server/services/azure/table/constants";
+import { createEntity } from "@/server/services/azure/table/createEntity";
+import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import { AZURE_DEFAULT_PARTITION_KEY } from "@/services/azure/constants";
-import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
@@ -109,7 +110,7 @@ export const roomRouter = router({
   generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)
     .mutation(async ({ input: { roomId } }) => {
-      const inviteClient = await getTableClient(AzureTable.Invites);
+      const inviteClient = await useTableClient(AzureTable.Invites);
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
       let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
@@ -142,7 +143,7 @@ export const roomRouter = router({
       return inviteCode;
     }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<boolean>(async ({ ctx, input }) => {
-    const inviteClient = await getTableClient(AzureTable.Invites);
+    const inviteClient = await useTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
       filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
     });

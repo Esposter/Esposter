@@ -3,9 +3,9 @@ import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,
 } from "@/models/tableEditor/TableEditorConfiguration";
+import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
 import { streamToText } from "@/util/text/streamToText";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
@@ -13,7 +13,7 @@ import { jsonDateParse } from "@/util/time/jsonDateParse";
 export const tableEditorRouter = router({
   readTableEditor: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
     try {
-      const containerClient = await getContainerClient(AzureContainer.TableEditorAssets);
+      const containerClient = await useContainerClient(AzureContainer.TableEditorAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
@@ -28,7 +28,7 @@ export const tableEditorRouter = router({
     }
   }),
   saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ ctx, input }) => {
-    const client = await getContainerClient(AzureContainer.TableEditorAssets);
+    const client = await useContainerClient(AzureContainer.TableEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));
   }),

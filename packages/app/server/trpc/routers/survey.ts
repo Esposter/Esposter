@@ -5,9 +5,9 @@ import { AzureContainer } from "@/models/azure/blob";
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
 import { selectSurveySchema, surveys } from "@/server/db/schema/surveys";
+import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getContainerClient, uploadBlockBlob } from "@/services/azure/blob";
 import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@/services/shared/publish/getPublishPath";
@@ -80,7 +80,7 @@ export const surveyRouter = router({
 
     await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
 
-    const client = await getContainerClient(AzureContainer.SurveyerAssets);
+    const client = await useContainerClient(AzureContainer.SurveyerAssets);
     const blobName = getPublishPath(id, rest.publishVersion, "json");
     await uploadBlockBlob(client, blobName, survey.model);
   }),

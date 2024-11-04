@@ -6,19 +6,17 @@ import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { selectRoomSchema } from "@/server/db/schema/rooms";
+import { createEntity } from "@/server/services/azure/table/createEntity";
+import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
+import { getReverseTickedTimestamp } from "@/server/services/azure/table/getReverseTickedTimestamp";
+import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
+import { updateEntity } from "@/server/services/azure/table/updateEntity";
+import { messageEventEmitter } from "@/server/services/esbabbler/events/messageEventEmitter";
+import { getMessagesPartitionKey } from "@/server/services/esbabbler/getMessagesPartitionKey";
+import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import {
-  createEntity,
-  deleteEntity,
-  getReverseTickedTimestamp,
-  getTableClient,
-  getTopNEntities,
-  updateEntity,
-} from "@/services/azure/table";
-import { messageEventEmitter } from "@/services/esbabbler/events/message";
-import { getMessagesPartitionKey, getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { observable } from "@trpc/server/observable";
@@ -75,7 +73,7 @@ export const messageRouter = router({
         updatedAt: createdAt,
         userId: ctx.session.user.id,
       });
-      const messageClient = await getTableClient(AzureTable.Messages);
+      const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
       messageEventEmitter.emit("createMessage", newMessage);
       return newMessage;
@@ -83,7 +81,7 @@ export const messageRouter = router({
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
     .mutation(async ({ input }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
+      const messageClient = await useTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
       return input;
@@ -128,7 +126,7 @@ export const messageRouter = router({
       const filter = cursor
         ? `${getMessagesPartitionKeyFilter(roomId)} and ${getCursorWhereAzureTable(cursor, sortBy)}`
         : getMessagesPartitionKeyFilter(roomId);
-      const messageClient = await getTableClient(AzureTable.Messages);
+      const messageClient = await useTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
       return getCursorPaginationData(messages, limit, sortBy);
     }),
@@ -136,7 +134,7 @@ export const messageRouter = router({
     .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
-      const messageClient = await getTableClient(AzureTable.Messages);
+      const messageClient = await useTableClient(AzureTable.Messages);
       await updateEntity(messageClient, { ...input, updatedAt: new Date() });
       messageEventEmitter.emit("updateMessage", input);
       return input;

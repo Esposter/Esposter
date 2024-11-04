@@ -10,7 +10,7 @@ export class CompositeKeyEntity implements CompositeKey {
   rowKey!: string;
 }
 
-export type AzureEntity = typeof AzureEntity.prototype;
 export const AzureEntity = applyItemMetadataMixin(CompositeKeyEntity);
+export type AzureEntity = typeof AzureEntity.prototype;
 
 export type AzureUpdateEntity<T> = CompositeKey & Partial<T>;
