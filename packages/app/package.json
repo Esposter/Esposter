@@ -58,7 +58,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
     "@hebilicious/authjs-nuxt": "^0.3.5",
-    "@koumoul/vjsf": "^3.0.0-beta.46",
+    "@koumoul/vjsf": "^3.0.0-beta.47",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.5",
     "@tiptap/core": "^2.9.1",
