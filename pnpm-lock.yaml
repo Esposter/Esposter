@@ -67,8 +67,8 @@ importers:
         specifier: 0.21.0
         version: 0.21.0
       '@auth/drizzle-adapter':
-        specifier: ^1.7.2
-        version: 1.7.2
+        specifier: ^1.7.3
+        version: 1.7.3
       '@azure/data-tables':
         specifier: ^13.2.2
         version: 13.2.2
@@ -641,8 +641,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/core@0.37.2':
-    resolution: {integrity: sha512-kUvzyvkcd6h1vpeMAojK2y7+PAV5H+0Cc9+ZlKYDFhDY31AlvsB+GW5vNO4qE3Y07KeQgvNO9U0QUx/fN62kBw==}
+  '@auth/core@0.37.3':
+    resolution: {integrity: sha512-qcffDLwxB9iUYH8GHq68w/KU8jtjAbjjk9xnpoKhjX3+QcntaQ2MKVSkTTocmA6ElpL5vK2xR9CXfQ98dvGnyg==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -655,8 +655,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/drizzle-adapter@1.7.2':
-    resolution: {integrity: sha512-PrXsbzcOGkw9A/lHr44SIOw0FBdXm9Me5xzmLCC54anPTiMmOq2FnJLjnPPnZZ/IKVOfTkSNOn9w9jtQgl2mCw==}
+  '@auth/drizzle-adapter@1.7.3':
+    resolution: {integrity: sha512-0BuGgRjcghoFJQH8796BaLCFXqh77lhizXuDliVK7cF2hs1nXo7eKZ/m5ddFa7ATTOwQ3gncQLHFJ1ap8dOoew==}
 
   '@azure/abort-controller@2.1.0':
     resolution: {integrity: sha512-SYtcG13aiV7znycu6plCClWUzD9BBtfnsbIxT89nkkRvQRB4n0kuZyJJvJ7hqdKOn7x7YoGKZ9lVStLJpLnOFw==}
@@ -5639,9 +5639,9 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
-  cookie@0.7.1:
-    resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
-    engines: {node: '>= 0.6'}
+  cookie@1.0.1:
+    resolution: {integrity: sha512-Xd8lFX4LM9QEEwxQpF9J9NTUh8pmdJO0cyRJhFiDoLTk2eH8FXlRv2IFGYVadZpqI3j8fhNrSdKCeYPxiAhLXw==}
+    engines: {node: '>=18'}
 
   copy-anything@3.0.5:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
@@ -7640,8 +7640,8 @@ packages:
   jose@5.2.3:
     resolution: {integrity: sha512-KUXdbctm1uHVL8BYhnyHkgp3zDX5KW8ZhAKVFEfUbU2P8Alpzjb+48hHvjOdQIyPshoblhzsuqOwEEAbtHVirA==}
 
-  jose@5.9.3:
-    resolution: {integrity: sha512-egLIoYSpcd+QUF+UHgobt5YzI2Pkw/H39ou9suW687MY6PmCwPmkNV/4TNjn1p2tX5xO3j0d0sq5hiYE24bSlg==}
+  jose@5.9.6:
+    resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
 
   js-base64@3.7.7:
     resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
@@ -8470,8 +8470,8 @@ packages:
   oauth4webapi@2.10.3:
     resolution: {integrity: sha512-9FkXEXfzVKzH63GUOZz1zMr3wBaICSzk6DLXx+CGdrQ10ItNk2ePWzYYc1fdmKq1ayGFb2aX97sRCoZ2s0mkDw==}
 
-  oauth4webapi@3.0.0:
-    resolution: {integrity: sha512-Rw9SxQYuQX9J41VgM4rVNGtm1ng0Qcd8ndv7JmhmwqQ3hHBokX+WjV379IJhKk7bVPHefgvrDgHoO/rB2dY7YA==}
+  oauth4webapi@3.1.2:
+    resolution: {integrity: sha512-KQZkNU+xn02lWrFu5Vjqg9E81yPtDSxUZorRHlLWVoojD+H/0GFbH59kcnz5Thdjj7c4/mYMBPj/mhvGe/kKXA==}
 
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
@@ -9036,11 +9036,19 @@ packages:
     peerDependencies:
       preact: '>=10'
 
+  preact-render-to-string@6.5.11:
+    resolution: {integrity: sha512-ubnauqoGczeGISiOh6RjX0/cdaF8v/oDXIjO85XALCQjwQP+SB4RDXXtvZ6yTYSjG+PC1QRP2AhPgCEsM2EvUw==}
+    peerDependencies:
+      preact: '>=10'
+
   preact@10.11.3:
     resolution: {integrity: sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==}
 
   preact@10.12.1:
     resolution: {integrity: sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==}
+
+  preact@10.24.3:
+    resolution: {integrity: sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -11265,19 +11273,18 @@ snapshots:
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
 
-  '@auth/core@0.37.2':
+  '@auth/core@0.37.3':
     dependencies:
       '@panva/hkdf': 1.2.1
-      '@types/cookie': 0.6.0
-      cookie: 0.7.1
-      jose: 5.9.3
-      oauth4webapi: 3.0.0
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
+      cookie: 1.0.1
+      jose: 5.9.6
+      oauth4webapi: 3.1.2
+      preact: 10.24.3
+      preact-render-to-string: 6.5.11(preact@10.24.3)
 
-  '@auth/drizzle-adapter@1.7.2':
+  '@auth/drizzle-adapter@1.7.3':
     dependencies:
-      '@auth/core': 0.37.2
+      '@auth/core': 0.37.3
     transitivePeerDependencies:
       - '@simplewebauthn/browser'
       - '@simplewebauthn/server'
@@ -17889,7 +17896,7 @@ snapshots:
 
   cookie@0.6.0: {}
 
-  cookie@0.7.1: {}
+  cookie@1.0.1: {}
 
   copy-anything@3.0.5:
     dependencies:
@@ -20140,7 +20147,7 @@ snapshots:
 
   jose@5.2.3: {}
 
-  jose@5.9.3: {}
+  jose@5.9.6: {}
 
   js-base64@3.7.7: {}
 
@@ -21358,7 +21365,7 @@ snapshots:
 
   oauth4webapi@2.10.3: {}
 
-  oauth4webapi@3.0.0: {}
+  oauth4webapi@3.1.2: {}
 
   object-assign@4.1.1: {}
 
@@ -21971,9 +21978,15 @@ snapshots:
       preact: 10.11.3
       pretty-format: 3.8.0
 
+  preact-render-to-string@6.5.11(preact@10.24.3):
+    dependencies:
+      preact: 10.24.3
+
   preact@10.11.3: {}
 
   preact@10.12.1: {}
+
+  preact@10.24.3: {}
 
   prelude-ls@1.2.1: {}
 
