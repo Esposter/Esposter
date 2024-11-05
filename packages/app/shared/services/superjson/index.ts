@@ -6,7 +6,7 @@ import { TableEditor } from "@/models/tableEditor/TableEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { RegisterSuperJSON } from "@/services/superjson/RegisterSuperJSON";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import baseSuperJSON from "superjson";
 
 // @TODO: Change this to use class decorators when it is supported
