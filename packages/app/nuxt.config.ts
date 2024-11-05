@@ -2,10 +2,12 @@ import { alias } from "./configuration/alias";
 import { app } from "./configuration/app";
 import { authJs } from "./configuration/authJs";
 import { build } from "./configuration/build";
+import { compatibilityDate } from "./configuration/compatibilityDate";
 import { experimental } from "./configuration/experimental";
 import { fonts } from "./configuration/fonts";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
+import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -18,10 +20,12 @@ export default defineNuxtConfig({
   app,
   authJs,
   build,
+  compatibilityDate,
   experimental,
   fonts,
   imports,
   modules,
+  nitro,
   pwa,
   runtimeConfig,
   security,
