@@ -17,9 +17,9 @@ export const authenticators = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (authenticator) => [
+  ({ credentialID, userId }) => [
     primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
+      columns: [userId, credentialID],
     }),
   ],
 );

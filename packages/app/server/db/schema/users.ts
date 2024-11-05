@@ -5,8 +5,8 @@ import { sessions } from "@/server/db/schema/sessions";
 import { surveys } from "@/server/db/schema/surveys";
 import { pgTable } from "@/server/db/shared/pgTable";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
-import { relations } from "drizzle-orm";
-import { integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -43,7 +43,7 @@ export const usersToRooms = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (userToRoom) => [primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] })],
+  ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
 );
 export type UserToRoom = typeof usersToRooms.$inferSelect;
 
@@ -67,12 +67,12 @@ export const likes = pgTable(
     userId: uuid("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    // @TODO: Check constraint of values 1 or -1 when drizzle implements this
-    // and remove all options from createSelectSchema as db should be our source of truth
-    // https://github.com/drizzle-team/drizzle-orm/issues/880
     value: integer("value").notNull(),
   },
-  (like) => [primaryKey({ columns: [like.userId, like.postId] })],
+  ({ postId, userId, value }) => [
+    primaryKey({ columns: [userId, postId] }),
+    check("value", sql`${value} = 1 OR ${value} = -1`),
+  ],
 );
 
 export type Like = typeof likes.$inferSelect;

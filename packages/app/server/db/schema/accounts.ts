@@ -22,7 +22,7 @@ export const accounts = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] })],
+  ({ provider, providerAccountId }) => [primaryKey({ columns: [provider, providerAccountId] })],
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
