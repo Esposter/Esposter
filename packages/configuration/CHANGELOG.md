@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
+
+
+### Bug Fixes
+
+* overrides ([937ab6a](https://github.com/Esposter/Esposter/commit/937ab6aa893a5488502240a9d6f146c525cd499d))
+
+
+
+
+
 # [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
 
 **Note:** Version bump only for package @esposter/configuration

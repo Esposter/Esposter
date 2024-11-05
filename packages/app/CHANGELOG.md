@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
+
+
+### Bug Fixes
+
+* add back esnext target for top level await ([8e9aa8b](https://github.com/Esposter/Esposter/commit/8e9aa8b5884961eaf80f4e67048ebf9b17e69982))
+* lint && types ([abc4876](https://github.com/Esposter/Esposter/commit/abc4876b327f871ec8360e8850f40f0b68454f38))
+* overrides ([937ab6a](https://github.com/Esposter/Esposter/commit/937ab6aa893a5488502240a9d6f146c525cd499d))
+* pin nitro ([bee211a](https://github.com/Esposter/Esposter/commit/bee211ab9b7e35fdf359f49b5c3ed40db890617e))
+* Update dependencies + fix up drizzle orm + enable back auto update deps ([c266a5a](https://github.com/Esposter/Esposter/commit/c266a5a0713ec088145a685ac19cf1bcdacf2b30))
+
+
+### Features
+
+* Add check constraint ([9e5efc8](https://github.com/Esposter/Esposter/commit/9e5efc84357e891153b7809273986f0cad12ca55))
+
+
+
+
+
 # [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
 
 

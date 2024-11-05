@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
+
+
+### Bug Fixes
+
+* Update dependencies + fix up drizzle orm + enable back auto update deps ([c266a5a](https://github.com/Esposter/Esposter/commit/c266a5a0713ec088145a685ac19cf1bcdacf2b30))
+
+
+
+
+
 # [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
 
 **Note:** Version bump only for package parse-tmx
