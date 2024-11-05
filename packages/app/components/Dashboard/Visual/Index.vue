@@ -3,7 +3,6 @@ import type { Visual } from "@/models/dashboard/Visual";
 
 import { useApexOptions } from "@/composables/dashboard/useApexOptions";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
-import { useTemplateRef } from "vue";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {

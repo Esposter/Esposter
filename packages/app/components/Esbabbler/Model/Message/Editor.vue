@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 import type { Editor } from "@tiptap/core";
 
-import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
+import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

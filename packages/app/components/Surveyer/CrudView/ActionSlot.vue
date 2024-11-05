@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@/db/schema/surveys";
+import type { Survey } from "@/server/db/schema/surveys";
 
 interface SurveyerCrudViewActionSlotProps {
   item: Survey;

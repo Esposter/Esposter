@@ -1,4 +1,5 @@
 /* eslint-disable perfectionist/sort-switch-case */
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";

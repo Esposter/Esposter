@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { saveSchema } from "@/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/settings/Settings";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 class BaseGame {

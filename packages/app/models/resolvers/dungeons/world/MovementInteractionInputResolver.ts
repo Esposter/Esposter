@@ -8,7 +8,7 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 
 export class MovementInteractionInputResolver extends AInputResolver {
-  async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput) {
+  override async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput) {
     const worldPlayerStore = useWorldPlayerStore();
     const { isMoving } = storeToRefs(worldPlayerStore);
 

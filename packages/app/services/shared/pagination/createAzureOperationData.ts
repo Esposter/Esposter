@@ -1,6 +1,7 @@
-import type { AzureEntity, CompositeKey } from "@/models/azure";
 import type { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
+import type { AzureEntity } from "@/shared/models/azure/AzureEntity";
+import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
 
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";

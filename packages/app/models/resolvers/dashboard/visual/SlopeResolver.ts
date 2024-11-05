@@ -10,7 +10,7 @@ export class SlopeResolver extends AVisualTypeResolver {
     super(VisualType.Slope);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.chart = defu(
       {
         type: uncapitalize(VisualType.Line),

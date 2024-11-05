@@ -1,21 +1,22 @@
-import type { CustomTableClient } from "@/models/azure/table";
+import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
 
-import { selectRoomSchema } from "@/db/schema/rooms";
-import { AzureTable } from "@/models/azure/table";
-import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
-import {
-  MessageReplyMetadataEntity,
-  MessageReplyMetadataEntityPropertyNames,
-  messageReplyMetadataSchema,
-} from "@/models/esbabbler/message/reply";
+import { selectRoomSchema } from "@/server/db/schema/rooms";
+import { AzureTable } from "@/server/models/azure/table/AzureTable";
+import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
+import { createEntity } from "@/server/services/azure/table/createEntity";
+import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
+import { replyEventEmitter } from "@/server/services/esbabbler/events/replyEventEmitter";
+import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
-import { createEntity, getTableClient, getTopNEntities } from "@/services/azure/table";
-import { replyEventEmitter } from "@/services/esbabbler/events/reply";
-import { getMessagesPartitionKeyFilter } from "@/services/esbabbler/table";
+import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
+import {
+  MessageReplyMetadataEntity,
+  MessageReplyMetadataEntityPropertyNames,
+  messageReplyMetadataSchema,
+} from "@/shared/models/esbabbler/message/metadata/reply";
 import { now } from "@/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
@@ -35,7 +36,7 @@ export const replyRouter = router({
     .use(getProfanityFilterMiddleware(createReplyInputSchema, ["message"]))
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
-      const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+      const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       const createdAt = new Date();
       const newReply = new MessageReplyMetadataEntity({
         ...input,
@@ -62,7 +63,7 @@ export const replyRouter = router({
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)
     .query(async ({ input: { messageRowKeys, roomId } }) => {
-      const messagesMetadataClient = (await getTableClient(
+      const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageReplyMetadataEntity>;
       const { messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;

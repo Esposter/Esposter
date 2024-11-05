@@ -1,4 +1,4 @@
-import type { Room } from "@/db/schema/rooms";
+import type { Room } from "@/server/db/schema/rooms";
 import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
 
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";

@@ -1,7 +1,7 @@
 import type { ProjectData } from "grapesjs";
 import type { Except } from "type-fest";
 
-import { applyItemMetadataMixin } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 export class BaseEmailEditor implements ProjectData {

@@ -5,7 +5,7 @@ import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { useConfirmationMenuStore } from "@/store/dungeons/monsterParty/confirmationMenu";
 
 export class ConfirmationMenuInputResolver extends AInputResolver {
-  handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const confirmationMenuStore = useConfirmationMenuStore();
     const { onPlayerInput } = confirmationMenuStore;
     return onPlayerInput(scene, justDownInput);

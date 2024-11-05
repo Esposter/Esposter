@@ -7,15 +7,17 @@ type Contexts = CreateWSSContextFnOptions | H3Event;
 const isH3Event = (value: Contexts): value is H3Event => "node" in value;
 
 export const createContext = (opts: Contexts) => {
+  const db = useDb();
+
   if (isH3Event(opts)) {
     const {
       node: { req, res },
     } = opts;
-    return { event: opts, req, res };
+    return { db, event: opts, req, res };
   }
 
   const { req, res } = opts;
-  return { req, res };
+  return { db, req, res };
 };
 
 export type Context = inferAsyncReturnType<typeof createContext>;

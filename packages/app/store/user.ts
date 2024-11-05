@@ -1,4 +1,4 @@
-import type { User } from "@/db/schema/users";
+import type { User } from "@/server/db/schema/users";
 import type { UpdateUserInput } from "@/server/trpc/routers/user";
 
 export const useUserStore = defineStore("user", () => {

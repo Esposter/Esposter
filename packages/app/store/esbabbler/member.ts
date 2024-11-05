@@ -1,4 +1,4 @@
-import type { User } from "@/db/schema/users";
+import type { User } from "@/server/db/schema/users";
 
 import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";

@@ -6,7 +6,7 @@ import { useDialogStore } from "@/store/dungeons/dialog";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 
 export class MessageInputResolver extends AInputResolver {
-  async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const dialogStore = useDialogStore();
     const { handleShowMessageInput } = dialogStore;
     const worldDialogStore = useWorldDialogStore();

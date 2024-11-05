@@ -12,7 +12,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export class MoveInputResolver extends AInputResolver {
-  handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsterIdToMove, sceneMode } = storeToRefs(monsterPartySceneStore);
     const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
