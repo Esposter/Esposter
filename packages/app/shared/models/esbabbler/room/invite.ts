@@ -1,9 +1,9 @@
-import type { CompositeKeyEntity } from "@/models/azure";
+import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntity";
 
-import { AzureEntity } from "@/models/azure";
-import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { selectRoomSchema } from "@/server/db/schema/rooms";
-import { getPropertyNames } from "@/services/shared/getPropertyNames";
+import { AzureEntity } from "@/shared/models/azure/AzureEntity";
+import { itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { getPropertyNames } from "@/shared/utils/getPropertyNames";
 import { z } from "zod";
 
 export class InviteEntity extends AzureEntity {

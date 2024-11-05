@@ -1,11 +1,10 @@
-import type { CompositeKey } from "@/models/azure";
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
 
-import { AzureTable } from "@/models/azure/table";
-import { MessageEntity, messageSchema } from "@/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { selectRoomSchema } from "@/server/db/schema/rooms";
+import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { createEntity } from "@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
 import { getReverseTickedTimestamp } from "@/server/services/azure/table/getReverseTickedTimestamp";
@@ -19,6 +18,7 @@ import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfan
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@/services/shared/pagination/cursor/getCursorWhere";
+import { MessageEntity, messageSchema } from "@/shared/models/esbabbler/message";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

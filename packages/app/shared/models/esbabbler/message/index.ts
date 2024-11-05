@@ -1,11 +1,11 @@
-import type { CompositeKeyEntity } from "@/models/azure";
-import type { FileEntity } from "@/models/esbabbler/message/file";
+import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntity";
+import type { FileEntity } from "@/shared/models/azure/file";
 
-import { AzureEntity } from "@/models/azure";
-import { fileSchema } from "@/models/esbabbler/message/file";
-import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
 import { selectUserSchema } from "@/server/db/schema/users";
-import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
+import { AzureEntity } from "@/shared/models/azure/AzureEntity";
+import { fileSchema } from "@/shared/models/azure/file";
+import { itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {

@@ -1,5 +1,5 @@
-import type { CompositeKey } from "@/models/azure";
-import type { CustomTableClient } from "@/models/azure/table";
+import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
+import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
 
 export const deleteEntity = <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,

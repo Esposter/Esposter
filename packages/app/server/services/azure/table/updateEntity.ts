@@ -1,5 +1,6 @@
-import type { AzureUpdateEntity, CompositeKey } from "@/models/azure";
-import type { CustomTableClient } from "@/models/azure/table";
+import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
+import type { AzureUpdateEntity } from "@/shared/models/azure/AzureUpdateEntity";
+import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
 import type { TableEntity } from "@azure/data-tables";
 import type { TupleSlice } from "@esposter/shared";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ROOM_NAME_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { formRules } from "@/services/vuetify/formRules";
+import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { getSync } from "@/util/getSync";
 import { useTemplateRef } from "vue";

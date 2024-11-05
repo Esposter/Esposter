@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 
 import { useMessageStore } from "@/store/esbabbler/message";
 

@@ -1,4 +1,4 @@
-import type { MessageMetadataEntity } from "@/models/esbabbler/message/metadata";
+import type { MessageMetadataEntity } from "@/shared/models/esbabbler/message/metadata";
 
 import { useRoomStore } from "@/store/esbabbler/room";
 

@@ -1,11 +1,11 @@
 import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
-import { AzureContainer } from "@/models/azure/blob";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
 import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { SAVE_FILENAME } from "@/services/clicker/constants";
+import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
 import { streamToText } from "@/util/text/streamToText";
 import { jsonDateParse } from "@/util/time/jsonDateParse";
 

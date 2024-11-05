@@ -1,13 +1,7 @@
-import type { CustomTableClient } from "@/models/azure/table";
+import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
 
-import { AzureTable } from "@/models/azure/table";
-import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
-  messageEmojiMetadataSchema,
-} from "@/models/esbabbler/message/emoji";
-import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
 import { selectRoomSchema } from "@/server/db/schema/rooms";
+import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
 import { createEntity } from "@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
@@ -18,6 +12,12 @@ import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMe
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
+import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
+import {
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityPropertyNames,
+  messageEmojiMetadataSchema,
+} from "@/shared/models/esbabbler/message/metadata/emoji";
 import { now } from "@/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

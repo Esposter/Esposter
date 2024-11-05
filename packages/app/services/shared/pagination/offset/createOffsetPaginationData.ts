@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+import type { ItemMetadata } from "@/shared/models/itemMetadata";
 
 import { OffsetPaginationData } from "@/models/shared/pagination/offset/OffsetPaginationData";
 

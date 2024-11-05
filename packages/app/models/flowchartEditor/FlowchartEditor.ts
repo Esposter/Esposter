@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { edgeSchema } from "@/models/flowchartEditor/Edge";
 import { nodeSchema } from "@/models/flowchartEditor/Node";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 export class BaseFlowchartEditor {

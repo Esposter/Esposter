@@ -1,13 +1,7 @@
-import type { CustomTableClient } from "@/models/azure/table";
+import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
 
-import { AzureTable } from "@/models/azure/table";
-import { MessageMetadataType } from "@/models/esbabbler/message/metadata";
-import {
-  MessageReplyMetadataEntity,
-  MessageReplyMetadataEntityPropertyNames,
-  messageReplyMetadataSchema,
-} from "@/models/esbabbler/message/reply";
 import { selectRoomSchema } from "@/server/db/schema/rooms";
+import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
 import { createEntity } from "@/server/services/azure/table/createEntity";
 import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
@@ -17,6 +11,12 @@ import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
+import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
+import {
+  MessageReplyMetadataEntity,
+  MessageReplyMetadataEntityPropertyNames,
+  messageReplyMetadataSchema,
+} from "@/shared/models/esbabbler/message/metadata/reply";
 import { now } from "@/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

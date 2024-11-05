@@ -1,5 +1,5 @@
-import type { MessageEntity } from "@/models/esbabbler/message";
 import type { DeleteMessageInput, UpdateMessageInput } from "@/server/trpc/routers/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 
 import EventEmitter from "eventemitter3";
 

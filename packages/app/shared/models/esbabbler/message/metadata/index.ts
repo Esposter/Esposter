@@ -1,6 +1,6 @@
-import { AzureEntity } from "@/models/azure";
-import { messageSchema } from "@/models/esbabbler/message";
-import { itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { AzureEntity } from "@/shared/models/azure/AzureEntity";
+import { messageSchema } from "@/shared/models/esbabbler/message";
+import { itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 export enum MessageMetadataType {

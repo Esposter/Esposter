@@ -1,12 +1,11 @@
 import type { Room } from "@/server/db/schema/rooms";
 import type { UserToRoom } from "@/server/db/schema/users";
 
-import { AzureTable } from "@/models/azure/table";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { rooms, selectRoomSchema } from "@/server/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "@/server/db/schema/users";
+import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@/server/services/azure/table/constants";
 import { createEntity } from "@/server/services/azure/table/createEntity";
 import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
@@ -18,6 +17,7 @@ import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedu
 import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
+import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/shared/models/esbabbler/room/invite";
 import { generateCode } from "@/util/math/random/generateCode";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";

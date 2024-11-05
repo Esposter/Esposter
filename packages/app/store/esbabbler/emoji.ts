@@ -1,5 +1,5 @@
-import type { MessageEmojiMetadataEntity } from "@/models/esbabbler/message/emoji";
 import type { CreateEmojiInput, DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/message/emoji";
+import type { MessageEmojiMetadataEntity } from "@/shared/models/esbabbler/message/metadata/emoji";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   const { $client } = useNuxtApp();
