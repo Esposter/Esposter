@@ -9,7 +9,7 @@ export class RadialBarResolver extends AVisualTypeResolver {
     super(VisualType.RadialBar);
   }
 
-  handleSchema(schema: z.AnyZodObject) {
+  override handleSchema(schema: z.AnyZodObject) {
     return schema.omit({ [basicChartConfigurationSchema.keyof().Values.dataLabels]: true });
   }
 }

@@ -21,7 +21,6 @@ export default defineConfig({
   plugins: [
     AutoImport({ imports: ["vue", "pinia"], dts: true }),
     tsconfigPaths(),
-    // Required for parse-tmx
     nodePolyfills({ include: ["zlib"] }),
     vue(),
     dts(),

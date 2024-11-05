@@ -3,7 +3,6 @@ import { formRules } from "@/services/vuetify/formRules";
 import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { getSync } from "@/util/getSync";
-import { useTemplateRef } from "vue";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;

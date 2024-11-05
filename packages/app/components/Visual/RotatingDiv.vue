@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useTemplateRef } from "vue";
-
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const container = useTemplateRef("container");
 const transform = useRotatingTransform(container);

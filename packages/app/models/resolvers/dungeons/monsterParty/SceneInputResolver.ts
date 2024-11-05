@@ -5,7 +5,7 @@ import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { useMonsterPartyInputStore } from "@/store/dungeons/monsterParty/input";
 
 export class SceneInputResolver extends AInputResolver {
-  async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
+  override async handleInput(scene: SceneWithPlugins, justDownInput: PlayerInput) {
     const monsterPartyInputStore = useMonsterPartyInputStore();
     const { onPlayerInput } = monsterPartyInputStore;
     await onPlayerInput(scene, justDownInput);
