@@ -35,7 +35,7 @@ export const replyRouter = router({
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")
     .use(getProfanityFilterMiddleware(createReplyInputSchema, ["message"]))
     .input(createReplyInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation<MessageReplyMetadataEntity>(async ({ input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       const createdAt = new Date();
       const newReply = new MessageReplyMetadataEntity({

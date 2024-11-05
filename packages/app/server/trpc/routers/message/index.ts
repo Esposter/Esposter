@@ -62,7 +62,7 @@ export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation<MessageEntity>(async ({ ctx, input }) => {
       const createdAt = new Date();
       const newMessage = new MessageEntity({
         createdAt,

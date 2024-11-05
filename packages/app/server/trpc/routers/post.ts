@@ -71,13 +71,17 @@ export const postRouter = router({
               userId: ctx.session.user.id,
             })
             .returning({ id: posts.id })
-        )[0];
+        ).find(Boolean);
+        if (!newComment) return null;
+
         await tx
           .update(posts)
           .set({ noComments: parentPost.noComments + 1 })
           .where(eq(posts.id, parentPost.id));
         return newComment;
       });
+      if (!newComment) return null;
+
       const newCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newComment.id),
         with: PostRelations,
@@ -98,7 +102,9 @@ export const postRouter = router({
             userId: ctx.session.user.id,
           })
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!newPost) return null;
+
       const newPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newPost.id),
         with: PostRelations,
@@ -171,7 +177,9 @@ export const postRouter = router({
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!updatedComment) return null;
+
       const updatedCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
@@ -193,7 +201,9 @@ export const postRouter = router({
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!updatedPost) return null;
+
       const updatedPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
