@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 
 import { RoutePath } from "@/models/router/RoutePath";
 
@@ -14,7 +14,7 @@ const { post } = defineProps<PostCommentsButtonProps>();
   <NuxtInvisibleLink :to="RoutePath.Post(post.id)">
     <v-tooltip text="Comments">
       <template #activator="{ props }">
-        <v-btn rd-0="!" height="2.5rem" prepend-icon="mdi-comment" :text="post.noComments.toString()" :="props" />
+        <v-btn rd-none="!" height="2.5rem" prepend-icon="mdi-comment" :text="post.noComments.toString()" :="props" />
       </template>
     </v-tooltip>
   </NuxtInvisibleLink>

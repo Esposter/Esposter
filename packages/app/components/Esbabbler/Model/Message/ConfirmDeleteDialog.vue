@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 
 import { useMessageStore } from "@/store/esbabbler/message";
 
@@ -14,6 +14,7 @@ defineSlots<{
 }>();
 const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
 const { deleteMessage } = useMessageStore();
+const { text } = useColors();
 </script>
 
 <template>
@@ -35,8 +36,14 @@ const { deleteMessage } = useMessageStore();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div py-2 mx-4 b-1 b-solid rd-2 shadow-md>
+    <div class="border" shadow-md py-2 mx-4 rd-lg>
       <slot name="messagePreview" />
     </div>
   </StyledDeleteDialog>
 </template>
+
+<style scoped lang="scss">
+.border {
+  border: 1px $border-style-root v-bind(text);
+}
+</style>

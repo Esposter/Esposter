@@ -6,7 +6,7 @@ import { buildingWithStatsSchema } from "@/models/clicker/data/building/Building
 import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerType";
 import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 class BaseGame {

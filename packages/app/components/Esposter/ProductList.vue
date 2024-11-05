@@ -4,7 +4,7 @@ import { productListItems } from "@/services/esposter/productListItems";
 
 <template>
   <v-list>
-    <NuxtInvisibleLink v-for="item in productListItems" :key="item.title" :to="item.href">
+    <NuxtInvisibleLink v-for="item of productListItems" :key="item.title" :to="item.href">
       <v-list-item :value="item.title">
         <template #prepend>
           <v-avatar color="background">

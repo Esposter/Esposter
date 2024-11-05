@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { VisualType } from "@/models/dashboard/VisualType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 const VisualTypeItemCategoryDefinitionMap = Object.values(VisualType).reduce(
   (acc, curr) => {
@@ -16,4 +16,4 @@ const VisualTypeItemCategoryDefinitionMap = Object.values(VisualType).reduce(
 export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
   VisualTypeItemCategoryDefinitionMap,
   "value",
-).map((d) => ({ ...d, title: prettifyName(d.value) }));
+).map((d) => ({ ...d, title: prettify(d.value) }));

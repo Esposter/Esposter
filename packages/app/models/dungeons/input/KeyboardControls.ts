@@ -20,7 +20,7 @@ export class KeyboardControls extends BaseControls implements Controls {
     this.enterKey = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.ENTER);
   }
 
-  getInput(justDown?: true) {
+  override getInput(justDown?: true) {
     const input = super.getInput();
     if (input === -1) return Direction.NONE;
     else if (input) return input;

@@ -28,19 +28,19 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (WorldMenuOptionGrid.value) {
-        case MenuOption.Monsters:
-          launchScene(scene, SceneKey.MonsterParty);
+        case MenuOption.Exit:
+          isMenuVisible.value = false;
+          fadeSwitchToScene(scene, SceneKey.Title);
           break;
         case MenuOption.Inventory:
           launchScene(scene, SceneKey.Inventory);
           break;
+        case MenuOption.Monsters:
+          launchScene(scene, SceneKey.MonsterParty);
+          break;
         case MenuOption.Save:
           await saveData();
           await showMessages(scene, [{ text: "Game has been saved." }]);
-          break;
-        case MenuOption.Exit:
-          isMenuVisible.value = false;
-          fadeSwitchToScene(scene, SceneKey.Title);
           break;
         default:
           exhaustiveGuard(WorldMenuOptionGrid.value);

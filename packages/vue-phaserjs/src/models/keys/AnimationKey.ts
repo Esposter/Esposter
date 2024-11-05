@@ -1,4 +1,4 @@
 // Module Augmentation
-export interface AnimationKeyMap {}
+export type AnimationKeyMap = Record<string, string>;
 
 export type AnimationKey = AnimationKeyMap[keyof AnimationKeyMap];

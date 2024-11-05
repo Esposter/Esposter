@@ -17,8 +17,8 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 const { GraphingCalculator } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
-let calculator: Desmos.Calculator;
-const expressionPanel = ref<HTMLDivElement | null>(null);
+let calculator: Desmos.Calculator | undefined;
+const expressionPanel = ref<HTMLDivElement>();
 const componentsToRender = computed<Parameters<typeof h>[]>(() => {
   const WindowControlsComponent: Parameters<typeof h> = [
     WindowControls,
@@ -45,14 +45,14 @@ const animate = () => {
   // Ignore warnings from updateSettings about
   // unsupported extraneous calculator settings which is fine
   ignoreWarn(() => {
-    calculator.updateSettings(savedSettings);
+    calculator?.updateSettings(savedSettings);
   });
 
   const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
   let i = 0;
   const { pause } = useIntervalFn(() => {
     const expression = expressions[i++];
-    calculator.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
+    calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
     if (i === expressions.length) {
       pause();
       isAnimating.value = false;
@@ -72,6 +72,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 onMounted(async () => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
+
   calculator = await GraphingCalculator(element, {
     border: false,
     expressionsCollapsed: true,
@@ -83,7 +84,10 @@ onMounted(async () => {
     trace: false,
   });
   calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
-  expressionPanel.value = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+  const newExpressionPanel = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+  if (!newExpressionPanel) return;
+
+  expressionPanel.value = newExpressionPanel;
   render(componentsToRender.value);
 });
 </script>

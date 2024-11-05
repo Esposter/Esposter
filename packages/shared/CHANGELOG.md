@@ -3,6 +3,143 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+# [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+# [1.25.0](https://github.com/Esposter/Esposter/compare/v1.24.2...v1.25.0) (2024-10-22)
+
+
+### Bug Fixes
+
+* lint for vue files and remaining packages ([11bb52f](https://github.com/Esposter/Esposter/commit/11bb52fbe53725a6fd1f835f9ce128a7a911b276))
+
+
+
+
+
+## [1.24.2](https://github.com/Esposter/Esposter/compare/v1.24.1...v1.24.2) (2024-10-17)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+
+# [1.24.0](https://github.com/Esposter/Esposter/compare/v1.23.0...v1.24.0) (2024-10-14)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+
+# [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Features
+
+* Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

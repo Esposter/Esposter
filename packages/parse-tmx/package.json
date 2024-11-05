@@ -1,7 +1,7 @@
 {
   "name": "parse-tmx",
-  "version": "1.20.0",
-  "description": "A parser for tmx",
+  "version": "1.27.0",
+  "description": "A parser for tmx.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/node": "^22.5.4"
+    "@types/node": "^22.9.0"
   }
 }

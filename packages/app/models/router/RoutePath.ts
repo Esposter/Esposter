@@ -5,8 +5,10 @@ export const RoutePath = {
   Clicker: "/clicker",
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",
+  Docs: "/docs",
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
+  FlowchartEditor: "/flowchart-editor",
   Github: "https://github.com/Esposter/Esposter",
   Index: "/",
   Login: "/login",
@@ -22,5 +24,6 @@ export const RoutePath = {
   TableEditor: "/table-editor",
   TermsAndConditions: "https://www.termsfeed.com/live/7202726c-ae87-41cd-af54-9bde6ca4477a",
   UserSettings: "/user/settings",
+  WebpageEditor: "/webpage-editor",
 } as const;
 export type RoutePath = typeof RoutePath;

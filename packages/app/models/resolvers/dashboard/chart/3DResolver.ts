@@ -10,7 +10,7 @@ export class ChartType3DResolver<T extends BasicChartConfiguration> extends ACha
     super(ChartType["3D"]);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.fill = defu(
       {
         type: "gradient",

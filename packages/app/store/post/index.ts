@@ -1,4 +1,4 @@
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreatePostInput, DeletePostInput, UpdatePostInput } from "@/server/trpc/routers/post";
 
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";

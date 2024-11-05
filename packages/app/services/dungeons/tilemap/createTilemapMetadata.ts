@@ -32,6 +32,9 @@ export const createTilemapMetadata = (layerNameEnum: Record<string, string>, ...
     layerMap.set(layerName, layer);
   }
 
-  for (const objectgroupName of Object.values(ObjectgroupName))
-    ExternalWorldSceneStore.objectLayerMap.set(objectgroupName, getObjectLayer(objectgroupName));
+  for (const objectgroupName of Object.values(ObjectgroupName)) {
+    const objectLayer = getObjectLayer(objectgroupName);
+    if (!objectLayer) continue;
+    ExternalWorldSceneStore.objectLayerMap.set(objectgroupName, objectLayer);
+  }
 };

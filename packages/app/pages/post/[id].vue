@@ -28,7 +28,7 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <PostCommentCard v-for="comment in commentList" v-else :key="comment.id" :comment />
+              <PostCommentCard v-for="comment of commentList" v-else :key="comment.id" :comment />
             </v-container>
           </StyledCard>
         </v-col>

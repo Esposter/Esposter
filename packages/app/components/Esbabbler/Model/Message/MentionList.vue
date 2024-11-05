@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@/db/schema/users";
+import type { User } from "@/server/db/schema/users";
 
 interface MessageMentionListProps {
   command: (props: Record<string, unknown>) => void;
@@ -47,9 +47,9 @@ watch(
   <div>
     <StyledCard overflow-y-auto="!" :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
-        v-for="(item, index) in items"
+        v-for="(item, index) of items"
         :key="item.id"
-        :style="{ backgroundColor: infoOpacity10 }"
+        class="button"
         justify-start="!"
         w-full
         rd
@@ -67,3 +67,9 @@ watch(
     </StyledCard>
   </div>
 </template>
+
+<style scoped lang="scss">
+.button {
+  background-color: v-bind(infoOpacity10);
+}
+</style>

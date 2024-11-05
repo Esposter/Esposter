@@ -3,7 +3,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import { useInputStore } from "vue-phaserjs";
 
 export abstract class BaseControls {
-  input: null | PlayerInput = null;
+  input?: PlayerInput;
 
   getInput() {
     const inputStore = useInputStore();
@@ -15,7 +15,7 @@ export abstract class BaseControls {
   }
 
   resetInput() {
-    this.input = null;
+    this.input = undefined;
   }
 
   setInput(input: PlayerInput) {

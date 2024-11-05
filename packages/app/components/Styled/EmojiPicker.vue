@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import "emoji-mart-vue-fast/css/emoji-mart.css";
 import data from "emoji-mart-vue-fast/data/all.json";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
@@ -51,3 +50,7 @@ const onEmojiSelect = (emoji: { native: string }) => {
     <Picker :data="emojiIndex" @select="onEmojiSelect" />
   </v-menu>
 </template>
+
+<style lang="scss">
+@use "emoji-mart-vue-fast/css/emoji-mart.css";
+</style>

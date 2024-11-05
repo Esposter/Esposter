@@ -4,14 +4,14 @@ import type { Except } from "type-fest";
 import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentItemType } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 const VuetifyComponentItemTypeItemCategoryDefinitionMap = {
   [VuetifyComponentItemType.VuetifyComponent]: {
     create: () => new VuetifyComponentItem(),
     icon: "mdi-vuetify",
     targetTypeKey: "type",
-    title: prettifyName(VuetifyComponentItemType.VuetifyComponent),
+    title: prettify(VuetifyComponentItemType.VuetifyComponent),
   },
 } as const satisfies Record<VuetifyComponentItemType, Except<ItemCategoryDefinition<VuetifyComponentItem>, "value">>;
 

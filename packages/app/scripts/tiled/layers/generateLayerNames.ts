@@ -9,9 +9,6 @@ export const generateLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed
   for (const layer of layers) {
     const layerName = `${filepath}${layer.name}`;
     switch (layer.type) {
-      case LayerType.objectgroup:
-        objectgroupNames.push(layerName);
-        break;
       case LayerType.group: {
         const result = generateLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
         objectgroupNames.push(...result.objectgroupNames);
@@ -20,6 +17,9 @@ export const generateLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed
       }
       case LayerType.layer:
         layerNames.push(layerName);
+        break;
+      case LayerType.objectgroup:
+        objectgroupNames.push(layerName);
         break;
       default:
         break;

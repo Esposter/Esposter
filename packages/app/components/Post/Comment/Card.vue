@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@/db/schema/posts";
-
-import { dayjs } from "@/services/dayjs";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 
 interface PostCommentCardProps {
   comment: PostWithRelations;
@@ -9,7 +7,7 @@ interface PostCommentCardProps {
 
 const { comment } = defineProps<PostCommentCardProps>();
 const { session } = useAuth();
-const createdAt = computed(() => dayjs(comment.createdAt).fromNow());
+const createdAtTimeAgo = useTimeAgo(() => comment.createdAt);
 const isCreator = computed(() => session.value?.user.id === comment.userId);
 const isUpdateMode = ref(false);
 </script>
@@ -18,12 +16,12 @@ const isUpdateMode = ref(false);
   <PostCommentConfirmDeleteDialog :comment-id="comment.id">
     <template #default="{ updateIsOpen }">
       <div flex>
-        <PostLikeSection :post="comment" is-comment-store pt-2 />
+        <PostLikeSection pt-2 :post="comment" is-comment-store />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">
           <v-avatar>
             <v-img v-if="comment.user.image" :src="comment.user.image" />
           </v-avatar>
-          Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+          Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
           <PostCommentUpdateRichTextEditor
             v-if="isUpdateMode"
             mt-2="!"
@@ -44,7 +42,7 @@ const isUpdateMode = ref(false);
         <v-avatar>
           <v-img v-if="comment.user.image" :src="comment.user.image" />
         </v-avatar>
-        Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAt }}</span>
+        Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
         <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
       </v-card>
     </template>

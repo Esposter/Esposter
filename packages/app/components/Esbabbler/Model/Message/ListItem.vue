@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { User } from "@/db/schema/users";
-import type { MessageEntity } from "@/models/esbabbler/message";
-
-import { dayjs } from "@/services/dayjs";
+import type { User } from "@/server/db/schema/users";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 
 interface MessageListItemProps {
   creator: User;
@@ -14,7 +12,7 @@ const messageHtml = computed(() => {
   const newMessage = useRefreshMentions(message.message);
   return newMessage;
 });
-const displayCreatedAt = computed(() => dayjs(message.createdAt).format("h:mm A"));
+const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
@@ -66,7 +64,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
-          <v-hover v-slot="{ isHovering, props: hoverProps }">
+          <v-hover #default="{ isHovering, props: hoverProps }">
             <EsbabblerModelMessageOptionsMenu
               :message
               :is-hovering

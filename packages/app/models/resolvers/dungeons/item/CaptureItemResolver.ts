@@ -12,14 +12,14 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 export class CaptureItemResolver extends AItemResolver {
   constructor() {
     super(ItemEffectType.Capture);
   }
 
-  handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+  override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
     // Unfortunately we can't really enforce in compile-time that all capture item ids
@@ -30,14 +30,14 @@ export class CaptureItemResolver extends AItemResolver {
     );
   }
 
-  isActive(item: Ref<Item>, _monster: Ref<Monster>) {
+  override isActive(item: Ref<Item>, _monster: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsters } = storeToRefs(monsterPartySceneStore);
 
     if (monsters.value.length >= COLUMN_SIZE * ROW_SIZE) {
       const infoPanelStore = useInfoPanelStore();
       const { infoDialogMessage } = storeToRefs(infoPanelStore);
-      infoDialogMessage.value.text = `You have no room in your party! Cannot use ${prettifyName(item.value.id)}.`;
+      infoDialogMessage.value.text = `You have no room in your party! Cannot use ${prettify(item.value.id)}.`;
       return false;
     }
 

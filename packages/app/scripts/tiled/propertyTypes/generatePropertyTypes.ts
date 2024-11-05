@@ -29,7 +29,7 @@ export const generatePropertyTypes = async () => {
         ),
       ]);
       classObjectTypes.push(name);
-    } else if (propertyType.type === PropertyType.enum) {
+    } else {
       const { name, type, values } = propertyType;
       await outputFile(`${directory}/${type}/${name}.ts`, generateEnumString(name, values));
     }

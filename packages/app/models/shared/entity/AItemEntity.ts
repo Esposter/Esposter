@@ -1,4 +1,4 @@
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/models/shared/ItemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
 class BaseAItemEntity {

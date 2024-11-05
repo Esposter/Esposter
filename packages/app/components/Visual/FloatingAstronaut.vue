@@ -252,5 +252,5 @@
 </template>
 
 <style scoped lang="scss">
-@import "@/components/Visual/FloatingAstronaut.scss";
+@use "@/components/Visual/FloatingAstronaut.scss";
 </style>

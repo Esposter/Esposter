@@ -28,7 +28,7 @@ const menu = ref(false);
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <NuxtInvisibleLink v-for="item in items" :key="item.title" :to="item.href" @click="menu = false">
+      <NuxtInvisibleLink v-for="item of items" :key="item.title" :to="item.href" @click="menu = false">
         <v-list-item :value="item.title">
           <template #prepend>
             <v-avatar color="background">

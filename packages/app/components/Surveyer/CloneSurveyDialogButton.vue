@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@/db/schema/surveys";
+import type { Survey } from "@/server/db/schema/surveys";
 
 interface CloneSurveyDialogButton {
   group: Survey["group"];
@@ -17,7 +17,7 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
         <template #activator="{ props: activatorProps }">
           <v-btn
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-file-multiple"
             size="small"
             :="activatorProps"

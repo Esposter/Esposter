@@ -1,37 +1,56 @@
 <script setup lang="ts">
-import { emailEditorTabItemCategoryDefinitions } from "@/services/emailEditor/emailEditorTabItemCategoryDefinitions";
+import type { Editor } from "grapesjs";
+
+import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
+import { useEmailEditorStore } from "@/store/emailEditor";
+import grapesJS from "grapesjs";
+import grapesJSMJML from "grapesjs-mjml";
 
 defineRouteRules({ ssr: false });
 
-await useReadEmailEditor();
-const { background } = useColors();
-const backgroundColor = computed(() => (isDark.value ? background.value : "white"));
-const isDark = useIsDark();
-const tab = ref(0);
+const { status } = useAuth();
+const emailEditorStore = useEmailEditorStore();
+const { readEmailEditor, saveEmailEditor } = emailEditorStore;
+let editor: Editor | undefined;
+
+const { trigger } = watchTriggerable(status, (newStatus) => {
+  if (newStatus === "loading" || newStatus === "error") return;
+
+  editor?.destroy();
+  editor = grapesJS.init({
+    container: ".v-main",
+    fromElement: true,
+    height: "100%",
+    plugins: [grapesJSMJML],
+    storageManager: {
+      options: {
+        local: {
+          key: EMAIL_EDITOR_LOCAL_STORAGE_KEY,
+        },
+      },
+      type: status.value === "authenticated" ? "remote" : "local",
+    },
+  });
+  editor.Storage.add("remote", {
+    load: () => readEmailEditor(),
+    store: (data) => saveEmailEditor(data),
+  });
+  editor.setComponents(`
+      <mjml>
+        <mj-body>
+        </mj-body>
+      </mjml>`);
+});
+
+onMounted(() => {
+  trigger();
+});
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ backgroundColor }">
-    <v-sheet h-full flex="!" flex-col>
-      <v-tabs v-model="tab" :items="emailEditorTabItemCategoryDefinitions">
-        <template #tab="{ item }">
-          <EmailEditorTab :item />
-        </template>
-        <template #item="{ item }">
-          <EmailEditorTabItem :item />
-        </template>
-      </v-tabs>
-    </v-sheet>
-  </NuxtLayout>
+  <NuxtLayout />
 </template>
 
-<style scoped lang="scss">
-.v-window {
-  flex-grow: 1;
-}
-
-:deep(.v-window__container),
-:deep(.cm-editor) {
-  height: 100%;
-}
+<style lang="scss">
+@use "grapesjs/dist/css/grapes.min.css";
 </style>

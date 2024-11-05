@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+import type { ItemMetadata } from "@/shared/models/itemMetadata";
 
 export const createItemMetadata = (): ItemMetadata => {
   const createdAt = new Date();

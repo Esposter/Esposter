@@ -1,0 +1,41 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1704604975229,
+      "tag": "0000_dusty_proteus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1712014360335,
+      "tag": "0001_tense_the_spike",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1712569607441,
+      "tag": "0002_lucky_mockingbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725776605499,
+      "tag": "0003_outstanding_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1730776866348,
+      "tag": "0004_brown_sumo",
+      "breakpoints": true
+    }
+  ]
+}

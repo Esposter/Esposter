@@ -58,14 +58,14 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
       case PlayerOption.Fight:
         activePanel.value = ActivePanel.AttackOption;
         return;
-      case PlayerOption.Switch:
-        await battleStateMachine.setState(StateName.SwitchAttempt);
+      case PlayerOption.Flee:
+        await battleStateMachine.setState(StateName.FleeAttempt);
         return;
       case PlayerOption.Item:
         await battleStateMachine.setState(StateName.ItemAttempt);
         return;
-      case PlayerOption.Flee:
-        await battleStateMachine.setState(StateName.FleeAttempt);
+      case PlayerOption.Switch:
+        await battleStateMachine.setState(StateName.SwitchAttempt);
         return;
       default:
         exhaustiveGuard(PlayerBattleMenuOptionGrid.value);

@@ -7,7 +7,7 @@ import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 export const EnemyPostAttackCheck: State<StateName> = {
   name: StateName.EnemyPostAttackCheck,
@@ -25,13 +25,13 @@ export const EnemyPostAttackCheck: State<StateName> = {
       await useMonsterDeathTween(false);
       if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !isMonsterFainted(m))) {
         await showMessages(scene, [
-          `${prettifyName(activeMonster.value.key)} has fainted!`,
+          `${prettify(activeMonster.value.key)} has fainted!`,
           "Select another monster to continue the battle.",
         ]);
         await battleStateMachine.setState(StateName.SwitchAttempt);
       } else {
         await showMessages(scene, [
-          `${prettifyName(activeMonster.value.key)} has fainted!`,
+          `${prettify(activeMonster.value.key)} has fainted!`,
           "You have no more monsters, escaping to safety...",
         ]);
         await battleStateMachine.setState(StateName.Finished);

@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import { dayjs } from "@/services/dayjs";
-import { SITE_NAME } from "@/services/esposter/constants";
-import { useUserStore } from "@/store/user";
+import type { User } from "@/server/db/schema/users";
 
-const userStore = useUserStore();
-const { authUser } = storeToRefs(userStore);
+import { SITE_NAME } from "@/services/esposter/constants";
+
+interface IntroductionCardProps {
+  user: User;
+}
+
+const { user } = defineProps<IntroductionCardProps>();
+const createdAt = useDateFormat(() => user.createdAt, "MMM D, YYYY");
+const createdAtTimeAgo = useTimeAgo(() => user.createdAt);
 </script>
 
 <template>
-  <StyledCard v-if="authUser" p-6="!" flex="!">
+  <StyledCard p-6="!" flex="!">
     <div flex-1 grid>
-      <div v-if="authUser.name" class="text-h5" font-bold>{{ authUser.name }}</div>
+      <div v-if="user.name" class="text-h5" font-bold>{{ user.name }}</div>
       <div>
-        {{ authUser.email }}
+        {{ user.email }}
       </div>
-      <div>
-        Joined {{ SITE_NAME }} on {{ dayjs(authUser.createdAt).format("MMM D, YYYY") }} ({{
-          dayjs(authUser.createdAt).fromNow()
-        }})
-      </div>
+      <div>Joined {{ SITE_NAME }} on {{ createdAt }} ({{ createdAtTimeAgo }})</div>
     </div>
-    <v-avatar v-if="authUser.image" size="6rem">
-      <v-img :src="authUser.image" :alt="authUser.name ?? ''" />
+    <v-avatar v-if="user.image" size="6rem">
+      <v-img :src="user.image" :alt="user.name ?? ''" />
     </v-avatar>
   </StyledCard>
 </template>

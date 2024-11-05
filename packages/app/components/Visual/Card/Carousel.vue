@@ -69,8 +69,8 @@ interface CardStyleVariables {
 const cardIds = ref<number[]>(cards.map((_, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
-const activeCardId = ref<null | number>(null);
-const inactiveCardId = ref<null | number>(null);
+const activeCardId = ref<number>();
+const inactiveCardId = ref<number>();
 
 const classes = computed<string[]>(() => {
   const newClasses = [];
@@ -87,7 +87,7 @@ const getClass = (cardId: number): string => {
   const offset = cardIds.value.indexOf(cardId);
   if (cardId === activeCardId.value) return "active-card";
   // If we're in the initial state, we can just set the last card as inactive
-  if ((inactiveCardId.value === null && cardId === maxShownCards) || cardId === inactiveCardId.value)
+  if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
     return "inactive-card";
   else if (offset > maxShownCards - 2) return "overflow-card";
   return `normal-card-${offset}`;
@@ -113,8 +113,8 @@ const moveCards = () => {
 
 const moveOneCard = () => {
   inactiveCardId.value = activeCardId.value;
-  if (activeCardId.value === null) activeCardId.value = cardIds.value[0];
-  else activeCardId.value = null;
+  if (activeCardId.value === undefined) activeCardId.value = cardIds.value[0];
+  else activeCardId.value = undefined;
 };
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
@@ -188,16 +188,16 @@ watch(
   () => cards,
   (newCards) => {
     cardIds.value = newCards.map((_, index) => index);
-    inactiveCardId.value = null;
+    inactiveCardId.value = undefined;
     activeCardId.value = 0;
   },
 );
 </script>
 
 <template>
-  <div grid flex-1 grid-cols-2>
+  <div flex-1 grid grid-cols-2>
     <div
-      v-for="(card, index) in cards"
+      v-for="(card, index) of cards"
       :key="index"
       :style="{ zIndex: cardIds.length - cardIds.indexOf(index) }"
       :class="classes[cardIds.indexOf(index)]"

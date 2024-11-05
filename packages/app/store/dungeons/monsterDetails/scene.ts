@@ -10,9 +10,8 @@ import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpeci
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
-  // We'll ensure that we populate the selected monster everytime before we enter the scene
-  const selectedMonster = ref<Monster>() as Ref<Monster>;
-  const attacks = computed(() => selectedMonster.value.attackIds.map(getAttack));
+  const selectedMonster = ref<Monster>();
+  const attacks = computed(() => selectedMonster.value?.attackIds.map(getAttack) ?? []);
   const attackNameList = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.id));
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
 
@@ -36,6 +35,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   return {
     attackNameList,
     onPlayerInput,
-    selectedMonster,
+    // We'll ensure that we populate the selected monster everytime before we enter the scene
+    selectedMonster: selectedMonster as Ref<Monster>,
   };
 });

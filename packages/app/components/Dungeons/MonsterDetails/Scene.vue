@@ -5,7 +5,7 @@ import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 import { Image, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
@@ -35,7 +35,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
       :configuration="{
         x: 200,
         y: 60,
-        text: prettifyName(selectedMonster.key),
+        text: prettify(selectedMonster.key),
         style: { ...MenuTextStyle, fontSize: 40 },
       }"
     />

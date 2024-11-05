@@ -22,6 +22,10 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (MonsterPartyConfirmationMenuOptionGrid.value) {
+        case ConfirmationMenuOption.No: {
+          onCancel();
+          break;
+        }
         case ConfirmationMenuOption.Yes: {
           const monsterId = monsterPartyOptionGrid.value.id;
           const index = monsterPartySceneStore.monsters.findIndex(({ id }) => id === monsterId);
@@ -30,10 +34,6 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
           monsterPartySceneStore.monsters.splice(index, 1);
           monsterPartySceneStore.sceneMode = SceneMode.Default;
           infoPanelStore.infoDialogMessage.text = `You released ${monsterPartyOptionGrid.value.key} into the wild.`;
-          break;
-        }
-        case ConfirmationMenuOption.No: {
-          onCancel();
           break;
         }
         default:

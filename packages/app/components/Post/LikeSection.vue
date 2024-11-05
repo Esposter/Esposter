@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 
 import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
 interface PostLikeSectionProps {
-  isCommentStore?: true;
+  isCommentStore?: boolean;
   post: PostWithRelations;
 }
 
@@ -21,7 +21,7 @@ const unliked = computed(() => post.likes.some((l) => l.userId === session.value
   <div flex flex-col items-center>
     <v-btn
       p-0="!"
-      rd-1="!"
+      rd="!"
       bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"
@@ -43,7 +43,7 @@ const unliked = computed(() => post.likes.some((l) => l.userId === session.value
     {{ post.noLikes }}
     <v-btn
       p-0="!"
-      rd-1="!"
+      rd="!"
       bg-transparent="!"
       width="1.5rem"
       min-width="1.5rem"

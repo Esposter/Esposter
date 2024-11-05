@@ -8,7 +8,8 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useSceneStore } from "@/store/dungeons/scene";
-import { prettifyName } from "@/util/text/prettifyName";
+import { getSync } from "@/util/getSync";
+import { prettify } from "@/util/text/prettify";
 
 let unsubscribes: (() => void)[] = [];
 
@@ -27,21 +28,27 @@ export const ItemAttempt: State<StateName> = {
     const { showMessages } = battleDialogStore;
     const { launchScene, removeScene } = usePreviousScene(battleScene.scene.key);
 
-    usePhaserListener("useItem", async (scene, item, monster, onComplete) => {
-      const sceneStore = useSceneStore();
-      const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
-      const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
-      // Remove all in-between scenes until we can switch directly back to the battle scene
-      // to avoid epilepsy flashing of multiple scenes when switching
-      for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
-        removeScene(scene, previousSceneKey.value);
-      switchToPreviousScene(scene);
-      await showMessages(battleScene, [`You used ${prettifyName(item.id)} on ${prettifyName(monster.key)}.`]);
-      await onComplete();
-    });
-    usePhaserListener("unuseItem", async () => {
-      await battleStateMachine.setState(StateName.PlayerInput);
-    });
+    usePhaserListener(
+      "useItem",
+      getSync(async (scene, item, monster, onComplete) => {
+        const sceneStore = useSceneStore();
+        const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
+        const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
+        // Remove all in-between scenes until we can switch directly back to the battle scene
+        // to avoid epilepsy flashing of multiple scenes when switching
+        for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
+          removeScene(scene, previousSceneKey.value);
+        switchToPreviousScene(scene);
+        await showMessages(battleScene, [`You used ${prettify(item.id)} on ${prettify(monster.key)}.`]);
+        await onComplete();
+      }),
+    );
+    usePhaserListener(
+      "unuseItem",
+      getSync(async () => {
+        await battleStateMachine.setState(StateName.PlayerInput);
+      }),
+    );
 
     launchScene(battleScene, SceneKey.Inventory);
   },

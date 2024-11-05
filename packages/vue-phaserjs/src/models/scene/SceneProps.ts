@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 export interface SceneProps {
-  autoStart?: true;
+  autoStart?: boolean;
   sceneKey: SceneWithPlugins["scene"]["key"];
 }

@@ -10,6 +10,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { getSync } from "@/util/getSync";
 
 let unsubscribes: (() => void)[] = [];
 
@@ -38,22 +39,28 @@ export const SwitchAttempt: State<StateName> = {
       return;
     }
 
-    usePhaserListener("switchMonster", async (monster) => {
-      const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
-      // If our active monster has fainted, then the death tween would have already been played
-      // so we don't have to play it again
-      if (isActiveMonsterFainted) {
-        switchActiveMonster(monster.id);
-        await battleStateMachine.setState(StateName.BringOutMonster);
-      } else {
-        await useMonsterDeathTween(false);
-        switchActiveMonster(monster.id);
-        await battleStateMachine.setState(StateName.SwitchMonster);
-      }
-    });
-    usePhaserListener("unswitchMonster", async () => {
-      await battleStateMachine.setState(StateName.PlayerInput);
-    });
+    usePhaserListener(
+      "switchMonster",
+      getSync(async (monster) => {
+        const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
+        // If our active monster has fainted, then the death tween would have already been played
+        // so we don't have to play it again
+        if (isActiveMonsterFainted) {
+          switchActiveMonster(monster.id);
+          await battleStateMachine.setState(StateName.BringOutMonster);
+        } else {
+          await useMonsterDeathTween(false);
+          switchActiveMonster(monster.id);
+          await battleStateMachine.setState(StateName.SwitchMonster);
+        }
+      }),
+    );
+    usePhaserListener(
+      "unswitchMonster",
+      getSync(async () => {
+        await battleStateMachine.setState(StateName.PlayerInput);
+      }),
+    );
 
     const { launchScene } = usePreviousScene(scene.scene.key);
     launchScene(scene, SceneKey.MonsterParty);

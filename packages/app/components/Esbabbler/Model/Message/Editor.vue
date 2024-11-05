@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 import type { Editor } from "@tiptap/core";
 
-import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
+import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -63,9 +63,6 @@ const keyboardExtension = new Extension({
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
   >
-    <template #prepend-footer="editorProps">
-      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
-    </template>
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
       <StyledButton

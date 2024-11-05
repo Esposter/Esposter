@@ -20,7 +20,7 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, tilemap: Tilemap
     const chestObjects = getObjects(chestObjectLayer);
     for (const { x, y } of chestObjects) {
       const positionId = getPositionId({ x, y });
-      if (worldData.value.chestMap[positionId]) continue;
+      if (positionId in worldData.value.chestMap) continue;
       else worldData.value.chestMap[positionId] = new Chest();
     }
   }

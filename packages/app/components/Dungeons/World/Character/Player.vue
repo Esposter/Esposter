@@ -10,6 +10,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { getSync } from "@/util/getSync";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
@@ -32,18 +33,20 @@ const sceneKey = useInjectSceneKey();
 // We only care about the starting frame, so we don't want this to be reactive
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
-onCreate(async (scene) => {
-  if (!isPlayerFainted.value) return;
+onCreate(
+  getSync(async (scene) => {
+    if (!isPlayerFainted.value) return;
 
-  await respawn();
-  scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
-    healParty();
-    await showMessages(scene, [
-      { text: "It looks like your team put up quite a fight...", title: "???" },
-      { text: "I went ahead and healed them up for you.", title: "???" },
-    ]);
-  });
-});
+    await respawn();
+    scene.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, async () => {
+      healParty();
+      await showMessages(scene, [
+        { text: "It looks like your team put up quite a fight...", title: "???" },
+        { text: "I went ahead and healed them up for you.", title: "???" },
+      ]);
+    });
+  }),
+);
 
 usePhaserListener("playerTeleport", (position, direction) => {
   onNextTick((scene) => {

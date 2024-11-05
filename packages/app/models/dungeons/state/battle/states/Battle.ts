@@ -22,7 +22,6 @@ export const Battle: State<StateName> = {
      */
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
-
     attackStatePriorityMap.value = useAttackStatePriorityMap();
 
     if (

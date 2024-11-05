@@ -12,17 +12,10 @@ export const watchTracker = <T>(
     watch(isTrackerInitialized, (newIsTrackerInitialized) => {
       if (!newIsTrackerInitialized) return;
       watchStopHandlers.push(
-        watchDebounced(
-          source,
-          (...args) => {
-            if (!newIsTrackerInitialized) return;
-            callback(...args);
-          },
-          {
-            debounce: dayjs.duration(0.5, "seconds").asMilliseconds(),
-            maxWait: dayjs.duration(1, "second").asMilliseconds(),
-          },
-        ),
+        watchDebounced(source, callback, {
+          debounce: dayjs.duration(0.5, "seconds").asMilliseconds(),
+          maxWait: dayjs.duration(1, "second").asMilliseconds(),
+        }),
       );
     }),
     watchOnce(

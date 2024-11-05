@@ -5,12 +5,12 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { getActiveItemResolvers } from "@/services/dungeons/item/getActiveItemResolvers";
 
-export const useItem = (scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) => {
+export const useItem = async (scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) => {
   const itemResolvers = getActiveItemResolvers(item, monster);
   let handled = false;
 
   for (const itemResolver of itemResolvers) {
-    itemResolver.handleItem(scene, item, monster);
+    await itemResolver.handleItem(scene, item, monster);
     handled = true;
     break;
   }

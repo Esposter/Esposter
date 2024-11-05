@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@/models/esbabbler/message";
+import type { MessageEntity } from "@/shared/models/esbabbler/message";
 
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
@@ -106,7 +106,7 @@ const onSelect = async (emoji: string) => {
           <v-btn
             v-if="isCreator"
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-pencil"
             size="small"
             :="tooltipProps"
@@ -118,12 +118,18 @@ const onSelect = async (emoji: string) => {
         <template #activator="{ props: menuProps }">
           <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">
-              <v-btn m-0="!" rd-0="!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+              <v-btn
+                m-0="!"
+                rd-none="!"
+                icon="mdi-dots-horizontal"
+                size="small"
+                :="mergeProps(menuProps, tooltipProps)"
+              />
             </template>
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item v-for="item in items" :key="item.title" @click="item.onClick">
+          <v-list-item v-for="item of items" :key="item.title" @click="item.onClick">
             <span :class="item.color ? `text-${item.color}` : undefined">{{ item.title }}</span>
             <template #append>
               <v-icon size="small" :icon="item.icon" :color="item.color ?? undefined" />

@@ -27,17 +27,19 @@ const hasEmojis = computed(() => emojis.value.length > 0);
 <template>
   <div v-if="hasEmojis" flex mt-2 flex-wrap gap-1>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } in emojis"
+      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"
       flex
       items-center
       shadow-md
-      cursor-pointer
       z-1
+      cursor-pointer
       w-fit
       px-2
+      origin-center
+      active:scale-95
       @click="
         isReacted
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
@@ -56,10 +58,6 @@ const hasEmojis = computed(() => emojis.value.length > 0);
 .reacted {
   background-color: v-bind(infoOpacity10);
   border: 1px $border-style-root v-bind(info);
-
-  &:active {
-    transform: $click-shrink;
-  }
 }
 
 .not-reacted {
@@ -69,10 +67,6 @@ const hasEmojis = computed(() => emojis.value.length > 0);
   &:hover {
     background-color: v-bind(surfaceOpacity80);
     border: 1px $border-style-root v-bind(border);
-  }
-
-  &:active {
-    transform: $click-shrink;
   }
 }
 </style>

@@ -1,6 +1,5 @@
 import type { TableEditorType } from "@/models/tableEditor/TableEditorType";
 
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
-export const getTableEditorTitle = (tableEditorType: TableEditorType) =>
-  `${prettifyName(tableEditorType)} Table Editor`;
+export const getTableEditorTitle = (tableEditorType: TableEditorType) => `${prettify(tableEditorType)} Table Editor`;

@@ -1,13 +1,18 @@
 <script setup lang="ts">
+import { formRules } from "@/services/vuetify/formRules";
+import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { getSync } from "@/util/getSync";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const editedRoomName = ref(currentRoomName.value);
 const isUpdateMode = ref(false);
-const titleRef = ref<HTMLDivElement>();
+const title = useTemplateRef("title");
 const titleHovered = ref(false);
+const { text } = useColors();
+const borderColor = computed(() => (!isUpdateMode.value && titleHovered.value ? text.value : "transparent"));
 const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !editedRoomName.value || editedRoomName.value === currentRoomName.value) return;
@@ -22,19 +27,23 @@ const onUpdateRoom = async () => {
   }
 };
 
-onClickOutside(titleRef, () => {
-  if (isUpdateMode.value) void onUpdateRoom();
-});
+onClickOutside(
+  title,
+  getSync(async () => {
+    if (isUpdateMode.value) await onUpdateRoom();
+  }),
+);
 </script>
 
 <template>
   <div
-    ref="titleRef"
+    ref="title"
+    class="border"
+    px-1
     flex
     items-center
-    px-1
-    :w="isUpdateMode ? 'full' : ''"
-    :b="!isUpdateMode && titleHovered ? '1 solid rd' : '1 solid transparent rd'"
+    :w="isUpdateMode ? 'full' : undefined"
+    rd
     @mouseenter="titleHovered = true"
     @mouseleave="titleHovered = false"
   >
@@ -46,6 +55,12 @@ onClickOutside(titleRef, () => {
       hide-details
       autofocus
       text-xl
+      :rules="[
+        formRules.required,
+        formRules.requireAtMostNCharacters(ROOM_NAME_MAX_LENGTH),
+        formRules.isNotEqual(currentRoomName),
+        formRules.isNotProfanity,
+      ]"
       @keydown.enter="onUpdateRoom"
     />
     <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">
@@ -53,3 +68,9 @@ onClickOutside(titleRef, () => {
     </v-toolbar-title>
   </div>
 </template>
+
+<style scoped lang="scss">
+.border {
+  border: 1px $border-style-root v-bind(borderColor);
+}
+</style>

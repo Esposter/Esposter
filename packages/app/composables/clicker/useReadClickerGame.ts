@@ -35,5 +35,7 @@ export const useReadClickerGame = async () => {
     },
   );
 
-  watchTracker(gameChangedTracker, saveGame);
+  watchTracker(gameChangedTracker, async () => {
+    await saveGame();
+  });
 };

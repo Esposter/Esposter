@@ -1,4 +1,4 @@
-import type { Room } from "@/db/schema/rooms";
+import type { Room } from "@/server/db/schema/rooms";
 import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
 
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
@@ -16,7 +16,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Room);
-  const currentRoomId = ref<null | string>(null);
+  const currentRoomId = ref();
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);

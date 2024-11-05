@@ -9,12 +9,12 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   const router = useRouter();
   const editFormDialog = ref(false);
   const editFormRef = ref<InstanceType<typeof VForm>>();
-  const editedItem: Ref<null | TItem> = ref(null);
+  const editedItem = ref<TItem>();
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const id = editedItem.value?.id;
-    if (!id) return null;
-    return items.value.find((i) => i.id === id) ?? null;
+    if (!id) return undefined;
+    return items.value.find((i) => i.id === id) ?? undefined;
   });
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
@@ -46,7 +46,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
   };
   const resetItem = async () => {
-    editedItem.value = null;
+    editedItem.value = undefined;
     editedIndex.value = -1;
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
   };

@@ -10,7 +10,7 @@ export class PyramidResolver<T extends BasicChartConfiguration> extends AChartTy
     super(ChartType.Pyramid);
   }
 
-  handleConfiguration(apexOptions: ApexOptions) {
+  override handleConfiguration(apexOptions: ApexOptions) {
     apexOptions.plotOptions = defu(
       {
         bar: {

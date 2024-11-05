@@ -3,7 +3,7 @@ import { RoutePath } from "@/models/router/RoutePath";
 import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { prettifyName } from "@/util/text/prettifyName";
+import { prettify } from "@/util/text/prettify";
 
 const router = useRouter();
 const visualStore = useVisualStore();
@@ -14,9 +14,9 @@ const { visualType } = storeToRefs(visualStore);
 <template>
   <v-toolbar>
     <v-toolbar-title px-4 font-bold="!">
-      <div pt-4 flex flex-col justify-between gap-y-4>
+      <div flex flex-col pt-4 justify-between gap-y-4>
         <div>Dashboard Editor</div>
-        <div w-full flex items-center>
+        <div flex items-center w-full>
           <v-select
             v-model="visualType"
             :items="visualTypeItemCategoryDefinitions"
@@ -28,7 +28,7 @@ const { visualType } = storeToRefs(visualStore);
             "
           />
           <v-divider mx-4="!" thickness="2" vertical inset />
-          <v-tooltip :text="`Add ${prettifyName(visualType)} Visual`">
+          <v-tooltip :text="`Add ${prettify(visualType)} Visual`">
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="createVisual">
                 <v-icon icon="mdi-plus" />

@@ -2,6 +2,7 @@ import { alias } from "./configuration/alias";
 import { app } from "./configuration/app";
 import { authJs } from "./configuration/authJs";
 import { build } from "./configuration/build";
+import { compatibilityDate } from "./configuration/compatibilityDate";
 import { experimental } from "./configuration/experimental";
 import { fonts } from "./configuration/fonts";
 import { imports } from "./configuration/imports";
@@ -19,12 +20,12 @@ export default defineNuxtConfig({
   app,
   authJs,
   build,
+  compatibilityDate,
   experimental,
   fonts,
   imports,
   modules,
   nitro,
-
   pwa,
   runtimeConfig,
   security,

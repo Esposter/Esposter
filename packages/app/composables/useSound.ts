@@ -10,8 +10,8 @@ export const useSound = (
   src: string,
   { autoplay, interrupt, onload, rate = 1, soundEnabled = true, volume = 1, ...rest }: ComposableOptions = {},
 ) => {
-  const sound = ref<Howl | null>(null);
-  const duration = ref<null | number>(null);
+  const sound = ref<Howl>();
+  const duration = ref<number>();
   const isPlaying = ref<boolean>(false);
 
   function handleLoad(this: ComposableOptions) {

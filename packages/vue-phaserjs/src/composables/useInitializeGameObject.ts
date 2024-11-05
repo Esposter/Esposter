@@ -40,7 +40,7 @@ export const useInitializeGameObject = <
   // the vue provide / inject api as this context should not be shared across every component,
   // only the components through the current rendering tree that it belongs to
   // We can do this because phaser containers can only contain gameObjects one level deep
-  const parentContainer = inject<null | Ref<GameObjects.Container>>(InjectionKeyMap.ParentContainer, null);
+  const parentContainer = inject<Ref<GameObjects.Container>>(InjectionKeyMap.ParentContainer);
   const sceneKey = useInjectSceneKey();
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
   const initializeGameObject = (scene: SceneWithPlugins) => {
@@ -69,6 +69,6 @@ export const useInitializeGameObject = <
   onUnmounted(() => {
     for (const setterStopHandler of setterStopHandlers) setterStopHandler();
     for (const eventStopHandler of eventStopHandlers) eventStopHandler();
-    if (gameObject) gameObject.destroy();
+    gameObject.destroy();
   });
 };

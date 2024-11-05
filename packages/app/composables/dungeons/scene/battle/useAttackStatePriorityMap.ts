@@ -8,7 +8,7 @@ export const useAttackStatePriorityMap = () => {
     return {
       [StateName.Battle]: StateName.EnemyAttack,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,
-      [StateName.PlayerPostAttackCheck]: null,
+      [StateName.PlayerPostAttackCheck]: undefined,
     };
   else if (generateRandomBoolean())
     return {

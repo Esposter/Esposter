@@ -10,7 +10,7 @@ import typescriptRules from "./typescriptRules.js";
  * so we have a light version that lints the extra typescript-eslint rules only in ts files so we can use it in CI/CD
  */
 export default withNuxt(nuxtPlugin, {
-  files: ["*.ts"],
+  files: ["**/*.ts"],
   languageOptions,
   rules: typescriptRules,
 }).overrides({

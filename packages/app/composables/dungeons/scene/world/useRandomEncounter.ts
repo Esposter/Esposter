@@ -14,7 +14,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
-import { pickWeightedRandomValue } from "@/util/math/random/pickWeightedRandomValues";
+import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const dungeonsStore = useDungeonsStore();
@@ -39,7 +39,7 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
 
   const areaTiledObjectProperty = getTiledObjectProperty<Area>(properties, EncounterObjectProperty.area);
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);
-  const randomEncounterableMonster = pickWeightedRandomValue(encounterArea.encounterableMonsters);
+  const randomEncounterableMonster = getWeightedRandomValue(encounterArea.encounterableMonsters);
   const randomMonster = new Monster(randomEncounterableMonster.key);
   const enemyStore = useEnemyStore();
   const { activeMonster } = storeToRefs(enemyStore);

@@ -3,7 +3,7 @@ import type { WatchCallback, WatchStopHandle } from "vue";
 import { dayjs } from "@/services/dayjs";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe("Watch Tracker", () => {
+describe("watchTracker", () => {
   const source = ref("");
   const callback: WatchCallback<typeof source.value> = vi.fn(() => {});
   let watchStopHandlers: WatchStopHandle[] = [];
@@ -21,26 +21,35 @@ describe("Watch Tracker", () => {
   });
 
   test("callback is not run on first source change", async () => {
+    expect.hasAssertions();
+
     source.value = "test";
     await nextTick();
-    expect(callback).not.toBeCalled();
+
+    expect(callback).not.toHaveBeenCalled();
   });
 
   test("callback is not run on second source change less than debounce time", async () => {
+    expect.hasAssertions();
+
     source.value = "test";
     await nextTick();
     source.value = "";
     await nextTick();
     vi.advanceTimersByTime(dayjs.duration(0.49, "seconds").asMilliseconds());
-    expect(callback).not.toBeCalled();
+
+    expect(callback).not.toHaveBeenCalled();
   });
 
   test("callback is run on second source change greater than debounce time", async () => {
+    expect.hasAssertions();
+
     source.value = "test";
     await nextTick();
     source.value = "";
     await nextTick();
     vi.advanceTimersByTime(dayjs.duration(0.5, "seconds").asMilliseconds());
-    expect(callback).toBeCalledTimes(1);
+
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 });

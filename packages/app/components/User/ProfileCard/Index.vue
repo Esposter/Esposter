@@ -59,7 +59,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       </v-card-title>
       <v-container px-0="!" py-6="!">
         <UserProfileCardRow
-          v-for="(row, title) in profileCardRows"
+          v-for="(row, title) of profileCardRows"
           :key="title"
           v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
           px-4

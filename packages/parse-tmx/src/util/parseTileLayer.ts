@@ -27,15 +27,12 @@ export const parseTileLayer = async (
   // Xml Deprecated
   if (isTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {
-    // Csv, Base64
+    // Base64, Csv
     const { _, $ } = nodeData;
     const { compression, encoding } = $;
     const layerData = _.trim();
 
     switch (encoding) {
-      case Encoding.Csv:
-        layer.data = layerData.split(",").map((d) => parseInt(d));
-        break;
       case Encoding.Base64: {
         const buffer = Buffer.from(layerData, encoding);
         switch (compression) {
@@ -60,6 +57,9 @@ export const parseTileLayer = async (
         }
         break;
       }
+      case Encoding.Csv:
+        layer.data = layerData.split(",").map((d) => parseInt(d));
+        break;
       default:
         exhaustiveGuard(encoding);
     }

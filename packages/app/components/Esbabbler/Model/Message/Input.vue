@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { MESSAGE_MAX_LENGTH } from "@/services/esbabbler/constants";
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
+import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { Extension } from "@tiptap/vue-3";
@@ -28,9 +28,6 @@ const keyboardExtension = new Extension({
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
   >
-    <template #prepend-footer="editorProps">
-      <RichTextEditorCustomEmojiPickerButton tooltip="Emoji" :="editorProps" />
-    </template>
     <template #append-footer="editorProps">
       <RichTextEditorCustomSendMessageButton :="editorProps" />
     </template>

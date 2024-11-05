@@ -1,4 +1,4 @@
-import type { PostWithRelations } from "@/db/schema/posts";
+import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
 
 import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
@@ -12,7 +12,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const router = useRouter();
   const currentPostId = computed(() => {
     const postId = router.currentRoute.value.params.id;
-    return typeof postId === "string" && uuidValidateV4(postId) ? postId : null;
+    return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
   });
   const currentPost = ref<PostWithRelations>();
   const { itemList, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);

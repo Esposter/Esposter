@@ -25,7 +25,7 @@ onUnmounted(() => {
 <template>
   <Container :configuration="{ x, y: 304 }">
     <Image
-      v-for="(monster, index) in monsters"
+      v-for="(monster, index) of monsters"
       :key="monster.id"
       :configuration="{
         visible,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@/db/schema/surveys";
+import type { Survey } from "@/server/db/schema/surveys";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
@@ -30,7 +30,7 @@ const group = ref(survey.group);
         <template #activator="{ props: tooltipProps }">
           <v-btn
             m-0="!"
-            rd-0="!"
+            rd-none="!"
             icon="mdi-folder-arrow-left-right"
             size="small"
             :="tooltipProps"

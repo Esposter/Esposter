@@ -22,14 +22,14 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
         const { type } = uc;
 
         switch (type) {
-          case Target.Upgrade: {
-            const foundUpgrade = clickerStore.game.boughtUpgrades.find((bu) => bu.id === uc.id);
-            if (foundUpgrade) return true;
-            break;
-          }
           case Target.Building: {
             const foundBuilding = clickerStore.game.boughtBuildings.find((bb) => bb.id === uc.id);
             if (foundBuilding) return foundBuilding.amount >= uc.amount;
+            break;
+          }
+          case Target.Upgrade: {
+            const foundUpgrade = clickerStore.game.boughtUpgrades.find((bu) => bu.id === uc.id);
+            if (foundUpgrade) return true;
             break;
           }
           default:

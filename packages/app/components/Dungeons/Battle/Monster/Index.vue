@@ -5,7 +5,7 @@ import { Image } from "vue-phaserjs";
 
 interface MonsterProps {
   // By default, this will be the player
-  isEnemy?: true;
+  isEnemy?: boolean;
 }
 
 const { isEnemy } = defineProps<MonsterProps>();

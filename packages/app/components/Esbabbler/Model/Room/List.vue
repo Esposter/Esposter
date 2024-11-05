@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@/db/schema/rooms";
+import type { Room } from "@/server/db/schema/rooms";
 
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 
@@ -16,7 +16,7 @@ const { hasMore, readMoreRooms, rooms } = defineProps<RoomListProps>();
 <template>
   <v-list overflow-y-auto="!">
     <slot name="prepend" />
-    <EsbabblerModelRoomListItem v-for="room in rooms" :key="room.id" :room />
+    <EsbabblerModelRoomListItem v-for="room of rooms" :key="room.id" :room />
     <StyledWaypoint :active="hasMore" @change="readMoreRooms" />
   </v-list>
 </template>

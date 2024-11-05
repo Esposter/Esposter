@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getDungeonsSound } from "@/services/dungeons/sound/getDungeonsSound";
 
-let backgroundMusicKey: BackgroundMusicKey | null = null;
+let backgroundMusicKey: BackgroundMusicKey | undefined;
 
 export const playDungeonsBackgroundMusic = (scene: SceneWithPlugins, key: BackgroundMusicKey) => {
   if (key === backgroundMusicKey) return;

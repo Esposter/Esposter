@@ -3,6 +3,169 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
+
+
+### Bug Fixes
+
+* overrides ([937ab6a](https://github.com/Esposter/Esposter/commit/937ab6aa893a5488502240a9d6f146c525cd499d))
+
+
+
+
+
+# [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+# [1.25.0](https://github.com/Esposter/Esposter/compare/v1.24.2...v1.25.0) (2024-10-22)
+
+
+### Bug Fixes
+
+* lint ([7bdea2f](https://github.com/Esposter/Esposter/commit/7bdea2f6b67423bfae6a4617faea2c5c50df10c9))
+
+
+
+
+
+## [1.24.2](https://github.com/Esposter/Esposter/compare/v1.24.1...v1.24.2) (2024-10-17)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* lint ([99efc7e](https://github.com/Esposter/Esposter/commit/99efc7e8c074e2a66916c58c0ecc0a5c332becee))
+
+
+
+
+
+
+# [1.24.0](https://github.com/Esposter/Esposter/compare/v1.23.0...v1.24.0) (2024-10-14)
+
+
+### Bug Fixes
+
+* lint ([6813e10](https://github.com/Esposter/Esposter/commit/6813e105c89767bca018b33f08d71635ee003b95))
+
+
+### Features
+
+* Add prettify tests ([7d740fe](https://github.com/Esposter/Esposter/commit/7d740fe6b7f73447df0b8ead66a77abe1034b4ad))
+
+
+
+
+
+
+# [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
+
+
+### Bug Fixes
+
+* lint ([2b6c450](https://github.com/Esposter/Esposter/commit/2b6c4509c4ed32ea72b7eed0a64f409a1003bb1a))
+* types ([56c2115](https://github.com/Esposter/Esposter/commit/56c2115249412c93334fcdab96fa6f9231d1759c))
+* use  and fix up some [@vue-ignores](https://github.com/vue-ignores) ([e3ec037](https://github.com/Esposter/Esposter/commit/e3ec037f13c829130d0e0f968f95cb362e80d8d5))
+
+
+
+
+
+# [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
+
+
+### Bug Fixes
+
+* lint ([7cf8e80](https://github.com/Esposter/Esposter/commit/7cf8e802d2ee7c86acecfdcf402d99e625580ca6))
+* vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
+
+
+
+
+
+## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
+
+
+
+
+
+
+## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+# [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
+
+
+### Bug Fixes
+
+* lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
+
+
+
+
+
+## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
 
 

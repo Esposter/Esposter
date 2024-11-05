@@ -27,17 +27,17 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartySceneStore.sceneMode !== SceneMode.Default || (await handleShowMessageInput(scene, justDownInput)))
       return;
-    else if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+    else if (isPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
-  const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
+  const onPlayerSpecialInput = async (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     switch (playerSpecialInput) {
       case PlayerSpecialInput.Cancel:
         onCancel(scene);
         return;
       case PlayerSpecialInput.Confirm:
-        onPlayerConfirmInput(scene, monsterPartyOptionGrid.value);
+        await onPlayerConfirmInput(scene, monsterPartyOptionGrid.value);
         return;
       case PlayerSpecialInput.Enter:
         return;
@@ -46,7 +46,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
     }
   };
 
-  const onPlayerConfirmInput = (scene: SceneWithPlugins, value: typeof monsterPartyOptionGrid.value) => {
+  const onPlayerConfirmInput = async (scene: SceneWithPlugins, value: typeof monsterPartyOptionGrid.value) => {
     if (value === PlayerSpecialInput.Cancel) {
       onCancel(scene);
       return;
@@ -68,7 +68,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         const itemOptionGrid = useItemOptionGrid();
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel)
           throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value);
-        useItem(scene, toRef(itemOptionGrid.value), toRef(value));
+        await useItem(scene, toRef(itemOptionGrid.value), toRef(value));
         return;
       }
       default: {

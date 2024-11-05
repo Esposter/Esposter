@@ -5,15 +5,15 @@ import { useGame } from "@/composables/useGame";
 
 export const usePhaserStore = defineStore("phaser", () => {
   // @NOTE: A very weird bug will occur here with setInteractive input priority if the game is a ref >:C
-  let baseGame: Game | null = null;
+  let baseGame: Game | undefined;
   const game = computed({
     get: () => baseGame,
-    set: (newGame: Game | null) => {
+    set: (newGame) => {
       baseGame = newGame;
     },
   });
 
-  const sceneKey = ref<null | SceneWithPlugins["scene"]["key"]>(null);
+  const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
   // When we access the root scene key from outside components, it should already be initialized
   const rootSceneKey = sceneKey as Ref<SceneWithPlugins["scene"]["key"]>;
   const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
