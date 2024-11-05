@@ -8,7 +8,5 @@ export const verificationTokens = pgTable(
     identifier: text("identifier").notNull(),
     token: text("token").notNull().unique(),
   },
-  (verificationToken) => ({
-    compositePK: primaryKey({ columns: [verificationToken.identifier, verificationToken.token] }),
-  }),
+  (verificationToken) => [primaryKey({ columns: [verificationToken.identifier, verificationToken.token] })],
 );

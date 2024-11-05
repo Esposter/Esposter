@@ -43,9 +43,7 @@ export const usersToRooms = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (userToRoom) => ({
-    compositePK: primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] }),
-  }),
+  (userToRoom) => [primaryKey({ columns: [userToRoom.userId, userToRoom.roomId] })],
 );
 export type UserToRoom = typeof usersToRooms.$inferSelect;
 
@@ -74,9 +72,7 @@ export const likes = pgTable(
     // https://github.com/drizzle-team/drizzle-orm/issues/880
     value: integer("value").notNull(),
   },
-  (like) => ({
-    compositePK: primaryKey({ columns: [like.userId, like.postId] }),
-  }),
+  (like) => [primaryKey({ columns: [like.userId, like.postId] })],
 );
 
 export type Like = typeof likes.$inferSelect;

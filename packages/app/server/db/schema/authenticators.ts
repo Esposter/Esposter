@@ -17,11 +17,11 @@ export const authenticators = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (authenticator) => ({
-    compositePK: primaryKey({
+  (authenticator) => [
+    primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),
-  }),
+  ],
 );
 
 export const authenticatorsRelations = relations(authenticators, ({ one }) => ({
