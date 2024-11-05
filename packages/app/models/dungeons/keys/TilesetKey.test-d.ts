@@ -9,13 +9,9 @@ describe("tilesetKey type", () => {
     expect.hasAssertions();
 
     expectTypeOf(TilesetKey).toMatchTypeOf<
-      {
-        // TilesetKey uses the same namespace as ImageKey & SpritesheetKey
-        // so we need to validate that we can't have conflicting values
-        [P in ImageKey]?: never;
-      } & {
-        [P in SpritesheetKey]?: never;
-      } & Record<string, string>
+      // TilesetKey uses the same namespace as ImageKey & SpritesheetKey
+      // so we need to validate that we can't have conflicting values
+      Partial<Record<ImageKey, never>> & Partial<Record<SpritesheetKey, never>> & Record<string, string>
     >();
   });
 });
