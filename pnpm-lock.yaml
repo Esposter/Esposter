@@ -298,8 +298,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       marked:
-        specifier: ^14.1.4
-        version: 14.1.4
+        specifier: ^15.0.0
+        version: 15.0.0
       mjml-browser:
         specifier: ^4.15.3
         version: 4.15.3
@@ -7184,6 +7184,11 @@ packages:
 
   marked@14.1.4:
     resolution: {integrity: sha512-vkVZ8ONmUdPnjCKc5uTRvmkRbx4EAi2OkTOXmfTDhZz3OFqMNBM1oTTWwTr4HY4uAEojhzPf+Fy8F1DWa3Sndg==}
+    engines: {node: '>= 18'}
+    hasBin: true
+
+  marked@15.0.0:
+    resolution: {integrity: sha512-0mouKmBROJv/WSHJBPZZyYofUgawMChnD5je/g+aOBXsHDjb/IsnTQj7mnhQZu+qPJmRQ0ecX3mLGEUm3BgwYA==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -18407,6 +18412,8 @@ snapshots:
       uc.micro: 2.1.0
 
   marked@14.1.4: {}
+
+  marked@15.0.0: {}
 
   mathjs@12.4.3:
     dependencies:
