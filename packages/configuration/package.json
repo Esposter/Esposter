@@ -35,6 +35,6 @@
     "unplugin-auto-import": "^0.18.3",
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-mkcert": "^1.17.6",
-    "vite-tsconfig-paths": "^5.1.0"
+    "vite-tsconfig-paths": "^5.1.1"
   }
 }
