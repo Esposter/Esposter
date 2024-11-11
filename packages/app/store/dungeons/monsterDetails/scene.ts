@@ -35,7 +35,6 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   return {
     attackNameList,
     onPlayerInput,
-    // We'll ensure that we populate the selected monster everytime before we enter the scene
     selectedMonster: selectedMonster as Ref<Monster>,
   };
 });

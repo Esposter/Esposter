@@ -1,6 +1,6 @@
 export const useActionStore = defineStore("dungeons/battle/action", () => {
-  const attackStatePriorityMap = ref() as Ref<ReturnType<typeof useAttackStatePriorityMap>>;
+  const attackStatePriorityMap = ref<ReturnType<typeof useAttackStatePriorityMap>>();
   return {
-    attackStatePriorityMap,
+    attackStatePriorityMap: attackStatePriorityMap as Ref<ReturnType<typeof useAttackStatePriorityMap>>,
   };
 });

@@ -3,7 +3,7 @@ import type { Position } from "grid-engine";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
-  const activeMonster = ref() as Ref<Monster>;
+  const activeMonster = ref<Monster>();
   const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 144 });
   const monsterPosition = ref({ ...initialMonsterPosition });
   const monsterTween = ref<TweenBuilderConfiguration>();
@@ -12,7 +12,7 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const takeDamage = useTakeDamage(true);
   return {
-    activeMonster,
+    activeMonster: activeMonster as Ref<Monster>,
     initialMonsterInfoContainerPosition,
     initialMonsterPosition,
     monsterInfoContainerPosition,
