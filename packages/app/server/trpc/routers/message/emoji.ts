@@ -18,7 +18,7 @@ import {
   MessageEmojiMetadataEntityPropertyNames,
   messageEmojiMetadataSchema,
 } from "@/shared/models/esbabbler/message/metadata/emoji";
-import { now } from "@/util/time/now";
+import { now } from "@/shared/utils/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

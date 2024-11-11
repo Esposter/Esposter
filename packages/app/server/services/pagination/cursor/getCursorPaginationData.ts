@@ -2,7 +2,7 @@ import type { CursorPaginationData } from "@/models/shared/pagination/cursor/Cur
 import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import type { ItemMetadata } from "@/shared/models/itemMetadata";
 
-import { getNextCursor } from "@/services/shared/pagination/cursor/getNextCursor";
+import { getNextCursor } from "@/server/services/pagination/cursor/getNextCursor";
 
 export const getCursorPaginationData = <TItem extends ItemMetadata>(
   items: TItem[],

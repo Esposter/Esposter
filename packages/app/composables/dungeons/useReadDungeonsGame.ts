@@ -1,7 +1,7 @@
 import { Game } from "@/models/dungeons/data/Game";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
+import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
 import { useDungeonsStore } from "@/store/dungeons";
-import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const useReadDungeonsGame = async () => {
   const { $client } = useNuxtApp();

@@ -3,8 +3,8 @@ import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOm
 import { Dashboard } from "@/models/dashboard/Dashboard";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
+import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
 import { useDashboardStore } from "@/store/dashboard";
-import { jsonDateParse } from "@/util/time/jsonDateParse";
 import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {

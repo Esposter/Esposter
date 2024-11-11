@@ -4,8 +4,8 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { SAVE_FILENAME } from "@/services/emailEditor/constants";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
 import { streamToText } from "@/util/text/streamToText";
-import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const emailEditorRouter = router({
   readEmailEditor: authedProcedure.query<EmailEditor>(async ({ ctx }) => {

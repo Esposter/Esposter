@@ -17,7 +17,7 @@ import {
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataSchema,
 } from "@/shared/models/esbabbler/message/metadata/reply";
-import { now } from "@/util/time/now";
+import { now } from "@/shared/utils/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

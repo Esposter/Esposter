@@ -1,7 +1,7 @@
 import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
 import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/constants";
+import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
-import { jsonDateParse } from "@/util/time/jsonDateParse";
 
 export const useReadFlowchartEditor = async () => {
   const { $client } = useNuxtApp();

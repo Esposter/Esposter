@@ -4,7 +4,7 @@ import type { TableConfig } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { parse } from "@/services/shared/pagination/cursor/parse";
+import { parse } from "@/server/services/pagination/cursor/parse";
 import { and, gt, lt } from "drizzle-orm";
 
 export const getCursorWhere = <TTable extends TableConfig, TItem extends ItemMetadata>(
