@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 import { middleware } from "@/server/trpc";
-import { profanityMatcher } from "@/services/obscenity/profanityMatcher";
+import { profanityMatcher } from "@/shared/services/obscenity/profanityMatcher";
 import { TRPCError } from "@trpc/server";
 
 export const getProfanityFilterMiddleware = <T extends z.ZodObject<z.ZodRawShape>>(

@@ -2,8 +2,8 @@
 import type { ArrayElement } from "type-fest/source/internal";
 import type { VValidation } from "vuetify/components";
 
-import { profanityMatcher } from "@/services/obscenity/profanityMatcher";
 import deepEqual from "fast-deep-equal";
+import { profanityMatcher } from "~/shared/services/obscenity/profanityMatcher";
 
 // @TODO: Internal vuetify types
 // https://github.com/vuetifyjs/vuetify/issues/16680
