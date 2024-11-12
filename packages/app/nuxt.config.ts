@@ -7,7 +7,6 @@ import { experimental } from "./configuration/experimental";
 import { fonts } from "./configuration/fonts";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
-import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -25,7 +24,6 @@ export default defineNuxtConfig({
   fonts,
   imports,
   modules,
-  nitro,
   pwa,
   runtimeConfig,
   security,
