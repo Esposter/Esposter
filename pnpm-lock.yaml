@@ -157,8 +157,8 @@ importers:
         specifier: ^10.45.2
         version: 10.45.2
       '@vue-flow/background':
-        specifier: ^1.3.1
-        version: 1.3.1(@vue-flow/core@1.41.4(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
+        specifier: ^1.3.2
+        version: 1.3.2(@vue-flow/core@1.41.4(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
       '@vue-flow/controls':
         specifier: ^1.1.2
         version: 1.1.2(@vue-flow/core@1.41.4(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))
@@ -3947,8 +3947,8 @@ packages:
     peerDependencies:
       '@eslint/config-array': '>=0.16.0'
 
-  '@vue-flow/background@1.3.1':
-    resolution: {integrity: sha512-8q0lTbvA3A9s0bDnpUIHMZj/HUTdMa3ChGSAw7EBaTKy7qJB21EnKbTIgC2lYweprzxk94vop4YmGfUO1jiqqQ==}
+  '@vue-flow/background@1.3.2':
+    resolution: {integrity: sha512-eJPhDcLj1wEo45bBoqTXw1uhl0yK2RaQGnEINqvvBsAFKh/camHJd5NPmOdS1w+M9lggc9igUewxaEd3iCQX2w==}
     peerDependencies:
       '@vue-flow/core': ^1.23.0
       vue: ^3.3.0
@@ -14733,7 +14733,7 @@ snapshots:
       '@eslint/config-array': 0.18.0
       '@nodelib/fs.walk': 2.0.0
 
-  '@vue-flow/background@1.3.1(@vue-flow/core@1.41.4(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))':
+  '@vue-flow/background@1.3.2(@vue-flow/core@1.41.4(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))':
     dependencies:
       '@vue-flow/core': 1.41.4(vue@3.5.12(typescript@5.6.3))
       vue: 3.5.12(typescript@5.6.3)
