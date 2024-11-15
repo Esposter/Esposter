@@ -75,10 +75,3 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
     </Game>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-@font-face {
-  font-family: "KenneyFutureNarrow";
-  src: local("KenneyFutureNarrow"), url("/fonts/KenneyFutureNarrow.woff2"), format(woff2);
-}
-</style>

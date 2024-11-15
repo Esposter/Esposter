@@ -2,8 +2,8 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
@@ -12,7 +12,6 @@ import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { IS_DEVELOPMENT } from "@/util/environment/constants";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
-import { load } from "webfontloader";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
@@ -30,8 +29,6 @@ const preload = (scene: SceneWithPlugins) => {
   const { height, width } = scene.cameras.main;
   x.value = width / 2;
   y.value = height / 2;
-  // We need to preload the fonts so phaser can properly use them
-  load({ custom: { families: [FontKey.KenneyFutureNarrow] } });
 
   scene.load.on("progress", (value: number) => {
     progressBarWidth.value = progressBarMaxWidth.value * value;
@@ -46,11 +43,12 @@ const preload = (scene: SceneWithPlugins) => {
     await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
   });
 
+  for (const fontLoader of Object.values(FontLoaderMap)) fontLoader(scene);
+  for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
-  for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
 };
 </script>
 

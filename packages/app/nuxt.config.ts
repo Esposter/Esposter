@@ -4,7 +4,6 @@ import { authJs } from "./configuration/authJs";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
 import { experimental } from "./configuration/experimental";
-import { fonts } from "./configuration/fonts";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { pwa } from "./configuration/pwa";
@@ -21,7 +20,6 @@ export default defineNuxtConfig({
   build,
   compatibilityDate,
   experimental,
-  fonts,
   imports,
   modules,
   pwa,
