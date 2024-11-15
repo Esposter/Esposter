@@ -127,7 +127,7 @@
     "omit-deep-lodash": "^1.1.7",
     "parse-tmx": "workspace:*",
     "pathe": "^1.1.2",
-    "phaser": "^3.86.0",
+    "phaser": "^3.87.0",
     "phaser3-rex-plugins": "^1.80.10",
     "pinia": "^2.2.6",
     "pluralize": "^8.0.0",
