@@ -325,8 +325,8 @@ importers:
         specifier: ^3.87.0
         version: 3.87.0
       phaser3-rex-plugins:
-        specifier: ^1.80.10
-        version: 1.80.10(encoding@0.1.13)(graphology-types@0.24.7)
+        specifier: ^1.80.11
+        version: 1.80.11(encoding@0.1.13)(graphology-types@0.24.7)
       pinia:
         specifier: ^2.2.6
         version: 2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
@@ -585,8 +585,8 @@ importers:
         specifier: ^3.87.0
         version: 3.87.0
       phaser3-rex-plugins:
-        specifier: ^1.80.10
-        version: 1.80.10(encoding@0.1.13)(graphology-types@0.24.7)
+        specifier: ^1.80.11
+        version: 1.80.11(encoding@0.1.13)(graphology-types@0.24.7)
       pinia:
         specifier: ^2.2.6
         version: 2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
@@ -7942,8 +7942,8 @@ packages:
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  phaser3-rex-plugins@1.80.10:
-    resolution: {integrity: sha512-7qpWkpFmXobkpMSFEIRcVnotpAYZDksGzgCuZrzDAy+vtmKex5bTdSEZ8UDYYwYgkuAhVoMsveFF6oDfGOSY4Q==}
+  phaser3-rex-plugins@1.80.11:
+    resolution: {integrity: sha512-it+rV0ElkAd0jjSLqSewLBk91vFzb+P/HxOfFhs9xdc+HfANDmNTLwFxiBIvuXEn84nyiCn1VR08Fcnyw7DuyQ==}
 
   phaser@3.87.0:
     resolution: {integrity: sha512-AyI1b3T5fp05gzf6WUmu2FNqaZL+Y7w88yBRLf7YZXF9bncUSHpnDrupnTGoPqy/RKHRLBcay7zWeqQ2wiMWcw==}
@@ -13049,7 +13049,7 @@ snapshots:
       '@octokit/request-error': 3.0.3
       '@octokit/types': 9.3.2
       is-plain-object: 5.0.0
-      node-fetch: 2.6.7(encoding@0.1.13)
+      node-fetch: 2.7.0(encoding@0.1.13)
       universal-user-agent: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -19414,7 +19414,7 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  phaser3-rex-plugins@1.80.10(encoding@0.1.13)(graphology-types@0.24.7):
+  phaser3-rex-plugins@1.80.11(encoding@0.1.13)(graphology-types@0.24.7):
     dependencies:
       dagre: 0.8.5
       eventemitter3: 3.1.2
