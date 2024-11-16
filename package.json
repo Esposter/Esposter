@@ -40,7 +40,7 @@
     "data-urls": "^5.0.0",
     "is-mobile": "^5.0.0",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vue": "^3.5.12",
+    "vue": "^3.5.13",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -48,7 +48,7 @@
     "@types/xml2js": "^0.4.14",
     "ctix": "^2.7.0",
     "dotenv": "^16.4.5",
-    "eslint": "^9.14.0",
+    "eslint": "9.14.0",
     "lerna": "^8.1.9",
     "rollup": "^4.27.2",
     "type-fest": "^4.27.0",
@@ -58,10 +58,11 @@
     "vue-tsc": "2.1.6"
   },
   "devDependenciesComments": {
+    "eslint": "@TODO: https://github.com/typescript-eslint/typescript-eslint/issues/10338",
     "vue-tsc": "@TODO: https://github.com/vuejs/language-tools/issues/4973"
   },
   "engines": {
     "node": "^22.11.0"
   },
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
+  "packageManager": "pnpm@9.13.2+sha512.88c9c3864450350e65a33587ab801acf946d7c814ed1134da4a924f6df5a2120fd36b46aab68f7cd1d413149112d53c7db3a4136624cfd00ff1846a0c6cef48a"
 }
