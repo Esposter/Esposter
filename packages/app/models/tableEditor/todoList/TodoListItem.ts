@@ -4,8 +4,10 @@ import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityTyp
 import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "@/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;
   notes = "";

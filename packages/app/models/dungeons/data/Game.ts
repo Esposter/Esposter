@@ -4,8 +4,10 @@ import type { Except } from "type-fest";
 import { saveSchema } from "@/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/settings/Settings";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 class BaseGame {
   id: string = crypto.randomUUID();
   saves: Save[] = [];

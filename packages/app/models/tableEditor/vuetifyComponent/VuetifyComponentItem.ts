@@ -10,8 +10,10 @@ import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
   component: VuetifyComponentType = VuetifyComponentType["v-alert"];
   props: Record<string, unknown> = {};

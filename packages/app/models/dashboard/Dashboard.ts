@@ -3,8 +3,10 @@ import type { Except } from "type-fest";
 
 import { visualSchema } from "@/models/dashboard/Visual";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 class BaseDashboard {
   visuals: Visual[] = [];
 

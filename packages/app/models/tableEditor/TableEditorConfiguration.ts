@@ -8,12 +8,14 @@ import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { todoListItemSchema } from "@/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
+@RegisterSuperJSON
 export class BaseTableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();

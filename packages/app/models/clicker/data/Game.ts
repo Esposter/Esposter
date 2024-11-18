@@ -7,8 +7,10 @@ import { ClickerType, clickerTypeSchema } from "@/models/clicker/data/ClickerTyp
 import { createUpgradeSchema } from "@/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+@RegisterSuperJSON
 class BaseGame {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
