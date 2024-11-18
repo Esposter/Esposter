@@ -4,8 +4,9 @@ import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "@/services/tableEditor/constants"
 import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+export
 @RegisterSuperJSON
-export class TableEditor<T extends Item> {
+class TableEditor<T extends Item> {
   items: T[] = [];
 }
 

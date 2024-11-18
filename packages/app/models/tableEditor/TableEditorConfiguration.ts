@@ -16,7 +16,7 @@ type TableEditorTypes = {
 };
 
 @RegisterSuperJSON
-export class BaseTableEditorConfiguration implements TableEditorTypes {
+class BaseTableEditorConfiguration implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 

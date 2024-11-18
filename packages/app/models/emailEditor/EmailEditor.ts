@@ -6,7 +6,7 @@ import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON
 import { z } from "zod";
 
 @RegisterSuperJSON
-export class BaseEmailEditor implements ProjectData {
+class BaseEmailEditor implements ProjectData {
   toJSON() {
     return JSON.stringify({ ...this });
   }

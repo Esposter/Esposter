@@ -7,8 +7,9 @@ import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
 import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import { z } from "zod";
 
+export
 @RegisterSuperJSON
-export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
+class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;
   notes = "";
   type = TodoListItemType.Todo;
