@@ -2,7 +2,7 @@
 import type { Visual } from "@/models/dashboard/Visual";
 
 import { useVisualStore } from "@/store/dashboard/visual";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 interface VisualPreviewContainerProps {
   id: Visual["id"];
@@ -17,9 +17,7 @@ const container = useTemplateRef("container");
 
 onClickExceptDrag(
   container,
-  getSync(async () => {
-    await editItem(id);
-  }),
+  getSynchronizedFunction(() => editItem(id)),
 );
 </script>
 

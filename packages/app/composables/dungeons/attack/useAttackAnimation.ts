@@ -5,7 +5,7 @@ import { dayjs } from "@/services/dayjs";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { sleep } from "vue-phaserjs";
 
 export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
@@ -16,7 +16,7 @@ export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack
   const attackManagerStore = useAttackManagerStore();
   const storeRefs = storeToRefs(attackManagerStore);
   return new Promise<void>((resolve) =>
-    getSync(async () => {
+    getSynchronizedFunction(async () => {
       ExternalAttackManagerStore.onComplete = resolve;
       storeRefs.attackId.value = attack.id;
       storeRefs.isToEnemy.value = isToEnemy;

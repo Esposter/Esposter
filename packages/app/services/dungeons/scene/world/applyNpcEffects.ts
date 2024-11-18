@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { applyNpcEffect } from "@/services/dungeons/scene/world/applyNpcEffect";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 export const applyNpcEffects = async (scene: SceneWithPlugins, npc: Npc) => {
   await applyNpcEffectsRecursive(scene, npc, [...npc.effects]);
@@ -15,9 +15,7 @@ const applyNpcEffectsRecursive = async (scene: SceneWithPlugins, npc: Npc, effec
   if (effects.length > 1)
     phaserEventEmitter.once(
       `${npc.name}${EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`,
-      getSync(async () => {
-        await applyNpcEffectsRecursive(scene, npc, effects);
-      }),
+      getSynchronizedFunction(() => applyNpcEffectsRecursive(scene, npc, effects)),
     );
 
   await applyNpcEffect(scene, npc, effects.shift());

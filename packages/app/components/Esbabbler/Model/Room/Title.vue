@@ -2,7 +2,7 @@
 import { formRules } from "@/services/vuetify/formRules";
 import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
@@ -29,7 +29,7 @@ const onUpdateRoom = async () => {
 
 onClickOutside(
   title,
-  getSync(async () => {
+  getSynchronizedFunction(async () => {
     if (isUpdateMode.value) await onUpdateRoom();
   }),
 );

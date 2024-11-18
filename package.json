@@ -48,9 +48,9 @@
     "@types/xml2js": "^0.4.14",
     "ctix": "^2.7.0",
     "dotenv": "^16.4.5",
-    "eslint": "9.14.0",
+    "eslint": "^9.15.0",
     "lerna": "^8.1.9",
-    "rollup": "^4.27.2",
+    "rollup": "^4.27.3",
     "type-fest": "^4.27.0",
     "typedoc": "^0.26.11",
     "typescript": "^5.6.3",
@@ -58,7 +58,6 @@
     "vue-tsc": "2.1.6"
   },
   "devDependenciesComments": {
-    "eslint": "@TODO: https://github.com/typescript-eslint/typescript-eslint/issues/10338",
     "vue-tsc": "@TODO: https://github.com/vuejs/language-tools/issues/4973"
   },
   "engines": {

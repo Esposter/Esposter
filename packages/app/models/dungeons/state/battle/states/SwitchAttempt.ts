@@ -10,7 +10,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 let unsubscribes: (() => void)[] = [];
 
@@ -41,7 +41,7 @@ export const SwitchAttempt: State<StateName> = {
 
     usePhaserListener(
       "switchMonster",
-      getSync(async (monster) => {
+      getSynchronizedFunction(async (monster) => {
         const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
         // If our active monster has fainted, then the death tween would have already been played
         // so we don't have to play it again
@@ -57,9 +57,7 @@ export const SwitchAttempt: State<StateName> = {
     );
     usePhaserListener(
       "unswitchMonster",
-      getSync(async () => {
-        await battleStateMachine.setState(StateName.PlayerInput);
-      }),
+      getSynchronizedFunction(() => battleStateMachine.setState(StateName.PlayerInput)),
     );
 
     const { launchScene } = usePreviousScene(scene.scene.key);

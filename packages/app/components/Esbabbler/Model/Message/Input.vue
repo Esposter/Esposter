@@ -3,6 +3,7 @@ import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { Extension } from "@tiptap/vue-3";
 
 const messageInputStore = useMessageInputStore();
@@ -13,7 +14,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        void sendMessage(this.editor);
+        getSynchronizedFunction(() => sendMessage(this.editor))();
         return true;
       },
     };

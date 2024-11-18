@@ -10,7 +10,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
@@ -34,7 +34,7 @@ const sceneKey = useInjectSceneKey();
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
 onCreate(
-  getSync(async (scene) => {
+  getSynchronizedFunction(async (scene) => {
     if (!isPlayerFainted.value) return;
 
     await respawn();

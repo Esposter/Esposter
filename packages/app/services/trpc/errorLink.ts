@@ -2,7 +2,7 @@ import type { TRPCRouter } from "@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { RoutePath } from "@/models/router/RoutePath";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { observable } from "@trpc/server/observable";
 import { toast } from "vuetify-sonner";
 
@@ -12,7 +12,7 @@ export const errorLink: TRPCLink<TRPCRouter> =
     observable((observer) => {
       const unsubscribe = next(op).subscribe({
         complete: observer.complete,
-        error: getSync(async (err) => {
+        error: getSynchronizedFunction(async (err) => {
           observer.error(err);
           if (!err.data) return;
 

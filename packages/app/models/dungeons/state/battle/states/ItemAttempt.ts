@@ -8,7 +8,7 @@ import { battleStateMachine } from "@/services/dungeons/scene/battle/battleState
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useSceneStore } from "@/store/dungeons/scene";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { prettify } from "@/util/text/prettify";
 
 let unsubscribes: (() => void)[] = [];
@@ -30,7 +30,7 @@ export const ItemAttempt: State<StateName> = {
 
     usePhaserListener(
       "useItem",
-      getSync(async (scene, item, monster, onComplete) => {
+      getSynchronizedFunction(async (scene, item, monster, onComplete) => {
         const sceneStore = useSceneStore();
         const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
         const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
@@ -45,9 +45,7 @@ export const ItemAttempt: State<StateName> = {
     );
     usePhaserListener(
       "unuseItem",
-      getSync(async () => {
-        await battleStateMachine.setState(StateName.PlayerInput);
-      }),
+      getSynchronizedFunction(() => battleStateMachine.setState(StateName.PlayerInput)),
     );
 
     launchScene(battleScene, SceneKey.Inventory);

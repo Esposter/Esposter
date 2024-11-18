@@ -7,7 +7,7 @@ import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -41,12 +41,12 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    return new Promise<void>((resolve) =>
-      getSync(async () => {
+    return new Promise<void>((resolve) => {
+      getSynchronizedFunction(async () => {
         queuedOnComplete = resolve;
         await showMessage(scene);
-      }),
-    );
+      })();
+    });
   };
   // Called after updateQueuedMessagesAndShowMessage
   const showMessage = async (scene: SceneWithPlugins) => {

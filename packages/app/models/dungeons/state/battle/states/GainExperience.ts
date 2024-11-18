@@ -15,7 +15,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
-import { getSync } from "@/util/getSync";
+import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
@@ -44,7 +44,7 @@ export const GainExperience: State<StateName> = {
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
       // will be triggered by the experience bar once it reaches 100%
-      const levelUpListener: PhaserEvents["levelUp"] = getSync(async ({ key, stats }, onComplete) => {
+      const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(async ({ key, stats }, onComplete) => {
         const showLevelUpMessage = async () => {
           await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
           onComplete();
@@ -60,7 +60,7 @@ export const GainExperience: State<StateName> = {
       phaserEventEmitter.on("levelUp", levelUpListener);
       phaserEventEmitter.once(
         "levelUpComplete",
-        getSync(async () => {
+        getSynchronizedFunction(async () => {
           phaserEventEmitter.off("levelUp", levelUpListener);
           await onComplete();
         }),
