@@ -163,7 +163,8 @@
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "class-transformer": "@TODO: Remove when es decorators are released",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "markdown-it": "https://github.com/json-layout/json-layout/issues/5"
+    "markdown-it": "https://github.com/json-layout/json-layout/issues/5",
+    "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -203,7 +204,6 @@
     "vuetify-nuxt-module": "^0.18.3"
   },
   "devDependenciesComments": {
-    "@nuxt/scripts": "@TODO: Upgrading breaks typechecking",
-    "nuxt": "@TODO: Upgrading breaks phaser"
+    "@nuxt/scripts": "@TODO: Upgrading breaks typechecking"
   }
 }
