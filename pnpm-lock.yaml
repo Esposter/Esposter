@@ -361,7 +361,7 @@ importers:
         specifier: ^0.170.0
         version: 0.170.0
       three-globe:
-        specifier: ^2.34.5
+        specifier: ^2.35.2
         version: 2.35.2(three@0.170.0)
       tippy.js:
         specifier: ^6.3.7
