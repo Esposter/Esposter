@@ -488,8 +488,8 @@ importers:
         specifier: ^3.14.159
         version: 3.14.159(@azure/data-tables@13.3.0)(@azure/storage-blob@12.25.0)(@parcel/watcher@2.5.0)(@types/node@22.9.0)(drizzle-orm@0.36.3(postgres@3.4.5))(encoding@0.1.13)(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.3)(sass@1.81.0)(terser@5.36.0)(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0)(sass@1.81.0)(terser@5.36.0))(vue-tsc@2.1.6(typescript@5.6.3))(xml2js@0.6.2)
       nuxt-security:
-        specifier: ^2.1.1
-        version: 2.1.1(magicast@0.3.5)(rollup@4.27.3)
+        specifier: ^2.1.2
+        version: 2.1.2(magicast@0.3.5)(rollup@4.27.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -7614,8 +7614,8 @@ packages:
   nuxt-csurf@1.6.5:
     resolution: {integrity: sha512-/DMNTON8LIVhntamKbBmAuM879B0QnuSJa7ZAkmkZe+21m+1QGcjVUxtSkizaM48NUvkuAGYOG0ncn+kqEgrzw==}
 
-  nuxt-security@2.1.1:
-    resolution: {integrity: sha512-OtZTS9WrSneWiO+n2F6hP4Nb6oGzWyUmcZgTG91rNLBj3I+psHHTrI4qj97FvBpo7xTRCSyD5x7MHMjvinZAXg==}
+  nuxt-security@2.1.2:
+    resolution: {integrity: sha512-iwn5mzejKj0ARd3M66fBT0A2wiF1+0rxV3K5cVkMh8/JiUvqBWD78hRoOIaqd0tU2HsV2N+HC8jb+RpoX+wURA==}
     engines: {node: '>=18.0.0'}
 
   nuxt@3.14.159:
@@ -18904,7 +18904,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-security@2.1.1(magicast@0.3.5)(rollup@4.27.3):
+  nuxt-security@2.1.2(magicast@0.3.5)(rollup@4.27.3):
     dependencies:
       '@nuxt/kit': 3.14.159(magicast@0.3.5)(rollup@4.27.3)
       basic-auth: 2.0.1
