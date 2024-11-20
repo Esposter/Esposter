@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
+
+**Note:** Version bump only for package @esposter/configuration
+
+
+
+
+
+
 # [1.28.0](https://github.com/Esposter/Esposter/compare/v1.27.0...v1.28.0) (2024-11-16)
 
 **Note:** Version bump only for package @esposter/configuration
