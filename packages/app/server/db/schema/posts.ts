@@ -28,7 +28,7 @@ export const PostRelations = {
   likes: true,
   user: true,
 } as const;
-export type PostWithRelations = { likes: Like[]; user: User } & Post;
+export type PostWithRelations = Post & { likes: Like[]; user: User };
 
 export const selectPostSchema = createSelectSchema(posts, {
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),

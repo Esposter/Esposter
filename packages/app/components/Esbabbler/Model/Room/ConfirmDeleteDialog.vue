@@ -9,7 +9,7 @@ interface RoomConfirmDeleteDialogProps {
 }
 
 defineSlots<{
-  default: (props: { tooltipProps: Record<string, unknown> } & StyledDialogActivatorSlotProps) => unknown;
+  default: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => unknown;
 }>();
 const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { session } = useAuth();

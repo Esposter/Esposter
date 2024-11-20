@@ -6,6 +6,8 @@ import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/setti
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
+export type Game = typeof Game.prototype;
+
 class BaseGame {
   id: string = crypto.randomUUID();
   saves: Save[] = [];
@@ -15,8 +17,6 @@ class BaseGame {
     return JSON.stringify({ ...this });
   }
 }
-
-export type Game = typeof Game.prototype;
 export const Game = applyItemMetadataMixin(BaseGame);
 
 export const gameSchema = z

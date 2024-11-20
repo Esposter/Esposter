@@ -6,8 +6,8 @@ import { ThemeMode } from "./models/vuetify/ThemeMode";
 
 // @TODO: Internal vuetify types
 export type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
-type Theme = VuetifyOptions["theme"];
 type Defaults = VuetifyOptions["defaults"];
+type Theme = VuetifyOptions["theme"];
 
 const BaseColorsCommon = {
   border: "#ccc",

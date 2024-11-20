@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from "@tiptap/vue-3";
 
-interface FooterBarProps {
+export interface FooterBarAppendSlotProps {
   editor?: Editor;
 }
 
@@ -9,7 +9,7 @@ export interface FooterBarPrependSlotProps {
   editor?: Editor;
 }
 
-export interface FooterBarAppendSlotProps {
+interface FooterBarProps {
   editor?: Editor;
 }
 

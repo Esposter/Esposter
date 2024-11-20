@@ -1,8 +1,5 @@
 import type { DeepOmitArray } from "@/util/types/DeepOmitArray";
 
-// Union of primitives to skip with deep omit utilities
-type Primitive = boolean | Function | null | number | string | symbol | undefined;
-
 export type DeepOmit<T, TKey> = T extends Primitive
   ? T
   : {
@@ -18,3 +15,6 @@ export type DeepOmit<T, TKey> = T extends Primitive
             : DeepOmit<TP, TKey>
         : never;
     };
+
+// Union of primitives to skip with deep omit utilities
+type Primitive = boolean | Function | null | number | string | symbol | undefined;

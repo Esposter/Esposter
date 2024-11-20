@@ -1,6 +1,6 @@
-export type Item = {
+export type Item = Record<string, unknown> & {
   active?: boolean;
   icon: string;
   onClick: () => void;
   title: string;
-} & Record<string, unknown>;
+};

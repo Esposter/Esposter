@@ -5,15 +5,15 @@ import type { VCard } from "vuetify/components";
 import { mergeProps } from "vue";
 import { VBtn } from "vuetify/components";
 
+export interface StyledDialogActivatorSlotProps {
+  isOpen: boolean;
+  updateIsOpen: (value: true) => boolean;
+}
+
 export interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
   confirmButtonProps?: VBtn["$props"];
-}
-
-export interface StyledDialogActivatorSlotProps {
-  isOpen: boolean;
-  updateIsOpen: (value: true) => boolean;
 }
 
 defineSlots<{

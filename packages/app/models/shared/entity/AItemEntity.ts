@@ -1,11 +1,11 @@
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
+export type AItemEntity = typeof AItemEntity.prototype;
+
 class BaseAItemEntity {
   id: string = crypto.randomUUID();
 }
-
-export type AItemEntity = typeof AItemEntity.prototype;
 export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
 
 export const aItemEntitySchema = z

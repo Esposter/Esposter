@@ -9,9 +9,6 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import EventEmitter from "eventemitter3";
 
-type SceneEventKeys = `${NpcId}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}` | `${SceneEventKey}${keyof typeof SceneKey}`;
-type SceneEvents = Record<SceneEventKeys, () => void>;
-
 export interface PhaserEvents extends SceneEvents {
   levelUp: (monster: Monster, onComplete: () => void) => void;
   levelUpComplete: () => void;
@@ -22,5 +19,8 @@ export interface PhaserEvents extends SceneEvents {
   unuseItem: () => void;
   useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => void;
 }
+type SceneEventKeys = `${NpcId}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}` | `${SceneEventKey}${keyof typeof SceneKey}`;
+
+type SceneEvents = Record<SceneEventKeys, () => void>;
 
 export const phaserEventEmitter = new EventEmitter<PhaserEvents>();

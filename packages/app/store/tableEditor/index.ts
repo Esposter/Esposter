@@ -13,13 +13,13 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 
-type TableEditorStoreState<TItem extends Item = Item> = {
+type TableEditorStoreState<TItem extends Item = Item> = ReturnType<typeof createEditFormData<TItem>> & {
   save: (isDeleteAction?: true) => Promise<void>;
   searchQuery: Ref<string>;
   tableEditor: ComputedRef<TableEditor<TItem>>;
   tableEditorConfiguration: Ref<TableEditorConfiguration>;
   tableEditorType: Ref<TableEditorType>;
-} & ReturnType<typeof createEditFormData<TItem>>;
+};
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {

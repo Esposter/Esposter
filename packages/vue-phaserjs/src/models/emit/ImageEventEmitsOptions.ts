@@ -3,6 +3,6 @@ import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameOb
 import type { ExtractUpdateEvent } from "@/utils/types/ExtractUpdateEvent";
 import type { UpdateEvent } from "@/utils/types/UpdateEvent";
 
-export type ImageEventEmitsOptions = {
+export type ImageEventEmitsOptions = GameObjectEventMapEmitsOptions & {
   [P in UpdateEvent<keyof ImageConfiguration>]: [ImageConfiguration[ExtractUpdateEvent<P>]?];
-} & GameObjectEventMapEmitsOptions;
+};

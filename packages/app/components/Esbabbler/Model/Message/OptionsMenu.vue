@@ -5,17 +5,17 @@ import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
-interface MessageOptionsMenuProps {
-  hoverProps?: Record<string, unknown>;
-  isHovering?: boolean | null;
-  message: MessageEntity;
-}
-
 interface Item {
   color?: string;
   icon: string;
   onClick: (event: KeyboardEvent | MouseEvent) => void;
   title: string;
+}
+
+interface MessageOptionsMenuProps {
+  hoverProps?: Record<string, unknown>;
+  isHovering?: boolean | null;
+  message: MessageEntity;
 }
 
 const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>();

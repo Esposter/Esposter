@@ -9,13 +9,13 @@ import { dayjs } from "@/services/dayjs";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
-
 type Airport = ArrayElement<(typeof airportHistory)["airports"]>;
 
 interface FeatureCollection {
   properties: Record<string, string>;
 }
+
+type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
 
 const id = "globe";
 const { width } = useWindowSize();

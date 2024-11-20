@@ -3,7 +3,7 @@ import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameOb
 import type { ExtractUpdateEvent } from "@/utils/types/ExtractUpdateEvent";
 import type { UpdateEvent } from "@/utils/types/UpdateEvent";
 
-export type TileSpriteEventEmitsOptions = {
-  [P in UpdateEvent<keyof TileSpriteConfiguration>]: [TileSpriteConfiguration[ExtractUpdateEvent<P>]?];
-} & GameObjectEventMapEmitsOptions &
-  Record<string, unknown[]>;
+export type TileSpriteEventEmitsOptions = GameObjectEventMapEmitsOptions &
+  Record<string, unknown[]> & {
+    [P in UpdateEvent<keyof TileSpriteConfiguration>]: [TileSpriteConfiguration[ExtractUpdateEvent<P>]?];
+  };

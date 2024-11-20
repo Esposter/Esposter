@@ -14,6 +14,20 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   validate: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
   wrap: boolean;
 
+  // going from top-left to bottom-right
+  get index() {
+    let index = this.position.value.x;
+    for (let i = 0; i < this.position.value.y; i++) index += this.getColumnSize(i);
+    return index;
+  }
+  get rowSize() {
+    return unref(this.grid).length;
+  }
+
+  get value() {
+    return unref(this.grid)[this.position.value.y][this.position.value.x];
+  }
+
   constructor({ grid, position, validate, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
     this.validate = (position) => {
       const value = this.getValue(position);
@@ -26,6 +40,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     this.position = position ?? ref({ x: 0, y: 0 });
     this.wrap = wrap ?? false;
   }
+
   // This is the array index if the grid were to be flattened
   getColumnSize(rowIndex: number) {
     if (rowIndex > this.rowSize - 1)
@@ -125,20 +140,5 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
       default:
         exhaustiveGuard(direction);
     }
-  }
-
-  // going from top-left to bottom-right
-  get index() {
-    let index = this.position.value.x;
-    for (let i = 0; i < this.position.value.y; i++) index += this.getColumnSize(i);
-    return index;
-  }
-
-  get rowSize() {
-    return unref(this.grid).length;
-  }
-
-  get value() {
-    return unref(this.grid)[this.position.value.y][this.position.value.x];
   }
 }

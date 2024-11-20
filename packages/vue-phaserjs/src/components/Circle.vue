@@ -5,11 +5,11 @@ import type { ArcEventEmitsOptions } from "@/models/emit/ArcEventEmitsOptions";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { ArcSetterMap } from "@/utils/setterMap/ArcSetterMap";
 
+interface CircleEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
+
 interface CircleProps {
   configuration: Partial<ArcConfiguration>;
 }
-
-interface CircleEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
 const { configuration } = defineProps<CircleProps>();
 const emit = defineEmits<CircleEmits>();

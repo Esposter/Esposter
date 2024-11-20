@@ -9,6 +9,8 @@ import { upgradeIdSchema } from "@/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
+export type Game = typeof Game.prototype;
+
 class BaseGame {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
@@ -20,8 +22,6 @@ class BaseGame {
     return JSON.stringify({ ...this });
   }
 }
-
-export type Game = typeof Game.prototype;
 export const Game = applyItemMetadataMixin(BaseGame);
 
 export const gameSchema = z

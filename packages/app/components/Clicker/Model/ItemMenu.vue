@@ -9,12 +9,10 @@ import { marked } from "marked";
 import { filename } from "pathe/utils";
 import { VMenu } from "vuetify/components";
 
-type ItemMenuProps = { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType } & Partial<
-  Pick<BuildingWithStats, "amount">
-> &
+type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
   Partial<Pick<Upgrade, "description">> &
   Pick<BuildingWithStats | Upgrade, "id"> &
-  Pick<Upgrade, "flavorDescription" | "price">;
+  Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
 
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();

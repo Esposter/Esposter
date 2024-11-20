@@ -14,9 +14,7 @@ import type { GlobalConfiguration } from "@/models/configuration/global/GlobalCo
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type TextConfiguration = {
-  text: string;
-} & AlphaConfiguration &
+export type TextConfiguration = AlphaConfiguration &
   BlendModeConfiguration &
   ComputedSizeConfiguration &
   DepthConfiguration &
@@ -29,4 +27,6 @@ export type TextConfiguration = {
   ScrollFactorConfiguration &
   TintConfiguration &
   TransformConfiguration &
-  VisibleConfiguration;
+  VisibleConfiguration & {
+    text: string;
+  };

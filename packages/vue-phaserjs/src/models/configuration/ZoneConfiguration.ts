@@ -7,13 +7,13 @@ import type { GlobalConfiguration } from "@/models/configuration/global/GlobalCo
 import type { GameObjects, Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type ZoneConfiguration = {
-  displayHeight: GameObjects.Zone["displayHeight"];
-  displayWidth: GameObjects.Zone["displayWidth"];
-} & DepthConfiguration &
+export type ZoneConfiguration = DepthConfiguration &
   Except<Types.GameObjects.Zone.ZoneConfig, keyof Types.GameObjects.GameObjectConfig> &
   GlobalConfiguration &
   OriginConfiguration &
   ScrollFactorConfiguration &
   TransformConfiguration &
-  VisibleConfiguration;
+  VisibleConfiguration & {
+    displayHeight: GameObjects.Zone["displayHeight"];
+    displayWidth: GameObjects.Zone["displayWidth"];
+  };

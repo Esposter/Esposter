@@ -7,11 +7,11 @@ import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
 import { ContainerSetterMap } from "@/utils/setterMap/ContainerSetterMap";
 
+interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
+
 interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;
 }
-
-interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { configuration = {} } = defineProps<ContainerProps>();

@@ -13,6 +13,8 @@ type BaseAnimationKeyMap = {
 };
 
 declare module "vue-phaserjs" {
+  interface AnimationKeyMap extends BaseAnimationKeyMap {}
+
   interface ScenePlugins {
     gridEngine: GridEngine;
     sliderPlugin: SliderPlugin;
@@ -20,8 +22,6 @@ declare module "vue-phaserjs" {
   }
 
   interface SceneWithPlugins {
-    scene: { key: SceneKey } & Scene["scene"];
+    scene: Scene["scene"] & { key: SceneKey };
   }
-
-  interface AnimationKeyMap extends BaseAnimationKeyMap {}
 }

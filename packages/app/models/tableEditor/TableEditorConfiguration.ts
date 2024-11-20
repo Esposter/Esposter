@@ -10,6 +10,8 @@ import { vuetifyComponentItemSchema } from "@/models/tableEditor/vuetifyComponen
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
+export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
+
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
@@ -22,8 +24,6 @@ export class BaseTableEditorConfiguration implements TableEditorTypes {
     return JSON.stringify({ ...this });
   }
 }
-
-export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
 export const TableEditorConfiguration = applyItemMetadataMixin(BaseTableEditorConfiguration);
 
 export const tableEditorConfigurationSchema = z

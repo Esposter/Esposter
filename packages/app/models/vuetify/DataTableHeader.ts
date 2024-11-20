@@ -3,4 +3,4 @@ import type { VDataTable } from "vuetify/components/VDataTable";
 
 // @TODO: Internal vuetify types
 // https://github.com/vuetifyjs/vuetify/issues/16680
-export type DataTableHeader = { isRichText?: true } & ArrayElement<VDataTable["$props"]["headers"]>;
+export type DataTableHeader = ArrayElement<VDataTable["$props"]["headers"]> & { isRichText?: true };

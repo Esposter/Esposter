@@ -5,6 +5,8 @@ import { visualSchema } from "@/models/dashboard/Visual";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 
+export type Dashboard = typeof Dashboard.prototype;
+
 class BaseDashboard {
   visuals: Visual[] = [];
 
@@ -12,8 +14,6 @@ class BaseDashboard {
     return JSON.stringify({ ...this });
   }
 }
-
-export type Dashboard = typeof Dashboard.prototype;
 export const Dashboard = applyItemMetadataMixin(BaseDashboard);
 
 export const dashboardSchema = z
