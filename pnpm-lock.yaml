@@ -298,8 +298,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       marked:
-        specifier: ^15.0.1
-        version: 15.0.1
+        specifier: ^15.0.2
+        version: 15.0.2
       mjml-browser:
         specifier: ^4.15.3
         version: 4.15.3
@@ -7169,8 +7169,8 @@ packages:
     engines: {node: '>= 18'}
     hasBin: true
 
-  marked@15.0.1:
-    resolution: {integrity: sha512-VnnE19XO2Vb2oZeH8quAepfrb6Aaz4OoY8yZQACfuy/5KVJ0GxYC0Qxzz/iuc+g5UF7H0HJ+QROfvH26XeBdDA==}
+  marked@15.0.2:
+    resolution: {integrity: sha512-85RUkoYKIVB21PbMKrnD6aCl9ws+XKEyhJNMbLn206NyD3jbBo7Ec7Wi4Jrsn4dV1a2ng7K/jfkmIN0DNoS41w==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -18335,7 +18335,7 @@ snapshots:
 
   marked@14.1.4: {}
 
-  marked@15.0.1: {}
+  marked@15.0.2: {}
 
   mathjs@12.4.3:
     dependencies:
