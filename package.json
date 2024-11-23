@@ -51,7 +51,7 @@
     "eslint": "^9.15.0",
     "lerna": "^8.1.9",
     "rollup": "^4.27.4",
-    "type-fest": "^4.27.0",
+    "type-fest": "^4.27.1",
     "typedoc": "^0.26.11",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
