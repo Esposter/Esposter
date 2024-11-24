@@ -46,8 +46,8 @@ importers:
         specifier: ^4.27.4
         version: 4.27.4
       type-fest:
-        specifier: ^4.27.1
-        version: 4.27.1
+        specifier: ^4.28.0
+        version: 4.28.0
       typedoc:
         specifier: ^0.26.11
         version: 0.26.11(typescript@5.6.3)
@@ -9328,8 +9328,8 @@ packages:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
 
-  type-fest@4.27.1:
-    resolution: {integrity: sha512-3Ta7CyV6daqpwuGJMJKABaUChZZejpzysZkQg1//bLRg2wKQ4duwsg3MMIsHuElq58iDqizg4DBUmK8H8wExJg==}
+  type-fest@4.28.0:
+    resolution: {integrity: sha512-jXMwges/FVbFRe5lTMJZVEZCrO9kI9c8k0PA/z7nF3bo0JSCCLysvokFjNPIUK/itEMas10MQM+AiHoHt/T/XA==}
     engines: {node: '>=16'}
 
   type-level-regexp@0.1.17:
@@ -15947,7 +15947,7 @@ snapshots:
       ts-pattern: 5.5.0
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.27.1
+      type-fest: 4.28.0
       typescript: 5.6.3
       yaml: 2.6.1
       yargs: 17.7.2
@@ -16229,7 +16229,7 @@ snapshots:
 
   dot-prop@9.0.0:
     dependencies:
-      type-fest: 4.27.1
+      type-fest: 4.28.0
 
   dotenv-expand@11.0.7:
     dependencies:
@@ -19332,7 +19332,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.26.2
       index-to-position: 0.1.2
-      type-fest: 4.27.1
+      type-fest: 4.28.0
 
   parse-path@7.0.0:
     dependencies:
@@ -20847,7 +20847,7 @@ snapshots:
 
   type-fest@0.8.1: {}
 
-  type-fest@4.27.1: {}
+  type-fest@4.28.0: {}
 
   type-level-regexp@0.1.17: {}
 
