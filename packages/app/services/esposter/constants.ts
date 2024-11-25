@@ -1,4 +1,4 @@
-import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "../../shared/models/azure/blob/AzureContainer";
 
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;

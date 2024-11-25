@@ -9,6 +9,7 @@ import { modules } from "./configuration/modules";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
+import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
 import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
@@ -25,6 +26,7 @@ export default defineNuxtConfig({
   pwa,
   runtimeConfig,
   security,
+  site,
   typescript,
   unocss,
   vite,
