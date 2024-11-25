@@ -145,7 +145,7 @@
     "trpc-nuxt": "^0.10.22",
     "vue-codemirror": "^6.1.1",
     "vue-phaserjs": "workspace:*",
-    "vue-router": "^4.4.5",
+    "vue-router": "^4.5.0",
     "vue-waypoint": "^4.3.0",
     "vue3-apexcharts": "^1.8.0",
     "vuetify": "^3.7.4",
