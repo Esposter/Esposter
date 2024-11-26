@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SideBarItem } from "@/models/user/SideBarItem";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useUserStore } from "@/store/user";
 
 definePageMeta({ middleware: "auth" });

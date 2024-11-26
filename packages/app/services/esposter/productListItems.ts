@@ -1,6 +1,6 @@
 import type { ListItem } from "@/models/shared/ListItem";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 
 export const productListItems: ListItem[] = [
   {

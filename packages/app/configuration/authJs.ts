@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { RoutePath } from "../models/router/RoutePath";
+import { RoutePath } from "../shared/models/router/RoutePath";
 
 export const authJs: NuxtConfig["authJs"] = {
   authenticatedRedirectTo: RoutePath.Index,

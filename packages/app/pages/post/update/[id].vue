@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { validate } from "@/services/router/validate";
 import { usePostStore } from "@/store/post";
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@/server/db/schema/posts";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 
 interface PostCommentsButtonProps {
   post: PostWithRelations;

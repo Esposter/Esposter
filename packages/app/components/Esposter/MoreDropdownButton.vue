@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ListItem } from "@/models/shared/ListItem";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { mergeProps } from "vue";
 
 const { session, signOut, status } = useAuth();

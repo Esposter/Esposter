@@ -1,7 +1,7 @@
 import type { TRPCRouter } from "@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { observable } from "@trpc/server/observable";
 import { toast } from "vuetify-sonner";

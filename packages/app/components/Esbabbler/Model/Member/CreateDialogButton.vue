@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 const { $client } = useNuxtApp();

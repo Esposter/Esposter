@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Room } from "@/server/db/schema/rooms";
 
-import { RoutePath } from "@/models/router/RoutePath";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomListItemProps {
