@@ -4,11 +4,12 @@ import { rooms } from "@/server/db/schema/rooms";
 import { sessions } from "@/server/db/schema/sessions";
 import { surveys } from "@/server/db/schema/surveys";
 import { pgTable } from "@/server/db/shared/pgTable";
-import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+import { USER_NAME_MAX_LENGTH } from "@/shared/services/user/constants";
 
 export const users = pgTable("User", {
   email: text("email").notNull().unique(),

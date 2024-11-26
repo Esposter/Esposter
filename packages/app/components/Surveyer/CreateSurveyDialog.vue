@@ -5,6 +5,7 @@ import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "@/services/shared/constants";
 import { formRules } from "@/services/vuetify/formRules";
+import { SURVEY_NAME_MAX_LENGTH } from "@/shared/services/surveyer/constants";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 interface CreateSurveyDialogProps {
@@ -48,7 +49,11 @@ const resetSurvey = () => {
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <v-text-field v-model="name" label="Name" :rules="[formRules.required]" />
+          <v-text-field
+            v-model="name"
+            label="Name"
+            :rules="[formRules.required, formRules.requireAtMostNCharacters(SURVEY_NAME_MAX_LENGTH)]"
+          />
         </v-col>
         <v-col cols="12">
           <SurveyerGroupCombobox v-model="group" />
