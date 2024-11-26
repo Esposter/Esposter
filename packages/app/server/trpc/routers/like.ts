@@ -3,9 +3,9 @@ import type { z } from "zod";
 
 import { posts } from "@/server/db/schema/posts";
 import { likes, selectLikeSchema } from "@/server/db/schema/users";
+import { ranking } from "@/server/services/post/ranking";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { ranking } from "@/services/post/ranking";
 import { and, eq } from "drizzle-orm";
 
 const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
