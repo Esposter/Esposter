@@ -6,7 +6,7 @@ import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Extension } from "@tiptap/vue-3";
 

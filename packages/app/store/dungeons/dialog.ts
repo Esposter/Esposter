@@ -6,8 +6,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {

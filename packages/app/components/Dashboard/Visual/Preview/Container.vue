@@ -2,7 +2,7 @@
 import type { Visual } from "@/models/dashboard/Visual";
 
 import { useVisualStore } from "@/store/dashboard/visual";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 
 interface VisualPreviewContainerProps {
   id: Visual["id"];

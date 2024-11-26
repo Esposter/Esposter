@@ -1,8 +1,8 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 export const useEmojiSubscribables = () => {
   const { $client } = useNuxtApp();

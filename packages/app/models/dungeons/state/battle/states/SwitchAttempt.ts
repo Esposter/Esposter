@@ -7,10 +7,10 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 let unsubscribes: (() => void)[] = [];
 

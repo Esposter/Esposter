@@ -2,7 +2,7 @@
 import { formRules } from "@/services/vuetify/formRules";
 import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;

@@ -6,9 +6,9 @@ import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useSceneStore } from "@/store/dungeons/scene";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { prettify } from "@/util/text/prettify";
 
 let unsubscribes: (() => void)[] = [];

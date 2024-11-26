@@ -10,7 +10,7 @@ import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";

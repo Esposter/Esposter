@@ -9,13 +9,13 @@ import { calculateLevelExperience } from "@/services/dungeons/monster/calculateL
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
-import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 
 export const GainExperience: State<StateName> = {
   name: StateName.GainExperience,
