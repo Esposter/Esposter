@@ -1,4 +1,4 @@
-import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+import type { ClickerItemProperties } from "@/shared/models/clicker/ClickerItemProperties";
 
 import { VARIABLE_IDENTIFIER } from "@/shared/services/clicker/constants";
 

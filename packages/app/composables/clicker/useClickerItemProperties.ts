@@ -1,4 +1,4 @@
-import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
+import type { ClickerItemProperties } from "@/shared/models/clicker/ClickerItemProperties";
 
 import { IconComponentMap } from "@/services/clicker/properties/IconComponentMap";
 import { NameMap } from "@/services/clicker/properties/NameMap";
