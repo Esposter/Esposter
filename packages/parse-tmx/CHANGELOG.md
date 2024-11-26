@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* make util folder consistent across the board ([19acc81](https://github.com/Esposter/Esposter/commit/19acc813362713828521a3acae5b8fe06793584a))
+
+
+
+
+
 ## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
 
 **Note:** Version bump only for package parse-tmx

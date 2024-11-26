@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* make util folder consistent across the board ([19acc81](https://github.com/Esposter/Esposter/commit/19acc813362713828521a3acae5b8fe06793584a))
+* use nuxt 4 + fix up imports ([71f3728](https://github.com/Esposter/Esposter/commit/71f37281d32f958278f6f3a589f789fdd53f3de8))
+
+
+### Features
+
+* Add nuxtjs seo module ([836ce14](https://github.com/Esposter/Esposter/commit/836ce1412021fabc04bbf6c02543c349d22fdf28))
+
+
+
+
+
 ## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
 
 **Note:** Version bump only for package esposter
