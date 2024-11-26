@@ -3,7 +3,7 @@ import type { Building } from "@/models/clicker/data/building/Building";
 import type { Except } from "type-fest";
 
 import { BuildingId } from "@/models/clicker/data/building/BuildingId";
-import { compileVariable } from "~/server/services/clicker/compiler/compileVariable";
+import { compileVariable } from "@/server/services/clicker/compiler/compileVariable";
 
 export const BuildingMap = {
   [BuildingId.Cursor]: {
