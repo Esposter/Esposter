@@ -1,8 +1,8 @@
-import type { Effect } from "@/models/clicker/data/effect/Effect";
+import type { Effect } from "@/shared/models/clicker/data/effect/Effect";
 import type { UnlockCondition } from "@/shared/models/clicker/data/unlockCondition/UnlockCondition";
 import type { UpgradeId } from "@/shared/models/clicker/data/upgrade/UpgradeId";
 
-import { effectSchema } from "@/models/clicker/data/effect/Effect";
+import { effectSchema } from "@/shared/models/clicker/data/effect/Effect";
 import { unlockConditionSchema } from "@/shared/models/clicker/data/unlockCondition/UnlockCondition";
 import { z } from "zod";
 
