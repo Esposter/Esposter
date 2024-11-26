@@ -1,10 +1,10 @@
 /* eslint-disable perfectionist/sort-objects */
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
 import type { Except } from "type-fest";
 
-import { EffectType } from "@/models/clicker/data/effect/EffectType";
-import { Target } from "@/models/clicker/data/Target";
-import { GrandmaUpgradeId } from "@/models/clicker/data/upgrade/GrandmaUpgradeId";
+import { EffectType } from "@/shared/models/clicker/data/effect/EffectType";
+import { Target } from "@/shared/models/clicker/data/Target";
+import { GrandmaUpgradeId } from "@/shared/models/clicker/data/upgrade/GrandmaUpgradeId";
 import { plural } from "pluralize";
 
 export const GrandmaUpgradeMap = {

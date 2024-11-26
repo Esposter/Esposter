@@ -1,7 +1,7 @@
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
 import type { UpgradeMap } from "@/server/assets/clicker/data/upgrades/UpgradeMap";
+import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
 
-import { Target } from "@/models/clicker/data/Target";
+import { Target } from "@/shared/models/clicker/data/Target";
 import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";

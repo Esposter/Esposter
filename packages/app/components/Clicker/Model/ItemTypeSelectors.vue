@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ClickerType } from "@/models/clicker/data/ClickerType";
 import { IconComponentMap } from "@/services/clicker/properties/IconComponentMap";
 import { NameMap } from "@/services/clicker/properties/NameMap";
+import { ClickerType } from "@/shared/models/clicker/data/ClickerType";
 import { useClickerStore } from "@/store/clicker";
 
 const clickerStore = useClickerStore();

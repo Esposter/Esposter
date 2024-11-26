@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
 
-import { ItemType } from "@/models/clicker/data/ItemType";
 import { Sound } from "@/models/clicker/Sound";
+import { ItemType } from "@/shared/models/clicker/data/ItemType";
 import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 

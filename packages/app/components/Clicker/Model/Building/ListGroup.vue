@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Building } from "@/models/clicker/data/building/Building";
+import type { Building } from "@/shared/models/clicker/data/building/Building";
 
 interface BuildingListGroupProps {
   buildings: Building[];

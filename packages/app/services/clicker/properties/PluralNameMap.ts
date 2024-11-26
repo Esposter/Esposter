@@ -1,4 +1,4 @@
-import { ClickerType } from "@/models/clicker/data/ClickerType";
+import { ClickerType } from "@/shared/models/clicker/data/ClickerType";
 
 export const PluralNameMap = {
   [ClickerType.Default]: "Piña Coladas",

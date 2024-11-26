@@ -1,6 +1,6 @@
-import { Game } from "@/models/clicker/data/Game";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { Game } from "@/shared/models/clicker/data/Game";
 
 export const useClickerStore = defineStore("clicker", () => {
   const { $client } = useNuxtApp();

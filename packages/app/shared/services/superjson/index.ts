@@ -1,4 +1,3 @@
-import { Game as ClickerGame } from "@/models/clicker/data/Game";
 import { Dashboard } from "@/models/dashboard/Dashboard";
 import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
 import { EmailEditor } from "@/models/emailEditor/EmailEditor";
@@ -6,6 +5,7 @@ import { TableEditor } from "@/models/tableEditor/TableEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { Game as ClickerGame } from "@/shared/models/clicker/data/Game";
 import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
 import baseSuperJSON from "superjson";
 

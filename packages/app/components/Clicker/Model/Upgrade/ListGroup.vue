@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
 
 interface UpgradeListGroupProps {
   isBought?: true;

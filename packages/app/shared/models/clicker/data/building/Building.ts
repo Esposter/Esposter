@@ -1,6 +1,6 @@
-import type { BuildingId } from "@/models/clicker/data/building/BuildingId";
+import type { BuildingId } from "@/shared/models/clicker/data/building/BuildingId";
 
-import { buildingIdSchema } from "@/models/clicker/data/building/BuildingId";
+import { buildingIdSchema } from "@/shared/models/clicker/data/building/BuildingId";
 import { z } from "zod";
 
 export interface Building {

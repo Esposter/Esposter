@@ -1,6 +1,6 @@
-import { BuildingId } from "@/models/clicker/data/building/BuildingId";
-import { ItemType } from "@/models/clicker/data/ItemType";
-import { UpgradeId } from "@/models/clicker/data/upgrade/UpgradeId";
+import { BuildingId } from "@/shared/models/clicker/data/building/BuildingId";
+import { ItemType } from "@/shared/models/clicker/data/ItemType";
+import { UpgradeId } from "@/shared/models/clicker/data/upgrade/UpgradeId";
 import { mergeObjectsStrict } from "@esposter/shared";
 import { z } from "zod";
 

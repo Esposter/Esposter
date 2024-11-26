@@ -1,5 +1,5 @@
-import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
-import type { Target } from "@/models/clicker/data/Target";
+import type { BuildingWithStats } from "@/shared/models/clicker/data/building/BuildingWithStats";
+import type { Target } from "@/shared/models/clicker/data/Target";
 
 import { FPS } from "@/services/clicker/constants";
 import { dayjs } from "@/shared/services/dayjs";

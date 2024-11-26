@@ -1,4 +1,3 @@
-import { Game, gameSchema } from "@/models/clicker/data/Game";
 import { BuildingMap } from "@/server/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "@/server/assets/clicker/data/upgrades/UpgradeMap";
 import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
@@ -7,6 +6,7 @@ import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@/server/util/azure/useContainerClient";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { Game, gameSchema } from "@/shared/models/clicker/data/Game";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { streamToText } from "@/util/text/streamToText";
 

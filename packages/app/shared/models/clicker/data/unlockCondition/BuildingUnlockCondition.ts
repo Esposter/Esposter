@@ -1,7 +1,7 @@
-import type { BuildingId } from "@/models/clicker/data/building/BuildingId";
+import type { BuildingId } from "@/shared/models/clicker/data/building/BuildingId";
 
-import { buildingIdSchema } from "@/models/clicker/data/building/BuildingId";
-import { ItemType } from "@/models/clicker/data/ItemType";
+import { buildingIdSchema } from "@/shared/models/clicker/data/building/BuildingId";
+import { ItemType } from "@/shared/models/clicker/data/ItemType";
 import { z } from "zod";
 
 export interface BuildingUnlockCondition {

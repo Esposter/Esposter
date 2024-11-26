@@ -1,9 +1,9 @@
-import { Game as ClickerGame } from "@/models/clicker/data/Game";
 import { Dashboard } from "@/models/dashboard/Dashboard";
 import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
 import { EmailEditor } from "@/models/emailEditor/EmailEditor";
 import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
+import { Game as ClickerGame } from "@/shared/models/clicker/data/Game";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 
 export default definePayloadPlugin(() => {

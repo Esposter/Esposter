@@ -1,6 +1,6 @@
-import type { Building } from "@/models/clicker/data/building/Building";
+import type { Building } from "@/shared/models/clicker/data/building/Building";
 
-import { buildingSchema } from "@/models/clicker/data/building/Building";
+import { buildingSchema } from "@/shared/models/clicker/data/building/Building";
 import { z } from "zod";
 
 export interface BuildingWithStats extends Building {

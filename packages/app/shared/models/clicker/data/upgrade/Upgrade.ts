@@ -1,9 +1,9 @@
 import type { Effect } from "@/models/clicker/data/effect/Effect";
-import type { UnlockCondition } from "@/models/clicker/data/unlockCondition/UnlockCondition";
-import type { UpgradeId } from "@/models/clicker/data/upgrade/UpgradeId";
+import type { UnlockCondition } from "@/shared/models/clicker/data/unlockCondition/UnlockCondition";
+import type { UpgradeId } from "@/shared/models/clicker/data/upgrade/UpgradeId";
 
 import { effectSchema } from "@/models/clicker/data/effect/Effect";
-import { unlockConditionSchema } from "@/models/clicker/data/unlockCondition/UnlockCondition";
+import { unlockConditionSchema } from "@/shared/models/clicker/data/unlockCondition/UnlockCondition";
 import { z } from "zod";
 
 export interface Upgrade<TId = UpgradeId> {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Target } from "@/models/clicker/data/Target";
+import { Target } from "@/shared/models/clicker/data/Target";
 import { dayjs } from "@/shared/services/dayjs";
 import { useClickerStore } from "@/store/clicker";
 import { filename } from "pathe/utils";

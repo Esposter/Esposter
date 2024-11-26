@@ -1,8 +1,8 @@
-import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
-import type { Upgrade } from "@/models/clicker/data/upgrade/Upgrade";
+import type { BuildingWithStats } from "@/shared/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
 
-import { Target } from "@/models/clicker/data/Target";
 import { applyUpgrades } from "@/services/clicker/upgrade/applyUpgrades";
+import { Target } from "@/shared/models/clicker/data/Target";
 
 export const applyMouseUpgrades = (
   basePower: number,

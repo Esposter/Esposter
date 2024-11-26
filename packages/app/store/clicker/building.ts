@@ -1,6 +1,6 @@
-import type { Building } from "@/models/clicker/data/building/Building";
-import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingWithStats";
 import type { BuildingMap } from "@/server/assets/clicker/data/BuildingMap";
+import type { Building } from "@/shared/models/clicker/data/building/Building";
+import type { BuildingWithStats } from "@/shared/models/clicker/data/building/BuildingWithStats";
 
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
