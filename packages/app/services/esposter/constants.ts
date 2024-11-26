@@ -1,8 +1,5 @@
-import { AzureContainer } from "../../shared/models/azure/blob/AzureContainer";
-
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
-export const LOGO_IMAGE_PATH = `/${AzureContainer.EsposterAssets}/${SITE_NAME}/logo.png`;
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
 
 export const APP_BAR_HEIGHT = 56;
