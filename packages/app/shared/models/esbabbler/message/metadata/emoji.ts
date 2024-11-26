@@ -2,7 +2,7 @@ import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntit
 
 import { selectUserSchema } from "@/server/db/schema/users";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/shared/models/esbabbler/message/metadata";
-import { getPropertyNames } from "@/shared/utils/getPropertyNames";
+import { getPropertyNames } from "@/shared/util/getPropertyNames";
 import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity {

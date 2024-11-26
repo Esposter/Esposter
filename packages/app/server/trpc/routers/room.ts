@@ -17,8 +17,9 @@ import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
+import { useTableClient } from "@/server/util/azure/useTableClient";
 import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/shared/models/esbabbler/room/invite";
-import { generateCode } from "@/shared/utils/random/generateCode";
+import { generateCode } from "@/shared/util/random/generateCode";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 

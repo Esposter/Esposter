@@ -9,6 +9,7 @@ import { authenticators } from "@/server/db/schema/authenticators";
 import { sessions } from "@/server/db/schema/sessions";
 import { users } from "@/server/db/schema/users";
 import { verificationTokens } from "@/server/db/schema/verificationTokens";
+import { useDb } from "@/server/util/useDb";
 import FacebookProvider from "@auth/core/providers/facebook";
 import GithubProvider from "@auth/core/providers/github";
 import GoogleProvider from "@auth/core/providers/google";

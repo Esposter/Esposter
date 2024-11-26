@@ -12,13 +12,14 @@ import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMe
 import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
+import { useTableClient } from "@/server/util/azure/useTableClient";
 import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
   messageEmojiMetadataSchema,
 } from "@/shared/models/esbabbler/message/metadata/emoji";
-import { now } from "@/shared/utils/time/now";
+import { now } from "@/shared/util/time/now";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

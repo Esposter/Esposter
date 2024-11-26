@@ -1,6 +1,6 @@
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useReadTableEditor = async () => {

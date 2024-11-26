@@ -3,7 +3,7 @@ import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOm
 import { Dashboard } from "@/models/dashboard/Dashboard";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useDashboardStore } from "@/store/dashboard";
 import deepEqual from "fast-deep-equal";
 

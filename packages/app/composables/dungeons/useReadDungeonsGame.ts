@@ -1,6 +1,6 @@
 import { Game } from "@/models/dungeons/data/Game";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useDungeonsStore } from "@/store/dungeons";
 
 export const useReadDungeonsGame = async () => {

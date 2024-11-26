@@ -18,6 +18,7 @@ import { getCursorWhereAzureTable } from "@/server/services/pagination/cursor/ge
 import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
+import { useTableClient } from "@/server/util/azure/useTableClient";
 import { MessageEntity, messageSchema } from "@/shared/models/esbabbler/message";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

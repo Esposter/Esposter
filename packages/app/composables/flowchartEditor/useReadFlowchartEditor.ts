@@ -1,6 +1,6 @@
 import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
 import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/constants";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
 export const useReadFlowchartEditor = async () => {

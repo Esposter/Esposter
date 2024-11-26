@@ -3,11 +3,11 @@ import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
 
 import { Compression } from "@/models/Compression";
 import { Encoding } from "@/models/Encoding";
-import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
-import { parseFlips } from "@/util/parseFlips";
-import { parseProperties } from "@/util/parseProperties";
-import { parseTileId } from "@/util/parseTileId";
-import { unpackTileBytes } from "@/util/unpackTileBytes";
+import { isTMXEmbeddedTilesetNode } from "@/utils/isTMXEmbeddedTilesetNode";
+import { parseFlips } from "@/utils/parseFlips";
+import { parseProperties } from "@/utils/parseProperties";
+import { parseTileId } from "@/utils/parseTileId";
+import { unpackTileBytes } from "@/utils/unpackTileBytes";
 import { exhaustiveGuard } from "@esposter/shared";
 import { gunzip, inflate } from "node:zlib";
 

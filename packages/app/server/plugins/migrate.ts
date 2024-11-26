@@ -1,4 +1,5 @@
 import { MIGRATIONS_FOLDER_PATH } from "@/server/db/constants";
+import { useDb } from "@/server/util/useDb";
 import { getSynchronizedFunction } from "@/util/getSynchronizedFunction";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 // @TODO: Make this async in nitro v3

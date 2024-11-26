@@ -1,10 +1,10 @@
 import type { TMXObjectNode } from "@/models/tmx/node/TMXObjectNode";
 import type { TMXObjectParsed } from "@/models/tmx/parsed/TMXObjectParsed";
 
-import { parseFlips } from "@/util/parseFlips";
-import { parseObjectShape } from "@/util/parseObjectShape";
-import { parseProperties } from "@/util/parseProperties";
-import { parseTileId } from "@/util/parseTileId";
+import { parseFlips } from "@/utils/parseFlips";
+import { parseObjectShape } from "@/utils/parseObjectShape";
+import { parseProperties } from "@/utils/parseProperties";
+import { parseTileId } from "@/utils/parseTileId";
 
 export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   const { $, polygon, properties, text } = node;

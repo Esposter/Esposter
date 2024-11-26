@@ -4,7 +4,7 @@ import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { generateClassString } from "@/scripts/tiled/propertyTypes/generateClassString";
 import { outputFile } from "@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@/scripts/util/generateEnumString";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { readFile } from "node:fs/promises";
 
 const filePath = "assets/dungeons/scene/world/index.tiled-project";

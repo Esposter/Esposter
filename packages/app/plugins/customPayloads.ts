@@ -4,7 +4,7 @@ import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
 import { EmailEditor } from "@/models/emailEditor/EmailEditor";
 import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
 import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
-import { jsonDateParse } from "@/shared/utils/time/jsonDateParse";
+import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 
 export default definePayloadPlugin(() => {
   definePayloadReducer("ClickerGame", (data) => data instanceof ClickerGame && data.toJSON());

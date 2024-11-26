@@ -1,8 +1,8 @@
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
 
-import { parseObject } from "@/util/parseObject";
-import { parseProperties } from "@/util/parseProperties";
+import { parseObject } from "@/utils/parseObject";
+import { parseProperties } from "@/utils/parseProperties";
 
 export const parseLayer = (node: TMXLayerNode): TMXLayerParsed => {
   const { $, image, object, properties } = node;
