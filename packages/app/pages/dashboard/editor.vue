@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VisualType } from "@/models/dashboard/VisualType";
 import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { uuidValidateV4 } from "@esposter/shared";
 

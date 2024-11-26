@@ -1,4 +1,4 @@
-import type { VisualType } from "@/models/dashboard/VisualType";
+import type { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import type { ApexOptions } from "apexcharts";
 
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";

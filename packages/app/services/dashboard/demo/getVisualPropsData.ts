@@ -1,4 +1,4 @@
-import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
+import type { ChartType } from "@/shared/models/dashboard/data/chart/type/ChartType";
 
 import { NotFoundError } from "@esposter/shared";
 

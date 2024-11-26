@@ -1,6 +1,6 @@
-import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
 import type { Item } from "@/models/tableEditor/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
+import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
 
 import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
 

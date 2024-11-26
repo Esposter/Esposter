@@ -1,10 +1,10 @@
-import type { Visual } from "@/models/dashboard/Visual";
+import type { Visual } from "@/shared/models/dashboard/data/Visual";
 
-import { Chart } from "@/models/dashboard/chart/Chart";
-import { VisualType } from "@/models/dashboard/VisualType";
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { Chart } from "@/shared/models/dashboard/data/chart/Chart";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import { useDashboardStore } from "@/store/dashboard";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {

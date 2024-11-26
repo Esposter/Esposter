@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VisualType } from "@/models/dashboard/VisualType";
+import type { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";

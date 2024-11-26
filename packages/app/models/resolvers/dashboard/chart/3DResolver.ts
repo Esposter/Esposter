@@ -1,8 +1,8 @@
-import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
+import type { BasicChartConfiguration } from "@/shared/models/dashboard/data/chart/BasicChartConfiguration";
 import type { ApexOptions } from "apexcharts";
 
-import { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { ChartType } from "@/shared/models/dashboard/data/chart/type/ChartType";
 import { defu } from "defu";
 
 export class ChartType3DResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {

@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
-import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
-import { VisualType } from "@/models/dashboard/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import { basicChartConfigurationSchema } from "@/shared/models/dashboard/data/chart/BasicChartConfiguration";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 export class RadialBarResolver extends AVisualTypeResolver {
   constructor() {

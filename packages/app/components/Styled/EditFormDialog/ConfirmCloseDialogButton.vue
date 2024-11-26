@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
+import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
 
 import { prettify } from "@/util/text/prettify";
 

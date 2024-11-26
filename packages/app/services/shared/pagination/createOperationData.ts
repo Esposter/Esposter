@@ -1,6 +1,6 @@
-import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
+import type { AItemEntity } from "@/shared/models/entity/AItemEntity";
 
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";

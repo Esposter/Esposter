@@ -1,5 +1,5 @@
-import type { Chart } from "@/models/dashboard/chart/Chart";
-import type { VisualType } from "@/models/dashboard/VisualType";
+import type { Chart } from "@/shared/models/dashboard/data/chart/Chart";
+import type { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import type { ApexOptions } from "apexcharts";
 
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";

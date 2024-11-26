@@ -1,4 +1,4 @@
-import { VisualType } from "@/models/dashboard/VisualType";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 export const VisualTypeDemoIconMap = {
   [VisualType.Area]: defineAsyncComponent(() => import("@/assets/dashboard/demo/icon/Area.vue")),

@@ -1,10 +1,10 @@
-import type { BasicChartConfiguration } from "@/models/dashboard/chart/BasicChartConfiguration";
+import type { BasicChartConfiguration } from "@/shared/models/dashboard/data/chart/BasicChartConfiguration";
 import type { ApexOptions } from "apexcharts";
 import type { z } from "zod";
 
-import { basicChartConfigurationSchema } from "@/models/dashboard/chart/BasicChartConfiguration";
-import { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { basicChartConfigurationSchema } from "@/shared/models/dashboard/data/chart/BasicChartConfiguration";
+import { ChartType } from "@/shared/models/dashboard/data/chart/type/ChartType";
 import { defu } from "defu";
 
 export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {

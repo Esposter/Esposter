@@ -1,7 +1,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { VisualType } from "@/models/dashboard/VisualType";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 

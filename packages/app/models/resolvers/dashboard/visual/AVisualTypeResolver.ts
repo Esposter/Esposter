@@ -1,7 +1,7 @@
 import type { ApexOptions } from "apexcharts";
 import type { z } from "zod";
 
-import { VisualType } from "@/models/dashboard/VisualType";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 export abstract class AVisualTypeResolver {
   type: VisualType;

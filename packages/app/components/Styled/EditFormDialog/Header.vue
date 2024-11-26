@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
+import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
 import type { VForm } from "vuetify/components";
 
 import ConfirmCloseDialogButton from "@/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue";

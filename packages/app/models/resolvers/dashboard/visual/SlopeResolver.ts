@@ -1,7 +1,7 @@
 import type { ApexOptions } from "apexcharts";
 
-import { VisualType } from "@/models/dashboard/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import { uncapitalize } from "@/util/text/uncapitalize";
 import defu from "defu";
 

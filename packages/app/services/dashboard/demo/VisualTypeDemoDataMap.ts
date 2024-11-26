@@ -1,5 +1,5 @@
-import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { ChartType } from "@/shared/models/dashboard/data/chart/type/ChartType";
 
 import { AreaPropsData } from "@/assets/dashboard/demo/data/AreaPropsData";
 import { BarPropsData } from "@/assets/dashboard/demo/data/BarPropsData";
@@ -19,8 +19,8 @@ import { RangeBarPropsData } from "@/assets/dashboard/demo/data/RangeBarPropsDat
 import { ScatterPropsData } from "@/assets/dashboard/demo/data/ScatterPropsData";
 import { SlopePropsData } from "@/assets/dashboard/demo/data/SlopePropsData";
 import { TreemapPropsDataMap } from "@/assets/dashboard/demo/data/treemap/TreemapPropsDataMap";
-import { VisualType } from "@/models/dashboard/VisualType";
 import { getVisualPropsData } from "@/services/dashboard/demo/getVisualPropsData";
+import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) => VisualPropsData> = {
   [VisualType.Area]: () => AreaPropsData,

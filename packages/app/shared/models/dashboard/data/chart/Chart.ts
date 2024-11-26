@@ -1,8 +1,8 @@
 import {
   BasicChartConfiguration,
   basicChartConfigurationSchema,
-} from "@/models/dashboard/chart/BasicChartConfiguration";
-import { ChartType, chartTypeSchema } from "@/models/dashboard/chart/type/ChartType";
+} from "@/shared/models/dashboard/data/chart/BasicChartConfiguration";
+import { ChartType, chartTypeSchema } from "@/shared/models/dashboard/data/chart/type/ChartType";
 import { z } from "zod";
 
 export class Chart {

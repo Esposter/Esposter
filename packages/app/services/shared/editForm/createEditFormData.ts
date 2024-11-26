@@ -1,4 +1,4 @@
-import type { AItemEntity } from "@/models/shared/entity/AItemEntity";
+import type { AItemEntity } from "@/shared/models/entity/AItemEntity";
 import type { VForm } from "vuetify/components";
 
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";

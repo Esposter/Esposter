@@ -1,7 +1,7 @@
-import type { Visual } from "@/models/dashboard/Visual";
+import type { Visual } from "@/shared/models/dashboard/data/Visual";
 import type { Except } from "type-fest";
 
-import { visualSchema } from "@/models/dashboard/Visual";
+import { visualSchema } from "@/shared/models/dashboard/data/Visual";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
 

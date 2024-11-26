@@ -1,5 +1,5 @@
-import type { VisualType } from "@/models/dashboard/VisualType";
 import type { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import type { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 import { ColumnResolver } from "@/models/resolvers/dashboard/visual/ColumnResolver";
 import { FunnelResolver } from "@/models/resolvers/dashboard/visual/FunnelResolver";

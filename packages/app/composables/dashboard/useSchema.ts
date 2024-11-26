@@ -1,5 +1,5 @@
-import type { ChartType } from "@/models/dashboard/chart/type/ChartType";
-import type { VisualType } from "@/models/dashboard/VisualType";
+import type { ChartType } from "@/shared/models/dashboard/data/chart/type/ChartType";
+import type { VisualType } from "@/shared/models/dashboard/data/VisualType";
 
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
 import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";

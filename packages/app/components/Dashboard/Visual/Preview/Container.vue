@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Visual } from "@/models/dashboard/Visual";
+import type { Visual } from "@/shared/models/dashboard/data/Visual";
 
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useVisualStore } from "@/store/dashboard/visual";

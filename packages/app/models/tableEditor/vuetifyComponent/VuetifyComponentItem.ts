@@ -1,6 +1,5 @@
-import type { ItemEntityType } from "@/models/shared/entity/ItemEntityType";
+import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
 
-import { createItemEntityTypeSchema } from "@/models/shared/entity/ItemEntityType";
 import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
 import {
   VuetifyComponentItemType,
@@ -10,6 +9,7 @@ import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
 } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import { createItemEntityTypeSchema } from "@/shared/models/entity/ItemEntityType";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
