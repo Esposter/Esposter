@@ -1,7 +1,7 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";

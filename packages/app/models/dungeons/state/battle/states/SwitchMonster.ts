@@ -1,8 +1,8 @@
 import type { State } from "@/models/dungeons/state/State";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { dayjs } from "@/services/dayjs";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { dayjs } from "@/shared/services/dayjs";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";

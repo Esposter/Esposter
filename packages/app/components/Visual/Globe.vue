@@ -5,7 +5,7 @@ import type { ArrayElement } from "type-fest/source/internal";
 import airportHistory from "@/assets/about/airport-history.json";
 import flightHistory from "@/assets/about/flight-history.json";
 import countries from "@/assets/about/globe-data-min.json";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 

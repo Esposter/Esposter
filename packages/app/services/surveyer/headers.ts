@@ -1,7 +1,7 @@
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import type { Survey } from "@/server/db/schema/surveys";
 
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 
 export const surveyerHeaders: DataTableHeader[] = [
   { key: "name", title: "Name" },

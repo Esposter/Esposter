@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";

@@ -2,7 +2,7 @@ import type { BuildingWithStats } from "@/models/clicker/data/building/BuildingW
 import type { Target } from "@/models/clicker/data/Target";
 
 import { FPS } from "@/services/clicker/constants";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { clearInterval, setInterval } from "worker-timers";

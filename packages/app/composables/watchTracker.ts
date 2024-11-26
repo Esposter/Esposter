@@ -1,6 +1,6 @@
 import type { WatchCallback, WatchOptions, WatchSource } from "vue";
 
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 
 export const watchTracker = <T>(
   source: WatchSource<T>,

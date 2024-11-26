@@ -4,7 +4,7 @@ import type { Expression } from "@/models/desmos/Expression";
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 
 interface VisualDesmosDisplayGraphProps {

@@ -1,6 +1,6 @@
 import type { PointsPopupProps } from "@/components/Clicker/Model/Points/Popup.vue";
 
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
 

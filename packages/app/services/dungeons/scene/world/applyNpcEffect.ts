@@ -3,9 +3,9 @@ import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
-import { dayjs } from "@/services/dayjs";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { dayjs } from "@/shared/services/dayjs";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { Cameras } from "phaser";

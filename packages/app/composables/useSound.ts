@@ -1,7 +1,7 @@
 import type { ComposableOptions } from "@/models/sound/ComposableOptions";
 import type { PlayOptions } from "@/models/sound/PlayOptions";
 
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { Howl } from "howler";
 
 const cache = new Map<string, Howl>();

@@ -1,4 +1,4 @@
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 
 export const SAVE_FILENAME = "save.json";
 export const CLICKER_LOCAL_STORAGE_KEY = "clicker-store";

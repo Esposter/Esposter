@@ -6,7 +6,7 @@ import type { TweenBuilderConfiguration } from "vue-phaserjs";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Math } from "phaser";
 import { Image, useTween } from "vue-phaserjs";

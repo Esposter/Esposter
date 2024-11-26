@@ -4,7 +4,7 @@ import type { Card } from "@/models/visual/Card";
 import type { Component } from "vue";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 
 interface VisualCardCarouselProps {
   cards: Card[];

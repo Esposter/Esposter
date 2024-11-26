@@ -1,5 +1,5 @@
 import { FPS } from "@/services/clicker/constants";
-import { dayjs } from "@/services/dayjs";
+import { dayjs } from "@/shared/services/dayjs";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
 import { clearInterval, setInterval } from "worker-timers";

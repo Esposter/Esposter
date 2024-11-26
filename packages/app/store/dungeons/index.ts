@@ -3,9 +3,9 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Game } from "@/models/dungeons/data/Game";
 import { Save } from "@/models/dungeons/data/Save";
-import { dayjs } from "@/services/dayjs";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { dayjs } from "@/shared/services/dayjs";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
