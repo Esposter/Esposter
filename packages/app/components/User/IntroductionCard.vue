@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@/server/db/schema/users";
 
-import { SITE_NAME } from "@/services/esposter/constants";
+import { SITE_NAME } from "@/shared/services/esposter/constants";
 
 interface IntroductionCardProps {
   user: User;

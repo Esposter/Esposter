@@ -1,0 +1,1 @@
+export const TABLE_EDITOR_ITEMS_MAX_LENGTH = 1000;

@@ -1,5 +1,5 @@
+import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
 import type { OffsetPaginationData } from "@/shared/models/pagination/offset/OffsetPaginationData";
-import type { ItemMetadata } from "~/shared/models/entity/ItemMetadata";
 
 export const getOffsetPaginationData = <TItem extends ItemMetadata>(
   items: TItem[],

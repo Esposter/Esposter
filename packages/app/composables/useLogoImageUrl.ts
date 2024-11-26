@@ -1,5 +1,5 @@
-import { SITE_NAME } from "@/services/esposter/constants";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { SITE_NAME } from "@/shared/services/esposter/constants";
 
 export const useLogoImageUrl = () => {
   const runtimeConfig = useRuntimeConfig();

@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "~/shared/models/entity/ItemMetadata";
+import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
 
 import { CursorPaginationData } from "@/shared/models/pagination/cursor/CursorPaginationData";
 // It's a little annoying, but because we can have initial reactive data,

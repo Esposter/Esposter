@@ -1,3 +1,4 @@
+import type { Item } from "@/shared/models/tableEditor/Item";
 import type { TableEditor } from "@/shared/models/tableEditor/TableEditor";
 import type {
   _ExtractActionsFromSetupStore,
@@ -5,7 +6,6 @@ import type {
   _ExtractStateFromSetupStore,
   Store,
 } from "pinia";
-import type { Item } from "~/shared/models/tableEditor/Item";
 
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";

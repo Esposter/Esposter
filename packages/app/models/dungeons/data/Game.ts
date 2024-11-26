@@ -3,8 +3,8 @@ import type { Except } from "type-fest";
 
 import { saveSchema } from "@/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/settings/Settings";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
-import { applyItemMetadataMixin, itemMetadataSchema } from "~/shared/models/entity/ItemMetadata";
 
 export type Game = typeof Game.prototype;
 

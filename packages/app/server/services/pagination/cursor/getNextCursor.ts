@@ -1,5 +1,5 @@
+import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
 import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
-import type { ItemMetadata } from "~/shared/models/entity/ItemMetadata";
 
 import { serialize } from "@/server/services/pagination/cursor/serialize";
 
