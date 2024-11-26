@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.1](https://github.com/Esposter/Esposter/compare/v1.29.0...v1.29.1) (2024-11-26)
+
+
+### Bug Fixes
+
+* rename to util to be same ([668e471](https://github.com/Esposter/Esposter/commit/668e471c08b2be127cef074952fc8c67bc8c4471))
+
+
+
+
+
 # [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
 
 **Note:** Version bump only for package @esposter/shared
