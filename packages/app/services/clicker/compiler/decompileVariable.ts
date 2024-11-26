@@ -1,8 +1,8 @@
 import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
 
+import { compileVariable } from "@/server/services/clicker/compiler/compileVariable";
 import { VARIABLE_REGEX } from "@/services/clicker/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { compileVariable } from "~/server/services/clicker/compiler/compileVariable";
 
 export const decompileVariable = (string: string, clickerItemProperties: ClickerItemProperties) => {
   const variableMatches = string.matchAll(VARIABLE_REGEX);
