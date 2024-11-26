@@ -1,6 +1,6 @@
-import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
-import { UpgradeMap } from "@/assets/clicker/data/upgrades/UpgradeMap";
 import { Game, gameSchema } from "@/models/clicker/data/Game";
+import { BuildingMap } from "@/server/assets/clicker/data/BuildingMap";
+import { UpgradeMap } from "@/server/assets/clicker/data/upgrades/UpgradeMap";
 import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";

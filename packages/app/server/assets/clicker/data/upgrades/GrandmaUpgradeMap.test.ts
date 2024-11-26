@@ -1,4 +1,4 @@
-import { GrandmaUpgradeMap } from "@/assets/clicker/data/upgrades/GrandmaUpgradeMap";
+import { GrandmaUpgradeMap } from "@/server/assets/clicker/data/upgrades/GrandmaUpgradeMap";
 import { describe, expect, test } from "vitest";
 
 describe("grandmaUpgradeMap", () => {

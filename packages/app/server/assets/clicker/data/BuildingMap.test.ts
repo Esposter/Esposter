@@ -1,4 +1,4 @@
-import { BuildingMap } from "@/assets/clicker/data/BuildingMap";
+import { BuildingMap } from "@/server/assets/clicker/data/BuildingMap";
 import { describe, expect, test } from "vitest";
 
 describe("buildingMap", () => {
