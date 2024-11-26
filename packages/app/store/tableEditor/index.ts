@@ -1,16 +1,16 @@
-import type { Item } from "@/models/tableEditor/Item";
-import type { TableEditor } from "@/models/tableEditor/TableEditor";
+import type { TableEditor } from "@/shared/models/tableEditor/TableEditor";
 import type {
   _ExtractActionsFromSetupStore,
   _ExtractGettersFromSetupStore,
   _ExtractStateFromSetupStore,
   Store,
 } from "pinia";
+import type { Item } from "~/shared/models/tableEditor/Item";
 
-import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { TableEditorConfiguration } from "@/shared/models/tableEditor/TableEditorConfiguration";
+import { TableEditorType } from "@/shared/models/tableEditor/TableEditorType";
 import { useItemStore } from "@/store/tableEditor/item";
 
 type TableEditorStoreState<TItem extends Item = Item> = ReturnType<typeof createEditFormData<TItem>> & {

@@ -2,7 +2,7 @@ import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntit
 
 import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { AzureEntity } from "@/shared/models/azure/AzureEntity";
-import { itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { getPropertyNames } from "@/shared/util/getPropertyNames";
 import { z } from "zod";
 

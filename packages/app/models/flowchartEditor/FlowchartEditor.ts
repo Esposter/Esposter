@@ -3,12 +3,12 @@ import type { Except } from "type-fest";
 
 import { edgeSchema } from "@/models/flowchartEditor/Edge";
 import { nodeSchema } from "@/models/flowchartEditor/Node";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
 import { z } from "zod";
+import { applyItemMetadataMixin, itemMetadataSchema } from "~/shared/models/entity/ItemMetadata";
 
 export type FlowchartEditor = typeof FlowchartEditor.prototype;
 
-export class BaseFlowchartEditor {
+class BaseFlowchartEditor {
   edges: Edge[] = [];
   nodes: Node[] = [];
 

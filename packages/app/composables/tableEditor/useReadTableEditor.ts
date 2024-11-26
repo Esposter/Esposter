@@ -1,5 +1,5 @@
-import { TableEditorConfiguration } from "@/models/tableEditor/TableEditorConfiguration";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { TableEditorConfiguration } from "@/shared/models/tableEditor/TableEditorConfiguration";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useTableEditorStore } from "@/store/tableEditor";
 

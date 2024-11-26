@@ -1,4 +1,4 @@
-import type { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import type { TableEditorType } from "@/shared/models/tableEditor/TableEditorType";
 
 import { prettify } from "@/util/text/prettify";
 

@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@/shared/models/itemMetadata";
+import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
 
 import { BasePaginationData } from "@/shared/models/pagination/BasePaginationData";
 

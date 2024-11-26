@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 
-import { NOTES_MAX_LENGTH } from "@/services/tableEditor/todoList/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { NOTES_MAX_LENGTH } from "~/shared/services/tableEditor/todoList/constants";
 
 const tableEditorStore = useTableEditorStore<TodoListItem>();
 const { editedItem } = storeToRefs(tableEditorStore);

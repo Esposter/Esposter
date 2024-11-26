@@ -1,8 +1,8 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
+import { TableEditorType } from "@/shared/models/tableEditor/TableEditorType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 
 const TableEditorTypeItemCategoryDefinitionMap = {

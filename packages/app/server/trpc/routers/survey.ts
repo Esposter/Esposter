@@ -1,7 +1,6 @@
 import type { Survey } from "@/server/db/schema/surveys";
 import type { z } from "zod";
 
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { selectSurveySchema, surveys } from "@/server/db/schema/surveys";
 import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { getOffsetPaginationData } from "@/server/services/pagination/offset/getOffsetPaginationData";
@@ -11,6 +10,7 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@/server/util/azure/useContainerClient";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { DatabaseEntityType } from "@/shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "@/shared/models/pagination/offset/OffsetPaginationParams";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { and, count, desc, eq } from "drizzle-orm";

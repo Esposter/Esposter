@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "@/shared/models/itemMetadata";
+import type { ItemMetadata } from "~/shared/models/entity/ItemMetadata";
 
 import { CursorPaginationData } from "@/shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import type { VuetifyComponentItem } from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import type { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategoryDefinition";

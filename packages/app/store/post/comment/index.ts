@@ -1,9 +1,9 @@
 import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
 
-import { DerivedDatabaseEntityType } from "@/models/shared/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
+import { DerivedDatabaseEntityType } from "@/shared/models/entity/DerivedDatabaseEntityType";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { uuidValidateV4 } from "@esposter/shared";
 

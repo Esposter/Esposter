@@ -1,9 +1,9 @@
 import type { Room } from "@/server/db/schema/rooms";
 import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
 
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
+import { DatabaseEntityType } from "@/shared/models/entity/DatabaseEntityType";
 import { useFuse } from "@vueuse/integrations/useFuse";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {

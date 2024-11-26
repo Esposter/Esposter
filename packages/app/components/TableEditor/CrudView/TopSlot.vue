@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalendarButton from "@/components/TableEditor/TodoList/CalendarButton.vue";
-import { TableEditorType } from "@/models/tableEditor/TableEditorType";
+import { TableEditorType } from "@/shared/models/tableEditor/TableEditorType";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();

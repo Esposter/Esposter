@@ -1,8 +1,8 @@
-import type { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
 import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
+import type { ATableEditorItemEntity } from "@/shared/models/tableEditor/ATableEditorItemEntity";
 
-import { aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
 import { createItemEntityTypeSchema } from "@/shared/models/entity/ItemEntityType";
+import { aTableEditorItemEntitySchema } from "@/shared/models/tableEditor/ATableEditorItemEntity";
 import { z } from "zod";
 
 // This is not directly used when creating new classes

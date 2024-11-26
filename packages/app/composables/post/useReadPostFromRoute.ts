@@ -1,5 +1,5 @@
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { DatabaseEntityType } from "@/shared/models/entity/DatabaseEntityType";
 
 export const useReadPostFromRoute = async () => {
   const { $client } = useNuxtApp();

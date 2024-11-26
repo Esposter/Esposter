@@ -6,7 +6,7 @@ import { buildingWithStatsSchema } from "@/shared/models/clicker/data/building/B
 import { ClickerType, clickerTypeSchema } from "@/shared/models/clicker/data/ClickerType";
 import { createUpgradeSchema } from "@/shared/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/shared/models/clicker/data/upgrade/UpgradeId";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
 export type Game = typeof Game.prototype;

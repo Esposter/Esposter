@@ -2,7 +2,7 @@ import type { Visual } from "@/shared/models/dashboard/data/Visual";
 import type { Except } from "type-fest";
 
 import { visualSchema } from "@/shared/models/dashboard/data/Visual";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
 export type Dashboard = typeof Dashboard.prototype;

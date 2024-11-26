@@ -1,8 +1,8 @@
-import type { Item } from "@/models/tableEditor/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
+import type { Item } from "~/shared/models/tableEditor/Item";
 
-import { ATableEditorItemEntity } from "@/models/tableEditor/ATableEditorItemEntity";
+import { ATableEditorItemEntity } from "@/shared/models/tableEditor/ATableEditorItemEntity";
 
 class NullItem extends ATableEditorItemEntity implements ItemEntityType<string> {
   type = "None";

@@ -4,7 +4,7 @@ import type { FileEntity } from "@/shared/models/azure/file";
 import { selectUserSchema } from "@/server/db/schema/users";
 import { AzureEntity } from "@/shared/models/azure/AzureEntity";
 import { fileSchema } from "@/shared/models/azure/file";
-import { itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
 import { z } from "zod";
 

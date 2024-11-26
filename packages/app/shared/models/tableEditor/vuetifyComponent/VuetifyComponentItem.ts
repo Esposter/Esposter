@@ -1,15 +1,15 @@
 import type { ItemEntityType } from "@/shared/models/entity/ItemEntityType";
 
-import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/models/tableEditor/ATableEditorItemEntity";
+import { createItemEntityTypeSchema } from "@/shared/models/entity/ItemEntityType";
+import { ATableEditorItemEntity, aTableEditorItemEntitySchema } from "@/shared/models/tableEditor/ATableEditorItemEntity";
 import {
   VuetifyComponentItemType,
   vuetifyComponentItemTypeSchema,
-} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
+} from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
-} from "@/models/tableEditor/vuetifyComponent/VuetifyComponentType";
-import { createItemEntityTypeSchema } from "@/shared/models/entity/ItemEntityType";
+} from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentType";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {

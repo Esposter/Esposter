@@ -2,9 +2,9 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { UpdateUserInput } from "@/server/trpc/routers/user";
 
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { DatabaseEntityType } from "@/shared/models/entity/DatabaseEntityType";
 import { useUserStore } from "@/store/user";
 import deepEqual from "fast-deep-equal";
 

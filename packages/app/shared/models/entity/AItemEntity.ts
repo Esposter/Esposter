@@ -1,4 +1,4 @@
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/itemMetadata";
+import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
 export type AItemEntity = typeof AItemEntity.prototype;

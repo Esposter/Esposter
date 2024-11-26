@@ -1,7 +1,7 @@
-import type { ItemMetadata } from "@/shared/models/itemMetadata";
 import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 import type { TableConfig } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
+import type { ItemMetadata } from "~/shared/models/entity/ItemMetadata";
 
 import { parse } from "@/server/services/pagination/cursor/parse";
 import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";
