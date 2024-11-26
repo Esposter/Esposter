@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { dayjs } from "@/shared/services/dayjs";
 import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import { dayjs } from "@/shared/services/dayjs";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";

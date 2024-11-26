@@ -2,8 +2,8 @@
 import type { Post } from "@/server/db/schema/posts";
 import type { SubmitEventPromise } from "vuetify";
 
-import { POST_TITLE_MAX_LENGTH } from "@/shared/services/post/constants";
 import { formRules } from "@/services/vuetify/formRules";
+import { POST_TITLE_MAX_LENGTH } from "@/shared/services/post/constants";
 
 export interface PostUpsertFormProps {
   initialValues?: Pick<Post, "description" | "title">;
