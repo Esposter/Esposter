@@ -3,8 +3,8 @@ import type { TRPCLink } from "@trpc/client";
 
 import { errorLink } from "@/services/trpc/errorLink";
 import { SuperJSON } from "@/shared/services/superjson";
-import { IS_DEVELOPMENT } from "@/util/environment/constants";
-import { getIsServer } from "@/util/environment/getIsServer";
+import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
+import { getIsServer } from "@/shared/util/environment/getIsServer";
 import { createWSClient, loggerLink, splitLink, wsLink } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 

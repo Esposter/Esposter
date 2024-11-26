@@ -11,7 +11,7 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
-import { IS_DEVELOPMENT } from "@/util/environment/constants";
+import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
 import { z } from "zod";
 
 export class Player {

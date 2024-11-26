@@ -4,7 +4,7 @@ import { SoundSetting, soundSettingSchema } from "@/models/dungeons/data/setting
 import { TextSpeedSetting, textSpeedSettingSchema } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { ThemeModeSetting, themeModeSettingSchema } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { IS_DEVELOPMENT } from "@/util/environment/constants";
+import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
 import { z } from "zod";
 
 const InitialSettings = {

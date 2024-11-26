@@ -7,7 +7,7 @@ import * as sessions from "@/server/db/schema/sessions";
 import * as surveys from "@/server/db/schema/surveys";
 import * as users from "@/server/db/schema/users";
 import * as verificationTokens from "@/server/db/schema/verificationTokens";
-import { IS_PRODUCTION } from "@/util/environment/constants";
+import { IS_PRODUCTION } from "@/shared/util/environment/constants";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 

@@ -9,7 +9,7 @@ import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
-import { IS_DEVELOPMENT } from "@/util/environment/constants";
+import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 

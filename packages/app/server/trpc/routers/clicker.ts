@@ -7,8 +7,8 @@ import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@/server/util/azure/useContainerClient";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
 import { Game, gameSchema } from "@/shared/models/clicker/data/Game";
+import { streamToText } from "@/shared/util/text/streamToText";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
-import { streamToText } from "@/util/text/streamToText";
 
 export const clickerRouter = router({
   readBuildingMap: publicProcedure.query(() => BuildingMap),
