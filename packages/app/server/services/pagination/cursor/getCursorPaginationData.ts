@@ -1,5 +1,5 @@
-import type { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
 import type { ItemMetadata } from "@/shared/models/itemMetadata";
+import type { CursorPaginationData } from "@/shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 
 import { getNextCursor } from "@/server/services/pagination/cursor/getNextCursor";

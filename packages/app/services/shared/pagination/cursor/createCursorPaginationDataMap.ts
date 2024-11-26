@@ -1,6 +1,6 @@
 import type { ItemMetadata } from "@/shared/models/itemMetadata";
 
-import { CursorPaginationData } from "@/models/shared/pagination/cursor/CursorPaginationData";
+import { CursorPaginationData } from "~/shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
 export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
