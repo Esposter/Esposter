@@ -4,8 +4,8 @@ import type { ContainerEventEmitsOptions } from "@/models/emit/ContainerEventEmi
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
-import { ContainerSetterMap } from "@/utils/setterMap/ContainerSetterMap";
+import { InjectionKeyMap } from "@/util/InjectionKeyMap";
+import { ContainerSetterMap } from "@/util/setterMap/ContainerSetterMap";
 
 interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 

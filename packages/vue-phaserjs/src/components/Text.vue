@@ -4,7 +4,7 @@ import type { TextProps } from "@/models/text/TextProps";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { useTextStore } from "@/store/text";
-import { TextSetterMap } from "@/utils/setterMap/TextSetterMap";
+import { TextSetterMap } from "@/util/setterMap/TextSetterMap";
 
 interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 

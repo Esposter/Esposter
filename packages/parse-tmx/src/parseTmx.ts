@@ -7,8 +7,8 @@ import type { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
 
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
-import { parseNode } from "@/utils/parseNode";
-import { parseTileset } from "@/utils/parseTileset";
+import { parseNode } from "@/util/parseNode";
+import { parseTileset } from "@/util/parseTileset";
 import { exhaustiveGuard, parseXmlString } from "@esposter/shared";
 // We will try and match phaser's transform when exporting tmx => json tilemaps
 // but also support extra functionality like using external tilesets

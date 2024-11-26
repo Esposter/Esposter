@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { RectangleSetterMap } from "@/utils/setterMap/RectangleSetterMap";
+import { RectangleSetterMap } from "@/util/setterMap/RectangleSetterMap";
 
 interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
