@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RoutePath } from "@/shared/models/router/RoutePath";
 import { surveyerHeaders } from "@/services/surveyer/headers";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();

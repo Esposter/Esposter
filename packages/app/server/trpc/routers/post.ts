@@ -2,7 +2,6 @@ import type { Post, PostWithRelations } from "@/server/db/schema/posts";
 
 import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { PostRelations, posts, selectPostSchema } from "@/server/db/schema/posts";
 import { getCursorPaginationData } from "@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@/server/services/pagination/cursor/getCursorWhere";
@@ -11,6 +10,7 @@ import { publicProcedure, router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
 import { ranking } from "@/services/post/ranking";
+import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";
 import { NotFoundError } from "@esposter/shared";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";

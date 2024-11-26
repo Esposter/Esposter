@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Visual } from "@/models/dashboard/Visual";
 
-import { useVisualStore } from "@/store/dashboard/visual";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
+import { useVisualStore } from "@/store/dashboard/visual";
 
 interface VisualPreviewContainerProps {
   id: Visual["id"];

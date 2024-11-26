@@ -1,5 +1,5 @@
 import type { BasePaginationParams } from "@/models/shared/pagination/BasePaginationParams";
-import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
+import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 
 import { createBasePaginationParamsSchema } from "@/models/shared/pagination/BasePaginationParams";
 import { z } from "zod";

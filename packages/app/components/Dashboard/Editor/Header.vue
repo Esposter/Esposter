@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RoutePath } from "@/shared/models/router/RoutePath";
 import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 

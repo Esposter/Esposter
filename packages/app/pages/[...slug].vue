@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RoutePath } from "@/shared/models/router/RoutePath";
 import { NOT_FOUND_BACKGROUND_PATH } from "@/services/esposter/constants";
+import { RoutePath } from "@/shared/models/router/RoutePath";
 import { gsap } from "gsap";
 
 const event = useRequestEvent();

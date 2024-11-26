@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { formRules } from "@/services/vuetify/formRules";
 import { ROOM_NAME_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
-import { useRoomStore } from "@/store/esbabbler/room";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
+import { useRoomStore } from "@/store/esbabbler/room";
 
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;

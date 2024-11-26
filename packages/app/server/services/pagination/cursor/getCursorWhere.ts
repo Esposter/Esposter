@@ -1,10 +1,10 @@
-import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
 import type { ItemMetadata } from "@/shared/models/itemMetadata";
+import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 import type { TableConfig } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
-import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
 import { parse } from "@/server/services/pagination/cursor/parse";
+import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";
 import { and, gt, lt } from "drizzle-orm";
 
 export const getCursorWhere = <TTable extends TableConfig, TItem extends ItemMetadata>(

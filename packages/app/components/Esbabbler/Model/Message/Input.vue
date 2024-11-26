@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { MESSAGE_MAX_LENGTH } from "@/shared/services/esbabbler/constants";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
-import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { Extension } from "@tiptap/vue-3";
 
 const messageInputStore = useMessageInputStore();

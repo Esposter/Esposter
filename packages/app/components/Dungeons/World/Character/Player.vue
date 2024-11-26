@@ -5,12 +5,12 @@ import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKe
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
+import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
