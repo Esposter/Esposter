@@ -1,11 +1,11 @@
 import type { Tilemaps } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import { TileProperty } from "@/models/dungeons/tilemap/TileProperty";
 import { getPositionId } from "@/services/dungeons/direction/getPositionId";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { CreateTilemapMetadataMap } from "@/services/dungeons/tilemap/CreateTilemapMetadataMap";
+import { ObjectgroupName } from "@/shared/generated/tiled/layers/ObjectgroupName";
 import { Chest } from "@/shared/models/dungeons/data/world/Chest";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 

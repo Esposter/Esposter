@@ -1,6 +1,6 @@
-import type { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
-import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import type { BaseTilesetKey } from "@/shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
+import type { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { Tilemaps } from "phaser";
 
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";

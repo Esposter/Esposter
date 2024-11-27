@@ -1,8 +1,8 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { Except } from "type-fest";
 
-import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { ItemId } from "@/shared/generated/tiled/propertyTypes/enum/ItemId";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 
 export const ItemMap = {

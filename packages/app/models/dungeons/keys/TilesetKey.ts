@@ -1,4 +1,4 @@
-import { BaseTilesetKey } from "@/generated/tiled/propertyTypes/enum/BaseTilesetKey";
+import { BaseTilesetKey } from "@/shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { mergeObjectsStrict } from "@esposter/shared";
 
 export const ExtraTilesetKey = {

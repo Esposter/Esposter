@@ -1,4 +1,4 @@
-import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
+import type { NpcId } from "@/shared/generated/tiled/propertyTypes/enum/NpcId";
 
 import { npcs } from "@/assets/dungeons/data/npcs";
 import { NotFoundError } from "@esposter/shared";

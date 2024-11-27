@@ -1,7 +1,7 @@
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 
-import { SignObjectProperty } from "@/generated/tiled/propertyTypes/class/SignObjectProperty";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { SignObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/SignObjectProperty";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { Direction } from "grid-engine";
 

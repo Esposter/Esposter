@@ -1,12 +1,12 @@
-import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
+import type { ItemId } from "@/shared/generated/tiled/propertyTypes/enum/ItemId";
 
-import { ChestObjectProperty } from "@/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionId } from "@/services/dungeons/direction/getPositionId";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { ChestObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/ChestObjectProperty";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";

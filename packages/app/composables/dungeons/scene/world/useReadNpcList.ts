@@ -1,16 +1,16 @@
-import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
+import type { NpcId } from "@/shared/generated/tiled/propertyTypes/enum/NpcId";
 import type { Position } from "grid-engine";
 
-import { NpcObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcObjectProperty";
-import { NpcPathObjectProperty } from "@/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
-import { ObjectType } from "@/generated/tiled/propertyTypes/class/ObjectType";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
+import { NpcObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
+import { NpcPathObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
+import { ObjectType } from "@/shared/generated/tiled/propertyTypes/class/ObjectType";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";

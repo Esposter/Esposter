@@ -34,11 +34,19 @@
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "gen-env": "gen-env-types .env -o env.d.ts -e .",
-    "tiled:gen": "tsx scripts/tiled/generate.ts"
+    "tiled:gen": "pnpm cross-os tiled:gen",
+    "cross-os": "node ../../scripts/cross-os.js",
+    "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
     "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
+  },
+  "cross-os": {
+    "tiled:gen": {
+      "win32": "pnpm pwsh scripts/tiled/generate.ps1",
+      "linux": "./scripts/tiled/generate.sh"
+    }
   },
   "dependencies": {
     "@auth/core": "0.21.0",

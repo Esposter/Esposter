@@ -1,13 +1,13 @@
-import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
+import type { Area } from "@/shared/generated/tiled/propertyTypes/enum/Area";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
-import { EncounterObjectProperty } from "@/generated/tiled/propertyTypes/class/EncounterObjectProperty";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { Monster } from "@/models/dungeons/monster/Monster";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
+import { LayerName } from "@/shared/generated/tiled/layers/Home/LayerName";
+import { EncounterObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";

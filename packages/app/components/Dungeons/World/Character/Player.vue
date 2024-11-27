@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { LayerName } from "@/generated/tiled/layers/Home/LayerName";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
+import { LayerName } from "@/shared/generated/tiled/layers/Home/LayerName";
 import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";

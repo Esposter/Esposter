@@ -1,5 +1,6 @@
-import { spawn } from "node:child_process";
-import packageJson from "../package.json" with { type: "json" };
+import { exec, spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import path from "node:path";
 
 const minArgv = 3;
 const property = "cross-os";
@@ -10,6 +11,12 @@ if (process.argv.length < minArgv)
 const script = process.argv[2];
 const args = process.argv.slice(3, process.argv.length);
 const { platform } = process;
+const require = createRequire(import.meta.url);
+const packageJson = await new Promise((resolve) =>
+  exec("pnpm prefix").stdout.on("data", (buffer) => {
+    resolve(require(path.resolve(buffer.toString("utf8").trim(), "package.json")));
+  }),
+);
 const command = packageJson[property][script][platform];
 if (!command) throw new Error(`script: "${script}" not found for the current platform: ${platform}`);
 

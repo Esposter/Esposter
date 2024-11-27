@@ -1,4 +1,4 @@
-import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
+import { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
 
 export type WorldForegroundKey = `World${TilemapKey}Foreground`;
 type WorldForegroundKeyMap = {

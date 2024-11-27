@@ -1,5 +1,5 @@
-import type { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import type { ItemEffect } from "@/models/dungeons/item/ItemEffect";
+import type { ItemId } from "@/shared/generated/tiled/propertyTypes/enum/ItemId";
 
 import { itemEffectSchema } from "@/models/dungeons/item/ItemEffect";
 import { itemIdSchema } from "@/models/dungeons/item/ItemId";

@@ -1,4 +1,4 @@
-import type { Area } from "@/generated/tiled/propertyTypes/enum/Area";
+import type { Area } from "@/shared/generated/tiled/propertyTypes/enum/Area";
 
 import { encounterAreas } from "@/assets/dungeons/data/encounterAreas";
 import { NotFoundError } from "@esposter/shared";

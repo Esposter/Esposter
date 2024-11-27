@@ -4,11 +4,11 @@ import type { InterfaceProperty } from "@/scripts/models/InterfaceProperty";
 
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { DIRECTORY } from "@/scripts/tiled/propertyTypes/constants";
-import { ROOT_DIRECTORY } from "@/scripts/tiled/util/constants";
+import { TILED_ROOT_DIRECTORY } from "@/scripts/tiled/util/constants";
 import { generateImportTypeLinesString } from "@/scripts/util/generateImportTypeLinesString";
 import { generateInterfaceString } from "@/scripts/util/generateInterfaceString";
 
-const ROOT_DIRECTORY_IMPORT_PATH = `@/${ROOT_DIRECTORY}/${DIRECTORY}`;
+const TILED_ROOT_DIRECTORY_IMPORT_PATH = `@/${TILED_ROOT_DIRECTORY}/${DIRECTORY}`;
 
 export const generateClassString = (name: string, properties: TiledObjectProperty[]) => {
   const importLines: ImportTypeLine[] = [];
@@ -21,7 +21,7 @@ export const generateClassString = (name: string, properties: TiledObjectPropert
       const { propertyType } = property;
       importLines.push({
         properties: [propertyType],
-        src: `${ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.class}/${propertyType}`,
+        src: `${TILED_ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.class}/${propertyType}`,
       });
       interfaceProperties.push({ name, type: propertyType });
       continue;
@@ -31,7 +31,7 @@ export const generateClassString = (name: string, properties: TiledObjectPropert
       const { propertyType } = property;
       importLines.push({
         properties: [propertyType],
-        src: `${ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.enum}/${propertyType}`,
+        src: `${TILED_ROOT_DIRECTORY_IMPORT_PATH}/${PropertyType.enum}/${propertyType}`,
       });
       interfaceProperties.push({ name, type: propertyType });
       continue;

@@ -1,12 +1,12 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { Direction, Position } from "grid-engine";
 
-import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
-import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
+import { ItemId } from "@/shared/generated/tiled/propertyTypes/enum/ItemId";
+import { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { directionSchema } from "@/shared/models/dungeons/data/player/Direction";
 import { inventorySchema } from "@/shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "@/shared/models/dungeons/data/player/Position";

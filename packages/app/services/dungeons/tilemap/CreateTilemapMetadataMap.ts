@@ -1,10 +1,10 @@
 import type { TilemapMetadataParams } from "@/models/dungeons/tilemap/TilemapMetadataParams";
 
-import { LayerName as HomeBuilding1LayerName } from "@/generated/tiled/layers/Home/HomeBuilding1/LayerName";
-import { LayerName as HomeBuilding2LayerName } from "@/generated/tiled/layers/Home/HomeBuilding2/LayerName";
-import { LayerName as HomeLayerName } from "@/generated/tiled/layers/Home/LayerName";
-import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import { createTilemapMetadata } from "@/services/dungeons/tilemap/createTilemapMetadata";
+import { LayerName as HomeBuilding1LayerName } from "@/shared/generated/tiled/layers/Home/HomeBuilding1/LayerName";
+import { LayerName as HomeBuilding2LayerName } from "@/shared/generated/tiled/layers/Home/HomeBuilding2/LayerName";
+import { LayerName as HomeLayerName } from "@/shared/generated/tiled/layers/Home/LayerName";
+import { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
 
 export const CreateTilemapMetadataMap = {
   [TilemapKey.Home]: (...args) => {

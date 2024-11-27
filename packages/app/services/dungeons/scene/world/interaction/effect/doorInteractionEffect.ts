@@ -1,14 +1,14 @@
-import type { TeleportTarget } from "@/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
+import type { TeleportTarget } from "@/shared/generated/tiled/propertyTypes/class/TeleportTarget";
 
-import { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
-import { TeleportObjectProperty } from "@/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { phaserEventEmitter } from "@/services/phaser/events";
+import { ObjectgroupName } from "@/shared/generated/tiled/layers/ObjectgroupName";
+import { TeleportObjectProperty } from "@/shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { NotFoundError } from "@esposter/shared";

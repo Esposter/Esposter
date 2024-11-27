@@ -1,5 +1,5 @@
-import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { LayerData } from "@/scripts/tiled/models/LayerData";
+import type { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
 
 import { DIRECTORY } from "@/scripts/tiled/layers/constants";
 import { generateLayerNames } from "@/scripts/tiled/layers/generateLayerNames";

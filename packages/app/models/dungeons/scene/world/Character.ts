@@ -1,6 +1,6 @@
-import type { NpcId } from "@/generated/tiled/propertyTypes/enum/NpcId";
 import type { Asset } from "@/models/dungeons/Asset";
 import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import type { NpcId } from "@/shared/generated/tiled/propertyTypes/enum/NpcId";
 import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
 import type { Direction, Position, WalkingAnimationMapping } from "grid-engine";
 
