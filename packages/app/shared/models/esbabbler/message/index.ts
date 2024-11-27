@@ -1,7 +1,7 @@
 import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "@/shared/models/azure/file";
 
-import { selectUserSchema } from "@/server/db/schema/users";
+import { selectUserSchema } from "@/shared/db/schema/users";
 import { AzureEntity } from "@/shared/models/azure/AzureEntity";
 import { fileSchema } from "@/shared/models/azure/file";
 import { itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";

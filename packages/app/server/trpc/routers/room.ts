@@ -1,8 +1,6 @@
-import type { Room } from "@/server/db/schema/rooms";
-import type { UserToRoom } from "@/server/db/schema/users";
+import type { Room } from "@/shared/db/schema/rooms";
+import type { UserToRoom } from "@/shared/db/schema/users";
 
-import { rooms, selectRoomSchema } from "@/server/db/schema/rooms";
-import { selectUserSchema, users, usersToRooms } from "@/server/db/schema/users";
 import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@/server/services/azure/table/constants";
 import { createEntity } from "@/server/services/azure/table/createEntity";
@@ -16,6 +14,8 @@ import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanit
 import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { useTableClient } from "@/server/util/azure/useTableClient";
+import { rooms, selectRoomSchema } from "@/shared/db/schema/rooms";
+import { selectUserSchema, users, usersToRooms } from "@/shared/db/schema/users";
 import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/shared/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";

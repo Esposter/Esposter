@@ -1,5 +1,5 @@
-import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@/server/trpc/routers/post";
+import type { PostWithRelations } from "@/shared/db/schema/posts";
 
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";

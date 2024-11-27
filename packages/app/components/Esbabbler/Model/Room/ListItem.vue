@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@/server/db/schema/rooms";
+import type { Room } from "@/shared/db/schema/rooms";
 
 import { RoutePath } from "@/shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/esbabbler/room";

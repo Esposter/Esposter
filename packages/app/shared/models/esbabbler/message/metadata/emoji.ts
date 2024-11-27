@@ -1,6 +1,6 @@
 import type { CompositeKeyEntity } from "@/shared/models/azure/CompositeKeyEntity";
 
-import { selectUserSchema } from "@/server/db/schema/users";
+import { selectUserSchema } from "@/shared/db/schema/users";
 import { MessageMetadataEntity, messageMetadataSchema } from "@/shared/models/esbabbler/message/metadata";
 import { getPropertyNames } from "@/shared/util/getPropertyNames";
 import { z } from "zod";

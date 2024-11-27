@@ -1,7 +1,7 @@
-import type { Like, User } from "@/server/db/schema/users";
+import type { Like, User } from "@/shared/db/schema/users";
 
-import { likes, users } from "@/server/db/schema/users";
-import { pgTable } from "@/server/db/shared/pgTable";
+import { pgTable } from "@/shared/db/pgTable";
+import { likes, users } from "@/shared/db/schema/users";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "@/shared/services/post/constants";
 import { relations } from "drizzle-orm";
 import { doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";

@@ -1,4 +1,4 @@
-import type { Survey } from "@/server/db/schema/surveys";
+import type { Survey } from "@/shared/db/schema/surveys";
 import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 
 import { useSurveyStore } from "@/store/surveyer/survey";

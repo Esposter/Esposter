@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { Survey } from "@/server/db/schema/surveys";
+import type { Survey } from "@/shared/db/schema/surveys";
 import type { VCard } from "vuetify/components";
 
 import { formRules } from "@/services/vuetify/formRules";

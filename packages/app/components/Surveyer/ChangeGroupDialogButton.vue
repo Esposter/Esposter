@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@/server/db/schema/surveys";
+import type { Survey } from "@/shared/db/schema/surveys";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";

@@ -1,5 +1,5 @@
-import type { Room } from "@/server/db/schema/rooms";
 import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@/server/trpc/routers/room";
+import type { Room } from "@/shared/db/schema/rooms";
 
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";

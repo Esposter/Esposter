@@ -1,5 +1,5 @@
-import { users } from "@/server/db/schema/users";
-import { pgTable } from "@/server/db/shared/pgTable";
+import { pgTable } from "@/shared/db/pgTable";
+import { users } from "@/shared/db/schema/users";
 import { SURVEY_NAME_MAX_LENGTH } from "@/shared/services/surveyer/constants";
 import { relations } from "drizzle-orm";
 import { integer, text, timestamp, uuid } from "drizzle-orm/pg-core";

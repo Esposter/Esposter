@@ -1,5 +1,5 @@
-import type { User } from "@/server/db/schema/users";
 import type { UpdateUserInput } from "@/server/trpc/routers/user";
+import type { User } from "@/shared/db/schema/users";
 
 export const useUserStore = defineStore("user", () => {
   const { $client } = useNuxtApp();

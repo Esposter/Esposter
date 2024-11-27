@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@/server/db/schema/posts";
+import type { PostWithRelations } from "@/shared/db/schema/posts";
 
 import { RoutePath } from "@/shared/models/router/RoutePath";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Post } from "@/server/db/schema/posts";
+import type { Post } from "@/shared/db/schema/posts";
 import type { SubmitEventPromise } from "vuetify";
 
 import { formRules } from "@/services/vuetify/formRules";

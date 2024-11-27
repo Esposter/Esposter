@@ -1,9 +1,9 @@
-import { accounts } from "@/server/db/schema/accounts";
-import { posts } from "@/server/db/schema/posts";
-import { rooms } from "@/server/db/schema/rooms";
-import { sessions } from "@/server/db/schema/sessions";
-import { surveys } from "@/server/db/schema/surveys";
-import { pgTable } from "@/server/db/shared/pgTable";
+import { pgTable } from "@/shared/db/pgTable";
+import { accounts } from "@/shared/db/schema/accounts";
+import { posts } from "@/shared/db/schema/posts";
+import { rooms } from "@/shared/db/schema/rooms";
+import { sessions } from "@/shared/db/schema/sessions";
+import { surveys } from "@/shared/db/schema/surveys";
 import { USER_NAME_MAX_LENGTH } from "@/shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";

@@ -1,4 +1,4 @@
-import type { User } from "@/server/db/schema/users";
+import type { User } from "@/shared/db/schema/users";
 
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";

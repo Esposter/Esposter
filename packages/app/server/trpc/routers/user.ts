@@ -1,10 +1,10 @@
-import type { User } from "@/server/db/schema/users";
+import type { User } from "@/shared/db/schema/users";
 import type { z } from "zod";
 
-import { selectUserSchema, users } from "@/server/db/schema/users";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
+import { selectUserSchema, users } from "@/shared/db/schema/users";
 import { eq } from "drizzle-orm";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();

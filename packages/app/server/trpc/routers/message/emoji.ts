@@ -1,6 +1,5 @@
 import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
 
-import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
 import { createEntity } from "@/server/services/azure/table/createEntity";
@@ -13,6 +12,7 @@ import { router } from "@/server/trpc";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@/server/trpc/routers/message";
 import { useTableClient } from "@/server/util/azure/useTableClient";
+import { selectRoomSchema } from "@/shared/db/schema/rooms";
 import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
 import {
   MessageEmojiMetadataEntity,

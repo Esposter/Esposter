@@ -1,7 +1,6 @@
 import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
 import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
 
-import { selectRoomSchema } from "@/server/db/schema/rooms";
 import { AzureTable } from "@/server/models/azure/table/AzureTable";
 import { createEntity } from "@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
@@ -17,6 +16,7 @@ import { router } from "@/server/trpc";
 import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
 import { useTableClient } from "@/server/util/azure/useTableClient";
+import { selectRoomSchema } from "@/shared/db/schema/rooms";
 import { MessageEntity, messageSchema } from "@/shared/models/esbabbler/message";
 import { createCursorPaginationParamsSchema } from "@/shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";

@@ -1,5 +1,5 @@
-import type { Survey } from "@/server/db/schema/surveys";
 import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@/server/trpc/routers/survey";
+import type { Survey } from "@/shared/db/schema/surveys";
 
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";

@@ -3,12 +3,12 @@ import type { AdapterUser } from "@auth/core/adapters";
 import type { Session } from "@auth/core/types";
 
 import { NuxtAuthHandler } from "#auth";
-import { accounts } from "@/server/db/schema/accounts";
-import { authenticators } from "@/server/db/schema/authenticators";
-import { sessions } from "@/server/db/schema/sessions";
-import { users } from "@/server/db/schema/users";
-import { verificationTokens } from "@/server/db/schema/verificationTokens";
 import { useDb } from "@/server/util/useDb";
+import { accounts } from "@/shared/db/schema/accounts";
+import { authenticators } from "@/shared/db/schema/authenticators";
+import { sessions } from "@/shared/db/schema/sessions";
+import { users } from "@/shared/db/schema/users";
+import { verificationTokens } from "@/shared/db/schema/verificationTokens";
 import { RoutePath } from "@/shared/models/router/RoutePath";
 import FacebookProvider from "@auth/core/providers/facebook";
 import GithubProvider from "@auth/core/providers/github";

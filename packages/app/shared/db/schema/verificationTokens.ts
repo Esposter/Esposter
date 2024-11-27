@@ -1,4 +1,4 @@
-import { pgTable } from "@/server/db/shared/pgTable";
+import { pgTable } from "@/shared/db/pgTable";
 import { primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
 export const verificationTokens = pgTable(

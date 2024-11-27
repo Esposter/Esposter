@@ -1,5 +1,5 @@
-import type { PostWithRelations } from "@/server/db/schema/posts";
 import type { CreateLikeInput, DeleteLikeInput, UpdateLikeInput } from "@/server/trpc/routers/like";
+import type { PostWithRelations } from "@/shared/db/schema/posts";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $client } = useNuxtApp();
