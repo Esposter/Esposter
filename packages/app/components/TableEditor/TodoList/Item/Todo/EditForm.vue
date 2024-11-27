@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import type { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { NOTES_MAX_LENGTH } from "@/shared/services/tableEditor/todoList/constants";

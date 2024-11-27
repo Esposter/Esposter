@@ -1,9 +1,7 @@
-import type { Visual } from "@/shared/models/dashboard/data/Visual";
-
 import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
-import { Chart } from "@/shared/models/dashboard/data/chart/Chart";
+import { Visual } from "@/shared/models/dashboard/data/Visual";
 import { VisualType } from "@/shared/models/dashboard/data/VisualType";
 import { useDashboardStore } from "@/store/dashboard";
 
@@ -26,19 +24,15 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     "Visual",
   );
   const createVisual = () => {
-    const id = crypto.randomUUID();
-    storeCreateVisual({
-      chart: new Chart(),
-      h: 4,
-      i: id,
-      id,
-      type: visualType.value,
-      w: 4,
-      x: (visualList.value.length * 2) % noColumns.value,
-      // Puts the item at the bottom
-      y: visualList.value.length + noColumns.value,
-      ...createItemMetadata(),
-    });
+    storeCreateVisual(
+      new Visual({
+        type: visualType.value,
+        x: (visualList.value.length * 2) % noColumns.value,
+        // Puts the item at the bottom
+        y: visualList.value.length + noColumns.value,
+        ...createItemMetadata(),
+      }),
+    );
   };
   const noColumns = ref(12);
   const editFormData = createEditFormData(computed(() => visualList.value));

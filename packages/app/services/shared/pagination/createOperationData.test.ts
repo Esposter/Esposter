@@ -1,5 +1,5 @@
-import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("createOperationData", () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import type { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import type { EventSourceInput } from "@fullcalendar/core";
 
 import { useTableEditorStore } from "@/store/tableEditor";

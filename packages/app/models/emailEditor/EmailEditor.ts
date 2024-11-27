@@ -4,13 +4,11 @@ import type { Except } from "type-fest";
 import { applyItemMetadataMixin } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
+import { Serializable } from "@/shared/models/entity/Serializable";
+
 export type EmailEditor = typeof EmailEditor.prototype;
 
-class BaseEmailEditor implements ProjectData {
-  toJSON() {
-    return JSON.stringify({ ...this });
-  }
-}
+class BaseEmailEditor extends Serializable implements ProjectData {}
 export const EmailEditor = applyItemMetadataMixin(BaseEmailEditor);
 
 export const emailEditorSchema = z.record(z.string().min(1), z.unknown()) satisfies z.ZodType<

@@ -1,5 +1,5 @@
-import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { expectToBeDefined } from "@/util/test/expectToBeDefined";

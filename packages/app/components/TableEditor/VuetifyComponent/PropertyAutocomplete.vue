@@ -3,9 +3,9 @@ import type { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyCo
 import type { Constructor } from "type-fest";
 
 import { getPropertySchema } from "@/services/tableEditor/vuetifyComponent/getPropertySchema";
+import { VuetifyComponentMap } from "@/shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { Vjsf } from "@koumoul/vjsf";
-import { VuetifyComponentMap } from "~/shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);

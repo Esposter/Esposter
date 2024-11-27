@@ -1,3 +1,5 @@
+import type { Except } from "type-fest";
+
 import { AItemEntity, aItemEntitySchema } from "@/shared/models/entity/AItemEntity";
 import { DEFAULT_NAME } from "@/shared/services/constants";
 import { z } from "zod";
@@ -10,4 +12,4 @@ export const aTableEditorItemEntitySchema = aItemEntitySchema.merge(
   z.object({
     name: z.string().min(1),
   }),
-) satisfies z.ZodType<ATableEditorItemEntity>;
+) satisfies z.ZodType<Except<ATableEditorItemEntity, "toJSON">>;

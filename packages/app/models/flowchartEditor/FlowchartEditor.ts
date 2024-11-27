@@ -6,15 +6,13 @@ import { nodeSchema } from "@/models/flowchartEditor/Node";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
+import { Serializable } from "@/shared/models/entity/Serializable";
+
 export type FlowchartEditor = typeof FlowchartEditor.prototype;
 
-class BaseFlowchartEditor {
+class BaseFlowchartEditor extends Serializable {
   edges: Edge[] = [];
   nodes: Node[] = [];
-
-  toJSON() {
-    return JSON.stringify({ ...this });
-  }
 }
 export const FlowchartEditor = applyItemMetadataMixin(BaseFlowchartEditor);
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SITE_NAME } from "~/shared/services/esposter/constants";
+import { SITE_NAME } from "@/shared/services/esposter/constants";
 
 const logoImageUrl = useLogoImageUrl();
 </script>

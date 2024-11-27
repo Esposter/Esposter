@@ -7,20 +7,17 @@ import { ClickerType, clickerTypeSchema } from "@/shared/models/clicker/data/Cli
 import { createUpgradeSchema } from "@/shared/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "@/shared/models/clicker/data/upgrade/UpgradeId";
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
+import { Serializable } from "@/shared/models/entity/Serializable";
 import { z } from "zod";
 
 export type Game = typeof Game.prototype;
 
-class BaseGame {
+class BaseGame extends Serializable {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
   id: string = crypto.randomUUID();
   noPoints = 0;
   type = ClickerType.Default;
-
-  toJSON() {
-    return JSON.stringify({ ...this });
-  }
 }
 export const Game = applyItemMetadataMixin(BaseGame);
 

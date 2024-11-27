@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
+import type { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";

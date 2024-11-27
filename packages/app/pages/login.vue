@@ -2,8 +2,8 @@
 import type { BuiltInProviderType } from "@auth/core/providers";
 import type { Component, CSSProperties } from "vue";
 
+import { SITE_NAME } from "@/shared/services/esposter/constants";
 import { toTitleCase } from "@/util/text/toTitleCase";
-import { SITE_NAME } from "~/shared/services/esposter/constants";
 
 interface ProviderProps {
   buttonStyle?: CSSProperties;

@@ -1,8 +1,8 @@
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { TodoListItem } from "@/models/tableEditor/todoList/TodoListItem";
-import { TodoListItemType } from "@/models/tableEditor/todoList/TodoListItemType";
+import { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
+import { TodoListItemType } from "@/shared/models/tableEditor/todoList/TodoListItemType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 

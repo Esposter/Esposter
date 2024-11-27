@@ -6,16 +6,14 @@ import { getInitialSettings, settingsSchema } from "@/models/dungeons/data/setti
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
+import { Serializable } from "@/shared/models/entity/Serializable";
+
 export type Game = typeof Game.prototype;
 
-class BaseGame {
+class BaseGame extends Serializable {
   id: string = crypto.randomUUID();
   saves: Save[] = [];
   settings = getInitialSettings();
-
-  toJSON() {
-    return JSON.stringify({ ...this });
-  }
 }
 export const Game = applyItemMetadataMixin(BaseGame);
 
