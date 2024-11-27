@@ -1,7 +1,7 @@
 import type { ProjectData } from "grapesjs";
 
-import { WebpageEditor } from "@/models/webpageEditor/WebpageEditor";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { WebpageEditor } from "@/shared/models/webpageEditor/data/WebpageEditor";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $client } = useNuxtApp();

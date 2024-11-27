@@ -1,16 +1,16 @@
 import type { Serializable } from "@/shared/models/entity/Serializable";
 import type { Constructor } from "type-fest";
 
-import { Game as DungeonsGame } from "@/models/dungeons/data/Game";
-import { EmailEditor } from "@/models/emailEditor/EmailEditor";
-import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
-import { WebpageEditor } from "@/models/webpageEditor/WebpageEditor";
 import { Game as ClickerGame } from "@/shared/models/clicker/data/Game";
 import { Dashboard } from "@/shared/models/dashboard/data/Dashboard";
+import { Game as DungeonsGame } from "@/shared/models/dungeons/data/Game";
+import { EmailEditor } from "@/shared/models/emailEditor/data/EmailEditor";
+import { FlowchartEditor } from "@/shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "@/shared/models/tableEditor/TableEditor";
 import { TableEditorConfiguration } from "@/shared/models/tableEditor/TableEditorConfiguration";
 import { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import { WebpageEditor } from "@/shared/models/webpageEditor/data/WebpageEditor";
 
 export const JSONClasses = [
   { cls: ClickerGame, name: "ClickerGame" },

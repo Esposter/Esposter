@@ -1,9 +1,12 @@
-import { AnimationsSetting, animationsSettingSchema } from "@/models/dungeons/data/settings/AnimationsSetting";
-import { BattleStyleSetting, battleStyleSettingSchema } from "@/models/dungeons/data/settings/BattleStyleSetting";
-import { SoundSetting, soundSettingSchema } from "@/models/dungeons/data/settings/SoundSetting";
-import { TextSpeedSetting, textSpeedSettingSchema } from "@/models/dungeons/data/settings/TextSpeedSetting";
-import { ThemeModeSetting, themeModeSettingSchema } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { AnimationsSetting, animationsSettingSchema } from "@/shared/models/dungeons/data/settings/AnimationsSetting";
+import {
+  BattleStyleSetting,
+  battleStyleSettingSchema,
+} from "@/shared/models/dungeons/data/settings/BattleStyleSetting";
+import { SoundSetting, soundSettingSchema } from "@/shared/models/dungeons/data/settings/SoundSetting";
+import { TextSpeedSetting, textSpeedSettingSchema } from "@/shared/models/dungeons/data/settings/TextSpeedSetting";
+import { ThemeModeSetting, themeModeSettingSchema } from "@/shared/models/dungeons/data/settings/ThemeModeSetting";
 import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
 import { z } from "zod";
 

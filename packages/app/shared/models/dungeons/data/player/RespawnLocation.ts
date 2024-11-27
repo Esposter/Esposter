@@ -1,9 +1,9 @@
 import type { Position } from "grid-engine";
 
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import { directionSchema } from "@/models/dungeons/data/player/Direction";
-import { positionSchema } from "@/models/dungeons/data/player/Position";
-import { tilemapKeySchema } from "@/models/dungeons/keys/TilemapKey";
+import { directionSchema } from "@/shared/models/dungeons/data/player/Direction";
+import { positionSchema } from "@/shared/models/dungeons/data/player/Position";
+import { tilemapKeySchema } from "@/shared/models/dungeons/keys/TilemapKey";
 import { Direction } from "grid-engine";
 import { z } from "zod";
 

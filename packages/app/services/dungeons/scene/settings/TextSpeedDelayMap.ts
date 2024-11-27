@@ -1,4 +1,4 @@
-import { TextSpeedSetting } from "@/models/dungeons/data/settings/TextSpeedSetting";
+import { TextSpeedSetting } from "@/shared/models/dungeons/data/settings/TextSpeedSetting";
 
 export const TextSpeedDelayMap = {
   [TextSpeedSetting.Fast]: 50,

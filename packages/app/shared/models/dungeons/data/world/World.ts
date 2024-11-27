@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import { WorldData, worldDataSchema } from "@/models/dungeons/data/world/WorldData";
-import { tilemapKeySchema } from "@/models/dungeons/keys/TilemapKey";
+import { WorldData, worldDataSchema } from "@/shared/models/dungeons/data/world/WorldData";
+import { tilemapKeySchema } from "@/shared/models/dungeons/keys/TilemapKey";
 import { zodStrictRecord } from "@/util/validation/zod/zodStrictRecord";
 
 export const getInitialWorld = () =>

@@ -1,6 +1,6 @@
-import { FlowchartEditor } from "@/models/flowchartEditor/FlowchartEditor";
 import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { FlowchartEditor } from "@/shared/models/flowchartEditor/data/FlowchartEditor";
 
 export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
   const { $client } = useNuxtApp();

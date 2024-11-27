@@ -1,10 +1,10 @@
-import { FlowchartEditor, flowchartEditorSchema } from "@/models/flowchartEditor/FlowchartEditor";
 import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
 import { SAVE_FILENAME } from "@/server/services/flowchartEditor/constants";
 import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@/server/util/azure/useContainerClient";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { FlowchartEditor, flowchartEditorSchema } from "@/shared/models/flowchartEditor/data/FlowchartEditor";
 import { streamToText } from "@/shared/util/text/streamToText";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 

@@ -2,12 +2,12 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { Save } from "@/models/dungeons/data/Save";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { Save } from "@/shared/models/dungeons/data/Save";
 import { useDungeonsStore } from "@/store/dungeons";
 import { exhaustiveGuard } from "@esposter/shared";
 

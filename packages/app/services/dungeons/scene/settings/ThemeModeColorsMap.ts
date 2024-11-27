@@ -1,6 +1,6 @@
 import type { Theme } from "@/models/dungeons/theme/Theme";
 
-import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
+import { ThemeModeSetting } from "@/shared/models/dungeons/data/settings/ThemeModeSetting";
 
 export const ThemeModeColorsMap = {
   [ThemeModeSetting.Blue]: {

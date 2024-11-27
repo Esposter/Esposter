@@ -1,6 +1,6 @@
 import type { ObjectgroupName } from "@/generated/tiled/layers/ObjectgroupName";
 import type { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { WorldData } from "@/models/dungeons/data/world/WorldData";
+import type { WorldData } from "@/shared/models/dungeons/data/world/WorldData";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "@/store/dungeons";

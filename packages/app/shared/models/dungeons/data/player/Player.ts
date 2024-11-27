@@ -3,14 +3,14 @@ import type { Direction, Position } from "grid-engine";
 
 import { ItemId } from "@/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "@/generated/tiled/propertyTypes/enum/TilemapKey";
-import { directionSchema } from "@/models/dungeons/data/player/Direction";
-import { inventorySchema } from "@/models/dungeons/data/player/Inventory";
-import { positionSchema } from "@/models/dungeons/data/player/Position";
-import { RespawnLocation, respawnLocationSchema } from "@/models/dungeons/data/player/RespawnLocation";
 import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
+import { directionSchema } from "@/shared/models/dungeons/data/player/Direction";
+import { inventorySchema } from "@/shared/models/dungeons/data/player/Inventory";
+import { positionSchema } from "@/shared/models/dungeons/data/player/Position";
+import { RespawnLocation, respawnLocationSchema } from "@/shared/models/dungeons/data/player/RespawnLocation";
 import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
 import { z } from "zod";
 

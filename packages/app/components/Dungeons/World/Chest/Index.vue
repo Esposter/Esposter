@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Chest } from "@/models/dungeons/data/world/Chest";
+import type { Chest } from "@/shared/models/dungeons/data/world/Chest";
 import type { Position } from "grid-engine";
 
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";

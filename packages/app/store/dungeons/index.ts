@@ -1,10 +1,10 @@
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { Game } from "@/models/dungeons/data/Game";
-import { Save } from "@/models/dungeons/data/Save";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { Game } from "@/shared/models/dungeons/data/Game";
+import { Save } from "@/shared/models/dungeons/data/Save";
 import { dayjs } from "@/shared/services/dayjs";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";

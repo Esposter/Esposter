@@ -1,5 +1,5 @@
-import { ThemeModeSetting } from "@/models/dungeons/data/settings/ThemeModeSetting";
 import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ThemeModeSetting } from "@/shared/models/dungeons/data/settings/ThemeModeSetting";
 
 export const ThemeModeGlassPanelImageKeyMap = {
   [ThemeModeSetting.Blue]: ImageKey.GlassPanel,

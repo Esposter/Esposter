@@ -1,9 +1,9 @@
-import { AnimationsSetting } from "@/models/dungeons/data/settings/AnimationsSetting";
-import { BattleStyleSetting } from "@/models/dungeons/data/settings/BattleStyleSetting";
-import { SoundSetting } from "@/models/dungeons/data/settings/SoundSetting";
-import { TextSpeedSetting } from "@/models/dungeons/data/settings/TextSpeedSetting";
 import { Grid } from "@/models/dungeons/Grid";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { AnimationsSetting } from "@/shared/models/dungeons/data/settings/AnimationsSetting";
+import { BattleStyleSetting } from "@/shared/models/dungeons/data/settings/BattleStyleSetting";
+import { SoundSetting } from "@/shared/models/dungeons/data/settings/SoundSetting";
+import { TextSpeedSetting } from "@/shared/models/dungeons/data/settings/TextSpeedSetting";
 
 const grid = [
   [SettingsOption["Text Speed"], TextSpeedSetting.Slow, TextSpeedSetting.Mid, TextSpeedSetting.Fast],
