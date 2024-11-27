@@ -51,8 +51,8 @@
     "eslint": "^9.15.0",
     "lerna": "^8.1.9",
     "rollup": "^4.27.4",
-    "type-fest": "^4.28.1",
-    "typedoc": "^0.26.11",
+    "type-fest": "^4.29.0",
+    "typedoc": "^0.27.0",
     "typescript": "^5.6.3",
     "vite": "^6.0.1",
     "vue-tsc": "2.1.6"
