@@ -19,7 +19,7 @@ import { useTableClient } from "@/server/util/azure/useTableClient";
 import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/shared/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "@/shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";
-import { generateCode } from "@/shared/util/random/generateCode";
+import { generateCode } from "@/shared/util/math/random/generateCode";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 

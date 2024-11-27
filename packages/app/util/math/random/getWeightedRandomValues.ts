@@ -1,6 +1,6 @@
 import type { CumulativeWeight } from "@/models/math/CumulativeWeight";
 
-import { generateRandomNumber } from "@/util/math/random/generateRandomNumber";
+import { generateRandomNumber } from "@/shared/util/math/random/generateRandomNumber";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) => {

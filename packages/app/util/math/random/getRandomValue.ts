@@ -1,6 +1,6 @@
 import type { ArrayElement } from "type-fest/source/internal";
 
-import { generateRandomInteger } from "@/util/math/random/generateRandomInteger";
+import { generateRandomInteger } from "@/shared/util/math/random/generateRandomInteger";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getRandomValue = <T extends string | unknown[]>(values: T) => {

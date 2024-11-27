@@ -1,4 +1,4 @@
-import { generateRandomInteger } from "@/util/math/random/generateRandomInteger";
+import { generateRandomInteger } from "@/shared/util/math/random/generateRandomInteger";
 
 export const generateCode = (length: number) => {
   const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
