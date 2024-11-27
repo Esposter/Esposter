@@ -24,6 +24,9 @@ export const selectUserSchema = createSelectSchema(users, {
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
 
+export const updateUserInputSchema = selectUserSchema.pick({ name: true });
+export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
+
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   likes: many(likes),

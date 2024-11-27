@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Row } from "@/models/user/ProfileCard/Row";
-import type { UpdateUserInput } from "@/server/trpc/routers/user";
+import type { UpdateUserInput } from "@/shared/db/schema/users";
 
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
