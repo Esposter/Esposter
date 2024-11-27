@@ -4,26 +4,26 @@ import { router } from "@/server/trpc";
 import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@/server/util/azure/useContainerClient";
 import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
-import { Game, gameSchema } from "@/shared/models/dungeons/data/Game";
+import { DungeonsGame, dungeonsGameSchema } from "@/shared/models/dungeons/data/DungeonsGame";
 import { streamToText } from "@/shared/util/text/streamToText";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 
 export const dungeonsRouter = router({
-  readGame: authedProcedure.query<Game>(async ({ ctx }) => {
+  readGame: authedProcedure.query<DungeonsGame>(async ({ ctx }) => {
     try {
       const containerClient = await useContainerClient(AzureContainer.DungeonsAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const response = await blockBlobClient.download();
-      if (!response.readableStreamBody) return new Game();
+      if (!response.readableStreamBody) return new DungeonsGame();
 
       const json = await streamToText(response.readableStreamBody);
-      return Object.assign(new Game(), jsonDateParse(json));
+      return Object.assign(new DungeonsGame(), jsonDateParse(json));
     } catch {
-      return new Game();
+      return new DungeonsGame();
     }
   }),
-  saveGame: authedProcedure.input(gameSchema).mutation(async ({ ctx, input }) => {
+  saveGame: authedProcedure.input(dungeonsGameSchema).mutation(async ({ ctx, input }) => {
     const client = await useContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await uploadBlockBlob(client, blobName, JSON.stringify(input));

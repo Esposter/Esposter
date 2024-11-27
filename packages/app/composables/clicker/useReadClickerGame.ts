@@ -2,7 +2,7 @@ import type { RecursiveDeepOmitItemMetadata } from "@/shared/util/types/Recursiv
 
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
-import { Game } from "@/shared/models/clicker/data/Game";
+import { ClickerGame } from "@/shared/models/clicker/data/ClickerGame";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useClickerStore } from "@/store/clicker";
 import deepEqual from "fast-deep-equal";
@@ -15,7 +15,7 @@ export const useReadClickerGame = async () => {
   // This is used for tracking when we should save the game
   // i.e. every time the user manually updates the game state
   // which is everything excluding automatic updates like noPoints
-  const gameChangedTracker = computed<RecursiveDeepOmitItemMetadata<Game, ["noPoints", "producedValue"]>>(
+  const gameChangedTracker = computed<RecursiveDeepOmitItemMetadata<ClickerGame, ["noPoints", "producedValue"]>>(
     (oldGameChangedTracker) => {
       const newGameChangedTracker = omitDeepItemMetadata(game.value, "noPoints", "producedValue");
       return oldGameChangedTracker && deepEqual(newGameChangedTracker, oldGameChangedTracker)
@@ -27,8 +27,8 @@ export const useReadClickerGame = async () => {
   await useReadData(
     () => {
       const clickerStoreJson = localStorage.getItem(CLICKER_LOCAL_STORAGE_KEY);
-      if (clickerStoreJson) game.value = Object.assign(new Game(), jsonDateParse(clickerStoreJson));
-      else game.value = new Game();
+      if (clickerStoreJson) game.value = Object.assign(new ClickerGame(), jsonDateParse(clickerStoreJson));
+      else game.value = new ClickerGame();
     },
     async () => {
       game.value = await $client.clicker.readGame.query();

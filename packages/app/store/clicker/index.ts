@@ -1,11 +1,11 @@
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
-import { Game } from "@/shared/models/clicker/data/Game";
+import { ClickerGame } from "@/shared/models/clicker/data/ClickerGame";
 
 export const useClickerStore = defineStore("clicker", () => {
   const { $client } = useNuxtApp();
   const { status } = useAuth();
-  const game = ref(new Game());
+  const game = ref(new ClickerGame());
   const saveGame = async () => {
     if (status.value === "authenticated") {
       saveItemMetadata(game.value);

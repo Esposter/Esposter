@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
-import { Game } from "@/shared/models/dungeons/data/Game";
+import { DungeonsGame } from "@/shared/models/dungeons/data/DungeonsGame";
 import { Save } from "@/shared/models/dungeons/data/Save";
 import { dayjs } from "@/shared/services/dayjs";
 import { Cameras } from "phaser";
@@ -17,7 +17,7 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const cameraStore = useCameraStore();
   const { fadeOut } = cameraStore;
 
-  const game = ref(new Game());
+  const game = ref(new DungeonsGame());
   const saveGame = async () => {
     if (status.value === "authenticated") {
       saveItemMetadata(game.value);

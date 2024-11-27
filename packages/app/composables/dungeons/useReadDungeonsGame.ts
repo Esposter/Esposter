@@ -1,5 +1,5 @@
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
-import { Game } from "@/shared/models/dungeons/data/Game";
+import { DungeonsGame } from "@/shared/models/dungeons/data/DungeonsGame";
 import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
 import { useDungeonsStore } from "@/store/dungeons";
 
@@ -10,8 +10,8 @@ export const useReadDungeonsGame = async () => {
   await useReadData(
     () => {
       const dungeonsStoreJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
-      if (dungeonsStoreJson) game.value = Object.assign(new Game(), jsonDateParse(dungeonsStoreJson));
-      else game.value = new Game();
+      if (dungeonsStoreJson) game.value = Object.assign(new DungeonsGame(), jsonDateParse(dungeonsStoreJson));
+      else game.value = new DungeonsGame();
     },
     async () => {
       game.value = await $client.dungeons.readGame.query();

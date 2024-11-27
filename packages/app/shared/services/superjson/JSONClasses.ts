@@ -1,9 +1,9 @@
 import type { Serializable } from "@/shared/models/entity/Serializable";
 import type { Constructor } from "type-fest";
 
-import { Game as ClickerGame } from "@/shared/models/clicker/data/Game";
+import { ClickerGame } from "@/shared/models/clicker/data/ClickerGame";
 import { Dashboard } from "@/shared/models/dashboard/data/Dashboard";
-import { Game as DungeonsGame } from "@/shared/models/dungeons/data/Game";
+import { DungeonsGame } from "@/shared/models/dungeons/data/DungeonsGame";
 import { EmailEditor } from "@/shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "@/shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "@/shared/models/tableEditor/TableEditor";
@@ -13,9 +13,9 @@ import { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyCompone
 import { WebpageEditor } from "@/shared/models/webpageEditor/data/WebpageEditor";
 
 export const JSONClasses = [
-  { cls: ClickerGame, name: "ClickerGame" },
+  { cls: ClickerGame, name: ClickerGame.name },
   { cls: Dashboard, name: Dashboard.name },
-  { cls: DungeonsGame, name: "DungeonsGame" },
+  { cls: DungeonsGame, name: DungeonsGame.name },
   { cls: EmailEditor, name: EmailEditor.name },
   { cls: FlowchartEditor, name: FlowchartEditor.name },
   { cls: TableEditor, name: TableEditor.name },

@@ -7,19 +7,19 @@ import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/enti
 import { Serializable } from "@/shared/models/entity/Serializable";
 import { z } from "zod";
 
-export type Game = typeof Game.prototype;
+export type DungeonsGame = typeof DungeonsGame.prototype;
 
-class BaseGame extends Serializable {
+class BaseDungeonsGame extends Serializable {
   id: string = crypto.randomUUID();
   saves: Save[] = [];
   settings = getInitialSettings();
 }
-export const Game = applyItemMetadataMixin(BaseGame);
+export const DungeonsGame = applyItemMetadataMixin(BaseDungeonsGame);
 
-export const gameSchema = z
+export const dungeonsGameSchema = z
   .object({
     id: z.string().uuid(),
     saves: z.array(saveSchema),
     settings: settingsSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<Except<DungeonsGame, "toJSON">>;

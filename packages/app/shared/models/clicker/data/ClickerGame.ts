@@ -10,18 +10,18 @@ import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/enti
 import { Serializable } from "@/shared/models/entity/Serializable";
 import { z } from "zod";
 
-export type Game = typeof Game.prototype;
+export type ClickerGame = typeof ClickerGame.prototype;
 
-class BaseGame extends Serializable {
+class BaseClickerGame extends Serializable {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
   id: string = crypto.randomUUID();
   noPoints = 0;
   type = ClickerType.Default;
 }
-export const Game = applyItemMetadataMixin(BaseGame);
+export const ClickerGame = applyItemMetadataMixin(BaseClickerGame);
 
-export const gameSchema = z
+export const clickerGameSchema = z
   .object({
     boughtBuildings: z.array(buildingWithStatsSchema),
     boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
@@ -29,4 +29,4 @@ export const gameSchema = z
     noPoints: z.number(),
     type: clickerTypeSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Except<Game, "toJSON">>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<Except<ClickerGame, "toJSON">>;
