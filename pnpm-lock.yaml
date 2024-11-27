@@ -521,8 +521,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1(vite@6.0.1(@types/node@22.10.0)(jiti@2.4.0)(sass@1.81.0)(terser@5.36.0)(tsx@4.19.2)(yaml@2.6.1))(vue@3.5.13(typescript@5.6.3))
       '@vitest/eslint-plugin':
-        specifier: ^1.1.11
-        version: 1.1.11(@typescript-eslint/utils@8.16.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3))(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)(vitest@2.1.6(@types/node@22.10.0)(happy-dom@15.11.6)(jiti@2.4.0)(sass@1.81.0)(terser@5.36.0)(tsx@4.19.2)(yaml@2.6.1))
+        specifier: ^1.1.12
+        version: 1.1.12(@typescript-eslint/utils@8.16.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3))(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)(vitest@2.1.6(@types/node@22.10.0)(happy-dom@15.11.6)(jiti@2.4.0)(sass@1.81.0)(terser@5.36.0)(tsx@4.19.2)(yaml@2.6.1))
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.15.0(jiti@2.4.0))
@@ -3990,8 +3990,8 @@ packages:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.1.11':
-    resolution: {integrity: sha512-f24vqvW1GE94Qs1qIelMdhTaYoVS6TbNz7V/1xc1A7gggoz21Lon3bDh8SRoesRpXSJ+23fXUc9cOUAKoGgZ8g==}
+  '@vitest/eslint-plugin@1.1.12':
+    resolution: {integrity: sha512-iv9K9fz9qRxBo9J/PGSMcLdOFIKqtFZ6THqSVG/jW8CJZFkIWLxPduCTXkbyG6FNKgL49fkv348nSgmfqCU6FA==}
     peerDependencies:
       '@typescript-eslint/utils': '>= 8.0'
       eslint: '>= 8.57.0'
@@ -15148,7 +15148,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.11(@typescript-eslint/utils@8.16.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3))(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)(vitest@2.1.6(@types/node@22.10.0)(happy-dom@15.11.6)(jiti@2.4.0)(sass@1.81.0)(terser@5.36.0)(tsx@4.19.2)(yaml@2.6.1))':
+  '@vitest/eslint-plugin@1.1.12(@typescript-eslint/utils@8.16.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3))(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)(vitest@2.1.6(@types/node@22.10.0)(happy-dom@15.11.6)(jiti@2.4.0)(sass@1.81.0)(terser@5.36.0)(tsx@4.19.2)(yaml@2.6.1))':
     dependencies:
       '@typescript-eslint/utils': 8.16.0(eslint@9.15.0(jiti@2.4.0))(typescript@5.6.3)
       eslint: 9.15.0(jiti@2.4.0)
