@@ -2,9 +2,8 @@ import type { ProjectData } from "grapesjs";
 import type { Except } from "type-fest";
 
 import { applyItemMetadataMixin } from "@/shared/models/entity/ItemMetadata";
-import { z } from "zod";
-
 import { Serializable } from "@/shared/models/entity/Serializable";
+import { z } from "zod";
 
 export type WebpageEditor = typeof WebpageEditor.prototype;
 

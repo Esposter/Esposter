@@ -1,6 +1,6 @@
 import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
-import type { RecursiveKeyOf } from "@/util/types/RecursiveKeyOf";
+import type { RecursiveDeepOmitItemMetadata } from "@/shared/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveKeyOf } from "@/shared/util/types/RecursiveKeyOf";
 
 import { omitDeep } from "@/util/object/omitDeep";
 

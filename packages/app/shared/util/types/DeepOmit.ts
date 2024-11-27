@@ -1,4 +1,4 @@
-import type { DeepOmitArray } from "@/util/types/DeepOmitArray";
+import type { DeepOmitArray } from "@/shared/util/types/DeepOmitArray";
 
 export type DeepOmit<T, TKey> = T extends Primitive
   ? T

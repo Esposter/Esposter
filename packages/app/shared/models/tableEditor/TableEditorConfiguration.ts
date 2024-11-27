@@ -1,7 +1,7 @@
 import type { Item } from "@/shared/models/tableEditor/Item";
 import type { TodoListItem } from "@/shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "@/shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
+import type { RecursiveDeepOmit } from "@/shared/util/types/RecursiveDeepOmit";
 
 import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
 import { Serializable } from "@/shared/models/entity/Serializable";

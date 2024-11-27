@@ -1,4 +1,4 @@
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveDeepOmitItemMetadata } from "@/shared/util/types/RecursiveDeepOmitItemMetadata";
 
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";

@@ -1,4 +1,4 @@
-import type { RecursiveDeepOmitItemMetadata } from "@/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveDeepOmitItemMetadata } from "@/shared/util/types/RecursiveDeepOmitItemMetadata";
 
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";

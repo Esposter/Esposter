@@ -1,5 +1,5 @@
-import type { RecursiveDeepOmit } from "@/util/types/RecursiveDeepOmit";
-import type { RecursiveKeyOf } from "@/util/types/RecursiveKeyOf";
+import type { RecursiveDeepOmit } from "@/shared/util/types/RecursiveDeepOmit";
+import type { RecursiveKeyOf } from "@/shared/util/types/RecursiveKeyOf";
 
 import omitDeepLodash from "omit-deep-lodash";
 
