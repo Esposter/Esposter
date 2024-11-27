@@ -3,8 +3,8 @@ import type { ImportTypeLine } from "@/scripts/models/ImportTypeLine";
 import type { InterfaceProperty } from "@/scripts/models/InterfaceProperty";
 
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
+import { TILED_ROOT_DIRECTORY } from "@/scripts/tiled/constants";
 import { DIRECTORY } from "@/scripts/tiled/propertyTypes/constants";
-import { TILED_ROOT_DIRECTORY } from "@/scripts/tiled/util/constants";
 import { generateImportTypeLinesString } from "@/scripts/util/generateImportTypeLinesString";
 import { generateInterfaceString } from "@/scripts/util/generateInterfaceString";
 
