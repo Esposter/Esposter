@@ -1,4 +1,4 @@
-import { VuetifyComponentMap } from "@/shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
+import { VuetifyComponentMap } from "#shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { z } from "zod";
 
 type VuetifyComponentTypeMap = { [P in keyof VuetifyComponentMap]: P };

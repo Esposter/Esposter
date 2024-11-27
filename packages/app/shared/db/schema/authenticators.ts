@@ -1,5 +1,5 @@
-import { pgTable } from "@/shared/db/pgTable";
-import { users } from "@/shared/db/schema/users";
+import { pgTable } from "#shared/db/pgTable";
+import { users } from "#shared/db/schema/users";
 import { relations } from "drizzle-orm";
 import { boolean, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 

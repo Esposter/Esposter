@@ -1,6 +1,6 @@
 import { getServerSession } from "#auth";
-import { authOptions } from "@/server/api/auth/[...]";
-import { middleware } from "@/server/trpc";
+import { authOptions } from "@@/server/api/auth/[...]";
+import { middleware } from "@@/server/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const isAuthed = middleware(async ({ ctx, next }) => {

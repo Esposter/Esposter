@@ -1,4 +1,4 @@
-import type { ImportTypeLine } from "@/scripts/models/ImportTypeLine";
+import type { ImportTypeLine } from "@@/scripts/models/ImportTypeLine";
 
 export const generateImportTypeLinesString = (lines: ImportTypeLine[]) =>
   lines.length === 0

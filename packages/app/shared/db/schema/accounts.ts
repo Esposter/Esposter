@@ -1,7 +1,7 @@
 import type { AdapterAccount } from "@auth/core/adapters";
 
-import { pgTable } from "@/shared/db/pgTable";
-import { users } from "@/shared/db/schema/users";
+import { pgTable } from "#shared/db/pgTable";
+import { users } from "#shared/db/schema/users";
 import { relations } from "drizzle-orm";
 import { integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 

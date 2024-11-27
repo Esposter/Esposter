@@ -1,8 +1,8 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { BASE_URL } from "../services/desmos/constants";
-import { GOOGLE_FONTS_BASE_URL } from "../services/google/constants";
-import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../services/grapesjs/constants";
+import { BASE_URL } from "../app/services/desmos/constants";
+import { GOOGLE_FONTS_BASE_URL } from "../app/services/google/constants";
+import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../app/services/grapesjs/constants";
 
 export const security: NuxtConfig["security"] = {
   headers: {

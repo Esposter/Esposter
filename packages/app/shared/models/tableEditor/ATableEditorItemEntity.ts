@@ -1,7 +1,7 @@
 import type { Except } from "type-fest";
 
-import { AItemEntity, aItemEntitySchema } from "@/shared/models/entity/AItemEntity";
-import { DEFAULT_NAME } from "@/shared/services/constants";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { DEFAULT_NAME } from "#shared/services/constants";
 import { z } from "zod";
 
 export abstract class ATableEditorItemEntity extends AItemEntity {

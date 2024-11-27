@@ -1,5 +1,5 @@
-import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
-import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
+import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 import type { Constructor } from "type-fest";
 
 import { plainToInstance } from "class-transformer";

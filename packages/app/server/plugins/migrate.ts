@@ -1,6 +1,6 @@
-import { useDb } from "@/server/util/useDb";
-import { MIGRATIONS_FOLDER_PATH } from "@/shared/db/constants";
-import { getSynchronizedFunction } from "@/shared/util/getSynchronizedFunction";
+import { MIGRATIONS_FOLDER_PATH } from "#shared/db/constants";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { useDb } from "@@/server/util/useDb";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 // @TODO: Make this async in nitro v3
 // https://github.com/nitrojs/nitro/issues/915

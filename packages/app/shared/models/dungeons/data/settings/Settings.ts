@@ -1,13 +1,13 @@
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { AnimationsSetting, animationsSettingSchema } from "@/shared/models/dungeons/data/settings/AnimationsSetting";
+import { AnimationsSetting, animationsSettingSchema } from "#shared/models/dungeons/data/settings/AnimationsSetting";
 import {
-  BattleStyleSetting,
-  battleStyleSettingSchema,
-} from "@/shared/models/dungeons/data/settings/BattleStyleSetting";
-import { SoundSetting, soundSettingSchema } from "@/shared/models/dungeons/data/settings/SoundSetting";
-import { TextSpeedSetting, textSpeedSettingSchema } from "@/shared/models/dungeons/data/settings/TextSpeedSetting";
-import { ThemeModeSetting, themeModeSettingSchema } from "@/shared/models/dungeons/data/settings/ThemeModeSetting";
-import { IS_DEVELOPMENT } from "@/shared/util/environment/constants";
+    BattleStyleSetting,
+    battleStyleSettingSchema,
+} from "#shared/models/dungeons/data/settings/BattleStyleSetting";
+import { SoundSetting, soundSettingSchema } from "#shared/models/dungeons/data/settings/SoundSetting";
+import { TextSpeedSetting, textSpeedSettingSchema } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
+import { ThemeModeSetting, themeModeSettingSchema } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
+import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { z } from "zod";
 
 const InitialSettings = {

@@ -1,16 +1,16 @@
-import type { Post, PostWithRelations } from "@/shared/db/schema/posts";
+import type { Post, PostWithRelations } from "#shared/db/schema/posts";
 
-import { getCursorPaginationData } from "@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "@/server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "@/server/services/pagination/sorting/parseSortByToSql";
-import { ranking } from "@/server/services/post/ranking";
-import { publicProcedure, router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
-import { PostRelations, posts, selectPostSchema } from "@/shared/db/schema/posts";
-import { DatabaseEntityType } from "@/shared/models/entity/DatabaseEntityType";
-import { createCursorPaginationParamsSchema } from "@/shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "@/shared/models/pagination/sorting/SortOrder";
+import { PostRelations, posts, selectPostSchema } from "#shared/db/schema/posts";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
+import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { ranking } from "@@/server/services/post/ranking";
+import { publicProcedure, router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";

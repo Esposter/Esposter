@@ -1,4 +1,4 @@
-import { getReverseTickedDay } from "@/server/services/azure/table/getReverseTickedDay";
+import { getReverseTickedDay } from "@@/server/services/azure/table/getReverseTickedDay";
 
 // For the best of both worlds of efficiency and scalability
 // the partition key is not only just the roomId

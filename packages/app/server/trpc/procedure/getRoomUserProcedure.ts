@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { UUIDV4_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

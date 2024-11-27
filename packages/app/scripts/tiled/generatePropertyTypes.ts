@@ -1,3 +1,3 @@
-import { generatePropertyTypes } from "@/scripts/tiled/propertyTypes/generatePropertyTypes";
+import { generatePropertyTypes } from "@@/scripts/tiled/propertyTypes/generatePropertyTypes";
 
 await generatePropertyTypes();

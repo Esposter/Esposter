@@ -1,11 +1,11 @@
-import type { Like } from "@/shared/db/schema/users";
+import type { Like } from "#shared/db/schema/users";
 import type { z } from "zod";
 
-import { ranking } from "@/server/services/post/ranking";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { posts } from "@/shared/db/schema/posts";
-import { likes, selectLikeSchema } from "@/shared/db/schema/users";
+import { posts } from "#shared/db/schema/posts";
+import { likes, selectLikeSchema } from "#shared/db/schema/users";
+import { ranking } from "@@/server/services/post/ranking";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { and, eq } from "drizzle-orm";
 
 const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });

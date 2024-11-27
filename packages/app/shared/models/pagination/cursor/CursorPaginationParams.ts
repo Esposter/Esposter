@@ -1,7 +1,7 @@
-import type { BasePaginationParams } from "@/shared/models/pagination/BasePaginationParams";
-import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
+import type { BasePaginationParams } from "#shared/models/pagination/BasePaginationParams";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { createBasePaginationParamsSchema } from "@/shared/models/pagination/BasePaginationParams";
+import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
 import { z } from "zod";
 
 export interface CursorPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
