@@ -3,8 +3,8 @@ import type { Except } from "type-fest";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
-    ATableEditorItemEntity,
-    aTableEditorItemEntitySchema,
+  ATableEditorItemEntity,
+  aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";

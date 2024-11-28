@@ -3,16 +3,16 @@ import type { Except } from "type-fest";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
-    ATableEditorItemEntity,
-    aTableEditorItemEntitySchema,
+  ATableEditorItemEntity,
+  aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/ATableEditorItemEntity";
 import {
-    VuetifyComponentItemType,
-    vuetifyComponentItemTypeSchema,
+  VuetifyComponentItemType,
+  vuetifyComponentItemTypeSchema,
 } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
 import {
-    VuetifyComponentType,
-    vuetifyComponentTypeSchema,
+  VuetifyComponentType,
+  vuetifyComponentTypeSchema,
 } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentType";
 import { z } from "zod";
 

@@ -1,6 +1,6 @@
 import {
-    BasicChartConfiguration,
-    basicChartConfigurationSchema,
+  BasicChartConfiguration,
+  basicChartConfigurationSchema,
 } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType, chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { z } from "zod";

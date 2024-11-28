@@ -3,9 +3,9 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata";
 import {
-    MessageReplyMetadataEntity,
-    MessageReplyMetadataEntityPropertyNames,
-    messageReplyMetadataSchema,
+  MessageReplyMetadataEntity,
+  MessageReplyMetadataEntityPropertyNames,
+  messageReplyMetadataSchema,
 } from "#shared/models/esbabbler/message/metadata/reply";
 import { now } from "#shared/util/time/now";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";

@@ -3,9 +3,9 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata";
 import {
-    MessageEmojiMetadataEntity,
-    MessageEmojiMetadataEntityPropertyNames,
-    messageEmojiMetadataSchema,
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityPropertyNames,
+  messageEmojiMetadataSchema,
 } from "#shared/models/esbabbler/message/metadata/emoji";
 import { now } from "#shared/util/time/now";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";

@@ -1,10 +1,10 @@
 import type { Item } from "#shared/models/tableEditor/Item";
 import type { TableEditor } from "#shared/models/tableEditor/TableEditor";
 import type {
-    _ExtractActionsFromSetupStore,
-    _ExtractGettersFromSetupStore,
-    _ExtractStateFromSetupStore,
-    Store,
+  _ExtractActionsFromSetupStore,
+  _ExtractGettersFromSetupStore,
+  _ExtractStateFromSetupStore,
+  Store,
 } from "pinia";
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditorConfiguration";
