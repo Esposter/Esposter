@@ -1,5 +1,5 @@
-import type { ItemMetadata } from "@/shared/models/entity/ItemMetadata";
-import type { SortItem } from "@/shared/models/pagination/sorting/SortItem";
+import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 export const serialize = <TItem extends ItemMetadata>(
   item: TItem | undefined,

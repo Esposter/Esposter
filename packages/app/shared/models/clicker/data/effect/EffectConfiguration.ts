@@ -1,10 +1,10 @@
-import type { EffectType } from "@/shared/models/clicker/data/effect/EffectType";
-import type { ItemType } from "@/shared/models/clicker/data/ItemType";
-import type { Target } from "@/shared/models/clicker/data/Target";
+import type { EffectType } from "#shared/models/clicker/data/effect/EffectType";
+import type { ItemType } from "#shared/models/clicker/data/ItemType";
+import type { Target } from "#shared/models/clicker/data/Target";
 
-import { effectTypeSchema } from "@/shared/models/clicker/data/effect/EffectType";
-import { itemTypeSchema } from "@/shared/models/clicker/data/ItemType";
-import { targetSchema } from "@/shared/models/clicker/data/Target";
+import { effectTypeSchema } from "#shared/models/clicker/data/effect/EffectType";
+import { itemTypeSchema } from "#shared/models/clicker/data/ItemType";
+import { targetSchema } from "#shared/models/clicker/data/Target";
 import { z } from "zod";
 
 export interface EffectConfiguration {

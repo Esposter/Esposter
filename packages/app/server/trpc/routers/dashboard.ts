@@ -1,12 +1,12 @@
-import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
-import { SAVE_FILENAME } from "@/server/services/dashboard/constants";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { useContainerClient } from "@/server/util/azure/useContainerClient";
-import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
-import { Dashboard, dashboardSchema } from "@/shared/models/dashboard/data/Dashboard";
-import { streamToText } from "@/shared/util/text/streamToText";
-import { jsonDateParse } from "@/shared/util/time/jsonDateParse";
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { Dashboard, dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
+import { streamToText } from "#shared/util/text/streamToText";
+import { jsonDateParse } from "#shared/util/time/jsonDateParse";
+import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
+import { SAVE_FILENAME } from "@@/server/services/dashboard/constants";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { useContainerClient } from "@@/server/util/azure/useContainerClient";
 
 export const dashboardRouter = router({
   readDashboard: authedProcedure.query<Dashboard>(async ({ ctx }) => {

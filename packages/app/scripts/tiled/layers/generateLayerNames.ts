@@ -1,6 +1,6 @@
 import type { TMXGroupLayerParsed, TMXLayerParsed } from "parse-tmx";
 
-import { LayerType } from "@/scripts/tiled/models/LayerType";
+import { LayerType } from "@@/scripts/tiled/models/LayerType";
 
 export const generateLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed)[], filepath = "") => {
   const objectgroupNames: string[] = [];

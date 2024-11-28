@@ -1,7 +1,7 @@
-import { BubbleType } from "@/shared/models/dashboard/data/chart/type/BubbleType";
-import { FunnelType } from "@/shared/models/dashboard/data/chart/type/FunnelType";
-import { PieType } from "@/shared/models/dashboard/data/chart/type/PieType";
-import { TreemapType } from "@/shared/models/dashboard/data/chart/type/TreemapType";
+import { BubbleType } from "#shared/models/dashboard/data/chart/type/BubbleType";
+import { FunnelType } from "#shared/models/dashboard/data/chart/type/FunnelType";
+import { PieType } from "#shared/models/dashboard/data/chart/type/PieType";
+import { TreemapType } from "#shared/models/dashboard/data/chart/type/TreemapType";
 import { mergeObjectsStrict } from "@esposter/shared";
 import { z } from "zod";
 

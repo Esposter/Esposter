@@ -1,10 +1,10 @@
-import { pgTable } from "@/shared/db/pgTable";
-import { accounts } from "@/shared/db/schema/accounts";
-import { posts } from "@/shared/db/schema/posts";
-import { rooms } from "@/shared/db/schema/rooms";
-import { sessions } from "@/shared/db/schema/sessions";
-import { surveys } from "@/shared/db/schema/surveys";
-import { USER_NAME_MAX_LENGTH } from "@/shared/services/user/constants";
+import { pgTable } from "#shared/db/pgTable";
+import { accounts } from "#shared/db/schema/accounts";
+import { posts } from "#shared/db/schema/posts";
+import { rooms } from "#shared/db/schema/rooms";
+import { sessions } from "#shared/db/schema/sessions";
+import { surveys } from "#shared/db/schema/surveys";
+import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

@@ -1,25 +1,25 @@
-import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
+import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
-import { AzureTable } from "@/server/models/azure/table/AzureTable";
-import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
-import { createEntity } from "@/server/services/azure/table/createEntity";
-import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
-import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
-import { updateEntity } from "@/server/services/azure/table/updateEntity";
-import { emojiEventEmitter } from "@/server/services/esbabbler/events/emojiEventEmitter";
-import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { router } from "@/server/trpc";
-import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { useTableClient } from "@/server/util/azure/useTableClient";
-import { selectRoomSchema } from "@/shared/db/schema/rooms";
-import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
+import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
   messageEmojiMetadataSchema,
-} from "@/shared/models/esbabbler/message/metadata/emoji";
-import { now } from "@/shared/util/time/now";
+} from "#shared/models/esbabbler/message/metadata/emoji";
+import { now } from "#shared/util/time/now";
+import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
+import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { updateEntity } from "@@/server/services/azure/table/updateEntity";
+import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
+import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
+import { router } from "@@/server/trpc";
+import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
+import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 

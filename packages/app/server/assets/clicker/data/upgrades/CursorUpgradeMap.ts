@@ -1,10 +1,10 @@
 /* eslint-disable perfectionist/sort-objects */
-import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
+import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { Except } from "type-fest";
 
-import { EffectType } from "@/shared/models/clicker/data/effect/EffectType";
-import { Target } from "@/shared/models/clicker/data/Target";
-import { CursorUpgradeId } from "@/shared/models/clicker/data/upgrade/CursorUpgradeId";
+import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
+import { Target } from "#shared/models/clicker/data/Target";
+import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
 import { plural } from "pluralize";
 
 export const CursorUpgradeMap = {

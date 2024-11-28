@@ -1,7 +1,7 @@
-import { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import { Player, playerSchema } from "@/shared/models/dungeons/data/player/Player";
-import { getInitialWorld, worldSchema } from "@/shared/models/dungeons/data/world/World";
-import { tilemapKeySchema } from "@/shared/models/dungeons/keys/TilemapKey";
+import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { Player, playerSchema } from "#shared/models/dungeons/data/player/Player";
+import { getInitialWorld, worldSchema } from "#shared/models/dungeons/data/world/World";
+import { tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
 import { z } from "zod";
 
 export class Save {

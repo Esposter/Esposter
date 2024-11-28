@@ -1,4 +1,4 @@
-import { generateEnumPropertyString } from "@/scripts/util/generateEnumPropertyString";
+import { generateEnumPropertyString } from "@@/scripts/util/generateEnumPropertyString";
 
 export const generateEnumString = (name: string, properties: string[]) =>
   properties.length === 0

@@ -1,4 +1,4 @@
-import { MIGRATIONS_FOLDER_PATH, SCHEMA_FOLDER_PATH } from "@/shared/db/constants";
+import { MIGRATIONS_FOLDER_PATH, SCHEMA_FOLDER_PATH } from "#shared/db/constants";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({

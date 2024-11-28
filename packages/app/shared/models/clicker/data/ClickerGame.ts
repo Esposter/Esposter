@@ -1,13 +1,13 @@
-import type { BuildingWithStats } from "@/shared/models/clicker/data/building/BuildingWithStats";
-import type { Upgrade } from "@/shared/models/clicker/data/upgrade/Upgrade";
+import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
+import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { Except } from "type-fest";
 
-import { buildingWithStatsSchema } from "@/shared/models/clicker/data/building/BuildingWithStats";
-import { ClickerType, clickerTypeSchema } from "@/shared/models/clicker/data/ClickerType";
-import { createUpgradeSchema } from "@/shared/models/clicker/data/upgrade/Upgrade";
-import { upgradeIdSchema } from "@/shared/models/clicker/data/upgrade/UpgradeId";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@/shared/models/entity/ItemMetadata";
-import { Serializable } from "@/shared/models/entity/Serializable";
+import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/BuildingWithStats";
+import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";
+import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
+import { upgradeIdSchema } from "#shared/models/clicker/data/upgrade/UpgradeId";
+import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
+import { Serializable } from "#shared/models/entity/Serializable";
 import { z } from "zod";
 
 export type ClickerGame = typeof ClickerGame.prototype;

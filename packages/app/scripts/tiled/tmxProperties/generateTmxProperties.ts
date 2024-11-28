@@ -1,10 +1,10 @@
-import type { LayerData } from "@/scripts/tiled/models/LayerData";
+import type { LayerData } from "@@/scripts/tiled/models/LayerData";
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 
-import { generateLayers } from "@/scripts/tiled/layers/generateLayers";
-import { generateBaseTilesetKey } from "@/scripts/tiled/propertyTypes/generateBaseTilesetKey";
-import { getTilemapDirectory } from "@/scripts/tiled/util/getTilemapDirectory";
-import { TilemapKey } from "@/shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { generateLayers } from "@@/scripts/tiled/layers/generateLayers";
+import { generateBaseTilesetKey } from "@@/scripts/tiled/propertyTypes/generateBaseTilesetKey";
+import { getTilemapDirectory } from "@@/scripts/tiled/util/getTilemapDirectory";
 import { readFile } from "node:fs/promises";
 import { parseTmx } from "parse-tmx";
 

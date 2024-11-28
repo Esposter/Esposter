@@ -1,5 +1,5 @@
-import { JSONClasses } from "@/shared/services/superjson/JSONClasses";
-import { RegisterSuperJSON } from "@/shared/services/superjson/RegisterSuperJSON";
+import { JSONClasses } from "#shared/services/superjson/JSONClasses";
+import { RegisterSuperJSON } from "#shared/services/superjson/RegisterSuperJSON";
 import baseSuperJSON from "superjson";
 
 // @TODO: Change this to use class decorators when it is supported

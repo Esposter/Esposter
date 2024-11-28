@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
+import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { TableClient } from "@azure/data-tables";
 
 // We add a fake property to preserve the entity type when for the table client

@@ -1,9 +1,9 @@
 /* eslint-disable perfectionist/sort-objects */
-import type { Building } from "@/shared/models/clicker/data/building/Building";
+import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { Except } from "type-fest";
 
-import { compileVariable } from "@/server/services/clicker/compiler/compileVariable";
-import { BuildingId } from "@/shared/models/clicker/data/building/BuildingId";
+import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
+import { compileVariable } from "@@/server/services/clicker/compiler/compileVariable";
 
 export const BuildingMap = {
   [BuildingId.Cursor]: {

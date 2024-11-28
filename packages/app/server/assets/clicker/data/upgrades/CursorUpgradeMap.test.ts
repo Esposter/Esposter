@@ -1,4 +1,4 @@
-import { CursorUpgradeMap } from "@/server/assets/clicker/data/upgrades/CursorUpgradeMap";
+import { CursorUpgradeMap } from "@@/server/assets/clicker/data/upgrades/CursorUpgradeMap";
 import { describe, expect, test } from "vitest";
 
 describe("cursorUpgradeMap", () => {

@@ -1,6 +1,6 @@
-import type { Context } from "@/server/trpc/context";
+import type { Context } from "@@/server/trpc/context";
 
-import { SuperJSON } from "@/shared/services/superjson";
+import { SuperJSON } from "#shared/services/superjson";
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";
 

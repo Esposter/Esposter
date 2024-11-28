@@ -1,3 +1,3 @@
-import { remove } from "@/scripts/tiled/util/remove";
+import { remove } from "@@/scripts/tiled/util/remove";
 
 await remove();
