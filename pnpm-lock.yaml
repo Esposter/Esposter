@@ -283,8 +283,8 @@ importers:
         specifier: ^2.46.0
         version: 2.46.0(phaser@3.87.0)
       grid-layout-plus:
-        specifier: ^1.0.5
-        version: 1.0.5(vue@3.5.13(typescript@5.6.3))
+        specifier: ^1.0.6
+        version: 1.0.6(vue@3.5.13(typescript@5.6.3))
       gsap:
         specifier: ^3.12.5
         version: 3.12.5
@@ -6513,8 +6513,8 @@ packages:
     peerDependencies:
       phaser: ~3.86.0
 
-  grid-layout-plus@1.0.5:
-    resolution: {integrity: sha512-5EUNN4soj4k/yiFw3Y6u9PLRyOrDu/uBUaVLZ9MsoPWicSLRIin+EBnF8SUKnA9mjIhrDdYRG7sJSbdaXCHdPg==}
+  grid-layout-plus@1.0.6:
+    resolution: {integrity: sha512-LyU2TWNMN4yXy2Y16sWWgghi35711onjkehbIyB8XCN/lSxNK7xoV0iphZ9LWZOw6lAM1+ngF56VVllviM8f4g==}
     peerDependencies:
       vue: ^3.0.0
 
@@ -18048,7 +18048,7 @@ snapshots:
       rxjs: 7.8.1
       tiled-property-flattener: 1.1.1
 
-  grid-layout-plus@1.0.5(vue@3.5.13(typescript@5.6.3)):
+  grid-layout-plus@1.0.6(vue@3.5.13(typescript@5.6.3)):
     dependencies:
       '@vexip-ui/hooks': 2.6.0(vue@3.5.13(typescript@5.6.3))
       '@vexip-ui/utils': 2.16.1
