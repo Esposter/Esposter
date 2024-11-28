@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
+
+**Note:** Version bump only for package @esposter/shared
+
+
+
+
+
 ## [1.29.2](https://github.com/Esposter/Esposter/compare/v1.29.1...v1.29.2) (2024-11-27)
 
 **Note:** Version bump only for package @esposter/shared

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
+
+
+### Bug Fixes
+
+* lint ([b084139](https://github.com/Esposter/Esposter/commit/b084139a18c5aaf5d0ac29b88729cd3b8c5bc7ee))
+* move app component to app folder ([a3160ab](https://github.com/Esposter/Esposter/commit/a3160ab3b5111ce07d275f1fd0f4596f2fc38230))
+* scripts ([92a1396](https://github.com/Esposter/Esposter/commit/92a139613da3f7a5d6a17f43243ec33ac64942a5))
+* types ([2af63e3](https://github.com/Esposter/Esposter/commit/2af63e339d00add967c66df8487ed03c2f7db3b4))
+
+
+### Features
+
+* migrate to nuxt4 folder structure ([dea2097](https://github.com/Esposter/Esposter/commit/dea209757f99985672ddb4c1d425e00769a44b39))
+
+
+
+
+
 ## [1.29.2](https://github.com/Esposter/Esposter/compare/v1.29.1...v1.29.2) (2024-11-27)
 
 
