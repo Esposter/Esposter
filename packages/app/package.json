@@ -127,7 +127,7 @@
     "howler": "^2.2.4",
     "js-beautify": "^1.15.1",
     "markdown-it": "^14.1.0",
-    "marked": "^15.0.2",
+    "marked": "^15.0.3",
     "mjml-browser": "^4.15.3",
     "node-emoji": "^2.1.3",
     "node-html-parser": "^6.1.13",
