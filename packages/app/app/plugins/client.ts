@@ -1,7 +1,7 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { SuperJSON } from "#shared/services/superjson";
+import { transformer } from "#shared/services/trpc/transformer";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { getIsServer } from "#shared/util/environment/getIsServer";
 import { errorLink } from "@/services/trpc/errorLink";
@@ -20,16 +20,16 @@ export default defineNuxtPlugin(() => {
     errorLink,
     splitLink({
       condition: (op) => op.type === "subscription",
-      false: httpBatchLink({ headers, url }),
+      false: httpBatchLink({ headers, transformer, url }),
       true: (() => {
-        if (getIsServer()) return httpBatchLink({ headers, url });
+        if (getIsServer()) return httpBatchLink({ headers, transformer, url });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
-        return wsLink({ client: wsClient });
+        return wsLink({ client: wsClient, transformer });
       })(),
     }),
   ];
-  const client = createTRPCNuxtClient<TRPCRouter>({ links, transformer: SuperJSON });
+  const client = createTRPCNuxtClient<TRPCRouter>({ links });
   return { provide: { client } };
 });
