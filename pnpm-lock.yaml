@@ -325,8 +325,8 @@ importers:
         specifier: ^3.87.0
         version: 3.87.0
       phaser3-rex-plugins:
-        specifier: ^1.80.11
-        version: 1.80.11(encoding@0.1.13)(graphology-types@0.24.7)
+        specifier: ^1.80.12
+        version: 1.80.12(encoding@0.1.13)(graphology-types@0.24.7)
       pinia:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
@@ -585,8 +585,8 @@ importers:
         specifier: ^3.87.0
         version: 3.87.0
       phaser3-rex-plugins:
-        specifier: ^1.80.11
-        version: 1.80.11(encoding@0.1.13)(graphology-types@0.24.7)
+        specifier: ^1.80.12
+        version: 1.80.12(encoding@0.1.13)(graphology-types@0.24.7)
       pinia:
         specifier: ^2.2.8
         version: 2.2.8(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
@@ -8231,8 +8231,8 @@ packages:
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
 
-  phaser3-rex-plugins@1.80.11:
-    resolution: {integrity: sha512-it+rV0ElkAd0jjSLqSewLBk91vFzb+P/HxOfFhs9xdc+HfANDmNTLwFxiBIvuXEn84nyiCn1VR08Fcnyw7DuyQ==}
+  phaser3-rex-plugins@1.80.12:
+    resolution: {integrity: sha512-6vzYVhiSeiQSBBDXl2xQyF1omVhElF9yQTW7DKl0JHXchQ0bmvj4B+YVT5EFcle7y+3reedwOUDlchLvoccxsQ==}
 
   phaser@3.87.0:
     resolution: {integrity: sha512-AyI1b3T5fp05gzf6WUmu2FNqaZL+Y7w88yBRLf7YZXF9bncUSHpnDrupnTGoPqy/RKHRLBcay7zWeqQ2wiMWcw==}
@@ -20253,7 +20253,7 @@ snapshots:
 
   perfect-debounce@1.0.0: {}
 
-  phaser3-rex-plugins@1.80.11(encoding@0.1.13)(graphology-types@0.24.7):
+  phaser3-rex-plugins@1.80.12(encoding@0.1.13)(graphology-types@0.24.7):
     dependencies:
       dagre: 0.8.5
       eventemitter3: 3.1.2
