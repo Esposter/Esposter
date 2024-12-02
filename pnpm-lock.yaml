@@ -361,8 +361,8 @@ importers:
         specifier: ^0.171.0
         version: 0.171.0
       three-globe:
-        specifier: ^2.35.2
-        version: 2.35.2(three@0.171.0)
+        specifier: ^2.35.3
+        version: 2.35.3(three@0.171.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -7228,8 +7228,8 @@ packages:
   just-diff@6.0.2:
     resolution: {integrity: sha512-S59eriX5u3/QhMNq3v/gm8Kd0w8OS6Tz2FS1NG4blv+z0MuQcBRJyFWjdovM0Rad4/P4aUPFtnkNjMjyMlMSYA==}
 
-  kapsule@1.14.6:
-    resolution: {integrity: sha512-wSi6tHNOfXrIK2Pvv6BhZ9ukzhbp+XZlOOPWSVGUbqfFsnnli4Eq8FN6TaWJv2e17sY5+fKYVxa4DP2oPGlKhg==}
+  kapsule@1.16.0:
+    resolution: {integrity: sha512-4f/z/Luu0cEXmagCwaFyzvfZai2HKgB4CQLwmsMUA+jlUbW94HfFSX+TWZxzWoMSO6b6aR+FD2Xd5z88VYZJTw==}
     engines: {node: '>=12'}
 
   keyv@4.5.4:
@@ -9458,8 +9458,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.35.2:
-    resolution: {integrity: sha512-dRRdwEdBA3JAxNurj7MgHYxLTgdlHNtmFEy4XdBwitkv2s4k9o4fPB8tqsc2Na9aPj6Y26RhQw7xrpBizIaMwA==}
+  three-globe@2.35.3:
+    resolution: {integrity: sha512-juM8ymvNBJvBIJatfnybZKd5cm0Ir4ZOJDf86rkvqLAVpyMb3X+vE+2Geo9kAywxdmWj4XgHk8wG16+JC9EqpA==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -18721,7 +18721,7 @@ snapshots:
 
   just-diff@6.0.2: {}
 
-  kapsule@1.14.6:
+  kapsule@1.16.0:
     dependencies:
       lodash-es: 4.17.21
 
@@ -21549,7 +21549,7 @@ snapshots:
       earcut: 3.0.0
       three: 0.171.0
 
-  three-globe@2.35.2(three@0.171.0):
+  three-globe@2.35.3(three@0.171.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
@@ -21563,7 +21563,7 @@ snapshots:
       frame-ticker: 1.0.3
       h3-js: 4.1.0
       index-array-by: 1.4.2
-      kapsule: 1.14.6
+      kapsule: 1.16.0
       three: 0.171.0
       three-conic-polygon-geometry: 1.6.5(three@0.171.0)
       three-geojson-geometry: 1.3.3(three@0.171.0)
