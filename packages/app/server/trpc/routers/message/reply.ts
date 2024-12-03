@@ -52,6 +52,7 @@ export const replyRouter = router({
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<MessageReplyMetadataEntity>((emit) => {
         const onCreateReply = (data: MessageReplyMetadataEntity) => () => {

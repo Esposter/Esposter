@@ -86,6 +86,7 @@ export const emojiRouter = router({
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<MessageEmojiMetadataEntity>((emit) => {
         const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
@@ -97,6 +98,7 @@ export const emojiRouter = router({
     ),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<DeleteEmojiInput>((emit) => {
         const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
@@ -108,6 +110,7 @@ export const emojiRouter = router({
     ),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<UpdateEmojiInput>((emit) => {
         const onUpdateEmoji = (data: UpdateEmojiInput) => () => {

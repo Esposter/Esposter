@@ -8,7 +8,8 @@ export const getProfanityFilterMiddleware = <T extends z.ZodObject<z.ZodRawShape
   schema: T,
   keys: (keyof T["shape"] & string)[],
 ) =>
-  middleware(async ({ next, rawInput }) => {
+  middleware(async ({ getRawInput, next }) => {
+    const rawInput = getRawInput();
     const result = schema.safeParse(rawInput);
     if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
 

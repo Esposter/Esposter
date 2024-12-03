@@ -89,6 +89,7 @@ export const messageRouter = router({
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<MessageEntity>((emit) => {
         const onCreateMessage = (data: MessageEntity) => () => {
@@ -100,6 +101,7 @@ export const messageRouter = router({
     ),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<CompositeKey>((emit) => {
         const onDeleteMessage = (data: CompositeKey) => () => {
@@ -111,6 +113,7 @@ export const messageRouter = router({
     ),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<UpdateMessageInput>((emit) => {
         const onUpdateMessage = (data: UpdateMessageInput) => () => {
