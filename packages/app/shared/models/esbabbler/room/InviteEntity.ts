@@ -17,7 +17,7 @@ export class InviteEntity extends AzureEntity {
 
 export const InviteEntityPropertyNames = getPropertyNames<InviteEntity>();
 
-export const inviteCodeSchema = z
+export const inviteEntitySchema = z
   .object({
     partitionKey: z.string(),
     roomId: selectRoomSchema.shape.id,

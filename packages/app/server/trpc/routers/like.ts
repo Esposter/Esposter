@@ -1,21 +1,14 @@
 import type { Like } from "#shared/db/schema/users";
-import type { z } from "zod";
 
 import { posts } from "#shared/db/schema/posts";
-import { likes, selectLikeSchema } from "#shared/db/schema/users";
+import { likes } from "#shared/db/schema/users";
+import { createLikeInputSchema } from "#shared/models/post/CreateLikeInput";
+import { deleteLikeInputSchema } from "#shared/models/post/DeleteLikeInput";
+import { updateLikeInputSchema } from "#shared/models/post/UpdateLikeInput";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { and, eq } from "drizzle-orm";
-
-const createLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
-export type CreateLikeInput = z.infer<typeof createLikeInputSchema>;
-
-const updateLikeInputSchema = selectLikeSchema.pick({ postId: true, value: true });
-export type UpdateLikeInput = z.infer<typeof updateLikeInputSchema>;
-
-const deleteLikeInputSchema = selectLikeSchema.shape.postId;
-export type DeleteLikeInput = z.infer<typeof deleteLikeInputSchema>;
 
 export const likeRouter = router({
   createLike: authedProcedure.input(createLikeInputSchema).mutation<Like | null>(async ({ ctx, input }) => {

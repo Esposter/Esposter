@@ -3,7 +3,6 @@ import type { UserToRoom } from "#shared/db/schema/users";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "#shared/models/esbabbler/room/invite";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { generateCode } from "#shared/util/math/random/generateCode";
@@ -22,6 +21,7 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
+import { InviteEntity, InviteEntityPropertyNames, inviteEntitySchema } from "~~/shared/models/esbabbler/room/InviteEntity";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
@@ -42,7 +42,7 @@ export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
 const deleteRoomInputSchema = selectRoomSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
 
-const joinRoomInputSchema = inviteCodeSchema.shape.rowKey;
+const joinRoomInputSchema = inviteEntitySchema.shape.rowKey;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 
 const leaveRoomInputSchema = selectRoomSchema.shape.id;
