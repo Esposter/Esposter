@@ -3,11 +3,11 @@ import type { UpdateEmojiInput } from "#shared/models/esbabbler/message/metadata
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { createEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/DeleteEmojiInput";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
-  messageEmojiMetadataEntitySchema,
 } from "#shared/models/esbabbler/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/UpdateEmojiInput";
@@ -29,13 +29,6 @@ import { z } from "zod";
 
 const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
-
-const createEmojiInputSchema = messageEmojiMetadataEntitySchema.pick({
-  emojiTag: true,
-  messageRowKey: true,
-  partitionKey: true,
-});
-export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
 
 const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;

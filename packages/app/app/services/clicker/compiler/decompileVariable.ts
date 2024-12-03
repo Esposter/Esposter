@@ -1,7 +1,7 @@
 import type { ClickerItemProperties } from "#shared/models/clicker/ClickerItemProperties";
 
+import { compileVariable } from "#shared/services/clicker/compiler/compileVariable";
 import { VARIABLE_REGEX } from "@/services/clicker/constants";
-import { compileVariable } from "@@/server/services/clicker/compiler/compileVariable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const decompileVariable = (string: string, clickerItemProperties: ClickerItemProperties) => {

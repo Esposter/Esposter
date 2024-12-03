@@ -3,6 +3,7 @@ import type { UpdateMessageInput } from "#shared/models/esbabbler/message/Update
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { createMessageInputSchema } from "#shared/models/esbabbler/message/CreateMessageInput";
 import { deleteMessageInputSchema } from "#shared/models/esbabbler/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/esbabbler/message/UpdateMessageInput";
@@ -44,11 +45,6 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
-
-const createMessageInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageEntitySchema.pick({ message: true }));
-export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;

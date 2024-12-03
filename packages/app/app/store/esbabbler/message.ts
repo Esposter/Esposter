@@ -1,7 +1,7 @@
+import type { CreateMessageInput } from "#shared/models/esbabbler/message/CreateMessageInput";
 import type { DeleteMessageInput } from "#shared/models/esbabbler/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
-import type { CreateMessageInput } from "@@/server/trpc/routers/message";
 import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
