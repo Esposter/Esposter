@@ -53,7 +53,7 @@
     "rollup": "^4.28.0",
     "type-fest": "^4.30.0",
     "typedoc": "^0.27.2",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "vite": "^6.0.2",
     "vue-tsc": "2.1.6"
   },
