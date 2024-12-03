@@ -1,6 +1,6 @@
-import type { DeleteMessageInput } from "#shared/models/esbabbler/message/DeleteMessageInput";
-import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
-import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
+import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 
 import EventEmitter from "eventemitter3";
 

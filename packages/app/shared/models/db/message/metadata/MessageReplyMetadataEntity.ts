@@ -1,10 +1,10 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 
-import { messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
+import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import {
   MessageMetadataEntity,
   messageMetadataEntitySchema,
-} from "#shared/models/esbabbler/message/metadata/MessageMetadataEntity";
+} from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 

@@ -4,7 +4,7 @@ import { selectUserSchema } from "#shared/db/schema/users";
 import {
   MessageMetadataEntity,
   messageMetadataEntitySchema,
-} from "#shared/models/esbabbler/message/metadata/MessageMetadataEntity";
+} from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 

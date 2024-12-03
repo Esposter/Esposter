@@ -3,6 +3,11 @@ import type { UserToRoom } from "#shared/db/schema/users";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
+import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
+import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
+import { InviteEntity, InviteEntityPropertyNames, inviteEntitySchema } from "#shared/models/db/room/InviteEntity";
+import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
+import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { generateCode } from "#shared/util/math/random/generateCode";
@@ -21,7 +26,6 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
-import { InviteEntity, InviteEntityPropertyNames, inviteEntitySchema } from "~~/shared/models/esbabbler/room/InviteEntity";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
@@ -31,22 +35,8 @@ const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema
 ]).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const createRoomInputSchema = selectRoomSchema.pick({ name: true });
-export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
-
-const updateRoomInputSchema = selectRoomSchema
-  .pick({ id: true })
-  .merge(selectRoomSchema.partial().pick({ name: true }));
-export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
-
-const deleteRoomInputSchema = selectRoomSchema.shape.id;
-export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
-
 const joinRoomInputSchema = inviteEntitySchema.shape.rowKey;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
-
-const leaveRoomInputSchema = selectRoomSchema.shape.id;
-export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;
 
 const readMembersInputSchema = z
   .object({

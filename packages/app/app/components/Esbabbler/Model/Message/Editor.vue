@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";

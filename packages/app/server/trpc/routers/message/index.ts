@@ -1,12 +1,12 @@
 import type { CompositeKey } from "#shared/models/azure/CompositeKey";
-import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { createMessageInputSchema } from "#shared/models/esbabbler/message/CreateMessageInput";
-import { deleteMessageInputSchema } from "#shared/models/esbabbler/message/DeleteMessageInput";
-import { MessageEntity, messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
-import { updateMessageInputSchema } from "#shared/models/esbabbler/message/UpdateMessageInput";
+import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
+import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";

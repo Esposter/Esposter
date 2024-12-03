@@ -1,16 +1,16 @@
-import type { DeleteEmojiInput } from "#shared/models/esbabbler/message/metadata/DeleteEmojiInput";
-import type { UpdateEmojiInput } from "#shared/models/esbabbler/message/metadata/UpdateEmojiInput";
+import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
+import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { createEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/CreateEmojiInput";
-import { deleteEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/DeleteEmojiInput";
+import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
+import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
-} from "#shared/models/esbabbler/message/metadata/MessageEmojiMetadataEntity";
-import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata/MessageMetadataType";
-import { updateEmojiInputSchema } from "#shared/models/esbabbler/message/metadata/UpdateEmojiInput";
+} from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { now } from "#shared/util/time/now";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";

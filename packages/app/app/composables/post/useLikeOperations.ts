@@ -1,7 +1,7 @@
 import type { PostWithRelations } from "#shared/db/schema/posts";
-import type { CreateLikeInput } from "#shared/models/post/CreateLikeInput";
-import type { DeleteLikeInput } from "#shared/models/post/DeleteLikeInput";
-import type { UpdateLikeInput } from "#shared/models/post/UpdateLikeInput";
+import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
+import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
+import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $client } = useNuxtApp();

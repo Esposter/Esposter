@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 

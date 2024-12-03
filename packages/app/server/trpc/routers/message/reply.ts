@@ -1,12 +1,12 @@
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata/MessageMetadataType";
+import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import {
   MessageReplyMetadataEntity,
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataEntitySchema,
-} from "#shared/models/esbabbler/message/metadata/MessageReplyMetadataEntity";
+} from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 import { now } from "#shared/util/time/now";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";

@@ -1,5 +1,8 @@
 import type { Room } from "#shared/db/schema/rooms";
-import type { CreateRoomInput, DeleteRoomInput, LeaveRoomInput, UpdateRoomInput } from "@@/server/trpc/routers/room";
+import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
+import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
+import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
+import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
