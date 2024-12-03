@@ -1,3 +1,6 @@
+import type { DeleteEmojiInput } from "#shared/models/esbabbler/message/metadata/DeleteEmojiInput";
+import type { MessageEmojiMetadataEntity } from "#shared/models/esbabbler/message/metadata/emoji";
+import type { UpdateEmojiInput } from "#shared/models/esbabbler/message/metadata/UpdateEmojiInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
@@ -21,7 +24,7 @@ export const useEmojiSubscribables = () => {
     createEmojiUnsubscribable.value = $client.emoji.onCreateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        onData: (data: MessageEmojiMetadataEntity) => {
           getSynchronizedFunction(() => createEmoji(data))();
         },
       },
@@ -29,7 +32,7 @@ export const useEmojiSubscribables = () => {
     updateEmojiUnsubscribable.value = $client.emoji.onUpdateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        onData: (data: UpdateEmojiInput) => {
           getSynchronizedFunction(() => updateEmoji(data))();
         },
       },
@@ -37,7 +40,7 @@ export const useEmojiSubscribables = () => {
     deleteEmojiUnsubscribable.value = $client.emoji.onDeleteEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        onData: (data: DeleteEmojiInput) => {
           getSynchronizedFunction(() => deleteEmoji(data))();
         },
       },

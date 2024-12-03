@@ -1,5 +1,5 @@
-import { BuildingMap } from "@@/server/assets/clicker/data/BuildingMap";
 import { describe, expect, test } from "vitest";
+import { BuildingMap } from "~~/shared/assets/clicker/data/BuildingMap";
 
 describe("buildingMap", () => {
   test("sorted by price", () => {

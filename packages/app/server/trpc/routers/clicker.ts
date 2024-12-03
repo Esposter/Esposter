@@ -2,13 +2,13 @@ import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { ClickerGame, clickerGameSchema } from "#shared/models/clicker/data/ClickerGame";
 import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
-import { BuildingMap } from "@@/server/assets/clicker/data/BuildingMap";
-import { UpgradeMap } from "@@/server/assets/clicker/data/upgrades/UpgradeMap";
 import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
 import { SAVE_FILENAME } from "@@/server/services/clicker/constants";
 import { publicProcedure, router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@@/server/util/azure/useContainerClient";
+import { BuildingMap } from "~~/shared/assets/clicker/data/BuildingMap";
+import { UpgradeMap } from "~~/shared/assets/clicker/data/upgrades/UpgradeMap";
 
 export const clickerRouter = router({
   readBuildingMap: publicProcedure.query(() => BuildingMap),

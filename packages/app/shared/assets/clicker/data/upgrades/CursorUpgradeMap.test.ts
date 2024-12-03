@@ -1,5 +1,5 @@
-import { CursorUpgradeMap } from "@@/server/assets/clicker/data/upgrades/CursorUpgradeMap";
 import { describe, expect, test } from "vitest";
+import { CursorUpgradeMap } from "~~/shared/assets/clicker/data/upgrades/CursorUpgradeMap";
 
 describe("cursorUpgradeMap", () => {
   test("sorted by price", () => {

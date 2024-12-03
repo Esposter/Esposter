@@ -1,8 +1,11 @@
 import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { MessageEntity, messageSchema } from "#shared/models/esbabbler/message";
+import { deleteMessageInputSchema } from "#shared/models/esbabbler/message/DeleteMessageInput";
+import { updateMessageInputSchema } from "#shared/models/esbabbler/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
@@ -50,14 +53,8 @@ export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
-const updateMessageInputSchema = messageSchema.pick({ message: true, partitionKey: true, rowKey: true });
-export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
-
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
-
-const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
-export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")

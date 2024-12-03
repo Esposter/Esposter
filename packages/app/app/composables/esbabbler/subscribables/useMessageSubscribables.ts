@@ -1,3 +1,6 @@
+import type { MessageEntity } from "#shared/models/esbabbler/message";
+import type { DeleteMessageInput } from "#shared/models/esbabbler/message/DeleteMessageInput";
+import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -20,7 +23,8 @@ export const useMessageSubscribables = () => {
     createMessageUnsubscribable.value = $client.message.onCreateMessage.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        // @TODO: trpc-nuxt type issue
+        onData: (data: MessageEntity) => {
           storeCreateMessage(data);
         },
       },
@@ -28,7 +32,7 @@ export const useMessageSubscribables = () => {
     updateMessageUnsubscribable.value = $client.message.onUpdateMessage.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        onData: (data: UpdateMessageInput) => {
           storeUpdateMessage(data);
         },
       },
@@ -36,7 +40,7 @@ export const useMessageSubscribables = () => {
     deleteMessageUnsubscribable.value = $client.message.onDeleteMessage.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data) => {
+        onData: (data: DeleteMessageInput) => {
           storeDeleteMessage(data);
         },
       },
