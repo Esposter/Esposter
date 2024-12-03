@@ -34,8 +34,8 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0(prettier-plugin-organize-imports@4.1.0(prettier@3.4.1)(typescript@5.6.3)(vue-tsc@2.1.6(typescript@5.6.3)))(prettier@3.4.1)(typescript@5.6.3)
       dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
+        specifier: ^16.4.6
+        version: 16.4.6
       eslint:
         specifier: ^9.16.0
         version: 9.16.0(jiti@2.4.0)
@@ -5636,8 +5636,8 @@ packages:
     resolution: {integrity: sha512-zIHwmZPRshsCdpMDyVsqGmgyP0yT8GAgXUnkdAoJisxvf33k7yO6OuoKmcTGuXPWSsm8Oh88nZicRLA9Y0rUeA==}
     engines: {node: '>=12'}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@16.4.6:
+    resolution: {integrity: sha512-JhcR/+KIjkkjiU8yEpaB/USlzVi3i5whwOjpIRNGi9svKEXZSe+Qp6IWAjFjv+2GViAoDRCUv/QLNziQxsLqDg==}
     engines: {node: '>=12'}
 
   drizzle-kit@0.28.1:
@@ -13211,7 +13211,7 @@ snapshots:
       create-require: 1.1.1
       defu: 6.1.4
       destr: 2.0.3
-      dotenv: 16.4.5
+      dotenv: 16.4.6
       git-url-parse: 15.0.0
       is-docker: 3.0.0
       jiti: 1.21.6
@@ -16074,7 +16074,7 @@ snapshots:
       chokidar: 4.0.1
       confbox: 0.1.8
       defu: 6.1.4
-      dotenv: 16.4.5
+      dotenv: 16.4.6
       giget: 1.2.3
       jiti: 2.4.0
       mlly: 1.7.3
@@ -16993,9 +16993,9 @@ snapshots:
 
   dotenv-expand@11.0.7:
     dependencies:
-      dotenv: 16.4.5
+      dotenv: 16.4.6
 
-  dotenv@16.4.5: {}
+  dotenv@16.4.6: {}
 
   drizzle-kit@0.28.1:
     dependencies:
@@ -19942,7 +19942,7 @@ snapshots:
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       cliui: 8.0.1
-      dotenv: 16.4.5
+      dotenv: 16.4.6
       dotenv-expand: 11.0.7
       enquirer: 2.3.6
       figures: 3.2.0
