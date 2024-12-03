@@ -1,4 +1,4 @@
-import type { MessageReplyMetadataEntity } from "#shared/models/esbabbler/message/metadata/reply";
+import type { MessageReplyMetadataEntity } from "#shared/models/esbabbler/message/metadata/MessageReplyMetadataEntity";
 
 import EventEmitter from "eventemitter3";
 

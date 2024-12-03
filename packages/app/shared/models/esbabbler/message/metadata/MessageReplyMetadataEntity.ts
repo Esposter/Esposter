@@ -1,7 +1,10 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 
-import { messageSchema } from "#shared/models/esbabbler/message";
-import { MessageMetadataEntity, messageMetadataSchema } from "#shared/models/esbabbler/message/metadata";
+import { messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
+import {
+  MessageMetadataEntity,
+  messageMetadataEntitySchema,
+} from "#shared/models/esbabbler/message/metadata/MessageMetadataEntity";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
@@ -16,9 +19,9 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity {
 
 export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageReplyMetadataEntity>();
 
-export const messageReplyMetadataSchema = messageMetadataSchema.merge(
+export const messageReplyMetadataEntitySchema = messageMetadataEntitySchema.merge(
   z.object({
-    message: messageSchema.shape.message,
-    messageReplyRowKey: messageSchema.shape.rowKey,
+    message: messageEntitySchema.shape.message,
+    messageReplyRowKey: messageEntitySchema.shape.rowKey,
   }),
 ) satisfies z.ZodType<MessageReplyMetadataEntity>;

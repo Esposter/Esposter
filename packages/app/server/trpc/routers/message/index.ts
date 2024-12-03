@@ -3,8 +3,8 @@ import type { UpdateMessageInput } from "#shared/models/esbabbler/message/Update
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { MessageEntity, messageSchema } from "#shared/models/esbabbler/message";
 import { deleteMessageInputSchema } from "#shared/models/esbabbler/message/DeleteMessageInput";
+import { MessageEntity, messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/esbabbler/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -27,7 +27,7 @@ import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: z.array(messageSchema.shape.rowKey).min(1),
+  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -38,7 +38,7 @@ const readMessagesInputSchema = z
   // as we insert our messages with a reverse-ticked timestamp as our rowkey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy
-  .merge(createCursorPaginationParamsSchema(messageSchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
+  .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
@@ -47,7 +47,7 @@ export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
 const createMessageInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageSchema.pick({ message: true }));
+  .merge(messageEntitySchema.pick({ message: true }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });

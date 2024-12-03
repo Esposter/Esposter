@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { messageSchema } from "#shared/models/esbabbler/message";
+import { messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
 
-export const updateMessageInputSchema = messageSchema.pick({ message: true, partitionKey: true, rowKey: true });
+export const updateMessageInputSchema = messageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true });
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;

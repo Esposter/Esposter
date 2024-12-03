@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/esbabbler/message";
+import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
 
 import { useMemberStore } from "@/store/esbabbler/member";
 

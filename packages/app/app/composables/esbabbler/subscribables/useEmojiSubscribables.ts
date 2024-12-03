@@ -1,5 +1,5 @@
 import type { DeleteEmojiInput } from "#shared/models/esbabbler/message/metadata/DeleteEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/esbabbler/message/metadata/emoji";
+import type { MessageEmojiMetadataEntity } from "#shared/models/esbabbler/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/esbabbler/message/metadata/UpdateEmojiInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 

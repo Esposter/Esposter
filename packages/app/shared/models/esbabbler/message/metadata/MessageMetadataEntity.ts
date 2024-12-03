@@ -1,12 +1,8 @@
 import { AzureEntity } from "#shared/models/azure/AzureEntity";
 import { itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
-import { messageSchema } from "#shared/models/esbabbler/message";
+import { messageEntitySchema } from "#shared/models/esbabbler/message/MessageEntity";
+import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata/MessageMetadataType";
 import { z } from "zod";
-
-export enum MessageMetadataType {
-  EmojiTag = "EmojiTag",
-  Reply = "Reply",
-}
 
 export class MessageMetadataEntity extends AzureEntity {
   messageRowKey!: string;
@@ -14,10 +10,10 @@ export class MessageMetadataEntity extends AzureEntity {
   type!: MessageMetadataType;
 }
 
-export const messageMetadataSchema = z
+export const messageMetadataEntitySchema = z
   .object({
-    messageRowKey: messageSchema.shape.rowKey,
-    partitionKey: messageSchema.shape.partitionKey,
+    messageRowKey: messageEntitySchema.shape.rowKey,
+    partitionKey: messageEntitySchema.shape.partitionKey,
     rowKey: z.string(),
     type: z.nativeEnum(MessageMetadataType),
   })

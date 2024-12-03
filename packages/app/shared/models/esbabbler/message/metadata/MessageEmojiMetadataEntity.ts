@@ -1,7 +1,10 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 
 import { selectUserSchema } from "#shared/db/schema/users";
-import { MessageMetadataEntity, messageMetadataSchema } from "#shared/models/esbabbler/message/metadata";
+import {
+  MessageMetadataEntity,
+  messageMetadataEntitySchema,
+} from "#shared/models/esbabbler/message/metadata/MessageMetadataEntity";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
@@ -18,6 +21,6 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
 
 export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageEmojiMetadataEntity>();
 
-export const messageEmojiMetadataSchema = messageMetadataSchema.merge(
+export const messageEmojiMetadataEntitySchema = messageMetadataEntitySchema.merge(
   z.object({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) }),
 ) satisfies z.ZodType<MessageEmojiMetadataEntity>;

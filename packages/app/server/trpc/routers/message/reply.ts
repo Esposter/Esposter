@@ -1,12 +1,12 @@
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata";
+import { MessageMetadataType } from "#shared/models/esbabbler/message/metadata/MessageMetadataType";
 import {
   MessageReplyMetadataEntity,
   MessageReplyMetadataEntityPropertyNames,
-  messageReplyMetadataSchema,
-} from "#shared/models/esbabbler/message/metadata/reply";
+  messageReplyMetadataEntitySchema,
+} from "#shared/models/esbabbler/message/metadata/MessageReplyMetadataEntity";
 import { now } from "#shared/util/time/now";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
@@ -25,7 +25,7 @@ import { z } from "zod";
 const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
 
-const createReplyInputSchema = messageReplyMetadataSchema.pick({
+const createReplyInputSchema = messageReplyMetadataEntitySchema.pick({
   message: true,
   messageRowKey: true,
   partitionKey: true,

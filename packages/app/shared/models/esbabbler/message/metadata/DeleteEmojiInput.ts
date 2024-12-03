@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
-import { messageEmojiMetadataSchema } from "#shared/models/esbabbler/message/metadata/emoji";
+import { messageEmojiMetadataEntitySchema } from "#shared/models/esbabbler/message/metadata/MessageEmojiMetadataEntity";
 
-export const deleteEmojiInputSchema = messageEmojiMetadataSchema.pick({
+export const deleteEmojiInputSchema = messageEmojiMetadataEntitySchema.pick({
   messageRowKey: true,
   partitionKey: true,
   rowKey: true,

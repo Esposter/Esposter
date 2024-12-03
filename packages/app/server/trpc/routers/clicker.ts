@@ -1,3 +1,5 @@
+import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
+import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { ClickerGame, clickerGameSchema } from "#shared/models/clicker/data/ClickerGame";
 import { streamToText } from "#shared/util/text/streamToText";
@@ -7,8 +9,6 @@ import { SAVE_FILENAME } from "@@/server/services/clicker/constants";
 import { publicProcedure, router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { useContainerClient } from "@@/server/util/azure/useContainerClient";
-import { BuildingMap } from "~~/shared/assets/clicker/data/BuildingMap";
-import { UpgradeMap } from "~~/shared/assets/clicker/data/upgrades/UpgradeMap";
 
 export const clickerRouter = router({
   readBuildingMap: publicProcedure.query(() => BuildingMap),

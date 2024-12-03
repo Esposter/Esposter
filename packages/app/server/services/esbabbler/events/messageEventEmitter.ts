@@ -1,5 +1,5 @@
-import type { MessageEntity } from "#shared/models/esbabbler/message";
 import type { DeleteMessageInput } from "#shared/models/esbabbler/message/DeleteMessageInput";
+import type { MessageEntity } from "#shared/models/esbabbler/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/esbabbler/message/UpdateMessageInput";
 
 import EventEmitter from "eventemitter3";
