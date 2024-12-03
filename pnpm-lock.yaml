@@ -313,8 +313,8 @@ importers:
         specifier: ^6.1.13
         version: 6.1.13
       obscenity:
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.4.1
+        version: 0.4.1
       omit-deep-lodash:
         specifier: ^1.1.7
         version: 1.1.7
@@ -8000,8 +8000,8 @@ packages:
   obliterator@2.0.4:
     resolution: {integrity: sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==}
 
-  obscenity@0.4.0:
-    resolution: {integrity: sha512-fB+Qr/bSVjDD7Gkf3umgWJuUJQpArV7PejJeNZVQlRjhlXms9MD12jIGFMI8USx3CK21ph84GWjUSZ/kqiyaPw==}
+  obscenity@0.4.1:
+    resolution: {integrity: sha512-hzkBkFsoiOVB1tYCnC3dqh/Y/S+iis0hC6mqexVfg+LRCcVS7GLTcbW14+BuKMNDqPwNJsM7+tCVki7gWq73lw==}
     engines: {node: '>=14.0.0'}
 
   ofetch@1.4.1:
@@ -20012,7 +20012,7 @@ snapshots:
 
   obliterator@2.0.4: {}
 
-  obscenity@0.4.0: {}
+  obscenity@0.4.1: {}
 
   ofetch@1.4.1:
     dependencies:
