@@ -15,8 +15,8 @@ export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack
 
   const attackManagerStore = useAttackManagerStore();
   const storeRefs = storeToRefs(attackManagerStore);
-  return new Promise<void>((resolve) =>
-    getSynchronizedFunction(async () => {
+  return new Promise<void>(
+    getSynchronizedFunction(async (resolve) => {
       ExternalAttackManagerStore.onComplete = resolve;
       storeRefs.attackId.value = attack.id;
       storeRefs.isToEnemy.value = isToEnemy;

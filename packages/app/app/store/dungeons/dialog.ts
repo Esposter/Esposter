@@ -41,12 +41,12 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   ) => {
     dialogTarget = target;
     queuedMessages = messages;
-    return new Promise<void>((resolve) => {
-      getSynchronizedFunction(async () => {
+    return new Promise<void>(
+      getSynchronizedFunction(async (resolve) => {
         queuedOnComplete = resolve;
         await showMessage(scene);
-      })();
-    });
+      }),
+    );
   };
   // Called after updateQueuedMessagesAndShowMessage
   const showMessage = async (scene: SceneWithPlugins) => {
