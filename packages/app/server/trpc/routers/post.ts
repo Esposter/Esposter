@@ -1,6 +1,12 @@
 import type { Post, PostWithRelations } from "#shared/db/schema/posts";
 
 import { PostRelations, posts, selectPostSchema } from "#shared/db/schema/posts";
+import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
+import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
+import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
+import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
+import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
+import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -23,33 +29,6 @@ const readPostsInputSchema = z
   .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]))
   .default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
-
-const createPostInputSchema = selectPostSchema
-  .pick({ title: true })
-  .merge(selectPostSchema.partial().pick({ description: true }));
-export type CreatePostInput = z.infer<typeof createPostInputSchema>;
-
-const createCommentInputSchema = selectPostSchema
-  .pick({ description: true })
-  .extend({ description: z.string().min(1) })
-  .merge(z.object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.unwrap() }));
-export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
-
-const updatePostInputSchema = selectPostSchema
-  .pick({ id: true })
-  .merge(selectPostSchema.partial().pick({ description: true, title: true }));
-export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
-
-const updateCommentInputSchema = selectPostSchema
-  .pick({ description: true, id: true })
-  .extend({ description: z.string().min(1) });
-export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
-
-const deletePostInputSchema = selectPostSchema.shape.id;
-export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
-
-const deleteCommentInputSchema = selectPostSchema.shape.id;
-export type DeleteCommentInput = z.infer<typeof deleteCommentInputSchema>;
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])

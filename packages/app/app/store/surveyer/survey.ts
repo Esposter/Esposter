@@ -1,5 +1,7 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { CreateSurveyInput, DeleteSurveyInput, UpdateSurveyInput } from "@@/server/trpc/routers/survey";
+import type { CreateSurveyInput } from "#shared/models/db/survey/CreateSurveyInput";
+import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInput";
+import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";

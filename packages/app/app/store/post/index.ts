@@ -1,5 +1,7 @@
 import type { PostWithRelations } from "#shared/db/schema/posts";
-import type { CreatePostInput, DeletePostInput, UpdatePostInput } from "@@/server/trpc/routers/post";
+import type { CreatePostInput } from "#shared/models/db/post/CreatePostInput";
+import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
+import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";

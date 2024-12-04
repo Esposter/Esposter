@@ -3,6 +3,9 @@ import type { z } from "zod";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
+import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
+import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
@@ -20,17 +23,6 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
-
-const createSurveyInputSchema = selectSurveySchema.pick({ group: true, model: true, name: true });
-export type CreateSurveyInput = z.infer<typeof createSurveyInputSchema>;
-
-const updateSurveyInputSchema = selectSurveySchema
-  .pick({ id: true, modelVersion: true })
-  .merge(selectSurveySchema.partial().pick({ group: true, model: true, name: true }));
-export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;
-
-const deleteSurveyInputSchema = selectSurveySchema.shape.id;
-export type DeleteSurveyInput = z.infer<typeof deleteSurveyInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;

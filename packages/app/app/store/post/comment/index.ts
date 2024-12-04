@@ -1,5 +1,7 @@
 import type { PostWithRelations } from "#shared/db/schema/posts";
-import type { CreateCommentInput, DeleteCommentInput, UpdateCommentInput } from "@@/server/trpc/routers/post";
+import type { CreateCommentInput } from "#shared/models/db/post/CreateCommentInput";
+import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInput";
+import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 
 import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
