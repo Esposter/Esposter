@@ -8,7 +8,7 @@ import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { generateImportTypeLinesString } from "@@/scripts/util/generateImportTypeLinesString";
 import { generateInterfaceString } from "@@/scripts/util/generateInterfaceString";
 
-const TILED_ROOT_DIRECTORY_IMPORT_PATH = `@/${TILED_ROOT_DIRECTORY}/${DIRECTORY}`;
+const TILED_ROOT_DIRECTORY_IMPORT_PATH = `#${TILED_ROOT_DIRECTORY}/${DIRECTORY}`;
 
 export const generateClassString = (name: string, properties: TiledObjectProperty[]) => {
   const importLines: ImportTypeLine[] = [];
