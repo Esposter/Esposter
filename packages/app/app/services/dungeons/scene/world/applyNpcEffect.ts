@@ -25,17 +25,16 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       healParty();
       break;
     }
-    case EffectType.Message:
-      {
-        const worldDialogStore = useWorldDialogStore();
-        const { showMessages } = worldDialogStore;
-        await showMessages(
-          scene,
-          effect.messages.map((text) => ({ text, title: npc.name })),
-        );
-        onComplete();
-      }
+    case EffectType.Message: {
+      const worldDialogStore = useWorldDialogStore();
+      const { showMessages } = worldDialogStore;
+      await showMessages(
+        scene,
+        effect.messages.map((text) => ({ text, title: npc.name })),
+      );
+      onComplete();
       return;
+    }
     case EffectType.SceneFade:
       scene.cameras.main.fadeOut(dayjs.duration(1, "seconds").asMilliseconds());
       scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
