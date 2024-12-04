@@ -10,7 +10,7 @@ import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
 import { parseNode } from "@/util/parseNode";
 import { parseTileset } from "@/util/parseTileset";
 import { exhaustiveGuard, parseXmlString } from "@esposter/shared";
-// We will try and match phaser's transform when exporting tmx => json tilemaps
+// We will match phaser's tmx => json tilemap export transformation
 // but also support extra functionality like using external tilesets
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {
   const {
@@ -19,46 +19,39 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   const map = new TMXMapParsed(structuredClone($));
   const expectedCount = map.width * map.height * 4;
 
-  await Promise.all(
-    $$.map(async (node) => {
-      const tmxNodeType = node["#name"] as TMXNodeType;
-      switch (tmxNodeType) {
-        case TMXNodeType.EditorSettings:
-          if (!node.$$) break;
-          map.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
-          break;
-        case TMXNodeType.Export:
-        case TMXNodeType.Image:
-        case TMXNodeType.Object:
-        case TMXNodeType.Property:
-          break;
-        case TMXNodeType.Group:
-        case TMXNodeType.ImageLayer:
-        case TMXNodeType.Layer:
-        case TMXNodeType.Objectgroup:
-          {
-            const layer = await parseNode(
-              node as unknown as TMXGroupLayerNode | TMXLayerNode,
-              expectedCount,
-              translateFlips,
-            );
-            map.layers.push(layer);
-          }
-          break;
-        case TMXNodeType.Properties:
-          if (!node.$$) break;
-          map.properties = {
-            ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
-          };
-          break;
-        case TMXNodeType.Tileset:
-          map.tilesets.push(parseTileset(node as TMXTilesetNode));
-          break;
-        default:
-          exhaustiveGuard(tmxNodeType);
+  for (const node of $$) {
+    const tmxNodeType = node["#name"] as TMXNodeType;
+    switch (tmxNodeType) {
+      case TMXNodeType.EditorSettings:
+        if (!node.$$) break;
+        map.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
+        break;
+      case TMXNodeType.Export:
+      case TMXNodeType.Image:
+      case TMXNodeType.Object:
+      case TMXNodeType.Property:
+        break;
+      case TMXNodeType.Group:
+      case TMXNodeType.ImageLayer:
+      case TMXNodeType.Layer:
+      case TMXNodeType.Objectgroup: {
+        const layer = await parseNode(node as TMXGroupLayerNode | TMXLayerNode, expectedCount, translateFlips);
+        map.layers.push(layer);
+        break;
       }
-    }),
-  );
+      case TMXNodeType.Properties:
+        if (!node.$$) break;
+        map.properties = {
+          ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
+        };
+        break;
+      case TMXNodeType.Tileset:
+        map.tilesets.push(parseTileset(node as TMXTilesetNode));
+        break;
+      default:
+        exhaustiveGuard(tmxNodeType);
+    }
+  }
 
   return { map };
 };
