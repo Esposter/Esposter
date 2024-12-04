@@ -1,6 +1,7 @@
-import type { inferAsyncReturnType } from "@trpc/server";
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
+
+import { useDb } from "@@/server/util/useDb";
 
 type Contexts = CreateWSSContextFnOptions | H3Event;
 
@@ -20,4 +21,4 @@ export const createContext = (opts: Contexts) => {
   return { db, req, res };
 };
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;

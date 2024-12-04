@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
-import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 
 export const getProfanityFilterProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
   schema: T,

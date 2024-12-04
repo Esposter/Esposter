@@ -1,16 +1,20 @@
-import type { Survey } from "@/server/db/schema/surveys";
+import type { Survey } from "#shared/db/schema/surveys";
 import type { z } from "zod";
 
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { createOffsetPaginationParamsSchema } from "@/models/shared/pagination/offset/OffsetPaginationParams";
-import { selectSurveySchema, surveys } from "@/server/db/schema/surveys";
-import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getOffsetPaginationData } from "@/services/shared/pagination/offset/getOffsetPaginationData";
-import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
-import { getPublishPath } from "@/services/shared/publish/getPublishPath";
-import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
+import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
+import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
+import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
+import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { getPublishPath } from "@@/server/services/publish/getPublishPath";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { useContainerClient } from "@@/server/util/azure/useContainerClient";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { and, count, desc, eq } from "drizzle-orm";
 
@@ -19,17 +23,6 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
-
-const createSurveyInputSchema = selectSurveySchema.pick({ group: true, model: true, name: true });
-export type CreateSurveyInput = z.infer<typeof createSurveyInputSchema>;
-
-const updateSurveyInputSchema = selectSurveySchema
-  .pick({ id: true, modelVersion: true })
-  .merge(selectSurveySchema.partial().pick({ group: true, model: true, name: true }));
-export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;
-
-const deleteSurveyInputSchema = selectSurveySchema.shape.id;
-export type DeleteSurveyInput = z.infer<typeof deleteSurveyInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;

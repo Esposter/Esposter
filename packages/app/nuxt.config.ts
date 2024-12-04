@@ -4,13 +4,13 @@ import { authJs } from "./configuration/authJs";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
 import { experimental } from "./configuration/experimental";
-import { fonts } from "./configuration/fonts";
+import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
-import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
+import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
 import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
@@ -22,13 +22,13 @@ export default defineNuxtConfig({
   build,
   compatibilityDate,
   experimental,
-  fonts,
+  future,
   imports,
   modules,
-  nitro,
   pwa,
   runtimeConfig,
   security,
+  site,
   typescript,
   unocss,
   vite,

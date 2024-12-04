@@ -1,24 +1,29 @@
-import type { Room } from "@/server/db/schema/rooms";
-import type { UserToRoom } from "@/server/db/schema/users";
+import type { Room } from "#shared/db/schema/rooms";
+import type { UserToRoom } from "#shared/db/schema/users";
 
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { rooms, selectRoomSchema } from "@/server/db/schema/rooms";
-import { selectUserSchema, users, usersToRooms } from "@/server/db/schema/users";
-import { AzureTable } from "@/server/models/azure/table/AzureTable";
-import { AZURE_DEFAULT_PARTITION_KEY } from "@/server/services/azure/table/constants";
-import { createEntity } from "@/server/services/azure/table/createEntity";
-import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
-import { getRoomOwnerProcedure } from "@/server/trpc/procedure/getRoomOwnerProcedure";
-import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
-import { inviteCodeSchema, InviteEntity, InviteEntityPropertyNames } from "@/shared/models/esbabbler/room/invite";
-import { generateCode } from "@/util/math/random/generateCode";
+import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
+import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
+import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
+import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
+import { InviteEntity, InviteEntityPropertyNames, inviteEntitySchema } from "#shared/models/db/room/InviteEntity";
+import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
+import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { generateCode } from "#shared/util/math/random/generateCode";
+import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
+import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
+import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
+import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
+import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 
@@ -30,22 +35,8 @@ const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema
 ]).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const createRoomInputSchema = selectRoomSchema.pick({ name: true });
-export type CreateRoomInput = z.infer<typeof createRoomInputSchema>;
-
-const updateRoomInputSchema = selectRoomSchema
-  .pick({ id: true })
-  .merge(selectRoomSchema.partial().pick({ name: true }));
-export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
-
-const deleteRoomInputSchema = selectRoomSchema.shape.id;
-export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;
-
-const joinRoomInputSchema = inviteCodeSchema.shape.rowKey;
+const joinRoomInputSchema = inviteEntitySchema.shape.rowKey;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
-
-const leaveRoomInputSchema = selectRoomSchema.shape.id;
-export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;
 
 const readMembersInputSchema = z
   .object({
@@ -109,7 +100,7 @@ export const roomRouter = router({
   }),
   generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
     .input(generateInviteCodeInputSchema)
-    .mutation(async ({ input: { roomId } }) => {
+    .mutation<string>(async ({ input: { roomId } }) => {
       const inviteClient = await useTableClient(AzureTable.Invites);
       // We only allow one invite code per room
       // So let's return the code to the user if it exists
@@ -142,21 +133,27 @@ export const roomRouter = router({
       await createEntity(inviteClient, newInvite);
       return inviteCode;
     }),
-  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<boolean>(async ({ ctx, input }) => {
+  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<null | UserToRoom>(async ({ ctx, input }) => {
     const inviteClient = await useTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
       filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
     });
-    if (invites.length === 0) return false;
+    if (invites.length === 0) return null;
 
-    const invite = invites[0];
-    await ctx.db.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id });
-    return true;
+    const [invite] = invites;
+    const userToRoom = (
+      await ctx.db.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
+    ).find(Boolean);
+    return userToRoom ?? null;
   }),
-  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation(async ({ ctx, input }) => {
-    await ctx.db
-      .delete(usersToRooms)
-      .where(and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)));
+  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<null | UserToRoom>(async ({ ctx, input }) => {
+    const userToRoom = (
+      await ctx.db
+        .delete(usersToRooms)
+        .where(and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
+        .returning()
+    ).find(Boolean);
+    return userToRoom ?? null;
   }),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
@@ -174,7 +171,7 @@ export const roomRouter = router({
       const resultUsers = joinedUsers.map((ju) => ju.User);
       return getCursorPaginationData(resultUsers, limit, sortBy);
     }),
-  readRoom: authedProcedure.input(readRoomInputSchema).query(async ({ ctx, input }) => {
+  readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
     if (input) {
       const joinedRoom = (
         await ctx.db

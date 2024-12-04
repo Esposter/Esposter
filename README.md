@@ -211,10 +211,10 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ## <a name="local-development">🏠 Local Development</a>
 
-1. Install the js dependencies and build the packages:
+1. Install dependencies:
 
 ```bash
-pnpm i && pnpm build:packages
+pnpm i
 ```
 
 2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
@@ -239,13 +239,19 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 
 ### Development Server
 
-1. Change to the app directory:
+1. Build the packages to be used by the application:
+
+```bash
+pnpm build:packages
+```
+
+2. Change to the app directory:
 
 ```bash
 cd packages/app
 ```
 
-2. Start the development server on <http://localhost:3000>
+3. Start the development server on <http://localhost:3000>
 
 ```bash
 pnpm dev

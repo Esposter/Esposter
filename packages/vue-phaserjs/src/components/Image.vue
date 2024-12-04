@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { ImageSetterMap } from "@/utils/setterMap/ImageSetterMap";
+import { ImageSetterMap } from "@/util/setterMap/ImageSetterMap";
 
 export interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "texture">;

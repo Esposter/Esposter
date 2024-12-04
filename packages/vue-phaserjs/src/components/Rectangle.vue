@@ -5,15 +5,15 @@ import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { RectangleSetterMap } from "@/utils/setterMap/RectangleSetterMap";
+import { RectangleSetterMap } from "@/util/setterMap/RectangleSetterMap";
+
+interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
 interface RectangleProps {
   configuration: Partial<RectangleConfiguration>;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, rectangle: GameObjects.Rectangle) => void;
 }
-
-interface RectangleEmits extends /** @vue-ignore */ RectangleEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<RectangleProps>();
 const emit = defineEmits<RectangleEmits>();

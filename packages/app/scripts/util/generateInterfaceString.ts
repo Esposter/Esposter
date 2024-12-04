@@ -1,4 +1,4 @@
-import type { InterfaceProperty } from "@/scripts/models/InterfaceProperty";
+import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
 
 import { startsWithNumber } from "@/util/regex/startsWithNumber";
 

@@ -2,12 +2,12 @@ import type { ThemeDefinition, VuetifyOptions } from "vuetify";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
-import { ThemeMode } from "./models/vuetify/ThemeMode";
+import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 
 // @TODO: Internal vuetify types
 export type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
-type Theme = VuetifyOptions["theme"];
 type Defaults = VuetifyOptions["defaults"];
+type Theme = VuetifyOptions["theme"];
 
 const BaseColorsCommon = {
   border: "#ccc",

@@ -1,17 +1,14 @@
-import type { User } from "@/server/db/schema/users";
+import type { User } from "#shared/db/schema/users";
 import type { z } from "zod";
 
-import { selectUserSchema, users } from "@/server/db/schema/users";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
+import { selectUserSchema, updateUserInputSchema, users } from "#shared/db/schema/users";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { eq } from "drizzle-orm";
 
 const readUserInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserInput = z.infer<typeof readUserInputSchema>;
-
-export const updateUserInputSchema = selectUserSchema.pick({ name: true });
-export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
 
 export const userRouter = router({
   readUser: authedProcedure.input(readUserInputSchema).query(

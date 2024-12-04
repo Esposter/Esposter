@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { PathFollowerSetterMap } from "@/utils/setterMap/PathFollowerSetterMap";
+import { PathFollowerSetterMap } from "@/util/setterMap/PathFollowerSetterMap";
 
 export interface PathFollowerProps {
   configuration: SetRequired<Partial<PathFollowerConfiguration>, "path" | "texture">;

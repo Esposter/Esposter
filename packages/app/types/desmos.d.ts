@@ -1,164 +1,5 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
 declare namespace Desmos {
-  /**
-   * Creates a four function calculator object to control the calculator embedded in the DOM element specified by element.
-   */
-  function FourFunctionCalculator(
-    element: HTMLElement,
-    options?: {
-      /**
-       * Picks the extra function(s) that appear in the top bar. Maximum 2, minimum 1.
-       * @default ["sqrt"]
-       */
-      additionalFunctions?:
-        | ("exponent" | "fraction" | "percent" | "sqrt")
-        | readonly ("exponent" | "fraction" | "percent" | "sqrt")[];
-      /**
-       * Set the input and output Braille code for persons using refreshable Braille displays.
-       * @default "none"
-       */
-      brailleMode?: "nemeth" | "none" | "ueb";
-      /**
-       * Limit the size of an expression to 100 characters.
-       * @default false
-       */
-      capExpressionSize?: boolean;
-      /**
-       * When true, users are able to toggle between decimal and fraction output in evaluations if Desmos detects a good rational approximation.
-       * @default false
-       */
-      decimalToFraction?: boolean;
-      /**
-       * Base font size.
-       * @default 16
-       */
-      fontSize?: number;
-      /**
-       * Display the calculator with an inverted color scheme.
-       * @default false
-       */
-      invertedColors?: boolean;
-      /**
-       * Language. See the Languages section for more information.
-       * @default "en"
-       */
-      language?: string;
-      /**
-       * Allow external hyperlinks (e.g. to braille examples)
-       * @default true
-       */
-      links?: boolean;
-      /**
-       * Display the calculator in a larger font.
-       * @default false
-       */
-      projectorMode?: boolean;
-      /**
-       * Display the settings menu.
-       * @default true
-       */
-      settingsMenu?: boolean;
-      /**
-       * Allow users to write six-dot Braille characters using the Home Row keys (S, D, F, J, K, and L). Requires that brailleMode be 'nemeth' or 'ueb'.
-       * @default false
-       */
-      sixKeyInput?: boolean;
-    },
-  ): BasicCalculator;
-
-  /**
-   * Creates a calculator object to control the calculator embedded in the DOM element specified by element.
-   */
-  function GraphingCalculator(element: HTMLElement, options?: GraphConfiguration & GraphSettings): Promise<Calculator>;
-
-  /**
-   * Creates a scientific calculator object to control the calculator embedded in the DOM element specified by element.
-   */
-  function ScientificCalculator(
-    element: HTMLElement,
-    options?: {
-      /**
-       * Determine whether the calculator should automatically resize whenever there are changes to element's dimensions. If set to false
-       * you will need to explicitly call .resize() in certain situations. See .resize().
-       * @default true
-       */
-      autosize?: boolean;
-      /**
-       * Allows the user to export a Braille rendering of the expression list. Requires that brailleMode be 'nemeth' or 'ueb'.
-       * @default true
-       */
-      brailleExpressionDownload?: boolean;
-      /**
-       * Set the input and output Braille code for persons using refreshable Braille displays.
-       */
-      brailleMode?: "nemeth" | "none" | "ueb";
-      /**
-       * Limit the size of an expression to 100 characters
-       * @default false
-       */
-      capExpressionSize?: boolean;
-      /**
-       * When true, users are able to toggle between decimal and fraction output in evaluations if Desmos detects a good rational approximation.
-       * @default true
-       */
-      decimalToFraction?: boolean;
-      /**
-       * When true, trig functions assume arguments are in degrees. Otherwise, arguments are assumed to be in radians.
-       * @default false
-       */
-      degreeMode?: boolean;
-      /**
-       * Base font size.
-       * @default 16
-       */
-      fontSize?: number;
-      /**
-       * Allow function definition, i.e. f(x) = 2x
-       * @default true
-       */
-      functionDefinition?: boolean;
-      /**
-       * Display the calculator with an inverted color scheme.
-       * @default false
-       */
-      invertedColors?: boolean;
-      /**
-       * Language. See the Languages section for more information.
-       * @default "en"
-       */
-      language?: string;
-      /**
-       * Allow external hyperlinks (e.g. to braille examples)
-       * @default true
-       */
-      links?: boolean;
-      /**
-       * Display the calculator in a larger font.
-       * @default false
-       */
-      projectorMode?: boolean;
-      /**
-       * Display the keypad in QWERTY layout (false shows an alphabetical layout)
-       * @default true
-       */
-      qwertyKeyboard?: boolean;
-      /**
-       * Display the settings menu.
-       * @default true
-       */
-      settingsMenu?: boolean;
-      /**
-       * Allow users to write six-dot Braille characters using the Home Row keys (S, D, F, J, K, and L). Requires that brailleMode be 'nemeth' or 'ueb'.
-       * @default false
-       */
-      sixKeyInput?: boolean;
-    },
-  ): BasicCalculator;
-
-  function imageFileToDataURL(file: File, cb: (err: Error, url: string) => void): void;
-
-  type GraphState = unknown;
-
   interface BasicCalculator
     extends Pick<
       Calculator,
@@ -190,7 +31,7 @@ declare namespace Desmos {
      */
     asyncScreenshot(callback: (dataUri: string) => void): void;
     asyncScreenshot(
-      opts: {
+      opts: Parameters<Calculator["screenshot"]>[0] & {
         /**
          * Determines the format of the generated image.
          * @default "png"
@@ -212,7 +53,7 @@ declare namespace Desmos {
          * @default false
          */
         showLabels?: boolean;
-      } & Parameters<Calculator["screenshot"]>[0],
+      },
       callback: (dataUri: string) => void,
     ): void;
 
@@ -435,11 +276,11 @@ declare namespace Desmos {
     /**
      * Object with observable properties for each public property.
      */
-    settings: {
-      observe(eventName: keyof GraphConfiguration | keyof GraphSettings | string, callback: () => void): void;
-      unobserve(eventName: keyof GraphConfiguration | keyof GraphSettings | string): void;
-    } & GraphConfiguration &
-      GraphSettings;
+    settings: GraphConfiguration &
+      GraphSettings & {
+        observe(eventName: keyof GraphConfiguration | keyof GraphSettings | string, callback: () => void): void;
+        unobserve(eventName: keyof GraphConfiguration | keyof GraphSettings | string): void;
+      };
 
     /**
      * Language codes suitable for passing into Calculator.updateSettings.
@@ -982,4 +823,163 @@ declare namespace Desmos {
      */
     yAxisStep?: number;
   }
+
+  type GraphState = unknown;
+
+  /**
+   * Creates a four function calculator object to control the calculator embedded in the DOM element specified by element.
+   */
+  function FourFunctionCalculator(
+    element: HTMLElement,
+    options?: {
+      /**
+       * Picks the extra function(s) that appear in the top bar. Maximum 2, minimum 1.
+       * @default ["sqrt"]
+       */
+      additionalFunctions?:
+        | ("exponent" | "fraction" | "percent" | "sqrt")
+        | readonly ("exponent" | "fraction" | "percent" | "sqrt")[];
+      /**
+       * Set the input and output Braille code for persons using refreshable Braille displays.
+       * @default "none"
+       */
+      brailleMode?: "nemeth" | "none" | "ueb";
+      /**
+       * Limit the size of an expression to 100 characters.
+       * @default false
+       */
+      capExpressionSize?: boolean;
+      /**
+       * When true, users are able to toggle between decimal and fraction output in evaluations if Desmos detects a good rational approximation.
+       * @default false
+       */
+      decimalToFraction?: boolean;
+      /**
+       * Base font size.
+       * @default 16
+       */
+      fontSize?: number;
+      /**
+       * Display the calculator with an inverted color scheme.
+       * @default false
+       */
+      invertedColors?: boolean;
+      /**
+       * Language. See the Languages section for more information.
+       * @default "en"
+       */
+      language?: string;
+      /**
+       * Allow external hyperlinks (e.g. to braille examples)
+       * @default true
+       */
+      links?: boolean;
+      /**
+       * Display the calculator in a larger font.
+       * @default false
+       */
+      projectorMode?: boolean;
+      /**
+       * Display the settings menu.
+       * @default true
+       */
+      settingsMenu?: boolean;
+      /**
+       * Allow users to write six-dot Braille characters using the Home Row keys (S, D, F, J, K, and L). Requires that brailleMode be 'nemeth' or 'ueb'.
+       * @default false
+       */
+      sixKeyInput?: boolean;
+    },
+  ): BasicCalculator;
+
+  /**
+   * Creates a calculator object to control the calculator embedded in the DOM element specified by element.
+   */
+  function GraphingCalculator(element: HTMLElement, options?: GraphConfiguration & GraphSettings): Promise<Calculator>;
+
+  function imageFileToDataURL(file: File, cb: (err: Error, url: string) => void): void;
+
+  /**
+   * Creates a scientific calculator object to control the calculator embedded in the DOM element specified by element.
+   */
+  function ScientificCalculator(
+    element: HTMLElement,
+    options?: {
+      /**
+       * Determine whether the calculator should automatically resize whenever there are changes to element's dimensions. If set to false
+       * you will need to explicitly call .resize() in certain situations. See .resize().
+       * @default true
+       */
+      autosize?: boolean;
+      /**
+       * Allows the user to export a Braille rendering of the expression list. Requires that brailleMode be 'nemeth' or 'ueb'.
+       * @default true
+       */
+      brailleExpressionDownload?: boolean;
+      /**
+       * Set the input and output Braille code for persons using refreshable Braille displays.
+       */
+      brailleMode?: "nemeth" | "none" | "ueb";
+      /**
+       * Limit the size of an expression to 100 characters
+       * @default false
+       */
+      capExpressionSize?: boolean;
+      /**
+       * When true, users are able to toggle between decimal and fraction output in evaluations if Desmos detects a good rational approximation.
+       * @default true
+       */
+      decimalToFraction?: boolean;
+      /**
+       * When true, trig functions assume arguments are in degrees. Otherwise, arguments are assumed to be in radians.
+       * @default false
+       */
+      degreeMode?: boolean;
+      /**
+       * Base font size.
+       * @default 16
+       */
+      fontSize?: number;
+      /**
+       * Allow function definition, i.e. f(x) = 2x
+       * @default true
+       */
+      functionDefinition?: boolean;
+      /**
+       * Display the calculator with an inverted color scheme.
+       * @default false
+       */
+      invertedColors?: boolean;
+      /**
+       * Language. See the Languages section for more information.
+       * @default "en"
+       */
+      language?: string;
+      /**
+       * Allow external hyperlinks (e.g. to braille examples)
+       * @default true
+       */
+      links?: boolean;
+      /**
+       * Display the calculator in a larger font.
+       * @default false
+       */
+      projectorMode?: boolean;
+      /**
+       * Display the keypad in QWERTY layout (false shows an alphabetical layout)
+       * @default true
+       */
+      qwertyKeyboard?: boolean;
+      /**
+       * Display the settings menu.
+       * @default true
+       */
+      settingsMenu?: boolean;
+      /**
+       * Allow users to write six-dot Braille characters using the Home Row keys (S, D, F, J, K, and L). Requires that brailleMode be 'nemeth' or 'ueb'.
+       * @default false
+       */
+      sixKeyInput?: boolean;
+    },
+  ): BasicCalculator;
 }

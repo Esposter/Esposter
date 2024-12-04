@@ -1,4 +1,4 @@
-import type { GameObjectEventMap } from "@/utils/emit/GameObjectEventMap";
+import type { GameObjectEventMap } from "@/util/emit/GameObjectEventMap";
 import type { Types } from "phaser";
 
 export type GameObjectEventMapEmitsOptions = {

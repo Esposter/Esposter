@@ -4,7 +4,7 @@ import type { Tilemaps, Types } from "phaser";
 
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onCreate } from "@/hooks/onCreate";
-import { getScene } from "@/utils/getScene";
+import { getScene } from "@/util/getScene";
 
 interface TilemapProps {
   configuration: Types.Tilemaps.TilemapConfig;

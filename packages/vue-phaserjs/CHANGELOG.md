@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+## [1.29.2](https://github.com/Esposter/Esposter/compare/v1.29.1...v1.29.2) (2024-11-27)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+## [1.29.1](https://github.com/Esposter/Esposter/compare/v1.29.0...v1.29.1) (2024-11-26)
+
+
+### Bug Fixes
+
+* rename to util to be same ([668e471](https://github.com/Esposter/Esposter/commit/668e471c08b2be127cef074952fc8c67bc8c4471))
+
+
+
+
+
+# [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
+
+**Note:** Version bump only for package vue-phaserjs
+
+
+
+
+
+
+# [1.28.0](https://github.com/Esposter/Esposter/compare/v1.27.0...v1.28.0) (2024-11-16)
+
+
+### Bug Fixes
+
+* move cast to when we return ([2716dcd](https://github.com/Esposter/Esposter/commit/2716dcd43ca9b876073577a4df92d966ce1ffec4))
+
+
+
+
+
 # [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
 
 

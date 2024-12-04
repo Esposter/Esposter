@@ -1,62 +1,45 @@
-import type { CustomTableClient } from "@/server/models/azure/table/CustomTableClient";
+import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
+import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
-import { selectRoomSchema } from "@/server/db/schema/rooms";
-import { AzureTable } from "@/server/models/azure/table/AzureTable";
-import { AZURE_MAX_PAGE_SIZE } from "@/server/services/azure/table/constants";
-import { createEntity } from "@/server/services/azure/table/createEntity";
-import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
-import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
-import { updateEntity } from "@/server/services/azure/table/updateEntity";
-import { emojiEventEmitter } from "@/server/services/esbabbler/events/emojiEventEmitter";
-import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { router } from "@/server/trpc";
-import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import { readMetadataInputSchema } from "@/server/trpc/routers/message";
-import { MessageMetadataType } from "@/shared/models/esbabbler/message/metadata";
+import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
+import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
-  messageEmojiMetadataSchema,
-} from "@/shared/models/esbabbler/message/metadata/emoji";
-import { now } from "@/util/time/now";
+} from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import { now } from "#shared/util/time/now";
+import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
+import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { updateEntity } from "@@/server/services/azure/table/updateEntity";
+import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
+import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
+import { router } from "@@/server/trpc";
+import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
+import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const createEmojiInputSchema = messageEmojiMetadataSchema.pick({
-  emojiTag: true,
-  messageRowKey: true,
-  partitionKey: true,
-});
-export type CreateEmojiInput = z.infer<typeof createEmojiInputSchema>;
-
 const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
-
-const updateEmojiInputSchema = messageEmojiMetadataSchema.pick({
-  messageRowKey: true,
-  partitionKey: true,
-  rowKey: true,
-  userIds: true,
-});
-export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;
 
 const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
-const deleteEmojiInputSchema = messageEmojiMetadataSchema.pick({
-  messageRowKey: true,
-  partitionKey: true,
-  rowKey: true,
-});
-export type DeleteEmojiInput = z.infer<typeof deleteEmojiInputSchema>;
-
 export const emojiRouter = router({
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
     .input(createEmojiInputSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation<MessageEmojiMetadataEntity | null>(async ({ ctx, input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
@@ -85,6 +68,7 @@ export const emojiRouter = router({
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<MessageEmojiMetadataEntity>((emit) => {
         const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
@@ -96,6 +80,7 @@ export const emojiRouter = router({
     ),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<DeleteEmojiInput>((emit) => {
         const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
@@ -107,6 +92,7 @@ export const emojiRouter = router({
     ),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<UpdateEmojiInput>((emit) => {
         const onUpdateEmoji = (data: UpdateEmojiInput) => () => {

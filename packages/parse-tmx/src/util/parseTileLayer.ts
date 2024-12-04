@@ -28,7 +28,7 @@ export const parseTileLayer = async (
   if (isTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {
     // Base64, Csv
-    const { _, $ } = nodeData;
+    const { $, _ } = nodeData;
     const { compression, encoding } = $;
     const layerData = _.trim();
 

@@ -1,14 +1,15 @@
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,
-} from "@/models/tableEditor/TableEditorConfiguration";
-import { uploadBlockBlob } from "@/server/services/azure/blob/uploadBlockBlob";
-import { router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { SAVE_FILENAME } from "@/services/clicker/constants";
-import { AzureContainer } from "@/shared/models/azure/blob/AzureContainer";
-import { streamToText } from "@/util/text/streamToText";
-import { jsonDateParse } from "@/util/time/jsonDateParse";
+} from "#shared/models/tableEditor/TableEditorConfiguration";
+import { streamToText } from "#shared/util/text/streamToText";
+import { jsonDateParse } from "#shared/util/time/jsonDateParse";
+import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
+import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
+import { router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { useContainerClient } from "@@/server/util/azure/useContainerClient";
 
 export const tableEditorRouter = router({
   readTableEditor: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {

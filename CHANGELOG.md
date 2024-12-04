@@ -3,6 +3,95 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
+
+
+### Bug Fixes
+
+* lint ([b084139](https://github.com/Esposter/Esposter/commit/b084139a18c5aaf5d0ac29b88729cd3b8c5bc7ee))
+* move app component to app folder ([a3160ab](https://github.com/Esposter/Esposter/commit/a3160ab3b5111ce07d275f1fd0f4596f2fc38230))
+* scripts ([92a1396](https://github.com/Esposter/Esposter/commit/92a139613da3f7a5d6a17f43243ec33ac64942a5))
+* types ([2af63e3](https://github.com/Esposter/Esposter/commit/2af63e339d00add967c66df8487ed03c2f7db3b4))
+
+
+### Features
+
+* migrate to nuxt4 folder structure ([dea2097](https://github.com/Esposter/Esposter/commit/dea209757f99985672ddb4c1d425e00769a44b39))
+
+
+
+
+
+## [1.29.2](https://github.com/Esposter/Esposter/compare/v1.29.1...v1.29.2) (2024-11-27)
+
+
+### Bug Fixes
+
+* imports ([5280aba](https://github.com/Esposter/Esposter/commit/5280abac8f348130afdf86bfb9b45286b914c16d))
+* lint ([577fdc5](https://github.com/Esposter/Esposter/commit/577fdc53055d1e3f950347cace5767c38ebce886))
+* lint ([9292876](https://github.com/Esposter/Esposter/commit/9292876a2c37aac2ca381f9de673cc68f5b274a3))
+* lint ([f92d291](https://github.com/Esposter/Esposter/commit/f92d29162a07f3b278f889f814bd25fce03147c7))
+* lint + refactor sorting models ([5d04851](https://github.com/Esposter/Esposter/commit/5d048511901f5af13bc2d618e2c0681430979b1b))
+* only build on push to branches ([37d3371](https://github.com/Esposter/Esposter/commit/37d3371d54c4fb15afe417a38af434073d9d425e))
+* update build to not run on tags push ([841f52c](https://github.com/Esposter/Esposter/commit/841f52c107226c66b654d073c8e47d24669197cb))
+
+
+
+
+
+## [1.29.1](https://github.com/Esposter/Esposter/compare/v1.29.0...v1.29.1) (2024-11-26)
+
+
+### Bug Fixes
+
+* rename to util to be same ([668e471](https://github.com/Esposter/Esposter/commit/668e471c08b2be127cef074952fc8c67bc8c4471))
+
+
+
+
+
+# [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* make util folder consistent across the board ([19acc81](https://github.com/Esposter/Esposter/commit/19acc813362713828521a3acae5b8fe06793584a))
+* use nuxt 4 + fix up imports ([71f3728](https://github.com/Esposter/Esposter/commit/71f37281d32f958278f6f3a589f789fdd53f3de8))
+
+
+### Features
+
+* Add nuxtjs seo module ([836ce14](https://github.com/Esposter/Esposter/commit/836ce1412021fabc04bbf6c02543c349d22fdf28))
+
+
+
+
+
+## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
+
+**Note:** Version bump only for package esposter
+
+
+
+
+
+
+# [1.28.0](https://github.com/Esposter/Esposter/compare/v1.27.0...v1.28.0) (2024-11-16)
+
+
+### Bug Fixes
+
+* move cast to when we return ([2716dcd](https://github.com/Esposter/Esposter/commit/2716dcd43ca9b876073577a4df92d966ce1ffec4))
+
+
+### Features
+
+* move fonts to load with native phaser ([fb91551](https://github.com/Esposter/Esposter/commit/fb91551e50abf370f5317278a5cfe3faab8433b1))
+
+
+
+
+
 # [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
 
 

@@ -1,5 +1,6 @@
-import type { DeleteEmojiInput, UpdateEmojiInput } from "@/server/trpc/routers/message/emoji";
-import type { MessageEmojiMetadataEntity } from "@/shared/models/esbabbler/message/metadata/emoji";
+import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
+import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
 import EventEmitter from "eventemitter3";
 

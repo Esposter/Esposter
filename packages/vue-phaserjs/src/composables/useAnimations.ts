@@ -4,7 +4,7 @@ import type { Types } from "phaser";
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onNextTick } from "@/hooks/onNextTick";
 import { onShutdown } from "@/hooks/onShutdown";
-import { getScene } from "@/utils/getScene";
+import { getScene } from "@/util/getScene";
 // Some animations e.g. attacks may exist only for a very short time before they disappear
 // and are launched after the scene is created, outside of any lifecycle hooks
 // so we want to allow returning the animations frames created by the scene immediately

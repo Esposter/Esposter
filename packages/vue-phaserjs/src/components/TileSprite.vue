@@ -4,7 +4,7 @@ import type { TileSpriteEventEmitsOptions } from "@/models/emit/TileSpriteEventE
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { TileSpriteSetterMap } from "@/utils/setterMap/TileSpriteSetterMap";
+import { TileSpriteSetterMap } from "@/util/setterMap/TileSpriteSetterMap";
 
 export interface TileSpriteProps {
   configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;

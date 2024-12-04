@@ -1,16 +1,22 @@
-import type { Post, PostWithRelations } from "@/server/db/schema/posts";
+import type { Post, PostWithRelations } from "#shared/db/schema/posts";
 
-import { DatabaseEntityType } from "@/models/shared/entity/DatabaseEntityType";
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { PostRelations, posts, selectPostSchema } from "@/server/db/schema/posts";
-import { publicProcedure, router } from "@/server/trpc";
-import { authedProcedure } from "@/server/trpc/procedure/authedProcedure";
-import { getProfanityFilterProcedure } from "@/server/trpc/procedure/getProfanityFilterProcedure";
-import { ranking } from "@/services/post/ranking";
-import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "@/services/shared/pagination/sorting/parseSortByToSql";
+import { PostRelations, posts, selectPostSchema } from "#shared/db/schema/posts";
+import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
+import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
+import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
+import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
+import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
+import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
+import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { ranking } from "@@/server/services/post/ranking";
+import { publicProcedure, router } from "@@/server/trpc";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -23,33 +29,6 @@ const readPostsInputSchema = z
   .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]))
   .default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
-
-const createPostInputSchema = selectPostSchema
-  .pick({ title: true })
-  .merge(selectPostSchema.partial().pick({ description: true }));
-export type CreatePostInput = z.infer<typeof createPostInputSchema>;
-
-const createCommentInputSchema = selectPostSchema
-  .pick({ description: true })
-  .extend({ description: z.string().min(1) })
-  .merge(z.object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.unwrap() }));
-export type CreateCommentInput = z.infer<typeof createCommentInputSchema>;
-
-const updatePostInputSchema = selectPostSchema
-  .pick({ id: true })
-  .merge(selectPostSchema.partial().pick({ description: true, title: true }));
-export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;
-
-const updateCommentInputSchema = selectPostSchema
-  .pick({ description: true, id: true })
-  .extend({ description: z.string().min(1) });
-export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;
-
-const deletePostInputSchema = selectPostSchema.shape.id;
-export type DeletePostInput = z.infer<typeof deletePostInputSchema>;
-
-const deleteCommentInputSchema = selectPostSchema.shape.id;
-export type DeleteCommentInput = z.infer<typeof deleteCommentInputSchema>;
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
@@ -71,13 +50,17 @@ export const postRouter = router({
               userId: ctx.session.user.id,
             })
             .returning({ id: posts.id })
-        )[0];
+        ).find(Boolean);
+        if (!newComment) return null;
+
         await tx
           .update(posts)
           .set({ noComments: parentPost.noComments + 1 })
           .where(eq(posts.id, parentPost.id));
         return newComment;
       });
+      if (!newComment) return null;
+
       const newCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newComment.id),
         with: PostRelations,
@@ -98,7 +81,9 @@ export const postRouter = router({
             userId: ctx.session.user.id,
           })
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!newPost) return null;
+
       const newPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newPost.id),
         with: PostRelations,
@@ -171,7 +156,9 @@ export const postRouter = router({
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!updatedComment) return null;
+
       const updatedCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
@@ -193,7 +180,9 @@ export const postRouter = router({
           .set(rest)
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
-      )[0];
+      ).find(Boolean);
+      if (!updatedPost) return null;
+
       const updatedPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,

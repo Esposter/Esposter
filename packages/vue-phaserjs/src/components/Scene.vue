@@ -8,10 +8,10 @@ import { usePhaserStore } from "@/store";
 import { useCameraStore } from "@/store/camera";
 import { useInputStore } from "@/store/input";
 import { ExternalSceneStore } from "@/store/scene";
-import { getScene } from "@/utils/getScene";
-import { resetLifecycleListeners } from "@/utils/hooks/resetLifecycleListeners";
-import { runLifecycleListeners } from "@/utils/hooks/runLifecycleListeners";
-import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
+import { getScene } from "@/util/getScene";
+import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
+import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
+import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { Cameras, Scene, Scenes } from "phaser";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();

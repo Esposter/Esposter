@@ -4,7 +4,7 @@ import type { NineSliceEventEmitsOptions } from "@/models/emit/NineSliceEventEmi
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { NineSliceSetterMap } from "@/utils/setterMap/NineSliceSetterMap";
+import { NineSliceSetterMap } from "@/util/setterMap/NineSliceSetterMap";
 
 export interface NineSliceProps {
   configuration: SetRequired<Partial<NineSliceConfiguration>, "texture">;

@@ -1,29 +1,34 @@
-import type { SortItem } from "@/models/shared/pagination/sorting/SortItem";
-import type { CompositeKey } from "@/shared/models/azure/CompositeKey";
+import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { createCursorPaginationParamsSchema } from "@/models/shared/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "@/models/shared/pagination/sorting/SortOrder";
-import { selectRoomSchema } from "@/server/db/schema/rooms";
-import { AzureTable } from "@/server/models/azure/table/AzureTable";
-import { createEntity } from "@/server/services/azure/table/createEntity";
-import { deleteEntity } from "@/server/services/azure/table/deleteEntity";
-import { getReverseTickedTimestamp } from "@/server/services/azure/table/getReverseTickedTimestamp";
-import { getTopNEntities } from "@/server/services/azure/table/getTopNEntities";
-import { updateEntity } from "@/server/services/azure/table/updateEntity";
-import { messageEventEmitter } from "@/server/services/esbabbler/events/messageEventEmitter";
-import { getMessagesPartitionKey } from "@/server/services/esbabbler/getMessagesPartitionKey";
-import { getMessagesPartitionKeyFilter } from "@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { router } from "@/server/trpc";
-import { getProfanityFilterMiddleware } from "@/server/trpc/middleware/getProfanityFilterMiddleware";
-import { getRoomUserProcedure } from "@/server/trpc/procedure/getRoomUserProcedure";
-import { getCursorPaginationData } from "@/services/shared/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "@/services/shared/pagination/cursor/getCursorWhere";
-import { MessageEntity, messageSchema } from "@/shared/models/esbabbler/message";
+import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
+import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
+import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { updateEntity } from "@@/server/services/azure/table/updateEntity";
+import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
+import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
+import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
+import { router } from "@@/server/trpc";
+import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: z.array(messageSchema.shape.rowKey).min(1),
+  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -34,35 +39,24 @@ const readMessagesInputSchema = z
   // as we insert our messages with a reverse-ticked timestamp as our rowkey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy
-  .merge(createCursorPaginationParamsSchema(messageSchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
+  .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
-const createMessageInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageSchema.pick({ message: true }));
-export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
-
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
-const updateMessageInputSchema = messageSchema.pick({ message: true, partitionKey: true, rowKey: true });
-export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;
-
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
-
-const deleteMessageInputSchema = messageSchema.pick({ partitionKey: true, rowKey: true });
-export type DeleteMessageInput = z.infer<typeof deleteMessageInputSchema>;
 
 export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation<MessageEntity>(async ({ ctx, input }) => {
       const createdAt = new Date();
       const newMessage = new MessageEntity({
         createdAt,
@@ -88,6 +82,7 @@ export const messageRouter = router({
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<MessageEntity>((emit) => {
         const onCreateMessage = (data: MessageEntity) => () => {
@@ -99,6 +94,7 @@ export const messageRouter = router({
     ),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<CompositeKey>((emit) => {
         const onDeleteMessage = (data: CompositeKey) => () => {
@@ -110,6 +106,7 @@ export const messageRouter = router({
     ),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     .subscription(({ input }) =>
       observable<UpdateMessageInput>((emit) => {
         const onUpdateMessage = (data: UpdateMessageInput) => () => {

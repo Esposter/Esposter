@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
-import { InjectionKeyMap } from "@/utils/InjectionKeyMap";
+import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { NotInitializedError } from "@esposter/shared";
 // We need to define the return type manually so it doesn't get lost after the inject
 export const useInjectSceneKey = (): SceneWithPlugins["scene"]["key"] => {
