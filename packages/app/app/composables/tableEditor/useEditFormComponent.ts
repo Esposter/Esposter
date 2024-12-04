@@ -1,6 +1,6 @@
 import { useTableEditorStore } from "@/store/tableEditor";
 
-const editFormComponentFilepathEntries = Object.entries<Component>(
+const editFormComponentFilepathEntries = Object.entries<Record<string, Component>>(
   import.meta.glob("@/components/TableEditor/**/Item/**/EditForm.vue", { eager: true, import: "default" }),
 );
 

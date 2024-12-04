@@ -6,7 +6,8 @@ declare global {
   var websocketServer: undefined | WebSocketServer;
 
   interface ObjectConstructor {
-    entries<T extends object>(o: T): Entries<T>;
+    // If we get "object" type <=> keyof object extends never, then we fallback to a usable type
+    entries<T extends object>(o: T): keyof T extends never ? [string, unknown][] : Entries<T>;
 
     fromEntries<T extends readonly [PropertyKey, unknown]>(entries: Iterable<T>): Record<T[0], T[1]>;
 

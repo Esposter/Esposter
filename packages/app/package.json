@@ -179,7 +179,7 @@
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^0.7.2",
     "@nuxt/fonts": "^0.10.2",
-    "@nuxt/scripts": "0.6.6",
+    "@nuxt/scripts": "^0.9.5",
     "@nuxt/test-utils": "^3.14.4",
     "@nuxtjs/seo": "^2.0.2",
     "@types/dedent": "^0.7.2",
@@ -211,8 +211,5 @@
     "unocss": "^0.65.1",
     "vitest": "^2.1.8",
     "vuetify-nuxt-module": "^0.18.3"
-  },
-  "devDependenciesComments": {
-    "@nuxt/scripts": "@TODO: Upgrading breaks typechecking"
   }
 }
