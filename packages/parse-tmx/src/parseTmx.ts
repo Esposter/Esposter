@@ -16,7 +16,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   const {
     map: { $, $$ },
   } = (await parseXmlString(xmlString)) as TMX;
-  const map = new TMXMapParsed(structuredClone($));
+  const map = new TMXMapParsed($);
   const expectedCount = map.width * map.height * 4;
 
   for (const node of $$) {
