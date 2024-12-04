@@ -20,7 +20,9 @@ export const usePopupStore = defineStore("clicker/popup", () => {
     popups.value.push({ duration, id, left: pageX, points: mouseStore.mousePower, top: pageY });
     window.setTimeout(() => {
       const index = popups.value.findIndex((p) => p.id === id);
-      if (index > -1) popups.value.splice(index, 1);
+      if (index === -1) return;
+
+      popups.value.splice(index, 1);
     }, duration);
   };
   return { onClick, popups };

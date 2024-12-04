@@ -3,7 +3,6 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -12,7 +11,7 @@ export const useEmojiSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
-  const { createEmoji, deleteEmoji, updateEmoji } = emojiStore;
+  const { storeCreateEmoji, storeDeleteEmoji, storeUpdateEmoji } = emojiStore;
 
   const createEmojiUnsubscribable = ref<Unsubscribable>();
   const updateEmojiUnsubscribable = ref<Unsubscribable>();
@@ -25,7 +24,7 @@ export const useEmojiSubscribables = () => {
       { roomId: currentRoomId.value },
       {
         onData: (data: MessageEmojiMetadataEntity) => {
-          getSynchronizedFunction(() => createEmoji(data))();
+          storeCreateEmoji(data);
         },
       },
     );
@@ -33,7 +32,7 @@ export const useEmojiSubscribables = () => {
       { roomId: currentRoomId.value },
       {
         onData: (data: UpdateEmojiInput) => {
-          getSynchronizedFunction(() => updateEmoji(data))();
+          storeUpdateEmoji(data);
         },
       },
     );
@@ -41,7 +40,7 @@ export const useEmojiSubscribables = () => {
       { roomId: currentRoomId.value },
       {
         onData: (data: DeleteEmojiInput) => {
-          getSynchronizedFunction(() => deleteEmoji(data))();
+          storeDeleteEmoji(data);
         },
       },
     );

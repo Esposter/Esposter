@@ -20,7 +20,9 @@ export const createOperationData = <
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
     const index = itemList.value.findIndex((i) => i.id === updatedItem.id);
-    if (index > -1) itemList.value[index] = { ...itemList.value[index], ...updatedItem, updatedAt: new Date() };
+    if (index === -1) return;
+
+    itemList.value[index] = { ...itemList.value[index], ...updatedItem, updatedAt: new Date() };
   };
   const deleteItem = (id: TItem["id"]) => {
     itemList.value = itemList.value.filter((i) => i.id !== id);

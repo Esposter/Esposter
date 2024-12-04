@@ -7,28 +7,25 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   const { $client } = useNuxtApp();
   const { getMetadataList: getEmojiList, setMetadataList: setEmojiList } =
     useMessageMetadataMap<MessageEmojiMetadataEntity>();
-  const createEmoji = async (input: CreateEmojiInput) => {
-    const newEmoji = await $client.emoji.createEmoji.mutate(input);
-    if (!newEmoji) return;
 
+  const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
     const emojiList = getEmojiList(newEmoji.messageRowKey);
     emojiList.push(newEmoji);
   };
-  const updateEmoji = async (input: UpdateEmojiInput) => {
-    const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
+  const storeUpdateEmoji = (updatedEmoji: UpdateEmojiInput) => {
     const emojiList = getEmojiList(updatedEmoji.messageRowKey);
     const index = emojiList.findIndex(
       (e) => e.partitionKey === updatedEmoji.partitionKey && e.rowKey === updatedEmoji.rowKey,
     );
-    if (index > -1)
-      emojiList[index] = {
-        ...emojiList[index],
-        ...updatedEmoji,
-        userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
-      };
+    if (index === -1) return;
+
+    emojiList[index] = {
+      ...emojiList[index],
+      ...updatedEmoji,
+      userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
+    };
   };
-  const deleteEmoji = async (input: DeleteEmojiInput) => {
-    await $client.emoji.deleteEmoji.mutate(input);
+  const storeDeleteEmoji = (input: DeleteEmojiInput) => {
     const emojiList = getEmojiList(input.messageRowKey);
     setEmojiList(
       input.messageRowKey,
@@ -36,11 +33,29 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     );
   };
 
+  const createEmoji = async (input: CreateEmojiInput) => {
+    const newEmoji = await $client.emoji.createEmoji.mutate(input);
+    if (!newEmoji) return;
+
+    storeCreateEmoji(newEmoji);
+  };
+  const updateEmoji = async (input: UpdateEmojiInput) => {
+    const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
+    storeUpdateEmoji(updatedEmoji);
+  };
+  const deleteEmoji = async (input: DeleteEmojiInput) => {
+    await $client.emoji.deleteEmoji.mutate(input);
+    storeDeleteEmoji(input);
+  };
+
   return {
     createEmoji,
     deleteEmoji,
     getEmojiList,
     setEmojiList,
+    storeCreateEmoji,
+    storeDeleteEmoji,
+    storeUpdateEmoji,
     updateEmoji,
   };
 });
