@@ -54,7 +54,7 @@
     "type-fest": "^4.30.0",
     "typedoc": "^0.27.3",
     "typescript": "5.6.3",
-    "vite": "^6.0.2",
+    "vite": "^6.0.3",
     "vue-tsc": "2.1.6"
   },
   "devDependenciesComments": {
