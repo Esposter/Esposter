@@ -346,8 +346,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       superjson:
-        specifier: ^2.2.1
-        version: 2.2.1
+        specifier: ^2.2.2
+        version: 2.2.2
       survey-core:
         specifier: ^1.12.13
         version: 1.12.13
@@ -9260,8 +9260,8 @@ packages:
     peerDependencies:
       postcss: ^8.4.31
 
-  superjson@2.2.1:
-    resolution: {integrity: sha512-8iGv75BYOa0xRJHK5vRLEjE2H/i4lulTjzpUXic3Eg8akftYjkmQDa8JARQ42rlczXyFR3IeRoeFCc7RxHsYZA==}
+  superjson@2.2.2:
+    resolution: {integrity: sha512-5JRxVqC8I8NuOUjzBbvVJAKNM8qoVuH0O77h4WInc/qC2q5IreqKxYwgkga3PfA22OayK2ikceb/B26dztPl+Q==}
     engines: {node: '>=16'}
 
   supports-color@7.2.0:
@@ -15013,7 +15013,7 @@ snapshots:
       mitt: 3.0.1
       perfect-debounce: 1.0.0
       speakingurl: 14.0.1
-      superjson: 2.2.1
+      superjson: 2.2.2
 
   '@vue/devtools-shared@7.6.7':
     dependencies:
@@ -21232,7 +21232,7 @@ snapshots:
       postcss: 8.4.49
       postcss-selector-parser: 6.1.2
 
-  superjson@2.2.1:
+  superjson@2.2.2:
     dependencies:
       copy-anything: 3.0.5
 

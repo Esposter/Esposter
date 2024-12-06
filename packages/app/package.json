@@ -143,7 +143,7 @@
     "postgres": "^3.4.5",
     "rxjs": "^7.8.1",
     "sql-highlight": "^6.0.0",
-    "superjson": "^2.2.1",
+    "superjson": "^2.2.2",
     "survey-core": "^1.12.13",
     "survey-creator-core": "^1.12.13",
     "survey-creator-vue": "^1.12.13",
