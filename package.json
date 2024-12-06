@@ -50,7 +50,7 @@
     "dotenv": "^16.4.7",
     "eslint": "^9.16.0",
     "lerna": "^8.1.9",
-    "rollup": "^4.28.0",
+    "rollup": "^4.28.1",
     "type-fest": "^4.30.0",
     "typedoc": "^0.27.3",
     "typescript": "5.6.3",
