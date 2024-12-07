@@ -58,7 +58,7 @@
     "@codemirror/language-data": "^6.5.1",
     "@codemirror/state": "^6.4.1",
     "@codemirror/theme-one-dark": "^6.1.2",
-    "@codemirror/view": "^6.35.1",
+    "@codemirror/view": "^6.35.2",
     "@esposter/shared": "workspace:*",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
