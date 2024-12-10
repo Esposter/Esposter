@@ -224,7 +224,7 @@ importers:
         version: 0.38.0(postgres@3.4.5)
       drizzle-zod:
         specifier: 0.5.1
-        version: 0.5.1(drizzle-orm@0.38.0(postgres@3.4.5))(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.38.0(postgres@3.4.5))(zod@3.24.0)
       emoji-mart-vue-fast:
         specifier: ^15.0.3
         version: 15.0.3(vue@3.5.13(typescript@5.6.3))
@@ -400,11 +400,11 @@ importers:
         specifier: ^8.18.0
         version: 8.18.0
       zod:
-        specifier: ^3.23.8
-        version: 3.23.8
+        specifier: ^3.24.0
+        version: 3.24.0
       zod-to-json-schema:
         specifier: ^3.23.5
-        version: 3.23.5(zod@3.23.8)
+        version: 3.23.5(zod@3.24.0)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -10608,8 +10608,8 @@ packages:
     peerDependencies:
       zod: ^3.23.3
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+  zod@3.24.0:
+    resolution: {integrity: sha512-Hz+wiY8yD0VLA2k/+nsg2Abez674dDGTai33SwNvMPuf9uIrBC9eFgIMQxBBbHFxVXi8W+5nX9DcAh9YNSQm/w==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -16749,10 +16749,10 @@ snapshots:
     optionalDependencies:
       postgres: 3.4.5
 
-  drizzle-zod@0.5.1(drizzle-orm@0.38.0(postgres@3.4.5))(zod@3.23.8):
+  drizzle-zod@0.5.1(drizzle-orm@0.38.0(postgres@3.4.5))(zod@3.24.0):
     dependencies:
       drizzle-orm: 0.38.0(postgres@3.4.5)
-      zod: 3.23.8
+      zod: 3.24.0
 
   dunder-proto@1.0.0:
     dependencies:
@@ -22853,10 +22853,10 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.5.2
 
-  zod-to-json-schema@3.23.5(zod@3.23.8):
+  zod-to-json-schema@3.23.5(zod@3.24.0):
     dependencies:
-      zod: 3.23.8
+      zod: 3.24.0
 
-  zod@3.23.8: {}
+  zod@3.24.0: {}
 
   zwitch@2.0.4: {}
