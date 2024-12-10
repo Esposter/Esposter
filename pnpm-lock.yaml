@@ -223,7 +223,7 @@ importers:
         specifier: ^0.38.0
         version: 0.38.0(postgres@3.4.5)
       drizzle-zod:
-        specifier: ^0.5.1
+        specifier: 0.5.1
         version: 0.5.1(drizzle-orm@0.38.0(postgres@3.4.5))(zod@3.23.8)
       emoji-mart-vue-fast:
         specifier: ^15.0.3
