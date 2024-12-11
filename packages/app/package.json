@@ -162,7 +162,7 @@
     "worker-timers": "^8.0.11",
     "ws": "^8.18.0",
     "zod": "^3.24.1",
-    "zod-to-json-schema": "^3.23.5"
+    "zod-to-json-schema": "^3.24.1"
   },
   "dependenciesComments": {
     "@auth/core": "@TODO: Upgrading breaks authjs-nuxt",
