@@ -178,7 +178,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@nuxt/eslint": "^0.7.2",
+    "@nuxt/eslint": "^0.7.3",
     "@nuxt/fonts": "^0.10.3",
     "@nuxt/scripts": "^0.9.5",
     "@nuxt/test-utils": "^3.15.1",
