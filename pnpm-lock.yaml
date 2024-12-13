@@ -364,8 +364,8 @@ importers:
         specifier: ^0.171.0
         version: 0.171.0
       three-globe:
-        specifier: ^2.35.9
-        version: 2.35.9(three@0.171.0)
+        specifier: ^2.35.11
+        version: 2.35.11(three@0.171.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -9404,20 +9404,20 @@ packages:
   third-party-capital@2.3.0:
     resolution: {integrity: sha512-p4rGOF4JCkI18HH3a1Vfd89Mg37TLlAsGmePBt20MA52frviYSBE6ToGOmTpqRC4EIlS5/4Owv6TpegFJUSkOg==}
 
-  three-conic-polygon-geometry@1.6.5:
-    resolution: {integrity: sha512-E1xMZYzTZCF6RYjTXUdgzvl8722zpv3C4IivZPYxl2bKYB9lwKcTQMwgOEo7Tjr+3TVZNU7GLuSnTdPq1scwXA==}
+  three-conic-polygon-geometry@2.0.1:
+    resolution: {integrity: sha512-SIOfABS2uFY+ciOda8a4KbSYdBa8tn+dus90nuFI9LOAd3c1AYZ9G2+u+by68dlmFmIjPw2n7Bfdw1dY2fKfVw==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.72.0'
 
-  three-geojson-geometry@1.3.3:
-    resolution: {integrity: sha512-9SogZ9CYfzUYPo0oagGdTCU+Suyjqrbdya24xNbkwMwXr0atF5ozJKPUkdQWHwUy2WgV+i4I9cSjFDnGnanvbQ==}
+  three-geojson-geometry@2.0.0:
+    resolution: {integrity: sha512-fE2+NWtPHNK4Zcz3sX9YPP2IrppuIiedAjyhxTf/hGZvJGkOqSwY21pLv8UmLjRkc4rotnkmX6icNn+xgsOb7w==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.35.9:
-    resolution: {integrity: sha512-gL/FrH+ZouZxL+2lsKepgylccdBlv++Fp9VUadk0BDt7qVTcJmVDDj8DBXol35cWrpjggXBs8BD9uArh91ij/w==}
+  three-globe@2.35.11:
+    resolution: {integrity: sha512-Xk2eT0F4LrxIzE85SUebLPnzov5wQyi8jx49juMAvd+yy8su/Ku1YraTS+BQTKYqhgsVsFLqViJN6h4H44gclg==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -21414,7 +21414,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  three-conic-polygon-geometry@1.6.5(three@0.171.0):
+  three-conic-polygon-geometry@2.0.1(three@0.171.0):
     dependencies:
       '@turf/boolean-point-in-polygon': 7.1.0
       d3-array: 3.2.4
@@ -21425,13 +21425,13 @@ snapshots:
       earcut: 3.0.0
       three: 0.171.0
 
-  three-geojson-geometry@1.3.3(three@0.171.0):
+  three-geojson-geometry@2.0.0(three@0.171.0):
     dependencies:
       d3-geo: 3.1.1
       earcut: 3.0.0
       three: 0.171.0
 
-  three-globe@2.35.9(three@0.171.0):
+  three-globe@2.35.11(three@0.171.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
@@ -21447,8 +21447,8 @@ snapshots:
       index-array-by: 1.4.2
       kapsule: 1.16.0
       three: 0.171.0
-      three-conic-polygon-geometry: 1.6.5(three@0.171.0)
-      three-geojson-geometry: 1.3.3(three@0.171.0)
+      three-conic-polygon-geometry: 2.0.1(three@0.171.0)
+      three-geojson-geometry: 2.0.0(three@0.171.0)
       tinycolor2: 1.6.0
       yaot: 1.1.3
 
