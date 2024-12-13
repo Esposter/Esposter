@@ -101,7 +101,7 @@
     "dedent": "^1.5.3",
     "defu": "^6.1.4",
     "devalue": "^5.1.1",
-    "drizzle-orm": "^0.38.1",
+    "drizzle-orm": "^0.38.2",
     "drizzle-zod": "0.5.1",
     "emoji-mart-vue-fast": "^15.0.3",
     "eventemitter3": "^5.0.1",
