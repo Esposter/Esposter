@@ -364,8 +364,8 @@ importers:
         specifier: ^0.171.0
         version: 0.171.0
       three-globe:
-        specifier: ^2.36.1
-        version: 2.36.1(three@0.171.0)
+        specifier: ^2.37.1
+        version: 2.37.1(three@0.171.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -5227,8 +5227,8 @@ packages:
     resolution: {integrity: sha512-2iy1EkLdlBzQGvbweYRFxmFath8+K7+AKB0TlhHWkNuH+TmovaMH/Wp7V7R4u7f4SnX3OgLsU9t1NI9ioDnUpg==}
     engines: {node: '>=8'}
 
-  data-joint@1.3.1:
-    resolution: {integrity: sha512-tMK0m4OVGqiA3zkn8JmO6YAqD8UwJqIAx4AAwFl1SKTtKAqcXePuT+n2aayiX9uITtlN3DFtKKTOxJRUc2+HvQ==}
+  data-bind-mapper@1.0.0:
+    resolution: {integrity: sha512-FCR4YwhbDbknc9t8P3ebGUENQioe/qmAOioiDSxBYUfIp9ysbWUMLNtuym5LbhbfjsQe9N7lJGM2LMw1ZjcPdQ==}
     engines: {node: '>=12'}
 
   data-urls@5.0.0:
@@ -9420,8 +9420,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.36.1:
-    resolution: {integrity: sha512-qLmod0ToJlOcrtBK46mDxij6WVjOp+tARzy4z6/21R/XaGwQ/Ekj+uonXNjEvsfidMoj79CcPtPZBgbIlpqAGw==}
+  three-globe@2.37.1:
+    resolution: {integrity: sha512-5cXSOL4cz43qyWEymt3VCGcsX+ORkOoXmFkz7UPfc59/t+/x2ISeGiKL2gXwztRGMovySPWxHjIvcvMWf3nKfQ==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -16486,9 +16486,9 @@ snapshots:
 
   dargs@7.0.0: {}
 
-  data-joint@1.3.1:
+  data-bind-mapper@1.0.0:
     dependencies:
-      index-array-by: 1.4.2
+      accessor-fn: 1.5.1
 
   data-urls@5.0.0:
     dependencies:
@@ -21437,7 +21437,7 @@ snapshots:
       earcut: 3.0.0
       three: 0.171.0
 
-  three-globe@2.36.1(three@0.171.0):
+  three-globe@2.37.1(three@0.171.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
@@ -21447,7 +21447,7 @@ snapshots:
       d3-interpolate: 3.0.1
       d3-scale: 4.0.2
       d3-scale-chromatic: 3.1.0
-      data-joint: 1.3.1
+      data-bind-mapper: 1.0.0
       frame-ticker: 1.0.3
       h3-js: 4.1.0
       index-array-by: 1.4.2
