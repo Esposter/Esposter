@@ -4,6 +4,6 @@ import baseSuperJSON from "superjson";
 
 // @TODO: Change this to use class decorators when it is supported
 // https://github.com/nuxt/nuxt/issues/14126
-for (const cls of JSONClasses.map((c) => c.cls)) RegisterSuperJSON(cls);
+for (const { cls } of JSONClasses) RegisterSuperJSON(cls);
 
 export const SuperJSON = baseSuperJSON;
