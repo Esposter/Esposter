@@ -131,7 +131,7 @@
     "marked": "^15.0.4",
     "mjml-browser": "^4.15.3",
     "node-emoji": "^2.2.0",
-    "node-html-parser": "^6.1.13",
+    "node-html-parser": "^7.0.1",
     "obscenity": "^0.4.1",
     "omit-deep-lodash": "^1.1.7",
     "parse-tmx": "workspace:*",
