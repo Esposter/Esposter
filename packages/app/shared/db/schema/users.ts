@@ -21,7 +21,7 @@ export const users = pgTable("User", {
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
+  name: z.string().min(1).max(USER_NAME_MAX_LENGTH).nullable(),
 });
 
 export const updateUserInputSchema = selectUserSchema.pick({ name: true });
