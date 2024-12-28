@@ -364,8 +364,8 @@ importers:
         specifier: ^0.171.0
         version: 0.171.0
       three-globe:
-        specifier: ^2.37.5
-        version: 2.37.5(three@0.171.0)
+        specifier: ^2.39.1
+        version: 2.39.1(three@0.171.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -9500,8 +9500,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.37.5:
-    resolution: {integrity: sha512-GaNuKz/SFujbHiNESU91G8P1iAdt4QUZwGkeE5ump4RP4Q0OjpNPzutkZlod4vn7sWHODMVbZ49wCTn6+llCmA==}
+  three-globe@2.39.1:
+    resolution: {integrity: sha512-1JGTDLJNcat0Nn7/9dnUOzsdDD9aBICM8cf8anOjEd1wzbmt1ZZlzkvAVP7bLZ+NBZYCududjdnPtca5F2w3Cw==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -21705,7 +21705,7 @@ snapshots:
       earcut: 3.0.1
       three: 0.171.0
 
-  three-globe@2.37.5(three@0.171.0):
+  three-globe@2.39.1(three@0.171.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
