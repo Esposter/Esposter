@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.31.0](https://github.com/Esposter/Esposter/compare/v1.30.0...v1.31.0) (2024-12-06)
+
+
+### Bug Fixes
+
+* deep copy serializable objects to json stringify properly ([4b22329](https://github.com/Esposter/Esposter/commit/4b22329dd97b746e306e168be5514bee3cff6e66))
+* lint ([bb647fe](https://github.com/Esposter/Esposter/commit/bb647fec0d004b6e8215d3a8bce64339b8965d4c))
+* move types ([5650063](https://github.com/Esposter/Esposter/commit/5650063c20e39cfbc0e2b44e1fbf2813146a1907))
+* nuxt scripts types ([62a72fa](https://github.com/Esposter/Esposter/commit/62a72fa18366adf29a02408336e56613dd85e444))
+* parse-tmx ([32a522d](https://github.com/Esposter/Esposter/commit/32a522db4c0a50ff5b3531d6e389e74bb965dc10))
+* scripts + parse-tmx perf improvement ([c89e711](https://github.com/Esposter/Esposter/commit/c89e71123e873be9ac8999d7212e7b1d6ced73b9))
+* synchronized functions ([4e20f36](https://github.com/Esposter/Esposter/commit/4e20f36b101d1ea3cf200858125f043cb7469972))
+* types ([82673bc](https://github.com/Esposter/Esposter/commit/82673bc1edeb0a80c049f76814bb63a6bebf1b33))
+* types ([dc0413c](https://github.com/Esposter/Esposter/commit/dc0413c5dba98cbc4e9b72112ef8eb5ea1e5c988))
+
+
+### Features
+
+* Upgrade trpc to v11 ([1c2fc2b](https://github.com/Esposter/Esposter/commit/1c2fc2b33d151d1378d0e31d407faf812599fb9a))
+
+
+
+
+
+
 # [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
 
 

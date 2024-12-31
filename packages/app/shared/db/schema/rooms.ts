@@ -1,19 +1,23 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users, usersToRooms } from "#shared/db/schema/users";
 import { ROOM_NAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
-import { relations } from "drizzle-orm";
-import { text, uuid } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const rooms = pgTable("Room", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  image: text("image"),
-  name: text("name").notNull(),
-  userId: uuid("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const rooms = pgTable(
+  "Room",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    image: text("image"),
+    name: text("name").notNull(),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  ({ name }) => [check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${ROOM_NAME_MAX_LENGTH}`)],
+);
 
 export type Room = typeof rooms.$inferSelect;
 

@@ -8,6 +8,6 @@ export const typescript: NuxtConfig["typescript"] = {
     compilerOptions: {
       noUncheckedIndexedAccess: false,
     },
-    exclude: typescriptIgnores.map((i) => (i.startsWith("public") ? `../${i}` : i)),
+    exclude: typescriptIgnores.map((i) => `../${i}`),
   },
 };

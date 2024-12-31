@@ -36,6 +36,13 @@
       "when": 1730776866348,
       "tag": "0004_brown_sumo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1733792482852,
+      "tag": "0005_curvy_johnny_storm",
+      "breakpoints": true
     }
   ]
 }

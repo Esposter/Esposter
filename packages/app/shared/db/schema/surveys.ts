@@ -1,23 +1,27 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
-import { relations } from "drizzle-orm";
-import { integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const surveys = pgTable("Survey", {
-  group: text("group"),
-  id: uuid("id").primaryKey().defaultRandom(),
-  model: text("model").notNull().default(""),
-  modelVersion: integer("modelVersion").notNull().default(0),
-  name: text("name").notNull(),
-  publishedAt: timestamp("publishedAt", { mode: "date" }),
-  publishVersion: integer("publishVersion").notNull().default(0),
-  userId: uuid("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const surveys = pgTable(
+  "Survey",
+  {
+    group: text("group"),
+    id: uuid("id").primaryKey().defaultRandom(),
+    model: text("model").notNull().default(""),
+    modelVersion: integer("modelVersion").notNull().default(0),
+    name: text("name").notNull(),
+    publishedAt: timestamp("publishedAt", { mode: "date" }),
+    publishVersion: integer("publishVersion").notNull().default(0),
+    userId: uuid("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  ({ name }) => [check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${SURVEY_NAME_MAX_LENGTH}`)],
+);
 
 export type Survey = typeof surveys.$inferSelect;
 
