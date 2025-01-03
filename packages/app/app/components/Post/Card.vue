@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "#shared/db/schema/posts";
 
+import { authClient } from "@/services/auth/authClient";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
@@ -11,7 +12,7 @@ interface PostCardProps {
 }
 
 const { isCommentStore, post } = defineProps<PostCardProps>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const { surfaceOpacity80 } = useColors();
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => session.value?.user.id === post.userId);

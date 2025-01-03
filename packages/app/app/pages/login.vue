@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { BuiltInProviderType } from "@auth/core/providers";
+import type { betterAuth } from "better-auth";
 import type { Component, CSSProperties } from "vue";
 
 import { SITE_NAME } from "#shared/services/esposter/constants";
+import { authClient } from "@/services/auth/authClient";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
 interface ProviderProps {
@@ -10,12 +11,12 @@ interface ProviderProps {
   logo: Component;
   logoAttrs?: Record<string, unknown>;
   logoStyle?: CSSProperties;
-  provider: BuiltInProviderType;
+  provider: keyof NonNullable<Parameters<typeof betterAuth>[0]["socialProviders"]>;
 }
 
-definePageMeta({ middleware: "guest-only" });
+definePageMeta({ middleware: "guest" });
 
-const { signIn } = useAuth();
+const { signIn } = authClient;
 const providerProps = ref<ProviderProps[]>([
   {
     buttonStyle: { backgroundColor: "#4285f4", paddingLeft: "0" },
@@ -68,7 +69,7 @@ const providerProps = ref<ProviderProps[]>([
               rd
               mb-3
               h-12
-              @click="signIn(provider)"
+              @click="signIn.social({ provider })"
             >
               <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
               <span font-bold text-white mx-auto>{{ toTitleCase(provider) }}</span>

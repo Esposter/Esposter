@@ -9,7 +9,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable(
-  "Post",
+  "posts",
   {
     depth: integer("depth").notNull().default(0),
     description: text("description").notNull().default(""),
@@ -19,13 +19,13 @@ export const posts = pgTable(
     parentId: uuid("parentId"),
     ranking: doublePrecision("ranking").notNull(),
     title: text("title").notNull().default(""),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   ({ description, title }) => [
-    check("title", sql`LENGTH(${title}) >= 1 AND LENGTH(${title}) <= ${POST_TITLE_MAX_LENGTH}`),
-    check("description", sql`LENGTH(${description}) <= ${POST_DESCRIPTION_MAX_LENGTH}`),
+    check("title", sql`LENGTH(${title}) >= 1 AND LENGTH(${title}) <= ${sql.raw(POST_TITLE_MAX_LENGTH.toString())}`),
+    check("description", sql`LENGTH(${description}) <= ${sql.raw(POST_DESCRIPTION_MAX_LENGTH.toString())}`),
   ],
 );
 

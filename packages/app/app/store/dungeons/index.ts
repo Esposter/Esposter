@@ -4,6 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { DungeonsGame } from "#shared/models/dungeons/data/DungeonsGame";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
+import { authClient } from "@/services/auth/authClient";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
 import { Cameras } from "phaser";
@@ -11,7 +12,6 @@ import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
 export const useDungeonsStore = defineStore("dungeons", () => {
   const { $client } = useNuxtApp();
-  const { status } = useAuth();
   const phaserStore = usePhaserStore();
   const { switchToScene } = phaserStore;
   const cameraStore = useCameraStore();
@@ -19,10 +19,12 @@ export const useDungeonsStore = defineStore("dungeons", () => {
 
   const game = ref(new DungeonsGame());
   const saveGame = async () => {
-    if (status.value === "authenticated") {
+    const { data: session } = await authClient.useSession(useFetch);
+
+    if (session.value) {
       saveItemMetadata(game.value);
       await $client.dungeons.saveGame.mutate(game.value);
-    } else if (status.value === "unauthenticated") {
+    } else {
       saveItemMetadata(game.value);
       localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
     }

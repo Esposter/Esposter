@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TValue">
 import type { Row } from "@/models/user/ProfileCard/Row";
 
 import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
@@ -6,15 +6,14 @@ import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { formRules } from "@/services/vuetify/formRules";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
-export interface UserProfileCardRowProps {
+export interface UserProfileCardRowProps<T> {
   editMode: boolean;
-  row: Row;
+  row: Row<T>;
   title: string;
 }
-
 // This is the edited row value
-const modelValue = defineModel<null | string>({ required: true });
-const { editMode, row, title } = defineProps<UserProfileCardRowProps>();
+const modelValue = defineModel<null | TValue>({ required: true });
+const { editMode, row, title } = defineProps<UserProfileCardRowProps<TValue>>();
 
 watch(
   () => editMode,
@@ -29,7 +28,7 @@ watch(
     <v-col self-center cols="6">{{ toTitleCase(title) }}:</v-col>
     <v-col v-if="row.type === RowValueType.Image" self-center flex flex-wrap items-center gap-4 cols="6">
       <v-avatar>
-        <v-img v-if="row.value" :src="row.value" />
+        <v-img v-if="row.value" :src="String(row.value)" />
       </v-avatar>
       <v-file-input
         v-if="editMode"

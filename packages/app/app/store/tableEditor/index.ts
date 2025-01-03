@@ -9,6 +9,7 @@ import type {
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
+import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
@@ -24,7 +25,6 @@ type TableEditorStoreState<TItem extends Item = Item> = ReturnType<typeof create
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
   const { $client } = useNuxtApp();
-  const { status } = useAuth();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
@@ -40,10 +40,10 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
-    if (status.value === "authenticated")
-      await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
-    else if (status.value === "unauthenticated")
-      localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
+    const { data: session } = await authClient.useSession(useFetch);
+
+    if (session.value) await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
+    else localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
     editFormDialog.value = false;
   };
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "#shared/db/schema/posts";
 
+import { authClient } from "@/services/auth/authClient";
 import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
@@ -10,7 +11,7 @@ interface PostLikeSectionProps {
 }
 
 const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;
 const liked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === 1));

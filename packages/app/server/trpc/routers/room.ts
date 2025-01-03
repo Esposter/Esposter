@@ -168,7 +168,7 @@ export const roomRouter = router({
         .where(where)
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
-      const resultUsers = joinedUsers.map((ju) => ju.User);
+      const resultUsers = joinedUsers.map(({ users }) => users);
       return getCursorPaginationData(resultUsers, limit, sortBy);
     }),
   readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
@@ -179,9 +179,8 @@ export const roomRouter = router({
           .from(rooms)
           .innerJoin(usersToRooms, and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
       ).find(Boolean);
-      return joinedRoom?.Room ?? null;
+      return joinedRoom?.rooms ?? null;
     }
-
     // By default, we will return the latest updated room
     const joinedRoom = (
       await ctx.db
@@ -190,7 +189,7 @@ export const roomRouter = router({
         .innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id))
         .orderBy(desc(rooms.updatedAt))
     ).find(Boolean);
-    return joinedRoom?.Room ?? null;
+    return joinedRoom?.rooms ?? null;
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
     const query = ctx.db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
@@ -198,7 +197,7 @@ export const roomRouter = router({
     query.orderBy(...parseSortByToSql(rooms, sortBy));
 
     const joinedRooms = await query.limit(limit + 1);
-    const resultRooms = joinedRooms.map((jr) => jr.Room);
+    const resultRooms = joinedRooms.map(({ rooms }) => rooms);
     return getCursorPaginationData(resultRooms, limit, sortBy);
   }),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"])

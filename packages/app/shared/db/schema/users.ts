@@ -1,4 +1,3 @@
-import { pgTable } from "#shared/db/pgTable";
 import { accounts } from "#shared/db/schema/accounts";
 import { posts } from "#shared/db/schema/posts";
 import { rooms } from "#shared/db/schema/rooms";
@@ -6,22 +5,25 @@ import { sessions } from "#shared/db/schema/sessions";
 import { surveys } from "#shared/db/schema/surveys";
 import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
-import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("User", {
+export const users = pgTable("users", {
+  createdAt: timestamp("created_at").notNull(),
+  deletedAt: timestamp("deleted_at").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
-  id: uuid("id").primaryKey().defaultRandom(),
+  emailVerified: boolean("email_verified").notNull(),
+  id: text("id").primaryKey(),
   image: text("image"),
-  name: text("name"),
+  name: text("name").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  name: z.string().min(1).max(USER_NAME_MAX_LENGTH).nullable(),
+  name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
 
 export const updateUserInputSchema = selectUserSchema.pick({ name: true });
@@ -37,12 +39,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const usersToRooms = pgTable(
-  "UserToRoom",
+  "users_to_rooms",
   {
     roomId: uuid("roomId")
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
@@ -62,12 +64,12 @@ export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
 }));
 
 export const likes = pgTable(
-  "Like",
+  "likes",
   {
     postId: uuid("postId")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     value: integer("value").notNull(),

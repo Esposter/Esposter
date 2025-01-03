@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { emojify } from "node-emoji";
 
@@ -7,7 +8,7 @@ interface MessageEmojiListProps {
 }
 
 const { messageRowKey } = defineProps<MessageEmojiListProps>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
 const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;

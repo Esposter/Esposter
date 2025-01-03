@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface RoomConfirmDeleteDialogProps {
@@ -12,7 +13,7 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => unknown;
 }>();
 const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === creatorId);
 const { deleteRoom, leaveRoom } = useRoomStore();
 </script>

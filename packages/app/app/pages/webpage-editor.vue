@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
+import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import grapesJS, { usePlugin } from "grapesjs";
@@ -23,14 +24,12 @@ import { css as cssFormat, html as htmlFormat } from "js-beautify";
 
 defineRouteRules({ ssr: false });
 
-const { status } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
 let editor: Editor | undefined;
 
-const { trigger } = watchTriggerable(status, (newStatus) => {
-  if (newStatus === "loading" || newStatus === "error") return;
-
+const { trigger } = watchTriggerable(session, (newSession) => {
   editor?.destroy();
   editor = grapesJS.init({
     container: ".v-main",
@@ -80,7 +79,7 @@ const { trigger } = watchTriggerable(status, (newStatus) => {
           key: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY,
         },
       },
-      type: status.value === "authenticated" ? "remote" : "local",
+      type: newSession ? "remote" : "local",
     },
     styleManager: {
       sectors: [
