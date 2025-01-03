@@ -1,6 +1,7 @@
 import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
+import { css } from "./configuration/css";
 import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
@@ -13,11 +14,13 @@ import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
 import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
+import { vuetify } from "./configuration/vuetify";
 
 export default defineNuxtConfig({
   app,
   build,
   compatibilityDate,
+  css,
   experimental,
   future,
   imports,
@@ -30,4 +33,5 @@ export default defineNuxtConfig({
   typescript,
   unocss,
   vite,
+  vuetify,
 });

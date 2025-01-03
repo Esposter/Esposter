@@ -16,9 +16,9 @@ export const vite: NuxtConfig["vite"] = {
     preprocessorOptions: {
       scss: {
         additionalData: `
-        @use "vuetify/settings" as *;
-        @use "@/assets/styles/classes.scss" as *;
-        @use "@/assets/styles/variables.scss" as *;
+        @use "@/assets/css/classes.scss" as *;
+        @use "@/assets/css/components.scss" as *;
+        @use "@/assets/css/variables.scss" as *;
         `,
       },
     },

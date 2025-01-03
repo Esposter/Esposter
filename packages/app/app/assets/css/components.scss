@@ -1,0 +1,4 @@
+@forward "vuetify/settings" with (
+  // Button text don't need to be capitalised
+  $button-text-transform: none
+);
