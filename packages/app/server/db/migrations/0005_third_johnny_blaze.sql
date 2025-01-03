@@ -1,5 +1,6 @@
 ALTER TABLE "Authenticator" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP TABLE "Authenticator" CASCADE;--> statement-breakpoint
+TRUNCATE TABLE "Account";
 ALTER TABLE "Account" RENAME TO "accounts";--> statement-breakpoint
 ALTER TABLE "Post" RENAME TO "posts";--> statement-breakpoint
 ALTER TABLE "Room" RENAME TO "rooms";--> statement-breakpoint
@@ -57,9 +58,9 @@ ALTER TABLE "likes" DROP CONSTRAINT "Like_userId_postId_pk";--> statement-breakp
 ALTER TABLE "users_to_rooms" DROP CONSTRAINT "UserToRoom_userId_roomId_pk";--> statement-breakpoint
 ALTER TABLE "verifications" DROP CONSTRAINT "VerificationToken_identifier_token_pk";--> statement-breakpoint
 ALTER TABLE "accounts" ALTER COLUMN "user_id" SET DATA TYPE text;--> statement-breakpoint
-ALTER TABLE "accounts" ALTER COLUMN "access_token_expires_at" SET DATA TYPE timestamp USING NULL
+ALTER TABLE "accounts" ALTER COLUMN "access_token_expires_at" SET DATA TYPE timestamp USING NULL;
 ALTER TABLE "sessions" ALTER COLUMN "user_id" SET DATA TYPE text;--> statement-breakpoint
-ALTER TABLE "users" ALTER COLUMN "email_verified" TYPE boolean USING (CASE WHEN email_verified IS NULL THEN false ELSE true END)
+ALTER TABLE "users" ALTER COLUMN "email_verified" TYPE boolean USING (CASE WHEN email_verified IS NULL THEN false ELSE true END);
 ALTER TABLE "posts" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
 ALTER TABLE "rooms" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
 ALTER TABLE "surveys" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
@@ -99,7 +100,7 @@ ALTER TABLE "users_to_rooms" DROP COLUMN "deletedAt";--> statement-breakpoint
 ALTER TABLE "users_to_rooms" DROP COLUMN "updatedAt";--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_token_unique" UNIQUE("token");--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_email_unique" UNIQUE("email");--> statement-breakpoint
-ALTER TABLE "posts" ADD CONSTRAINT "title" CHECK (LENGTH("posts"."title") >= 1 AND LENGTH("posts"."title") <= 300);--> statement-breakpoint
+ALTER TABLE "posts" ADD CONSTRAINT "title" CHECK (LENGTH("posts"."title") <= 300);--> statement-breakpoint
 ALTER TABLE "posts" ADD CONSTRAINT "description" CHECK (LENGTH("posts"."description") <= 1000);--> statement-breakpoint
 ALTER TABLE "rooms" ADD CONSTRAINT "name" CHECK (LENGTH("rooms"."name") >= 1 AND LENGTH("rooms"."name") <= 100);--> statement-breakpoint
 ALTER TABLE "surveys" ADD CONSTRAINT "name" CHECK (LENGTH("surveys"."name") >= 1 AND LENGTH("surveys"."name") <= 100);--> statement-breakpoint

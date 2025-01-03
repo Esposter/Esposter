@@ -43,6 +43,13 @@
       "when": 1735875977447,
       "tag": "0005_third_johnny_blaze",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1735891856371,
+      "tag": "0006_steady_mole_man",
+      "breakpoints": true
     }
   ]
 }
