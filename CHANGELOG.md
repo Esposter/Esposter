@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.32.0](https://github.com/Esposter/Esposter/compare/v1.31.0...v1.32.0) (2025-01-03)
+
+
+### Bug Fixes
+
+* Add overflow anywhere ([6b181a9](https://github.com/Esposter/Esposter/commit/6b181a9cfce332e3ffe9d3a4af70bd3f3cce4408))
+* migrations ([861a2ef](https://github.com/Esposter/Esposter/commit/861a2ef57a19f4e160419989f0805ef5c67b3098))
+* migrations ([b661494](https://github.com/Esposter/Esposter/commit/b66149466c14f5887fcb60a76ecb5af16613c3f1))
+* migrations ([eefe5b6](https://github.com/Esposter/Esposter/commit/eefe5b6ffb3f30dd32749c5074349139742e54a0))
+* migrations ([b3c8cbc](https://github.com/Esposter/Esposter/commit/b3c8cbcf79dec091170c847d22468d830606b037))
+* migrations ([cf5395a](https://github.com/Esposter/Esposter/commit/cf5395a506697238f40ffae1b6be27d055b4666a))
+* Update drizzle-zod ([9e324cb](https://github.com/Esposter/Esposter/commit/9e324cb6db876c7e663849c1865d52bf253275cd))
+
+
+### Features
+
+* Add auth ([84355f8](https://github.com/Esposter/Esposter/commit/84355f8c2367dc60b46e7dafa319b84b0ad93a9b))
+* Add check constraints ([7ab0fa6](https://github.com/Esposter/Esposter/commit/7ab0fa6579b95973f6d05bd325faac97de682962))
+
+
+
+
+
 # [1.31.0](https://github.com/Esposter/Esposter/compare/v1.30.0...v1.31.0) (2024-12-06)
 
 
