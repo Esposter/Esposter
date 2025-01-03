@@ -9,7 +9,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const posts = pgTable(
-  "Post",
+  "posts",
   {
     depth: integer("depth").notNull().default(0),
     description: text("description").notNull().default(""),

@@ -2,9 +2,11 @@
 import type { ListItem } from "@/models/shared/ListItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
+import { authClient } from "@/services/auth/authClient";
 import { mergeProps } from "vue";
 
-const { session, signOut, status } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
+const { signOut } = authClient;
 const items = computed<ListItem[]>(() => {
   const commonItems: ListItem[] = [
     {
@@ -34,16 +36,8 @@ const items = computed<ListItem[]>(() => {
       title: "Terms & Conditions",
     },
   ];
-  return status.value === "unauthenticated"
+  return session.value
     ? [
-        {
-          href: RoutePath.Login,
-          icon: "mdi-login",
-          title: "Login",
-        },
-        ...commonItems,
-      ]
-    : [
         {
           href: RoutePath.UserSettings,
           icon: "mdi-cog",
@@ -52,9 +46,19 @@ const items = computed<ListItem[]>(() => {
         ...commonItems,
         {
           icon: "mdi-logout",
-          onClick: signOut,
+          onClick: async () => {
+            await signOut();
+          },
           title: "Logout",
         },
+      ]
+    : [
+        {
+          href: RoutePath.Login,
+          icon: "mdi-login",
+          title: "Login",
+        },
+        ...commonItems,
       ];
 });
 const menu = ref(false);
@@ -63,7 +67,7 @@ const menu = ref(false);
 <template>
   <v-menu v-model="menu" location="bottom start" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-tooltip v-if="status === 'authenticated' && session" location="bottom" text="Account">
+      <v-tooltip v-if="session" location="bottom" text="Account">
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
             <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">

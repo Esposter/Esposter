@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { authClient } from "@/services/auth/authClient";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
@@ -24,7 +25,7 @@ const emit = defineEmits<{
   "update:menu": [value: boolean];
   "update:update-mode": [value: true];
 }>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const emojiStore = useEmojiStore();
 const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
 const emojis = computed(() => getEmojiList(message.rowKey));

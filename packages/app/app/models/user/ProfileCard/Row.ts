@@ -1,6 +1,6 @@
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
-export interface Row {
+export interface Row<TValue> {
   type: RowValueType;
-  value: null | string;
+  value: TValue;
 }

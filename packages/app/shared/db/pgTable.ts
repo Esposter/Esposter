@@ -12,8 +12,8 @@ export const pgTable = <TTableName extends string, TColumnsMap extends Record<st
   basePgTable<TTableName, TColumnsMap & typeof metadataSchema>(
     name,
     {
-      ...columns,
       ...metadataSchema,
+      ...columns,
     },
     extraConfig,
   );

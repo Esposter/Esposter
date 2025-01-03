@@ -12,7 +12,7 @@ const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
 const { updateAuthUser } = userStore;
 const { authUser } = storeToRefs(userStore);
-const profileCardRows = computed<Record<keyof UpdateUserInput, Row>>(() => {
+const profileCardRows = computed<{ [P in keyof UpdateUserInput]: Row<UpdateUserInput[P]> }>(() => {
   if (!authUser.value)
     throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.User) });
 
@@ -61,7 +61,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
         <UserProfileCardRow
           v-for="(row, title) of profileCardRows"
           :key="title"
-          v-model="editedProfileCardRows[title as keyof UpdateUserInput]"
+          v-model="editedProfileCardRows[title]"
           px-4
           :title
           :row="{

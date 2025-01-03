@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "#shared/db/schema/posts";
 
+import { authClient } from "@/services/auth/authClient";
+
 interface PostCommentCardProps {
   comment: PostWithRelations;
 }
 
 const { comment } = defineProps<PostCommentCardProps>();
-const { session } = useAuth();
+const { data: session } = await authClient.useSession(useFetch);
 const createdAtTimeAgo = useTimeAgo(() => comment.createdAt);
 const isCreator = computed(() => session.value?.user.id === comment.userId);
 const isUpdateMode = ref(false);

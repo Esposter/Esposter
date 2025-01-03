@@ -7,7 +7,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const rooms = pgTable(
-  "Room",
+  "rooms",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),

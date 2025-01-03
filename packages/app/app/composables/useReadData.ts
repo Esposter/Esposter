@@ -1,12 +1,15 @@
-export const useReadData = async (unauthedReader: () => void, authedReader: () => Promise<void>) => {
-  const { status } = useAuth();
+import { authClient } from "@/services/auth/authClient";
 
-  watch(status, async (newStatus) => {
-    if (newStatus === "authenticated") await authedReader();
-    else if (newStatus === "unauthenticated") unauthedReader();
+export const useReadData = async (unauthedReader: () => void, authedReader: () => Promise<void>) => {
+  const { data: session } = await authClient.useSession(useFetch);
+
+  watch(session, async (newSession) => {
+    if (newSession) await authedReader();
+    else unauthedReader();
   });
 
-  if (status.value === "authenticated") await authedReader();
+  if (session.value) await authedReader();
   // We'll assume that not being authenticated means that we will read from local storage for data
-  else if (status.value === "unauthenticated") onMounted(unauthedReader);
+  // which needs to be done onMounted
+  else onMounted(unauthedReader);
 };

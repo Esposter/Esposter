@@ -3,9 +3,10 @@ import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 
+import { authClient } from "@/services/auth/authClient";
+
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $client } = useNuxtApp();
-  const { session } = useAuth();
 
   const createLike = async (input: CreateLikeInput) => {
     const newLike = await $client.like.createLike.mutate(input);
@@ -31,6 +32,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
+    const { data: session } = await authClient.useSession(useFetch);
     const userId = session.value?.user.id;
     if (!userId) return;
 

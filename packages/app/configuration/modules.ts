@@ -1,7 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 export const modules: NuxtConfig["modules"] = [
-  "@hebilicious/authjs-nuxt",
   "@nuxt/eslint",
   "@nuxt/fonts",
   "@nuxt/scripts",

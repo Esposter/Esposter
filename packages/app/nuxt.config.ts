@@ -1,6 +1,4 @@
-import { alias } from "./configuration/alias";
 import { app } from "./configuration/app";
-import { authJs } from "./configuration/authJs";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
 import { experimental } from "./configuration/experimental";
@@ -16,9 +14,7 @@ import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
 
 export default defineNuxtConfig({
-  alias,
   app,
-  authJs,
   build,
   compatibilityDate,
   experimental,
