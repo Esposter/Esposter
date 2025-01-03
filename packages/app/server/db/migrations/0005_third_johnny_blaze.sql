@@ -1,10 +1,9 @@
 ALTER TABLE "Authenticator" DISABLE ROW LEVEL SECURITY;--> statement-breakpoint
 DROP TABLE "Authenticator" CASCADE;--> statement-breakpoint
-TRUNCATE TABLE "Account";
+ALTER TABLE "Account" DROP CONSTRAINT "Account_pkey";--> statement-breakpoint
 ALTER TABLE "Account" RENAME TO "accounts";--> statement-breakpoint
 ALTER TABLE "Post" RENAME TO "posts";--> statement-breakpoint
 ALTER TABLE "Room" RENAME TO "rooms";--> statement-breakpoint
-TRUNCATE TABLE "Session";
 ALTER TABLE "Session" DROP CONSTRAINT "Session_pkey";--> statement-breakpoint
 ALTER TABLE "Session" RENAME TO "sessions";--> statement-breakpoint
 ALTER TABLE "Survey" RENAME TO "surveys";--> statement-breakpoint
