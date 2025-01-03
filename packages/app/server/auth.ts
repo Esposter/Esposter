@@ -1,9 +1,8 @@
+import { db } from "@@/server/db";
 import { schema } from "@@/server/db/schema";
-import { useDb } from "@@/server/util/useDb";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-const db = useDb();
 const runtimeConfig = useRuntimeConfig();
 
 export const auth = betterAuth({

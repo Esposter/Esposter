@@ -12,11 +12,13 @@ export const rooms = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),
     name: text("name").notNull(),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ name }) => [check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${ROOM_NAME_MAX_LENGTH}`)],
+  ({ name }) => [
+    check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
+  ],
 );
 
 export type Room = typeof rooms.$inferSelect;

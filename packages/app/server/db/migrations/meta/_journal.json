@@ -40,43 +40,8 @@
     {
       "idx": 5,
       "version": "7",
-      "when": 1733792482852,
-      "tag": "0005_curvy_johnny_storm",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1735867105661,
-      "tag": "0006_short_peter_parker",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1735867341600,
-      "tag": "0007_whole_human_cannonball",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1735871155220,
-      "tag": "0008_luxuriant_monster_badoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1735871639882,
-      "tag": "0009_redundant_photon",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1735871726587,
-      "tag": "0010_many_gideon",
+      "when": 1735875977447,
+      "tag": "0005_third_johnny_blaze",
       "breakpoints": true
     }
   ]

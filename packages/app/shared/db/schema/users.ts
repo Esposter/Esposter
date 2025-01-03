@@ -44,7 +44,7 @@ export const usersToRooms = pgTable(
     roomId: uuid("roomId")
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
@@ -69,7 +69,7 @@ export const likes = pgTable(
     postId: uuid("postId")
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     value: integer("value").notNull(),
