@@ -58,7 +58,9 @@ ALTER TABLE "likes" DROP CONSTRAINT "Like_userId_postId_pk";--> statement-breakp
 ALTER TABLE "users_to_rooms" DROP CONSTRAINT "UserToRoom_userId_roomId_pk";--> statement-breakpoint
 ALTER TABLE "verifications" DROP CONSTRAINT "VerificationToken_identifier_token_pk";--> statement-breakpoint
 ALTER TABLE "accounts" ALTER COLUMN "user_id" SET DATA TYPE text;--> statement-breakpoint
+ALTER TABLE "accounts" ALTER COLUMN "access_token_expires_at" SET DATA TYPE timestamp USING NULL
 ALTER TABLE "sessions" ALTER COLUMN "user_id" SET DATA TYPE text;--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "email_verified" TYPE boolean USING (CASE WHEN email_verified IS NULL THEN false ELSE true END)
 ALTER TABLE "posts" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
 ALTER TABLE "rooms" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
 ALTER TABLE "surveys" ALTER COLUMN "userId" SET DATA TYPE text;--> statement-breakpoint
