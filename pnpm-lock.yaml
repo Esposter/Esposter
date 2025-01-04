@@ -190,8 +190,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0
       better-auth:
-        specifier: ^1.1.9
-        version: 1.1.9(encoding@0.1.13)
+        specifier: ^1.1.10
+        version: 1.1.10(encoding@0.1.13)
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -4493,8 +4493,8 @@ packages:
   before-after-hook@2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
 
-  better-auth@1.1.9:
-    resolution: {integrity: sha512-giGua5RtMLLAEkEOrOBJqzk4yyH8I8Vzj+XegW+JkKci99T6RqdW/N6phzpYyy/37xH1ara8E4Ho7ZDgtChzSA==}
+  better-auth@1.1.10:
+    resolution: {integrity: sha512-glVx/Kd08nupFlXO2+bN6pYMoK2Y7rr04Jrix45S9dLr+sTQw/ysVNW/88Nf+Q/VoAL8MuXaUxTP3PhFYrlBBg==}
 
   better-call@0.3.3:
     resolution: {integrity: sha512-N4lDVm0NGmFfDJ0XMQ4O83Zm/3dPlvIQdxvwvgSLSkjFX5PM4GUYSVAuxNzXN27QZMHDkrJTWUqxBrm4tPC3eA==}
@@ -15796,7 +15796,7 @@ snapshots:
 
   before-after-hook@2.2.3: {}
 
-  better-auth@1.1.9(encoding@0.1.13):
+  better-auth@1.1.10(encoding@0.1.13):
     dependencies:
       '@better-auth/utils': 0.2.3
       '@better-fetch/fetch': 1.1.12
