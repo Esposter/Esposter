@@ -50,6 +50,13 @@
       "when": 1735891856371,
       "tag": "0006_steady_mole_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1736205118584,
+      "tag": "0007_light_bloodscream",
+      "breakpoints": true
     }
   ]
 }

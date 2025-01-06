@@ -24,7 +24,7 @@ export const posts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   ({ description, title }) => [
-    check("title", sql`LENGTH(${title}) <= ${sql.raw(POST_TITLE_MAX_LENGTH.toString())}`),
+    check("title", sql`LENGTH(${title}) >= 1 AND LENGTH(${title}) <= ${sql.raw(POST_TITLE_MAX_LENGTH.toString())}`),
     check("description", sql`LENGTH(${description}) <= ${sql.raw(POST_DESCRIPTION_MAX_LENGTH.toString())}`),
   ],
 );
