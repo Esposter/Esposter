@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // @TODO: Nuxt build fails to build this atm
+// import { authClient } from "@/services/auth/authClient";
 // import { validate } from "@/services/router/validate";
 // import { useSurveyStore } from "@/store/surveyer/survey";
 // import "survey-core/defaultV2.min.css";
@@ -12,7 +13,7 @@
 // definePageMeta({ middleware: "auth", validate });
 
 // const survey = await useReadSurveyFromRoute();
-// const { status } = useAuth();
+// const { data: session } = await authClient.useSession(useFetch);
 // const surveyerStore = useSurveyStore();
 // const { updateSurvey } = surveyerStore;
 // const creator = new SurveyCreatorModel({ isAutoSave: true, showLogicTab: true });
@@ -20,7 +21,7 @@
 // creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
 //   survey.model = creator.text;
 
-//   if (status.value === "authenticated")
+//   if (session.value)
 //     try {
 //       const isSuccessful = await updateSurvey(survey);
 //       callback(saveNo, isSuccessful);
