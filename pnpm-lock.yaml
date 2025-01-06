@@ -210,9 +210,6 @@ importers:
       defu:
         specifier: ^6.1.4
         version: 6.1.4
-      devalue:
-        specifier: ^5.1.1
-        version: 5.1.1
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.3(kysely@0.27.5)(postgres@3.4.5)
@@ -18667,7 +18664,7 @@ snapshots:
   jake@10.9.2:
     dependencies:
       async: 3.2.6
-      chalk: 4.1.0
+      chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
 
