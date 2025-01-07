@@ -385,8 +385,8 @@ importers:
         specifier: ^0.3.20
         version: 0.3.20(vue@3.5.13(typescript@5.6.3))(vuetify@3.7.6)
       worker-timers:
-        specifier: ^8.0.12
-        version: 8.0.12
+        specifier: ^8.0.13
+        version: 8.0.13
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -10678,14 +10678,14 @@ packages:
   workbox-window@7.3.0:
     resolution: {integrity: sha512-qW8PDy16OV1UBaUNGlTVcepzrlzyzNW/ZJvFQQs2j2TzGsg6IKjcpZC1RSquqQnTOafl5pCj5bGfAHlCjOOjdA==}
 
-  worker-timers-broker@7.1.8:
-    resolution: {integrity: sha512-DV67pvrVaO4EOLzy/f8YuumRQmfTsuUyvK2qDPHhRcm0gGTqOxijqi5sEI5CkXi2PCCVMI3IN5DU4p3hrOivkA==}
+  worker-timers-broker@7.1.9:
+    resolution: {integrity: sha512-YPql2CMZwAqPlCHoxXWsERLJChb8r9YvjRiAR0KSQ8iyNbckmSXdw4UCttrMbntwQLWxz5msO0oiUX2VA3WyTQ==}
 
   worker-timers-worker@8.0.10:
     resolution: {integrity: sha512-wmdEMhn70li//pFNDT3pcjQ8kcuZOIuD6vrt9RBCwdTcnwvnsAmdSKSHiZSGwhNYwTJd+dvuhb81G05TGpTHcg==}
 
-  worker-timers@8.0.12:
-    resolution: {integrity: sha512-hbAW2H06tf6wPF/WoqiufxRC6hTAXKqcumHFKpwOpCTarQh22DFlgfptQSTlMq2U9GfPvjtyF8uocu4De+fj7Q==}
+  worker-timers@8.0.13:
+    resolution: {integrity: sha512-ggT5TBkuZC+EySptNS61Z5nuwa/8klCyKBv0+Wa0HPLjp13nluIrdUXX9zdYGwJKwNuVPp1wPMUnFuSKw5Hxsg==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -23200,7 +23200,7 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.3.0
 
-  worker-timers-broker@7.1.8:
+  worker-timers-broker@7.1.9:
     dependencies:
       '@babel/runtime': 7.26.0
       fast-unique-numbers: 9.0.15
@@ -23212,11 +23212,11 @@ snapshots:
       '@babel/runtime': 7.26.0
       tslib: 2.8.1
 
-  worker-timers@8.0.12:
+  worker-timers@8.0.13:
     dependencies:
       '@babel/runtime': 7.26.0
       tslib: 2.8.1
-      worker-timers-broker: 7.1.8
+      worker-timers-broker: 7.1.9
       worker-timers-worker: 8.0.10
 
   wrap-ansi@6.2.0:
