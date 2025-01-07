@@ -106,8 +106,8 @@ importers:
         specifier: ^6.1.15
         version: 6.1.15(@fullcalendar/core@6.1.15)(vue@3.5.13(typescript@5.6.3))
       '@koumoul/vjsf':
-        specifier: ^3.8.0
-        version: 3.8.0(vue@3.5.13(typescript@5.6.3))(vuetify@3.7.6)
+        specifier: ^3.9.0
+        version: 3.9.0(vue@3.5.13(typescript@5.6.3))(vuetify@3.7.6)
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
@@ -2225,8 +2225,8 @@ packages:
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@3.8.0':
-    resolution: {integrity: sha512-eBM4nmojTJ7YTVFJKcnUU3e14V3jsrXOVpHea+mR1l4Qc8Hg3TAi4bWOalTEuCIMhWUc6R81Ze8sZHCpOTfR2g==}
+  '@koumoul/vjsf@3.9.0':
+    resolution: {integrity: sha512-sNAKbhY9qQay2MZsKM0OuW9H5HLndjpHKHjYYkbdssWJwks7g6pJWFGcWv97JfktSwQAwswwnk64n3yBlwLsXw==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^3.6.13
@@ -12533,7 +12533,7 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@3.8.0(vue@3.5.13(typescript@5.6.3))(vuetify@3.7.6)':
+  '@koumoul/vjsf@3.9.0(vue@3.5.13(typescript@5.6.3))(vuetify@3.7.6)':
     dependencies:
       '@json-layout/core': 1.4.1
       '@vueuse/core': 10.11.1(vue@3.5.13(typescript@5.6.3))
