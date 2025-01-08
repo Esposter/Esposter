@@ -13,14 +13,14 @@ import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponen
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 
 export const JSONClasses = [
-  { cls: ClickerGame, name: ClickerGame.name },
-  { cls: Dashboard, name: Dashboard.name },
-  { cls: DungeonsGame, name: DungeonsGame.name },
-  { cls: EmailEditor, name: EmailEditor.name },
-  { cls: FlowchartEditor, name: FlowchartEditor.name },
-  { cls: TableEditor, name: TableEditor.name },
-  { cls: TableEditorConfiguration, name: TableEditorConfiguration.name },
-  { cls: TodoListItem, name: TodoListItem.name },
-  { cls: VuetifyComponentItem, name: VuetifyComponentItem.name },
-  { cls: WebpageEditor, name: WebpageEditor.name },
+  { cls: ClickerGame, name: "ClickerGame" },
+  { cls: Dashboard, name: "Dashboard" },
+  { cls: DungeonsGame, name: "DungeonsGame" },
+  { cls: EmailEditor, name: "EmailEditor" },
+  { cls: FlowchartEditor, name: "FlowchartEditor" },
+  { cls: TableEditor, name: "TableEditor" },
+  { cls: TableEditorConfiguration, name: "TableEditorConfiguration" },
+  { cls: TodoListItem, name: "TodoListItem" },
+  { cls: VuetifyComponentItem, name: "VuetifyComponentItem" },
+  { cls: WebpageEditor, name: "WebpageEditor" },
 ] satisfies { cls: Constructor<Serializable>; name: string }[];
