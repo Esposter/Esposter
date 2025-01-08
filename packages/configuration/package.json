@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.2",
-    "@unocss/eslint-config": "^0.65.3",
+    "@unocss/eslint-config": "^0.65.4",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/eslint-plugin": "^1.1.24",
     "eslint-config-prettier": "^9.1.0",
