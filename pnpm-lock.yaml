@@ -355,8 +355,8 @@ importers:
         specifier: ^0.172.0
         version: 0.172.0
       three-globe:
-        specifier: ^2.39.1
-        version: 2.39.1(three@0.172.0)
+        specifier: ^2.40.0
+        version: 2.40.0(three@0.172.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -5258,6 +5258,9 @@ packages:
     resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
     engines: {node: '>=12'}
 
+  d3-octree@1.1.0:
+    resolution: {integrity: sha512-F8gPlqpP+HwRPMO/8uOu5wjH110+6q4cgJvgJT6vlpy3BEaDIKlTZrgHKZSp/i1InRpVfh4puY/kvL6MxK930A==}
+
   d3-scale-chromatic@3.1.0:
     resolution: {integrity: sha512-A3s5PWiZ9YCXFye1o246KoscMWqf8BsD9eRiJ3He7C9OBaxKhAd5TFCdEx/7VbKtxxTsu//1mMJFrEt572cEyQ==}
     engines: {node: '>=12'}
@@ -9645,8 +9648,14 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.39.1:
-    resolution: {integrity: sha512-1JGTDLJNcat0Nn7/9dnUOzsdDD9aBICM8cf8anOjEd1wzbmt1ZZlzkvAVP7bLZ+NBZYCududjdnPtca5F2w3Cw==}
+  three-globe@2.40.0:
+    resolution: {integrity: sha512-wSscAcH0MJBVtiZbhQ1zheCwqjlgHfGygUunSFu57H91hzB0YUoCC+g11EXTJHGg8gHPMZ8zBXZkY32zXZ/fUA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      three: '>=0.154'
+
+  three-slippy-map-globe@1.0.0:
+    resolution: {integrity: sha512-yCcqrnbHcCmKM1iDfi1U1ju2RKRPuyabLFUjdFqSvdS9wJ8xGl2MvNBH1bvEOrEPYntnsDPFhS4wJ8B8qsvikw==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -16844,6 +16853,8 @@ snapshots:
     dependencies:
       d3-color: 3.1.0
 
+  d3-octree@1.1.0: {}
+
   d3-scale-chromatic@3.1.0:
     dependencies:
       d3-color: 3.1.0
@@ -22021,7 +22032,7 @@ snapshots:
       earcut: 3.0.1
       three: 0.172.0
 
-  three-globe@2.39.1(three@0.172.0):
+  three-globe@2.40.0(three@0.172.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
@@ -22039,8 +22050,16 @@ snapshots:
       three: 0.172.0
       three-conic-polygon-geometry: 2.0.1(three@0.172.0)
       three-geojson-geometry: 2.1.0(three@0.172.0)
+      three-slippy-map-globe: 1.0.0(three@0.172.0)
       tinycolor2: 1.6.0
       yaot: 1.1.3
+
+  three-slippy-map-globe@1.0.0(three@0.172.0):
+    dependencies:
+      d3-geo: 3.1.1
+      d3-octree: 1.1.0
+      d3-scale: 4.0.2
+      three: 0.172.0
 
   three@0.172.0: {}
 

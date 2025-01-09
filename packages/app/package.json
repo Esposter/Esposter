@@ -146,7 +146,7 @@
     "survey-creator-vue": "^1.12.17",
     "survey-vue3-ui": "^1.12.17",
     "three": "^0.172.0",
-    "three-globe": "^2.39.1",
+    "three-globe": "^2.40.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "0.11.1-next.1",
     "vue-codemirror": "^6.1.1",
