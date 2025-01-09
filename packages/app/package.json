@@ -132,7 +132,7 @@
     "obscenity": "^0.4.1",
     "omit-deep-lodash": "^1.1.7",
     "parse-tmx": "workspace:*",
-    "pathe": "^2.0.0",
+    "pathe": "^2.0.1",
     "phaser": "^3.87.0",
     "phaser3-rex-plugins": "^1.80.12",
     "pinia": "^2.3.0",
