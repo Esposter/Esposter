@@ -82,7 +82,7 @@
     "@vue-flow/core": "^1.41.7",
     "@vue-flow/minimap": "^1.5.0",
     "@vue-flow/node-resizer": "^1.4.0",
-    "@vuepic/vue-datepicker": "^11.0.0",
+    "@vuepic/vue-datepicker": "^11.0.1",
     "@vueuse/core": "^12.3.0",
     "@vueuse/integrations": "^12.3.0",
     "@vueuse/nuxt": "^12.3.0",
