@@ -91,7 +91,7 @@
     "ajv-formats": "^3.0.1",
     "ajv-i18n": "^4.2.0",
     "apexcharts": "^4.3.0",
-    "better-auth": "^1.1.10",
+    "better-auth": "^1.1.11",
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
     "dayjs": "^1.11.13",
