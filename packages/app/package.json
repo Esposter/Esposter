@@ -189,7 +189,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/three": "^0.172.0",
     "@types/ws": "^8.5.13",
-    "@unocss/nuxt": "^0.65.4",
+    "@unocss/nuxt": "^65.4.0",
     "@vite-pwa/nuxt": "^0.10.6",
     "@vitest/coverage-v8": "^2.1.8",
     "@vue/test-utils": "^2.4.6",
@@ -204,7 +204,7 @@
     "prettier": "^3.4.2",
     "sass-embedded": "^1.83.1",
     "tsx": "^4.19.2",
-    "unocss": "^0.65.4",
+    "unocss": "^65.4.0",
     "vitest": "^2.1.8",
     "vuetify-nuxt-module": "^0.18.3"
   }
