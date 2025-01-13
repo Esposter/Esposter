@@ -26,7 +26,7 @@
     "@unocss/eslint-config": "^65.4.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/eslint-plugin": "^1.1.25",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-perfectionist": "^4.6.0",
     "eslint-plugin-pinia": "^0.4.1",
     "eslint-plugin-prettier": "^5.2.1",
