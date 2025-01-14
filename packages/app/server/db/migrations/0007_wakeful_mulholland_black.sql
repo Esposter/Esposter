@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD CONSTRAINT "name" CHECK (LENGTH("users"."name") >= 1 AND LENGTH("users"."name") <= 100);

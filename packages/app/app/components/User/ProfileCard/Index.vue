@@ -1,29 +1,26 @@
 <!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
-import type { UpdateUserInput } from "#shared/db/schema/users";
-
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
+import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
-import { useUserStore } from "@/store/user";
 import deepEqual from "fast-deep-equal";
 
+const { data: session } = await authClient.useSession(useFetch);
+const { updateUser } = authClient;
 const { backgroundOpacity20 } = useColors();
-const userStore = useUserStore();
-const { updateAuthUser } = userStore;
-const { authUser } = storeToRefs(userStore);
 const profileCardRows = computed(() => {
-  if (!authUser.value)
+  if (!session.value)
     throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.User) });
 
   return {
     name: {
       type: RowValueType.Text,
-      value: authUser.value.name,
+      value: session.value.user.name,
     },
     image: {
       type: RowValueType.Image,
-      value: authUser.value.image,
+      value: session.value.user.image,
     },
   } as const;
 });
@@ -32,7 +29,7 @@ const profileCardRowValues = computed(
     Object.entries(profileCardRows.value).reduce<Record<string, unknown>>((acc, [prop, row]) => {
       acc[prop] = row.value;
       return acc;
-    }, {}) as UpdateUserInput,
+    }, {}) as { [P in keyof typeof profileCardRows.value]: (typeof profileCardRows.value)[P]["value"] },
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);
@@ -47,7 +44,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
     v-model="isValid"
     @submit.prevent="
       async () => {
-        await updateAuthUser(editedProfileCardRows);
+        await updateUser(editedProfileCardRows);
         editMode = false;
       }
     "

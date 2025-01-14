@@ -1,28 +1,23 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
-
 import { SITE_NAME } from "#shared/services/esposter/constants";
+import { authClient } from "@/services/auth/authClient";
 
-interface IntroductionCardProps {
-  user: User;
-}
-
-const { user } = defineProps<IntroductionCardProps>();
-const createdAt = useDateFormat(() => user.createdAt, "MMM D, YYYY");
-const createdAtTimeAgo = useTimeAgo(() => user.createdAt);
+const { data: session } = await authClient.useSession(useFetch);
+const createdAt = useDateFormat(() => session.value?.user.createdAt, "MMM D, YYYY");
+const createdAtTimeAgo = useTimeAgo(() => session.value?.user.createdAt ?? "");
 </script>
 
 <template>
-  <StyledCard p-6="!" flex="!">
+  <StyledCard v-if="session" p-6="!" flex="!">
     <div flex-1 grid>
-      <div v-if="user.name" class="text-h5" font-bold>{{ user.name }}</div>
+      <div v-if="session.user.name" class="text-h5" font-bold>{{ session.user.name }}</div>
       <div>
-        {{ user.email }}
+        {{ session.user.email }}
       </div>
       <div>Joined {{ SITE_NAME }} on {{ createdAt }} ({{ createdAtTimeAgo }})</div>
     </div>
-    <v-avatar v-if="user.image" size="6rem">
-      <v-img :src="user.image" :alt="user.name ?? ''" />
+    <v-avatar size="6rem">
+      <v-img v-if="session.user.image" :src="session.user.image" :alt="session.user.name ?? ''" />
     </v-avatar>
   </StyledCard>
 </template>

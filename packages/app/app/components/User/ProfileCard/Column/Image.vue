@@ -23,7 +23,7 @@ watch(imageBase64, (newImageBase64) => {
 </script>
 
 <template>
-  <v-col self-center flex flex-wrap items-center gap-4 cols="6">
+  <v-col flex flex-wrap items-center self-center gap-4 cols="6">
     <template v-if="editMode">
       <v-avatar>
         <v-img v-if="imageBase64" :src="imageBase64" />
@@ -31,13 +31,13 @@ watch(imageBase64, (newImageBase64) => {
       </v-avatar>
       <v-file-input
         v-model="imageModelValue"
-        my-2
         accept="image/*"
         prepend-icon=""
         prepend-inner-icon="mdi-upload"
         label="Upload image"
         density="compact"
         hide-details
+        my-2
         show-size
       />
     </template>

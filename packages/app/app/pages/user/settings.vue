@@ -2,15 +2,10 @@
 import type { SideBarItem } from "@/models/user/SideBarItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { useUserStore } from "@/store/user";
 
 definePageMeta({ middleware: "auth" });
 
-await useReadUser();
-
 const { smAndDown } = useDisplay();
-const userStore = useUserStore();
-const { authUser } = storeToRefs(userStore);
 const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
 </script>
 
@@ -19,7 +14,7 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
     <v-container>
       <v-row>
         <v-col>
-          <UserIntroductionCard v-if="authUser" :user="authUser" />
+          <UserIntroductionCard />
         </v-col>
       </v-row>
       <v-row>

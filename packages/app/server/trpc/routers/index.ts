@@ -12,7 +12,6 @@ import { postRouter } from "@@/server/trpc/routers/post";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { userRouter } from "@@/server/trpc/routers/user";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
 
 export const trpcRouter = router({
@@ -29,7 +28,6 @@ export const trpcRouter = router({
   room: roomRouter,
   survey: surveyRouter,
   tableEditor: tableEditorRouter,
-  user: userRouter,
   webpageEditor: webpageEditorRouter,
 });
 
