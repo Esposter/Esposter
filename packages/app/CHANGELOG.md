@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.33.0](https://github.com/Esposter/Esposter/compare/v1.32.0...v1.33.0) (2025-01-14)
+
+
+### Bug Fixes
+
+* composable cannot have await with lifecycle hooks ([3b9ef18](https://github.com/Esposter/Esposter/commit/3b9ef1887e8ebde0aca8023c10f35a3cc77e754e))
+* converting image ([55e34a4](https://github.com/Esposter/Esposter/commit/55e34a41f1d2ee083a1a240990114606e9a0d13e))
+* json class names ([f0d7f76](https://github.com/Esposter/Esposter/commit/f0d7f76f0e99c62708255b1a7d4cbdcf517c25dc))
+* migrations ([5c4b03b](https://github.com/Esposter/Esposter/commit/5c4b03b6d47843afc4ba5aefb9d899caf7f6c534))
+* migrations ([cd373eb](https://github.com/Esposter/Esposter/commit/cd373ebacad7a19a6b7822c2766c6dcbd31cfb56))
+* posts must have non-empty titles + fix up profanity middleware ([3127751](https://github.com/Esposter/Esposter/commit/312775134d9f2dca7c6b5c8b6306324387918c82))
+* remove devalue ([84aa708](https://github.com/Esposter/Esposter/commit/84aa70845af402d6702da7bcba2273c594bbf334))
+* watch for new session data instead ([bd31d33](https://github.com/Esposter/Esposter/commit/bd31d3360098cfdde298182090dd040a633643c6))
+
+
+### Features
+
+* Add image ([b6d59ef](https://github.com/Esposter/Esposter/commit/b6d59ef582360ec7f53527d1afc8e212e2d482c8))
+
+
+
+
+
 # [1.32.0](https://github.com/Esposter/Esposter/compare/v1.31.0...v1.32.0) (2025-01-03)
 
 
