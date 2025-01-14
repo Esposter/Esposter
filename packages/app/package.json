@@ -177,7 +177,7 @@
     "@nuxt/fonts": "^0.10.3",
     "@nuxt/scripts": "^0.9.5",
     "@nuxt/test-utils": "^3.15.4",
-    "@nuxtjs/seo": "^2.0.2",
+    "@nuxtjs/seo": "^2.0.3",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
     "@types/fs-extra": "^11.0.4",
