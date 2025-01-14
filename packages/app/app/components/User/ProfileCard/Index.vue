@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { UpdateUserInput } from "#shared/db/schema/users";
-import type { Row } from "@/models/user/ProfileCard/Row";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
@@ -12,27 +11,27 @@ const { backgroundOpacity20 } = useColors();
 const userStore = useUserStore();
 const { updateAuthUser } = userStore;
 const { authUser } = storeToRefs(userStore);
-const profileCardRows = computed<{ [P in keyof UpdateUserInput]: Row<UpdateUserInput[P]> }>(() => {
+const profileCardRows = computed(() => {
   if (!authUser.value)
     throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.User) });
 
   return {
-    // @TODO: https://github.com/trpc/trpc/issues/1937
-    // avatar: {
-    //   type: RowValueType.Image,
-    //   value: user.image,
-    // },
+    image: {
+      type: RowValueType.Image,
+      value: authUser.value.image,
+    },
     name: {
       type: RowValueType.Text,
       value: authUser.value.name,
     },
-  };
+  } as const;
 });
-const profileCardRowValues = computed(() =>
-  Object.entries(profileCardRows.value).reduce((acc, [prop, row]) => {
-    acc[prop] = row.value;
-    return acc;
-  }, {} as UpdateUserInput),
+const profileCardRowValues = computed(
+  () =>
+    Object.entries(profileCardRows.value).reduce<Record<string, unknown>>((acc, [prop, row]) => {
+      acc[prop] = row.value;
+      return acc;
+    }, {}) as UpdateUserInput,
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);

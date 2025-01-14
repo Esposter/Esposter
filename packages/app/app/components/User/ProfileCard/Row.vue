@@ -1,19 +1,18 @@
-<script setup lang="ts" generic="TValue">
+<script setup lang="ts" generic="TType extends RowValueType">
 import type { Row } from "@/models/user/ProfileCard/Row";
+import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
-import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
-import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
-import { formRules } from "@/services/vuetify/formRules";
+import { RowValueComponentMap } from "@/services/user/RowValueComponentMap";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
-export interface UserProfileCardRowProps<T> {
+export interface UserProfileCardRowProps<TType extends RowValueType> {
   editMode: boolean;
-  row: Row<T>;
+  row: Row<TType>;
   title: string;
 }
-// This is the edited row value
-const modelValue = defineModel<null | TValue>({ required: true });
-const { editMode, row, title } = defineProps<UserProfileCardRowProps<TValue>>();
+
+const modelValue = defineModel<Row<TType>["value"]>({ required: true });
+const { editMode, row, title } = defineProps<UserProfileCardRowProps<TType>>();
 
 watch(
   () => editMode,
@@ -26,34 +25,6 @@ watch(
 <template>
   <v-row>
     <v-col self-center cols="6">{{ toTitleCase(title) }}:</v-col>
-    <v-col v-if="row.type === RowValueType.Image" self-center flex flex-wrap items-center gap-4 cols="6">
-      <v-avatar>
-        <v-img v-if="row.value" :src="String(row.value)" />
-      </v-avatar>
-      <v-file-input
-        v-if="editMode"
-        prepend-icon=""
-        prepend-inner-icon="mdi-upload"
-        label="Upload image"
-        density="compact"
-        hide-details
-        my-2
-      />
-    </v-col>
-    <v-col v-else self-center cols="6" font-bold>
-      <v-text-field
-        v-if="editMode"
-        v-model="modelValue"
-        size="small"
-        :rules="[
-          formRules.required,
-          formRules.requireAtMostNCharacters(USER_NAME_MAX_LENGTH),
-          formRules.isNotProfanity,
-        ]"
-      />
-      <template v-else>
-        {{ row.value }}
-      </template>
-    </v-col>
+    <component :is="RowValueComponentMap[row.type]" v-model="modelValue" :edit-mode :value="row.value" />
   </v-row>
 </template>
