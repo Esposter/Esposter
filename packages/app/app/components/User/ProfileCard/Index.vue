@@ -1,3 +1,4 @@
+<!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
 import type { UpdateUserInput } from "#shared/db/schema/users";
 
@@ -16,13 +17,13 @@ const profileCardRows = computed(() => {
     throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.User) });
 
   return {
-    image: {
-      type: RowValueType.Image,
-      value: authUser.value.image,
-    },
     name: {
       type: RowValueType.Text,
       value: authUser.value.name,
+    },
+    image: {
+      type: RowValueType.Image,
+      value: authUser.value.image,
     },
   } as const;
 });
