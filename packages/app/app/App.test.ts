@@ -7,8 +7,8 @@ describe("app", () => {
   test("snapshots", async () => {
     expect.hasAssertions();
 
-    const componentFilepathEntries = Object.entries<Record<string, Component>>(
-      import.meta.glob("@/components/About/*.vue", { eager: true, import: "default" }),
+    const componentFilepathEntries = Object.entries(
+      import.meta.glob<Component>("@/components/About/*.vue", { eager: true, import: "default" }),
     );
 
     for (const [filepath, component] of componentFilepathEntries) {

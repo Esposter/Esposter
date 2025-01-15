@@ -25,18 +25,18 @@ const descriptionHtml = computed(() => (description ? marked.parse(description) 
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`));
 const displayPrice = computed(() => formatNumberLong(price));
 const buildingIcon = computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
+  const glob = import.meta.glob<string>("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
   return images[id];
 });
 const menuIcon = computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
+  const glob = import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
   return images[id];
 });
 const upgradeIcon = computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
+  const glob = import.meta.glob<string>("@/assets/clicker/icons/upgrades/**/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
   return images[id];
 });
 </script>

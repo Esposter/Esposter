@@ -13,8 +13,8 @@ const amount = computed(() => {
 const rotatingDivIds = computed(() => Array.from({ length: amount.value }, () => crypto.randomUUID()));
 
 const icon = computed(() => {
-  const glob = import.meta.glob("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
-  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value as string]));
+  const glob = import.meta.glob<string>("@/assets/clicker/icons/menu/*.png", { eager: true, import: "default" });
+  const images = Object.fromEntries(Object.entries(glob).map(([key, value]) => [filename(key), value]));
   return images.Cursor;
 });
 
