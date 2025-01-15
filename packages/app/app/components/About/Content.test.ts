@@ -1,0 +1,21 @@
+import Content from "@/components/About/Content.vue";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { describe, expect, test } from "vitest";
+import { createVuetify } from "vuetify";
+
+describe("content", () => {
+  test("snapshot", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(Content, {
+      global: {
+        plugins: [createVuetify()],
+      },
+    });
+
+    expect(component.html()).toMatchInlineSnapshot(`
+      "<div data-v-1063f98c="" class="text-h4" font-bold="" mb-8="">Why Esposter?</div>
+      <div data-v-1063f98c="" class="text-h6">Esposter is an independent, community-driven lifetime project. It was created by <a data-v-4b2ab03a="" data-v-1063f98c="" href="https://www.linkedin.com/in/jimmy-chen-b6216820b" rel="noopener noreferrer" target="_blank" class="author" font-bold=""> Jimmy Chen </a> as a personal attempt to incorporate the best features of social media in a minimalistic way with the least amount of code. </div>"
+    `);
+  });
+});
