@@ -202,7 +202,7 @@
     "nuxt": "^3.15.1",
     "nuxt-security": "^2.1.5",
     "prettier": "^3.4.2",
-    "sass-embedded": "^1.83.1",
+    "sass-embedded": "^1.83.4",
     "tsx": "^4.19.2",
     "unocss": "^65.4.0",
     "vitest": "^2.1.8",
