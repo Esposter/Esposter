@@ -1,3 +1,4 @@
+import { trimFileExtension } from "@/util/trimFileExtension";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { createVuetify } from "vuetify";
@@ -16,7 +17,7 @@ describe("app", () => {
           plugins: [createVuetify()],
         },
       });
-      const filename = filepath.replace(/\.[^/.]+$/, "");
+      const filename = trimFileExtension(filepath);
 
       await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);
     }
