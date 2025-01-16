@@ -280,8 +280,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(vue@3.5.13(typescript@5.7.2))
       gsap:
-        specifier: ^3.12.5
-        version: 3.12.5
+        specifier: ^3.12.7
+        version: 3.12.7
       howler:
         specifier: ^2.2.4
         version: 2.2.4
@@ -6555,8 +6555,8 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
-  gsap@3.12.5:
-    resolution: {integrity: sha512-srBfnk4n+Oe/ZnMIOXt3gT605BX9x5+rh/prT2F1SsNJsU1XuMiP0E2aptW481OnonOGACZWBqseH5Z7csHxhQ==}
+  gsap@3.12.7:
+    resolution: {integrity: sha512-V4GsyVamhmKefvcAKaoy0h6si0xX7ogwBoBSs2CTJwt7luW0oZzC0LhdkyuKV8PJAXr7Yaj8pMjCKD4GJ+eEMg==}
 
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
@@ -18518,7 +18518,7 @@ snapshots:
       interactjs: 1.10.27
       vue: 3.5.13(typescript@5.7.2)
 
-  gsap@3.12.5: {}
+  gsap@3.12.7: {}
 
   gzip-size@6.0.0:
     dependencies:
