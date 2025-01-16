@@ -1,4 +1,4 @@
-import { publicProcedure } from "@@/server/trpc";
 import { isAuthed } from "@@/server/trpc/middleware/isAuthed";
+import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 
-export const authedProcedure = publicProcedure.use(isAuthed);
+export const authedProcedure = rateLimitedProcedure.use(isAuthed);

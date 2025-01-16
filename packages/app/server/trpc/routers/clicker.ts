@@ -6,12 +6,13 @@ import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
 import { SAVE_FILENAME } from "@@/server/services/clicker/constants";
-import { publicProcedure, router } from "@@/server/trpc";
+import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { useContainerClient } from "@@/server/util/azure/useContainerClient";
 
 export const clickerRouter = router({
-  readBuildingMap: publicProcedure.query(() => BuildingMap),
+  readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
   readGame: authedProcedure.query<ClickerGame>(async ({ ctx }) => {
     try {
       const containerClient = await useContainerClient(AzureContainer.ClickerAssets);
@@ -26,7 +27,7 @@ export const clickerRouter = router({
       return new ClickerGame();
     }
   }),
-  readUpgradeMap: publicProcedure.query(() => UpgradeMap),
+  readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
   saveGame: authedProcedure.input(clickerGameSchema).mutation(async ({ ctx, input }) => {
     const client = await useContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;

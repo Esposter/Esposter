@@ -14,9 +14,10 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { ranking } from "@@/server/services/post/ranking";
-import { publicProcedure, router } from "@@/server/trpc";
+import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
+import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -127,12 +128,12 @@ export const postRouter = router({
         return deletedPost;
       }),
   ),
-  readPost: publicProcedure
+  readPost: rateLimitedProcedure
     .input(readPostInputSchema)
     .query(({ ctx, input }) =>
       ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
     ),
-  readPosts: publicProcedure
+  readPosts: rateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
