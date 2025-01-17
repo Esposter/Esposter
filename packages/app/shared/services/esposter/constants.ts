@@ -4,7 +4,7 @@ export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b621
 
 export const APP_BAR_HEIGHT = 56;
 
-export const ICONS_PUBLIC_FOLDER_PATH = "/icons";
+export const PWA_PUBLIC_FOLDER_PATH = "/pwa";
 
 const IMAGES_PUBLIC_FOLDER_PATH = "/images";
 export const NOT_FOUND_BACKGROUND_PATH = `${IMAGES_PUBLIC_FOLDER_PATH}/notFoundBackground.svg`;
