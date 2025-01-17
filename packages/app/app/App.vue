@@ -3,6 +3,7 @@ import { VSonner } from "vuetify-sonner";
 </script>
 
 <template>
+  <NuxtPwaAssets />
   <v-app>
     <EsposterAppBar />
     <EsposterLoadingIndicator />
@@ -11,7 +12,6 @@ import { VSonner } from "vuetify-sonner";
         <NuxtPage />
       </NuxtSEO>
     </NuxtTheme>
-    <VitePwaManifest />
     <ClientOnly>
       <VSonner />
     </ClientOnly>
