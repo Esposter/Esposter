@@ -12,19 +12,18 @@ const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $client } = useNuxtApp();
 const imageModelValue = ref<File | null>(null);
 const isLoading = ref(false);
+const onFileChange = async (files: File | File[]) => {
+  const file = Array.isArray(files) ? files[0] : files;
+  isLoading.value = true;
 
-watch(imageModelValue, async (newImageModelValue) => {
-  if (newImageModelValue) {
-    isLoading.value = true;
-
-    try {
-      const profileImageData = await newImageModelValue.arrayBuffer();
-      modelValue.value = await $client.user.uploadProfileImage.mutate(profileImageData);
-    } finally {
-      isLoading.value = false;
-    }
-  } else modelValue.value = null;
-});
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    modelValue.value = await $client.user.uploadProfileImage.mutate(formData);
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -45,6 +44,8 @@ watch(imageModelValue, async (newImageModelValue) => {
         hide-details
         my-2
         show-size
+        @update:model-value="onFileChange"
+        @click:clear="modelValue = null"
       />
     </template>
     <v-avatar v-else>

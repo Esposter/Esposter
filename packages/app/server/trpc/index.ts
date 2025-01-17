@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { SuperJSON as transformer } from "#shared/services/superjson";
+import { transformer } from "#shared/services/trpc/transformer";
 import { initTRPC } from "@trpc/server";
 import { ZodError } from "zod";
 // Avoid exporting the entire t-object since it's not very

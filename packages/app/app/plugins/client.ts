@@ -1,7 +1,7 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { SuperJSON as transformer } from "#shared/services/superjson";
+import { transformer } from "#shared/services/trpc/transformer";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { getIsServer } from "#shared/util/environment/getIsServer";
 import { errorLink } from "@/services/trpc/errorLink";
