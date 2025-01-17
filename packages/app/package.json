@@ -35,7 +35,7 @@
     "db:up": "pnpm db:run up",
     "gen-env": "gen-env-types .env -o env.d.ts -e .",
     "tiled:gen": "pnpm cross-os tiled:gen",
-    "generate-pwa-assets": "pwa-asset-generator public/logo.svg public/pwa -f -i public/pwa/index.html -m public/pwa/manifest.json",
+    "generate-pwa-assets": "pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/Esposter/logo.png public/pwa -f -i public/pwa/index.html -m public/pwa/manifest.json",
     "cross-os": "node ../../scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
