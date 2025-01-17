@@ -7,9 +7,9 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
   const { $client } = useNuxtApp();
   const flowchartEditor = ref(new FlowchartEditor());
   const saveFlowchartEditor = async () => {
-    const { data: session } = await authClient.useSession(useFetch);
+    const session = authClient.useSession();
 
-    if (session.value) {
+    if (session.value.data) {
       saveItemMetadata(flowchartEditor.value);
       await $client.flowchartEditor.saveFlowchartEditor.mutate(flowchartEditor.value);
     } else {

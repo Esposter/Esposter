@@ -10,7 +10,6 @@ export interface UserProfileCardColumnImageProps {
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $client } = useNuxtApp();
-const profileImageUrl = await useProfileImageUrl();
 const imageModelValue = ref<File | null>(null);
 const isLoading = ref(false);
 
@@ -20,8 +19,7 @@ watch(imageModelValue, async (newImageModelValue) => {
 
     try {
       const profileImageData = await newImageModelValue.arrayBuffer();
-      await $client.user.uploadProfileImage.mutate(profileImageData);
-      modelValue.value = profileImageUrl.value;
+      modelValue.value = await $client.user.uploadProfileImage.mutate(profileImageData);
     } finally {
       isLoading.value = false;
     }
@@ -33,7 +31,7 @@ watch(imageModelValue, async (newImageModelValue) => {
   <v-col flex flex-wrap items-center self-center gap-4 cols="6">
     <template v-if="editMode">
       <v-avatar>
-        <v-img v-if="imageModelValue && profileImageUrl" :src="profileImageUrl" />
+        <v-img v-if="modelValue" :src="modelValue" />
         <v-img v-else-if="value" :src="value" />
       </v-avatar>
       <v-file-input

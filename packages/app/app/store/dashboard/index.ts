@@ -7,9 +7,9 @@ export const useDashboardStore = defineStore("dashboard", () => {
   const { $client } = useNuxtApp();
   const dashboard = ref(new Dashboard());
   const saveDashboard = async () => {
-    const { data: session } = await authClient.useSession(useFetch);
+    const session = authClient.useSession();
 
-    if (session.value) {
+    if (session.value.data) {
       saveItemMetadata(dashboard.value);
       await $client.dashboard.saveDashboard.mutate(dashboard.value);
     } else {

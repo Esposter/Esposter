@@ -19,9 +19,9 @@ export const useDungeonsStore = defineStore("dungeons", () => {
 
   const game = ref(new DungeonsGame());
   const saveGame = async () => {
-    const { data: session } = await authClient.useSession(useFetch);
+    const session = authClient.useSession();
 
-    if (session.value) {
+    if (session.value.data) {
       saveItemMetadata(game.value);
       await $client.dungeons.saveGame.mutate(game.value);
     } else {

@@ -7,9 +7,9 @@ export const useClickerStore = defineStore("clicker", () => {
   const { $client } = useNuxtApp();
   const game = ref(new ClickerGame());
   const saveGame = async () => {
-    const { data: session } = await authClient.useSession(useFetch);
+    const session = authClient.useSession();
 
-    if (session.value) {
+    if (session.value.data) {
       saveItemMetadata(game.value);
       await $client.clicker.saveGame.mutate(game.value);
     } else {

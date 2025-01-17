@@ -8,13 +8,12 @@ import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyIn
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@@/server/services/publish/getPublishPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
-import { useContainerClient } from "@@/server/util/azure/useContainerClient";
+import { useUpload } from "@@/server/util/azure/useUpload";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { and, count, desc, eq } from "drizzle-orm";
 
@@ -73,9 +72,8 @@ export const surveyRouter = router({
 
     await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
 
-    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
     const blobName = getPublishPath(id, rest.publishVersion, "json");
-    await uploadBlockBlob(containerClient, blobName, survey.model);
+    await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
   }),
   readSurvey: authedProcedure
     .input(readSurveyInputSchema)

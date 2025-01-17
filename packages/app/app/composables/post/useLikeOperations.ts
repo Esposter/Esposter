@@ -32,8 +32,8 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
-    const { data: session } = await authClient.useSession(useFetch);
-    const userId = session.value?.user.id;
+    const session = authClient.useSession();
+    const userId = session.value.data?.user.id;
     if (!userId) return;
 
     await $client.like.deleteLike.mutate(postId);

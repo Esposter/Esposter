@@ -5,32 +5,27 @@ import {
 } from "#shared/models/tableEditor/TableEditorConfiguration";
 import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
-import { uploadBlockBlob } from "@@/server/services/azure/blob/uploadBlockBlob";
 import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
-import { useContainerClient } from "@@/server/util/azure/useContainerClient";
+import { useDownload } from "@@/server/util/azure/useDownload";
+import { useUpload } from "@@/server/util/azure/useUpload";
 
 export const tableEditorRouter = router({
   readTableEditor: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
     try {
-      const containerClient = await useContainerClient(AzureContainer.TableEditorAssets);
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const response = await blockBlobClient.download();
+      const response = await useDownload(AzureContainer.TableEditorAssets, blobName);
       if (!response.readableStreamBody) return new TableEditorConfiguration();
 
       const json = await streamToText(response.readableStreamBody);
       return Object.assign(new TableEditorConfiguration(), jsonDateParse(json));
     } catch {
-      // We need to catch the case where the user is reading for the very first time
-      // and there is no table editor configuration saved yet
       return new TableEditorConfiguration();
     }
   }),
   saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.TableEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await uploadBlockBlob(containerClient, blobName, JSON.stringify(input));
+    await useUpload(AzureContainer.TableEditorAssets, blobName, JSON.stringify(input));
   }),
 });

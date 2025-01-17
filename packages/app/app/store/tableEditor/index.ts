@@ -11,6 +11,7 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditor
 import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 
@@ -40,10 +41,15 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
-    const { data: session } = await authClient.useSession(useFetch);
+    const session = authClient.useSession();
 
-    if (session.value) await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
-    else localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
+    if (session.value.data) {
+      saveItemMetadata(tableEditorConfiguration.value);
+      await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
+    } else {
+      saveItemMetadata(tableEditorConfiguration.value);
+      localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
+    }
     editFormDialog.value = false;
   };
 
