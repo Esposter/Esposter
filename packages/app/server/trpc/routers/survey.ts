@@ -73,9 +73,9 @@ export const surveyRouter = router({
 
     await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
 
-    const client = await useContainerClient(AzureContainer.SurveyerAssets);
+    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
     const blobName = getPublishPath(id, rest.publishVersion, "json");
-    await uploadBlockBlob(client, blobName, survey.model);
+    await uploadBlockBlob(containerClient, blobName, survey.model);
   }),
   readSurvey: authedProcedure
     .input(readSurveyInputSchema)

@@ -29,8 +29,8 @@ export const clickerRouter = router({
   }),
   readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
   saveGame: authedProcedure.input(clickerGameSchema).mutation(async ({ ctx, input }) => {
-    const client = await useContainerClient(AzureContainer.ClickerAssets);
+    const containerClient = await useContainerClient(AzureContainer.ClickerAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await uploadBlockBlob(client, blobName, JSON.stringify(input));
+    await uploadBlockBlob(containerClient, blobName, JSON.stringify(input));
   }),
 });

@@ -24,8 +24,8 @@ export const webpageEditorRouter = router({
     }
   }),
   saveWebpageEditor: authedProcedure.input(webpageEditorSchema).mutation(async ({ ctx, input }) => {
-    const client = await useContainerClient(AzureContainer.WebpageEditorAssets);
+    const containerClient = await useContainerClient(AzureContainer.WebpageEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await uploadBlockBlob(client, blobName, JSON.stringify(input));
+    await uploadBlockBlob(containerClient, blobName, JSON.stringify(input));
   }),
 });

@@ -24,8 +24,8 @@ export const flowchartEditorRouter = router({
     }
   }),
   saveFlowchartEditor: authedProcedure.input(flowchartEditorSchema).mutation(async ({ ctx, input }) => {
-    const client = await useContainerClient(AzureContainer.FlowchartEditorAssets);
+    const containerClient = await useContainerClient(AzureContainer.FlowchartEditorAssets);
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await uploadBlockBlob(client, blobName, JSON.stringify(input));
+    await uploadBlockBlob(containerClient, blobName, JSON.stringify(input));
   }),
 });
