@@ -1,20 +1,32 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { ICONS_PUBLIC_FOLDER_PATH, SITE_NAME } from "../shared/services/esposter/constants";
+import { SITE_NAME } from "../shared/services/esposter/constants";
 
 export const pwa: NuxtConfig["pwa"] = {
   manifest: {
     icons: [
       {
-        purpose: "maskable any",
+        purpose: "any",
         sizes: "192x192",
-        src: `${ICONS_PUBLIC_FOLDER_PATH}/manifest-icon-192.png`,
+        src: "manifest-icon-192.maskable.png",
         type: "image/png",
       },
       {
-        purpose: "maskable any",
+        purpose: "maskable",
+        sizes: "192x192",
+        src: "manifest-icon-192.maskable.png",
+        type: "image/png",
+      },
+      {
+        purpose: "any",
         sizes: "512x512",
-        src: `${ICONS_PUBLIC_FOLDER_PATH}/manifest-icon-512.png`,
+        src: "manifest-icon-512.maskable.png",
+        type: "image/png",
+      },
+      {
+        purpose: "maskable",
+        sizes: "512x512",
+        src: "manifest-icon-512.maskable.png",
         type: "image/png",
       },
     ],

@@ -26,5 +26,5 @@ export const vite: NuxtConfig["vite"] = {
   optimizeDeps: {
     include: commonjsDeps,
   },
-  plugins: [nodePolyfills({ include: ["zlib"] })],
+  plugins: [nodePolyfills({ include: ["stream", "timers", "util", "zlib"] })],
 };
