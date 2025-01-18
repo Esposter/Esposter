@@ -10,7 +10,6 @@ import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
   const url = useClientUrl();
-  const headers = useRequestHeaders();
   const links: TRPCLink<TRPCRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
@@ -20,9 +19,9 @@ export default defineNuxtPlugin(() => {
     errorLink,
     splitLink({
       condition: (op) => op.type === "subscription",
-      false: httpBatchLink({ headers, transformer, url }),
+      false: httpBatchLink({ transformer, url }),
       true: (() => {
-        if (getIsServer()) return httpBatchLink({ headers, transformer, url });
+        if (getIsServer()) return httpBatchLink({ transformer, url });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         // eslint-disable-next-line @typescript-eslint/no-deprecated
