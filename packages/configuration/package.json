@@ -29,7 +29,7 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-perfectionist": "^4.6.0",
     "eslint-plugin-pinia": "^0.4.1",
-    "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-prettier": "^5.2.3",
     "rollup-plugin-dts": "^6.1.1",
     "typescript-eslint": "8.19.1",
     "unplugin-auto-import": "^19.0.0",
