@@ -45,7 +45,6 @@ const onFileChange = async (files: File | File[]) => {
         my-2
         show-size
         @update:model-value="onFileChange"
-        @click:clear="modelValue = null"
       />
     </template>
     <v-avatar v-else>
