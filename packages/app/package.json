@@ -120,7 +120,7 @@
     "grapesjs-touch": "^0.1.1",
     "grapesjs-tui-image-editor": "^1.0.2",
     "grapesjs-typed": "^2.0.1",
-    "grid-engine": "^2.46.0",
+    "grid-engine": "^2.46.1",
     "grid-layout-plus": "^1.0.6",
     "gsap": "^3.12.7",
     "howler": "^2.2.4",
@@ -148,7 +148,7 @@
     "survey-creator-vue": "^1.12.19",
     "survey-vue3-ui": "^1.12.19",
     "three": "^0.172.0",
-    "three-globe": "^2.40.4",
+    "three-globe": "^2.41.0",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "0.11.1-next.1",
     "vue-codemirror": "^6.1.1",
@@ -194,7 +194,7 @@
     "@types/ws": "^8.5.13",
     "@unocss/nuxt": "^65.4.2",
     "@vite-pwa/nuxt": "^0.10.6",
-    "@vitest/coverage-v8": "^3.0.1",
+    "@vitest/coverage-v8": "^3.0.2",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.2",
@@ -209,7 +209,7 @@
     "sass-embedded": "^1.83.4",
     "tsx": "^4.19.2",
     "unocss": "^65.4.2",
-    "vitest": "^3.0.1",
+    "vitest": "^3.0.2",
     "vuetify-nuxt-module": "^0.18.3"
   }
 }
