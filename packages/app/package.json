@@ -192,7 +192,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/three": "^0.172.0",
     "@types/ws": "^8.5.13",
-    "@unocss/nuxt": "^65.4.2",
+    "@unocss/nuxt": "^65.4.3",
     "@vite-pwa/nuxt": "^0.10.6",
     "@vitest/coverage-v8": "^3.0.2",
     "@vue/test-utils": "^2.4.6",
@@ -208,7 +208,7 @@
     "pwa-asset-generator": "^6.4.0",
     "sass-embedded": "^1.83.4",
     "tsx": "^4.19.2",
-    "unocss": "^65.4.2",
+    "unocss": "^65.4.3",
     "vitest": "^3.0.2",
     "vuetify-nuxt-module": "^0.18.3"
   }
