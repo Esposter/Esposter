@@ -14,6 +14,7 @@ export const AnimationSetterMap = {
       if (!configuration.key) continue;
       const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
       gameObject.once(event, () => {
+        // @ts-expect-error This is a valid event that isn't a part of our type definition since phaser doesn't have a type for it
         emit(event);
       });
 
