@@ -19,11 +19,10 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     );
     if (index === -1) return;
 
-    emojiList[index] = {
-      ...emojiList[index],
+    Object.assign(emojiList[index], {
       ...updatedEmoji,
       userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
-    };
+    });
   };
   const storeDeleteEmoji = (input: DeleteEmojiInput) => {
     const emojiList = getEmojiList(input.messageRowKey);

@@ -55,7 +55,7 @@ describe("createOperationData", () => {
     expect(itemList.value[0].name).not.toStrictEqual(updatedName);
 
     vi.advanceTimersByTime(msPassed);
-    updateItem({ ...newItem, name: updatedName });
+    updateItem(Object.assign({}, newItem, { name: updatedName }));
 
     expect(itemList.value[0].name).toStrictEqual(updatedName);
     expect(itemList.value[0].updatedAt.getTime()).toStrictEqual(updatedAt.getTime() + msPassed);

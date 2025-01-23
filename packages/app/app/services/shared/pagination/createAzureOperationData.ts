@@ -23,7 +23,7 @@ export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeK
     );
     if (index === -1) return;
 
-    itemList.value[index] = { ...itemList.value[index], ...updatedItem, updatedAt: new Date() };
+    Object.assign(itemList.value[index], { ...updatedItem, updatedAt: new Date() });
   };
   const deleteItem = ({ partitionKey, rowKey }: CompositeKey) => {
     itemList.value = itemList.value.filter((i) => !(i.partitionKey === partitionKey && i.rowKey === rowKey));

@@ -1,5 +1,3 @@
-import type { Room } from "#shared/db/schema/rooms";
-
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadRooms = async () => {
@@ -22,9 +20,7 @@ export const useReadRooms = async () => {
     currentRoomId.value ? $client.room.readRoom.query(currentRoomId.value) : null,
     $client.room.readRooms.query(),
   ]);
-  const initialRooms: Room[] = [];
-  if (item && !response.items.some((r) => r.id === item.id)) initialRooms.push(item);
-  initialRooms.push(...response.items);
-  initializeCursorPaginationData({ ...response, items: initialRooms });
+  if (item && !response.items.some((r) => r.id === item.id)) response.items.push(item);
+  initializeCursorPaginationData(response);
   return readMoreRooms;
 };

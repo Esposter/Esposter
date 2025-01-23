@@ -24,7 +24,7 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
     switch (tmxNodeType) {
       case TMXNodeType.EditorSettings:
         if (!node.$$) break;
-        map.editorsettings = { ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })) };
+        map.editorsettings = Object.assign({}, ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })));
         break;
       case TMXNodeType.Export:
       case TMXNodeType.Image:
@@ -41,9 +41,10 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
       }
       case TMXNodeType.Properties:
         if (!node.$$) break;
-        map.properties = {
+        map.properties = Object.assign(
+          {},
           ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
-        };
+        );
         break;
       case TMXNodeType.Tileset:
         map.tilesets.push(parseTileset(node as TMXTilesetNode));

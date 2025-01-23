@@ -14,7 +14,7 @@ export const AnimationSetterMap = {
       if (!configuration.key) continue;
       const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
       gameObject.once(event, () => {
-        emit(event as Parameters<typeof emit>[0]);
+        emit(event);
       });
 
       if (gameObject.scene.anims.exists(configuration.key)) continue;
