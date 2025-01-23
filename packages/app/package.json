@@ -194,7 +194,7 @@
     "@types/ws": "^8.5.14",
     "@unocss/nuxt": "^65.4.3",
     "@vite-pwa/nuxt": "^0.10.6",
-    "@vitest/coverage-v8": "^3.0.3",
+    "@vitest/coverage-v8": "^3.0.4",
     "@vue/test-utils": "^2.4.6",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.2",
@@ -209,7 +209,7 @@
     "sass-embedded": "^1.83.4",
     "tsx": "^4.19.2",
     "unocss": "^65.4.3",
-    "vitest": "^3.0.3",
+    "vitest": "^3.0.4",
     "vuetify-nuxt-module": "^0.18.3"
   }
 }
