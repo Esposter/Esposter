@@ -17,7 +17,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "dev": "nuxt dev",
-    "start": "node .output/server/index.mjs",
+    "start": "bun .output/server/index.mjs",
     "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
@@ -29,14 +29,14 @@
     "lint:fix": "cross-env TIMING=1 eslint --config eslint.light.config.js --fix .",
     "lint:all": "cross-env TIMING=1 eslint .",
     "lint:all:fix": "cross-env TIMING=1 eslint --fix .",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
-    "db:gen": "pnpm db:run generate",
-    "db:studio": "pnpm db:run studio",
-    "db:up": "pnpm db:run up",
+    "db:run": "bun ../../node_modules/drizzle-kit/bin.cjs",
+    "db:gen": "bun db:run generate",
+    "db:studio": "bun db:run studio",
+    "db:up": "bun db:run up",
     "gen-env": "gen-env-types .env -o env.d.ts -e .",
-    "tiled:gen": "pnpm cross-os tiled:gen",
+    "tiled:gen": "bun cross-os tiled:gen",
     "generate-pwa-assets": "pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/Esposter/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
-    "cross-os": "node ../../scripts/cross-os.js",
+    "cross-os": "bun ../../scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
@@ -45,7 +45,7 @@
   },
   "cross-os": {
     "tiled:gen": {
-      "win32": "pnpm pwsh scripts/tiled/generate.ps1",
+      "win32": "bun pwsh scripts/tiled/generate.ps1",
       "linux": "./scripts/tiled/generate.sh"
     }
   },
@@ -207,7 +207,6 @@
     "prettier": "^3.4.2",
     "pwa-asset-generator": "^6.4.0",
     "sass-embedded": "^1.83.4",
-    "tsx": "^4.19.2",
     "unocss": "^65.4.3",
     "vitest": "^3.0.3",
     "vuetify-nuxt-module": "^0.18.3"

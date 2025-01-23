@@ -24,7 +24,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "pnpm export:gen && vite build",
+    "build": "bun export:gen && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

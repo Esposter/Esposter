@@ -5,7 +5,7 @@ import path from "node:path";
 const minArgv = 3;
 const property = "cross-os";
 if (process.argv.length < minArgv)
-  // pnpm cross-os [args]
+  // bun cross-os [args]
   throw new Error(`${property} requires at least ${minArgv - 2} arguments`);
 
 const script = process.argv[2];
@@ -13,7 +13,7 @@ const args = process.argv.slice(3, process.argv.length);
 const { platform } = process;
 const require = createRequire(import.meta.url);
 const packageJson = await new Promise((resolve) =>
-  exec("pnpm prefix").stdout.on("data", (buffer) => {
+  exec("bun prefix").stdout.on("data", (buffer) => {
     resolve(require(path.resolve(buffer.toString("utf8").trim(), "package.json")));
   }),
 );

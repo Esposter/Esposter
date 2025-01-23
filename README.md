@@ -214,7 +214,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 1. Install dependencies:
 
 ```bash
-pnpm i
+bun i
 ```
 
 2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
@@ -226,13 +226,13 @@ pnpm i
 Build the application for production:
 
 ```bash
-pnpm build
+bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-pnpm preview
+bun preview
 ```
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
@@ -242,7 +242,7 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 1. Build the packages to be used by the application:
 
 ```bash
-pnpm build:packages
+bun build:packages
 ```
 
 2. Change to the app directory:
@@ -254,12 +254,12 @@ cd packages/app
 3. Start the development server on <http://localhost:3000>
 
 ```bash
-pnpm dev
+bun dev
 ```
 
 ### Architecture
 
-Esposter is a lerna + pnpm workspaces monorepo.
+Esposter is a lerna + bun workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Tools

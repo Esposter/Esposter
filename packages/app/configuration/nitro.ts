@@ -9,4 +9,5 @@ export const nitro: NuxtConfig["nitro"] = {
       },
     },
   },
+  preset: "bun",
 };

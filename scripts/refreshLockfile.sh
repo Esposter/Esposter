@@ -1,3 +1,3 @@
-rm -rf pnpm-lock.yaml
+rm -rf bun.lock
 find . -name "node_modules" -type d -exec rm -rf {} +
-pnpm i
+bun i

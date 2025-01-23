@@ -3,6 +3,9 @@
   "description": "A nice and casual place for posting random things.",
   "version": "1.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
@@ -14,25 +17,25 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
+    "build": "bun build:packages && bun build:docs && bun build:app",
     "build:app": "lerna run build --scope=@esposter/app",
     "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "typecheck": "lerna run typecheck",
-    "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
+    "typecheck:packages": "bun typecheck --ignore @esposter/app",
     "lint": "lerna run lint",
     "lint:fix": "lerna run lint:fix",
-    "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
-    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
-    "cross-os": "node scripts/cross-os.js",
+    "lint:fix:packages": "bun lint:fix --ignore @esposter/app",
+    "release": "bun build:packages && bun lint:fix:packages && bun typecheck:packages && lerna publish --yes",
+    "refresh:lockfile": "bun cross-os refresh:lockfile",
+    "cross-os": "bun scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "cross-os": {
     "refresh:lockfile": {
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1",
+      "win32": "bun pwsh scripts/refreshLockfile.ps1",
       "linux": "./scripts/refreshLockfile.sh"
     }
   },
@@ -62,7 +65,6 @@
     "vue-tsc": "@TODO: https://github.com/vuejs/language-tools/issues/4973"
   },
   "engines": {
-    "node": "^22.13.1"
-  },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+    "bun": "^1.2.0"
+  }
 }
