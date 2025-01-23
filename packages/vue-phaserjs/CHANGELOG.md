@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/Esposter/Esposter/compare/v1.33.0...v1.34.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* typecheck ([4faf963](https://github.com/Esposter/Esposter/commit/4faf963c79a0384cc6fd6a59ffccc5d7fe4913d9))
+* typescript eslint ([141b4e2](https://github.com/Esposter/Esposter/commit/141b4e217984fb3ebcb9a9b1cbce770e92100f50))
+
+
+
+
+
+
 # [1.33.0](https://github.com/Esposter/Esposter/compare/v1.32.0...v1.33.0) (2025-01-14)
 
 **Note:** Version bump only for package vue-phaserjs

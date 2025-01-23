@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/Esposter/Esposter/compare/v1.33.0...v1.34.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* add back rate limited procedure ([ae505e2](https://github.com/Esposter/Esposter/commit/ae505e26b7f40402902fb52ee13397f78d9f2a7a))
+* Add util polyfill ([c6bcabd](https://github.com/Esposter/Esposter/commit/c6bcabde60d350463cf5f71770c0c8ad6c4ad07f))
+* generating pwa images ([53983fc](https://github.com/Esposter/Esposter/commit/53983fc0b9b88c953134d3480601bd2d11b962cf))
+* generating pwa images to be transparent + add node polyfills ([aa0d2c0](https://github.com/Esposter/Esposter/commit/aa0d2c0d913915402bcd618f9a26e65f1b1a6c56))
+* remove unnecessary clear ([5c83bfb](https://github.com/Esposter/Esposter/commit/5c83bfb2d3bb78e7099e045809e1b2e71912558e))
+* remove util polyfill ([3d16ae1](https://github.com/Esposter/Esposter/commit/3d16ae1aef5633f67656a9e1d5d6d759d1de3b4e))
+* typescript eslint ([141b4e2](https://github.com/Esposter/Esposter/commit/141b4e217984fb3ebcb9a9b1cbce770e92100f50))
+* update PWA ([f5dffd1](https://github.com/Esposter/Esposter/commit/f5dffd11dceb4a9385b5e186a625bdbcba943d77))
+
+
+### Features
+
+* Add more snapshots ([a1421f6](https://github.com/Esposter/Esposter/commit/a1421f69f7430d5c1f6e6bbd9c437b9339e780d6))
+* Add snapshot test ([7211b4f](https://github.com/Esposter/Esposter/commit/7211b4f031d83f409013097c3d6cc00f24e590a0))
+* Add upload user profile image ([68609ac](https://github.com/Esposter/Esposter/commit/68609acb628932995fea6a6fdd6d6e4ef59d5044))
+* Add zod-form-data ([43400e2](https://github.com/Esposter/Esposter/commit/43400e2a8b9bc239ff1d08714a8dd7801eaddfa4))
+* update app links ([b9303d1](https://github.com/Esposter/Esposter/commit/b9303d1f1fbd74bcd2da1b56b16af098b6e44d3d))
+* update PWA ([8fa31d0](https://github.com/Esposter/Esposter/commit/8fa31d0e380f20d83ab3c76498cff96c9aeb0af8))
+
+
+
+
+
+
 # [1.33.0](https://github.com/Esposter/Esposter/compare/v1.32.0...v1.33.0) (2025-01-14)
 
 
