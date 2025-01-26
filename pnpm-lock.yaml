@@ -143,10 +143,10 @@ importers:
         version: 2.11.3(@tiptap/core@2.11.3(@tiptap/pm@2.11.3))(@tiptap/pm@2.11.3)(vue@3.5.13(typescript@5.7.2))
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.724(@trpc/server@11.0.0-rc.724(typescript@5.7.2))(typescript@5.7.2)
+        version: 11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.724(typescript@5.7.2)
+        version: 11.0.0-rc.729(typescript@5.7.2)
       '@vue-flow/background':
         specifier: ^1.3.2
         version: 1.3.2(@vue-flow/core@1.42.1(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))
@@ -304,8 +304,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       obscenity:
-        specifier: ^0.4.2
-        version: 0.4.2
+        specifier: ^0.4.3
+        version: 0.4.3
       omit-deep-lodash:
         specifier: ^1.1.7
         version: 1.1.7
@@ -365,7 +365,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 0.11.1-next.1
-        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.724(@trpc/server@11.0.0-rc.724(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.724(typescript@5.7.2))
+        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.729(typescript@5.7.2))
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.7.2))
@@ -3339,14 +3339,14 @@ packages:
       '@tiptap/pm': ^2.7.0
       vue: ^3.0.0
 
-  '@trpc/client@11.0.0-rc.724':
-    resolution: {integrity: sha512-Ou62Zw2wmfJ/X9/YlSacrGbkLP7FE1Ohv/bgQJYzWctSeEkQkIAsFOgy7a/T0Ry7kD78w3YTf7U1MKOf5X3NNA==}
+  '@trpc/client@11.0.0-rc.729':
+    resolution: {integrity: sha512-soDEkBWeLX+WOa+FRqkkCWY6GEaogDc85zWcvxXaXUiZ45ORiz4bVzGyLUYJGuzxYs1cUxv0RAhy6zhGtC688Q==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.724+0eee7e763
+      '@trpc/server': 11.0.0-rc.729+a60413241
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.0-rc.724':
-    resolution: {integrity: sha512-kdDDwLYWGlnoXxgNeOzgb620lsnueEXMn8PLPDZW5Lpm5T3kJPT4F0JYTZINk/DM0e7q4iWx488FvwBNpNhACA==}
+  '@trpc/server@11.0.0-rc.729':
+    resolution: {integrity: sha512-rjkzNpnmbuFWT/BSSRN14/23ebt9CnkZqaq+WPdWZiBsxaDVvQRmm2mcjtKhEokwxWX1p1yuJhdIwG5yt5YuDw==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -7974,8 +7974,8 @@ packages:
   obliterator@2.0.5:
     resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
-  obscenity@0.4.2:
-    resolution: {integrity: sha512-mN05c7/+c54mYmv/kXdZh7uIc8XNvCUR9+Ysto1LmKEuQ+oDriakTVrB/52V7gzazk/eIbHffm9FiULYAv78sA==}
+  obscenity@0.4.3:
+    resolution: {integrity: sha512-DZKM0xUEksY5dVGaZoyC5VmIRMSbI6O0Gyb/07L+77d4zWJKKf5tQZrhlT0aiVYD6prTmnxiS3RhN0sfh5Q95Q==}
     engines: {node: '>=14.0.0'}
 
   ofetch@1.4.1:
@@ -14506,12 +14506,12 @@ snapshots:
       '@tiptap/pm': 2.11.3
       vue: 3.5.13(typescript@5.7.2)
 
-  '@trpc/client@11.0.0-rc.724(@trpc/server@11.0.0-rc.724(typescript@5.7.2))(typescript@5.7.2)':
+  '@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.724(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.729(typescript@5.7.2)
       typescript: 5.7.2
 
-  '@trpc/server@11.0.0-rc.724(typescript@5.7.2)':
+  '@trpc/server@11.0.0-rc.729(typescript@5.7.2)':
     dependencies:
       typescript: 5.7.2
 
@@ -20476,7 +20476,7 @@ snapshots:
 
   obliterator@2.0.5: {}
 
-  obscenity@0.4.2: {}
+  obscenity@0.4.3: {}
 
   ofetch@1.4.1:
     dependencies:
@@ -22466,10 +22466,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.724(@trpc/server@11.0.0-rc.724(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.724(typescript@5.7.2)):
+  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.729(typescript@5.7.2)):
     dependencies:
-      '@trpc/client': 11.0.0-rc.724(@trpc/server@11.0.0-rc.724(typescript@5.7.2))(typescript@5.7.2)
-      '@trpc/server': 11.0.0-rc.724(typescript@5.7.2)
+      '@trpc/client': 11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.729(typescript@5.7.2)
       h3: 1.14.0
       ofetch: 1.4.1
       ohash: 1.1.4
