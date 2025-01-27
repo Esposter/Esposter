@@ -143,10 +143,10 @@ importers:
         version: 2.11.3(@tiptap/core@2.11.3(@tiptap/pm@2.11.3))(@tiptap/pm@2.11.3)(vue@3.5.13(typescript@5.7.2))
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)
+        version: 11.0.0-rc.730(@trpc/server@11.0.0-rc.730(typescript@5.7.2))(typescript@5.7.2)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.729(typescript@5.7.2)
+        version: 11.0.0-rc.730(typescript@5.7.2)
       '@vue-flow/background':
         specifier: ^1.3.2
         version: 1.3.2(@vue-flow/core@1.42.1(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))
@@ -365,7 +365,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 0.11.1-next.1
-        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.729(typescript@5.7.2))
+        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.730(@trpc/server@11.0.0-rc.730(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.730(typescript@5.7.2))
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.7.2))
@@ -470,8 +470,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       drizzle-kit:
-        specifier: ^0.30.2
-        version: 0.30.2
+        specifier: ^0.30.3
+        version: 0.30.3
       fs-extra:
         specifier: ^11.3.0
         version: 11.3.0
@@ -3327,14 +3327,14 @@ packages:
       '@tiptap/pm': ^2.7.0
       vue: ^3.0.0
 
-  '@trpc/client@11.0.0-rc.729':
-    resolution: {integrity: sha512-soDEkBWeLX+WOa+FRqkkCWY6GEaogDc85zWcvxXaXUiZ45ORiz4bVzGyLUYJGuzxYs1cUxv0RAhy6zhGtC688Q==}
+  '@trpc/client@11.0.0-rc.730':
+    resolution: {integrity: sha512-OFt98CtSq9KCiD7odFYP92MMVhgT4NCAy50gvsd8syVXAtKgyo6itmUuq5fcxwUYjiDwHOQvlWgA0IIQWSvLxQ==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.729+a60413241
+      '@trpc/server': 11.0.0-rc.730+776d07336
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.0-rc.729':
-    resolution: {integrity: sha512-rjkzNpnmbuFWT/BSSRN14/23ebt9CnkZqaq+WPdWZiBsxaDVvQRmm2mcjtKhEokwxWX1p1yuJhdIwG5yt5YuDw==}
+  '@trpc/server@11.0.0-rc.730':
+    resolution: {integrity: sha512-pRdPGqU1LkIq6kZ1ST9fmFaFnsl7IZ6h3eEIG6cbAkUHha/oTlmDXZZAIpunBPQ1ugi5uwFClvfTY8ZapemBKA==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -5489,8 +5489,8 @@ packages:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.30.2:
-    resolution: {integrity: sha512-vhdLrxWA32WNVF77NabpSnX7pQBornx64VDQDmKddRonOB2Xe/yY4glQ7rECoa+ogqcQNo7VblLUbeBK6Zn9Ow==}
+  drizzle-kit@0.30.3:
+    resolution: {integrity: sha512-kT8sgyC2hZrtOh5okhEBiwgx8jx+EjLUFoANFVVkBbxIjcb8XjaUorZ0rwCEUEd7THclI3ZARR64pmxloMW3Aw==}
     hasBin: true
 
   drizzle-orm@0.38.4:
@@ -14459,12 +14459,12 @@ snapshots:
       '@tiptap/pm': 2.11.3
       vue: 3.5.13(typescript@5.7.2)
 
-  '@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)':
+  '@trpc/client@11.0.0-rc.730(@trpc/server@11.0.0-rc.730(typescript@5.7.2))(typescript@5.7.2)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.729(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.730(typescript@5.7.2)
       typescript: 5.7.2
 
-  '@trpc/server@11.0.0-rc.729(typescript@5.7.2)':
+  '@trpc/server@11.0.0-rc.730(typescript@5.7.2)':
     dependencies:
       typescript: 5.7.2
 
@@ -17223,7 +17223,7 @@ snapshots:
 
   dotenv@16.4.7: {}
 
-  drizzle-kit@0.30.2:
+  drizzle-kit@0.30.3:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
@@ -22418,10 +22418,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.729(typescript@5.7.2)):
+  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.730(@trpc/server@11.0.0-rc.730(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.730(typescript@5.7.2)):
     dependencies:
-      '@trpc/client': 11.0.0-rc.729(@trpc/server@11.0.0-rc.729(typescript@5.7.2))(typescript@5.7.2)
-      '@trpc/server': 11.0.0-rc.729(typescript@5.7.2)
+      '@trpc/client': 11.0.0-rc.730(@trpc/server@11.0.0-rc.730(typescript@5.7.2))(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.730(typescript@5.7.2)
       h3: 1.14.0
       ofetch: 1.4.1
       ohash: 1.1.4
