@@ -419,8 +419,8 @@ importers:
         specifier: ^3.15.4
         version: 3.15.4(@types/node@22.12.0)(@vue/test-utils@2.4.6)(happy-dom@16.7.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.0)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vitest@3.0.4(@types/node@22.12.0)(happy-dom@16.7.3)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(yaml@2.7.0)
       '@nuxtjs/seo':
-        specifier: ^2.1.0
-        version: 2.1.0(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.2)))(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(unhead@1.11.18)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
+        specifier: ^2.1.1
+        version: 2.1.1(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.2)))(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(unhead@1.11.18)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       '@types/dedent':
         specifier: ^0.7.2
         version: 0.7.2
@@ -2421,11 +2421,11 @@ packages:
   '@nuxtjs/robots@5.2.2':
     resolution: {integrity: sha512-8krXcdG/iysVhY1VNJFeLyCV20/Qvlq37TjRjgV91EKJnjcsjUWBlvyVYANOJsbKuoZK4WFoFUGt8Ehrbg91gg==}
 
-  '@nuxtjs/seo@2.1.0':
-    resolution: {integrity: sha512-mIkRzoENKqfPI2HpUGlp6Rpsl+8nUWpf8MvEEofiJknfp+AZhDtLbJR4Fxl4jNoNLu+x7LU8mq5mJzF10okkOQ==}
+  '@nuxtjs/seo@2.1.1':
+    resolution: {integrity: sha512-QpRbfdxkzBrowA70yQORPpXrZgbX+m7muKmvrb8iWpnrwB/u4MtuU5QdKNdpoIbXFdIi2x5Tol+K02rr/BwClg==}
 
-  '@nuxtjs/sitemap@7.2.3':
-    resolution: {integrity: sha512-El7By5jORUCYd6aSK8wUvSNtt+vSd/nTnnPZa/vBs6B5GrNXvLVamDrC2AtbO5HrIvYLQIVuNTTfMuA0dV/UPA==}
+  '@nuxtjs/sitemap@7.2.4':
+    resolution: {integrity: sha512-u4BLPuKHsy6jSj2D27W3QHih4PwaWY2LrGi+6PTUu/b0/itS+U2aovxHfWLUWHKNZG3LazJNziLG/RBBwdqLxg==}
     engines: {node: '>=18.0.0'}
 
   '@nx/devkit@20.4.0':
@@ -13497,11 +13497,11 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/seo@2.1.0(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.2)))(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(unhead@1.11.18)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))':
+  '@nuxtjs/seo@2.1.1(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.2)))(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(unhead@1.11.18)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@nuxt/kit': 3.15.3(magicast@0.3.5)(rollup@4.32.1)
       '@nuxtjs/robots': 5.2.2(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
-      '@nuxtjs/sitemap': 7.2.3(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
+      '@nuxtjs/sitemap': 7.2.4(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       nuxt-link-checker: 4.1.0(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       nuxt-og-image: 4.1.2(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       nuxt-schema-org: 4.1.1(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.2)))(magicast@0.3.5)(rollup@4.32.1)(unhead@1.11.18)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
@@ -13518,7 +13518,7 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/sitemap@7.2.3(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))':
+  '@nuxtjs/sitemap@7.2.4(h3@1.14.0)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@nuxt/devtools-kit': 2.0.0-beta.3(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
       '@nuxt/kit': 3.15.3(magicast@0.3.5)(rollup@4.32.1)
@@ -19006,7 +19006,7 @@ snapshots:
   jake@10.9.2:
     dependencies:
       async: 3.2.6
-      chalk: 4.1.0
+      chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
 
@@ -20490,7 +20490,7 @@ snapshots:
   ora@5.3.0:
     dependencies:
       bl: 4.1.0
-      chalk: 4.1.0
+      chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       is-interactive: 1.0.0
