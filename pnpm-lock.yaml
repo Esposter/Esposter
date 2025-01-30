@@ -173,7 +173,7 @@ importers:
         version: 12.5.0(axios@1.7.9(debug@4.4.0))(change-case@5.4.4)(focus-trap@7.6.4)(fuse.js@7.0.0)(typescript@5.7.2)
       '@vueuse/nuxt':
         specifier: ^12.5.0
-        version: 12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)
+        version: 12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -211,11 +211,11 @@ importers:
         specifier: ^6.1.4
         version: 6.1.4
       drizzle-orm:
-        specifier: ^0.39.0
-        version: 0.39.0(kysely@0.27.5)(postgres@3.4.5)
+        specifier: ^0.39.1
+        version: 0.39.1(kysely@0.27.5)(postgres@3.4.5)
       drizzle-zod:
         specifier: ^0.7.0
-        version: 0.7.0(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(zod@3.24.1)
+        version: 0.7.0(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(zod@3.24.1)
       emoji-mart-vue-fast:
         specifier: ^15.0.3
         version: 15.0.3(vue@3.5.13(typescript@5.7.2))
@@ -358,8 +358,8 @@ importers:
         specifier: ^0.172.0
         version: 0.172.0
       three-globe:
-        specifier: ^2.41.4
-        version: 2.41.4(three@0.172.0)
+        specifier: ^2.41.5
+        version: 2.41.5(three@0.172.0)
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -411,10 +411,10 @@ importers:
         version: 0.7.6(@vue/compiler-sfc@3.5.13)(eslint@9.19.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.32.1)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
       '@nuxt/fonts':
         specifier: ^0.10.3
-        version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.4.2)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
+        version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.4.2)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
       '@nuxt/scripts':
         specifier: ^0.9.5
-        version: 0.9.5(05be34655178ac957a8f758eca9e9f7c)
+        version: 0.9.5(f0c713e5b36aadb015c7acfe9cabc30a)
       '@nuxt/test-utils':
         specifier: ^3.15.4
         version: 3.15.4(@types/node@22.12.0)(@vue/test-utils@2.4.6)(happy-dom@16.7.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.0)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vitest@3.0.4(@types/node@22.12.0)(happy-dom@16.7.3)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(yaml@2.7.0)
@@ -486,7 +486,7 @@ importers:
         version: 16.7.3
       nuxt:
         specifier: ^3.15.4
-        version: 3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0)
+        version: 3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0)
       nuxt-security:
         specifier: ^2.1.5
         version: 2.1.5(magicast@0.3.5)(rollup@4.32.1)
@@ -2170,6 +2170,30 @@ packages:
   '@lezer/yaml@1.0.3':
     resolution: {integrity: sha512-GuBLekbw9jDBDhGur82nuwkxKQ+a3W5H0GfaAthDXcAu+XdpS43VlnxA9E9hllkpSP5ellRDKjLLj7Lu9Wr6xA==}
 
+  '@loaders.gl/core@3.4.15':
+    resolution: {integrity: sha512-rPOOTuusWlRRNMWg7hymZBoFmPCXWThsA5ZYRfqqXnsgVeQIi8hzcAhJ7zDUIFAd/OSR8ravtqb0SH+3k6MOFQ==}
+
+  '@loaders.gl/draco@3.4.15':
+    resolution: {integrity: sha512-SStmyP0ZnS4JbWZb2NhrfiHW65uy3pVTTzQDTgXfkR5cD9oDAEu4nCaHbQ8x38/m39FHliCPgS9b1xWvLKQo8w==}
+
+  '@loaders.gl/gltf@3.4.15':
+    resolution: {integrity: sha512-Y6kMNPLiHQPr6aWQw/4BMTxgPHWx3fcib4LPpZCbhyfM8PRn6pOqATVngUXdoOf5XY0QtdKVld6N1kxlr4pJtw==}
+
+  '@loaders.gl/images@3.4.15':
+    resolution: {integrity: sha512-QpjYhEetHabY/z9mWZYJXZZp4XJAxa38f9Ii/DjPlnJErepzY5GLBUTDHMu4oZ6n99gGImtuGFicDnFV6mb60g==}
+
+  '@loaders.gl/loader-utils@3.4.15':
+    resolution: {integrity: sha512-uUx6tCaky6QgCRkqCNuuXiUfpTzKV+ZlJOf6C9bKp62lpvFOv9AwqoXmL23j8nfsENdlzsX3vPhc3en6QQyksA==}
+
+  '@loaders.gl/schema@3.4.15':
+    resolution: {integrity: sha512-8oRtstz0IsqES7eZd2jQbmCnmExCMtL8T6jWd1+BfmnuyZnQ0B6TNccy++NHtffHdYuzEoQgSELwcdmhSApYew==}
+
+  '@loaders.gl/textures@3.4.15':
+    resolution: {integrity: sha512-QHnmxBYtLvTdG1uMz2KWcxVY8KPb1+XyPJUoZV9GMcQkulz+CwFB8BaX8nROfMDz9KKYoPfksCzjig0LZ0WBJQ==}
+
+  '@loaders.gl/worker-utils@3.4.15':
+    resolution: {integrity: sha512-zUUepOYRYmcYIcr/c4Mchox9h5fBFNkD81rsGnLlZyq19QvyHzN+93SVxrLc078gw93t2RKrVcOOZY13zT3t1w==}
+
   '@mapbox/node-pre-gyp@2.0.0':
     resolution: {integrity: sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg==}
     engines: {node: '>=18'}
@@ -2177,6 +2201,12 @@ packages:
 
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
+
+  '@math.gl/core@3.6.3':
+    resolution: {integrity: sha512-jBABmDkj5uuuE0dTDmwwss7Cup5ZwQ6Qb7h1pgvtkEutTrhkcv8SuItQNXmF45494yIHeoGue08NlyeY6wxq2A==}
+
+  '@math.gl/types@3.6.3':
+    resolution: {integrity: sha512-3uWLVXHY3jQxsXCr/UCNPSc2BG0hNUljhmOBt9l+lNFDp7zHgm0cK2Tw4kj2XfkJy4TgwZTBGwRDQgWEbLbdTA==}
 
   '@mdi/font@7.4.47':
     resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
@@ -2737,6 +2767,15 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@probe.gl/env@3.6.0':
+    resolution: {integrity: sha512-4tTZYUg/8BICC3Yyb9rOeoKeijKbZHRXBEKObrfPmX4sQmYB15ZOUpoVBhAyJkOYVAM8EkPci6Uw5dLCwx2BEQ==}
+
+  '@probe.gl/log@3.6.0':
+    resolution: {integrity: sha512-hjpyenpEvOdowgZ1qMeCJxfRD4JkKdlXz0RC14m42Un62NtOT+GpWyKA4LssT0+xyLULCByRAtG2fzZorpIAcA==}
+
+  '@probe.gl/stats@3.6.0':
+    resolution: {integrity: sha512-JdALQXB44OP4kUBN/UrQgzbJe4qokbVF4Y8lkIA8iVCFnjVowWIgkD/z/0QO65yELT54tTrtepw1jScjKB+rhQ==}
 
   '@redocly/ajv@8.11.2':
     resolution: {integrity: sha512-io1JpnwtIcvojV7QKDUSIuMN/ikdOUd1ReEnUnMKGfDVridQZ31J0MmIuqwuRjWDZfmvr+Q0MqCcfHM2gTivOg==}
@@ -5500,12 +5539,15 @@ packages:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
+  draco3d@1.5.5:
+    resolution: {integrity: sha512-JVuNV0EJzD3LBYhGyIXJLeBID/EVtmFO1ZNhAYflTgiMiAJlbhXQmRRda/azjc8MRVMHh0gqGhiqHUo5dIXM8Q==}
+
   drizzle-kit@0.30.4:
     resolution: {integrity: sha512-B2oJN5UkvwwNHscPWXDG5KqAixu7AUzZ3qbe++KU9SsQ+cZWR4DXEPYcvWplyFAno0dhRJECNEhNxiDmFaPGyQ==}
     hasBin: true
 
-  drizzle-orm@0.39.0:
-    resolution: {integrity: sha512-kkZwo3Jvht0fdJD/EWGx0vYcEK0xnGrlNVaY07QYluRZA9N21B9VFbY+54bnb/1xvyzcg97tE65xprSAP/fFGQ==}
+  drizzle-orm@0.39.1:
+    resolution: {integrity: sha512-2bDHlzTY31IDmrYn8i+ZZrxK8IyBD4mPZ7JmZdVDQj2tpBZXs/gxB/1kK5pSvkjxPUMNOVsTnoGkSltgjuJwcA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -6317,6 +6359,9 @@ packages:
   gitconfiglocal@1.0.0:
     resolution: {integrity: sha512-spLUXeTAVHxDtKsJc8FkFVgFtMdEN9qPGpL23VfSHx4fP4+Ds097IXLvymbnDH8FnmxX5Nr9bPw3A+AQ6mWEaQ==}
 
+  gl-matrix@3.4.3:
+    resolution: {integrity: sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA==}
+
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -6669,6 +6714,11 @@ packages:
 
   image-meta@0.2.1:
     resolution: {integrity: sha512-K6acvFaelNxx8wc2VjbIzXKDVB0Khs0QT35U6NkGfTdCmjLNcO2945m7RFNR9/RPVFm48hq7QPzK8uGH18HCGw==}
+
+  image-size@0.7.5:
+    resolution: {integrity: sha512-Hiyv+mXHfFEP7LzUL/llg9RwFxxY+o9N3JVLIeG5E7iFIFAalxvRU9UZthBdYDEVnzHMgjnKJPPpay5BWf1g9g==}
+    engines: {node: '>=6.9.0'}
+    hasBin: true
 
   image-size@1.2.0:
     resolution: {integrity: sha512-4S8fwbO6w3GeCVN6OPtA9I5IGKkcDMPcKndtUlpJuCwu7JLjtj7JZpwqLuyY2nrmQT3AWsCJLSKPsc2mPBSl3w==}
@@ -7237,6 +7287,9 @@ packages:
 
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
+
+  ktx-parse@0.0.4:
+    resolution: {integrity: sha512-LY3nrmfXl+wZZdPxgJ3ZmLvG+wkOZZP3/dr4RbQj1Pk3Qwz44esOOSFFVQJcNWpXAtiNIC66WgXufX/SYgYz6A==}
 
   kysely@0.27.5:
     resolution: {integrity: sha512-s7hZHcQeSNKpzCkHRm8yA+0JPLjncSWnjb+2TIElwS2JAqYr+Kv3Ess+9KFfJS0C1xcQ1i9NkNHpWwCYpHMWsA==}
@@ -8750,9 +8803,6 @@ packages:
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
-  rafor@1.0.2:
-    resolution: {integrity: sha512-b8e8/srbSbC0FZTxivEz9pj5z1mQM8CpCEv1aAxuaK26ljSOHJk8AjimcTaHpHIZlwH/VPbli12LuKKrJyyGmA==}
-
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -9627,6 +9677,9 @@ packages:
   tabbable@6.2.0:
     resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
 
+  taichi.js@0.0.36:
+    resolution: {integrity: sha512-JPVI5SSXEOHSAw2YXcL2Y4jKdvBaOyzolCyB5iN/Mhj+vM8hDvi5xzR5YFogZQyuETb53v7/RErvI9BHiyUHRQ==}
+
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
@@ -9693,6 +9746,10 @@ packages:
     resolution: {integrity: sha512-wiBrwC1EhBelW12Zy26JeOUkQ5mRu+5o8rpsJk5+2t+Y5vE7e842qtZDQ2g1NpX/29HdyFeJ4nSIhI47ENSxlQ==}
     engines: {node: '>=0.10'}
 
+  texture-compressor@1.0.2:
+    resolution: {integrity: sha512-dStVgoaQ11mA5htJ+RzZ51ZxIZqNOgWKAIvtjLrW1AliQQLCmrDqNzQZ8Jh91YealQ95DXt4MEduLzJmbs6lig==}
+    hasBin: true
+
   third-party-capital@2.3.0:
     resolution: {integrity: sha512-p4rGOF4JCkI18HH3a1Vfd89Mg37TLlAsGmePBt20MA52frviYSBE6ToGOmTpqRC4EIlS5/4Owv6TpegFJUSkOg==}
 
@@ -9708,8 +9765,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.41.4:
-    resolution: {integrity: sha512-zyFHP8uFoLnxZwTYYZ7j0D2CFJDeQeHBM9GS+tSMmFHw063vVC3NQhOwl5hA+utEGjlZzAOU0SbEDWNgsHehaA==}
+  three-globe@2.41.5:
+    resolution: {integrity: sha512-5CvYW2TUgxGwfBVUmipYkR9HyTwHnODNvMgNs/kl5YbbTkCYXyhJmlNXOuwRxya41nIZUdjvDDQCRhHonQLk2w==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -10857,9 +10914,6 @@ packages:
     resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
     engines: {node: '>= 14'}
     hasBin: true
-
-  yaot@1.1.3:
-    resolution: {integrity: sha512-AE8LInj21hTuA01RUK+9pSsl0ltQXO+rxn4Q+CJT4+NI/X7dhGGblF7vvzGj6ro0qXRCGAE/7ccEfu6S4DJayw==}
 
   yargs-parser@20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
@@ -12757,6 +12811,56 @@ snapshots:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@loaders.gl/core@3.4.15':
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@loaders.gl/loader-utils': 3.4.15
+      '@loaders.gl/worker-utils': 3.4.15
+      '@probe.gl/log': 3.6.0
+
+  '@loaders.gl/draco@3.4.15':
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@loaders.gl/loader-utils': 3.4.15
+      '@loaders.gl/schema': 3.4.15
+      '@loaders.gl/worker-utils': 3.4.15
+      draco3d: 1.5.5
+
+  '@loaders.gl/gltf@3.4.15':
+    dependencies:
+      '@loaders.gl/draco': 3.4.15
+      '@loaders.gl/images': 3.4.15
+      '@loaders.gl/loader-utils': 3.4.15
+      '@loaders.gl/textures': 3.4.15
+      '@math.gl/core': 3.6.3
+
+  '@loaders.gl/images@3.4.15':
+    dependencies:
+      '@loaders.gl/loader-utils': 3.4.15
+
+  '@loaders.gl/loader-utils@3.4.15':
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@loaders.gl/worker-utils': 3.4.15
+      '@probe.gl/stats': 3.6.0
+
+  '@loaders.gl/schema@3.4.15':
+    dependencies:
+      '@types/geojson': 7946.0.16
+
+  '@loaders.gl/textures@3.4.15':
+    dependencies:
+      '@loaders.gl/images': 3.4.15
+      '@loaders.gl/loader-utils': 3.4.15
+      '@loaders.gl/schema': 3.4.15
+      '@loaders.gl/worker-utils': 3.4.15
+      ktx-parse: 0.0.4
+      texture-compressor: 1.0.2
+
+  '@loaders.gl/worker-utils@3.4.15':
+    dependencies:
+      '@babel/runtime': 7.26.7
+
   '@mapbox/node-pre-gyp@2.0.0(encoding@0.1.13)':
     dependencies:
       consola: 3.4.0
@@ -12771,6 +12875,14 @@ snapshots:
       - supports-color
 
   '@marijn/find-cluster-break@1.0.2': {}
+
+  '@math.gl/core@3.6.3':
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@math.gl/types': 3.6.3
+      gl-matrix: 3.4.3
+
+  '@math.gl/types@3.6.3': {}
 
   '@mdi/font@7.4.47': {}
 
@@ -13036,7 +13148,7 @@ snapshots:
       - rollup
       - supports-color
 
-  '@nuxt/devtools-ui-kit@1.7.0(35d2a3bfc64de83e4915e4e90b5544d0)':
+  '@nuxt/devtools-ui-kit@1.7.0(3d967da5696bd59c79220f09ccd480c2)':
     dependencies:
       '@iconify-json/carbon': 1.2.5
       '@iconify-json/logos': 1.2.4
@@ -13053,7 +13165,7 @@ snapshots:
       '@unocss/reset': 0.65.4
       '@vueuse/core': 12.5.0(typescript@5.7.2)
       '@vueuse/integrations': 12.5.0(axios@1.7.9(debug@4.4.0))(change-case@5.4.4)(focus-trap@7.6.4)(fuse.js@7.0.0)(typescript@5.7.2)
-      '@vueuse/nuxt': 12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)
+      '@vueuse/nuxt': 12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)
       defu: 6.1.4
       focus-trap: 7.6.4
       splitpanes: 3.1.8(vue@3.5.13(typescript@5.7.2))
@@ -13207,7 +13319,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@nuxt/fonts@0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.4.2)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))':
+  '@nuxt/fonts@0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.4.2)(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@nuxt/devtools-kit': 1.7.0(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
       '@nuxt/kit': 3.15.3(magicast@0.3.5)(rollup@4.32.1)
@@ -13228,7 +13340,7 @@ snapshots:
       ufo: 1.5.4
       unifont: 0.1.7
       unplugin: 2.1.2
-      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
+      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -13323,10 +13435,10 @@ snapshots:
       pathe: 2.0.2
       std-env: 3.8.0
 
-  '@nuxt/scripts@0.9.5(05be34655178ac957a8f758eca9e9f7c)':
+  '@nuxt/scripts@0.9.5(f0c713e5b36aadb015c7acfe9cabc30a)':
     dependencies:
       '@nuxt/devtools-kit': 1.7.0(magicast@0.3.5)(rollup@4.32.1)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))
-      '@nuxt/devtools-ui-kit': 1.7.0(35d2a3bfc64de83e4915e4e90b5544d0)
+      '@nuxt/devtools-ui-kit': 1.7.0(3d967da5696bd59c79220f09ccd480c2)
       '@nuxt/kit': 3.15.3(magicast@0.3.5)(rollup@4.32.1)
       '@stripe/stripe-js': 4.10.0
       '@types/google.maps': 3.58.1
@@ -13351,7 +13463,7 @@ snapshots:
       ufo: 1.5.4
       unimport: 3.14.6(rollup@4.32.1)
       unplugin: 1.16.1
-      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
+      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
       valibot: 0.42.1(typescript@5.7.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -13893,6 +14005,19 @@ snapshots:
   '@polka/url@1.0.0-next.28': {}
 
   '@popperjs/core@2.11.8': {}
+
+  '@probe.gl/env@3.6.0':
+    dependencies:
+      '@babel/runtime': 7.26.7
+
+  '@probe.gl/log@3.6.0':
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@probe.gl/env': 3.6.0
+
+  '@probe.gl/stats@3.6.0':
+    dependencies:
+      '@babel/runtime': 7.26.7
 
   '@redocly/ajv@8.11.2':
     dependencies:
@@ -15679,13 +15804,13 @@ snapshots:
 
   '@vueuse/metadata@12.5.0': {}
 
-  '@vueuse/nuxt@12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)':
+  '@vueuse/nuxt@12.5.0(magicast@0.3.5)(nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0))(rollup@4.32.1)(typescript@5.7.2)':
     dependencies:
       '@nuxt/kit': 3.15.3(magicast@0.3.5)(rollup@4.32.1)
       '@vueuse/core': 12.5.0(typescript@5.7.2)
       '@vueuse/metadata': 12.5.0
       local-pkg: 1.0.0
-      nuxt: 3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0)
+      nuxt: 3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0)
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
       - magicast
@@ -17102,9 +17227,9 @@ snapshots:
 
   dayjs@1.11.13: {}
 
-  db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)):
+  db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)):
     optionalDependencies:
-      drizzle-orm: 0.39.0(kysely@0.27.5)(postgres@3.4.5)
+      drizzle-orm: 0.39.1(kysely@0.27.5)(postgres@3.4.5)
 
   de-indent@1.0.2: {}
 
@@ -17268,6 +17393,8 @@ snapshots:
 
   dotenv@16.4.7: {}
 
+  draco3d@1.5.5: {}
+
   drizzle-kit@0.30.4:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
@@ -17277,14 +17404,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5):
+  drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5):
     optionalDependencies:
       kysely: 0.27.5
       postgres: 3.4.5
 
-  drizzle-zod@0.7.0(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(zod@3.24.1):
+  drizzle-zod@0.7.0(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(zod@3.24.1):
     dependencies:
-      drizzle-orm: 0.39.0(kysely@0.27.5)(postgres@3.4.5)
+      drizzle-orm: 0.39.1(kysely@0.27.5)(postgres@3.4.5)
       zod: 3.24.1
 
   dunder-proto@1.0.1:
@@ -18267,6 +18394,8 @@ snapshots:
     dependencies:
       ini: 1.3.8
 
+  gl-matrix@3.4.3: {}
+
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -18651,6 +18780,8 @@ snapshots:
   ignore@7.0.3: {}
 
   image-meta@0.2.1: {}
+
+  image-size@0.7.5: {}
 
   image-size@1.2.0:
     dependencies:
@@ -19189,6 +19320,8 @@ snapshots:
   knitwork@1.2.0: {}
 
   kolorist@1.8.0: {}
+
+  ktx-parse@0.0.4: {}
 
   kysely@0.27.5: {}
 
@@ -19822,7 +19955,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  nitropack@2.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(typescript@5.7.2)(xml2js@0.6.2):
+  nitropack@2.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(typescript@5.7.2)(xml2js@0.6.2):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@netlify/functions': 2.8.2
@@ -19846,7 +19979,7 @@ snapshots:
       cookie-es: 1.2.2
       croner: 9.0.0
       crossws: 0.3.3
-      db0: 0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))
+      db0: 0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 9.0.0
@@ -19889,7 +20022,7 @@ snapshots:
       unctx: 2.4.1
       unenv: 1.10.0
       unimport: 3.14.6(rollup@4.32.1)
-      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
+      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
       untyped: 1.5.2
       unwasm: 0.3.9
     optionalDependencies:
@@ -20256,7 +20389,7 @@ snapshots:
       - vite
       - vue
 
-  nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0):
+  nuxt@3.15.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@parcel/watcher@2.5.1)(@types/node@22.12.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.19.0(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(meow@9.0.0)(optionator@0.9.4)(rollup@4.32.1)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(typescript@5.7.2)(vite@6.0.11(@types/node@22.12.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.37.0)(tsx@4.19.2)(yaml@2.7.0))(vue-tsc@2.1.6(typescript@5.7.2))(xml2js@0.6.2)(yaml@2.7.0):
     dependencies:
       '@nuxt/cli': 3.21.1(magicast@0.3.5)
       '@nuxt/devalue': 2.0.2
@@ -20294,7 +20427,7 @@ snapshots:
       magic-string: 0.30.17
       mlly: 1.7.4
       nanotar: 0.2.0
-      nitropack: 2.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(typescript@5.7.2)(xml2js@0.6.2)
+      nitropack: 2.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))(encoding@0.1.13)(typescript@5.7.2)(xml2js@0.6.2)
       nypm: 0.5.2
       ofetch: 1.4.1
       ohash: 1.1.4
@@ -20316,7 +20449,7 @@ snapshots:
       unimport: 4.0.0(rollup@4.32.1)
       unplugin: 2.1.2
       unplugin-vue-router: 0.11.2(rollup@4.32.1)(vue-router@4.5.0(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))
-      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
+      unstorage: 1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2)
       untyped: 1.5.2
       vue: 3.5.13(typescript@5.7.2)
       vue-bundle-renderer: 2.1.1
@@ -21318,8 +21451,6 @@ snapshots:
 
   radix3@1.1.2: {}
 
-  rafor@1.0.2: {}
-
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -22252,6 +22383,14 @@ snapshots:
 
   tabbable@6.2.0: {}
 
+  taichi.js@0.0.36:
+    dependencies:
+      '@loaders.gl/core': 3.4.15
+      '@loaders.gl/gltf': 3.4.15
+      '@webgpu/types': 0.1.53
+      gl-matrix: 3.4.3
+      tslib: 2.8.1
+
   tapable@2.2.1: {}
 
   tar-fs@2.1.1:
@@ -22334,6 +22473,11 @@ snapshots:
 
   text-extensions@1.9.0: {}
 
+  texture-compressor@1.0.2:
+    dependencies:
+      argparse: 1.0.10
+      image-size: 0.7.5
+
   third-party-capital@2.3.0:
     dependencies:
       semver: 7.6.3
@@ -22356,7 +22500,7 @@ snapshots:
       earcut: 3.0.1
       three: 0.172.0
 
-  three-globe@2.41.4(three@0.172.0):
+  three-globe@2.41.5(three@0.172.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.1
@@ -22371,12 +22515,12 @@ snapshots:
       h3-js: 4.1.0
       index-array-by: 1.4.2
       kapsule: 1.16.0
+      taichi.js: 0.0.36
       three: 0.172.0
       three-conic-polygon-geometry: 2.1.2(three@0.172.0)
       three-geojson-geometry: 2.1.1(three@0.172.0)
       three-slippy-map-globe: 1.0.3(three@0.172.0)
       tinycolor2: 1.6.0
-      yaot: 1.1.3
 
   three-slippy-map-globe@1.0.3(three@0.172.0):
     dependencies:
@@ -22937,7 +23081,7 @@ snapshots:
       acorn: 8.14.0
       webpack-virtual-modules: 0.6.2
 
-  unstorage@1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2):
+  unstorage@1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.4.2):
     dependencies:
       anymatch: 3.1.3
       chokidar: 3.6.0
@@ -22950,7 +23094,7 @@ snapshots:
     optionalDependencies:
       '@azure/data-tables': 13.3.0
       '@azure/storage-blob': 12.26.0
-      db0: 0.2.3(drizzle-orm@0.39.0(kysely@0.27.5)(postgres@3.4.5))
+      db0: 0.2.3(drizzle-orm@0.39.1(kysely@0.27.5)(postgres@3.4.5))
       ioredis: 5.4.2
 
   untun@0.1.3:
@@ -23790,10 +23934,6 @@ snapshots:
   yaml-ast-parser@0.0.43: {}
 
   yaml@2.7.0: {}
-
-  yaot@1.1.3:
-    dependencies:
-      rafor: 1.0.2
 
   yargs-parser@20.2.9: {}
 
