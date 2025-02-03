@@ -12,8 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Use Latest Corepack
+        run: |
+          npm i -g corepack@latest
+          corepack enable
 
       - name: Install node & pnpm
         uses: actions/setup-node@v4
