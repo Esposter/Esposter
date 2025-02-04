@@ -4,6 +4,7 @@ import type { Component, CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { toTitleCase } from "@/util/text/toTitleCase";
+import { toast } from "vuetify-sonner";
 
 export interface LoginButtonProps {
   logo: Component;
@@ -31,17 +32,18 @@ const isLoading = ref(false);
     h-12
     @disabled="isLoading"
     @click="
-      signIn.social(
-        { provider },
-        {
-          onRequest: () => {
-            isLoading = true;
+      async () => {
+        isLoading = true;
+        await signIn.social(
+          { provider },
+          {
+            onError: ({ error }) => {
+              toast(error.message, { cardProps: { color: 'error' } });
+            },
           },
-          onResponse: () => {
-            isLoading = false;
-          },
-        },
-      )
+        );
+        isLoading = false;
+      }
     "
   >
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
