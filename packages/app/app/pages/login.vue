@@ -1,25 +1,12 @@
 <script setup lang="ts">
-import type { betterAuth } from "better-auth";
-import type { Component, CSSProperties } from "vue";
+import type { LoginButtonProps } from "@/components/Login/Button.vue";
 
 import { SITE_NAME } from "#shared/services/esposter/constants";
-import { authClient } from "@/services/auth/authClient";
-import { toTitleCase } from "@/util/text/toTitleCase";
-
-interface ProviderProps {
-  buttonStyle?: CSSProperties;
-  logo: Component;
-  logoAttrs?: Record<string, unknown>;
-  logoStyle?: CSSProperties;
-  provider: keyof NonNullable<Parameters<typeof betterAuth>[0]["socialProviders"]>;
-}
 
 definePageMeta({ middleware: "guest" });
 
-const { signIn } = authClient;
-const providerProps = ref<ProviderProps[]>([
+const loginButtonsProps = ref<LoginButtonProps[]>([
   {
-    buttonStyle: { backgroundColor: "#4285f4", paddingLeft: "0" },
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Google.vue`))),
     logoStyle: {
       backgroundColor: "#fff",
@@ -29,20 +16,20 @@ const providerProps = ref<ProviderProps[]>([
       width: "3rem",
     },
     provider: "google",
+    style: { backgroundColor: "#4285f4", paddingLeft: "0" },
   },
   {
-    buttonStyle: { backgroundColor: "#252525" },
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Github.vue`))),
     logoAttrs: { fill: "#fff" },
     provider: "github",
+    style: { backgroundColor: "#252525" },
   },
   {
-    buttonStyle: { backgroundColor: "#1877f2" },
     logo: markRaw(defineAsyncComponent(() => import(`@/components/Visual/Logo/Facebook.vue`))),
     provider: "facebook",
+    style: { backgroundColor: "#1877f2" },
   },
 ]);
-const isLoading = ref(false);
 </script>
 
 <template>
@@ -59,55 +46,11 @@ const isLoading = ref(false);
             <span class="text-h6" pl-2>{{ SITE_NAME }}</span>
           </div>
           <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
-          <template v-for="{ provider, logo, logoStyle, logoAttrs, buttonStyle } of providerProps" :key="provider">
-            <button
-              class="button"
-              :style="{ ...buttonStyle }"
-              pl-2
-              flex
-              items-center
-              w-full
-              rd
-              mb-3
-              h-12
-              @disabled="isLoading"
-              @click="
-                signIn.social(
-                  { provider },
-                  {
-                    onRequest: () => {
-                      isLoading = true;
-                    },
-                    onResponse: () => {
-                      isLoading = false;
-                    },
-                  },
-                )
-              "
-            >
-              <v-progress-circular v-if="isLoading" size="small" indeterminate />
-              <template v-else>
-                <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-                <span font-bold text-white mx-auto>{{ toTitleCase(provider) }}</span>
-              </template>
-            </button>
+          <template v-for="loginButtonProps of loginButtonsProps" :key="loginButtonProps.provider">
+            <LoginButton :="loginButtonProps" />
           </template>
         </v-container>
       </StyledCard>
     </v-container>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-.button {
-  box-shadow: 0 2px 4px 0 rgba(black, 0.25);
-  transition:
-    box-shadow 0.2s,
-    transform 0.2s;
-
-  &:hover {
-    box-shadow: 0 2px 10px 2px rgba(black, 0.35);
-    transform: translateY(-3px);
-  }
-}
-</style>
