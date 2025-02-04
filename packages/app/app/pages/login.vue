@@ -70,6 +70,7 @@ const isLoading = ref(false);
               rd
               mb-3
               h-12
+              @disabled="isLoading"
               @click="
                 signIn.social(
                   { provider },
