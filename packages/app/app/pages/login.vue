@@ -42,6 +42,7 @@ const providerProps = ref<ProviderProps[]>([
     provider: "facebook",
   },
 ]);
+const isLoading = ref(false);
 </script>
 
 <template>
@@ -69,10 +70,25 @@ const providerProps = ref<ProviderProps[]>([
               rd
               mb-3
               h-12
-              @click="signIn.social({ provider })"
+              @click="
+                signIn.social(
+                  { provider },
+                  {
+                    onRequest: () => {
+                      isLoading = true;
+                    },
+                    onResponse: () => {
+                      isLoading = false;
+                    },
+                  },
+                )
+              "
             >
-              <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-              <span font-bold text-white mx-auto>{{ toTitleCase(provider) }}</span>
+              <v-progress-circular v-if="isLoading" size="small" indeterminate />
+              <template v-else>
+                <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
+                <span font-bold text-white mx-auto>{{ toTitleCase(provider) }}</span>
+              </template>
             </button>
           </template>
         </v-container>
