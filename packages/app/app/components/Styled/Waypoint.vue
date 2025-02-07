@@ -9,8 +9,8 @@ interface StyledWaypointProps {
 
 const { active } = defineProps<StyledWaypointProps>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
-const loading = ref(false);
-const realActive = computed(() => !loading.value && active);
+const isLoading = ref(false);
+const realActive = computed(() => !isLoading.value && active);
 </script>
 
 <template>
@@ -22,15 +22,15 @@ const realActive = computed(() => !loading.value && active);
       @change="
         (waypointState: WaypointState) => {
           if (waypointState.going === Going.In) {
-            loading = true;
+            isLoading = true;
             emit('change', () => {
-              loading = false;
+              isLoading = false;
             });
           }
         }
       "
     >
-      <v-progress-circular v-if="loading" size="small" indeterminate />
+      <v-progress-circular v-if="isLoading" size="small" indeterminate />
     </Waypoint>
   </ClientOnly>
 </template>
