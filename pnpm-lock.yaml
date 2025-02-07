@@ -143,10 +143,10 @@ importers:
         version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(vue@3.5.13(typescript@5.7.2))
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.741(@trpc/server@11.0.0-rc.741(typescript@5.7.2))(typescript@5.7.2)
+        version: 11.0.0-rc.746(@trpc/server@11.0.0-rc.746(typescript@5.7.2))(typescript@5.7.2)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.741(typescript@5.7.2)
+        version: 11.0.0-rc.746(typescript@5.7.2)
       '@vue-flow/background':
         specifier: ^1.3.2
         version: 1.3.2(@vue-flow/core@1.42.1(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))
@@ -365,7 +365,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 0.11.1-next.1
-        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.741(@trpc/server@11.0.0-rc.741(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.741(typescript@5.7.2))
+        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.746(@trpc/server@11.0.0-rc.746(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.746(typescript@5.7.2))
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.7.2))
@@ -518,8 +518,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.0)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       '@vitest/eslint-plugin':
-        specifier: ^1.1.25
-        version: 1.1.25(@typescript-eslint/utils@8.23.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2)(vitest@3.0.5(@types/node@22.13.1)(happy-dom@17.0.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.0)(tsx@4.19.2)(yaml@2.7.0))
+        specifier: ^1.1.26
+        version: 1.1.26(@typescript-eslint/utils@8.23.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2)(vitest@3.0.5(@types/node@22.13.1)(happy-dom@17.0.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.0)(tsx@4.19.2)(yaml@2.7.0))
       eslint-config-prettier:
         specifier: ^10.0.1
         version: 10.0.1(eslint@9.19.0(jiti@2.4.2))
@@ -3323,14 +3323,14 @@ packages:
       '@tiptap/pm': ^2.7.0
       vue: ^3.0.0
 
-  '@trpc/client@11.0.0-rc.741':
-    resolution: {integrity: sha512-Xtas4BZuDDb9gGeesgWhLNaG77fXMtlwjYTMgEgCBvZUySdxMjiY66M8lw4XEKbbVgm+di68q7/6nNnXpbh9JQ==}
+  '@trpc/client@11.0.0-rc.746':
+    resolution: {integrity: sha512-/bBwQ6RH4N/soI6wtiDYPRpJdLwD2u+J85qUQD+WqsEFmM6SRbwyeI29tM5Ft71e2pNG6GNTsrg3z7xOjI8D8Q==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.741+caed91ee7
+      '@trpc/server': 11.0.0-rc.746+6c15b0575
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.0-rc.741':
-    resolution: {integrity: sha512-EfZIzROiHqyrshCAyUNxvboZKZEA5L3rzlnluFs29d3e31FOwFGhV4Wq2rXCKSc+9SP+b1nHHqyzSP/UBaW3Cg==}
+  '@trpc/server@11.0.0-rc.746':
+    resolution: {integrity: sha512-BBmocuZuhzkFc0A2gLVHzIv+5Fc+6RVnqll9Ei9vUdqAlqn4nB4+Au5beIX0WQp+gQ6/JoVi/rJdwEtwwobIIQ==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -3841,8 +3841,8 @@ packages:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.1.25':
-    resolution: {integrity: sha512-u8DpDnMbPcqBmJOB4PeEtn6q7vKmLVTLFMpzoxSAo0hjYdl4iYSHRleqwPQo0ywc7UV0S6RKIahYRQ3BnZdMVw==}
+  '@vitest/eslint-plugin@1.1.26':
+    resolution: {integrity: sha512-qZoaWeThjk8MAJHmAFIrLDa3oBCixSAo90+DkvZXDdDnjBYjo+ILPsfNR6uSKDub+XjpgFvz0jeezuYhWs67aA==}
     peerDependencies:
       '@typescript-eslint/utils': '>= 8.0'
       eslint: '>= 8.57.0'
@@ -14266,12 +14266,12 @@ snapshots:
       '@tiptap/pm': 2.11.5
       vue: 3.5.13(typescript@5.7.2)
 
-  '@trpc/client@11.0.0-rc.741(@trpc/server@11.0.0-rc.741(typescript@5.7.2))(typescript@5.7.2)':
+  '@trpc/client@11.0.0-rc.746(@trpc/server@11.0.0-rc.746(typescript@5.7.2))(typescript@5.7.2)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.741(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.746(typescript@5.7.2)
       typescript: 5.7.2
 
-  '@trpc/server@11.0.0-rc.741(typescript@5.7.2)':
+  '@trpc/server@11.0.0-rc.746(typescript@5.7.2)':
     dependencies:
       typescript: 5.7.2
 
@@ -15103,7 +15103,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.25(@typescript-eslint/utils@8.23.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2)(vitest@3.0.5(@types/node@22.13.1)(happy-dom@17.0.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.0)(tsx@4.19.2)(yaml@2.7.0))':
+  '@vitest/eslint-plugin@1.1.26(@typescript-eslint/utils@8.23.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2)(vitest@3.0.5(@types/node@22.13.1)(happy-dom@17.0.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.0)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@typescript-eslint/utils': 8.23.0(eslint@9.19.0(jiti@2.4.2))(typescript@5.7.2)
       eslint: 9.19.0(jiti@2.4.2)
@@ -21978,10 +21978,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.741(@trpc/server@11.0.0-rc.741(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.741(typescript@5.7.2)):
+  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.746(@trpc/server@11.0.0-rc.746(typescript@5.7.2))(typescript@5.7.2))(@trpc/server@11.0.0-rc.746(typescript@5.7.2)):
     dependencies:
-      '@trpc/client': 11.0.0-rc.741(@trpc/server@11.0.0-rc.741(typescript@5.7.2))(typescript@5.7.2)
-      '@trpc/server': 11.0.0-rc.741(typescript@5.7.2)
+      '@trpc/client': 11.0.0-rc.746(@trpc/server@11.0.0-rc.746(typescript@5.7.2))(typescript@5.7.2)
+      '@trpc/server': 11.0.0-rc.746(typescript@5.7.2)
       h3: 1.15.0
       ofetch: 1.4.1
       ohash: 1.1.4
