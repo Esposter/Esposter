@@ -3,19 +3,14 @@ import type { MeshPhongMaterial } from "three";
 import type { ArrayElement } from "type-fest/source/internal";
 
 import { dayjs } from "#shared/services/dayjs";
-import airportHistory from "@/assets/about/airport-history.json";
-import flightHistory from "@/assets/about/flight-history.json";
-import countries from "@/assets/about/globe-data-min.json";
+import { generateRandomInteger } from "#shared/util/math/random/generateRandomInteger";
+import data from "@/assets/about/data.json";
+import countries from "@/assets/about/globe.json";
+import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-type Airport = ArrayElement<(typeof airportHistory)["airports"]>;
-
-interface FeatureCollection {
-  properties: Record<string, string>;
-}
-
-type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
+type Data = ArrayElement<typeof data>;
 
 const id = "globe";
 const { width } = useWindowSize();
@@ -73,39 +68,28 @@ onMounted(async () => {
     .showAtmosphere(true)
     .atmosphereColor("#3a228a")
     .atmosphereAltitude(0.25)
-    .hexPolygonColor((e) => {
-      if (["IDN", "KAZ", "KGZ", "KOR", "MYS", "RUS", "THA", "UZB"].includes((e as FeatureCollection).properties.ISO_A3))
-        return "rgba(255,255,255, 1)";
-      else return "rgba(255,255,255, 0.7)";
-    });
+    .hexPolygonColor(() => "rgba(255,255,255,0.7)");
   globe.rotateY(-Math.PI * (5 / 9));
   globe.rotateZ(-Math.PI / 6);
-
-  setTimeout(() => {
-    globe
-      .arcsData(flightHistory.flights)
-      .arcColor((e: unknown) => ((e as Flight).status ? "#9cff00" : "#ff4000"))
-      .arcAltitude((e) => (e as Flight).arcAlt)
-      .arcStroke((e) => ((e as Flight).status ? 0.5 : 0.3))
-      .arcDashLength(0.9)
-      .arcDashGap(4)
-      .arcDashAnimateTime(dayjs.duration(1, "second").asMilliseconds())
-      .arcsTransitionDuration(dayjs.duration(1, "second").asMilliseconds())
-      .arcDashInitialGap((e) => (e as Flight).order * 1)
-      .labelsData(airportHistory.airports)
-      .labelColor(() => "#ffcb21")
-      .labelDotOrientation((e) => ((e as Airport).text === "ALA" ? "top" : "right"))
-      .labelDotRadius(0.3)
-      .labelSize((e) => (e as Airport).size)
-      .labelText("city")
-      .labelResolution(6)
-      .labelAltitude(0.01)
-      .pointsData(airportHistory.airports)
-      .pointColor(() => "#fff")
-      .pointsMerge(true)
-      .pointAltitude(0.07)
-      .pointRadius(0.05);
-  }, dayjs.duration(1, "second").asMilliseconds());
+  globe
+    .arcsData(data)
+    .arcStartLat((d) => (d as Data).startLat)
+    .arcStartLng((d) => (d as Data).startLng)
+    .arcEndLat((d) => (d as Data).endLat)
+    .arcEndLng((d) => (d as Data).endLng)
+    .arcColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .arcAltitude((e) => (e as Data).arcAlt)
+    .arcStroke(() => ARC_STROKES[generateRandomInteger(ARC_STROKES.length - 1)])
+    .arcDashLength(0.9)
+    .arcDashInitialGap((e) => (e as Data).order)
+    .arcDashGap(15)
+    .arcDashAnimateTime(dayjs.duration(2, "second").asMilliseconds())
+    .arcsTransitionDuration(dayjs.duration(2, "second").asMilliseconds())
+    .pointsData(data)
+    .pointColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .pointsMerge(true)
+    .pointAltitude(0.07)
+    .pointRadius(0.05);
 
   const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
   globeMaterial.color = new Color(0x3a228a);
