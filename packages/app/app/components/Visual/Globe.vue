@@ -83,7 +83,7 @@ onMounted(async () => {
     .arcStroke(() => ARC_STROKES[generateRandomInteger(ARC_STROKES.length - 1)])
     .arcDashLength(0.9)
     .arcDashInitialGap((e) => (e as Data).order)
-    .arcDashGap(4)
+    .arcDashGap(15)
     .arcDashAnimateTime(dayjs.duration(2, "second").asMilliseconds())
     .arcsTransitionDuration(dayjs.duration(2, "second").asMilliseconds())
     .labelsData(countries)
