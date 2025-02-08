@@ -14,6 +14,33 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 type Data = ArrayElement<typeof data>;
 
+const {
+  arcLength,
+  arcTime,
+  atmosphereAltitude,
+  atmosphereColor,
+  emissive,
+  emissiveIntensity,
+  globeColor,
+  hexPolygonColor,
+  ringMaxRadius,
+  rings,
+  shininess,
+  showAtmosphere,
+} = {
+  arcLength: 0.9,
+  arcTime: dayjs.duration(2, "second").asMilliseconds(),
+  atmosphereAltitude: 0.25,
+  atmosphereColor: "#3a228a",
+  emissive: "#220038",
+  emissiveIntensity: 0.1,
+  globeColor: "#3a228a",
+  hexPolygonColor: "rgba(255,255,255,0.7)",
+  ringMaxRadius: 3,
+  rings: 3,
+  shininess: 0.7,
+  showAtmosphere: true,
+};
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
@@ -67,10 +94,10 @@ onMounted(async () => {
     .hexPolygonsData(features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.7)
-    .showAtmosphere(true)
-    .atmosphereColor("#3a228a")
-    .atmosphereAltitude(0.25)
-    .hexPolygonColor(() => "rgba(255,255,255,0.7)");
+    .showAtmosphere(showAtmosphere)
+    .atmosphereColor(atmosphereColor)
+    .atmosphereAltitude(atmosphereAltitude)
+    .hexPolygonColor(() => hexPolygonColor);
   globe.rotateY(-Math.PI * (5 / 9));
   globe.rotateZ(-Math.PI / 6);
   globe
@@ -82,11 +109,10 @@ onMounted(async () => {
     .arcColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
     .arcAltitude((e) => (e as Data).arcAlt)
     .arcStroke(() => ARC_STROKES[generateRandomInteger(ARC_STROKES.length - 1)])
-    .arcDashLength(0.9)
+    .arcDashLength(arcLength)
     .arcDashInitialGap((e) => (e as Data).order)
     .arcDashGap(15)
-    .arcDashAnimateTime(dayjs.duration(2, "second").asMilliseconds())
-    .arcsTransitionDuration(dayjs.duration(2, "second").asMilliseconds())
+    .arcDashAnimateTime(arcTime)
     // Sadly, the browser is not powerful enough to render all the labels
     .labelsData(getRandomValues(countries, 50))
     .labelColor(() => "#fff")
@@ -96,17 +122,22 @@ onMounted(async () => {
     .labelText("name")
     .labelResolution(6)
     .labelAltitude(0.01)
-    .pointsData(data)
+    .pointsData(countries)
     .pointColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
     .pointsMerge(true)
-    .pointAltitude(0.07)
-    .pointRadius(0.05);
+    .pointAltitude(0)
+    .pointRadius(1)
+    .ringsData(getRandomValues(countries, rings))
+    .ringColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .ringMaxRadius(ringMaxRadius)
+    .ringPropagationSpeed(3)
+    .ringRepeatPeriod(arcTime * arcLength);
 
   const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
-  globeMaterial.color = new Color(0x3a228a);
-  globeMaterial.emissive = new Color(0x220038);
-  globeMaterial.emissiveIntensity = 0.1;
-  globeMaterial.shininess = 0.7;
+  globeMaterial.color = new Color(globeColor);
+  globeMaterial.emissive = new Color(emissive);
+  globeMaterial.emissiveIntensity = emissiveIntensity;
+  globeMaterial.shininess = shininess;
   scene.add(globe);
 
   const animate = () => {
@@ -121,6 +152,10 @@ onMounted(async () => {
     camera.updateProjectionMatrix();
     renderer.setSize(width.value, height.value);
   });
+
+  window.setInterval(() => {
+    globe.ringsData(getRandomValues(countries, rings));
+  }, dayjs.duration(2, "seconds").asMilliseconds());
 });
 </script>
 

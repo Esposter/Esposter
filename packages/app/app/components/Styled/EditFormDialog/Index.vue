@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 
+import { dayjs } from "#shared/services/dayjs";
 import Header from "@/components/Styled/EditFormDialog/Header.vue";
 import { VForm } from "vuetify/components";
 
@@ -30,7 +31,7 @@ watch(dialog, (newDialog) => {
   // until after the CSS animation that lasts 300ms ends
   window.setTimeout(() => {
     if (!newDialog) emit("close");
-  }, 300);
+  }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
 
 const editFormRef = ref<InstanceType<typeof VForm>>();
