@@ -45,7 +45,9 @@ const cardType = ref(CardType.Marquee);
           Here's a globe for you to play around with if you are bored 🙂
         </v-col>
         <v-col flex justify-center>
-          <VisualGlobe />
+          <ClientOnly>
+            <VisualGlobe />
+          </ClientOnly>
         </v-col>
       </v-row>
     </v-container>

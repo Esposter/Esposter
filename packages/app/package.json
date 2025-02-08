@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
-  "version": "1.34.0",
+  "version": "1.35.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -35,7 +35,7 @@
     "db:up": "bun db:run up",
     "gen-env": "bun x gen-env-types .env -o env.d.ts -e .",
     "tiled:gen": "bun cross-os tiled:gen",
-    "generate-pwa-assets": "bun x pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/Esposter/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
+    "generate-pwa-assets": "bun x pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
     "cross-os": "bun ../../scripts/cross-os.js",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
@@ -66,7 +66,6 @@
     "@fullcalendar/vue3": "^6.1.15",
     "@koumoul/vjsf": "^3.9.0",
     "@mdi/font": "^7.4.47",
-    "@pinia/nuxt": "^0.9.0",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-character-count": "^2.11.5",
     "@tiptap/extension-link": "^2.11.5",
@@ -86,7 +85,6 @@
     "@vuepic/vue-datepicker": "^11.0.1",
     "@vueuse/core": "^12.5.0",
     "@vueuse/integrations": "^12.5.0",
-    "@vueuse/nuxt": "^12.5.0",
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
@@ -124,7 +122,7 @@
     "grid-layout-plus": "^1.0.6",
     "gsap": "^3.12.7",
     "howler": "^2.2.4",
-    "js-beautify": "^1.15.1",
+    "js-beautify": "^1.15.2",
     "markdown-it": "^14.1.0",
     "marked": "^15.0.6",
     "mjml-browser": "^4.15.3",
@@ -176,11 +174,12 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@nuxt/eslint": "^1.0.0",
+    "@nuxt/eslint": "^1.0.1",
     "@nuxt/fonts": "^0.10.3",
-    "@nuxt/scripts": "^0.9.5",
+    "@nuxt/scripts": "0.9.5",
     "@nuxt/test-utils": "^3.15.4",
     "@nuxtjs/seo": "^2.1.1",
+    "@pinia/nuxt": "^0.9.0",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
     "@types/fs-extra": "^11.0.4",
@@ -196,6 +195,7 @@
     "@vite-pwa/nuxt": "^0.10.6",
     "@vitest/coverage-v8": "^3.0.5",
     "@vue/test-utils": "^2.4.6",
+    "@vueuse/nuxt": "^12.5.0",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.4",
     "fs-extra": "^11.3.0",
@@ -208,5 +208,8 @@
     "unocss": "^65.4.3",
     "vitest": "^3.0.5",
     "vuetify-nuxt-module": "^0.18.3"
+  },
+  "devDependenciesComments": {
+    "@nuxt/scripts": "@TODO: Remove when types are fixed"
   }
 }

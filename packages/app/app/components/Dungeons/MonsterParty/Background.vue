@@ -17,7 +17,7 @@ onCreate((scene) => {
       origin: 0,
       width,
       height,
-      fillColor: 0x000000,
+      fillColor: 0x000,
     }"
   />
   <TileSprite

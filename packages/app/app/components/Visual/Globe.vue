@@ -3,20 +3,44 @@ import type { MeshPhongMaterial } from "three";
 import type { ArrayElement } from "type-fest/source/internal";
 
 import { dayjs } from "#shared/services/dayjs";
-import airportHistory from "@/assets/about/airport-history.json";
-import flightHistory from "@/assets/about/flight-history.json";
-import countries from "@/assets/about/globe-data-min.json";
+import { generateRandomInteger } from "#shared/util/math/random/generateRandomInteger";
+import countries from "@/assets/about/countries.json";
+import data from "@/assets/about/data.json";
+import { features } from "@/assets/about/globe.json";
+import { ARC_STROKES, COLORS } from "@/services/visual/constants";
+import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-type Airport = ArrayElement<(typeof airportHistory)["airports"]>;
+type Data = ArrayElement<typeof data>;
 
-interface FeatureCollection {
-  properties: Record<string, string>;
-}
-
-type Flight = ArrayElement<(typeof flightHistory)["flights"]>;
-
+const {
+  arcLength,
+  arcTime,
+  atmosphereAltitude,
+  atmosphereColor,
+  emissive,
+  emissiveIntensity,
+  globeColor,
+  hexPolygonColor,
+  ringMaxRadius,
+  rings,
+  shininess,
+  showAtmosphere,
+} = {
+  arcLength: 0.9,
+  arcTime: dayjs.duration(2, "second").asMilliseconds(),
+  atmosphereAltitude: 0.25,
+  atmosphereColor: "#3a228a",
+  emissive: "#220038",
+  emissiveIntensity: 0.1,
+  globeColor: "#3a228a",
+  hexPolygonColor: "rgba(255,255,255,0.7)",
+  ringMaxRadius: 3,
+  rings: 3,
+  shininess: 0.7,
+  showAtmosphere: true,
+};
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
@@ -25,12 +49,12 @@ onMounted(async () => {
   const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
   if (!canvas) return;
   const renderer = new WebGLRenderer({ antialias: true, canvas });
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new Scene();
-  scene.add(new AmbientLight(0xbbbbbb, 0.3));
+  scene.add(new AmbientLight(0xbbb, 0.3));
 
   const camera = new PerspectiveCamera();
   camera.aspect = width.value / height.value;
@@ -39,7 +63,7 @@ onMounted(async () => {
   camera.position.x = 0;
   camera.position.y = 0;
 
-  const dLight = new DirectionalLight(0xffffff, 0.8);
+  const dLight = new DirectionalLight(0xfff, 0.8);
   dLight.position.set(-800, 2000, 400);
   camera.add(dLight);
 
@@ -67,51 +91,53 @@ onMounted(async () => {
 
   const ThreeGlobe = (await import("three-globe")).default;
   const globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
-    .hexPolygonsData(countries.features)
+    .hexPolygonsData(features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.7)
-    .showAtmosphere(true)
-    .atmosphereColor("#3a228a")
-    .atmosphereAltitude(0.25)
-    .hexPolygonColor((e) => {
-      if (["IDN", "KAZ", "KGZ", "KOR", "MYS", "RUS", "THA", "UZB"].includes((e as FeatureCollection).properties.ISO_A3))
-        return "rgba(255,255,255, 1)";
-      else return "rgba(255,255,255, 0.7)";
-    });
+    .showAtmosphere(showAtmosphere)
+    .atmosphereColor(atmosphereColor)
+    .atmosphereAltitude(atmosphereAltitude)
+    .hexPolygonColor(() => hexPolygonColor);
   globe.rotateY(-Math.PI * (5 / 9));
   globe.rotateZ(-Math.PI / 6);
-
-  setTimeout(() => {
-    globe
-      .arcsData(flightHistory.flights)
-      .arcColor((e: unknown) => ((e as Flight).status ? "#9cff00" : "#ff4000"))
-      .arcAltitude((e) => (e as Flight).arcAlt)
-      .arcStroke((e) => ((e as Flight).status ? 0.5 : 0.3))
-      .arcDashLength(0.9)
-      .arcDashGap(4)
-      .arcDashAnimateTime(dayjs.duration(1, "second").asMilliseconds())
-      .arcsTransitionDuration(dayjs.duration(1, "second").asMilliseconds())
-      .arcDashInitialGap((e) => (e as Flight).order * 1)
-      .labelsData(airportHistory.airports)
-      .labelColor(() => "#ffcb21")
-      .labelDotOrientation((e) => ((e as Airport).text === "ALA" ? "top" : "right"))
-      .labelDotRadius(0.3)
-      .labelSize((e) => (e as Airport).size)
-      .labelText("city")
-      .labelResolution(6)
-      .labelAltitude(0.01)
-      .pointsData(airportHistory.airports)
-      .pointColor(() => "#fff")
-      .pointsMerge(true)
-      .pointAltitude(0.07)
-      .pointRadius(0.05);
-  }, dayjs.duration(1, "second").asMilliseconds());
+  globe
+    .arcsData(data)
+    .arcStartLat((d) => (d as Data).startLat)
+    .arcStartLng((d) => (d as Data).startLng)
+    .arcEndLat((d) => (d as Data).endLat)
+    .arcEndLng((d) => (d as Data).endLng)
+    .arcColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .arcAltitude((e) => (e as Data).arcAlt)
+    .arcStroke(() => ARC_STROKES[generateRandomInteger(ARC_STROKES.length - 1)])
+    .arcDashLength(arcLength)
+    .arcDashInitialGap((e) => (e as Data).order)
+    .arcDashGap(15)
+    .arcDashAnimateTime(arcTime)
+    // Sadly, the browser is not powerful enough to render all the labels
+    .labelsData(getRandomValues(countries, 50))
+    .labelColor(() => "#fff")
+    .labelDotOrientation(() => "right")
+    .labelDotRadius(0.3)
+    .labelSize(() => 1)
+    .labelText("name")
+    .labelResolution(6)
+    .labelAltitude(0.01)
+    .pointsData(countries)
+    .pointColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .pointsMerge(true)
+    .pointAltitude(0)
+    .pointRadius(1)
+    .ringsData(getRandomValues(countries, rings))
+    .ringColor(() => COLORS[generateRandomInteger(COLORS.length - 1)])
+    .ringMaxRadius(ringMaxRadius)
+    .ringPropagationSpeed(3)
+    .ringRepeatPeriod(arcTime * arcLength);
 
   const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
-  globeMaterial.color = new Color(0x3a228a);
-  globeMaterial.emissive = new Color(0x220038);
-  globeMaterial.emissiveIntensity = 0.1;
-  globeMaterial.shininess = 0.7;
+  globeMaterial.color = new Color(globeColor);
+  globeMaterial.emissive = new Color(emissive);
+  globeMaterial.emissiveIntensity = emissiveIntensity;
+  globeMaterial.shininess = shininess;
   scene.add(globe);
 
   const animate = () => {
@@ -126,6 +152,10 @@ onMounted(async () => {
     camera.updateProjectionMatrix();
     renderer.setSize(width.value, height.value);
   });
+
+  window.setInterval(() => {
+    globe.ringsData(getRandomValues(countries, rings));
+  }, dayjs.duration(2, "seconds").asMilliseconds());
 });
 </script>
 
