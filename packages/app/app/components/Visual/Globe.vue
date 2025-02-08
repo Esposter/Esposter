@@ -8,6 +8,7 @@ import countries from "@/assets/about/countries.json";
 import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
+import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -86,7 +87,8 @@ onMounted(async () => {
     .arcDashGap(15)
     .arcDashAnimateTime(dayjs.duration(2, "second").asMilliseconds())
     .arcsTransitionDuration(dayjs.duration(2, "second").asMilliseconds())
-    .labelsData(countries)
+    // Sadly, the browser is not powerful enough to render all the labels
+    .labelsData(getRandomValues(countries, 50))
     .labelColor(() => "#fff")
     .labelDotOrientation(() => "right")
     .labelDotRadius(0.3)
