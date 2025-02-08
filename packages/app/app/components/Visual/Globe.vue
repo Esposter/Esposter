@@ -20,12 +20,12 @@ onMounted(async () => {
   const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
   if (!canvas) return;
   const renderer = new WebGLRenderer({ antialias: true, canvas });
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const scene = new Scene();
-  scene.add(new AmbientLight(0xbbbbbb, 0.3));
+  scene.add(new AmbientLight(0xbbb, 0.3));
 
   const camera = new PerspectiveCamera();
   camera.aspect = width.value / height.value;
@@ -34,7 +34,7 @@ onMounted(async () => {
   camera.position.x = 0;
   camera.position.y = 0;
 
-  const dLight = new DirectionalLight(0xffffff, 0.8);
+  const dLight = new DirectionalLight(0xfff, 0.8);
   dLight.position.set(-800, 2000, 400);
   camera.add(dLight);
 

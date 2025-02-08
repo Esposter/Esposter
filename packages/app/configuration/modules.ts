@@ -7,6 +7,7 @@ export const modules: NuxtConfig["modules"] = [
   "@nuxt/test-utils/module",
   "@nuxtjs/seo",
   "@pinia/nuxt",
+  "@tresjs/nuxt",
   "@unocss/nuxt",
   "@vite-pwa/nuxt",
   "@vueuse/nuxt",
