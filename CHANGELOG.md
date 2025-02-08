@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.35.0](https://github.com/Esposter/Esposter/compare/v1.34.0...v1.35.0) (2025-02-08)
+
+
+### Bug Fixes
+
+* add error handling ([f2e2515](https://github.com/Esposter/Esposter/commit/f2e251591e73ec68a309cd5470fd5b698a1d7f8e))
+* add login loading state ([19aeae4](https://github.com/Esposter/Esposter/commit/19aeae466eed982475ef0e571195e081ca3799ae))
+* builds by updating corepack ([c5da933](https://github.com/Esposter/Esposter/commit/c5da9334ab1b2022a2293d3b08321eaf52e30176))
+* directly use process cwd ([aa16467](https://github.com/Esposter/Esposter/commit/aa16467386aeb5e4ed301b9fa4ec34d88b0e66b7))
+* disable button when loading ([29bc5d5](https://github.com/Esposter/Esposter/commit/29bc5d5bb0a5d27cd9dddf4881c30704fb6668b0))
+* make dash gap bigger ([5536b89](https://github.com/Esposter/Esposter/commit/5536b89f42d87328d175b92e04ba81f20a6a391c))
+* only render a subset ([c4357c9](https://github.com/Esposter/Esposter/commit/c4357c9873d58e5c6a4c6f441cc100cfac81611a))
+* pin some deps ([988e083](https://github.com/Esposter/Esposter/commit/988e0832e48b990672c04ff6e9d78e02a0a8fa9c))
+* points data + add rings ([22aa96d](https://github.com/Esposter/Esposter/commit/22aa96dfe184efe1d8af036282711fe9003f5a60))
+* remove tresjs ([ed7e0cc](https://github.com/Esposter/Esposter/commit/ed7e0cc4d89d18c1b11cf72ca9197fed6cecaa60))
+* remove unnecessary one off execution packages from being installed ([4f2a854](https://github.com/Esposter/Esposter/commit/4f2a854908619a21d8ccf0eb3c4f0815136714b7))
+* setup pnpm via official installation ([b313e4d](https://github.com/Esposter/Esposter/commit/b313e4d9571d388798eb883f73e563384cf401ab))
+* update rollup ([03bf8c7](https://github.com/Esposter/Esposter/commit/03bf8c73aac066bd3d6620ae0dc1e97b54aeecb4))
+* update snapshot ([7e0e90c](https://github.com/Esposter/Esposter/commit/7e0e90c3205f313f72902edf3ead615892caa91a))
+* Update ts ([b2065e8](https://github.com/Esposter/Esposter/commit/b2065e8cd9241700f232f8168e2bf0dea2725b4c))
+
+
+### Features
+
+* Add countries ([594c651](https://github.com/Esposter/Esposter/commit/594c651536c0396f764f6e9b6f9e477629aabc2a))
+* Upgrade to pnpm 10 + refactor property names ([ef364d2](https://github.com/Esposter/Esposter/commit/ef364d29be7e82b6ffdc1e0233854c50a231e83c))
+
+
+
+
+
 # [1.34.0](https://github.com/Esposter/Esposter/compare/v1.33.0...v1.34.0) (2025-01-23)
 
 
