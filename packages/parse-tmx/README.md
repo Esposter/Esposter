@@ -39,22 +39,17 @@ The basic implementation:
 
 ```ts
 import { parseTmx } from "parse-tmx";
-// The *.tmx file can be loaded as a string or URL encoded data.
-// for Webpack use 'url-loader' plugin, for Rollup it can be '@rollup/plugin-url'
-import tmxFile from "map.tmx";
+// The *.tmx file can be loaded as a string or URL encoded data
+import map from "map.tmx";
 
 // Translates the tile flips in the layer data (default: false)
 const translateFlips = true;
 
 const loadMap = async () => {
-  const data = await parseTmx(tmxFile, translateFlips);
+  const data = await parseTmx(map, translateFlips);
   ...
 };
 ```
-
-#### Important
-
-Parser only supports embedded tilesets. At the moment, external tilesets are not supported!
 
 ### Example data
 
