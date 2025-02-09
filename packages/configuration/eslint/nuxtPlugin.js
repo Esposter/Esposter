@@ -18,6 +18,8 @@ export default tseslint.config(
       "vitest/consistent-test-it": ["error", { fn: "test" }],
       "vitest/max-expects": "off",
       "vitest/no-hooks": "off",
+      "vitest/prefer-to-be-falsy": "off",
+      "vitest/prefer-to-be-truthy": "off",
       "vitest/require-hook": "off"
     },
     settings: {

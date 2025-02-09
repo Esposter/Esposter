@@ -24,9 +24,9 @@ export default defineNuxtPlugin(() => {
         if (getIsServer()) return httpBatchLink({ transformer, url });
 
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        // eslint-disable-next-line @typescript-eslint/no-deprecated
+
         const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
-        // eslint-disable-next-line @typescript-eslint/no-deprecated
+
         return wsLink({ client: wsClient, transformer });
       })(),
     }),

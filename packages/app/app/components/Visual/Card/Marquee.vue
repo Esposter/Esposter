@@ -56,7 +56,8 @@ $card-length: 6;
 
 .scene {
   --buff: 3rem;
-  mask: linear-gradient(transparent, v-bind(surface) var(--buff) calc(100% - var(--buff)), transparent),
+  mask:
+    linear-gradient(transparent, v-bind(surface) var(--buff) calc(100% - var(--buff)), transparent),
     linear-gradient(90deg, transparent, v-bind(surface) var(--buff) calc(100% - var(--buff)), transparent);
   mask-composite: intersect;
 }
