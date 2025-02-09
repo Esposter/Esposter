@@ -25,7 +25,7 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "@unocss/eslint-config": "^65.4.3",
     "@vitejs/plugin-vue": "^5.2.1",
-    "@vitest/eslint-plugin": "^1.1.26",
+    "@vitest/eslint-plugin": "^1.1.27",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-perfectionist": "^4.8.0",
     "eslint-plugin-pinia": "^0.4.1",
