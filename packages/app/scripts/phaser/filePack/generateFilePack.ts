@@ -1,7 +1,7 @@
 import type { Types } from "phaser";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { getFilename } from "@/util/getFilename";
+import { trimFileExtension } from "@/util/trimFileExtension";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
 import { generateEnumString } from "@@/scripts/util/generateEnumString";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
@@ -18,19 +18,25 @@ export const generateFilePack = async () => {
   const enumName = "FileKey";
 
   for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    for (const blob of response.segment.blobItems)
-      if (blob.properties.contentType?.includes("image")) {
-        const filename = getFilename(blob.name);
-        const key = filename.substring(0, filename.indexOf("."));
+    for (const blob of response.segment.blobItems) {
+      if (!blob.properties.contentType)
+        throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);
+
+      const addFileKey = (type: string) => {
+        const key = trimFileExtension(blob.name).replaceAll("/", "");
         if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
 
         fileKeys.add(key);
         filePack.files.push({
           key,
-          type: "image",
+          type,
           url: blob.name,
         });
-      }
+      };
+
+      if (blob.properties.contentType.includes("image")) addFileKey("image");
+      else if (blob.properties.contentType.includes("font")) addFileKey("font");
+    }
 
   const filename = "filepack.json";
   await outputFile(`${enumName}.ts`, generateEnumString(enumName, [...fileKeys]));

@@ -2,6 +2,7 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { getFilename } from "@/util/getFilename";
+import { trimFileExtension } from "@/util/trimFileExtension";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { outputFile } from "@@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@@/scripts/util/generateEnumString";
@@ -13,7 +14,7 @@ export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[
 
   for (const { source } of tilesets) {
     const filename = getFilename(source);
-    const tilesetKey = filename.substring(0, filename.indexOf("."));
+    const tilesetKey = trimFileExtension(filename);
     if (tilesetKeys.has(tilesetKey))
       throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${tilesetKey}`);
     tilesetKeys.add(tilesetKey);
