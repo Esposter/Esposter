@@ -14,7 +14,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm build:packages && pnpm phaser:gen && pnpm build:docs && pnpm build:app",
+    "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "lerna run build --scope=@esposter/app",
     "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",

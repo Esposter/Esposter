@@ -15,7 +15,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm phaser:gen && nuxt build",
     "dev": "nuxt dev",
     "start": "node .output/server/index.mjs",
     "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
