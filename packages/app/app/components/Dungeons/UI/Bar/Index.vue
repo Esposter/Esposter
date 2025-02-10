@@ -3,8 +3,8 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { dayjs } from "#shared/services/dayjs";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -28,17 +28,17 @@ const emit = defineEmits<{
 }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);
-const barTextureMap = computed<Record<BarOrigin, ImageKey>>(() =>
+const barTextureMap = computed<Record<BarOrigin, FileKey>>(() =>
   type === BarType.Experience
     ? {
-        [BarOrigin.Left]: ImageKey.ExperienceBarLeftCap,
-        [BarOrigin.Middle]: ImageKey.ExperienceBarMiddle,
-        [BarOrigin.Right]: ImageKey.ExperienceBarRightCap,
+        [BarOrigin.Left]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft,
+        [BarOrigin.Middle]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid,
+        [BarOrigin.Right]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight,
       }
     : {
-        [BarOrigin.Left]: ImageKey.HealthBarLeftCap,
-        [BarOrigin.Middle]: ImageKey.HealthBarMiddle,
-        [BarOrigin.Right]: ImageKey.HealthBarRightCap,
+        [BarOrigin.Left]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft,
+        [BarOrigin.Middle]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid,
+        [BarOrigin.Right]: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight,
       },
 );
 const barWidth = computed(() => (width * barPercentage) / 100);

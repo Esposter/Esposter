@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FontKey } from "@/models/dungeons/keys/FontKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
@@ -21,7 +21,7 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
-defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
+defaultTextStyle.value = { fontFamily: FileKey.ThirdPartyKenneysAssetsFontsKenneyFutureNarrow };
 </script>
 
 <template>

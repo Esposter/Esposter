@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { onCreate, Rectangle, TileSprite } from "vue-phaserjs";
 
 const width = ref<number>();
@@ -25,7 +25,7 @@ onCreate((scene) => {
       origin: 0,
       width,
       height,
-      texture: ImageKey.MonsterPartyBackground,
+      texture: FileKey.SceneMonsterPartyBackground,
       alpha: 0.7,
     }"
   />

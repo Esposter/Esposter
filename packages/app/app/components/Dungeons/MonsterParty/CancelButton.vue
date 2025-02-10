@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ButtonTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/ButtonTextStyle";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { Input } from "phaser";
 import { Container, Image, Text } from "vue-phaserjs";
@@ -18,7 +18,9 @@ const isActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialIn
     <Image
       :configuration="{
         origin: 0,
-        texture: isActive ? ImageKey.BlueButtonSelected : ImageKey.BlueButton,
+        texture: isActive
+          ? FileKey.ThirdPartyKenneysAssetsUIPackBlueButton01
+          : FileKey.ThirdPartyKenneysAssetsUIPackBlueButton00,
         scaleX: 0.7,
         alpha: isActive ? 1 : 0.7,
       }"

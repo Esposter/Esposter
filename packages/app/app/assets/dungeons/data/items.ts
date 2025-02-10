@@ -1,6 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
@@ -12,6 +13,7 @@ export const ItemMap = {
       type: ItemEffectType.Capture,
       value: 1,
     },
+    fileKey: FileKey.UIBallsDamagedBall,
   },
   [ItemId.Potion]: {
     description: "A basic healing item that will heal 30 HP from a single monster.",

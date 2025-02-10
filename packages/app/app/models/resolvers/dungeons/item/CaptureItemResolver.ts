@@ -1,5 +1,4 @@
 import type { Item } from "@/models/dungeons/item/Item";
-import type { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
@@ -13,6 +12,7 @@ import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { prettify } from "@/util/text/prettify";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export class CaptureItemResolver extends AItemResolver {
   constructor() {
@@ -20,11 +20,11 @@ export class CaptureItemResolver extends AItemResolver {
   }
 
   override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+    if (!item.value.fileKey) throw new InvalidOperationError(Operation.Read, this.handleItem.name, "FileKey");
+
     const ballStore = useBallStore();
     const { texture } = storeToRefs(ballStore);
-    // Unfortunately we can't really enforce in compile-time that all capture item ids
-    // are actually also BallKey textures for convenience
-    texture.value = item.value.id as unknown as BallKey;
+    texture.value = item.value.fileKey;
     phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
       battleStateMachine.setState(StateName.CatchMonster),
     );

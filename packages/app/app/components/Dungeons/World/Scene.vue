@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { dayjs } from "#shared/services/dayjs";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "@/store/dungeons/controls";
@@ -16,7 +16,7 @@ const { controls } = storeToRefs(controlsStore);
 const inputResolvers = getActiveInputResolvers();
 
 const create = (scene: SceneWithPlugins) => {
-  playDungeonsBackgroundMusic(scene, BackgroundMusicKey.AndTheJourneyBegins);
+  playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiAndTheJourneyBegins);
   fadeIn(scene, dayjs.duration(1, "second").asMilliseconds());
 };
 

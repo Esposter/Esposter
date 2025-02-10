@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
@@ -9,7 +9,7 @@ export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>,
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) return;
 
-  const { play, stop } = getDungeonsSoundEffect(scene, SoundEffectKey.TextBlip, { loop: true });
+  const { play, stop } = getDungeonsSoundEffect(scene, FileKey.SoundTextBlip, { loop: true });
   const textDelay = useTextDelay();
   const textSections = text.split(/(\S|\s+)/).filter(Boolean);
   let i = 0;

@@ -1,12 +1,12 @@
-import type { SoundKey } from "@/models/dungeons/keys/sound/SoundKey";
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-export const getDungeonsSound = (scene: SceneWithPlugins, soundKey: SoundKey, options?: Types.Sound.SoundConfig) => ({
+export const getDungeonsSound = (scene: SceneWithPlugins, fileKey: FileKey, options?: Types.Sound.SoundConfig) => ({
   play: () => {
-    scene.sound.play(soundKey, { ...options, volume: options?.volume ?? 1 });
+    scene.sound.play(fileKey, { ...options, volume: options?.volume ?? 1 });
   },
   stop: () => {
-    scene.sound.stopByKey(soundKey);
+    scene.sound.stopByKey(fileKey);
   },
 });

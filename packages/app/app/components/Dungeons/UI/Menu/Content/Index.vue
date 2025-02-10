@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TValue extends string, TGrid extends readonly (readonly TValue[])[]">
 import type { Grid } from "@/models/dungeons/Grid";
 
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { getGridKey } from "@/services/dungeons/getGridKey";
 import { INITIAL_MENU_CURSOR_POSITION, MENU_CURSOR_POSITION_INCREMENT } from "@/services/dungeons/UI/menu/constants";
 
@@ -24,7 +24,7 @@ const { grid } = defineProps<ContentProps>();
     />
   </template>
   <DungeonsUIInputCursor
-    :cursor-image-key="ImageKey.CursorWhite"
+    :cursor-file-key="FileKey.UICursorCursorWhite"
     :grid
     :initial-position="INITIAL_MENU_CURSOR_POSITION"
     :position-increment="MENU_CURSOR_POSITION_INCREMENT"

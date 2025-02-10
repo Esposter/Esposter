@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
@@ -21,7 +21,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
     :scene-key="SceneKey.MonsterDetails"
     @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
   >
-    <Image :configuration="{ origin: 0, texture: ImageKey.MonsterDetailsBackground }" />
+    <Image :configuration="{ origin: 0, texture: FileKey.SceneMonsterPartyMonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
       :configuration="{
