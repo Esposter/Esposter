@@ -3,6 +3,8 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import files from "#shared/generated/phaser/files.json";
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { getBlobUrl } from "#shared/util/azure/getBlobUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
@@ -38,16 +40,16 @@ const preload = (scene: SceneWithPlugins) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;
     })
     .once("complete", async () => {
+      scene.load.setBaseURL();
       await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
     });
-
-  scene.load.setBaseURL(runtimeConfig.public.azure.blobUrl);
-  scene.load.pack(files);
-  scene.load.setBaseURL();
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
+
+  scene.load.setBaseURL(`${getBlobUrl()}/${AzureContainer.DungeonsAssets}`);
+  scene.load.pack(files);
 };
 </script>
 
