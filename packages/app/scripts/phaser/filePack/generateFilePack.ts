@@ -2,6 +2,7 @@ import type { Types } from "phaser";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { trimFileExtension } from "@/util/trimFileExtension";
+import { CONTENT_TYPE_PHASER_METHOD_MAP } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
 import { generateEnumString } from "@@/scripts/util/generateEnumString";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
@@ -34,8 +35,8 @@ export const generateFilePack = async () => {
         });
       };
 
-      if (blob.properties.contentType.includes("image")) addFileKey("image");
-      else if (blob.properties.contentType.includes("font")) addFileKey("font");
+      for (const [contentType, phaserMethod] of Object.entries(CONTENT_TYPE_PHASER_METHOD_MAP))
+        if (blob.properties.contentType.includes(contentType)) addFileKey(phaserMethod);
     }
 
   const filename = "filepack.json";
