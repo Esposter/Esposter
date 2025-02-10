@@ -34,25 +34,15 @@
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "gen-env": "pnpx gen-env-types .env -o env.d.ts -e .",
-    "phaser:gen": "pnpm cross-os phaser:gen",
-    "tiled:gen": "pnpm cross-os tiled:gen",
+    "phaser:gen": "tsx scripts/phaser/index.ts",
+    "tiled:gen": "tsx scripts/tiled/index.ts",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
-    "cross-os": "node ../../scripts/cross-os.js",
+    "cross-os": "node scripts/cross-os.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
     "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
     "db:run": "https://github.com/drizzle-team/drizzle-kit-mirror/issues/113"
-  },
-  "cross-os": {
-    "phaser:gen": {
-      "win32": "pnpm pwsh scripts/phaser/generate.ps1",
-      "linux": "./scripts/phaser/generate.sh"
-    },
-    "tiled:gen": {
-      "win32": "pnpm pwsh scripts/tiled/generate.ps1",
-      "linux": "./scripts/tiled/generate.sh"
-    }
   },
   "dependencies": {
     "@azure/data-tables": "^13.3.0",

@@ -4,7 +4,7 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { generateLayers } from "@@/scripts/tiled/layers/generateLayers";
-import { generateBaseTilesetKey } from "@@/scripts/tiled/propertyTypes/generateBaseTilesetKey";
+import { generateBaseTilesetKey } from "@@/scripts/tiled/tmxProperties/generateBaseTilesetKey";
 import { getTilemapDirectory } from "@@/scripts/tiled/util/getTilemapDirectory";
 import { readFile } from "node:fs/promises";
 import { parseTmx } from "parse-tmx";

@@ -16,5 +16,5 @@ const packageJson = require(path.resolve(process.cwd(), "package.json"));
 const command = packageJson[property][script][platform];
 if (!command) throw new Error(`script: "${script}" not found for the current platform: ${platform}`);
 
-const proc = spawn(command, args, { stdio: "inherit", shell: true });
+const proc = spawn(command, args, { shell: true, stdio: "inherit" });
 proc.on("exit", (code) => process.exit(code));

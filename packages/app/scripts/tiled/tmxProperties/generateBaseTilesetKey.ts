@@ -6,7 +6,6 @@ import { trimFileExtension } from "@/util/trimFileExtension";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { outputFile } from "@@/scripts/tiled/util/outputFile";
 import { generateEnumString } from "@@/scripts/util/generateEnumString";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
   const tilesetKeys = new Set<string>();
@@ -15,8 +14,6 @@ export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[
   for (const { source } of tilesets) {
     const filename = getFilename(source);
     const tilesetKey = trimFileExtension(filename);
-    if (tilesetKeys.has(tilesetKey))
-      throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${tilesetKey}`);
     tilesetKeys.add(tilesetKey);
   }
 
