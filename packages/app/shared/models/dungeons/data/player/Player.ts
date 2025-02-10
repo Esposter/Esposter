@@ -1,6 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
 import type { Direction, Position } from "grid-engine";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { directionSchema } from "#shared/models/dungeons/data/player/Direction";
@@ -8,7 +9,6 @@ import { inventorySchema } from "#shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/data/player/RespawnLocation";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
@@ -23,9 +23,9 @@ export class Player {
   monsters: Monster[] = (() => {
     if (IS_DEVELOPMENT) {
       const monsters = [
-        new Monster(MonsterKey.Iguanignite),
-        new Monster(MonsterKey.Carnodusk),
-        new Monster(MonsterKey.Ignivolt),
+        new Monster(FileKey.UIMonstersIguanignite),
+        new Monster(FileKey.UIMonstersCarnodusk),
+        new Monster(FileKey.UIMonstersIgnivolt),
       ];
       for (const monster of monsters) {
         monster.stats.attack = 100;
@@ -33,7 +33,7 @@ export class Player {
       }
       return monsters;
     }
-    return [new Monster(MonsterKey.Iguanignite)];
+    return [new Monster(FileKey.UIMonstersIguanignite)];
   })();
   position: Position;
   respawnLocation = new RespawnLocation();

@@ -1,0 +1,131 @@
+[
+  { "key": "SceneBattleForestBackground", "type": "image", "url": "Scene/Battle/ForestBackground.png" },
+  { "key": "SceneInventoryBackground", "type": "image", "url": "Scene/Inventory/Background.png" },
+  { "key": "SceneInventoryBag", "type": "image", "url": "Scene/Inventory/Bag.png" },
+  { "key": "SceneMonsterPartyBackground", "type": "image", "url": "Scene/MonsterParty/Background.png" },
+  {
+    "key": "SceneMonsterPartyMonsterDetailsBackground",
+    "type": "image",
+    "url": "Scene/MonsterParty/MonsterDetailsBackground.png"
+  },
+  { "key": "SceneTitleScreenBackground", "type": "image", "url": "Scene/Title/ScreenBackground.png" },
+  { "key": "SceneTitleText", "type": "image", "url": "Scene/Title/Text.png" },
+  { "key": "SceneTitleTextBackground", "type": "image", "url": "Scene/Title/TextBackground.png" },
+  { "key": "SceneWorldHomeForeground", "type": "image", "url": "Scene/World/Home/Foreground.png" },
+  {
+    "key": "SceneWorldHomeHomeBuilding1Foreground",
+    "type": "image",
+    "url": "Scene/World/Home/HomeBuilding1/Foreground.png"
+  },
+  {
+    "key": "SceneWorldHomeHomeBuilding2Foreground",
+    "type": "image",
+    "url": "Scene/World/Home/HomeBuilding2/Foreground.png"
+  },
+  { "key": "SoundOpenChest", "type": "audio", "url": "Sound/OpenChest.mp3" },
+  { "key": "SoundOpenDoor", "type": "audio", "url": "Sound/OpenDoor.mp3" },
+  { "key": "SoundTextBlip", "type": "audio", "url": "Sound/TextBlip.mp3" },
+  {
+    "key": "ThirdPartyKenneysAssetsFontsKenneyFutureNarrow",
+    "type": "font",
+    "url": "ThirdParty/KenneysAssets/Fonts/KenneyFutureNarrow.woff2"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUIPackBlueButton00",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UIPack/BlueButton00.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUIPackBlueButton01",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UIPack/BlueButton01.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueLeft.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueMid.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueRight.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenLeft.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenMid.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenRight.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowLeft",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowLeft.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowMid.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowRight.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionCustomUI",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/CustomUI.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanel.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanelGreen.png"
+  },
+  {
+    "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple",
+    "type": "image",
+    "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanelPurple.png"
+  },
+  { "key": "ThirdPartyLeohpazClaw", "type": "audio", "url": "ThirdParty/Leohpaz/Claw.wav" },
+  { "key": "ThirdPartyLeohpazFlee", "type": "audio", "url": "ThirdParty/Leohpaz/Flee.wav" },
+  { "key": "ThirdPartyLeohpazIceExplosion", "type": "audio", "url": "ThirdParty/Leohpaz/IceExplosion.wav" },
+  { "key": "ThirdPartyLeohpazLicense", "type": "image", "url": "ThirdParty/Leohpaz/License.png" },
+  { "key": "ThirdPartyLeohpazStepGrass", "type": "audio", "url": "ThirdParty/Leohpaz/StepGrass.wav" },
+  {
+    "key": "ThirdPartyXDeviruchiAndTheJourneyBegins",
+    "type": "audio",
+    "url": "ThirdParty/XDeviruchi/AndTheJourneyBegins.wav"
+  },
+  { "key": "ThirdPartyXDeviruchiDecisiveBattle", "type": "audio", "url": "ThirdParty/XDeviruchi/DecisiveBattle.wav" },
+  { "key": "ThirdPartyXDeviruchiTitleTheme", "type": "audio", "url": "ThirdParty/XDeviruchi/TitleTheme.wav" },
+  { "key": "UIBallsCosmoBall", "type": "image", "url": "UI/Balls/CosmoBall.png" },
+  { "key": "UIBallsDamagedBall", "type": "image", "url": "UI/Balls/DamagedBall.png" },
+  { "key": "UICursorCursor", "type": "image", "url": "UI/Cursor/Cursor.png" },
+  { "key": "UICursorCursorWhite", "type": "image", "url": "UI/Cursor/CursorWhite.png" },
+  { "key": "UIJoystickBase", "type": "image", "url": "UI/Joystick/Base.png" },
+  { "key": "UIJoystickThumb", "type": "image", "url": "UI/Joystick/Thumb.png" },
+  { "key": "UIMonstersAquavalor", "type": "image", "url": "UI/Monsters/Aquavalor.png" },
+  { "key": "UIMonstersCarnodusk", "type": "image", "url": "UI/Monsters/Carnodusk.png" },
+  { "key": "UIMonstersFrostsaber", "type": "image", "url": "UI/Monsters/Frostsaber.png" },
+  { "key": "UIMonstersIgnivolt", "type": "image", "url": "UI/Monsters/Ignivolt.png" },
+  { "key": "UIMonstersIguanignite", "type": "image", "url": "UI/Monsters/Iguanignite.png" }
+]

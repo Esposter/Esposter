@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import type { FileKey } from "#shared/generated/phaser/FileKey";
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
-import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 
 import { Image } from "vue-phaserjs";
 
 interface LeftCapProps {
   imagePosition: ImagePosition;
   scaleY: number;
-  texture: ImageKey;
+  texture: FileKey;
 }
 
 const { imagePosition, scaleY, texture } = defineProps<LeftCapProps>();

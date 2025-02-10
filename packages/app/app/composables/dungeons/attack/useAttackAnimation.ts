@@ -22,7 +22,7 @@ export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack
       storeRefs.isToEnemy.value = isToEnemy;
       storeRefs.isActive.value = true;
       await sleep(scene, dayjs.duration(0.2, "seconds").asMilliseconds());
-      getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
+      getDungeonsSoundEffect(scene, attack.fileKey).play();
     }),
   );
 };

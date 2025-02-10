@@ -1,16 +1,16 @@
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 
 const AttackMap = {
   [AttackId.Slash]: {
-    soundEffectKey: SoundEffectKey.Claw,
+    fileKey: FileKey.ThirdPartyLeohpazClaw,
   },
   [AttackId["Ice Shard"]]: {
-    soundEffectKey: SoundEffectKey.IceExplosion,
+    fileKey: FileKey.ThirdPartyLeohpazIceExplosion,
   },
 } as const satisfies Record<AttackId, Except<Attack, "id">>;
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Image } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
-const texture = computed(() => Object.values(ImageKey).find((k) => k === `World${tilemapKey.value}Foreground`));
+const texture = computed(() => Object.values(FileKey).find((k) => k === `SceneWorld${tilemapKey.value}Foreground`));
 const worldPlayerStore = useWorldPlayerStore();
 const { sprite } = storeToRefs(worldPlayerStore);
 // Make the foreground have a higher depth than the player for them to hide behind

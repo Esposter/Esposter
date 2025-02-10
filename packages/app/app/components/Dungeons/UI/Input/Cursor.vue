@@ -3,11 +3,11 @@ import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 import type { ImageConfiguration } from "vue-phaserjs";
 
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Image } from "vue-phaserjs";
 
 interface CursorProps {
-  cursorImageKey?: Extract<ImageKey, "CursorWhite">;
+  cursorFileKey?: FileKey.UICursorCursorWhite;
   grid: Grid<TValue, TGrid>;
   initialPosition: Position;
   positionIncrement: Partial<Position>;
@@ -16,7 +16,7 @@ interface CursorProps {
 }
 
 const {
-  cursorImageKey = ImageKey.Cursor,
+  cursorFileKey = FileKey.UICursorCursor,
   grid,
   initialPosition,
   positionIncrement,
@@ -30,5 +30,5 @@ const position = computed(() => ({
 </script>
 
 <template>
-  <Image :configuration="{ ...position, texture: cursorImageKey, scale, tween }" />
+  <Image :configuration="{ ...position, texture: cursorFileKey, scale, tween }" />
 </template>

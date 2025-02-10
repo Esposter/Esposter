@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -29,7 +29,7 @@ onUnmounted(() => {
 
 <template>
   <Container :configuration="{ ...monsterInfoContainerPosition, tween: monsterInfoContainerTween }">
-    <Image :configuration="{ origin: 0, texture: ImageKey.HealthBarBackground, scaleY }" />
+    <Image :configuration="{ origin: 0, texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionCustomUI, scaleY }" />
     <Text
       :configuration="{
         x: 30,

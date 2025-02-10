@@ -1,9 +1,9 @@
 import type { TeleportTarget } from "#shared/generated/tiled/propertyTypes/class/TeleportTarget";
 import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -28,7 +28,7 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const worldSceneStore = useWorldSceneStore();
   const { switchToTilemap } = worldSceneStore;
   fadeOut(scene);
-  getDungeonsSoundEffect(scene, SoundEffectKey.OpenDoor).play();
+  getDungeonsSoundEffect(scene, FileKey.SoundOpenDoor).play();
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
     await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
 

@@ -5,7 +5,7 @@ import type { Position } from "grid-engine";
 import { NpcObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
 import { NpcPathObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
 import { ObjectType } from "#shared/generated/tiled/propertyTypes/class/ObjectType";
-import { AssetKey } from "@/models/dungeons/keys/AssetKey";
+import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
@@ -40,7 +40,7 @@ export const useReadNpcList = () => {
     const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
     const { frame, id, ...rest } = getNpc(idTiledObjectProperty.value);
     npcList.push({
-      asset: { frame, key: AssetKey.Npc },
+      asset: { frame, key: SpritesheetKey.Npc },
       id: `${CharacterId.Npc}${id}`,
       isMoving: false,
       name: id,
