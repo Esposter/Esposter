@@ -58,7 +58,6 @@
     "vue-tsc": "2.1.6"
   },
   "devDependenciesComments": {
-    "rollup": "@TODO: rollup building packages error",
     "vue-tsc": "@TODO: https://github.com/vuejs/language-tools/issues/4973"
   },
   "engines": {
