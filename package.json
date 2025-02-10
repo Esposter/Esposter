@@ -27,7 +27,7 @@
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "pnpm cross-os refresh:lockfile",
-    "cross-os": "node app/app/scripts/cross-os.ts",
+    "cross-os": "node packages/app/scripts/cross-os.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "cross-os": {
