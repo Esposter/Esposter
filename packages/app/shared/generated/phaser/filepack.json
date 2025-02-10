@@ -1,0 +1,120 @@
+{
+  "baseURL": "https://dshpstespauea001.blob.core.windows.net",
+  "files": [
+    { "key": "UIballsCosmoBall", "type": "image", "url": "UI/balls/CosmoBall.png" },
+    { "key": "UIballsDamagedBall", "type": "image", "url": "UI/balls/DamagedBall.png" },
+    { "key": "UIcursorCursor", "type": "image", "url": "UI/cursor/Cursor.png" },
+    { "key": "UIcursorCursorWhite", "type": "image", "url": "UI/cursor/CursorWhite.png" },
+    { "key": "UIjoystickBase", "type": "image", "url": "UI/joystick/Base.png" },
+    { "key": "UIjoystickThumb", "type": "image", "url": "UI/joystick/Thumb.png" },
+    { "key": "UImonstersAquavalor", "type": "image", "url": "UI/monsters/Aquavalor.png" },
+    { "key": "UImonstersCarnodusk", "type": "image", "url": "UI/monsters/Carnodusk.png" },
+    { "key": "UImonstersFrostsaber", "type": "image", "url": "UI/monsters/Frostsaber.png" },
+    { "key": "UImonstersIgnivolt", "type": "image", "url": "UI/monsters/Ignivolt.png" },
+    { "key": "UImonstersIguanignite", "type": "image", "url": "UI/monsters/Iguanignite.png" },
+    { "key": "soundOpenChest", "type": "audio", "url": "sound/OpenChest.mp3" },
+    { "key": "soundOpenDoor", "type": "audio", "url": "sound/OpenDoor.mp3" },
+    { "key": "soundTextBlip", "type": "audio", "url": "sound/TextBlip.mp3" },
+    { "key": "thirdPartyaxulartcharacterCustom", "type": "image", "url": "thirdParty/axulart/character/Custom.png" },
+    {
+      "key": "thirdPartykenneysAssetsUIPackBlueButton00",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UIPack/BlueButton00.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUIPackBlueButton01",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UIPack/BlueButton01.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalBlueLeft",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalBlueLeft.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalBlueMid",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalBlueMid.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalBlueRight",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalBlueRight.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalGreenLeft",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalGreenLeft.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalGreenMid",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalGreenMid.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalGreenRight",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalGreenRight.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalShadowLeft",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalShadowLeft.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalShadowMid",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalShadowMid.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionBarHorizontalShadowRight",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/BarHorizontalShadowRight.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionCustomUI",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/CustomUI.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionGlassPanel",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/GlassPanel.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionGlassPanelGreen",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/GlassPanelGreen.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsUISpaceExpansionGlassPanelPurple",
+      "type": "image",
+      "url": "thirdParty/kenneysAssets/UISpaceExpansion/GlassPanelPurple.png"
+    },
+    {
+      "key": "thirdPartykenneysAssetsfontsKenneyFutureNarrow",
+      "type": "font",
+      "url": "thirdParty/kenneysAssets/fonts/KenneyFutureNarrow.woff2"
+    },
+    { "key": "thirdPartyleohpazClaw", "type": "audio", "url": "thirdParty/leohpaz/Claw.wav" },
+    { "key": "thirdPartyleohpazFlee", "type": "audio", "url": "thirdParty/leohpaz/Flee.wav" },
+    { "key": "thirdPartyleohpazIceExplosion", "type": "audio", "url": "thirdParty/leohpaz/IceExplosion.wav" },
+    { "key": "thirdPartyleohpazLicense", "type": "image", "url": "thirdParty/leohpaz/License.png" },
+    { "key": "thirdPartyleohpazStepGrass", "type": "audio", "url": "thirdParty/leohpaz/StepGrass.wav" },
+    {
+      "key": "thirdPartyparabellumGamesCharacters",
+      "type": "image",
+      "url": "thirdParty/parabellumGames/Characters.png"
+    },
+    { "key": "thirdPartypimenSlash", "type": "image", "url": "thirdParty/pimen/Slash.png" },
+    { "key": "thirdPartypimeniceAttackActive", "type": "image", "url": "thirdParty/pimen/iceAttack/Active.png" },
+    { "key": "thirdPartypimeniceAttackStart", "type": "image", "url": "thirdParty/pimen/iceAttack/Start.png" },
+    {
+      "key": "thirdPartyxDeviruchiAndTheJourneyBegins",
+      "type": "audio",
+      "url": "thirdParty/xDeviruchi/AndTheJourneyBegins.wav"
+    },
+    { "key": "thirdPartyxDeviruchiDecisiveBattle", "type": "audio", "url": "thirdParty/xDeviruchi/DecisiveBattle.wav" },
+    { "key": "thirdPartyxDeviruchiTitleTheme", "type": "audio", "url": "thirdParty/xDeviruchi/TitleTheme.wav" }
+  ]
+}

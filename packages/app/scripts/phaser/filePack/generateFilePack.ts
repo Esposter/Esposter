@@ -9,6 +9,7 @@ import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
+import { format, resolveConfig } from "prettier";
 
 export const generateFilePack = async () => {
   config();
@@ -39,8 +40,15 @@ export const generateFilePack = async () => {
         if (blob.properties.contentType.includes(contentType)) addFileKey(phaserMethod);
     }
 
-  const filename = "filepack.json";
-  await outputFile(`${enumName}.ts`, generateEnumString(enumName, [...fileKeys]));
-  await outputFile(filename, JSON.stringify(filePack));
-  await outputFile(".gitignore", filename);
+  await Promise.all([
+    outputFile(`${enumName}.ts`, generateEnumString(enumName, [...fileKeys])),
+    (async () => {
+      const options = await resolveConfig(process.cwd());
+      if (!options)
+        throw new InvalidOperationError(Operation.Read, "Prettier Configuration", "Missing Prettier Configuration");
+
+      const formatted = await format(JSON.stringify(filePack), { ...options, parser: "json" });
+      await outputFile("filepack.json", formatted);
+    })(),
+  ]);
 };
