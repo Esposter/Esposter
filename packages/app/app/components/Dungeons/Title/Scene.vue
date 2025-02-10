@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "@/store/dungeons/controls";
@@ -22,7 +21,7 @@ const versionY = ref<number>();
     :scene-key="SceneKey.Title"
     @create="
       (scene) => {
-        playDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
+        playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiTitleTheme);
         x = scene.scale.width / 2;
         versionX = scene.scale.width - 150;
         versionY = scene.scale.height - 50;
@@ -33,7 +32,7 @@ const versionY = ref<number>();
     <Image
       :configuration="{
         origin: 0,
-        texture: ImageKey.TitleScreenBackground,
+        texture: FileKey.SceneTitleScreenBackground,
         scale: 0.58,
       }"
     />
@@ -41,7 +40,7 @@ const versionY = ref<number>();
       :configuration="{
         x,
         y: 150,
-        texture: ImageKey.TitleTextBackground,
+        texture: FileKey.SceneTitleTextBackground,
         scale: 0.25,
         alpha: 0.5,
       }"
@@ -50,7 +49,7 @@ const versionY = ref<number>();
       :configuration="{
         x,
         y: 150,
-        texture: ImageKey.TitleText,
+        texture: FileKey.SceneTitleText,
         scale: 0.55,
         alpha: 0.5,
       }"

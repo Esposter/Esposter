@@ -1,15 +1,14 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 const MonstersDataMap = {
-  [MonsterKey.Aquavalor]: {
+  [FileKey.UIMonstersAquavalor]: {
     asset: {
-      key: AssetKey.Aquavalor,
+      key: FileKey.UIMonstersAquavalor,
     },
     attackIds: [AttackId["Ice Shard"]],
     stats: {
@@ -20,9 +19,9 @@ const MonstersDataMap = {
     },
     status: { exp: 0, hp: 25 },
   },
-  [MonsterKey.Carnodusk]: {
+  [FileKey.UIMonstersCarnodusk]: {
     asset: {
-      key: AssetKey.Carnodusk,
+      key: FileKey.UIMonstersCarnodusk,
     },
     attackIds: [AttackId["Ice Shard"]],
     stats: {
@@ -33,9 +32,9 @@ const MonstersDataMap = {
     },
     status: { exp: 0, hp: 25 },
   },
-  [MonsterKey.Frostsaber]: {
+  [FileKey.UIMonstersFrostsaber]: {
     asset: {
-      key: AssetKey.Frostsaber,
+      key: FileKey.UIMonstersFrostsaber,
     },
     attackIds: [AttackId["Ice Shard"]],
     stats: {
@@ -46,9 +45,9 @@ const MonstersDataMap = {
     },
     status: { exp: 0, hp: 25 },
   },
-  [MonsterKey.Ignivolt]: {
+  [FileKey.UIMonstersIgnivolt]: {
     asset: {
-      key: AssetKey.Ignivolt,
+      key: FileKey.UIMonstersIgnivolt,
     },
     attackIds: [AttackId["Ice Shard"]],
     stats: {
@@ -59,9 +58,9 @@ const MonstersDataMap = {
     },
     status: { exp: 0, hp: 25 },
   },
-  [MonsterKey.Iguanignite]: {
+  [FileKey.UIMonstersIguanignite]: {
     asset: {
-      key: AssetKey.Iguanignite,
+      key: FileKey.UIMonstersIguanignite,
     },
     attackIds: [AttackId.Slash],
     stats: {
@@ -72,6 +71,6 @@ const MonstersDataMap = {
     },
     status: { exp: 0, hp: 25 },
   },
-} as const satisfies Record<MonsterKey, Except<Monster, "id" | "key">>;
+} as const satisfies Partial<Record<FileKey, Except<Monster, "id" | "key">>>;
 
 export const monstersData: Except<Monster, "id">[] = parseDictionaryToArray(MonstersDataMap, "key");

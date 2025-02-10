@@ -18,6 +18,7 @@ export const BringOutMonster: State<StateName> = {
 
     await useMonsterAppearTween(false);
     useMonsterInfoContainerAppearTween(false);
+    // @ts-expect-error Type instantiation is excessively deep and possibly infinite.ts(2589)
     await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
     await sleep(scene, dayjs.duration(1, "second").asMilliseconds());
     await battleStateMachine.setState(StateName.PlayerInput);

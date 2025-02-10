@@ -2,17 +2,16 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import files from "#shared/generated/phaser/files.json";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
-import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
-import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
+const runtimeConfig = useRuntimeConfig();
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
 const x = ref<number>();
@@ -42,10 +41,11 @@ const preload = (scene: SceneWithPlugins) => {
       await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
     });
 
-  for (const fontLoader of Object.values(FontLoaderMap)) fontLoader(scene);
-  for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
+  scene.load.setBaseURL(runtimeConfig.public.azure.blobUrl);
+  scene.load.pack(files);
+  scene.load.setBaseURL();
+
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
-  for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
   for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
 };

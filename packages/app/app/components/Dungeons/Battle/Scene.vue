@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
@@ -18,7 +18,7 @@ const { onPlayerInput } = battleSceneStore;
     :scene-key="SceneKey.Battle"
     @create="
       async (scene) => {
-        playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
+        playDungeonsBackgroundMusic(scene, FileKey.ThirdPartyXDeviruchiDecisiveBattle);
         battleStateMachine.scene = scene;
         await battleStateMachine.setState(StateName.Intro);
       }

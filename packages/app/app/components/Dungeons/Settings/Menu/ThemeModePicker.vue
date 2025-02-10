@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
+import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
@@ -32,7 +32,7 @@ const rightCursorX = textX + padding;
         12,
       originX: 1,
       originY: 0,
-      texture: ImageKey.CursorWhite,
+      texture: FileKey.UICursorCursorWhite,
       scaleX: 2.5,
       flipX: true,
     }"
@@ -58,7 +58,7 @@ const rightCursorX = textX + padding;
         SETTINGS_POSITION_INCREMENT.y * (SettingsOptionGrid.getPosition(SettingsOption['Theme Mode'])?.y ?? 0) +
         12,
       origin: 0,
-      texture: ImageKey.CursorWhite,
+      texture: FileKey.UICursorCursorWhite,
       scaleX: 2.5,
     }"
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="updateThemeModeSetting(Direction.RIGHT)"

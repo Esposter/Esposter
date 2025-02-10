@@ -2,17 +2,17 @@ import type { BaseEncounterableMonster } from "@/models/dungeons/area/BaseEncoun
 import type { EncounterArea } from "@/models/dungeons/area/EncounterArea";
 import type { Except } from "type-fest";
 
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";
-import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 export const EncounterAreaMap = {
   [Area.Grass]: {
     encounterableMonsters: [
-      { key: MonsterKey.Aquavalor, weight: 45 },
-      { key: MonsterKey.Carnodusk, weight: 40 },
-      { key: MonsterKey.Frostsaber, weight: 10 },
-      { key: MonsterKey.Ignivolt, weight: 25 },
+      { key: FileKey.UIMonstersAquavalor, weight: 45 },
+      { key: FileKey.UIMonstersCarnodusk, weight: 40 },
+      { key: FileKey.UIMonstersFrostsaber, weight: 10 },
+      { key: FileKey.UIMonstersIgnivolt, weight: 25 },
     ],
   },
 } as const satisfies Record<Area, Except<EncounterArea<BaseEncounterableMonster>, "id">>;

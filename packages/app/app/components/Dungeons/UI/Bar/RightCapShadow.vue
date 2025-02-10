@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Image } from "vue-phaserjs";
 
 interface RightCapShadowProps {
@@ -15,7 +15,12 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
 
 <template>
   <Image
-    :configuration="{ ...imagePosition, texture: ImageKey.BarRightCapShadow, displayWidth, scaleY }"
-    @update:display-width="displayWidth = $event"
+    :configuration="{
+      ...imagePosition,
+      texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight,
+      displayWidth,
+      scaleY,
+    }"
+    @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
   />
 </template>

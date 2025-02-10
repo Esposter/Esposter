@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Image } from "vue-phaserjs";
 
 interface MiddleShadowProps {
@@ -14,5 +14,12 @@ const { displayWidth, imagePosition, scaleY } = defineProps<MiddleShadowProps>()
 </script>
 
 <template>
-  <Image :configuration="{ ...imagePosition, texture: ImageKey.BarMiddleShadow, scaleY, displayWidth }" />
+  <Image
+    :configuration="{
+      ...imagePosition,
+      texture: FileKey.ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid,
+      scaleY,
+      displayWidth,
+    }"
+  />
 </template>
