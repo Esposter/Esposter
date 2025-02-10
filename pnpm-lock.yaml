@@ -43,10 +43,10 @@ importers:
         specifier: ^4.34.6
         version: 4.34.6
       type-fest:
-        specifier: ^4.33.0
+        specifier: ^4.34.1
         version: 4.34.1
       typedoc:
-        specifier: ^0.27.6
+        specifier: ^0.27.7
         version: 0.27.7(typescript@5.7.3)
       typescript:
         specifier: ^5.7.3
