@@ -129,7 +129,7 @@
     "pathe": "^2.0.2",
     "phaser": "^3.87.0",
     "phaser3-rex-plugins": "^1.80.13",
-    "pinia": "^2.3.1",
+    "pinia": "^3.0.0",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.5",
     "rate-limiter-flexible": "^5.0.5",
