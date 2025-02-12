@@ -579,7 +579,7 @@ importers:
         specifier: workspace:*
         version: link:../parse-tmx
       phaser:
-        specifier: ^3.88.0
+        specifier: ^3.88.1
         version: 3.88.1
       phaser3-rex-plugins:
         specifier: ^1.80.13
