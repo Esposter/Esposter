@@ -59,7 +59,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
-    "@koumoul/vjsf": "^3.9.0",
+    "@koumoul/vjsf": "^3.10.1",
     "@mdi/font": "^7.4.47",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-character-count": "^2.11.5",
@@ -127,9 +127,9 @@
     "omit-deep-lodash": "^1.1.7",
     "parse-tmx": "workspace:*",
     "pathe": "^2.0.3",
-    "phaser": "^3.88.0",
+    "phaser": "^3.88.1",
     "phaser3-rex-plugins": "^1.80.13",
-    "pinia": "^3.0.0",
+    "pinia": "^3.0.1",
     "pluralize": "^8.0.0",
     "postgres": "^3.4.5",
     "rate-limiter-flexible": "^5.0.5",
@@ -171,10 +171,10 @@
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^1.0.1",
     "@nuxt/fonts": "^0.10.3",
-    "@nuxt/scripts": "0.9.5",
+    "@nuxt/scripts": "^0.10.1",
     "@nuxt/test-utils": "^3.15.4",
     "@nuxtjs/seo": "^2.1.1",
-    "@pinia/nuxt": "^0.10.0",
+    "@pinia/nuxt": "^0.10.1",
     "@types/dedent": "^0.7.2",
     "@types/deep-equal": "^1.0.4",
     "@types/fs-extra": "^11.0.4",
@@ -204,8 +204,5 @@
     "unocss": "^65.4.3",
     "vitest": "^3.0.5",
     "vuetify-nuxt-module": "^0.18.3"
-  },
-  "devDependenciesComments": {
-    "@nuxt/scripts": "@TODO: Remove when types are fixed"
   }
 }
