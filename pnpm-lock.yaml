@@ -407,8 +407,8 @@ importers:
         specifier: ^0.10.3
         version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.5.0)(magicast@0.3.5)(vite@6.1.0(@types/node@22.13.2)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.2)(tsx@4.19.2)(yaml@2.7.0))
       '@nuxt/scripts':
-        specifier: ^0.10.1
-        version: 0.10.1(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
+        specifier: ^0.10.3
+        version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
       '@nuxt/test-utils':
         specifier: ^3.15.4
         version: 3.15.4(@types/node@22.13.2)(@vue/test-utils@2.4.6)(happy-dom@17.1.0)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.83.4)(terser@5.38.2)(tsx@4.19.2)(typescript@5.7.3)(vitest@3.0.5(@types/node@22.13.2)(happy-dom@17.1.0)(jiti@2.4.2)(sass-embedded@1.83.4)(terser@5.38.2)(tsx@4.19.2)(yaml@2.7.0))(yaml@2.7.0)
@@ -2354,8 +2354,8 @@ packages:
     resolution: {integrity: sha512-pAYZb/3ocSC/db1EFd5y+otmgHqUkvfxfhd9EknDB5DygnJuOIQNuGJ7LMJM6S2c0DYgBIHOdEelLxKHOjwbgQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  '@nuxt/scripts@0.10.1':
-    resolution: {integrity: sha512-mQO2K7jyxHhL1BTXm1uF6f5otnxMiGX/HiDK/f9qJ2fIDcpSbyFoxZ+GxnoliEedrwod0gsl9QMgR9AVd/gDKA==}
+  '@nuxt/scripts@0.10.3':
+    resolution: {integrity: sha512-1Bmv0205PXcg2Z0qjC0cb5Qtkv1QEQSG31+32R6h9s4aMAciiXAC8CXltUO6KC97FSvSy4WUpLHjMddYHqtjyg==}
     peerDependencies:
       '@stripe/stripe-js': ^5.6.0
       '@types/google.maps': ^3.58.1
@@ -12818,7 +12818,7 @@ snapshots:
       pathe: 2.0.3
       std-env: 3.8.0
 
-  '@nuxt/scripts@0.10.1(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
+  '@nuxt/scripts@0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.18(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)
       '@unhead/vue': 1.11.18(vue@3.5.13(typescript@5.7.3))

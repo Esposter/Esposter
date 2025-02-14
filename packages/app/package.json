@@ -171,7 +171,7 @@
     "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "^1.0.1",
     "@nuxt/fonts": "^0.10.3",
-    "@nuxt/scripts": "^0.10.1",
+    "@nuxt/scripts": "^0.10.3",
     "@nuxt/test-utils": "^3.15.4",
     "@nuxtjs/seo": "^2.1.1",
     "@pinia/nuxt": "^0.10.1",
