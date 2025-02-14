@@ -1,9 +1,12 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { SITE_NAME } from "../shared/services/esposter/constants";
+import { SITE_DESCRIPTION, SITE_NAME } from "../shared/services/esposter/constants";
 
 export const pwa: NuxtConfig["pwa"] = {
   manifest: {
+    background_color: "#fff",
+    description: SITE_DESCRIPTION,
+    display: "standalone",
     icons: [
       {
         purpose: "any",
@@ -34,5 +37,6 @@ export const pwa: NuxtConfig["pwa"] = {
     orientation: "portrait",
     short_name: SITE_NAME,
     start_url: "/",
+    theme_color: "#fff",
   },
 };

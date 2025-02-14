@@ -8,7 +8,7 @@ export const useConfirmBeforeNavigation = (isDirty: Ref<boolean>) => {
     event.preventDefault();
     // Even though the docs tell us that it's deprecated,
     // this actually makes the window prompt for reloading pop up
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
+
     event.returnValue = false;
   });
 };

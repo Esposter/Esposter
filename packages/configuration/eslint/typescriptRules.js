@@ -7,6 +7,7 @@ export default {
       const rules = c.rules ?? {};
       delete rules["@typescript-eslint/no-base-to-string"];
       delete rules["@typescript-eslint/no-empty-object-type"];
+      delete rules["@typescript-eslint/no-unused-vars"];
       delete rules["@typescript-eslint/no-redundant-type-constituents"];
       delete rules["@typescript-eslint/no-unsafe-argument"];
       delete rules["@typescript-eslint/no-unsafe-assignment"];
@@ -21,6 +22,11 @@ export default {
       // Rules we actually want to keep for ts files but conflict with vue files in the script setup section
       delete rules["@typescript-eslint/restrict-plus-operands"];
       delete rules["@typescript-eslint/restrict-template-expressions"];
+      // Computationally expensive
+      delete rules["@typescript-eslint/no-confusing-void-expression"];
+      delete rules["@typescript-eslint/no-deprecated"];
+      delete rules["@typescript-eslint/no-floating-promises"];
+      delete rules["@typescript-eslint/no-misused-promises"];
       return rules;
     }),
     ...tseslint.configs.stylisticTypeChecked.map((c) => {

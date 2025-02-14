@@ -1,11 +1,11 @@
-import type { WatchCallback, WatchStopHandle } from "vue";
+import type { WatchStopHandle } from "vue";
 
 import { dayjs } from "#shared/services/dayjs";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("watchTracker", () => {
   const source = ref("");
-  const callback: WatchCallback<typeof source.value> = vi.fn(() => {});
+  const callback = vi.fn<() => typeof source.value>(() => "");
   let watchStopHandlers: WatchStopHandle[] = [];
 
   beforeEach(() => {
