@@ -26,7 +26,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@unocss/eslint-config": "^65.4.3",
+    "@unocss/eslint-config": "^65.5.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/eslint-plugin": "^1.1.31",
     "eslint-config-prettier": "^10.0.1",
