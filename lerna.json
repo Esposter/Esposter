@@ -1,7 +1,0 @@
-{
-  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "version": "1.35.0",
-  "npmClient": "pnpm",
-  "forcePublish": true,
-  "conventionalCommits": true
-}

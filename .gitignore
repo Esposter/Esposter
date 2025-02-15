@@ -22,6 +22,9 @@ vitest.config.*.timestamp*
 .cache
 dist
 
+# Turbo
+.turbo
+
 # Dependencies
 node_modules
 
