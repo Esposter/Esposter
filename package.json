@@ -40,19 +40,16 @@
     }
   },
   "dependencies": {
-    "data-urls": "^5.0.0",
-    "is-mobile": "^5.0.0",
-    "vue": "^3.5.13",
-    "xml2js": "^0.6.2"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14",
+    "@lerna-lite/cli": "^3.12.0",
+    "@lerna-lite/publish": "^3.12.0",
+    "@lerna-lite/run": "^3.12.0",
     "ctix": "^2.7.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.20.1",
-    "lerna": "^8.1.9",
-    "rollup": "^4.34.6",
+    "rollup": "^4.34.7",
     "type-fest": "^4.34.1",
     "typedoc": "^0.27.7",
     "typescript": "^5.7.3",
@@ -67,11 +64,9 @@
     "bun": "^1.2.2"
   },
   "trustedDependencies": [
-    "@esposter/app",
     "@parcel/watcher",
     "core-js",
     "esbuild",
-    "nx",
     "vue-demi"
   ]
 }
