@@ -11,6 +11,9 @@
     "lint:fix": {
       "dependsOn": ["^lint:fix"]
     },
+    "start": {
+      "dependsOn": ["^start"]
+    },
     "test": {
       "dependsOn": ["^test"]
     },

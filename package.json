@@ -18,7 +18,7 @@
     "build:app": "turbo build --filter=@esposter/app",
     "build:docs": "typedoc",
     "build:packages": "turbo build --filter=!@esposter/app",
-    "start": "node packages/app/.output/server/index.mjs",
+    "start": "turbo start --filter=@esposter/app",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
     "typecheck:packages": "turbo typecheck --filter=!@esposter/app",
@@ -37,15 +37,10 @@
     }
   },
   "dependencies": {
-    "data-urls": "^5.0.0",
-    "is-mobile": "^5.0.0",
-    "vue": "^3.5.13",
-    "xml2js": "^0.6.2"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.12",
-    "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14",
     "ctix": "^2.7.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.20.1",
