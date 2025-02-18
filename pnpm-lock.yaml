@@ -376,8 +376,8 @@ importers:
         specifier: ^0.3.20
         version: 0.3.20(vue@3.5.13(typescript@5.7.3))(vuetify@3.7.12)
       worker-timers:
-        specifier: ^8.0.14
-        version: 8.0.14
+        specifier: ^8.0.15
+        version: 8.0.15
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -10111,14 +10111,14 @@ packages:
   worker-factory@7.0.36:
     resolution: {integrity: sha512-gSYPHZRUBXUkON4LSyA7/GAVmBuJDU1WeJhFFp+ZmlxNKInWCvxG1UAS5KnwcayTfGHGVEvM1BnfgmUu8OtpnA==}
 
-  worker-timers-broker@8.0.0:
-    resolution: {integrity: sha512-lFw11AuJdI08h+YK1KpGRX4oUXXiYWIoo8TPZGHX2MYpScFHnkaxBDHIAKePi0y/z6BYamI0CqBToye1m/IStA==}
+  worker-timers-broker@8.0.1:
+    resolution: {integrity: sha512-Gd3VJ+vZGZGThTqBbCDAeArqXV72b4RRZeHB6Qyp4t4ULG3R/JUbqaNCJNfaOW9mGLE3Gg/13x5u35e4Fs0uIQ==}
 
-  worker-timers-worker@9.0.0:
-    resolution: {integrity: sha512-QeYcnX67HYnec3bAhXWSDZCxmxNWH7kzxnNEhp9XRg926lyTuocsmH+MzhcO2QRaJ5vLwUmLnty8+W9VTJJf8A==}
+  worker-timers-worker@9.0.1:
+    resolution: {integrity: sha512-pqmrERbuhnBpBHPWZwZciXxcMD03yijvdmAO+UDmxC3RWpPlvIoFT367xGgVbvbgMVyozexTsQ7RQn0PJgxNWg==}
 
-  worker-timers@8.0.14:
-    resolution: {integrity: sha512-GEYsjzywtWfnACX4kw1aQ4Y3RSSDaG0nBG6sodjKqVbIG79OnhWGvPBkpUNWo2e74SGgN8eZNkDRXN9+xhLUPQ==}
+  worker-timers@8.0.15:
+    resolution: {integrity: sha512-hVQp3nLYRnNFFmr611FyPu17nrW/MBzIeiAUii3dKBXrapMrTLHSnC6f4poqOAYjuydG6LdMX+KPB50WJtaVLQ==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -21914,26 +21914,26 @@ snapshots:
       fast-unique-numbers: 9.0.15
       tslib: 2.8.1
 
-  worker-timers-broker@8.0.0:
+  worker-timers-broker@8.0.1:
     dependencies:
       '@babel/runtime': 7.26.9
       broker-factory: 3.1.0
       fast-unique-numbers: 9.0.15
       tslib: 2.8.1
-      worker-timers-worker: 9.0.0
+      worker-timers-worker: 9.0.1
 
-  worker-timers-worker@9.0.0:
+  worker-timers-worker@9.0.1:
     dependencies:
       '@babel/runtime': 7.26.9
       tslib: 2.8.1
       worker-factory: 7.0.36
 
-  worker-timers@8.0.14:
+  worker-timers@8.0.15:
     dependencies:
       '@babel/runtime': 7.26.9
       tslib: 2.8.1
-      worker-timers-broker: 8.0.0
-      worker-timers-worker: 9.0.0
+      worker-timers-broker: 8.0.1
+      worker-timers-worker: 9.0.1
 
   wrap-ansi@6.2.0:
     dependencies:
