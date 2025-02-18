@@ -189,7 +189,7 @@
     "@types/ws": "^8.5.14",
     "@unocss/nuxt": "^66.0.0",
     "@vite-pwa/nuxt": "^0.10.6",
-    "@vitest/coverage-v8": "^3.0.5",
+    "@vitest/coverage-v8": "^3.0.6",
     "@vue/test-utils": "^2.4.6",
     "@vueuse/nuxt": "^12.7.0",
     "cross-env": "^7.0.3",
@@ -203,7 +203,7 @@
     "sass-embedded": "^1.85.0",
     "tsx": "^4.19.2",
     "unocss": "^66.0.0",
-    "vitest": "^3.0.5",
+    "vitest": "^3.0.6",
     "vuetify-nuxt-module": "^0.18.3"
   }
 }
