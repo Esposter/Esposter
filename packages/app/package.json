@@ -59,7 +59,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
-    "@koumoul/vjsf": "^3.10.1",
+    "@koumoul/vjsf": "^3.10.2",
     "@mdi/font": "^7.4.47",
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-character-count": "^2.11.5",
