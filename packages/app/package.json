@@ -201,7 +201,7 @@
     "nuxt-security": "^2.1.5",
     "prettier": "^3.5.1",
     "sass-embedded": "^1.85.0",
-    "tsx": "^4.19.2",
+    "tsx": "^4.19.3",
     "unocss": "^66.0.0",
     "vitest": "^3.0.6",
     "vuetify-nuxt-module": "^0.18.3"
