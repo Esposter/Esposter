@@ -401,8 +401,8 @@ importers:
         specifier: ^0.10.3
         version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.5.0)(magicast@0.3.5)(vite@6.1.0(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       '@nuxt/scripts':
-        specifier: ^0.10.3
-        version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
+        specifier: ^0.10.4
+        version: 0.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
       '@nuxt/test-utils':
         specifier: ^3.15.4
         version: 3.15.4(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
@@ -2597,8 +2597,8 @@ packages:
     resolution: {integrity: sha512-pAYZb/3ocSC/db1EFd5y+otmgHqUkvfxfhd9EknDB5DygnJuOIQNuGJ7LMJM6S2c0DYgBIHOdEelLxKHOjwbgQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  '@nuxt/scripts@0.10.3':
-    resolution: {integrity: sha512-1Bmv0205PXcg2Z0qjC0cb5Qtkv1QEQSG31+32R6h9s4aMAciiXAC8CXltUO6KC97FSvSy4WUpLHjMddYHqtjyg==}
+  '@nuxt/scripts@0.10.4':
+    resolution: {integrity: sha512-wGKVPABskj8wIdbSwJMkx8ZBWtG1ihI7Vw65jDohQ8L+P6OxVVA4l3Gj1lqi6J6KlbeRMnMut5ZFHrkqckI9iw==}
     peerDependencies:
       '@stripe/stripe-js': ^5.6.0
       '@types/google.maps': ^3.58.1
@@ -12769,7 +12769,7 @@ snapshots:
       scule: 1.3.0
       semver: 7.7.1
       simple-git: 3.27.0
-      sirv: 3.0.0
+      sirv: 3.0.1
       tinyglobby: 0.2.10
       unimport: 3.14.6(rollup@3.29.5)
       vite: 6.1.0(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
@@ -12926,7 +12926,7 @@ snapshots:
       pathe: 2.0.3
       std-env: 3.8.0
 
-  '@nuxt/scripts@0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
+  '@nuxt/scripts@0.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)
       '@unhead/vue': 1.11.19(vue@3.5.13(typescript@5.7.3))
@@ -12940,7 +12940,7 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 1.3.1
       semver: 7.7.1
-      sirv: 3.0.0
+      sirv: 3.0.1
       std-env: 3.8.0
       ufo: 1.5.4
       unplugin: 2.2.0
@@ -14414,7 +14414,7 @@ snapshots:
       '@unocss/rule-utils': 66.0.0
       colorette: 2.0.20
       gzip-size: 6.0.0
-      sirv: 3.0.0
+      sirv: 3.0.1
       vue-flow-layout: 0.1.1(vue@3.5.13(typescript@5.7.3))
     transitivePeerDependencies:
       - vue
@@ -21559,7 +21559,7 @@ snapshots:
       open: 10.1.0
       perfect-debounce: 1.0.0
       picocolors: 1.1.1
-      sirv: 3.0.0
+      sirv: 3.0.1
       vite: 6.1.0(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
     optionalDependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)
