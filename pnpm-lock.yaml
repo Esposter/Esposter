@@ -172,11 +172,11 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(ajv@8.17.1)
       apexcharts:
-        specifier: ^4.4.0
-        version: 4.4.0
+        specifier: ^4.5.0
+        version: 4.5.0
       better-auth:
-        specifier: ^1.1.18
-        version: 1.1.18
+        specifier: ^1.1.19
+        version: 1.1.19
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -331,17 +331,17 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       survey-core:
-        specifier: ^1.12.23
-        version: 1.12.23
+        specifier: ^1.12.24
+        version: 1.12.24
       survey-creator-core:
         specifier: ^1.12.24
-        version: 1.12.24(survey-core@1.12.23)
+        version: 1.12.24(survey-core@1.12.24)
       survey-creator-vue:
         specifier: ^1.12.24
-        version: 1.12.24(survey-core@1.12.23)(survey-creator-core@1.12.24(survey-core@1.12.23))(survey-vue3-ui@1.12.23(survey-core@1.12.23)(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
+        version: 1.12.24(survey-core@1.12.24)(survey-creator-core@1.12.24(survey-core@1.12.24))(survey-vue3-ui@1.12.24(survey-core@1.12.24)(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
       survey-vue3-ui:
-        specifier: ^1.12.23
-        version: 1.12.23(survey-core@1.12.23)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^1.12.24
+        version: 1.12.24(survey-core@1.12.24)(vue@3.5.13(typescript@5.7.3))
       three:
         specifier: ^0.173.0
         version: 0.173.0
@@ -368,7 +368,7 @@ importers:
         version: 4.3.0(vue@3.5.13(typescript@5.7.3))
       vue3-apexcharts:
         specifier: ^1.8.0
-        version: 1.8.0(apexcharts@4.4.0)(vue@3.5.13(typescript@5.7.3))
+        version: 1.8.0(apexcharts@4.5.0)(vue@3.5.13(typescript@5.7.3))
       vuetify:
         specifier: ^3.7.13
         version: 3.7.13(typescript@5.7.3)(vite-plugin-vuetify@2.1.0)(vue@3.5.13(typescript@5.7.3))
@@ -388,8 +388,8 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(zod@3.24.2)
       zod-to-json-schema:
-        specifier: ^3.24.1
-        version: 3.24.1(zod@3.24.2)
+        specifier: ^3.24.2
+        version: 3.24.2(zod@3.24.2)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -404,8 +404,8 @@ importers:
         specifier: ^0.10.4
         version: 0.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
       '@nuxt/test-utils':
-        specifier: ^3.15.4
-        version: 3.15.4(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
+        specifier: ^3.16.0
+        version: 3.16.0(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
       '@nuxtjs/seo':
         specifier: ^2.2.0
         version: 2.2.0(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(h3@1.15.0)(magicast@0.3.5)(rollup@3.29.5)(typescript@5.7.3)(unhead@1.11.19)(unstorage@1.14.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0))(vite@6.1.0(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
@@ -2620,8 +2620,8 @@ packages:
     engines: {node: '>=18.12.0'}
     hasBin: true
 
-  '@nuxt/test-utils@3.15.4':
-    resolution: {integrity: sha512-R5eNXILsB5GCTMgoKdW3rN9rNBQCVBqxw4+tcujNplcivbJp7lQrRMHlbR9ijAJ1jEMkDNXdOQGbM1RnWvDuuQ==}
+  '@nuxt/test-utils@3.16.0':
+    resolution: {integrity: sha512-ISllWsRtcPIEUJVjG2fR78Ng0fV+uBtjkeiHf7qLsYBlJRIp/UZrNyqTYJ4yyiZjk6x1kw0j3XwD5F9NE1um5g==}
     engines: {node: ^18.20.5 || ^20.9.0 || ^22.0.0 || >=23.0.0}
     peerDependencies:
       '@cucumber/cucumber': ^10.3.1 || ^11.0.0
@@ -2630,10 +2630,10 @@ packages:
       '@testing-library/vue': ^7.0.0 || ^8.0.1
       '@vitest/ui': '*'
       '@vue/test-utils': ^2.4.2
-      happy-dom: ^9.10.9 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+      happy-dom: ^9.10.9 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
       jsdom: ^22.0.0 || ^23.0.0 || ^24.0.0 || ^25.0.0 || ^26.0.0
       playwright-core: ^1.43.1
-      vitest: ^0.34.6 || ^1.0.0 || ^2.0.0 || ^3.0.0-beta.3
+      vitest: ^0.34.6 || ^1.0.0 || ^2.0.0 || ^3.0.0
     peerDependenciesMeta:
       '@cucumber/cucumber':
         optional: true
@@ -4349,8 +4349,8 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apexcharts@4.4.0:
-    resolution: {integrity: sha512-JGsHeQEKDlQh1rob8aBai9/HKvXIpbZ83TnobKZAcdOELf+oQZaxZyAnbbldr6PPBdCgG2zzzLaP1dtEsJxzWw==}
+  apexcharts@4.5.0:
+    resolution: {integrity: sha512-E7ZkrVqPNBUWy/Rmg8DEIqHNBmElzICE/oxOX5Ekvs2ICQUOK/VkEkMH09JGJu+O/EA0NL31hxlmF+wrwrSLaQ==}
 
   aproba@2.0.0:
     resolution: {integrity: sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==}
@@ -4496,8 +4496,8 @@ packages:
   before-after-hook@3.0.2:
     resolution: {integrity: sha512-Nik3Sc0ncrMK4UUdXQmAnRtzmNQTAAXmXIopizwZ1W1t8QmfJj+zL4OA2I7XPTPW5z5TDqv4hRo/JzouDJnX3A==}
 
-  better-auth@1.1.18:
-    resolution: {integrity: sha512-cU/u7/qlSiR/OO1O53gh/bHvxyB53DE+5ZOw9DtpDI8IyIQUBqDnQ06MOwNtj8JwjXHcMFNSNd5u/W8DED0bJw==}
+  better-auth@1.1.19:
+    resolution: {integrity: sha512-OYf2oysca2+ASJ9hpGVkoLsz8b7bo65hHsVGpnIs9H5ORUnHJ7rKc6Wur4ZDCxuewBGUJMJyTAtXuo/cdAirjA==}
 
   better-call@0.3.3:
     resolution: {integrity: sha512-N4lDVm0NGmFfDJ0XMQ4O83Zm/3dPlvIQdxvwvgSLSkjFX5PM4GUYSVAuxNzXN27QZMHDkrJTWUqxBrm4tPC3eA==}
@@ -9100,8 +9100,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@1.12.23:
-    resolution: {integrity: sha512-/ZKLF+6xlVLyna4c4N3xWyrYRIlfT43C3ZjScrU/36QY5abpvLyEalHGMxu2rKcBNj1vyw5BwGccYf5DWs5RhQ==}
+  survey-core@1.12.24:
+    resolution: {integrity: sha512-wctjd+Hv4fjrP2QDT/nlXfHq3KT7iDuxAClfflM3ztRM72FFJcvprNuZSkiHg0ow1Th59/zblqTnnz4qiCqXjg==}
 
   survey-creator-core@1.12.24:
     resolution: {integrity: sha512-PXIIq6ku6pocVRQTUWH22vEUr4BGhBcJg9GndLrytlGmTmod6oarBqM6WExNy2A1M1Cmt6q5VR66JDMZgNYtDg==}
@@ -9121,10 +9121,10 @@ packages:
       survey-vue3-ui: 1.12.24
       vue: ^3.2.41
 
-  survey-vue3-ui@1.12.23:
-    resolution: {integrity: sha512-v1877XqYL6Fgd3ONkDZ2PEQhjHJ7OAeA3r2IQAOEdpIhsNZhOwHU2OUtJ6zuIo1MwZP3I+nvYWiRZnt/m7imdA==}
+  survey-vue3-ui@1.12.24:
+    resolution: {integrity: sha512-KQl6H+2vp6IS0jbFbPceWUzL0Rm1y1mOjfzoIjHGreiKXzpuZvzkrIJ3tt244adtjxMtSUoQClbtt8ZrbLiunw==}
     peerDependencies:
-      survey-core: 1.12.23
+      survey-core: 1.12.24
       vue: ^3.2.41
 
   svg-tags@1.0.0:
@@ -10390,8 +10390,8 @@ packages:
     peerDependencies:
       zod: '>= 3.11.0'
 
-  zod-to-json-schema@3.24.1:
-    resolution: {integrity: sha512-3h08nf3Vw3Wl3PK+q3ow/lIil81IT2Oa7YpQyUUDsEWbXveMesdfK1xBd2RhCkynwZndAxixji/7SYJJowr62w==}
+  zod-to-json-schema@3.24.2:
+    resolution: {integrity: sha512-pNUqrcSxuuB3/+jBbU8qKUbTbDqYUaG1vf5cXFjbhGgoUuA1amO/y4Q8lzfOhHU8HNPK6VFJ18lBDKj3OHyDsg==}
     peerDependencies:
       zod: ^3.24.1
 
@@ -12988,7 +12988,7 @@ snapshots:
       - magicast
       - supports-color
 
-  '@nuxt/test-utils@3.15.4(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)':
+  '@nuxt/test-utils@3.16.0(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)
       '@nuxt/schema': 3.15.4
@@ -13013,7 +13013,7 @@ snapshots:
       ufo: 1.5.4
       unenv: 1.10.0
       unplugin: 2.2.0
-      vite: 6.1.0(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+      vite: 6.1.1(@types/node@22.13.4)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vitest-environment-nuxt: 1.0.1(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
       vue: 3.5.13(typescript@5.7.3)
     optionalDependencies:
@@ -15168,7 +15168,7 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  apexcharts@4.4.0:
+  apexcharts@4.5.0:
     dependencies:
       '@svgdotjs/svg.draggable.js': 3.0.6(@svgdotjs/svg.js@3.2.4)
       '@svgdotjs/svg.filter.js': 3.0.8
@@ -15346,7 +15346,7 @@ snapshots:
 
   before-after-hook@3.0.2: {}
 
-  better-auth@1.1.18:
+  better-auth@1.1.19:
     dependencies:
       '@better-auth/utils': 0.2.3
       '@better-fetch/fetch': 1.1.12
@@ -20723,22 +20723,22 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@1.12.23: {}
+  survey-core@1.12.24: {}
 
-  survey-creator-core@1.12.24(survey-core@1.12.23):
+  survey-creator-core@1.12.24(survey-core@1.12.24):
     dependencies:
-      survey-core: 1.12.23
+      survey-core: 1.12.24
 
-  survey-creator-vue@1.12.24(survey-core@1.12.23)(survey-creator-core@1.12.24(survey-core@1.12.23))(survey-vue3-ui@1.12.23(survey-core@1.12.23)(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3)):
+  survey-creator-vue@1.12.24(survey-core@1.12.24)(survey-creator-core@1.12.24(survey-core@1.12.24))(survey-vue3-ui@1.12.24(survey-core@1.12.24)(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3)):
     dependencies:
-      survey-core: 1.12.23
-      survey-creator-core: 1.12.24(survey-core@1.12.23)
-      survey-vue3-ui: 1.12.23(survey-core@1.12.23)(vue@3.5.13(typescript@5.7.3))
+      survey-core: 1.12.24
+      survey-creator-core: 1.12.24(survey-core@1.12.24)
+      survey-vue3-ui: 1.12.24(survey-core@1.12.24)(vue@3.5.13(typescript@5.7.3))
       vue: 3.5.13(typescript@5.7.3)
 
-  survey-vue3-ui@1.12.23(survey-core@1.12.23)(vue@3.5.13(typescript@5.7.3)):
+  survey-vue3-ui@1.12.24(survey-core@1.12.24)(vue@3.5.13(typescript@5.7.3)):
     dependencies:
-      survey-core: 1.12.23
+      survey-core: 1.12.24
       vue: 3.5.13(typescript@5.7.3)
 
   svg-tags@1.0.0: {}
@@ -21663,7 +21663,7 @@ snapshots:
 
   vitest-environment-nuxt@1.0.1(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0):
     dependencies:
-      '@nuxt/test-utils': 3.15.4(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
+      '@nuxt/test-utils': 3.16.0(@types/node@22.13.4)(@vue/test-utils@2.4.6)(happy-dom@17.1.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.4)(happy-dom@17.1.1)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -21810,9 +21810,9 @@ snapshots:
     dependencies:
       vue: 3.5.13(typescript@5.7.3)
 
-  vue3-apexcharts@1.8.0(apexcharts@4.4.0)(vue@3.5.13(typescript@5.7.3)):
+  vue3-apexcharts@1.8.0(apexcharts@4.5.0)(vue@3.5.13(typescript@5.7.3)):
     dependencies:
-      apexcharts: 4.4.0
+      apexcharts: 4.5.0
       vue: 3.5.13(typescript@5.7.3)
 
   vue@3.5.13(typescript@5.7.3):
@@ -22249,7 +22249,7 @@ snapshots:
     dependencies:
       zod: 3.24.2
 
-  zod-to-json-schema@3.24.1(zod@3.24.2):
+  zod-to-json-schema@3.24.2(zod@3.24.2):
     dependencies:
       zod: 3.24.2
 
