@@ -138,7 +138,7 @@
     "sql-highlight": "^6.0.0",
     "superjson": "^2.2.2",
     "survey-core": "^1.12.23",
-    "survey-creator-core": "^1.12.23",
+    "survey-creator-core": "^1.12.24",
     "survey-creator-vue": "^1.12.23",
     "survey-vue3-ui": "^1.12.23",
     "three": "^0.173.0",
