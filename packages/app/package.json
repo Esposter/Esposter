@@ -173,7 +173,7 @@
     "@nuxt/eslint": "^1.1.0",
     "@nuxt/fonts": "^0.10.3",
     "@nuxt/scripts": "^0.10.4",
-    "@nuxt/test-utils": "^3.16.0",
+    "@nuxt/test-utils": "^3.17.0",
     "@nuxtjs/seo": "^2.2.0",
     "@pinia/nuxt": "^0.10.1",
     "@types/dedent": "^0.7.2",
