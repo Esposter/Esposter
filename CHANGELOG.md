@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.1](https://github.com/Esposter/Esposter/compare/v1.37.0...v1.37.1) (2025-02-15)
+
+### Bug Fixes
+
+* package ([94a72f9](https://github.com/Esposter/Esposter/commit/94a72f95426745886315509515720af2f2f75336))
+* update pnpm stuff ([05638df](https://github.com/Esposter/Esposter/commit/05638dfd6d7f9b95d86399361214df0422f76e45))
+
 # [1.37.0](https://github.com/Esposter/Esposter/compare/v1.35.0...v1.37.0) (2025-02-15)
 
 ### Bug Fixes
