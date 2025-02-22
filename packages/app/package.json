@@ -37,7 +37,6 @@
     "phaser:gen": "tsx scripts/phaser/index.ts",
     "tiled:gen": "tsx scripts/tiled/index.ts",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
-    "cross-os": "node scripts/cross-os.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
