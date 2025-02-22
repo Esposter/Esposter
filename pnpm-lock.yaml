@@ -131,10 +131,10 @@ importers:
         version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(vue@3.5.13(typescript@5.7.3))
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.800(@trpc/server@11.0.0-rc.800(typescript@5.7.3))(typescript@5.7.3)
+        version: 11.0.0-rc.802(@trpc/server@11.0.0-rc.802(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.800(typescript@5.7.3)
+        version: 11.0.0-rc.802(typescript@5.7.3)
       '@vue-flow/background':
         specifier: ^1.3.2
         version: 1.3.2(@vue-flow/core@1.42.1(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
@@ -353,7 +353,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 0.11.1-next.1
-        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.800(@trpc/server@11.0.0-rc.800(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.800(typescript@5.7.3))
+        version: 0.11.1-next.1(@trpc/client@11.0.0-rc.802(@trpc/server@11.0.0-rc.802(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.802(typescript@5.7.3))
       vue-codemirror:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.7.3))
@@ -401,8 +401,8 @@ importers:
         specifier: ^0.10.3
         version: 0.10.3(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(encoding@0.1.13)(ioredis@5.5.0)(magicast@0.3.5)(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       '@nuxt/scripts':
-        specifier: ^0.10.4
-        version: 0.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
+        specifier: ^0.10.5
+        version: 0.10.5(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)
       '@nuxt/test-utils':
         specifier: ^3.17.0
         version: 3.17.0(@types/node@22.13.5)(@vue/test-utils@2.4.6)(happy-dom@17.1.2)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.50.1)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.7.3)(vitest@3.0.6(@types/node@22.13.5)(happy-dom@17.1.2)(jiti@2.4.2)(sass-embedded@1.85.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(yaml@2.7.0)
@@ -2593,8 +2593,8 @@ packages:
     resolution: {integrity: sha512-pAYZb/3ocSC/db1EFd5y+otmgHqUkvfxfhd9EknDB5DygnJuOIQNuGJ7LMJM6S2c0DYgBIHOdEelLxKHOjwbgQ==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  '@nuxt/scripts@0.10.4':
-    resolution: {integrity: sha512-wGKVPABskj8wIdbSwJMkx8ZBWtG1ihI7Vw65jDohQ8L+P6OxVVA4l3Gj1lqi6J6KlbeRMnMut5ZFHrkqckI9iw==}
+  '@nuxt/scripts@0.10.5':
+    resolution: {integrity: sha512-MZTGWN/kjkKBZzuJssIrzHO9evMWtceaLowF9R7FMZjACFLYWqnf127EP/2pzDfwii5+NkZUe5mfyeIDxXbkUw==}
     peerDependencies:
       '@stripe/stripe-js': ^5.6.0
       '@types/google.maps': ^3.58.1
@@ -3478,14 +3478,14 @@ packages:
       '@tiptap/pm': ^2.7.0
       vue: ^3.0.0
 
-  '@trpc/client@11.0.0-rc.800':
-    resolution: {integrity: sha512-ER9W2zdEnvSI9jeXeQ5Rz8OnDN5wkscAITWpsLUPCqaVCpL5yT/zCb8gayshSTx9kuyk7iWn43nD41cTYjKQ5Q==}
+  '@trpc/client@11.0.0-rc.802':
+    resolution: {integrity: sha512-oToR54iL/sxmu2RwVxh/dJfY6CrZ8IeSEpsu5KjtlwQHM7/w5awSTF4+odjhgB0QnVFgM0vOjw8MNbExKCKSFw==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.800+892471d1b
+      '@trpc/server': 11.0.0-rc.802+1eccc1171
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.0-rc.800':
-    resolution: {integrity: sha512-41bKqujk4QAS2czpTPMXDBy8ZD9kInu9qDfya0KMs4SkEs2RNW4c0FLBJKMOIXz+z0dVkrmspW5q+ZTPGZV59g==}
+  '@trpc/server@11.0.0-rc.802':
+    resolution: {integrity: sha512-CkV2qTnmSOy84Qtev3B4WA6oLft7q2pg8X/IewssaD4LQevBrmTdTPDfvGeT1wdCa/NAT4ZIMt7AgbbWfAs/9Q==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -12847,7 +12847,7 @@ snapshots:
       pathe: 2.0.3
       std-env: 3.8.0
 
-  '@nuxt/scripts@0.10.4(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
+  '@nuxt/scripts@0.10.5(@azure/data-tables@13.3.0)(@azure/storage-blob@12.26.0)(@unhead/vue@1.11.19(vue@3.5.13(typescript@5.7.3)))(db0@0.2.4(drizzle-orm@0.39.3(kysely@0.27.5)(postgres@3.4.5)))(ioredis@5.5.0)(magicast@0.3.5)(typescript@5.7.3)':
     dependencies:
       '@nuxt/kit': 3.15.4(magicast@0.3.5)
       '@unhead/vue': 1.11.19(vue@3.5.13(typescript@5.7.3))
@@ -13917,12 +13917,12 @@ snapshots:
       '@tiptap/pm': 2.11.5
       vue: 3.5.13(typescript@5.7.3)
 
-  '@trpc/client@11.0.0-rc.800(@trpc/server@11.0.0-rc.800(typescript@5.7.3))(typescript@5.7.3)':
+  '@trpc/client@11.0.0-rc.802(@trpc/server@11.0.0-rc.802(typescript@5.7.3))(typescript@5.7.3)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.800(typescript@5.7.3)
+      '@trpc/server': 11.0.0-rc.802(typescript@5.7.3)
       typescript: 5.7.3
 
-  '@trpc/server@11.0.0-rc.800(typescript@5.7.3)':
+  '@trpc/server@11.0.0-rc.802(typescript@5.7.3)':
     dependencies:
       typescript: 5.7.3
 
@@ -20837,10 +20837,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.800(@trpc/server@11.0.0-rc.800(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.800(typescript@5.7.3)):
+  trpc-nuxt@0.11.1-next.1(@trpc/client@11.0.0-rc.802(@trpc/server@11.0.0-rc.802(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.802(typescript@5.7.3)):
     dependencies:
-      '@trpc/client': 11.0.0-rc.800(@trpc/server@11.0.0-rc.800(typescript@5.7.3))(typescript@5.7.3)
-      '@trpc/server': 11.0.0-rc.800(typescript@5.7.3)
+      '@trpc/client': 11.0.0-rc.802(@trpc/server@11.0.0-rc.802(typescript@5.7.3))(typescript@5.7.3)
+      '@trpc/server': 11.0.0-rc.802(typescript@5.7.3)
       h3: 1.15.0
       ofetch: 1.4.1
       ohash: 1.1.4
