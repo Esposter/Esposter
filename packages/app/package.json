@@ -133,7 +133,7 @@
     "pluralize": "^8.0.0",
     "postgres": "^3.4.5",
     "rate-limiter-flexible": "^5.0.5",
-    "rxjs": "^7.8.1",
+    "rxjs": "^7.8.2",
     "sql-highlight": "^6.0.0",
     "superjson": "^2.2.2",
     "survey-core": "^1.12.24",
