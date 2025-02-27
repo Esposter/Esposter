@@ -274,8 +274,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       js-beautify:
-        specifier: ^1.15.3
-        version: 1.15.3
+        specifier: ^1.15.4
+        version: 1.15.4
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -6874,8 +6874,8 @@ packages:
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
 
-  js-beautify@1.15.3:
-    resolution: {integrity: sha512-rKKGuyTxGNlyN4EQKWzNndzXpi0bOl8Gl8YQAW1as/oMz0XhD6sHJO1hTvoBDOSzKuJb9WkwoAb34FfdkKMv2A==}
+  js-beautify@1.15.4:
+    resolution: {integrity: sha512-9/KXeZUKKJwqCXUdBxFJ3vPh467OCckSBmYDwSK/EtV090K+iMJ7zx2S3HLVDIWFQdqMIsZWbnaGiba18aWhaA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -14734,7 +14734,7 @@ snapshots:
 
   '@vue/test-utils@2.4.6':
     dependencies:
-      js-beautify: 1.15.3
+      js-beautify: 1.15.4
       vue-component-type-helpers: 2.2.4
 
   '@vuepic/vue-datepicker@11.0.1(vue@3.5.13(typescript@5.7.3))':
@@ -17922,13 +17922,13 @@ snapshots:
 
   jose@5.10.0: {}
 
-  js-beautify@1.15.3:
+  js-beautify@1.15.4:
     dependencies:
       config-chain: 1.1.13
       editorconfig: 1.0.4
       glob: 10.4.5
       js-cookie: 3.0.5
-      nopt: 8.1.0
+      nopt: 7.2.1
 
   js-cookie@3.0.5: {}
 
