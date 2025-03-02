@@ -40,7 +40,7 @@
   },
   "peerDependencies": {
     "phaser": "^3.88.2",
-    "phaser3-rex-plugins": "^1.80.13",
+    "phaser3-rex-plugins": "^1.80.14",
     "pinia": "^3.0.1",
     "vue": "^3.5.13"
   }

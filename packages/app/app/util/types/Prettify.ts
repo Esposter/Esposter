@@ -1,5 +1,5 @@
+import type { UpperCaseToLowerCase } from "@/util/types/UpperCaseToLowerCase";
 import type { Trim } from "type-fest";
-import type { UpperCaseToLowerCase } from "type-fest/source/delimiter-case";
 import type { StringDigit, UpperCaseCharacters } from "type-fest/source/internal";
 
 export type Prettify<T extends string> = Trim<BasePrettify<T>>;
