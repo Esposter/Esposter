@@ -52,7 +52,7 @@
     "typescript": "^5.8.2",
     "vite": "^6.2.0",
     "vite-plugin-node-polyfills": "^0.23.0",
-    "vue-tsc": "^2.2.4"
+    "vue-tsc": "^2.2.8"
   },
   "engines": {
     "node": "^22.14.0"
