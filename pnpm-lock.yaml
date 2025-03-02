@@ -34,8 +34,8 @@ importers:
         specifier: ^4.34.9
         version: 4.34.9
       type-fest:
-        specifier: ^4.35.0
-        version: 4.35.0
+        specifier: ^4.36.0
+        version: 4.36.0
       typedoc:
         specifier: ^0.27.9
         version: 0.27.9(typescript@5.8.2)
@@ -307,8 +307,8 @@ importers:
         specifier: ^3.88.2
         version: 3.88.2
       phaser3-rex-plugins:
-        specifier: ^1.80.13
-        version: 1.80.13(encoding@0.1.13)(graphology-types@0.24.8)
+        specifier: ^1.80.14
+        version: 1.80.14(encoding@0.1.13)(graphology-types@0.24.8)
       pinia:
         specifier: ^3.0.1
         version: 3.0.1(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
@@ -7829,6 +7829,9 @@ packages:
   phaser3-rex-plugins@1.80.13:
     resolution: {integrity: sha512-d2P3c+0r7h/GXtOZIjB6DLjBQ2rSEeZ+AOG1D6jgGGn/Txb+PiDmFMhBF3qJ6YoPlVarSE8lw6V8Jy7K7xPnLg==}
 
+  phaser3-rex-plugins@1.80.14:
+    resolution: {integrity: sha512-eHi3VgryO9umNu6D1yQU5IS6tH4TyC2Y6RgJ495nNp37X2fdYnmYpBfgFg+YaumvtaoOvCkUVyi/YqWNPf2X2A==}
+
   phaser@3.88.2:
     resolution: {integrity: sha512-UBgd2sAFuRJbF2xKaQ5jpMWB8oETncChLnymLGHcrnT53vaqiGrQWbUKUDBawKLm24sghjKo4Bf+/xfv8espZQ==}
 
@@ -9295,8 +9298,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.35.0:
-    resolution: {integrity: sha512-2/AwEFQDFEy30iOLjrvHDIH7e4HEWH+f1Yl1bI5XMqzuoCUqwYCdxachgsgv0og/JdVZUhbfjcJAoHj5L1753A==}
+  type-fest@4.36.0:
+    resolution: {integrity: sha512-3T/PUdKTCnkUmhQU6FFJEHsLwadsRegktX3TNHk+2JJB9HlA8gp1/VXblXVDI93kSnXF2rdPx0GMbHtJIV2LPg==}
     engines: {node: '>=16'}
 
   type-level-regexp@0.1.17:
@@ -15874,7 +15877,7 @@ snapshots:
       ts-pattern: 5.6.2
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.35.0
+      type-fest: 4.36.0
       typescript: 5.8.2
       yaml: 2.7.0
       yargs: 17.7.2
@@ -16137,7 +16140,7 @@ snapshots:
 
   dot-prop@9.0.0:
     dependencies:
-      type-fest: 4.35.0
+      type-fest: 4.36.0
 
   dotenv@16.4.7: {}
 
@@ -19107,7 +19110,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.26.2
       index-to-position: 0.1.2
-      type-fest: 4.35.0
+      type-fest: 4.36.0
 
   parse-ms@4.0.0: {}
 
@@ -19183,6 +19186,21 @@ snapshots:
   perfect-debounce@1.0.0: {}
 
   phaser3-rex-plugins@1.80.13(encoding@0.1.13)(graphology-types@0.24.8):
+    dependencies:
+      dagre: 0.8.5
+      eventemitter3: 3.1.2
+      graphology: 0.25.4(graphology-types@0.24.8)
+      i18next: 22.5.1
+      i18next-http-backend: 2.7.3(encoding@0.1.13)
+      js-yaml: 4.1.0
+      mustache: 4.2.0
+      papaparse: 5.5.2
+      webfontloader: 1.6.28
+    transitivePeerDependencies:
+      - encoding
+      - graphology-types
+
+  phaser3-rex-plugins@1.80.14(encoding@0.1.13)(graphology-types@0.24.8):
     dependencies:
       dagre: 0.8.5
       eventemitter3: 3.1.2
@@ -19633,27 +19651,27 @@ snapshots:
     dependencies:
       find-up-simple: 1.0.0
       read-pkg: 9.0.1
-      type-fest: 4.35.0
+      type-fest: 4.36.0
 
   read-pkg-up@10.1.0:
     dependencies:
       find-up: 6.3.0
       read-pkg: 8.1.0
-      type-fest: 4.35.0
+      type-fest: 4.36.0
 
   read-pkg@8.1.0:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 7.1.1
-      type-fest: 4.35.0
+      type-fest: 4.36.0
 
   read-pkg@9.0.1:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 8.1.0
-      type-fest: 4.35.0
+      type-fest: 4.36.0
       unicorn-magic: 0.1.0
 
   readable-stream@2.3.8:
@@ -20722,7 +20740,7 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.35.0: {}
+  type-fest@4.36.0: {}
 
   type-level-regexp@0.1.17: {}
 
@@ -21824,7 +21842,7 @@ snapshots:
       deepmerge-ts: 7.1.5
       read-pkg: 9.0.1
       sort-keys: 5.1.0
-      type-fest: 4.35.0
+      type-fest: 4.36.0
       write-json-file: 6.0.0
 
   ws@8.18.1: {}
