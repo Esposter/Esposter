@@ -598,8 +598,8 @@ importers:
         specifier: ^3.88.2
         version: 3.88.2
       phaser3-rex-plugins:
-        specifier: ^1.80.13
-        version: 1.80.13(encoding@0.1.13)(graphology-types@0.24.8)
+        specifier: ^1.80.14
+        version: 1.80.14(encoding@0.1.13)(graphology-types@0.24.8)
       pinia:
         specifier: ^3.0.1
         version: 3.0.1(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
@@ -7825,9 +7825,6 @@ packages:
 
   perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}
-
-  phaser3-rex-plugins@1.80.13:
-    resolution: {integrity: sha512-d2P3c+0r7h/GXtOZIjB6DLjBQ2rSEeZ+AOG1D6jgGGn/Txb+PiDmFMhBF3qJ6YoPlVarSE8lw6V8Jy7K7xPnLg==}
 
   phaser3-rex-plugins@1.80.14:
     resolution: {integrity: sha512-eHi3VgryO9umNu6D1yQU5IS6tH4TyC2Y6RgJ495nNp37X2fdYnmYpBfgFg+YaumvtaoOvCkUVyi/YqWNPf2X2A==}
@@ -19184,21 +19181,6 @@ snapshots:
       sha.js: 2.4.11
 
   perfect-debounce@1.0.0: {}
-
-  phaser3-rex-plugins@1.80.13(encoding@0.1.13)(graphology-types@0.24.8):
-    dependencies:
-      dagre: 0.8.5
-      eventemitter3: 3.1.2
-      graphology: 0.25.4(graphology-types@0.24.8)
-      i18next: 22.5.1
-      i18next-http-backend: 2.7.3(encoding@0.1.13)
-      js-yaml: 4.1.0
-      mustache: 4.2.0
-      papaparse: 5.5.2
-      webfontloader: 1.6.28
-    transitivePeerDependencies:
-      - encoding
-      - graphology-types
 
   phaser3-rex-plugins@1.80.14(encoding@0.1.13)(graphology-types@0.24.8):
     dependencies:
