@@ -34,8 +34,8 @@ importers:
         specifier: ^4.34.9
         version: 4.34.9
       type-fest:
-        specifier: ^4.36.0
-        version: 4.36.0
+        specifier: ^4.37.0
+        version: 4.37.0
       typedoc:
         specifier: ^0.27.9
         version: 0.27.9(typescript@5.8.2)
@@ -9348,8 +9348,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.36.0:
-    resolution: {integrity: sha512-3T/PUdKTCnkUmhQU6FFJEHsLwadsRegktX3TNHk+2JJB9HlA8gp1/VXblXVDI93kSnXF2rdPx0GMbHtJIV2LPg==}
+  type-fest@4.37.0:
+    resolution: {integrity: sha512-S/5/0kFftkq27FPNye0XM1e2NsnoD/3FS+pBmbjmmtLT6I+i344KoOf7pvXreaFsDamWeaJX55nczA1m5PsBDg==}
     engines: {node: '>=16'}
 
   type-level-regexp@0.1.17:
@@ -15969,7 +15969,7 @@ snapshots:
       ts-pattern: 5.6.2
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.36.0
+      type-fest: 4.37.0
       typescript: 5.8.2
       yaml: 2.7.0
       yargs: 17.7.2
@@ -16232,7 +16232,7 @@ snapshots:
 
   dot-prop@9.0.0:
     dependencies:
-      type-fest: 4.36.0
+      type-fest: 4.37.0
 
   dotenv@16.4.7: {}
 
@@ -19228,7 +19228,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.26.2
       index-to-position: 0.1.2
-      type-fest: 4.36.0
+      type-fest: 4.37.0
 
   parse-ms@4.0.0: {}
 
@@ -19762,27 +19762,27 @@ snapshots:
     dependencies:
       find-up-simple: 1.0.1
       read-pkg: 9.0.1
-      type-fest: 4.36.0
+      type-fest: 4.37.0
 
   read-pkg-up@10.1.0:
     dependencies:
       find-up: 6.3.0
       read-pkg: 8.1.0
-      type-fest: 4.36.0
+      type-fest: 4.37.0
 
   read-pkg@8.1.0:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 7.1.1
-      type-fest: 4.36.0
+      type-fest: 4.37.0
 
   read-pkg@9.0.1:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 8.1.0
-      type-fest: 4.36.0
+      type-fest: 4.37.0
       unicorn-magic: 0.1.0
 
   readable-stream@2.3.8:
@@ -20849,7 +20849,7 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.36.0: {}
+  type-fest@4.37.0: {}
 
   type-level-regexp@0.1.17: {}
 
@@ -21947,7 +21947,7 @@ snapshots:
       deepmerge-ts: 7.1.5
       read-pkg: 9.0.1
       sort-keys: 5.1.0
-      type-fest: 4.36.0
+      type-fest: 4.37.0
       write-json-file: 6.0.0
 
   ws@8.18.1: {}
