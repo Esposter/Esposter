@@ -84,7 +84,7 @@
     "ajv-formats": "^3.0.1",
     "ajv-i18n": "^4.2.0",
     "apexcharts": "^4.5.0",
-    "better-auth": "^1.2.2",
+    "better-auth": "1.1.21",
     "class-transformer": "^0.5.1",
     "codemirror": "^6.0.1",
     "dayjs": "^1.11.13",
@@ -161,6 +161,7 @@
     "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
+    "better-auth": "@TODO: https://github.com/better-auth/better-auth/issues/1669",
     "class-transformer": "@TODO: Remove when es decorators are released",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
