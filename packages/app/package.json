@@ -118,7 +118,6 @@
     "howler": "^2.2.4",
     "is-mobile": "^5.0.0",
     "js-beautify": "^1.15.4",
-    "markdown-it": "^14.1.0",
     "marked": "^15.0.7",
     "mjml-browser": "^4.15.3",
     "node-emoji": "^2.2.0",
@@ -164,7 +163,6 @@
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "class-transformer": "@TODO: Remove when es decorators are released",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "markdown-it": "https://github.com/json-layout/json-layout/issues/5",
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {

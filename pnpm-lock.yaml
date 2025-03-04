@@ -276,9 +276,6 @@ importers:
       js-beautify:
         specifier: ^1.15.4
         version: 1.15.4
-      markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
       marked:
         specifier: ^15.0.7
         version: 15.0.7
