@@ -373,8 +373,8 @@ importers:
         specifier: ^0.3.20
         version: 0.3.20(vue@3.5.13(typescript@5.8.2))(vuetify@3.7.15)
       worker-timers:
-        specifier: ^8.0.17
-        version: 8.0.17
+        specifier: ^8.0.18
+        version: 8.0.18
       ws:
         specifier: ^8.18.1
         version: 8.18.1
@@ -4475,8 +4475,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  broker-factory@3.1.2:
-    resolution: {integrity: sha512-NyLP5FNiOy5b7bfm7MSntaHj2DhNFA9dKA+AATy5Rf1EGkt3jTHGsPHLUwGE4DdLNp4+iYroNcLoEHPoEfgl1Q==}
+  broker-factory@3.1.3:
+    resolution: {integrity: sha512-mBxlMgW4Fk4nYDuwLTGtBt+TaHnxgnXW6bqW9D4L7mPEPSkvsfdEakzvsrIwy+quOU9eDl+ETAMVbaU1fSUKAQ==}
 
   brorand@1.1.0:
     resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
@@ -5901,8 +5901,8 @@ packages:
   fast-npm-meta@0.2.2:
     resolution: {integrity: sha512-E+fdxeaOQGo/CMWc9f4uHFfgUPJRAu7N3uB8GBvB3SDPAIWJK4GKyYhkAGFq+GYrcbKNfQIz5VVQyJnDuPPCrg==}
 
-  fast-unique-numbers@9.0.17:
-    resolution: {integrity: sha512-VG/HeTXz7X/L+Gj/lirTU/A5bA5b4Vsn6HFBuM+0Y/2GJmBiQ4EPwwLEAbf3bBCX7aeRSgjDNxNGPIfefof2FA==}
+  fast-unique-numbers@9.0.18:
+    resolution: {integrity: sha512-+mCjhyigl+xn5jicnUMsA2R63xQQyEp8EzW1u7NOeVzq9ULNm59aB1oNYUsWJiv2wi07CyTyjiGXZejaMn5JhA==}
     engines: {node: '>=18.2.0'}
 
   fast-uri@3.0.6:
@@ -10167,17 +10167,17 @@ packages:
   workbox-window@7.3.0:
     resolution: {integrity: sha512-qW8PDy16OV1UBaUNGlTVcepzrlzyzNW/ZJvFQQs2j2TzGsg6IKjcpZC1RSquqQnTOafl5pCj5bGfAHlCjOOjdA==}
 
-  worker-factory@7.0.38:
-    resolution: {integrity: sha512-irNf2AaUHlzgfdOl4+WSb3BspTGnah+yMvbx3DRff9/17163ghnoHrHl6YzjDc3+/agV0SK8uzBTHlZvcnletw==}
+  worker-factory@7.0.39:
+    resolution: {integrity: sha512-UrCbghhZSu8ZjBwF0fmH+h7l8gK9LhBMcl2w6TpC22gQHi2YLXogJcW71aaldtVLSrbusAi526Oi5IHJgc9FdA==}
 
-  worker-timers-broker@8.0.3:
-    resolution: {integrity: sha512-zYKsovDkWl11ArSmBctFz1NhDILlfJaTmSatqotB+fb9fieSmR8XNU479fO5nE3pQz8Pe/fHMUBV5K+8ZvxN7Q==}
+  worker-timers-broker@8.0.4:
+    resolution: {integrity: sha512-Sdt+SLFqtaR5h0eTGABH4Y7O5hnDE0ZLIhOmMXA6PUPO1fSONFDH3rLGdDV65y4tN2D9XSuGFEHXjT/jQbm9hw==}
 
-  worker-timers-worker@9.0.3:
-    resolution: {integrity: sha512-LEBOcoikMZjMOpEJC3rNHvPtcFlH/x1bFVOzUlrTiQZkhMhNQXnnaGvXdXMLwNmjt6wqr6DD9hfXwoBvy9YsZA==}
+  worker-timers-worker@9.0.4:
+    resolution: {integrity: sha512-p05qP3t2UJ9ohBiuosNrj19SMGhYVYCnyEUJS1lkN0zNBtnR0unKmz5ho4tvH+R+5EB07kfDGVT+DkM/TDKOnw==}
 
-  worker-timers@8.0.17:
-    resolution: {integrity: sha512-eheMQmmLji8f7TTcACHJ7061RlI3391iojmjGOaXpYA5CynL0pQS4HGJ1lEV7A3S+MZY86Eus79MhFm54sBeHw==}
+  worker-timers@8.0.18:
+    resolution: {integrity: sha512-lPbu0GOdATjev88gCuuG3Z8LXvpRl2my6TfBy7IyVF2iPBPuuUSFZjNtl01G4WBvsALpdVRTwnhoL2W2wVVE4A==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -15218,12 +15218,12 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  broker-factory@3.1.2:
+  broker-factory@3.1.3:
     dependencies:
       '@babel/runtime': 7.26.9
-      fast-unique-numbers: 9.0.17
+      fast-unique-numbers: 9.0.18
       tslib: 2.8.1
-      worker-factory: 7.0.38
+      worker-factory: 7.0.39
 
   brorand@1.1.0: {}
 
@@ -16917,7 +16917,7 @@ snapshots:
 
   fast-npm-meta@0.2.2: {}
 
-  fast-unique-numbers@9.0.17:
+  fast-unique-numbers@9.0.18:
     dependencies:
       '@babel/runtime': 7.26.9
       tslib: 2.8.1
@@ -21888,32 +21888,32 @@ snapshots:
       '@types/trusted-types': 2.0.7
       workbox-core: 7.3.0
 
-  worker-factory@7.0.38:
+  worker-factory@7.0.39:
     dependencies:
       '@babel/runtime': 7.26.9
-      fast-unique-numbers: 9.0.17
+      fast-unique-numbers: 9.0.18
       tslib: 2.8.1
 
-  worker-timers-broker@8.0.3:
+  worker-timers-broker@8.0.4:
     dependencies:
       '@babel/runtime': 7.26.9
-      broker-factory: 3.1.2
-      fast-unique-numbers: 9.0.17
+      broker-factory: 3.1.3
+      fast-unique-numbers: 9.0.18
       tslib: 2.8.1
-      worker-timers-worker: 9.0.3
+      worker-timers-worker: 9.0.4
 
-  worker-timers-worker@9.0.3:
+  worker-timers-worker@9.0.4:
     dependencies:
       '@babel/runtime': 7.26.9
       tslib: 2.8.1
-      worker-factory: 7.0.38
+      worker-factory: 7.0.39
 
-  worker-timers@8.0.17:
+  worker-timers@8.0.18:
     dependencies:
       '@babel/runtime': 7.26.9
       tslib: 2.8.1
-      worker-timers-broker: 8.0.3
-      worker-timers-worker: 9.0.3
+      worker-timers-broker: 8.0.4
+      worker-timers-worker: 9.0.4
 
   wrap-ansi@6.2.0:
     dependencies:
