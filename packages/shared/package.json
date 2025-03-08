@@ -26,12 +26,12 @@
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
-    "data-urls": "^5.0.0",
-    "xml2js": "^0.6.2"
+    "data-urls": "catalog:",
+    "xml2js": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14"
+    "@types/data-urls": "catalog:",
+    "@types/xml2js": "catalog:"
   }
 }

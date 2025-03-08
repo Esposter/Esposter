@@ -37,22 +37,22 @@
     }
   },
   "dependencies": {
-    "vue": "^3.5.13"
+    "vue": "catalog:"
   },
   "devDependencies": {
-    "@lerna-lite/cli": "^3.12.1",
-    "@lerna-lite/publish": "^3.12.2",
-    "@lerna-lite/run": "^3.12.1",
-    "ctix": "^2.7.0",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.21.0",
-    "rollup": "^4.34.9",
-    "type-fest": "^4.37.0",
-    "typedoc": "^0.27.9",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.1",
-    "vite-plugin-node-polyfills": "^0.23.0",
-    "vue-tsc": "^2.2.8"
+    "@lerna-lite/cli": "catalog:",
+    "@lerna-lite/publish": "catalog:",
+    "@lerna-lite/run": "catalog:",
+    "ctix": "catalog:",
+    "dotenv": "catalog:",
+    "eslint": "catalog:",
+    "rollup": "catalog:",
+    "type-fest": "catalog:",
+    "typedoc": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-node-polyfills": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "engines": {
     "node": "^22.14.0"
