@@ -3,7 +3,7 @@
 // import { authClient } from "@/services/auth/authClient";
 // import { validate } from "@/services/router/validate";
 // import { useSurveyStore } from "@/store/surveyer/survey";
-// import "survey-core/defaultV2.min.css";
+// import "survey-core/survey-core.min.css";
 // import "survey-core/survey.i18n.js";
 // import { SurveyCreatorModel } from "survey-creator-core";
 // import "survey-creator-core/survey-creator-core.i18n.js";
@@ -16,7 +16,7 @@
 // const { data: session } = await authClient.useSession(useFetch);
 // const surveyerStore = useSurveyStore();
 // const { updateSurvey } = surveyerStore;
-// const creator = new SurveyCreatorModel({ isAutoSave: true, showLogicTab: true });
+// const creator = new SurveyCreatorModel({ isAutoSave: true });
 // creator.text = survey.model;
 // creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
 //   survey.model = creator.text;
