@@ -27,7 +27,7 @@ catalog:
   "@pinia/nuxt": ^0.10.1
   "@rollup/plugin-commonjs": ^28.0.3
   "@rollup/plugin-json": ^6.1.0
-  "@rollup/plugin-node-resolve": ^16.0.0
+  "@rollup/plugin-node-resolve": ^16.0.1
   "@rollup/plugin-typescript": ^12.1.2
   "@tiptap/core": ^2.11.5
   "@tiptap/extension-character-count": ^2.11.5
