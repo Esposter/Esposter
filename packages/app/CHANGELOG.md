@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.38.0](https://github.com/Esposter/Esposter/compare/v1.37.1...v1.38.0) (2025-03-12)
+
+### Bug Fixes
+
+* pin better-auth ver ([0bbe946](https://github.com/Esposter/Esposter/commit/0bbe946d089541786d3d654da5ea47661bf7e2da))
+* src ([0d249c2](https://github.com/Esposter/Esposter/commit/0d249c20790b957850f3b6b7c6093318271e5ada))
+* update apply surveyjs v2 migrations ([09ae32b](https://github.com/Esposter/Esposter/commit/09ae32bfeeb28a1d7763a06729e00f6dd63673a2))
+* update apply surveyjs v2 migrations ([e99ac81](https://github.com/Esposter/Esposter/commit/e99ac819a29b63e9d5852834d4d99b7a53071650))
+* update dependencies + fix types ([d7c1817](https://github.com/Esposter/Esposter/commit/d7c18178f7dc691002fae384dace58b77808605c))
+* update vue-tsc finally ([0d24bae](https://github.com/Esposter/Esposter/commit/0d24baeb4005459511e0a0fea883355f88adf6d0))
+
+### Features
+
+* Upgrade to nuxt 3.16 ([e77f6a3](https://github.com/Esposter/Esposter/commit/e77f6a31f153c5dc7e549bca1bba356546279d27))
+
 ## [1.37.1](https://github.com/Esposter/Esposter/compare/v1.37.0...v1.37.1) (2025-02-15)
 
 **Note:** Version bump only for package @esposter/app
