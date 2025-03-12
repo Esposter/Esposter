@@ -1,12 +1,6 @@
-import { JSONClasses } from "#shared/services/superjson/JSONClasses";
-import { RegisterSuperJSON } from "#shared/services/superjson/RegisterSuperJSON";
-import baseSuperJSON from "superjson";
+import { SuperJSON as baseSuperJSON, registerCustom } from "superjson";
 
-// @TODO: Change this to use class decorators when it is supported
-// https://github.com/nuxt/nuxt/issues/14126
-for (const { cls } of JSONClasses) RegisterSuperJSON(cls);
-
-baseSuperJSON.registerCustom<ArrayBuffer, string>(
+registerCustom<ArrayBuffer, string>(
   {
     deserialize: (v) => {
       const length = v.length / 2;

@@ -1,5 +1,5 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { Except } from "type-fest";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
@@ -10,7 +10,9 @@ import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEd
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
 import { z } from "zod";
 
-export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
+export
+
+class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;
   notes = "";
   type = TodoListItemType.Todo;
@@ -23,4 +25,4 @@ export const todoListItemSchema = aTableEditorItemEntitySchema
       dueAt: z.date().nullable(),
       notes: z.string().max(NOTES_MAX_LENGTH),
     }),
-  ) satisfies z.ZodType<Except<TodoListItem, "toJSON">>;
+  ) satisfies z.ZodType<ToData<TodoListItem>>;

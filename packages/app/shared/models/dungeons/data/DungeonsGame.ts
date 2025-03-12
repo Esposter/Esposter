@@ -1,5 +1,5 @@
 import type { Save } from "#shared/models/dungeons/data/Save";
-import type { Except } from "type-fest";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { saveSchema } from "#shared/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "#shared/models/dungeons/data/settings/Settings";
@@ -7,7 +7,6 @@ import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entit
 import { Serializable } from "#shared/models/entity/Serializable";
 import { z } from "zod";
 
-export type DungeonsGame = typeof DungeonsGame.prototype;
 
 class BaseDungeonsGame extends Serializable {
   id: string = crypto.randomUUID();
@@ -15,6 +14,7 @@ class BaseDungeonsGame extends Serializable {
   settings = getInitialSettings();
 }
 export const DungeonsGame = applyItemMetadataMixin(BaseDungeonsGame);
+export type DungeonsGame = typeof DungeonsGame.prototype;
 
 export const dungeonsGameSchema = z
   .object({
@@ -22,4 +22,4 @@ export const dungeonsGameSchema = z
     saves: z.array(saveSchema),
     settings: settingsSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Except<DungeonsGame, "toJSON">>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<DungeonsGame>>;

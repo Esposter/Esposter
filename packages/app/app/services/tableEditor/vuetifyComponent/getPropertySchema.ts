@@ -1,7 +1,7 @@
 import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
-import type { Constructor } from "type-fest";
+import type { Class } from "type-fest";
 
-export const getPropertySchema = (type: Constructor<unknown>): JSONSchema<object> | undefined => {
+export const getPropertySchema = (type: Class<unknown>): JSONSchema<object> | undefined => {
   switch (type) {
     case Boolean:
       return {

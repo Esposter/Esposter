@@ -1,5 +1,5 @@
 import type { Serializable } from "#shared/models/entity/Serializable";
-import type { Constructor } from "type-fest";
+import type { Class } from "type-fest";
 
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -23,4 +23,4 @@ export const JSONClasses = [
   { cls: TodoListItem, name: "TodoListItem" },
   { cls: VuetifyComponentItem, name: "VuetifyComponentItem" },
   { cls: WebpageEditor, name: "WebpageEditor" },
-] satisfies { cls: Constructor<Serializable>; name: string }[];
+] satisfies { cls: Class<Serializable>; name: string }[];

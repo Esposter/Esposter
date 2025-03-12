@@ -1,6 +1,6 @@
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { Except } from "type-fest";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/BuildingWithStats";
 import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";
@@ -29,4 +29,4 @@ export const clickerGameSchema = z
     noPoints: z.number(),
     type: clickerTypeSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<Except<ClickerGame, "toJSON">>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<ClickerGame>>;
