@@ -695,7 +695,7 @@ importers:
         version: 13.0.0(vue@3.5.13(typescript@5.8.2))
       '@vueuse/integrations':
         specifier: 'catalog:'
-        version: 13.0.0(axios@1.8.2(debug@4.4.0))(change-case@5.4.4)(fuse.js@7.1.0)(vue@3.5.13(typescript@5.8.2))
+        version: 13.0.0(axios@1.8.3(debug@4.4.0))(change-case@5.4.4)(fuse.js@7.1.0)(vue@3.5.13(typescript@5.8.2))
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
@@ -4846,8 +4846,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.8.2:
-    resolution: {integrity: sha512-ls4GYBm5aig9vWx8AWDSGLpnpDQRtWAfrjU+EuytuODrFBkqesN2RkOQCBzrA1RQNHw1SmRMSDDDSwzNAYQ6Rg==}
+  axios@1.8.3:
+    resolution: {integrity: sha512-iP4DebzoNlP/YN2dpwCgb8zoCmhtkajzS48JvwmkSkXvPI3DHc7m+XYL5tGnSlJtR6nImXZmdCuN5aP8dh1d8A==}
 
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
@@ -15038,13 +15038,13 @@ snapshots:
       '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.8.2))
       vue: 3.5.13(typescript@5.8.2)
 
-  '@vueuse/integrations@13.0.0(axios@1.8.2(debug@4.4.0))(change-case@5.4.4)(fuse.js@7.1.0)(vue@3.5.13(typescript@5.8.2))':
+  '@vueuse/integrations@13.0.0(axios@1.8.3(debug@4.4.0))(change-case@5.4.4)(fuse.js@7.1.0)(vue@3.5.13(typescript@5.8.2))':
     dependencies:
       '@vueuse/core': 13.0.0(vue@3.5.13(typescript@5.8.2))
       '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.8.2))
       vue: 3.5.13(typescript@5.8.2)
     optionalDependencies:
-      axios: 1.8.2(debug@4.4.0)
+      axios: 1.8.3(debug@4.4.0)
       change-case: 5.4.4
       fuse.js: 7.1.0
 
@@ -15402,7 +15402,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.8.2(debug@4.4.0):
+  axios@1.8.3(debug@4.4.0):
     dependencies:
       follow-redirects: 1.15.9(debug@4.4.0)
       form-data: 4.0.2
@@ -21508,7 +21508,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.7(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)):
     dependencies:
-      axios: 1.8.2(debug@4.4.0)
+      axios: 1.8.3(debug@4.4.0)
       debug: 4.4.0(supports-color@9.4.0)
       picocolors: 1.1.1
       vite: 6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)

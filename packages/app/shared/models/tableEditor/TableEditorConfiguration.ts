@@ -15,7 +15,6 @@ type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
-
 class BaseTableEditorConfiguration extends Serializable implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();

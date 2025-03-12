@@ -10,9 +10,7 @@ import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEd
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
 import { z } from "zod";
 
-export
-
-class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
+export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;
   notes = "";
   type = TodoListItemType.Todo;

@@ -32,8 +32,9 @@
   },
   "cross-os": {
     "refresh:lockfile": {
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1",
-      "linux": "./scripts/refreshLockfile.sh"
+      "darwin": "sh ./scripts/refreshLockfile.sh",
+      "linux": "./scripts/refreshLockfile.sh",
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
     }
   },
   "dependencies": {

@@ -7,7 +7,6 @@ import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entit
 import { Serializable } from "#shared/models/entity/Serializable";
 import { z } from "zod";
 
-
 class BaseDungeonsGame extends Serializable {
   id: string = crypto.randomUUID();
   saves: Save[] = [];

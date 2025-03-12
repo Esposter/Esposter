@@ -5,9 +5,7 @@ import { Serializable } from "#shared/models/entity/Serializable";
 import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "#shared/services/tableEditor/constants";
 import { z } from "zod";
 
-export
-
-class TableEditor<T extends ToData<Item>> extends Serializable {
+export class TableEditor<T extends ToData<Item>> extends Serializable {
   items: T[] = [];
 }
 

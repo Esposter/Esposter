@@ -7,7 +7,6 @@ import { edgeSchema } from "#shared/models/flowchartEditor/data/Edge";
 import { nodeSchema } from "#shared/models/flowchartEditor/data/Node";
 import { z } from "zod";
 
-
 class BaseFlowchartEditor extends Serializable {
   edges: Edge[] = [];
   nodes: Node[] = [];
