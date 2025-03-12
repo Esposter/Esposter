@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "1.38.0",
+  "version": "1.38.1",
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
