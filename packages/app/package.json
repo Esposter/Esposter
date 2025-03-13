@@ -178,7 +178,6 @@
     "@types/pluralize": "catalog:",
     "@types/three": "catalog:",
     "@types/ws": "catalog:",
-    "@unhead/schema": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
     "@vitest/coverage-v8": "catalog:",

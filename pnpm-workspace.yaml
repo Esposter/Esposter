@@ -21,9 +21,9 @@ catalog:
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.2.0
   "@nuxt/fonts": ^0.11.0
-  "@nuxt/scripts": ^0.11.1
+  "@nuxt/scripts": ^0.11.2
   "@nuxt/test-utils": ^3.17.2
-  "@nuxtjs/seo": ^3.0.0-beta.3
+  "@nuxtjs/seo": ^3.0.1
   "@pinia/nuxt": ^0.10.1
   "@rollup/plugin-commonjs": ^28.0.3
   "@rollup/plugin-json": ^6.1.0
@@ -52,8 +52,6 @@ catalog:
   "@types/three": ^0.174.0
   "@types/ws": ^8.18.0
   "@types/xml2js": ^0.4.14
-  # @TODO: https://github.com/nuxt/scripts/issues/412
-  "@unhead/schema": ^1.11.20
   "@unocss/eslint-config": ^66.0.0
   "@unocss/nuxt": ^66.0.0
   "@vite-pwa/nuxt": ^0.10.6
@@ -144,7 +142,7 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
-  rate-limiter-flexible: ^6.0.0
+  rate-limiter-flexible: ^6.1.0
   rollup: ^4.35.0
   rollup-plugin-dts: ^6.1.1
   rxjs: ^7.8.2
