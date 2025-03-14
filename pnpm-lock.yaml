@@ -517,8 +517,8 @@ catalogs:
       specifier: ^0.18.3
       version: 0.18.3
     vuetify-sonner:
-      specifier: ^0.3.20
-      version: 0.3.20
+      specifier: ^0.3.21
+      version: 0.3.21
     worker-timers:
       specifier: ^8.0.19
       version: 8.0.19
@@ -905,7 +905,7 @@ importers:
         version: 3.7.16(typescript@5.8.2)(vite-plugin-vuetify@2.1.0)(vue@3.5.13(typescript@5.8.2))
       vuetify-sonner:
         specifier: 'catalog:'
-        version: 0.3.20(vue@3.5.13(typescript@5.8.2))(vuetify@3.7.16)
+        version: 0.3.21(vue@3.5.13(typescript@5.8.2))(vuetify@3.7.16)
       worker-timers:
         specifier: 'catalog:'
         version: 8.0.19
@@ -10388,8 +10388,8 @@ packages:
   vuetify-nuxt-module@0.18.3:
     resolution: {integrity: sha512-Mv5mcqfqk5dR9oVJiITXn5p4NmDzp57AR2Txf/0iIoAjFlMsDWzTpUvn9ELTzDI3Z0LjiYVqptwxrOlMcju2Wg==}
 
-  vuetify-sonner@0.3.20:
-    resolution: {integrity: sha512-ym1Wng0PCPaABYTmlnn7ibvhmQJIGyXnJVaW/OfG+cH9MGF9FiSDxO2jTr4M/Y823GZVIEQDLGirSm0Xo2SKjA==}
+  vuetify-sonner@0.3.21:
+    resolution: {integrity: sha512-sAAPReHNqZf9ish2JmFYDbp0E8UQLLqcTJ1Cvm6u75Lom0/Yg9NQf8CU32yYlnQq6pYpk0rGJNZADPYmyT3/vg==}
     peerDependencies:
       vue: ^3.3.0
       vuetify: ^3.3.0
@@ -21779,9 +21779,10 @@ snapshots:
       - vue
       - webpack-plugin-vuetify
 
-  vuetify-sonner@0.3.20(vue@3.5.13(typescript@5.8.2))(vuetify@3.7.16):
+  vuetify-sonner@0.3.21(vue@3.5.13(typescript@5.8.2))(vuetify@3.7.16):
     dependencies:
       vue: 3.5.13(typescript@5.8.2)
+      vue-component-type-helpers: 2.2.8
       vue-sonner: 1.3.0
       vuetify: 3.7.16(typescript@5.8.2)(vite-plugin-vuetify@2.1.0)(vue@3.5.13(typescript@5.8.2))
 
