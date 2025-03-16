@@ -514,8 +514,8 @@ catalogs:
       specifier: ^3.7.16
       version: 3.7.16
     vuetify-nuxt-module:
-      specifier: ^0.18.3
-      version: 0.18.3
+      specifier: ^0.18.4
+      version: 0.18.4
     vuetify-sonner:
       specifier: ^0.3.21
       version: 0.3.21
@@ -1029,7 +1029,7 @@ importers:
         version: 3.0.8(@types/node@22.13.10)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
       vuetify-nuxt-module:
         specifier: 'catalog:'
-        version: 0.18.3(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))
+        version: 0.18.4(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))
 
   packages/configuration:
     devDependencies:
@@ -10385,8 +10385,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.18.3:
-    resolution: {integrity: sha512-Mv5mcqfqk5dR9oVJiITXn5p4NmDzp57AR2Txf/0iIoAjFlMsDWzTpUvn9ELTzDI3Z0LjiYVqptwxrOlMcju2Wg==}
+  vuetify-nuxt-module@0.18.4:
+    resolution: {integrity: sha512-UzpwKY5Db0sdh+J0o0uGkmVHT1MAcef7urkWsOTSzz8Z6m0iKH5JONn/yX8mUQQyquPwNMxZr/8H1DNLsVqLvQ==}
 
   vuetify-sonner@0.3.21:
     resolution: {integrity: sha512-sAAPReHNqZf9ish2JmFYDbp0E8UQLLqcTJ1Cvm6u75Lom0/Yg9NQf8CU32yYlnQq6pYpk0rGJNZADPYmyT3/vg==}
@@ -21758,7 +21758,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.2
 
-  vuetify-nuxt-module@0.18.3(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2)):
+  vuetify-nuxt-module@0.18.4(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@nuxt/kit': 3.16.0(magicast@0.3.5)
       defu: 6.1.4
