@@ -151,7 +151,7 @@ catalog:
   superjson: ^2.2.2
   survey-core: ^2.0.0
   survey-creator-core: ^2.0.1
-  survey-creator-vue: ^2.0.0
+  survey-creator-vue: ^2.0.1
   survey-vue3-ui: ^2.0.0
   three: ^0.174.0
   three-globe: ^2.42.2

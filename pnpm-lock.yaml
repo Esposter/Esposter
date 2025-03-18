@@ -436,8 +436,8 @@ catalogs:
       specifier: ^2.0.1
       version: 2.0.1
     survey-creator-vue:
-      specifier: ^2.0.0
-      version: 2.0.0
+      specifier: ^2.0.1
+      version: 2.0.1
     survey-vue3-ui:
       specifier: ^2.0.0
       version: 2.0.0
@@ -869,7 +869,7 @@ importers:
         version: 2.0.1(survey-core@2.0.0)
       survey-creator-vue:
         specifier: 'catalog:'
-        version: 2.0.0(survey-core@2.0.0)(survey-creator-core@2.0.1(survey-core@2.0.0))(survey-vue3-ui@2.0.0(survey-core@2.0.0)(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))
+        version: 2.0.1(survey-core@2.0.0)(survey-creator-core@2.0.1(survey-core@2.0.0))(survey-vue3-ui@2.0.0(survey-core@2.0.0)(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))
       survey-vue3-ui:
         specifier: 'catalog:'
         version: 2.0.0(survey-core@2.0.0)(vue@3.5.13(typescript@5.8.2))
@@ -9501,12 +9501,12 @@ packages:
       ace-builds:
         optional: true
 
-  survey-creator-vue@2.0.0:
-    resolution: {integrity: sha512-OMGwKYM64l4+vCn/wJhoP6A/cXrCI5KKHr5AJToEToCieOs4MAoRaqgqSJO/gvsNqbbHY0mBpVFapj/SsAlxUg==}
+  survey-creator-vue@2.0.1:
+    resolution: {integrity: sha512-26dmpFN7FdCAoBXLIgil/LPnnWKRJic54jOVNWLEUYVO7SFDAUJB5JDI8/rSwsMEfhOPPHCI7ndkALskuHwoiA==}
     peerDependencies:
-      survey-core: 2.0.0
-      survey-creator-core: 2.0.0
-      survey-vue3-ui: 2.0.0
+      survey-core: 2.0.1
+      survey-creator-core: 2.0.1
+      survey-vue3-ui: 2.0.1
       vue: ^3.2.41
 
   survey-vue3-ui@2.0.0:
@@ -20747,7 +20747,7 @@ snapshots:
     dependencies:
       survey-core: 2.0.0
 
-  survey-creator-vue@2.0.0(survey-core@2.0.0)(survey-creator-core@2.0.1(survey-core@2.0.0))(survey-vue3-ui@2.0.0(survey-core@2.0.0)(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2)):
+  survey-creator-vue@2.0.1(survey-core@2.0.0)(survey-creator-core@2.0.1(survey-core@2.0.0))(survey-vue3-ui@2.0.0(survey-core@2.0.0)(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       survey-core: 2.0.0
       survey-creator-core: 2.0.1(survey-core@2.0.0)
