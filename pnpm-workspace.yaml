@@ -161,7 +161,7 @@ catalog:
   type-fest: ^4.37.0
   typedoc: ^0.28.0
   typescript: ^5.8.2
-  typescript-eslint: ^8.26.1
+  typescript-eslint: ^8.27.0
   unocss: ^66.0.0
   unplugin-auto-import: ^19.1.1
   vite: ^6.2.2
