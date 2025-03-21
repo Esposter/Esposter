@@ -14,7 +14,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.15
   "@fullcalendar/timegrid": ^6.1.15
   "@fullcalendar/vue3": ^6.1.15
-  "@koumoul/vjsf": ^3.12.2
+  "@koumoul/vjsf": ^3.13.1
   "@lerna-lite/cli": ^3.12.3
   "@lerna-lite/publish": ^3.12.3
   "@lerna-lite/run": ^3.12.3
@@ -92,10 +92,10 @@ catalog:
   defu: ^6.1.4
   dotenv: ^16.4.7
   drizzle-kit: ^0.30.5
-  drizzle-orm: ^0.40.1
+  drizzle-orm: ^0.41.0
   drizzle-zod: ^0.7.0
   emoji-mart-vue-fast: ^15.0.4
-  eslint: ^9.22.0
+  eslint: ^9.23.0
   eslint-config-prettier: ^10.1.1
   eslint-plugin-perfectionist: ^4.10.1
   eslint-plugin-pinia: ^0.4.1
