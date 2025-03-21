@@ -142,7 +142,7 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
-  rate-limiter-flexible: ^6.1.0
+  rate-limiter-flexible: ^6.2.0
   rollup: ^4.36.0
   rollup-plugin-dts: ^6.1.1
   rxjs: ^7.8.2
@@ -185,3 +185,8 @@ catalog:
   zod: ^3.24.2
   zod-form-data: ^2.0.7
   zod-to-json-schema: ^3.24.4
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - core-js
+  - esbuild
+  - vue-demi
