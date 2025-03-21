@@ -184,7 +184,7 @@ catalog:
   xml2js: ^0.6.2
   zod: ^3.24.2
   zod-form-data: ^2.0.7
-  zod-to-json-schema: ^3.24.4
+  zod-to-json-schema: ^3.24.5
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
