@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import type { Constructor } from "type-fest";
+import type { Class } from "type-fest";
 
 import { VuetifyComponentMap } from "#shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
 import { getPropertySchema } from "@/services/tableEditor/vuetifyComponent/getPropertySchema";
@@ -14,17 +14,14 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
   if (!component) return {};
 
   const result: Record<string, Component> = {};
-  const props = VuetifyComponentMap[component].props as Record<
-    string,
-    { type?: Constructor<unknown> | Constructor<unknown>[] }
-  >;
+  const props = VuetifyComponentMap[component].props as Record<string, { type?: Class<unknown> | Class<unknown>[] }>;
 
   for (const [name, prop] of Object.entries(props).filter((propEntry) => propEntry[1].type))
     if (Array.isArray(prop.type) && prop.type.length > 0) {
       const componentSchema = getPropertySchema(prop.type[0]);
       if (componentSchema) result[name] = markRaw(componentSchema);
     } else {
-      const componentSchema = getPropertySchema(prop.type as Constructor<unknown>);
+      const componentSchema = getPropertySchema(prop.type as Class<unknown>);
       if (componentSchema) result[name] = markRaw(componentSchema);
     }
 

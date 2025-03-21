@@ -14,7 +14,7 @@ interface VisualDesmosDisplayGraphProps {
 
 const { expressions, id } = defineProps<VisualDesmosDisplayGraphProps>();
 const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: MouseEvent] }>();
-const { GraphingCalculator } = useDesmos();
+const { onLoaded } = useDesmos();
 const isDark = useIsDark();
 const isAnimating = ref(false);
 let calculator: Desmos.Calculator | undefined;
@@ -69,7 +69,7 @@ watch(componentsToRender, (newComponentsToRender) => {
   render(newComponentsToRender);
 });
 
-onMounted(async () => {
+onLoaded(async ({ GraphingCalculator }) => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
 

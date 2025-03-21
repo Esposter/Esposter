@@ -1,14 +1,14 @@
 import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 import type { TableEntityQueryOptions } from "@azure/data-tables";
-import type { Constructor } from "type-fest";
+import type { Class } from "type-fest";
 
 import { plainToInstance } from "class-transformer";
 
 export const getTopNEntities = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
   topN: number,
-  cls: Constructor<TEntity>,
+  cls: Class<TEntity>,
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
   const listResults = tableClient.listEntities<TEntity>({ queryOptions });

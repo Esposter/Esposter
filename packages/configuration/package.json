@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "1.35.0",
+  "version": "1.38.1",
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
@@ -22,19 +22,22 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@unocss/eslint-config": "^65.4.3",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "@vitest/eslint-plugin": "^1.1.28",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-perfectionist": "^4.8.0",
-    "eslint-plugin-pinia": "^0.4.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "rollup-plugin-dts": "^6.1.1",
-    "typescript-eslint": "^8.24.0",
-    "unplugin-auto-import": "^19.0.0",
-    "vite-plugin-dts": "^4.5.0",
-    "vite-plugin-mkcert": "^1.17.6",
-    "vite-tsconfig-paths": "^5.1.4"
+    "@rollup/plugin-commonjs": "catalog:",
+    "@rollup/plugin-json": "catalog:",
+    "@rollup/plugin-node-resolve": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "@unocss/eslint-config": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vitest/eslint-plugin": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-perfectionist": "catalog:",
+    "eslint-plugin-pinia": "catalog:",
+    "eslint-plugin-prettier": "catalog:",
+    "rollup-plugin-dts": "catalog:",
+    "typescript-eslint": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vite-plugin-mkcert": "catalog:",
+    "vite-tsconfig-paths": "catalog:"
   }
 }

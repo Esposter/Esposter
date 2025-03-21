@@ -1,5 +1,5 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { Except } from "type-fest";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
@@ -26,4 +26,4 @@ export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
   .merge(
     z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.string().min(1), z.unknown()) }),
-  ) satisfies z.ZodType<Except<VuetifyComponentItem, "toJSON">>;
+  ) satisfies z.ZodType<ToData<VuetifyComponentItem>>;

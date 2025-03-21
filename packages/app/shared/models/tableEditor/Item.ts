@@ -1,6 +1,6 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { ATableEditorItemEntity } from "#shared/models/tableEditor/ATableEditorItemEntity";
-import type { Except } from "type-fest";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import { aTableEditorItemEntitySchema } from "#shared/models/tableEditor/ATableEditorItemEntity";
@@ -13,4 +13,4 @@ export type Item = ATableEditorItemEntity & ItemEntityType<string>;
 
 export const itemSchema = aTableEditorItemEntitySchema.merge(
   createItemEntityTypeSchema(z.string()),
-) satisfies z.ZodType<Except<Item, "toJSON">>;
+) satisfies z.ZodType<ToData<Item>>;

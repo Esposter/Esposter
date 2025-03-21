@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "1.35.0",
+  "version": "1.38.1",
   "description": "A library that contains shared typescript code.",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -25,7 +25,13 @@
     "typecheck": "tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
+  "dependencies": {
+    "data-urls": "catalog:",
+    "xml2js": "catalog:"
+  },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "@types/data-urls": "catalog:",
+    "@types/xml2js": "catalog:"
   }
 }

@@ -1,6 +1,6 @@
 import type { LayoutItem } from "#shared/models/dashboard/data/LayoutItem";
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { Except } from "type-fest";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { Chart, chartSchema } from "#shared/models/dashboard/data/chart/Chart";
 import { layoutItemSchema } from "#shared/models/dashboard/data/LayoutItem";
@@ -28,4 +28,4 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
 export const visualSchema = aItemEntitySchema
   .merge(createItemEntityTypeSchema(visualTypeSchema))
   .merge(layoutItemSchema)
-  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<Except<Visual, "toJSON">>;
+  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<ToData<Visual>>;

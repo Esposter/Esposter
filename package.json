@@ -32,45 +32,31 @@
   },
   "cross-os": {
     "refresh:lockfile": {
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1",
-      "linux": "./scripts/refreshLockfile.sh"
+      "darwin": "sh ./scripts/refreshLockfile.sh",
+      "linux": "./scripts/refreshLockfile.sh",
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
     }
   },
   "dependencies": {
-    "data-urls": "^5.0.0",
-    "is-mobile": "^5.0.0",
-    "vue": "^3.5.13",
-    "xml2js": "^0.6.2"
+    "vue": "catalog:"
   },
   "devDependencies": {
-    "@types/data-urls": "^3.0.4",
-    "@types/xml2js": "^0.4.14",
-    "ctix": "^2.7.0",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.20.1",
-    "lerna": "^8.1.9",
-    "rollup": "^4.34.6",
-    "type-fest": "^4.34.1",
-    "typedoc": "^0.27.7",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.0",
-    "vite-plugin-node-polyfills": "^0.23.0",
-    "vue-tsc": "2.1.6"
-  },
-  "devDependenciesComments": {
-    "vue-tsc": "@TODO: https://github.com/vuejs/language-tools/issues/4973"
+    "@lerna-lite/cli": "catalog:",
+    "@lerna-lite/publish": "catalog:",
+    "@lerna-lite/run": "catalog:",
+    "ctix": "catalog:",
+    "dotenv": "catalog:",
+    "eslint": "catalog:",
+    "rollup": "catalog:",
+    "type-fest": "catalog:",
+    "typedoc": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-node-polyfills": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "engines": {
-    "node": "^22.13.1"
+    "node": "^22.14.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "core-js",
-      "esbuild",
-      "nx",
-      "vue-demi"
-    ]
-  },
-  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d"
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }

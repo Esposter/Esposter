@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { SITE_DESCRIPTION, SITE_NAME } from "../shared/services/esposter/constants";
+import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/esposter/constants";
 
 export const pwa: NuxtConfig["pwa"] = {
   manifest: {
@@ -11,25 +11,25 @@ export const pwa: NuxtConfig["pwa"] = {
       {
         purpose: "any",
         sizes: "192x192",
-        src: "manifest-icon-192.maskable.png",
+        src: `${PWA_PUBLIC_FOLDER_PATH}/manifest-icon-192.maskable.png`,
         type: "image/png",
       },
       {
         purpose: "maskable",
         sizes: "192x192",
-        src: "manifest-icon-192.maskable.png",
+        src: `${PWA_PUBLIC_FOLDER_PATH}/manifest-icon-192.maskable.png`,
         type: "image/png",
       },
       {
         purpose: "any",
         sizes: "512x512",
-        src: "manifest-icon-512.maskable.png",
+        src: `${PWA_PUBLIC_FOLDER_PATH}/manifest-icon-512.maskable.png`,
         type: "image/png",
       },
       {
         purpose: "maskable",
         sizes: "512x512",
-        src: "manifest-icon-512.maskable.png",
+        src: `${PWA_PUBLIC_FOLDER_PATH}/manifest-icon-512.maskable.png`,
         type: "image/png",
       },
     ],

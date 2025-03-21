@@ -2,8 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)"],
   "ignorePresets": [":prHourlyLimit2"],
-  "rangeStrategy": "bump",
-  "updatePinnedDependencies": false,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
@@ -11,8 +13,6 @@
       "automergeType": "branch"
     }
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  }
+  "rangeStrategy": "bump",
+  "updatePinnedDependencies": false
 }

@@ -3,8 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.35.0](https://github.com/Esposter/Esposter/compare/v1.34.0...v1.35.0) (2025-02-08)
+## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
+**Note:** Version bump only for package @esposter/app
+
+# [1.38.0](https://github.com/Esposter/Esposter/compare/v1.37.1...v1.38.0) (2025-03-12)
+
+### Bug Fixes
+
+* pin better-auth ver ([0bbe946](https://github.com/Esposter/Esposter/commit/0bbe946d089541786d3d654da5ea47661bf7e2da))
+* src ([0d249c2](https://github.com/Esposter/Esposter/commit/0d249c20790b957850f3b6b7c6093318271e5ada))
+* update apply surveyjs v2 migrations ([09ae32b](https://github.com/Esposter/Esposter/commit/09ae32bfeeb28a1d7763a06729e00f6dd63673a2))
+* update apply surveyjs v2 migrations ([e99ac81](https://github.com/Esposter/Esposter/commit/e99ac819a29b63e9d5852834d4d99b7a53071650))
+* update dependencies + fix types ([d7c1817](https://github.com/Esposter/Esposter/commit/d7c18178f7dc691002fae384dace58b77808605c))
+* update vue-tsc finally ([0d24bae](https://github.com/Esposter/Esposter/commit/0d24baeb4005459511e0a0fea883355f88adf6d0))
+
+### Features
+
+* Upgrade to nuxt 3.16 ([e77f6a3](https://github.com/Esposter/Esposter/commit/e77f6a31f153c5dc7e549bca1bba356546279d27))
+
+## [1.37.1](https://github.com/Esposter/Esposter/compare/v1.37.0...v1.37.1) (2025-02-15)
+
+**Note:** Version bump only for package @esposter/app
+
+# [1.37.0](https://github.com/Esposter/Esposter/compare/v1.35.0...v1.37.0) (2025-02-15)
+
+### Bug Fixes
+
+* build command ([6aa3f3a](https://github.com/Esposter/Esposter/commit/6aa3f3a5227dd20e36f7ccebc11fac798037f977))
+* format file automatically ([707debf](https://github.com/Esposter/Esposter/commit/707debfc0d8dad040f3c581d5f280e2dd4bafe23))
+* linting rules ([41249de](https://github.com/Esposter/Esposter/commit/41249de7e766fc9cf334ba69b7bc9ce07497bd17))
+* move single-use packages to their own package folder and build with rollup ([b8970e4](https://github.com/Esposter/Esposter/commit/b8970e4f4eb5872944693ebd73a75cd28ca4b94e))
+* pwa manifest ([f85b4de](https://github.com/Esposter/Esposter/commit/f85b4de8b7a086abd9c079fcdfa888cb0d31c133))
+
+### Features
+
+* Add generating filepack ([d180318](https://github.com/Esposter/Esposter/commit/d1803183dba7af41a3fce09e1c98501ae3b644aa))
+* Add unique FileKey + support font ([ccb1d13](https://github.com/Esposter/Esposter/commit/ccb1d13802031f6b40a18e61f459224b5b0e6bec))
+* Simplify cross-os to ts and change all scripts to single command ([f44bc56](https://github.com/Esposter/Esposter/commit/f44bc565987b380e1a534adfa63b773afb0fe77a))
+* Support audio as well ([1ba645a](https://github.com/Esposter/Esposter/commit/1ba645a7047b479652080bbb6ddbb3efbba821b4))
+
+# [1.35.0](https://github.com/Esposter/Esposter/compare/v1.34.0...v1.35.0) (2025-02-08)
 
 ### Bug Fixes
 
@@ -19,18 +58,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * remove unnecessary one off execution packages from being installed ([4f2a854](https://github.com/Esposter/Esposter/commit/4f2a854908619a21d8ccf0eb3c4f0815136714b7))
 * update snapshot ([7e0e90c](https://github.com/Esposter/Esposter/commit/7e0e90c3205f313f72902edf3ead615892caa91a))
 
-
 ### Features
 
 * Add countries ([594c651](https://github.com/Esposter/Esposter/commit/594c651536c0396f764f6e9b6f9e477629aabc2a))
 * Upgrade to pnpm 10 + refactor property names ([ef364d2](https://github.com/Esposter/Esposter/commit/ef364d29be7e82b6ffdc1e0233854c50a231e83c))
 
-
-
-
-
 # [1.34.0](https://github.com/Esposter/Esposter/compare/v1.33.0...v1.34.0) (2025-01-23)
-
 
 ### Bug Fixes
 
@@ -43,7 +76,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * typescript eslint ([141b4e2](https://github.com/Esposter/Esposter/commit/141b4e217984fb3ebcb9a9b1cbce770e92100f50))
 * update PWA ([f5dffd1](https://github.com/Esposter/Esposter/commit/f5dffd11dceb4a9385b5e186a625bdbcba943d77))
 
-
 ### Features
 
 * Add more snapshots ([a1421f6](https://github.com/Esposter/Esposter/commit/a1421f69f7430d5c1f6e6bbd9c437b9339e780d6))
@@ -53,13 +85,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * update app links ([b9303d1](https://github.com/Esposter/Esposter/commit/b9303d1f1fbd74bcd2da1b56b16af098b6e44d3d))
 * update PWA ([8fa31d0](https://github.com/Esposter/Esposter/commit/8fa31d0e380f20d83ab3c76498cff96c9aeb0af8))
 
-
-
-
-
-
 # [1.33.0](https://github.com/Esposter/Esposter/compare/v1.32.0...v1.33.0) (2025-01-14)
-
 
 ### Bug Fixes
 
@@ -72,17 +98,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * remove devalue ([84aa708](https://github.com/Esposter/Esposter/commit/84aa70845af402d6702da7bcba2273c594bbf334))
 * watch for new session data instead ([bd31d33](https://github.com/Esposter/Esposter/commit/bd31d3360098cfdde298182090dd040a633643c6))
 
-
 ### Features
 
 * Add image ([b6d59ef](https://github.com/Esposter/Esposter/commit/b6d59ef582360ec7f53527d1afc8e212e2d482c8))
 
-
-
-
-
 # [1.32.0](https://github.com/Esposter/Esposter/compare/v1.31.0...v1.32.0) (2025-01-03)
-
 
 ### Bug Fixes
 
@@ -94,18 +114,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * migrations ([cf5395a](https://github.com/Esposter/Esposter/commit/cf5395a506697238f40ffae1b6be27d055b4666a))
 * Update drizzle-zod ([9e324cb](https://github.com/Esposter/Esposter/commit/9e324cb6db876c7e663849c1865d52bf253275cd))
 
-
 ### Features
 
 * Add auth ([84355f8](https://github.com/Esposter/Esposter/commit/84355f8c2367dc60b46e7dafa319b84b0ad93a9b))
 * Add check constraints ([7ab0fa6](https://github.com/Esposter/Esposter/commit/7ab0fa6579b95973f6d05bd325faac97de682962))
 
-
-
-
-
 # [1.31.0](https://github.com/Esposter/Esposter/compare/v1.30.0...v1.31.0) (2024-12-06)
-
 
 ### Bug Fixes
 
@@ -119,18 +133,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * types ([82673bc](https://github.com/Esposter/Esposter/commit/82673bc1edeb0a80c049f76814bb63a6bebf1b33))
 * types ([dc0413c](https://github.com/Esposter/Esposter/commit/dc0413c5dba98cbc4e9b72112ef8eb5ea1e5c988))
 
-
 ### Features
 
 * Upgrade trpc to v11 ([1c2fc2b](https://github.com/Esposter/Esposter/commit/1c2fc2b33d151d1378d0e31d407faf812599fb9a))
 
-
-
-
-
-
 # [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
-
 
 ### Bug Fixes
 
@@ -138,17 +145,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * move app component to app folder ([a3160ab](https://github.com/Esposter/Esposter/commit/a3160ab3b5111ce07d275f1fd0f4596f2fc38230))
 * scripts ([92a1396](https://github.com/Esposter/Esposter/commit/92a139613da3f7a5d6a17f43243ec33ac64942a5))
 
-
 ### Features
 
 * migrate to nuxt4 folder structure ([dea2097](https://github.com/Esposter/Esposter/commit/dea209757f99985672ddb4c1d425e00769a44b39))
 
-
-
-
-
 ## [1.29.2](https://github.com/Esposter/Esposter/compare/v1.29.1...v1.29.2) (2024-11-27)
-
 
 ### Bug Fixes
 
@@ -158,62 +159,36 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * lint ([f92d291](https://github.com/Esposter/Esposter/commit/f92d29162a07f3b278f889f814bd25fce03147c7))
 * lint + refactor sorting models ([5d04851](https://github.com/Esposter/Esposter/commit/5d048511901f5af13bc2d618e2c0681430979b1b))
 
-
-
-
-
 ## [1.29.1](https://github.com/Esposter/Esposter/compare/v1.29.0...v1.29.1) (2024-11-26)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 # [1.29.0](https://github.com/Esposter/Esposter/compare/v1.28.1...v1.29.0) (2024-11-26)
-
 
 ### Bug Fixes
 
 * make util folder consistent across the board ([19acc81](https://github.com/Esposter/Esposter/commit/19acc813362713828521a3acae5b8fe06793584a))
 * use nuxt 4 + fix up imports ([71f3728](https://github.com/Esposter/Esposter/commit/71f37281d32f958278f6f3a589f789fdd53f3de8))
 
-
 ### Features
 
 * Add nuxtjs seo module ([836ce14](https://github.com/Esposter/Esposter/commit/836ce1412021fabc04bbf6c02543c349d22fdf28))
-
-
-
-
 
 ## [1.28.1](https://github.com/Esposter/Esposter/compare/v1.28.0...v1.28.1) (2024-11-20)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
-
 # [1.28.0](https://github.com/Esposter/Esposter/compare/v1.27.0...v1.28.0) (2024-11-16)
-
 
 ### Bug Fixes
 
 * move cast to when we return ([2716dcd](https://github.com/Esposter/Esposter/commit/2716dcd43ca9b876073577a4df92d966ce1ffec4))
 
-
 ### Features
 
 * move fonts to load with native phaser ([fb91551](https://github.com/Esposter/Esposter/commit/fb91551e50abf370f5317278a5cfe3faab8433b1))
 
-
-
-
-
 # [1.27.0](https://github.com/Esposter/Esposter/compare/v1.26.0...v1.27.0) (2024-11-05)
-
 
 ### Bug Fixes
 
@@ -223,28 +198,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * pin nitro ([bee211a](https://github.com/Esposter/Esposter/commit/bee211ab9b7e35fdf359f49b5c3ed40db890617e))
 * Update dependencies + fix up drizzle orm + enable back auto update deps ([c266a5a](https://github.com/Esposter/Esposter/commit/c266a5a0713ec088145a685ac19cf1bcdacf2b30))
 
-
 ### Features
 
 * Add check constraint ([9e5efc8](https://github.com/Esposter/Esposter/commit/9e5efc84357e891153b7809273986f0cad12ca55))
 
-
-
-
-
 # [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
-
 
 ### Features
 
 * add getting random values cuz it's cool ([3d4968d](https://github.com/Esposter/Esposter/commit/3d4968d1597088897b97272d65d0d7dc04dbb2a3))
 
-
-
-
-
 # [1.25.0](https://github.com/Esposter/Esposter/compare/v1.24.2...v1.25.0) (2024-10-22)
-
 
 ### Bug Fixes
 
@@ -252,38 +216,22 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * lint for vue files and remaining packages ([11bb52f](https://github.com/Esposter/Esposter/commit/11bb52fbe53725a6fd1f835f9ce128a7a911b276))
 * remaining lint stuff ([d95927e](https://github.com/Esposter/Esposter/commit/d95927ec38e9b7a371af7ba801ed3b61c6f60d4e))
 
-
 ### Features
 
 * Add profanity filters to all inputs ([d83351d](https://github.com/Esposter/Esposter/commit/d83351d68237a16edb3ce99190bfcf3331f1e595))
-
-
-
-
 
 ## [1.24.2](https://github.com/Esposter/Esposter/compare/v1.24.1...v1.24.2) (2024-10-17)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 ## [1.24.1](https://github.com/Esposter/Esposter/compare/v1.24.0...v1.24.1) (2024-10-17)
-
 
 ### Bug Fixes
 
 * lint ([99efc7e](https://github.com/Esposter/Esposter/commit/99efc7e8c074e2a66916c58c0ecc0a5c332becee))
 * Update drizzle-orm + fix up base table func ([1feaf8e](https://github.com/Esposter/Esposter/commit/1feaf8e470a0bb78826de72b78d9960e922da80c))
 
-
-
-
-
-
 # [1.24.0](https://github.com/Esposter/Esposter/compare/v1.23.0...v1.24.0) (2024-10-14)
-
 
 ### Bug Fixes
 
@@ -292,18 +240,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * lint ([e66c1fa](https://github.com/Esposter/Esposter/commit/e66c1faebf90cada133bb9c7a93f627318554796))
 * tests ([401264f](https://github.com/Esposter/Esposter/commit/401264fab96952b2116cc1f7fb56961a57f6cc59))
 
-
 ### Features
 
 * Add prettify tests ([7d740fe](https://github.com/Esposter/Esposter/commit/7d740fe6b7f73447df0b8ead66a77abe1034b4ad))
 
-
-
-
-
-
 # [1.23.0](https://github.com/Esposter/Esposter/compare/v1.22.0...v1.23.0) (2024-10-08)
-
 
 ### Bug Fixes
 
@@ -325,7 +266,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use  and fix up some [@vue-ignores](https://github.com/vue-ignores) ([e3ec037](https://github.com/Esposter/Esposter/commit/e3ec037f13c829130d0e0f968f95cb362e80d8d5))
 * use custom node + add header ([4c0e0f0](https://github.com/Esposter/Esposter/commit/4c0e0f03102bc655bf7475eb59982c81f86f244b))
 
-
 ### Features
 
 * Add connect + colors ([94cb08e](https://github.com/Esposter/Esposter/commit/94cb08e4fffa2654f2dd0302dfc809286912aae3))
@@ -340,12 +280,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * finish converting remaining non-db related frontend stuff all from null to undefined ([fad154c](https://github.com/Esposter/Esposter/commit/fad154cda273182dc7972897cc42adda5ec6866a))
 * format html/css output ([c60ff96](https://github.com/Esposter/Esposter/commit/c60ff96c460ecc803b881aff48805d07f76cc5ad))
 
-
-
-
-
 # [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
-
 
 ### Bug Fixes
 
@@ -353,61 +288,35 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * remove wrong v-if ([428cd3b](https://github.com/Esposter/Esposter/commit/428cd3b839d616906d3407d6e28966edd78595a1))
 * vitest lint ([f25a701](https://github.com/Esposter/Esposter/commit/f25a701da896e7a84abf7dde5d7681a71b178347))
 
-
 ### Features
 
 * Add flowchart ([dd691a6](https://github.com/Esposter/Esposter/commit/dd691a614811bcbc8cbc4eed319923f474c3e759))
 * Add rich text to todolist + migrate v-for to use of ([4353429](https://github.com/Esposter/Esposter/commit/4353429857a6a852f9a0421da413b475543884d9))
 
-
-
-
-
 ## [1.21.5](https://github.com/Esposter/Esposter/compare/v1.21.4...v1.21.5) (2024-09-18)
-
 
 ### Bug Fixes
 
 * add sleep func as part of lib and use scene delayedcall ([0965cc3](https://github.com/Esposter/Esposter/commit/0965cc30ff94760ae390f30f2e5d3b3bed12c5e7))
 
-
-
-
-
 ## [1.21.4](https://github.com/Esposter/Esposter/compare/v1.21.3...v1.21.4) (2024-09-18)
-
 
 ### Bug Fixes
 
 * revert @nuxt/scripts ver ([9940713](https://github.com/Esposter/Esposter/commit/994071312ee14f0541e420c6c6eabc0d97656150))
 
-
-
-
-
 ## [1.21.3](https://github.com/Esposter/Esposter/compare/v1.21.2...v1.21.3) (2024-09-16)
-
 
 ### Bug Fixes
 
 * order + add tests ([720e668](https://github.com/Esposter/Esposter/commit/720e66852aa42267927430342fd490bf36bc3114))
 * Update dependencies + fix types ([e145bf8](https://github.com/Esposter/Esposter/commit/e145bf8c3b6b752df24c4d549017481206abecbf))
 
-
-
-
-
-
 ## [1.21.2](https://github.com/Esposter/Esposter/compare/v1.21.1...v1.21.2) (2024-09-14)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 ## [1.21.1](https://github.com/Esposter/Esposter/compare/v1.21.0...v1.21.1) (2024-09-14)
-
 
 ### Bug Fixes
 
@@ -417,12 +326,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * remove now unnecessary casts ([60564a0](https://github.com/Esposter/Esposter/commit/60564a0e83bed0985f74b810b6f9660db92a47f8))
 * use back original tsconfig ([0d01770](https://github.com/Esposter/Esposter/commit/0d0177054c770bdc59b7ac5d5f993dbc62793f87))
 
-
-
-
-
 # [1.21.0](https://github.com/Esposter/Esposter/compare/v1.20.2...v1.21.0) (2024-09-14)
-
 
 ### Bug Fixes
 
@@ -432,60 +336,35 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * lint + settings types ([332ce48](https://github.com/Esposter/Esposter/commit/332ce484b19b9859b5cb2760e6635b96e6c708ed))
 * move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
 
-
 ### Features
 
 * Add documentation btn ([c3eb7f3](https://github.com/Esposter/Esposter/commit/c3eb7f3b5fb5ae8fd098d206055b173b588caf76))
-
-
-
-
 
 ## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 ## [1.20.1](https://github.com/Esposter/Esposter/compare/v1.20.0...v1.20.1) (2024-09-13)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 # [1.20.0](https://github.com/Esposter/Esposter/compare/v1.19.0...v1.20.0) (2024-09-13)
-
 
 ### Bug Fixes
 
 * package imports ([4602c42](https://github.com/Esposter/Esposter/commit/4602c42e695aa12043b8694c25b8f20e667fec44))
 
-
 ### Features
 
 * Upgrade vue-tsc to v2 + enable same name shorthand + fix up workspace packages ([749c3c2](https://github.com/Esposter/Esposter/commit/749c3c2a8f99518460f624c80433fa7dae52326b))
 
-
-
-
-
 # [1.19.0](https://github.com/Esposter/Esposter/compare/v1.18.0...v1.19.0) (2024-09-13)
-
 
 ### Features
 
 * Add vue-phaserjs package ([5f158f5](https://github.com/Esposter/Esposter/commit/5f158f5e07da10dd0593257a7ba06d53a49323c9))
 
-
-
-
-
 # [1.18.0](https://github.com/Esposter/Esposter/compare/v1.17.0...v1.18.0) (2024-09-13)
-
 
 ### Bug Fixes
 
@@ -531,7 +410,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * woohoo! that's the last of em scenekey issues ([706a09e](https://github.com/Esposter/Esposter/commit/706a09e10149115f5ab58b15b8a5826d63403007))
 * worker ([4340631](https://github.com/Esposter/Esposter/commit/43406312083fde8a183e33de64b62779ffcf8827))
 
-
 ### Features
 
 * Add ball animations ([bc321d4](https://github.com/Esposter/Esposter/commit/bc321d479b69cfa10d8d0ab591aaccca63ed8543))
@@ -550,17 +428,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * successfully transform remaining on completes to async/await ([8fdcb2e](https://github.com/Esposter/Esposter/commit/8fdcb2ed38195358a1978cf53b4098d982594110))
 * upgrade nuxt-security and remove unnecessary rate limiting ([6b9b67a](https://github.com/Esposter/Esposter/commit/6b9b67a279bcaaf9f0b28b360159f835b9214972))
 
-
-
-
-
 # [1.17.0](https://github.com/Esposter/Esposter/compare/v1.16.0...v1.17.0) (2024-08-07)
-
 
 ### Bug Fixes
 
 * types ([1c1b0ad](https://github.com/Esposter/Esposter/commit/1c1b0ad8acace1b05cf0af45e1901911b85a7d46))
-
 
 ### Features
 
@@ -570,12 +442,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Add UI to show monsters ([ea8349e](https://github.com/Esposter/Esposter/commit/ea8349e34d75cb7d9c013e33cb2c0f5f434c16ce))
 * fix up and refactor out input resolvers for world + add input resolvers for monster party ([3622eea](https://github.com/Esposter/Esposter/commit/3622eeac9ff8ce2d662a1e2214a91cfd1deaca6d))
 
-
-
-
-
 # [1.16.0](https://github.com/Esposter/Esposter/compare/v1.15.0...v1.16.0) (2024-08-01)
-
 
 ### Bug Fixes
 
@@ -611,7 +478,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * vnode ([a1e20fa](https://github.com/Esposter/Esposter/commit/a1e20fa3cf7f0edf4672191f0553b70eb855f49a))
 * weird but seems like we don't need to disable here ([a98b051](https://github.com/Esposter/Esposter/commit/a98b05118ea816f8326c552019e216c3754099ae))
 
-
 ### Features
 
 * Add animate ([718a5dc](https://github.com/Esposter/Esposter/commit/718a5dcb878ebb29ecfa4bcfcd82b4f2f29f089c))
@@ -629,25 +495,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * move animate button behind expressions list menu ([e1b3495](https://github.com/Esposter/Esposter/commit/e1b349500a19155218b588659a8864243f6cf62b))
 * Optimise to use interval instead of timeout ([ce52c6d](https://github.com/Esposter/Esposter/commit/ce52c6de785a6544e1ddd23fe45dd67bb357b832))
 
-
-
-
-
-
 # [1.15.0](https://github.com/Esposter/Esposter/compare/v1.14.0...v1.15.0) (2024-07-01)
-
 
 ### Bug Fixes
 
 * just compare cloned ver of original item ([54acd28](https://github.com/Esposter/Esposter/commit/54acd28b5c8c51a0d44abfba934cb3da796c736f))
 
-
-
-
-
-
 # [1.14.0](https://github.com/Esposter/Esposter/compare/v1.13.0...v1.14.0) (2024-06-27)
-
 
 ### Bug Fixes
 
@@ -674,7 +528,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * uuuh actually level up monster thanks ([9dd59b5](https://github.com/Esposter/Esposter/commit/9dd59b56a6a8a2b48580a0dd2a0d4f98fb1c5ec9))
 * while loop again ([23562c2](https://github.com/Esposter/Esposter/commit/23562c293294bdf7119949b7dc357227aa9e37a1))
 
-
 ### Features
 
 * Add exp & refactor into status ([1b71855](https://github.com/Esposter/Esposter/commit/1b71855c3819efbd31948d9c1ce10a28604f2274))
@@ -687,18 +540,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Update bar to grab from monster exp ([0c03a38](https://github.com/Esposter/Esposter/commit/0c03a381d9c39079ff63a16ff0236e3a883172e0))
 * Update monster details bar to also grab from monster exp ([0c67c6b](https://github.com/Esposter/Esposter/commit/0c67c6bf85b83c7fa06d7e2b1029bafed9335422))
 
-
 ### Reverts
 
 * back to old tween setter map ([f4c109a](https://github.com/Esposter/Esposter/commit/f4c109a466045e1a73aff3750916fcbfa4511969))
 
-
-
-
-
-
 # [1.13.0](https://github.com/Esposter/Esposter/compare/v1.12.0...v1.13.0) (2024-06-18)
-
 
 ### Bug Fixes
 
@@ -713,7 +559,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * types ([06a1151](https://github.com/Esposter/Esposter/commit/06a1151a937176b3cfc9b1411fa6f7b9196be2f2))
 * use sleep anyways since it works + fix up types ([40fad06](https://github.com/Esposter/Esposter/commit/40fad0623149644a419bdcbd58c1cf5281d9bc1e))
 * worker src ([23b1623](https://github.com/Esposter/Esposter/commit/23b1623b93bf074bb2accbb65b5a1d7969664c23))
-
 
 ### Features
 
@@ -738,13 +583,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * move data labels to just a prop ([e44bb44](https://github.com/Esposter/Esposter/commit/e44bb44a2f6776e907ea4cdcc1c34d0bea9da330))
 * use defu to add defaults ([d2d9196](https://github.com/Esposter/Esposter/commit/d2d91963802fc8c996f0f6c547dace8ac5a5a991))
 
-
-
-
-
-
 # [1.12.0](https://github.com/Esposter/Esposter/compare/v1.11.2...v1.12.0) (2024-06-08)
-
 
 ### Bug Fixes
 
@@ -758,7 +597,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * stringify json ([410e3db](https://github.com/Esposter/Esposter/commit/410e3db4c0041ee409d49380a508ea6cf978f699))
 * styles ([576fb59](https://github.com/Esposter/Esposter/commit/576fb5940153ea4c3fd5723ff834e508c4396b4a))
 
-
 ### Features
 
 * Add counter ([54c1069](https://github.com/Esposter/Esposter/commit/54c1069ea78ed201c9d38984d14a92a41d0b250c))
@@ -767,28 +605,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Add superjson ([627e902](https://github.com/Esposter/Esposter/commit/627e9021fa12ee30a7421aa046fcffe80740f9f6))
 * add tabs and preview ([f734f9c](https://github.com/Esposter/Esposter/commit/f734f9cd92fcdaf11b7bf48e81f681bad5c34fcd))
 
-
-
-
-
 ## [1.11.2](https://github.com/Esposter/Esposter/compare/v1.11.1...v1.11.2) (2024-06-04)
 
 **Note:** Version bump only for package @esposter/app
-
-
-
-
 
 ## [1.11.1](https://github.com/Esposter/Esposter/compare/v1.11.0...v1.11.1) (2024-06-04)
 
 **Note:** Version bump only for package @esposter/app
 
-
-
-
-
 # [1.11.0](https://github.com/Esposter/Esposter/compare/v1.10.0...v1.11.0) (2024-06-04)
-
 
 ### Bug Fixes
 
@@ -817,7 +642,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use prevent to also have vuetify prevent submit default natively ([f84fbe7](https://github.com/Esposter/Esposter/commit/f84fbe76503220f2e3781030c3688a30bd0c8be5))
 * visual list + vuetify styles ([a12a6bd](https://github.com/Esposter/Esposter/commit/a12a6bdabd8e62ada7bf3df5730e76c3b28dbccc))
 
-
 ### Features
 
 * Add complete type-safe resolver ([5527a1c](https://github.com/Esposter/Esposter/commit/5527a1c8de330342473376b7771ae12dd4018e4d))
@@ -829,13 +653,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * support different types of charts ([3cb020e](https://github.com/Esposter/Esposter/commit/3cb020e2bedc7dd6b4c390da184f01f48f5d8d1e))
 * Support switching chart types, this was crazy ([cdcc153](https://github.com/Esposter/Esposter/commit/cdcc153ce2ac350d23df9929803847021e95dfb9))
 
-
-
-
-
-
 # [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
-
 
 ### Bug Fixes
 
@@ -883,7 +701,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * types ([b8b825d](https://github.com/Esposter/Esposter/commit/b8b825d9b52a8fb20716fcdace5e14df031caa58))
 * use edited item, you dum dum ([1364707](https://github.com/Esposter/Esposter/commit/1364707b3e065918640967c23e22df7a1b515017))
 
-
 ### Features
 
 * Add auto gen json schema from zod schema ([4cc6900](https://github.com/Esposter/Esposter/commit/4cc6900ed1592540cb5425e4cfa91e3acdc1c9dd))
@@ -914,30 +731,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use display grid to support all sorts of weirdness with dashboard layouts ([0ea57a2](https://github.com/Esposter/Esposter/commit/0ea57a22a3400da30d0cd237ab8b84bb62b18fe0))
 * used vuetify grid system to show grid visuals ([1d60b82](https://github.com/Esposter/Esposter/commit/1d60b82e3b8002da34a510360ace357b13946e1e))
 
-
 ### Performance Improvements
 
 * use fast deep equals to check if savable ([279be25](https://github.com/Esposter/Esposter/commit/279be25287cc6969ec2e8a41f2d05778a874dcec))
 
-
-
-
-
-
 ## [1.9.1](https://github.com/Esposter/Esposter/compare/v1.9.0...v1.9.1) (2024-05-21)
-
 
 ### Bug Fixes
 
 * use tsx back ([f5981df](https://github.com/Esposter/Esposter/commit/f5981df689fafc12411b94e99f9b27411ddd1389))
 
-
-
-
-
-
 # [1.9.0](https://github.com/Esposter/Esposter/compare/v1.7.1...v1.9.0) (2024-05-20)
-
 
 ### Bug Fixes
 
@@ -950,77 +754,47 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * use pnpm ([930416f](https://github.com/Esposter/Esposter/commit/930416f0fa32dc37b8af72d622d4d1d5a3f5df0c))
 * use pnpm ([7116647](https://github.com/Esposter/Esposter/commit/7116647d2d18827b36659a96499dcbb8c63fe457))
 
-
 ### Features
 
 * Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
 
-
-
-
-
-
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)
-
 
 ### Bug Fixes
 
 * lerna publish ([5f362b4](https://github.com/Esposter/Esposter/commit/5f362b4e50e01cc4ed3cced3208730fa24335938))
 
-
-
-
-
 # [1.5.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.5.0) (2024-05-18)
-
 
 ### Bug Fixes
 
 * commit changes ([25b569d](https://github.com/Esposter/Esposter/commit/25b569d3529ea01b7bcebe78114267dea523a92f))
 
-
 ### Features
 
 * move nuxt app to separate package ([a0546f6](https://github.com/Esposter/Esposter/commit/a0546f672564ac0fe26e44eee29c9b752b1ee851))
-
-
-
-
 
 # [1.4.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.4.0) (2024-05-18)
 
-
 ### Bug Fixes
 
 * commit changes ([25b569d](https://github.com/Esposter/Esposter/commit/25b569d3529ea01b7bcebe78114267dea523a92f))
 
-
 ### Features
 
 * move nuxt app to separate package ([a0546f6](https://github.com/Esposter/Esposter/commit/a0546f672564ac0fe26e44eee29c9b752b1ee851))
-
-
-
-
 
 # [1.3.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.3.0) (2024-05-18)
 
-
 ### Bug Fixes
 
 * commit changes ([25b569d](https://github.com/Esposter/Esposter/commit/25b569d3529ea01b7bcebe78114267dea523a92f))
-
 
 ### Features
 
 * move nuxt app to separate package ([a0546f6](https://github.com/Esposter/Esposter/commit/a0546f672564ac0fe26e44eee29c9b752b1ee851))
 
-
-
-
-
 # [1.2.0](https://github.com/Esposter/Esposter/compare/v1.1.2...v1.2.0) (2024-05-18)
-
 
 ### Features
 

@@ -11,8 +11,6 @@ import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoList
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
 
-export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
-
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
@@ -22,6 +20,7 @@ class BaseTableEditorConfiguration extends Serializable implements TableEditorTy
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 }
 export const TableEditorConfiguration = applyItemMetadataMixin(BaseTableEditorConfiguration);
+export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
 
 export const tableEditorConfigurationSchema = z
   .object({
