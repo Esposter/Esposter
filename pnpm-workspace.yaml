@@ -144,7 +144,7 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^6.2.0
   rollup: ^4.36.0
-  rollup-plugin-dts: ^6.1.1
+  rollup-plugin-dts: ^6.2.1
   rxjs: ^7.8.2
   sass-embedded: ^1.86.0
   sql-highlight: ^6.0.0
