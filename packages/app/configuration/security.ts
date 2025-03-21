@@ -29,4 +29,7 @@ export const security: NuxtConfig["security"] = {
       "worker-src": ["blob:", process.env.BASE_URL],
     },
   },
+  rateLimiter: {
+    whiteList: ["127.0.0.1"],
+  },
 };
