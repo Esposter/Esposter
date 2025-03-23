@@ -142,8 +142,8 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
-  rate-limiter-flexible: ^6.2.0
-  rollup: ^4.36.0
+  rate-limiter-flexible: ^6.2.1
+  rollup: ^4.37.0
   rollup-plugin-dts: ^6.2.1
   rxjs: ^7.8.2
   sass-embedded: ^1.86.0
@@ -156,7 +156,7 @@ catalog:
   three: ^0.174.0
   three-globe: ^2.42.2
   tippy.js: ^6.3.7
-  trpc-nuxt: 0.11.1-next.1
+  trpc-nuxt: ^1.0.2
   tsx: ^4.19.3
   type-fest: ^4.37.0
   typedoc: ^0.28.1
