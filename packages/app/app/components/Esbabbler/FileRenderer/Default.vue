@@ -10,13 +10,13 @@ const { url } = defineProps<FileRendererProps>();
  * the second decode is to decode the filename which is encoded to support utf8
  */
 const uniqueFilename = computed(() => decodeURIComponent(decodeURIComponent(getFilename(url))));
-const niceFilename = computed(() => uniqueFilename.value.substring(uniqueFilename.value.indexOf(":") + 1));
+const cleanFilename = computed(() => uniqueFilename.value.substring(uniqueFilename.value.indexOf(":") + 1));
 </script>
 
 <template>
-  <NuxtInvisibleLink :href="url" :download="niceFilename">
+  <NuxtInvisibleLink :href="url" :download="cleanFilename">
     <StyledCard pl-2="!" pr-1="!" py-2="!">
-      {{ niceFilename }}
+      {{ cleanFilename }}
       <v-icon icon="mdi-download" />
     </StyledCard>
   </NuxtInvisibleLink>

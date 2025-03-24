@@ -69,8 +69,8 @@
     "@tiptap/starter-kit": "catalog:",
     "@tiptap/suggestion": "catalog:",
     "@tiptap/vue-3": "catalog:",
-    "@trpc/client": "next",
-    "@trpc/server": "next",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
     "@vue-flow/background": "catalog:",
     "@vue-flow/controls": "catalog:",
     "@vue-flow/core": "catalog:",
@@ -153,7 +153,6 @@
     "worker-timers": "catalog:",
     "ws": "catalog:",
     "zod": "catalog:",
-    "zod-form-data": "catalog:",
     "zod-to-json-schema": "catalog:"
   },
   "dependenciesComments": {

@@ -17,9 +17,7 @@ const onFileChange = async (files: File | File[]) => {
   isLoading.value = true;
 
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-    modelValue.value = await $client.user.uploadProfileImage.mutate(formData);
+    modelValue.value = await $client.user.uploadProfileImage.mutate(file);
   } finally {
     isLoading.value = false;
   }
