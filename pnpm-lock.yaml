@@ -457,8 +457,8 @@ catalogs:
       specifier: ^6.3.7
       version: 6.3.7
     trpc-nuxt:
-      specifier: ^1.0.2
-      version: 1.0.2
+      specifier: ^1.0.3
+      version: 1.0.3
     tsx:
       specifier: ^4.19.3
       version: 4.19.3
@@ -887,7 +887,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 1.0.2(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.0(typescript@5.8.2))
+        version: 1.0.3(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.0(typescript@5.8.2))
       vue-codemirror:
         specifier: 'catalog:'
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.8.2))
@@ -9719,8 +9719,8 @@ packages:
     resolution: {integrity: sha512-pkonvlKk8/ZuR0D5tLW8ljt5I8kmxp2XKymhepUeOdCEfKpZaktSArkLHZt76OB1ZvO9bssUsDty4SWhLvZpLg==}
     engines: {node: '>=0.10.0'}
 
-  trpc-nuxt@1.0.2:
-    resolution: {integrity: sha512-Lx5zfaFrmakEtWrPwiOITeCmIQ8/KB9KBzEM8wYW09bSaLZJS8Wi8BqP5TskuURWEENaNnDDR95iQ1VCSsmfFA==}
+  trpc-nuxt@1.0.3:
+    resolution: {integrity: sha512-CAO7ZOROKYYlwsCu/jkKyQV1E4hGXLyp+H8OBh93kSithqB68FfZCQKbZMD/6twgBknrYi4LazvOcoieRrNbFQ==}
     peerDependencies:
       '@trpc/client': ^11.0.0
       '@trpc/server': ^11.0.0
@@ -18147,7 +18147,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.13.12
+      '@types/node': 22.13.13
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -21031,7 +21031,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@1.0.2(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.0(typescript@5.8.2)):
+  trpc-nuxt@1.0.3(@trpc/client@11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.0(typescript@5.8.2)):
     dependencies:
       '@trpc/client': 11.0.0(@trpc/server@11.0.0(typescript@5.8.2))(typescript@5.8.2)
       '@trpc/server': 11.0.0(typescript@5.8.2)
