@@ -8,18 +8,19 @@ import {
   messageReplyMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 import { now } from "#shared/util/time/now";
+import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { replyEventEmitter } from "@@/server/services/esbabbler/events/replyEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
+import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { useTableClient } from "@@/server/util/azure/useTableClient";
-import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -52,15 +53,11 @@ export const replyRouter = router({
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
-    .subscription(({ input }) =>
-      observable<MessageReplyMetadataEntity>((emit) => {
-        const onCreateReply = (data: MessageReplyMetadataEntity) => () => {
-          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
-        };
-        replyEventEmitter.on("createReply", onCreateReply);
-        return () => replyEventEmitter.off("createReply", onCreateReply);
-      }),
-    ),
+    .subscription(async function* ({ input, signal }) {
+      for await (const [data] of on(replyEventEmitter, "createReply", { signal })) {
+        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      }
+    }),
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)
     .query(async ({ input: { messageRowKeys, roomId } }) => {

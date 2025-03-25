@@ -1,9 +1,9 @@
 import type { MessageReplyMetadataEntity } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "node:events";
 
 interface ReplyEvents {
-  createReply: (data: MessageReplyMetadataEntity) => void;
+  createReply: MessageReplyMetadataEntity[];
 }
 
 export const replyEventEmitter = new EventEmitter<ReplyEvents>();

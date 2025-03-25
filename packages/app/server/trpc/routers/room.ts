@@ -11,6 +11,7 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { generateCode } from "#shared/util/math/random/generateCode";
+import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
@@ -23,7 +24,6 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { useTableClient } from "@@/server/util/azure/useTableClient";
 import { and, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 

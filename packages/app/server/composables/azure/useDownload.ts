@@ -1,6 +1,6 @@
 import type { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 
-import { useContainerClient } from "@@/server/util/azure/useContainerClient";
+import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 
 export const useDownload = async (azureContainer: AzureContainer, blobName: string) => {
   const containerClient = await useContainerClient(azureContainer);

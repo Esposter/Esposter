@@ -1,5 +1,3 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
@@ -9,6 +7,7 @@ import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/Me
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
@@ -18,13 +17,13 @@ import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
+import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { on } from "@@/server/services/events/on";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { useTableClient } from "@@/server/util/azure/useTableClient";
-import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -82,37 +81,25 @@ export const messageRouter = router({
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
-    .subscription(({ input }) =>
-      observable<MessageEntity>((emit) => {
-        const onCreateMessage = (data: MessageEntity) => () => {
-          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
-        };
-        messageEventEmitter.on("createMessage", onCreateMessage);
-        return () => messageEventEmitter.off("createMessage", onCreateMessage);
-      }),
-    ),
+    .subscription(async function* ({ input, signal }) {
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) {
+        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      }
+    }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
-    .subscription(({ input }) =>
-      observable<CompositeKey>((emit) => {
-        const onDeleteMessage = (data: CompositeKey) => () => {
-          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
-        };
-        messageEventEmitter.on("deleteMessage", onDeleteMessage);
-        return () => messageEventEmitter.off("deleteMessage", onDeleteMessage);
-      }),
-    ),
+    .subscription(async function* ({ input, signal }) {
+      for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal })) {
+        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      }
+    }),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
-    .subscription(({ input }) =>
-      observable<UpdateMessageInput>((emit) => {
-        const onUpdateMessage = (data: UpdateMessageInput) => () => {
-          if (data.partitionKey.startsWith(input.roomId)) emit.next(data);
-        };
-        messageEventEmitter.on("updateMessage", onUpdateMessage);
-        return () => messageEventEmitter.off("updateMessage", onUpdateMessage);
-      }),
-    ),
+    .subscription(async function* ({ input, signal }) {
+      for await (const [data] of on(messageEventEmitter, "updateMessage", { signal })) {
+        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      }
+    }),
   readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
     .input(readMessagesInputSchema)
     .query(async ({ input: { cursor, limit, roomId } }) => {
