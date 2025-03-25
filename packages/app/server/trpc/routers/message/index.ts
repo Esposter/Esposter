@@ -82,7 +82,6 @@ export const messageRouter = router({
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
-
     .subscription(({ input }) =>
       observable<MessageEntity>((emit) => {
         const onCreateMessage = (data: MessageEntity) => () => {
@@ -94,7 +93,6 @@ export const messageRouter = router({
     ),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
-
     .subscription(({ input }) =>
       observable<CompositeKey>((emit) => {
         const onDeleteMessage = (data: CompositeKey) => () => {
@@ -106,7 +104,6 @@ export const messageRouter = router({
     ),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
-
     .subscription(({ input }) =>
       observable<UpdateMessageInput>((emit) => {
         const onUpdateMessage = (data: UpdateMessageInput) => () => {

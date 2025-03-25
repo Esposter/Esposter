@@ -68,7 +68,6 @@ export const emojiRouter = router({
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
-
     .subscription(({ input }) =>
       observable<MessageEmojiMetadataEntity>((emit) => {
         const onCreateEmoji = (data: MessageEmojiMetadataEntity) => () => {
@@ -80,7 +79,6 @@ export const emojiRouter = router({
     ),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
-
     .subscription(({ input }) =>
       observable<DeleteEmojiInput>((emit) => {
         const onDeleteEmoji = (data: DeleteEmojiInput) => () => {
@@ -92,7 +90,6 @@ export const emojiRouter = router({
     ),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
-
     .subscription(({ input }) =>
       observable<UpdateEmojiInput>((emit) => {
         const onUpdateEmoji = (data: UpdateEmojiInput) => () => {

@@ -52,7 +52,6 @@ export const replyRouter = router({
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
-
     .subscription(({ input }) =>
       observable<MessageReplyMetadataEntity>((emit) => {
         const onCreateReply = (data: MessageReplyMetadataEntity) => () => {
