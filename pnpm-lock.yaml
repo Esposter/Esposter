@@ -463,8 +463,8 @@ catalogs:
       specifier: ^4.19.3
       version: 4.19.3
     type-fest:
-      specifier: ^4.37.0
-      version: 4.37.0
+      specifier: ^4.38.0
+      version: 4.38.0
     typedoc:
       specifier: ^0.28.1
       version: 0.28.1
@@ -572,7 +572,7 @@ importers:
         version: 4.37.0
       type-fest:
         specifier: 'catalog:'
-        version: 4.37.0
+        version: 4.38.0
       typedoc:
         specifier: 'catalog:'
         version: 0.28.1(typescript@5.8.2)
@@ -9786,6 +9786,10 @@ packages:
     resolution: {integrity: sha512-S/5/0kFftkq27FPNye0XM1e2NsnoD/3FS+pBmbjmmtLT6I+i344KoOf7pvXreaFsDamWeaJX55nczA1m5PsBDg==}
     engines: {node: '>=16'}
 
+  type-fest@4.38.0:
+    resolution: {integrity: sha512-2dBz5D5ycHIoliLYLi0Q2V7KRaDlH0uWIvmk7TYlAg5slqwiPv1ezJdZm1QEM0xgk29oYWMCbIG7E6gHpvChlg==}
+    engines: {node: '>=16'}
+
   type-level-regexp@0.1.17:
     resolution: {integrity: sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg==}
 
@@ -16305,7 +16309,7 @@ snapshots:
       ts-pattern: 5.6.2
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.37.0
+      type-fest: 4.38.0
       typescript: 5.8.2
       yaml: 2.7.0
       yargs: 17.7.2
@@ -19993,21 +19997,21 @@ snapshots:
     dependencies:
       find-up: 6.3.0
       read-pkg: 8.1.0
-      type-fest: 4.37.0
+      type-fest: 4.38.0
 
   read-pkg@8.1.0:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 7.1.1
-      type-fest: 4.37.0
+      type-fest: 4.38.0
 
   read-pkg@9.0.1:
     dependencies:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 8.2.0
-      type-fest: 4.37.0
+      type-fest: 4.38.0
       unicorn-magic: 0.1.0
 
   readable-stream@2.3.8:
@@ -21087,6 +21091,8 @@ snapshots:
 
   type-fest@4.37.0: {}
 
+  type-fest@4.38.0: {}
+
   type-level-regexp@0.1.17: {}
 
   typed-array-buffer@1.0.3:
@@ -22132,7 +22138,7 @@ snapshots:
       deepmerge-ts: 7.1.5
       read-pkg: 9.0.1
       sort-keys: 5.1.0
-      type-fest: 4.37.0
+      type-fest: 4.38.0
       write-json-file: 6.0.0
 
   ws@8.18.1: {}
