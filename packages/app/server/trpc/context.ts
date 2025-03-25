@@ -10,13 +10,14 @@ const isH3Event = (value: Contexts): value is H3Event => "node" in value;
 export const createContext = (opts: Contexts) => {
   if (isH3Event(opts)) {
     const {
+      headers,
       node: { req, res },
     } = opts;
-    return { db, event: opts, req, res };
+    return { db, headers, req, res };
   }
 
   const { req, res } = opts;
-  return { db, req, res };
+  return { db, headers: opts.info.connectionParams as Headers | null, req, res };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

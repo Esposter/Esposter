@@ -108,7 +108,6 @@ export const roomRouter = router({
         filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
       });
       if (invites.length > 0) return invites[0].rowKey;
-
       // Generate non-colliding invite code
       let inviteCode = generateCode(8);
       invites = await getTopNEntities(inviteClient, 1, InviteEntity, {

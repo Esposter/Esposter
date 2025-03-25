@@ -1,7 +1,7 @@
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import {
-    TableEditorConfiguration,
-    tableEditorConfigurationSchema,
+  TableEditorConfiguration,
+  tableEditorConfigurationSchema,
 } from "#shared/models/tableEditor/TableEditorConfiguration";
 import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
