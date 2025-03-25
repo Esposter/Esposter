@@ -4,7 +4,7 @@ import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { useDungeonsStore } from "@/store/dungeons";
 
 export const useReadDungeonsGame = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const dungeonsStore = useDungeonsStore();
   const { game } = storeToRefs(dungeonsStore);
   await useReadData(
@@ -14,7 +14,7 @@ export const useReadDungeonsGame = async () => {
       else game.value = new DungeonsGame();
     },
     async () => {
-      game.value = await $client.dungeons.readGame.query();
+      game.value = await $trpc.dungeons.readGame.query();
     },
   );
 };

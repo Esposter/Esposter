@@ -33,6 +33,6 @@ export default defineNuxtPlugin(() => {
       })(),
     }),
   ];
-  const client = createTRPCNuxtClient<TRPCRouter>({ links });
-  return { provide: { client } };
+  const trpc = createTRPCNuxtClient<TRPCRouter>({ links });
+  return { provide: { trpc } };
 });

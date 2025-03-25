@@ -7,7 +7,7 @@ import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMessageSubscribables = () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
@@ -20,7 +20,7 @@ export const useMessageSubscribables = () => {
   onMounted(() => {
     if (!currentRoomId.value) return;
 
-    createMessageUnsubscribable.value = $client.message.onCreateMessage.subscribe(
+    createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       { roomId: currentRoomId.value },
       {
         // @TODO: trpc-nuxt type issue
@@ -29,7 +29,7 @@ export const useMessageSubscribables = () => {
         },
       },
     );
-    updateMessageUnsubscribable.value = $client.message.onUpdateMessage.subscribe(
+    updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
       { roomId: currentRoomId.value },
       {
         onData: (data: UpdateMessageInput) => {
@@ -37,7 +37,7 @@ export const useMessageSubscribables = () => {
         },
       },
     );
-    deleteMessageUnsubscribable.value = $client.message.onDeleteMessage.subscribe(
+    deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
       { roomId: currentRoomId.value },
       {
         onData: (data: DeleteMessageInput) => {

@@ -12,8 +12,8 @@ export const suggestion: MentionOptions["suggestion"] = {
     const { currentRoomId } = storeToRefs(roomStore);
     if (!(currentRoomId.value && query)) return [];
 
-    const { $client } = useNuxtApp();
-    const { items } = await $client.room.readMembers.query({ filter: { name: query }, roomId: currentRoomId.value });
+    const { $trpc } = useNuxtApp();
+    const { items } = await $trpc.room.readMembers.query({ filter: { name: query }, roomId: currentRoomId.value });
     return items;
   },
 

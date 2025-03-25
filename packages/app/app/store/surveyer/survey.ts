@@ -8,7 +8,7 @@ import { createOperationData } from "@/services/shared/pagination/createOperatio
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const { itemList, ...restData } = createOffsetPaginationData<Survey>();
   const {
     createSurvey: storeCreateSurvey,
@@ -18,7 +18,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   } = createOperationData(itemList, DatabaseEntityType.Survey);
 
   const createSurvey = async (input: CreateSurveyInput) => {
-    const newSurvey = await $client.survey.createSurvey.mutate(input);
+    const newSurvey = await $trpc.survey.createSurvey.mutate(input);
     if (!newSurvey) return;
 
     storeCreateSurvey(newSurvey);
@@ -26,7 +26,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
     input.modelVersion++;
-    const updatedSurvey = await $client.survey.updateSurvey.mutate(input);
+    const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
     // Surveyjs needs to know whether the save was successful with a boolean
     if (!updatedSurvey) return false;
 
@@ -34,7 +34,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     return true;
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
-    const deletedSurvey = await $client.survey.deleteSurvey.mutate(input);
+    const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
     if (!deletedSurvey) return;
 
     storeDeleteSurvey(deletedSurvey.id);

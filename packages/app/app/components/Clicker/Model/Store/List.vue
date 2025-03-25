@@ -3,7 +3,7 @@ import { useClickerStore } from "@/store/clicker";
 import { useBuildingStore } from "@/store/clicker/building";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
-const { $client } = useNuxtApp();
+const { $trpc } = useNuxtApp();
 const clickerStore = useClickerStore();
 const { game } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
@@ -18,8 +18,8 @@ const unlockedStoreUpgrades = computed(() =>
     .toSorted((a, b) => a.price - b.price),
 );
 
-initializeUpgradeMap(await $client.clicker.readUpgradeMap.query());
-initializeBuildingMap(await $client.clicker.readBuildingMap.query());
+initializeUpgradeMap(await $trpc.clicker.readUpgradeMap.query());
+initializeBuildingMap(await $trpc.clicker.readBuildingMap.query());
 </script>
 
 <template>

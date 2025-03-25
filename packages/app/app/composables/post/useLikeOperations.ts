@@ -6,10 +6,10 @@ import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import { authClient } from "@/services/auth/authClient";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
 
   const createLike = async (input: CreateLikeInput) => {
-    const newLike = await $client.like.createLike.mutate(input);
+    const newLike = await $trpc.like.createLike.mutate(input);
     if (!newLike) return;
 
     const post = toValue(allPosts).find((p) => p.id === newLike.postId);
@@ -19,7 +19,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     post.noLikes += newLike.value;
   };
   const updateLike = async (input: UpdateLikeInput) => {
-    const updatedLike = await $client.like.updateLike.mutate(input);
+    const updatedLike = await $trpc.like.updateLike.mutate(input);
     if (!updatedLike) return;
 
     const post = toValue(allPosts).find((p) => p.id === updatedLike.postId);
@@ -36,7 +36,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const userId = session.value.data?.user.id;
     if (!userId) return;
 
-    await $client.like.deleteLike.mutate(postId);
+    await $trpc.like.deleteLike.mutate(postId);
 
     const post = toValue(allPosts).find((p) => p.id === postId);
     if (!post) return;

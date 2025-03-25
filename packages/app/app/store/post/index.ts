@@ -8,7 +8,7 @@ import { createOperationData } from "@/services/shared/pagination/createOperatio
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const { itemList, ...restData } = createCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
@@ -18,19 +18,19 @@ export const usePostStore = defineStore("post", () => {
   } = createOperationData(itemList, DatabaseEntityType.Post);
 
   const createPost = async (input: CreatePostInput) => {
-    const newPost = await $client.post.createPost.mutate(input);
+    const newPost = await $trpc.post.createPost.mutate(input);
     if (!newPost) return;
 
     storeCreatePost(newPost);
   };
   const updatePost = async (input: UpdatePostInput) => {
-    const updatedPost = await $client.post.updatePost.mutate(input);
+    const updatedPost = await $trpc.post.updatePost.mutate(input);
     if (!updatedPost) return;
 
     storeUpdatePost(updatedPost);
   };
   const deletePost = async (input: DeletePostInput) => {
-    const deletedPost = await $client.post.deletePost.mutate(input);
+    const deletedPost = await $trpc.post.deletePost.mutate(input);
     if (!deletedPost) return;
 
     storeDeletePost(deletedPost.id);

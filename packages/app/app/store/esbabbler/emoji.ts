@@ -4,7 +4,7 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const { getMetadataList: getEmojiList, setMetadataList: setEmojiList } =
     useMessageMetadataMap<MessageEmojiMetadataEntity>();
 
@@ -33,17 +33,17 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   };
 
   const createEmoji = async (input: CreateEmojiInput) => {
-    const newEmoji = await $client.emoji.createEmoji.mutate(input);
+    const newEmoji = await $trpc.emoji.createEmoji.mutate(input);
     if (!newEmoji) return;
 
     storeCreateEmoji(newEmoji);
   };
   const updateEmoji = async (input: UpdateEmojiInput) => {
-    const updatedEmoji = await $client.emoji.updateEmoji.mutate(input);
+    const updatedEmoji = await $trpc.emoji.updateEmoji.mutate(input);
     storeUpdateEmoji(updatedEmoji);
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
-    await $client.emoji.deleteEmoji.mutate(input);
+    await $trpc.emoji.deleteEmoji.mutate(input);
     storeDeleteEmoji(input);
   };
 

@@ -8,7 +8,7 @@ import { useClickerStore } from "@/store/clicker";
 import deepEqual from "fast-deep-equal";
 
 export const useReadClickerGame = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const clickerStore = useClickerStore();
   const { saveGame } = clickerStore;
   const { game } = storeToRefs(clickerStore);
@@ -31,7 +31,7 @@ export const useReadClickerGame = async () => {
       else game.value = new ClickerGame();
     },
     async () => {
-      game.value = await $client.clicker.readGame.query();
+      game.value = await $trpc.clicker.readGame.query();
     },
   );
 

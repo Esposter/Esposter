@@ -4,7 +4,7 @@ import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useReadTableEditor = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const tableEditorStore = useTableEditorStore();
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
   await useReadData(
@@ -18,7 +18,7 @@ export const useReadTableEditor = async () => {
       else tableEditorConfiguration.value = new TableEditorConfiguration();
     },
     async () => {
-      tableEditorConfiguration.value = await $client.tableEditor.readTableEditor.query();
+      tableEditorConfiguration.value = await $trpc.tableEditor.readTableEditor.query();
     },
   );
 };

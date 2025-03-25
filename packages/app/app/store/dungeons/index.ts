@@ -11,7 +11,7 @@ import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
 export const useDungeonsStore = defineStore("dungeons", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const phaserStore = usePhaserStore();
   const { switchToScene } = phaserStore;
   const cameraStore = useCameraStore();
@@ -23,7 +23,7 @@ export const useDungeonsStore = defineStore("dungeons", () => {
 
     if (session.value.data) {
       saveItemMetadata(game.value);
-      await $client.dungeons.saveGame.mutate(game.value);
+      await $trpc.dungeons.saveGame.mutate(game.value);
     } else {
       saveItemMetadata(game.value);
       localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());

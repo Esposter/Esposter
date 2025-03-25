@@ -2,7 +2,7 @@ import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadMessages = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
@@ -13,7 +13,7 @@ export const useReadMessages = async () => {
     try {
       if (!currentRoomId.value) return;
 
-      const response = await $client.message.readMessages.query({
+      const response = await $trpc.message.readMessages.query({
         cursor: nextCursor.value,
         roomId: currentRoomId.value,
       });
@@ -27,7 +27,7 @@ export const useReadMessages = async () => {
   };
 
   if (currentRoomId.value) {
-    const response = await $client.message.readMessages.query({ roomId: currentRoomId.value });
+    const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
     initializeCursorPaginationData(response);
     if (response.items.length > 0) await readEmojis(response.items.map((m) => m.rowKey));
   }

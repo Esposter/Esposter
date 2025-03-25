@@ -12,7 +12,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const messageInputStore = useMessageInputStore();
   const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
@@ -37,15 +37,15 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
 
   const createMessage = async (input: CreateMessageInput) => {
-    const newMessage = await $client.message.createMessage.mutate(input);
+    const newMessage = await $trpc.message.createMessage.mutate(input);
     storeCreateMessage(newMessage);
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    const updatedMessage = await $client.message.updateMessage.mutate(input);
+    const updatedMessage = await $trpc.message.updateMessage.mutate(input);
     storeUpdateMessage(updatedMessage);
   };
   const deleteMessage = async (input: DeleteMessageInput) => {
-    const deletedMessageId = await $client.message.deleteMessage.mutate(input);
+    const deletedMessageId = await $trpc.message.deleteMessage.mutate(input);
     storeDeleteMessage(deletedMessageId);
   };
   // We need to expose the internal store crud message functions

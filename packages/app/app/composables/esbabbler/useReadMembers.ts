@@ -2,7 +2,7 @@ import { useMemberStore } from "@/store/esbabbler/member";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadMembers = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
@@ -12,7 +12,7 @@ export const useReadMembers = async () => {
     try {
       if (!currentRoomId.value) return;
 
-      const response = await $client.room.readMembers.query({ cursor: nextCursor.value, roomId: currentRoomId.value });
+      const response = await $trpc.room.readMembers.query({ cursor: nextCursor.value, roomId: currentRoomId.value });
       pushMemberList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
@@ -22,7 +22,7 @@ export const useReadMembers = async () => {
   };
 
   if (currentRoomId.value)
-    initializeCursorPaginationData(await $client.room.readMembers.query({ roomId: currentRoomId.value }));
+    initializeCursorPaginationData(await $trpc.room.readMembers.query({ roomId: currentRoomId.value }));
 
   return readMoreMembers;
 };

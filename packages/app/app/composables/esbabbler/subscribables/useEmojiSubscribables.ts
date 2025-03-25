@@ -7,7 +7,7 @@ import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useEmojiSubscribables = () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
@@ -20,7 +20,7 @@ export const useEmojiSubscribables = () => {
   onMounted(() => {
     if (!currentRoomId.value) return;
 
-    createEmojiUnsubscribable.value = $client.emoji.onCreateEmoji.subscribe(
+    createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
         onData: (data: MessageEmojiMetadataEntity) => {
@@ -28,7 +28,7 @@ export const useEmojiSubscribables = () => {
         },
       },
     );
-    updateEmojiUnsubscribable.value = $client.emoji.onUpdateEmoji.subscribe(
+    updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
         onData: (data: UpdateEmojiInput) => {
@@ -36,7 +36,7 @@ export const useEmojiSubscribables = () => {
         },
       },
     );
-    deleteEmojiUnsubscribable.value = $client.emoji.onDeleteEmoji.subscribe(
+    deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
         onData: (data: DeleteEmojiInput) => {

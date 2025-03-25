@@ -2,7 +2,7 @@ import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadEmojis = () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
@@ -10,7 +10,7 @@ export const useReadEmojis = () => {
   return async (messageRowKeys: string[]) => {
     if (!currentRoomId.value) return;
 
-    const emojis = await $client.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });
+    const emojis = await $trpc.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });
     for (const messageRowKey of messageRowKeys)
       setEmojiList(
         messageRowKey,

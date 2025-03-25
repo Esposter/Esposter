@@ -2,10 +2,10 @@ import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 
 export const useReadSurveyFromRoute = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const route = useRoute();
   const surveyId = route.params.id as string;
-  const survey = await $client.survey.readSurvey.query(surveyId);
+  const survey = await $trpc.survey.readSurvey.query(surveyId);
   if (!survey)
     throw createError({
       statusCode: 404,

@@ -4,7 +4,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 export const useReadSurveys = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
   const { initializeOffsetPaginationData } = surveyStore;
   const { hasMore, surveyList, totalItemsLength } = storeToRefs(surveyStore);
@@ -20,7 +20,7 @@ export const useReadSurveys = async () => {
   }) => {
     isLoading.value = true;
     try {
-      const response = await $client.survey.readSurveys.query({
+      const response = await $trpc.survey.readSurveys.query({
         limit: itemsPerPage,
         offset: (page - 1) * itemsPerPage,
         sortBy,
@@ -32,7 +32,7 @@ export const useReadSurveys = async () => {
     }
   };
 
-  initializeOffsetPaginationData(await $client.survey.readSurveys.query());
-  totalItemsLength.value = await $client.survey.count.query();
+  initializeOffsetPaginationData(await $trpc.survey.readSurveys.query());
+  totalItemsLength.value = await $trpc.survey.count.query();
   return { isLoading, readMoreSurveys };
 };

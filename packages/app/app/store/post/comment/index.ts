@@ -10,7 +10,7 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { uuidValidateV4 } from "@esposter/shared";
 
 export const useCommentStore = defineStore("post/comment", () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const router = useRouter();
   const currentPostId = computed(() => {
     const postId = router.currentRoute.value.params.id;
@@ -28,14 +28,14 @@ export const useCommentStore = defineStore("post/comment", () => {
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
-    const newComment = await $client.post.createComment.mutate(input);
+    const newComment = await $trpc.post.createComment.mutate(input);
     if (!newComment) return;
 
     storeCreateComment(newComment);
     currentPost.value.noComments += 1;
   };
   const updateComment = async (input: UpdateCommentInput) => {
-    const updatedComment = await $client.post.updateComment.mutate(input);
+    const updatedComment = await $trpc.post.updateComment.mutate(input);
     if (!updatedComment) return;
 
     storeUpdateComment(updatedComment);
@@ -43,7 +43,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const deleteComment = async (input: DeleteCommentInput) => {
     if (!currentPost.value) return;
 
-    const deletedComment = await $client.post.deleteComment.mutate(input);
+    const deletedComment = await $trpc.post.deleteComment.mutate(input);
     if (!deletedComment) return;
 
     storeDeleteComment(deletedComment.id);

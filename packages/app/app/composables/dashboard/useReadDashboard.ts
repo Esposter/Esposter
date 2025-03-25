@@ -8,7 +8,7 @@ import { useDashboardStore } from "@/store/dashboard";
 import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
@@ -25,7 +25,7 @@ export const useReadDashboard = async () => {
       else dashboard.value = new Dashboard();
     },
     async () => {
-      dashboard.value = await $client.dashboard.readDashboard.query();
+      dashboard.value = await $trpc.dashboard.readDashboard.query();
     },
   );
 
