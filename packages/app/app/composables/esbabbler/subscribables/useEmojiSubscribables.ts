@@ -1,6 +1,3 @@
-import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { useEmojiStore } from "@/store/esbabbler/emoji";
@@ -23,7 +20,7 @@ export const useEmojiSubscribables = () => {
     createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data: MessageEmojiMetadataEntity) => {
+        onData: (data) => {
           storeCreateEmoji(data);
         },
       },
@@ -31,7 +28,7 @@ export const useEmojiSubscribables = () => {
     updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data: UpdateEmojiInput) => {
+        onData: (data) => {
           storeUpdateEmoji(data);
         },
       },
@@ -39,7 +36,7 @@ export const useEmojiSubscribables = () => {
     deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
       { roomId: currentRoomId.value },
       {
-        onData: (data: DeleteEmojiInput) => {
+        onData: (data) => {
           storeDeleteEmoji(data);
         },
       },
