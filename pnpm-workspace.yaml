@@ -121,7 +121,7 @@ catalog:
   grapesjs-touch: ^0.1.1
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
-  grid-engine: ^2.46.2
+  grid-engine: ^2.47.0
   grid-layout-plus: ^1.0.6
   gsap: ^3.12.7
   h3: ^1.15.1
