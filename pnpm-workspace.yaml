@@ -93,7 +93,7 @@ catalog:
   dedent: ^1.5.3
   defu: ^6.1.4
   dotenv: ^16.4.7
-  drizzle-kit: ^0.30.5
+  drizzle-kit: ^0.30.6
   drizzle-orm: ^0.41.0
   drizzle-zod: ^0.7.0
   emoji-mart-vue-fast: ^15.0.4
