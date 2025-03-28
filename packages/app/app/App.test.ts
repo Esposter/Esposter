@@ -5,8 +5,7 @@ import { createVuetify } from "vuetify";
 
 const vuetify = createVuetify();
 
-// @TODO: Enable this when snapshots are consistent
-describe.todo("app", () => {
+describe("app", () => {
   test("snapshots", async () => {
     expect.hasAssertions();
 
