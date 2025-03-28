@@ -1,12 +1,12 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
+import { transformer } from "#shared/services/trpc/transformer";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { getIsServer } from "#shared/util/environment/getIsServer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { createWSClient, loggerLink, splitLink, wsLink } from "@trpc/client";
-import { SuperJSON } from "superjson";
 import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
@@ -19,9 +19,9 @@ export default defineNuxtPlugin(() => {
     errorLink,
     splitLink({
       condition: (op) => op.type === "subscription",
-      false: httpBatchLink({ transformer: SuperJSON, url: TRPC_CLIENT_PATH }),
+      false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
       true: (() => {
-        if (getIsServer()) return httpBatchLink({ transformer: SuperJSON, url: TRPC_CLIENT_PATH });
+        if (getIsServer()) return httpBatchLink({ transformer, url: TRPC_CLIENT_PATH });
 
         const headers = useRequestHeaders();
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -29,7 +29,7 @@ export default defineNuxtPlugin(() => {
           connectionParams: () => headers,
           url: `${wsProtocol}//${window.location.host}`,
         });
-        return wsLink({ client: wsClient, transformer: SuperJSON });
+        return wsLink({ client: wsClient, transformer });
       })(),
     }),
   ];
