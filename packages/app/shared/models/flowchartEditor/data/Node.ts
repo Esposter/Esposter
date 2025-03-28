@@ -6,4 +6,4 @@ import { z } from "zod";
 export const nodeSchema = z.object({
   id: z.string(),
   position: xyPositionSchema,
-}) as const satisfies z.ZodType<Node>;
+}) satisfies z.ZodType<Node>;

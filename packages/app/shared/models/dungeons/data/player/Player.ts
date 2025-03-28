@@ -51,4 +51,4 @@ export const playerSchema = z.object({
   monsters: z.array(monsterSchema),
   position: positionSchema,
   respawnLocation: respawnLocationSchema,
-}) as const satisfies z.ZodType<Player>;
+}) satisfies z.ZodType<Player>;

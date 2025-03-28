@@ -8,4 +8,4 @@ export enum MonsterKey {
   Iguanignite = "Iguanignite",
 }
 
-export const monsterKeySchema = z.nativeEnum(MonsterKey) as const satisfies z.ZodType<MonsterKey>;
+export const monsterKeySchema = z.nativeEnum(MonsterKey) satisfies z.ZodType<MonsterKey>;

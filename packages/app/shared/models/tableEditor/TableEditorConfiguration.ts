@@ -28,6 +28,4 @@ export const tableEditorConfigurationSchema = z
     [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
   })
   // @NOTE: props type seems to be wrongly inferred as { [x: string]: {} } instead of Record<string, unknown>
-  .merge(itemMetadataSchema) as const satisfies z.ZodType<
-  RecursiveDeepOmit<TableEditorConfiguration, ["props", "toJSON"]>
->;
+  .merge(itemMetadataSchema) satisfies z.ZodType<RecursiveDeepOmit<TableEditorConfiguration, ["props", "toJSON"]>>;

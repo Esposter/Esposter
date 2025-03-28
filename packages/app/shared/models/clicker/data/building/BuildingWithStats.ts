@@ -11,4 +11,4 @@ export interface BuildingWithStats extends Building {
 export const buildingWithStatsSchema = buildingSchema.extend({
   amount: z.number(),
   producedValue: z.number(),
-}) as const satisfies z.ZodType<BuildingWithStats>;
+}) satisfies z.ZodType<BuildingWithStats>;

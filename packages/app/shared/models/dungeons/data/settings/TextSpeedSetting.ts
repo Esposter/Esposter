@@ -6,4 +6,4 @@ export enum TextSpeedSetting {
   Slow = "Slow",
 }
 
-export const textSpeedSettingSchema = z.nativeEnum(TextSpeedSetting) as const satisfies z.ZodType<TextSpeedSetting>;
+export const textSpeedSettingSchema = z.nativeEnum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;

@@ -12,4 +12,4 @@ export const aTableEditorItemEntitySchema = aItemEntitySchema.merge(
   z.object({
     name: z.string().min(1),
   }),
-) as const satisfies z.ZodType<ToData<ATableEditorItemEntity>>;
+) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;

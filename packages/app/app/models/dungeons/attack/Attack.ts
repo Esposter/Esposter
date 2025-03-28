@@ -13,4 +13,4 @@ export interface Attack {
 export const attackSchema = z.object({
   id: attackIdSchema,
   soundEffectKey: soundEffectKeySchema,
-}) as const satisfies z.ZodType<Attack>;
+}) satisfies z.ZodType<Attack>;

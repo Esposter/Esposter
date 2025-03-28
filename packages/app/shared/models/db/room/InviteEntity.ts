@@ -23,4 +23,4 @@ export const inviteEntitySchema = z
     roomId: selectRoomSchema.shape.id,
     rowKey: z.string(),
   })
-  .merge(itemMetadataSchema) as const satisfies z.ZodType<InviteEntity>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<InviteEntity>;

@@ -21,4 +21,4 @@ export const effectConfigurationSchema = z.object({
   itemType: itemTypeSchema.optional(),
   targets: z.array(targetSchema).optional(),
   type: effectTypeSchema,
-}) as const satisfies z.ZodType<EffectConfiguration>;
+}) satisfies z.ZodType<EffectConfiguration>;

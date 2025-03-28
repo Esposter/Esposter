@@ -14,4 +14,4 @@ export const buildingUnlockConditionSchema = z.object({
   amount: z.number().int(),
   id: buildingIdSchema,
   type: z.literal(ItemType.Building),
-}) as const satisfies z.ZodType<BuildingUnlockCondition>;
+}) satisfies z.ZodType<BuildingUnlockCondition>;

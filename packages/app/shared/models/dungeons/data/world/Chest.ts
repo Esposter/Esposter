@@ -12,4 +12,4 @@ export class Chest implements IChest {
 export const chestSchema = z.object({
   isOpened: z.boolean(),
   itemId: itemIdSchema,
-}) as const satisfies z.ZodType<Chest>;
+}) satisfies z.ZodType<Chest>;

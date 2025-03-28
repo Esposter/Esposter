@@ -5,6 +5,4 @@ export enum BattleStyleSetting {
   Shift = "Shift",
 }
 
-export const battleStyleSettingSchema = z.nativeEnum(
-  BattleStyleSetting,
-) as const satisfies z.ZodType<BattleStyleSetting>;
+export const battleStyleSettingSchema = z.nativeEnum(BattleStyleSetting) satisfies z.ZodType<BattleStyleSetting>;

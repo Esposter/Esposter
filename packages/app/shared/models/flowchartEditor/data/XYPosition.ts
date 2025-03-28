@@ -5,4 +5,4 @@ import { z } from "zod";
 export const xyPositionSchema = z.object({
   x: z.number(),
   y: z.number(),
-}) as const satisfies z.ZodType<XYPosition>;
+}) satisfies z.ZodType<XYPosition>;

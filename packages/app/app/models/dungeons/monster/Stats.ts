@@ -13,4 +13,4 @@ export const statsSchema = z.object({
   baseExp: z.number().int().positive(),
   level: z.number().int().positive(),
   maxHp: z.number().int().positive(),
-}) as const satisfies z.ZodType<Stats>;
+}) satisfies z.ZodType<Stats>;

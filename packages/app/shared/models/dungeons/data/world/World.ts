@@ -12,4 +12,4 @@ export const getInitialWorld = () =>
   }, {} as World);
 export type World = Record<TilemapKey, WorldData>;
 
-export const worldSchema = zodStrictRecord(tilemapKeySchema, worldDataSchema) as const satisfies z.ZodType<World>;
+export const worldSchema = zodStrictRecord(tilemapKeySchema, worldDataSchema) satisfies z.ZodType<World>;

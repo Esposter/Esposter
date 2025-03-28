@@ -24,4 +24,4 @@ export const messageReplyMetadataEntitySchema = messageMetadataEntitySchema.merg
     message: messageEntitySchema.shape.message,
     messageReplyRowKey: messageEntitySchema.shape.rowKey,
   }),
-) as const satisfies z.ZodType<MessageReplyMetadataEntity>;
+) satisfies z.ZodType<MessageReplyMetadataEntity>;

@@ -31,4 +31,4 @@ export const messageEntitySchema = z
     rowKey: z.string(),
     userId: selectUserSchema.shape.id,
   })
-  .merge(itemMetadataSchema) as const satisfies z.ZodType<MessageEntity>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<MessageEntity>;

@@ -9,4 +9,4 @@ export class WorldData {
 
 export const worldDataSchema = z.object({
   chestMap: z.record(z.string().min(1), chestSchema),
-}) as const satisfies z.ZodType<WorldData>;
+}) satisfies z.ZodType<WorldData>;

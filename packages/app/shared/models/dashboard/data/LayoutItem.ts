@@ -18,4 +18,4 @@ export const layoutItemSchema = z.object({
   w: z.number().int().nonnegative(),
   x: z.number().int().nonnegative(),
   y: z.number().int().nonnegative(),
-}) as const satisfies z.ZodType<LayoutItem>;
+}) satisfies z.ZodType<LayoutItem>;

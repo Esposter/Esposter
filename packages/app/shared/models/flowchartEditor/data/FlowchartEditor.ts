@@ -19,4 +19,4 @@ export const flowchartEditorSchema = z
     edges: z.array(edgeSchema),
     nodes: z.array(nodeSchema),
   })
-  .merge(itemMetadataSchema) as const satisfies z.ZodType<ToData<FlowchartEditor>>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<FlowchartEditor>>;

@@ -15,4 +15,4 @@ export const buildingSchema = z.object({
   baseValue: z.number(),
   flavorDescription: z.string().min(1),
   id: buildingIdSchema,
-}) as const satisfies z.ZodType<Building>;
+}) satisfies z.ZodType<Building>;

@@ -23,4 +23,4 @@ export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageE
 
 export const messageEmojiMetadataEntitySchema = messageMetadataEntitySchema.merge(
   z.object({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) }),
-) as const satisfies z.ZodType<MessageEmojiMetadataEntity>;
+) satisfies z.ZodType<MessageEmojiMetadataEntity>;

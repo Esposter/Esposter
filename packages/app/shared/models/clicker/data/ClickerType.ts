@@ -6,4 +6,4 @@ export enum ClickerType {
   Physical = "Physical",
 }
 
-export const clickerTypeSchema = z.nativeEnum(ClickerType) as const satisfies z.ZodType<ClickerType>;
+export const clickerTypeSchema = z.nativeEnum(ClickerType) satisfies z.ZodType<ClickerType>;

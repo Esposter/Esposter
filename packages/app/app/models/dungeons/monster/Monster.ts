@@ -32,4 +32,4 @@ export const monsterSchema = z.object({
   key: monsterKeySchema,
   stats: statsSchema,
   status: statusSchema,
-}) as const satisfies z.ZodType<Monster>;
+}) satisfies z.ZodType<Monster>;

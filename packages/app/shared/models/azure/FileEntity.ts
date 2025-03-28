@@ -9,4 +9,4 @@ export class FileEntity {
 export const fileEntitySchema = z.object({
   mimetype: z.string(),
   url: z.string(),
-}) as const satisfies z.ZodType<FileEntity>;
+}) satisfies z.ZodType<FileEntity>;

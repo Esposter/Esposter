@@ -11,4 +11,4 @@ export enum SoundEffectKey {
   TextBlip = "TextBlip",
 }
 
-export const soundEffectKeySchema = z.nativeEnum(SoundEffectKey) as const satisfies z.ZodType<SoundEffectKey>;
+export const soundEffectKeySchema = z.nativeEnum(SoundEffectKey) satisfies z.ZodType<SoundEffectKey>;

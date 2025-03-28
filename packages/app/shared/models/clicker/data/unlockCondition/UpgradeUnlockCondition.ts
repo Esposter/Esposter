@@ -12,4 +12,4 @@ export interface UpgradeUnlockCondition {
 export const upgradeUnlockConditionSchema = z.object({
   id: upgradeIdSchema,
   type: z.literal(ItemType.Upgrade),
-}) as const satisfies z.ZodType<UpgradeUnlockCondition>;
+}) satisfies z.ZodType<UpgradeUnlockCondition>;

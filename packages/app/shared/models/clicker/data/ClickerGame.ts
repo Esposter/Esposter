@@ -29,4 +29,4 @@ export const clickerGameSchema = z
     noPoints: z.number(),
     type: clickerTypeSchema,
   })
-  .merge(itemMetadataSchema) as const satisfies z.ZodType<ToData<ClickerGame>>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<ClickerGame>>;

@@ -13,4 +13,4 @@ export class Chart {
 export const chartSchema = z.object({
   configuration: basicChartConfigurationSchema,
   type: chartTypeSchema,
-}) as const satisfies z.ZodType<Chart>;
+}) satisfies z.ZodType<Chart>;
