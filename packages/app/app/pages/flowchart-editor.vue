@@ -30,7 +30,7 @@ onNodesChange(getSynchronizedFunction(debouncedSaveFlowChartEditor));
 </script>
 
 <template>
-  <NuxtLayout :scrim="false">
+  <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
     <template #left>
       <FlowchartEditorSideBar />
     </template>

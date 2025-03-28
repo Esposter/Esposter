@@ -1,17 +1,9 @@
-<script setup lang="ts">
-import { useLayoutStore } from "@/store/layout";
-
-const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen } = storeToRefs(layoutStore);
-</script>
-
 <template>
-  <v-toolbar color="surface" density="comfortable" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
-    <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
+  <v-toolbar border pl-4 color="surface" density="comfortable">
     <EsbabblerModelRoomTitle />
     <template #append>
-      <EsbabblerModelMemberCreateDialogButton />
-      <v-btn icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = !rightDrawerOpen" />
+      <EsbabblerContentAddFriendsDialogButton />
+      <EsbabblerContentShowMemberListButton />
     </template>
   </v-toolbar>
 </template>

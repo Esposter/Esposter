@@ -38,7 +38,7 @@ onClickOutside(
 <template>
   <div
     ref="title"
-    class="border"
+    class="custom-border"
     px-1
     flex
     items-center
@@ -70,7 +70,7 @@ onClickOutside(
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px $border-style-root v-bind(borderColor);
 }
 </style>

@@ -18,7 +18,7 @@ const inviteLink = computed(() =>
 <template>
   <v-dialog v-model="dialog">
     <template #activator>
-      <v-tooltip location="bottom" text="Add friends to Room">
+      <v-tooltip location="bottom" text="Add Friends to Room">
         <template #activator="{ props }">
           <v-btn icon="mdi-account-plus" size="small" :="props" @click="dialog = true" />
         </template>

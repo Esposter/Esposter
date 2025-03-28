@@ -36,14 +36,14 @@ const { text } = useColors();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div class="border" shadow-md py-2 mx-4 rd-lg>
+    <div class="custom-border" shadow-md py-2 mx-4 rd-lg>
       <slot name="messagePreview" />
     </div>
   </StyledDeleteDialog>
 </template>
 
 <style scoped lang="scss">
-.border {
+.custom-border {
   border: 1px $border-style-root v-bind(text);
 }
 </style>

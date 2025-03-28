@@ -5,11 +5,12 @@ import type { VNavigationDrawer } from "vuetify/components";
 import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
+  leftNavigationDrawerProps?: VNavigationDrawer["$props"];
   mainStyle?: CSSProperties;
-  scrim?: VNavigationDrawer["scrim"];
+  rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { mainStyle, scrim } = defineProps<DefaultProps>();
+const { leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: (props: Record<string, never>) => unknown;
   footer?: (props: Record<string, never>) => unknown;
@@ -28,13 +29,13 @@ router.beforeEach(() => {
 </script>
 
 <template>
+  <!-- Ignore parent div here, it is only for nuxt -->
   <div contents>
-    <!-- Ignore parent div here, it is only for nuxt -->
     <v-navigation-drawer
       v-if="slots.left"
       app
       :model-value="leftDrawerOpen"
-      :scrim
+      :="leftNavigationDrawerProps"
       @update:model-value="
         (value) => {
           leftDrawerOpen = value;
@@ -50,7 +51,7 @@ router.beforeEach(() => {
       app
       location="right"
       :model-value="rightDrawerOpen"
-      :scrim
+      :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
           rightDrawerOpen = value;
