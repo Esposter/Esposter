@@ -52,7 +52,7 @@ describe("createOperationData", () => {
 
     expect(itemList.value[0].name).not.toStrictEqual(updatedName);
 
-    updateItem({ name: updatedName });
+    updateItem(Object.assign({}, newItem, { name: updatedName }));
 
     expect(itemList.value[0].name).toStrictEqual(updatedName);
   });
