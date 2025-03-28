@@ -19,9 +19,9 @@ useSubscribables();
 </script>
 
 <template>
-  <!-- Set max height here so we can hide global window scrollbar
-    and show scrollbar within the chat content only for chat routes -->
   <NuxtLayout :main-style="{ 'max-height': '100dvh' }" :left-navigation-drawer-props="{ permanent: true }">
+    <!-- Set max height here so we can hide global window scrollbar
+    and show scrollbar within the chat content only for chat routes -->
     <template #left>
       <EsbabblerLeftSideBar />
     </template>
