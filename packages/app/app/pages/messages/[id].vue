@@ -9,7 +9,7 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName, roomList, roomSearchQuery } = storeToRefs(roomStore);
-const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
+const isRoomExisting = computed(() => roomList.value.some((r) => r.id === currentRoomId.value));
 const route = useRoute();
 const roomId = route.params.id;
 currentRoomId.value = typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
@@ -25,16 +25,16 @@ useSubscribables();
     <template #left>
       <EsbabblerLeftSideBar />
     </template>
-    <template v-if="roomExists" #right>
+    <template v-if="isRoomExisting" #right>
       <EsbabblerRightSideBar />
     </template>
-    <template v-if="roomExists">
+    <template v-if="isRoomExisting">
       <Head>
         <Title>{{ currentRoomName }}</Title>
       </Head>
       <EsbabblerContent />
     </template>
-    <template v-if="roomExists" #footer>
+    <template v-if="isRoomExisting" #footer>
       <EsbabblerModelMessageInput />
     </template>
   </NuxtLayout>
