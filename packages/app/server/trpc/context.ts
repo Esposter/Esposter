@@ -19,7 +19,7 @@ export const createContext = (opts: Contexts) => {
   }
 
   const { req, res } = opts;
-  return { db, headers: opts.info.connectionParams as Headers | null, req, res };
+  return { db, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

@@ -23,12 +23,8 @@ export default defineNuxtPlugin(() => {
       true: (() => {
         if (getIsServer()) return httpBatchLink({ transformer, url: TRPC_CLIENT_PATH });
 
-        const headers = useRequestHeaders();
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsClient = createWSClient({
-          connectionParams: () => headers,
-          url: `${wsProtocol}//${window.location.host}`,
-        });
+        const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
         return wsLink({ client: wsClient, transformer });
       })(),
     }),
