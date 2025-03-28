@@ -12,7 +12,9 @@ const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $trpc } = useNuxtApp();
 const imageModelValue = ref<File | null>(null);
 const isLoading = ref(false);
-const onFileChange = async (files: File | File[]) => {
+const onFileChange = async (files: File | File[] | undefined) => {
+  if (!files) return;
+
   const file = Array.isArray(files) ? files[0] : files;
   isLoading.value = true;
 
