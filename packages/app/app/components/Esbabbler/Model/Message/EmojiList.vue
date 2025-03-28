@@ -9,9 +9,10 @@ interface MessageEmojiListProps {
 
 const { messageRowKey } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
+const { $trpc } = useNuxtApp();
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
-const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
+const { getEmojiList } = emojiStore;
 const emojis = computed(() =>
   getEmojiList(messageRowKey).map((e) => ({
     emoji: emojify(e.emojiTag),
@@ -43,10 +44,10 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       active:scale-95
       @click="
         isReacted
-          ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
+          ? $trpc.emoji.deleteEmoji.mutate({ partitionKey, rowKey, messageRowKey })
           : userIds.length > 0
-            ? updateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
-            : createEmoji({ partitionKey, messageRowKey, emojiTag })
+            ? $trpc.emoji.updateEmoji.mutate({ partitionKey, rowKey, messageRowKey, userIds })
+            : $trpc.emoji.createEmoji.mutate({ partitionKey, messageRowKey, emojiTag })
       "
     >
       {{ emoji }}

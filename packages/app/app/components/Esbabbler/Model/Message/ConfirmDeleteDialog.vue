@@ -2,8 +2,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { useMessageStore } from "@/store/esbabbler/message";
-
 interface ConfirmDeleteMessageDialogProps {
   message: MessageEntity;
 }
@@ -13,7 +11,7 @@ defineSlots<{
   messagePreview: (props: Record<string, never>) => unknown;
 }>();
 const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
-const { deleteMessage } = useMessageStore();
+const { $trpc } = useNuxtApp();
 const { text } = useColors();
 </script>
 
@@ -26,7 +24,7 @@ const { text } = useColors();
     @delete="
       async (onComplete) => {
         try {
-          await deleteMessage({ partitionKey: message.partitionKey, rowKey: message.rowKey });
+          await $trpc.message.deleteMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
         } finally {
           onComplete();
         }

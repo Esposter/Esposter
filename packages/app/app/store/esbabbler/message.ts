@@ -1,7 +1,4 @@
-import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
-import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
@@ -33,31 +30,16 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
     const savedMessageInput = messageInputStore.messageInput;
     editor.commands.clearContent(true);
-    await createMessage({ message: savedMessageInput, roomId: roomStore.currentRoomId });
+    await $trpc.message.createMessage.mutate({ message: savedMessageInput, roomId: roomStore.currentRoomId });
   };
-
-  const createMessage = async (input: CreateMessageInput) => {
-    const newMessage = await $trpc.message.createMessage.mutate(input);
-    storeCreateMessage(newMessage);
-  };
-  const updateMessage = async (input: UpdateMessageInput) => {
-    const updatedMessage = await $trpc.message.updateMessage.mutate(input);
-    storeUpdateMessage(updatedMessage);
-  };
-  const deleteMessage = async (input: DeleteMessageInput) => {
-    const deletedMessageId = await $trpc.message.deleteMessage.mutate(input);
-    storeDeleteMessage(deletedMessageId);
-  };
-  // We need to expose the internal store crud message functions
-  // since it's also used in subscriptions to receive messages created by other people
+  // We only expose the internal store crud message functions for subscriptions
+  // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
     ...restOperationData,
-    deleteMessage,
     sendMessage,
-    updateMessage,
     ...restData,
   };
 });

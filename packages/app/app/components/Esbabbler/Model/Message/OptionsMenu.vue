@@ -26,8 +26,9 @@ const emit = defineEmits<{
   "update:update-mode": [value: true];
 }>();
 const { data: session } = await authClient.useSession(useFetch);
+const { $trpc } = useNuxtApp();
 const emojiStore = useEmojiStore();
-const { createEmoji, deleteEmoji, getEmojiList, updateEmoji } = emojiStore;
+const { getEmojiList } = emojiStore;
 const emojis = computed(() => getEmojiList(message.rowKey));
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const items = computed(() => {
@@ -58,7 +59,7 @@ const onSelect = async (emoji: string) => {
   const emojiTag = unemojify(emoji);
   const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
   if (!foundEmoji) {
-    await createEmoji({
+    await $trpc.emoji.createEmoji.mutate({
       emojiTag,
       messageRowKey: message.rowKey,
       partitionKey: message.partitionKey,
@@ -68,13 +69,13 @@ const onSelect = async (emoji: string) => {
 
   if (foundEmoji.userIds.includes(session.value.user.id)) {
     if (foundEmoji.userIds.length === 1)
-      await deleteEmoji({
+      await $trpc.emoji.deleteEmoji.mutate({
         messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
       });
     else
-      await updateEmoji({
+      await $trpc.emoji.updateEmoji.mutate({
         messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
@@ -83,7 +84,7 @@ const onSelect = async (emoji: string) => {
     return;
   }
 
-  await updateEmoji({
+  await $trpc.emoji.updateEmoji.mutate({
     messageRowKey: foundEmoji.messageRowKey,
     partitionKey: foundEmoji.partitionKey,
     rowKey: foundEmoji.rowKey,
