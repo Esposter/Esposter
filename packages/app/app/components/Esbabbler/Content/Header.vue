@@ -1,6 +1,6 @@
 <template>
   <v-toolbar border pl-4 color="surface" density="comfortable">
-    <EsbabblerModelRoomTitle />
+    <EsbabblerContentTitle />
     <template #append>
       <EsbabblerContentAddFriendsDialogButton />
       <EsbabblerContentShowMemberListButton />
