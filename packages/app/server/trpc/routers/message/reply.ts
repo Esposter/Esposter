@@ -54,9 +54,8 @@ export const replyRouter = router({
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(replyEventEmitter, "createReply", { signal })) {
+      for await (const [data] of on(replyEventEmitter, "createReply", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)

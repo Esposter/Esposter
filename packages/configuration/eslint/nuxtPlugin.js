@@ -32,6 +32,7 @@ export default tseslint.config(
     },
   },
   perfectionist.configs["recommended-natural"],
+  eslintPluginPrettierRecommended,
   {
     rules: {
       curly: ["error", "multi"],
@@ -42,5 +43,4 @@ export default tseslint.config(
       "pinia/require-setup-store-properties-export": "off",
     },
   },
-  eslintPluginPrettierRecommended,
 );

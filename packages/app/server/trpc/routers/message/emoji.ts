@@ -68,23 +68,20 @@ export const emojiRouter = router({
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "createEmoji", { signal })) {
+      for await (const [data] of on(emojiEventEmitter, "createEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "deleteEmoji", { signal })) {
+      for await (const [data] of on(emojiEventEmitter, "deleteEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "updateEmoji", { signal })) {
+      for await (const [data] of on(emojiEventEmitter, "updateEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   readEmojis: getRoomUserProcedure(readMetadataInputSchema, "roomId")
     .input(readMetadataInputSchema)

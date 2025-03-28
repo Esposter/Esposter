@@ -82,23 +82,20 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) {
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal })) {
+      for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "updateMessage", { signal })) {
+      for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
     .input(readMessagesInputSchema)
