@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
+
+### Bug Fixes
+
+* add back no-deprecated check & add vue expect errors ([0a70edb](https://github.com/Esposter/Esposter/commit/0a70edbc48737b7f668fe6fc6744010633e7aa6a))
+* add files ([df8ec27](https://github.com/Esposter/Esposter/commit/df8ec274479d3e223ddd378f124d59320b95c75c))
+* Add identifier ([e5f68c1](https://github.com/Esposter/Esposter/commit/e5f68c1d6bcdaf9ec08ff2795002326d1afeb907))
+* don't use deprecated stuff ([71d9b1b](https://github.com/Esposter/Esposter/commit/71d9b1bb35d3c3bf00f2788565a3375ad67a680b))
+* input hanging workaround + migrate in plugin instead ([c679635](https://github.com/Esposter/Esposter/commit/c679635d2d95320ae5d18dfb92ac313eab4fc026))
+* lint ([e8cbbae](https://github.com/Esposter/Esposter/commit/e8cbbaec64ff0c825d7c05fc02ebb112644a9e6e))
+* only satisfies for zod ([edb5b86](https://github.com/Esposter/Esposter/commit/edb5b86f95e3ef3c6d20d5c05f9eb16a1106df2e))
+* put test to todo for now ([f751d35](https://github.com/Esposter/Esposter/commit/f751d35aa56efca12ed784e121544440a1bec4cd))
+* remove unnecessary weird non json serializble stuff ([50a2730](https://github.com/Esposter/Esposter/commit/50a2730906a4327196d076e616db1740da14ccb4))
+* trpc transformer ([49bbbc1](https://github.com/Esposter/Esposter/commit/49bbbc13830a2ce8af0346868b6fa8933deebc75))
+* update dependencies + fix types ([a06fe37](https://github.com/Esposter/Esposter/commit/a06fe37d55bd3564309f8405e647338b742c695b))
+* update snapshots ([b19a925](https://github.com/Esposter/Esposter/commit/b19a9251f294c3308b876481dfcc656a1f2d2bc2))
+* update to latest ver of scripts to fix up typechecking issues ([a9d0af6](https://github.com/Esposter/Esposter/commit/a9d0af6cd764d0b0c3fff03242b10647b4410ae3))
+
+### Features
+
+* Migrate to async generators ([c0d2d83](https://github.com/Esposter/Esposter/commit/c0d2d838b7eb2bf4b28c2d32862285e367d195ad))
+* Try support websockets ([5f2f70d](https://github.com/Esposter/Esposter/commit/5f2f70dbacd21abe461b4f3e07a1154787dc195f))
+* Update dependencies and trpc-nuxt to v1! c: ([67728db](https://github.com/Esposter/Esposter/commit/67728db6831d32050bc818206d6d304fbf0a991e))
+* Upgrade to trpc 11 ([1494045](https://github.com/Esposter/Esposter/commit/1494045fbc518b0a8446fd6d99da458eac30f965))
+
 ## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
 **Note:** Version bump only for package esposter

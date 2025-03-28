@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
+
+### Bug Fixes
+
+* add back no-deprecated check & add vue expect errors ([0a70edb](https://github.com/Esposter/Esposter/commit/0a70edbc48737b7f668fe6fc6744010633e7aa6a))
+* input hanging workaround + migrate in plugin instead ([c679635](https://github.com/Esposter/Esposter/commit/c679635d2d95320ae5d18dfb92ac313eab4fc026))
+
 ## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
 **Note:** Version bump only for package @esposter/configuration

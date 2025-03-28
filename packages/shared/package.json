@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "1.38.1",
+  "version": "1.39.0",
   "description": "A library that contains shared typescript code.",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
