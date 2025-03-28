@@ -19,11 +19,11 @@ export const createAzureOperationData = <TItem extends AzureEntity, TEntityTypeK
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
     const index = itemList.value.findIndex(
-      (i) => i.partitionKey === updatedItem.partitionKey && i.rowKey === updatedItem.rowKey,
+      ({ partitionKey, rowKey }) => partitionKey === updatedItem.partitionKey && rowKey === updatedItem.rowKey,
     );
     if (index === -1) return;
 
-    Object.assign(itemList.value[index], { ...updatedItem, updatedAt: new Date() });
+    Object.assign(itemList.value[index], updatedItem);
   };
   const deleteItem = ({ partitionKey, rowKey }: CompositeKey) => {
     itemList.value = itemList.value.filter((i) => !(i.partitionKey === partitionKey && i.rowKey === rowKey));

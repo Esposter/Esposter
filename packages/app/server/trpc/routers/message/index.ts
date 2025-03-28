@@ -112,9 +112,10 @@ export const messageRouter = router({
     .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
     .input(updateMessageInputSchema)
     .mutation(async ({ input }) => {
+      const updatedMessage = { ...input, updatedAt: new Date() };
       const messageClient = await useTableClient(AzureTable.Messages);
-      await updateEntity(messageClient, { ...input, updatedAt: new Date() });
-      messageEventEmitter.emit("updateMessage", input);
+      await updateEntity(messageClient, updatedMessage);
+      messageEventEmitter.emit("updateMessage", updatedMessage);
       return input;
     }),
 });

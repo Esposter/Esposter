@@ -7,7 +7,7 @@ import { EventEmitter } from "node:events";
 interface MessageEvents {
   createMessage: MessageEntity[];
   deleteMessage: DeleteMessageInput[];
-  updateMessage: UpdateMessageInput[];
+  updateMessage: (Pick<MessageEntity, "updatedAt"> & UpdateMessageInput)[];
 }
 
 export const messageEventEmitter = new EventEmitter<MessageEvents>();

@@ -20,7 +20,7 @@ export abstract class AItemResolver {
     item.value.quantity--;
     if (item.value.quantity > 0) return;
 
-    const index = inventory.value.findIndex((i) => i.id === item.value.id);
+    const index = inventory.value.findIndex(({ id }) => id === item.value.id);
     if (index === -1) return;
     inventory.value.splice(index, 1);
   }

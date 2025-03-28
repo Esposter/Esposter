@@ -7,7 +7,7 @@ import { EventEmitter } from "node:events";
 interface EmojiEvents {
   createEmoji: MessageEmojiMetadataEntity[];
   deleteEmoji: DeleteEmojiInput[];
-  updateEmoji: UpdateEmojiInput[];
+  updateEmoji: (Pick<MessageEmojiMetadataEntity, "updatedAt"> & UpdateEmojiInput)[];
 }
 
 export const emojiEventEmitter = new EventEmitter<EmojiEvents>();
