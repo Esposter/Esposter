@@ -21,7 +21,7 @@ const isUpdateMode = ref(false);
         <PostLikeSection pt-2 :post="comment" is-comment-store />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">
           <v-avatar>
-            <v-img v-if="comment.user.image" :src="comment.user.image" />
+            <v-img v-if="comment.user.image" :src="comment.user.image" :alt="comment.user.name" />
           </v-avatar>
           Posted by <span font-bold>{{ comment.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
           <PostCommentUpdateRichTextEditor

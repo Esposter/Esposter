@@ -57,7 +57,7 @@ watch(
         @click="selectItem(index)"
       >
         <v-avatar v-if="item.image" size="x-small">
-          <v-img :src="item.image" :alt="item.name ?? undefined" />
+          <v-img :src="item.image" :alt="item.name" />
         </v-avatar>
         <span font-bold pl-2 case-normal>
           {{ item.name }}

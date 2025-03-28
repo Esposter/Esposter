@@ -30,8 +30,8 @@ const onFileChange = async (files: File | File[] | undefined) => {
   <v-col flex flex-wrap items-center self-center gap-4 cols="6">
     <template v-if="editMode">
       <v-avatar>
-        <v-img v-if="modelValue" :src="modelValue" />
-        <v-img v-else-if="value" :src="value" />
+        <v-img v-if="modelValue" :src="modelValue" :alt="modelValue" />
+        <v-img v-else-if="value" :src="value" :alt="value" />
       </v-avatar>
       <v-file-input
         v-model="imageModelValue"
@@ -48,7 +48,7 @@ const onFileChange = async (files: File | File[] | undefined) => {
       />
     </template>
     <v-avatar v-else>
-      <v-img v-if="value" :src="value" />
+      <v-img v-if="value" :src="value" :alt="value" />
     </v-avatar>
   </v-col>
 </template>
