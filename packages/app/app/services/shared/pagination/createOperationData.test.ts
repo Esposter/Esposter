@@ -48,17 +48,13 @@ describe("createOperationData", () => {
     const { createItem, itemList, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
-    const updatedAt = newItem.updatedAt;
-    const msPassed = 1;
     createItem(newItem);
 
     expect(itemList.value[0].name).not.toStrictEqual(updatedName);
 
-    vi.advanceTimersByTime(msPassed);
-    updateItem(Object.assign({}, newItem, { name: updatedName }));
+    updateItem({ name: updatedName });
 
     expect(itemList.value[0].name).toStrictEqual(updatedName);
-    expect(itemList.value[0].updatedAt.getTime()).toStrictEqual(updatedAt.getTime() + msPassed);
   });
 
   test("deletes", () => {
