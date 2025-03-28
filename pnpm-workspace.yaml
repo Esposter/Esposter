@@ -95,7 +95,7 @@ catalog:
   dotenv: ^16.4.7
   drizzle-kit: ^0.30.6
   drizzle-orm: ^0.41.0
-  drizzle-zod: ^0.7.0
+  drizzle-zod: ^0.7.1
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.23.0
   eslint-config-prettier: ^10.1.1
