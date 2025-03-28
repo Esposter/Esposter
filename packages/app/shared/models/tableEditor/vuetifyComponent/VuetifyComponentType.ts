@@ -8,4 +8,6 @@ export const VuetifyComponentType = Object.keys(VuetifyComponentMap).reduce<Reco
 }, {}) as VuetifyComponentTypeMap;
 export type VuetifyComponentType = keyof typeof VuetifyComponentType;
 
-export const vuetifyComponentTypeSchema = z.nativeEnum(VuetifyComponentType) satisfies z.ZodType<VuetifyComponentType>;
+export const vuetifyComponentTypeSchema = z.nativeEnum(
+  VuetifyComponentType,
+) as const satisfies z.ZodType<VuetifyComponentType>;

@@ -14,4 +14,4 @@ export const saveSchema = z.object({
   player: playerSchema,
   tilemapKey: tilemapKeySchema,
   world: worldSchema,
-}) satisfies z.ZodType<Save>;
+}) as const satisfies z.ZodType<Save>;

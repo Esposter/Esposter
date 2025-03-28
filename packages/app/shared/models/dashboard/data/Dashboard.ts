@@ -15,4 +15,6 @@ export type Dashboard = typeof Dashboard.prototype;
 
 export const dashboardSchema = z
   .object({ visuals: z.array(visualSchema) })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<Except<Dashboard, "visuals"> & { visuals: ToData<Visual>[] }>>;
+  .merge(itemMetadataSchema) as const satisfies z.ZodType<
+  ToData<Except<Dashboard, "visuals"> & { visuals: ToData<Visual>[] }>
+>;

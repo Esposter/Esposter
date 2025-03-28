@@ -5,4 +5,4 @@ export enum AttackId {
   Slash = "Slash",
 }
 
-export const attackIdSchema = z.nativeEnum(AttackId) satisfies z.ZodType<AttackId>;
+export const attackIdSchema = z.nativeEnum(AttackId) as const satisfies z.ZodType<AttackId>;

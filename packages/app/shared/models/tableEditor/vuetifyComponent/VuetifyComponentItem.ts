@@ -26,4 +26,4 @@ export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
   .merge(
     z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.string().min(1), z.unknown()) }),
-  ) satisfies z.ZodType<ToData<VuetifyComponentItem>>;
+  ) as const satisfies z.ZodType<ToData<VuetifyComponentItem>>;

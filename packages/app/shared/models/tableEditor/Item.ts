@@ -13,4 +13,4 @@ export type Item = ATableEditorItemEntity & ItemEntityType<string>;
 
 export const itemSchema = aTableEditorItemEntitySchema.merge(
   createItemEntityTypeSchema(z.string()),
-) satisfies z.ZodType<ToData<Item>>;
+) as const satisfies z.ZodType<ToData<Item>>;

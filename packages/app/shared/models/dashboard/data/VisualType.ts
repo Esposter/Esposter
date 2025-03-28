@@ -21,4 +21,4 @@ export enum VisualType {
   Treemap = "Treemap",
 }
 
-export const visualTypeSchema = z.nativeEnum(VisualType) satisfies z.ZodType<VisualType>;
+export const visualTypeSchema = z.nativeEnum(VisualType) as const satisfies z.ZodType<VisualType>;

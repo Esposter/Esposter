@@ -23,4 +23,4 @@ export const todoListItemSchema = aTableEditorItemEntitySchema
       dueAt: z.date().nullable(),
       notes: z.string().max(NOTES_MAX_LENGTH),
     }),
-  ) satisfies z.ZodType<ToData<TodoListItem>>;
+  ) as const satisfies z.ZodType<ToData<TodoListItem>>;

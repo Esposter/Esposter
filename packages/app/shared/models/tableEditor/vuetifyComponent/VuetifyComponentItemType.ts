@@ -6,4 +6,4 @@ export enum VuetifyComponentItemType {
 
 export const vuetifyComponentItemTypeSchema = z.nativeEnum(
   VuetifyComponentItemType,
-) satisfies z.ZodType<VuetifyComponentItemType>;
+) as const satisfies z.ZodType<VuetifyComponentItemType>;

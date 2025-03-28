@@ -28,4 +28,4 @@ export const settingsSchema = z.object({
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,
-}) satisfies z.ZodType<Settings>;
+}) as const satisfies z.ZodType<Settings>;

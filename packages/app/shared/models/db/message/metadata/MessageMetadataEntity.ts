@@ -17,4 +17,4 @@ export const messageMetadataEntitySchema = z
     rowKey: z.string(),
     type: z.nativeEnum(MessageMetadataType),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<MessageMetadataEntity>;
+  .merge(itemMetadataSchema) as const satisfies z.ZodType<MessageMetadataEntity>;

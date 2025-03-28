@@ -14,4 +14,4 @@ export const aItemEntitySchema = z
   .object({
     id: z.string().uuid(),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<AItemEntity>>;
+  .merge(itemMetadataSchema) as const satisfies z.ZodType<ToData<AItemEntity>>;

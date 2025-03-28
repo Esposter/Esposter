@@ -23,4 +23,4 @@ export const JSONClasses = [
   { cls: TodoListItem, name: "TodoListItem" },
   { cls: VuetifyComponentItem, name: "VuetifyComponentItem" },
   { cls: WebpageEditor, name: "WebpageEditor" },
-] satisfies { cls: Class<Serializable>; name: string }[];
+] as const satisfies { cls: Class<Serializable>; name: string }[];

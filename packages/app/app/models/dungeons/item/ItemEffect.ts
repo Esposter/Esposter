@@ -11,4 +11,4 @@ export interface ItemEffect {
 export const itemEffectSchema = z.object({
   type: itemEffectTypeSchema,
   value: z.number(),
-}) satisfies z.ZodType<ItemEffect>;
+}) as const satisfies z.ZodType<ItemEffect>;

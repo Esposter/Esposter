@@ -6,4 +6,4 @@ export const edgeSchema = z.object({
   id: z.string(),
   source: z.string(),
   target: z.string(),
-}) satisfies z.ZodType<Edge>;
+}) as const satisfies z.ZodType<Edge>;

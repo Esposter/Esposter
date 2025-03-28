@@ -5,4 +5,4 @@ export enum ItemEffectType {
   Heal = "Heal",
 }
 
-export const itemEffectTypeSchema = z.nativeEnum(ItemEffectType) satisfies z.ZodType<ItemEffectType>;
+export const itemEffectTypeSchema = z.nativeEnum(ItemEffectType) as const satisfies z.ZodType<ItemEffectType>;

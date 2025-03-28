@@ -10,4 +10,4 @@ export type UnlockCondition = BuildingUnlockCondition | UpgradeUnlockCondition;
 export const unlockConditionSchema = z.union([
   buildingUnlockConditionSchema,
   upgradeUnlockConditionSchema,
-]) satisfies z.ZodType<UnlockCondition>;
+]) as const satisfies z.ZodType<UnlockCondition>;

@@ -6,4 +6,4 @@ import { z } from "zod";
 export const AssetKey = mergeObjectsStrict(ImageKey, SpritesheetKey);
 export type AssetKey = ImageKey | SpritesheetKey;
 
-export const assetKeySchema = z.nativeEnum(AssetKey) satisfies z.ZodType<AssetKey>;
+export const assetKeySchema = z.nativeEnum(AssetKey) as const satisfies z.ZodType<AssetKey>;

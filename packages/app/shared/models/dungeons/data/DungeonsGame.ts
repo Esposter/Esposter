@@ -21,4 +21,4 @@ export const dungeonsGameSchema = z
     saves: z.array(saveSchema),
     settings: settingsSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<DungeonsGame>>;
+  .merge(itemMetadataSchema) as const satisfies z.ZodType<ToData<DungeonsGame>>;

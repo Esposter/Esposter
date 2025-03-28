@@ -7,4 +7,4 @@ import { z } from "zod";
 export const Target = mergeObjectsStrict(ItemType, UpgradeId, BuildingId);
 export type Target = BuildingId | ItemType | UpgradeId;
 
-export const targetSchema = z.nativeEnum(Target) satisfies z.ZodType<Target>;
+export const targetSchema = z.nativeEnum(Target) as const satisfies z.ZodType<Target>;

@@ -17,4 +17,4 @@ export const itemSchema = z.object({
   effect: itemEffectSchema,
   id: itemIdSchema,
   quantity: z.number().int().positive(),
-}) satisfies z.ZodType<Item>;
+}) as const satisfies z.ZodType<Item>;

@@ -15,4 +15,4 @@ export const effectSchema = z.object({
   configuration: effectConfigurationSchema,
   targets: z.array(targetSchema).min(1),
   value: z.number(),
-}) satisfies z.ZodType<Effect>;
+}) as const satisfies z.ZodType<Effect>;

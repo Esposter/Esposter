@@ -6,4 +6,4 @@ export enum ItemType {
   Upgrade = "Upgrade",
 }
 
-export const itemTypeSchema = z.nativeEnum(ItemType) satisfies z.ZodType<ItemType>;
+export const itemTypeSchema = z.nativeEnum(ItemType) as const satisfies z.ZodType<ItemType>;

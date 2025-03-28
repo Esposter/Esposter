@@ -17,4 +17,4 @@ export const respawnLocationSchema = z.object({
   direction: directionSchema,
   position: positionSchema,
   tilemapKey: tilemapKeySchema,
-}) satisfies z.ZodType<RespawnLocation>;
+}) as const satisfies z.ZodType<RespawnLocation>;

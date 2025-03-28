@@ -9,4 +9,4 @@ export enum EffectType {
   Multiplicative = "Multiplicative",
 }
 
-export const effectTypeSchema = z.nativeEnum(EffectType) satisfies z.ZodType<EffectType>;
+export const effectTypeSchema = z.nativeEnum(EffectType) as const satisfies z.ZodType<EffectType>;

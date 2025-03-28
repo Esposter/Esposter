@@ -10,4 +10,4 @@ export const basicChartConfigurationSchema = z.object({
   dataLabels: z.boolean().default(false),
   subtitle: z.string().default(""),
   title: z.string().default(""),
-}) satisfies z.ZodType<BasicChartConfiguration>;
+}) as const satisfies z.ZodType<BasicChartConfiguration>;
