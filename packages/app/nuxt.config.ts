@@ -2,6 +2,7 @@ import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
 import { css } from "./configuration/css";
+import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
@@ -21,6 +22,7 @@ export default defineNuxtConfig({
   build,
   compatibilityDate,
   css,
+  devtools,
   experimental,
   future,
   imports,
