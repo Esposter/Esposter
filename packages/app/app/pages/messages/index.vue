@@ -2,7 +2,8 @@
 import { RoutePath } from "#shared/models/router/RoutePath";
 
 definePageMeta({ middleware: "auth" });
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+
+useHead({ titleTemplate: "Esbabbler" });
 
 const { $trpc } = useNuxtApp();
 const room = await $trpc.room.readRoom.query();
@@ -12,9 +13,6 @@ if (room) await navigateTo(RoutePath.Messages(room.id), { replace: true });
 <template>
   <NuxtLayout>
     <template #default>
-      <Head>
-        <Title>Esbabbler</Title>
-      </Head>
       <div class="bg-surface" h-full>
         <EsbabblerLeftSideBar />
       </div>
