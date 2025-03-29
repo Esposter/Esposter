@@ -34,7 +34,7 @@ router.beforeEach(() => {
     <v-navigation-drawer
       v-if="slots.left"
       app
-      :model-value="leftDrawerOpen"
+      :model-value="leftNavigationDrawerProps?.permanent ?? leftDrawerOpen"
       :="leftNavigationDrawerProps"
       @update:model-value="
         (value) => {
@@ -50,7 +50,7 @@ router.beforeEach(() => {
       v-if="slots.right"
       app
       location="right"
-      :model-value="rightDrawerOpen"
+      :model-value="rightNavigationDrawerProps?.permanent ?? rightDrawerOpen"
       :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
