@@ -24,11 +24,11 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     });
     setEmojiList(updatedEmoji.messageRowKey, emojiList);
   };
-  const storeDeleteEmoji = (input: DeleteEmojiInput) => {
-    const emojiList = getEmojiList(input.messageRowKey);
+  const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {
+    const emojiList = getEmojiList(messageRowKey);
     setEmojiList(
-      input.messageRowKey,
-      emojiList.filter((e) => !(e.partitionKey === input.partitionKey && e.rowKey === input.rowKey)),
+      messageRowKey,
+      emojiList.filter((e) => !(e.partitionKey === partitionKey && e.rowKey === rowKey)),
     );
   };
 

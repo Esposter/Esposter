@@ -41,7 +41,7 @@ onUnmounted(() => {
         },
         displayWidth: nameDisplayWidth,
       }"
-      @update:display-width="(value: typeof nameDisplayWidth) => (nameDisplayWidth = value)"
+      @update:display-width="(value) => (nameDisplayWidth = value)"
     />
     <Text
       :configuration="{

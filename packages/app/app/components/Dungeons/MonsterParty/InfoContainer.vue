@@ -64,7 +64,7 @@ watch(
         text: infoDialogMessage.text,
         style: MenuTextStyle,
       }"
-      @update:display-width="(value: typeof infoTextDisplayWidth) => (infoTextDisplayWidth = value)"
+      @update:display-width="(value) => (infoTextDisplayWidth = value)"
     />
     <DungeonsUIInputPromptCursor :y="rectangleHeight / 2 - 3" />
   </Container>

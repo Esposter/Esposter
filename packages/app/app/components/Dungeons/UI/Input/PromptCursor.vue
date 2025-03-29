@@ -35,6 +35,6 @@ const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVi
         },
       },
     }"
-    @update:display-width="(value: typeof inputPromptCursorDisplayWidth) => (inputPromptCursorDisplayWidth = value)"
+    @update:display-width="(value) => (inputPromptCursorDisplayWidth = value)"
   />
 </template>
