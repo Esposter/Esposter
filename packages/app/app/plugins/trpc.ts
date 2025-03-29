@@ -17,18 +17,21 @@ export default defineNuxtPlugin(() => {
         (IS_DEVELOPMENT && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
     errorLink,
-    splitLink({
-      condition: (op) => op.type === "subscription",
-      false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
-      true: (() => {
-        if (getIsServer()) return httpBatchLink({ transformer, url: TRPC_CLIENT_PATH });
-
-        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
-        return wsLink({ client: wsClient, transformer });
-      })(),
-    }),
   ];
+
+  if (getIsServer()) links.push(httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }));
+  else {
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
+    links.push(
+      splitLink({
+        condition: ({ type }) => type === "subscription",
+        false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
+        true: wsLink({ client: wsClient, transformer }),
+      }),
+    );
+  }
+
   const trpc = createTRPCNuxtClient<TRPCRouter>({ links });
   return { provide: { trpc } };
 });
