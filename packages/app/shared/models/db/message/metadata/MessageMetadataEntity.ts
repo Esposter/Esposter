@@ -1,3 +1,5 @@
+import type { ToData } from "#shared/models/entity/ToData";
+
 import { AzureEntity } from "#shared/models/azure/AzureEntity";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
@@ -17,4 +19,4 @@ export const messageMetadataEntitySchema = z
     rowKey: z.string(),
     type: z.nativeEnum(MessageMetadataType),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<MessageMetadataEntity>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<MessageMetadataEntity>>;

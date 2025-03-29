@@ -6,6 +6,7 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageReplyMetadataEntity } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
+import { InviteEntity } from "#shared/models/db/room/InviteEntity";
 import { DungeonsGame } from "#shared/models/dungeons/data/DungeonsGame";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
@@ -21,6 +22,7 @@ export const JSONClassMap = {
   DungeonsGame,
   EmailEditor,
   FlowchartEditor,
+  InviteEntity,
   MessageEmojiMetadataEntity,
   MessageEntity,
   MessageReplyMetadataEntity,

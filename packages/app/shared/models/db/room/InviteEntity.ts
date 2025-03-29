@@ -10,7 +10,7 @@ import { z } from "zod";
 export class InviteEntity extends AzureEntity {
   roomId!: string;
 
-  constructor(init?: CompositeKeyEntity & Partial<InviteEntity>) {
+  constructor(init?: Partial<InviteEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
