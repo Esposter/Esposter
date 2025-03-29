@@ -7,11 +7,11 @@ import {
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
-import { now } from "#shared/util/time/now";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { replyEventEmitter } from "@@/server/services/esbabbler/events/replyEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
@@ -43,7 +43,7 @@ export const replyRouter = router({
       const newReply = new MessageReplyMetadataEntity({
         ...input,
         createdAt,
-        rowKey: now(),
+        rowKey: getReverseTickedTimestamp(),
         type: MessageMetadataType.Reply,
         updatedAt: createdAt,
       });
