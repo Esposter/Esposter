@@ -9,12 +9,12 @@ import {
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
-import { now } from "#shared/util/time/now";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
@@ -50,7 +50,7 @@ export const emojiRouter = router({
         emojiTag: input.emojiTag,
         messageRowKey: input.messageRowKey,
         partitionKey: input.partitionKey,
-        rowKey: now(),
+        rowKey: getReverseTickedTimestamp(),
         type: MessageMetadataType.EmojiTag,
         userIds: [ctx.session.user.id],
       });

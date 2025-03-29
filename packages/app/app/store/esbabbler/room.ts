@@ -30,7 +30,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
     if (!newRoom) return;
 
-    storeCreateRoom(newRoom);
+    storeCreateRoom(newRoom, true);
   };
   const updateRoom = async (input: UpdateRoomInput) => {
     const updatedRoom = await $trpc.room.updateRoom.mutate(input);

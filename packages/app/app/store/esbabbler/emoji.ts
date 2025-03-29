@@ -9,6 +9,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
     const emojiList = getEmojiList(newEmoji.messageRowKey);
     emojiList.push(newEmoji);
+    setEmojiList(newEmoji.messageRowKey, emojiList);
   };
   const storeUpdateEmoji = (updatedEmoji: UpdateEmojiInput) => {
     const emojiList = getEmojiList(updatedEmoji.messageRowKey);
@@ -21,6 +22,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
       ...updatedEmoji,
       userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
     });
+    setEmojiList(updatedEmoji.messageRowKey, emojiList);
   };
   const storeDeleteEmoji = (input: DeleteEmojiInput) => {
     const emojiList = getEmojiList(input.messageRowKey);
