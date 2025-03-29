@@ -108,9 +108,4 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
 }
-
-:deep(.ProseMirror) {
-  height: auto;
-  max-height: 15rem;
-}
 </style>

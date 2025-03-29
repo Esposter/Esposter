@@ -4,18 +4,19 @@ import type { FooterBarAppendSlotProps } from "@/components/RichTextEditor/Foote
 import { POST_DESCRIPTION_MAX_LENGTH } from "#shared/services/post/constants";
 
 export interface DescriptionRichTextEditorProps {
+  height?: string;
   placeholder?: string;
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { placeholder } = defineProps<DescriptionRichTextEditorProps>();
+const { height = "15rem", placeholder } = defineProps<DescriptionRichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
 }>();
 </script>
 
 <template>
-  <RichTextEditor v-model="modelValue" :placeholder :limit="POST_DESCRIPTION_MAX_LENGTH">
+  <RichTextEditor v-model="modelValue" :height :placeholder :limit="POST_DESCRIPTION_MAX_LENGTH">
     <template #append-footer="{ editor }">
       <slot name="append-footer" :editor />
     </template>

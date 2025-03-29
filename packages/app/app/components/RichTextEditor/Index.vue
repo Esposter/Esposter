@@ -16,7 +16,7 @@ interface RichTextEditorProps {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { extensions, height = "15rem", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
+const { extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
@@ -64,6 +64,7 @@ onUnmounted(() => editor.value?.destroy());
 :deep(.ProseMirror) {
   padding: 1rem;
   height: v-bind(height);
+  max-height: 15rem;
   overflow-y: auto;
   outline: none;
 

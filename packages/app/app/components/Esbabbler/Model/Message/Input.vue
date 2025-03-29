@@ -34,10 +34,3 @@ const keyboardExtension = new Extension({
     </template>
   </RichTextEditor>
 </template>
-
-<style scoped lang="scss">
-:deep(.ProseMirror) {
-  height: auto;
-  max-height: 15rem;
-}
-</style>

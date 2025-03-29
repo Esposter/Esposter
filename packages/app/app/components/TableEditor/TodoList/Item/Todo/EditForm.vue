@@ -16,7 +16,7 @@ const { editedItem } = storeToRefs(tableEditorStore);
         <v-text-field v-model="editedItem.name" label="Name" :rules="[formRules.required]" />
       </v-col>
       <v-col cols="12">
-        <RichTextEditor v-model="editedItem.notes" :limit="NOTES_MAX_LENGTH" />
+        <RichTextEditor v-model="editedItem.notes" height="15rem" :limit="NOTES_MAX_LENGTH" />
       </v-col>
       <v-col cols="12">
         <StyledDatePicker
