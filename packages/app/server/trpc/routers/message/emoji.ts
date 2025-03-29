@@ -39,13 +39,13 @@ export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 export const emojiRouter = router({
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
     .input(createEmojiInputSchema)
-    .mutation<MessageEmojiMetadataEntity | null>(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
         filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.EmojiTag}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
       });
-      if (foundEmojis.length > 0) return null;
+      if (foundEmojis.length > 0) return;
 
       const newEmoji = new MessageEmojiMetadataEntity({
         emojiTag: input.emojiTag,
@@ -57,7 +57,6 @@ export const emojiRouter = router({
       });
       await createEntity(messagesMetadataClient, newEmoji);
       emitSerialized(emojiEventEmitter, "createEmoji", newEmoji);
-      return newEmoji;
     }),
   deleteEmoji: getRoomUserProcedure(deleteEmojiInputSchema, "partitionKey")
     .input(deleteEmojiInputSchema)
@@ -105,6 +104,5 @@ export const emojiRouter = router({
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       await updateEntity(messagesMetadataClient, updatedEmoji);
       emitSerialized(emojiEventEmitter, "updateEmoji", updatedEmoji);
-      return input;
     }),
 });

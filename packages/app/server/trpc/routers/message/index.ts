@@ -56,7 +56,7 @@ export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
-    .mutation<MessageEntity>(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const createdAt = new Date();
       const newMessage = new MessageEntity({
         createdAt,
@@ -70,7 +70,6 @@ export const messageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
       emitSerialized(messageEventEmitter, "createMessage", newMessage);
-      return newMessage;
     }),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
@@ -78,7 +77,6 @@ export const messageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       emitSerialized(messageEventEmitter, "deleteMessage", input);
-      return input;
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
@@ -117,6 +115,5 @@ export const messageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       await updateEntity(messageClient, updatedMessage);
       emitSerialized(messageEventEmitter, "updateMessage", updatedMessage);
-      return input;
     }),
 });
