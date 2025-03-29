@@ -16,7 +16,8 @@ import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities"
 import { replyEventEmitter } from "@@/server/services/esbabbler/events/replyEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
-import { on } from "@@/server/services/events/on";
+import { emitSerialized } from "@@/server/services/events/emitSerialized";
+import { onDeserialized } from "@@/server/services/events/onDeserialized";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
@@ -48,13 +49,13 @@ export const replyRouter = router({
         updatedAt: createdAt,
       });
       await createEntity(messagesMetadataClient, newReply);
-      replyEventEmitter.emit("createReply", newReply);
+      emitSerialized(replyEventEmitter, "createReply", newReply);
       return newReply;
     }),
   onCreateReply: getRoomUserProcedure(onCreateReplyInputSchema, "roomId")
     .input(onCreateReplyInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(replyEventEmitter, "createReply", { signal }))
+      for await (const [data] of onDeserialized(replyEventEmitter, "createReply", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")

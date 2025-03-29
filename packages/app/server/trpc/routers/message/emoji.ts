@@ -20,7 +20,8 @@ import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
-import { on } from "@@/server/services/events/on";
+import { emitSerialized } from "@@/server/services/events/emitSerialized";
+import { onDeserialized } from "@@/server/services/events/onDeserialized";
 import { router } from "@@/server/trpc";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
@@ -55,7 +56,7 @@ export const emojiRouter = router({
         userIds: [ctx.session.user.id],
       });
       await createEntity(messagesMetadataClient, newEmoji);
-      emojiEventEmitter.emit("createEmoji", newEmoji);
+      emitSerialized(emojiEventEmitter, "createEmoji", newEmoji);
       return newEmoji;
     }),
   deleteEmoji: getRoomUserProcedure(deleteEmojiInputSchema, "partitionKey")
@@ -63,24 +64,24 @@ export const emojiRouter = router({
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-      emojiEventEmitter.emit("deleteEmoji", input);
+      emitSerialized(emojiEventEmitter, "deleteEmoji", input);
     }),
   onCreateEmoji: getRoomUserProcedure(onCreateEmojiInputSchema, "roomId")
     .input(onCreateEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "createEmoji", { signal }))
+      for await (const [data] of onDeserialized(emojiEventEmitter, "createEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   onDeleteEmoji: getRoomUserProcedure(onDeleteEmojiInputSchema, "roomId")
     .input(onDeleteEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "deleteEmoji", { signal }))
+      for await (const [data] of onDeserialized(emojiEventEmitter, "deleteEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   onUpdateEmoji: getRoomUserProcedure(onUpdateEmojiInputSchema, "roomId")
     .input(onUpdateEmojiInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(emojiEventEmitter, "updateEmoji", { signal }))
+      for await (const [data] of onDeserialized(emojiEventEmitter, "updateEmoji", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   readEmojis: getRoomUserProcedure(readMetadataInputSchema, "roomId")
@@ -103,7 +104,7 @@ export const emojiRouter = router({
       const updatedEmoji = { ...input, updatedAt: new Date(), userIds: [...input.userIds, ctx.session.user.id] };
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       await updateEntity(messagesMetadataClient, updatedEmoji);
-      emojiEventEmitter.emit("updateEmoji", updatedEmoji);
+      emitSerialized(emojiEventEmitter, "updateEmoji", updatedEmoji);
       return input;
     }),
 });
