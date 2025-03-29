@@ -145,7 +145,7 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^6.2.1
-  rollup: ^4.37.0
+  rollup: ^4.38.0
   rollup-plugin-dts: ^6.2.1
   rxjs: ^7.8.2
   sass-embedded: ^1.86.0
