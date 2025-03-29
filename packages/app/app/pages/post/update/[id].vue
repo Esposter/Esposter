@@ -6,7 +6,8 @@ import { usePostStore } from "@/store/post";
 definePageMeta({ middleware: "auth", validate });
 
 const post = await useReadPostFromRoute();
-const { updatePost } = usePostStore();
+const postStore = usePostStore();
+const { updatePost } = postStore;
 </script>
 
 <template>

@@ -7,9 +7,17 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 const { $trpc } = useNuxtApp();
 const room = await $trpc.room.readRoom.query();
 if (room) await navigateTo(RoutePath.Messages(room.id), { replace: true });
-else await navigateTo(RoutePath.Messages("t"), { replace: true });
 </script>
 
 <template>
-  <NuxtLayout />
+  <NuxtLayout>
+    <template #default>
+      <Head>
+        <Title>Esbabbler</Title>
+      </Head>
+      <div class="bg-surface" h-full>
+        <EsbabblerLeftSideBar />
+      </div>
+    </template>
+  </NuxtLayout>
 </template>

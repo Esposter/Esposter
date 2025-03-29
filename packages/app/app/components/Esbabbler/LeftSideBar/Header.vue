@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid flex justify-center>
     <EsbabblerModelRoomSearcher />
   </v-container>
 </template>

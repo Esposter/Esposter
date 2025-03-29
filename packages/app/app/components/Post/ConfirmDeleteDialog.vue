@@ -13,7 +13,8 @@ defineSlots<{
   postPreview: (props: Record<string, never>) => unknown;
 }>();
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
-const { deletePost } = usePostStore();
+const postStore = usePostStore();
+const { deletePost } = postStore;
 const { text } = useColors();
 </script>
 

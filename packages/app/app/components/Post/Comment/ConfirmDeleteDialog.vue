@@ -12,7 +12,8 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
 }>();
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
-const { deleteComment } = useCommentStore();
+const commentStore = useCommentStore();
+const { deleteComment } = commentStore;
 const { text } = useColors();
 </script>
 
