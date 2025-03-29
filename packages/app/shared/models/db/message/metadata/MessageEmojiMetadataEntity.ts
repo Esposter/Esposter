@@ -12,7 +12,7 @@ import { z } from "zod";
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
   emojiTag!: string;
 
-  userIds!: string[];
+  userIds: string[] = [];
 
   constructor(init?: Partial<MessageEmojiMetadataEntity> & ToData<CompositeKeyEntity>) {
     super();

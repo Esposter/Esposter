@@ -3,7 +3,7 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 import type { TableEntityQueryOptions } from "@azure/data-tables";
 import type { Class } from "type-fest";
 
-import { plainToInstance } from "class-transformer";
+import { deserializeEntity } from "@@/server/services/azure/transformer/deserializeEntity";
 
 export const getTopNEntities = async <TEntity extends CompositeKey>(
   tableClient: CustomTableClient<TEntity>,
@@ -17,7 +17,7 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
   // Filter out metadata like continuation token before deserializing the json
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  for await (const page of iterator) return plainToInstance(cls, page.slice(0, topN));
+  for await (const page of iterator) return page.slice(0, topN).map((e) => deserializeEntity(e, cls));
 
   return [];
 };

@@ -10,7 +10,7 @@ import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
-  files!: FileEntity[];
+  files: FileEntity[] = [];
 
   message!: string;
 
