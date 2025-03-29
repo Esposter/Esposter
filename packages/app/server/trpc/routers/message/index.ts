@@ -18,8 +18,7 @@ import { messageEventEmitter } from "@@/server/services/esbabbler/events/message
 import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
-import { emitSerialized } from "@@/server/services/events/emitSerialized";
-import { onDeserialized } from "@@/server/services/events/onDeserialized";
+import { on } from "@@/server/services/events/on";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { router } from "@@/server/trpc";
@@ -69,31 +68,31 @@ export const messageRouter = router({
       });
       const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
-      emitSerialized(messageEventEmitter, "createMessage", newMessage);
+      messageEventEmitter.emit("createMessage", newMessage);
     }),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
     .mutation(async ({ input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
-      emitSerialized(messageEventEmitter, "deleteMessage", input);
+      messageEventEmitter.emit("deleteMessage", input);
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of onDeserialized(messageEventEmitter, "createMessage", { signal }))
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of onDeserialized(messageEventEmitter, "deleteMessage", { signal }))
+      for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   onUpdateMessage: getRoomUserProcedure(onUpdateMessageInputSchema, "roomId")
     .input(onUpdateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of onDeserialized(messageEventEmitter, "updateMessage", { signal }))
+      for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
   readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
@@ -114,6 +113,6 @@ export const messageRouter = router({
       const updatedMessage = { ...input, updatedAt: new Date() };
       const messageClient = await useTableClient(AzureTable.Messages);
       await updateEntity(messageClient, updatedMessage);
-      emitSerialized(messageEventEmitter, "updateMessage", updatedMessage);
+      messageEventEmitter.emit("updateMessage", updatedMessage);
     }),
 });

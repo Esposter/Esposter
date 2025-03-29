@@ -1,5 +1,6 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity } from "#shared/models/azure/AzureEntity";
@@ -15,7 +16,7 @@ export class MessageEntity extends AzureEntity {
 
   userId!: string;
 
-  constructor(init: CompositeKeyEntity & Partial<MessageEntity>) {
+  constructor(init?: Partial<MessageEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
@@ -31,4 +32,4 @@ export const messageEntitySchema = z
     rowKey: z.string(),
     userId: selectUserSchema.shape.id,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<MessageEntity>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<MessageEntity>>;

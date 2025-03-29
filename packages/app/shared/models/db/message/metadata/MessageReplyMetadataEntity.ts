@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import {
@@ -11,7 +12,7 @@ import { z } from "zod";
 export class MessageReplyMetadataEntity extends MessageMetadataEntity {
   message!: string;
 
-  constructor(init: CompositeKeyEntity & Partial<MessageReplyMetadataEntity>) {
+  constructor(init?: Partial<MessageReplyMetadataEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
@@ -24,4 +25,4 @@ export const messageReplyMetadataEntitySchema = messageMetadataEntitySchema.merg
     message: messageEntitySchema.shape.message,
     messageReplyRowKey: messageEntitySchema.shape.rowKey,
   }),
-) satisfies z.ZodType<MessageReplyMetadataEntity>;
+) satisfies z.ZodType<ToData<MessageReplyMetadataEntity>>;

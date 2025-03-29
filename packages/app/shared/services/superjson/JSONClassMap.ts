@@ -3,6 +3,9 @@ import type { Class } from "type-fest";
 
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { MessageReplyMetadataEntity } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 import { DungeonsGame } from "#shared/models/dungeons/data/DungeonsGame";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
@@ -12,15 +15,18 @@ import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 
-export const JSONClasses = [
-  { cls: ClickerGame, name: "ClickerGame" },
-  { cls: Dashboard, name: "Dashboard" },
-  { cls: DungeonsGame, name: "DungeonsGame" },
-  { cls: EmailEditor, name: "EmailEditor" },
-  { cls: FlowchartEditor, name: "FlowchartEditor" },
-  { cls: TableEditor, name: "TableEditor" },
-  { cls: TableEditorConfiguration, name: "TableEditorConfiguration" },
-  { cls: TodoListItem, name: "TodoListItem" },
-  { cls: VuetifyComponentItem, name: "VuetifyComponentItem" },
-  { cls: WebpageEditor, name: "WebpageEditor" },
-] as const satisfies { cls: Class<Serializable>; name: string }[];
+export const JSONClassMap = {
+  ClickerGame,
+  Dashboard,
+  DungeonsGame,
+  EmailEditor,
+  FlowchartEditor,
+  MessageEmojiMetadataEntity,
+  MessageEntity,
+  MessageReplyMetadataEntity,
+  TableEditor,
+  TableEditorConfiguration,
+  TodoListItem,
+  VuetifyComponentItem,
+  WebpageEditor,
+} as const satisfies Record<string, Class<Serializable>>;

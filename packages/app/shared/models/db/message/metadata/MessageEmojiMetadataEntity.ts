@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import {
@@ -13,7 +14,7 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity {
 
   userIds!: string[];
 
-  constructor(init: CompositeKeyEntity & Partial<MessageEmojiMetadataEntity>) {
+  constructor(init?: Partial<MessageEmojiMetadataEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
@@ -23,4 +24,4 @@ export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageE
 
 export const messageEmojiMetadataEntitySchema = messageMetadataEntitySchema.merge(
   z.object({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) }),
-) satisfies z.ZodType<MessageEmojiMetadataEntity>;
+) satisfies z.ZodType<ToData<MessageEmojiMetadataEntity>>;

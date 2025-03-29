@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntity } from "#shared/models/azure/AzureEntity";
@@ -9,7 +10,7 @@ import { z } from "zod";
 export class InviteEntity extends AzureEntity {
   roomId!: string;
 
-  constructor(init: CompositeKeyEntity & Partial<InviteEntity>) {
+  constructor(init?: CompositeKeyEntity & Partial<InviteEntity>) {
     super();
     Object.assign(this, init);
   }
@@ -23,4 +24,4 @@ export const inviteEntitySchema = z
     roomId: selectRoomSchema.shape.id,
     rowKey: z.string(),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<InviteEntity>;
+  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<InviteEntity>>;
