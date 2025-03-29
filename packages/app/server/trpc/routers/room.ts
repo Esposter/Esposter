@@ -24,7 +24,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { and, desc, eq, ilike } from "drizzle-orm";
+import { and, desc, eq, exists, ilike, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -149,7 +149,7 @@ export const roomRouter = router({
     const userToRoom = (
       await ctx.db
         .delete(usersToRooms)
-        .where(and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
+        .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.session.user.id)))
         .returning()
     ).find(Boolean);
     return userToRoom ?? null;
@@ -163,8 +163,8 @@ export const roomRouter = router({
       const joinedUsers = await ctx.db
         .select()
         .from(users)
-        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id), eq(usersToRooms.roomId, roomId)))
-        .where(where)
+        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .where(and(eq(usersToRooms.roomId, roomId), where))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
       const resultUsers = joinedUsers.map(({ users }) => users);
@@ -176,22 +176,45 @@ export const roomRouter = router({
         await ctx.db
           .select()
           .from(rooms)
-          .innerJoin(usersToRooms, and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input)))
+          .where(
+            and(
+              eq(rooms.id, input),
+              exists(
+                // Select a constant '1' - we only care if *any* row matches
+                ctx.db
+                  .select({ _: sql`1` })
+                  .from(usersToRooms)
+                  .where(
+                    and(
+                      // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
+                      eq(usersToRooms.roomId, rooms.id),
+                      // Condition 2: Ensure the row belongs to the specific user
+                      eq(usersToRooms.userId, ctx.session.user.id),
+                    ),
+                  ),
+              ),
+            ),
+          )
       ).find(Boolean);
-      return joinedRoom?.rooms ?? null;
+      return joinedRoom ?? null;
     }
     // By default, we will return the latest updated room
     const joinedRoom = (
       await ctx.db
         .select()
         .from(rooms)
-        .innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id))
+        .innerJoin(usersToRooms, eq(usersToRooms.roomId, rooms.id))
+        .where(eq(usersToRooms.userId, ctx.session.user.id))
         .orderBy(desc(rooms.updatedAt))
+        .limit(1)
     ).find(Boolean);
     return joinedRoom?.rooms ?? null;
   }),
   readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
-    const query = ctx.db.select().from(rooms).innerJoin(usersToRooms, eq(usersToRooms.userId, ctx.session.user.id));
+    const query = ctx.db
+      .select()
+      .from(rooms)
+      .innerJoin(usersToRooms, and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.session.user.id)));
     if (cursor) query.where(getCursorWhere(rooms, cursor, sortBy));
     query.orderBy(...parseSortByToSql(rooms, sortBy));
 
