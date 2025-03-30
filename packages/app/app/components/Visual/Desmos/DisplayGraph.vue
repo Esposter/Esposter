@@ -70,10 +70,10 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  onLoaded(async ({ GraphingCalculator }) => {
-    const element = document.querySelector<HTMLDivElement>(`#${id}`);
-    if (!element) return;
+  const element = document.querySelector<HTMLDivElement>(`#${id}`);
+  if (!element) return;
 
+  onLoaded(async ({ GraphingCalculator }) => {
     calculator = await GraphingCalculator(element, {
       border: false,
       expressionsCollapsed: true,
