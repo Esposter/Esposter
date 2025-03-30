@@ -2,9 +2,10 @@ import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/Delete
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
+import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
-  const { getMetadataList: getEmojiList, setMetadataList: setEmojiList } =
-    useMessageMetadataMap<MessageEmojiMetadataEntity>();
+  const { getEmojiList, setEmojiList } = useMessageMetadataMap(MessageMetadataType.Emoji);
 
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
     const emojiList = getEmojiList(newEmoji.messageRowKey);
@@ -14,12 +15,11 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
   const storeUpdateEmoji = (updatedEmoji: UpdateEmojiInput) => {
     const emojiList = getEmojiList(updatedEmoji.messageRowKey);
     const index = emojiList.findIndex(
-      (e) => e.partitionKey === updatedEmoji.partitionKey && e.rowKey === updatedEmoji.rowKey,
+      ({ partitionKey, rowKey }) => partitionKey === updatedEmoji.partitionKey && rowKey === updatedEmoji.rowKey,
     );
     if (index === -1) return;
 
-    Object.assign(emojiList[index], {
-      ...updatedEmoji,
+    Object.assign(emojiList[index], updatedEmoji, {
       userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
     });
     setEmojiList(updatedEmoji.messageRowKey, emojiList);

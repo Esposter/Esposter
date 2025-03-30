@@ -1,22 +1,24 @@
-import type { ToData } from "#shared/models/entity/ToData";
+import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 
-import { AzureEntity } from "#shared/models/azure/AzureEntity";
+import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "#shared/models/azure/AzureMetadataEntity";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
-import { itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
 import { z } from "zod";
 
-export class MessageMetadataEntity extends AzureEntity {
+export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {
   messageRowKey!: string;
-
-  type!: MessageMetadataType;
 }
 
-export const messageMetadataEntitySchema = z
-  .object({
-    messageRowKey: messageEntitySchema.shape.rowKey,
-    partitionKey: messageEntitySchema.shape.partitionKey,
-    rowKey: z.string(),
-    type: z.nativeEnum(MessageMetadataType),
-  })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<MessageMetadataEntity>>;
+export const createMessageMetadataEntitySchema = <TTypeSchema extends z.ZodType<string>>(typeSchema: TTypeSchema) =>
+  z
+    .object({
+      messageRowKey: messageEntitySchema.shape.rowKey,
+    })
+    .merge(
+      createAzureMetadataEntitySchema(
+        z.object({
+          partitionKey: messageEntitySchema.shape.partitionKey,
+          rowKey: z.string(),
+          type: typeSchema,
+        }),
+      ),
+    );

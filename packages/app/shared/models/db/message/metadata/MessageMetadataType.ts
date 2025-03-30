@@ -1,4 +1,8 @@
 export enum MessageMetadataType {
-  EmojiTag = "EmojiTag",
+  // @TODO: Not Implemented
+  EditHistory = "EditHistory",
+  Emoji = "Emoji",
+  // @TODO: Not Implemented
+  ReadReceipt = "ReadReceipt",
   Reply = "Reply",
 }

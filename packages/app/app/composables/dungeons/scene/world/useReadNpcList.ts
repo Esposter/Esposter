@@ -10,7 +10,7 @@ import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
-import { createItemMetadata } from "@/services/shared/createItemMetadata";
+import { createItemMetadata } from "@/services/shared/metadata/createItemMetadata";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";

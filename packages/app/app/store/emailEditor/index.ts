@@ -1,7 +1,7 @@
 import type { ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const { $trpc } = useNuxtApp();

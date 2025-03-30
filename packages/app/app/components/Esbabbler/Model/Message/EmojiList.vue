@@ -13,23 +13,23 @@ const { $trpc } = useNuxtApp();
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
 const { getEmojiList } = emojiStore;
-const emojis = computed(() =>
-  getEmojiList(messageRowKey).map((e) => ({
-    emoji: emojify(e.emojiTag),
-    emojiTag: e.emojiTag,
-    isReacted: Boolean(session.value && e.userIds.includes(session.value.user.id)),
-    partitionKey: e.partitionKey,
-    rowKey: e.rowKey,
-    userIds: e.userIds,
+const emojiList = computed(() =>
+  getEmojiList(messageRowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
+    emoji: emojify(emojiTag),
+    emojiTag,
+    isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
+    partitionKey,
+    rowKey,
+    userIds,
   })),
 );
-const hasEmojis = computed(() => emojis.value.length > 0);
+const hasEmojis = computed(() => emojiList.value.length > 0);
 </script>
 
 <template>
   <div v-if="hasEmojis" flex mt-2 flex-wrap gap-1>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
+      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojiList"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"

@@ -3,10 +3,10 @@ import { createOperationData } from "@/services/shared/pagination/createOperatio
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe("createOperationData", () => {
-  let operationData: ReturnType<typeof createOperationData<TodoListItem>>;
+  let operationData: ReturnType<typeof createOperationData<TodoListItem, "Item">>;
 
   beforeEach(() => {
-    operationData = createOperationData(ref<TodoListItem[]>([]));
+    operationData = createOperationData(ref<TodoListItem[]>([]), "Item");
   });
 
   test("pushes", () => {

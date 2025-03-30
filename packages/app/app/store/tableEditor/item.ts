@@ -17,7 +17,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
     }),
   );
   return {
-    ...createOperationData(itemList),
+    ...createOperationData(itemList, "Item"),
     ...restData,
   };
 });

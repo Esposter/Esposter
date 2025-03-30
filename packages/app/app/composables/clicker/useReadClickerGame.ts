@@ -3,7 +3,7 @@ import type { RecursiveDeepOmitItemMetadata } from "#shared/util/types/Recursive
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
-import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
+import { omitDeepItemMetadata } from "@/services/shared/metadata/omitDeepItemMetadata";
 import { useClickerStore } from "@/store/clicker";
 import deepEqual from "fast-deep-equal";
 

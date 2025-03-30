@@ -1,7 +1,7 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { createItemMetadata } from "@/services/shared/createItemMetadata";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { createItemMetadata } from "@/services/shared/metadata/createItemMetadata";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { useDashboardStore } from "@/store/dashboard";
 

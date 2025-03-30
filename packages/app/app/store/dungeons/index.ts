@@ -6,7 +6,7 @@ import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 

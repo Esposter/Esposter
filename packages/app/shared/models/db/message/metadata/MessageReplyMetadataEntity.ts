@@ -3,13 +3,14 @@ import type { ToData } from "#shared/models/entity/ToData";
 
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import {
+  createMessageMetadataEntitySchema,
   MessageMetadataEntity,
-  messageMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
+import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
-export class MessageReplyMetadataEntity extends MessageMetadataEntity {
+export class MessageReplyMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Reply> {
   message!: string;
 
   constructor(init?: Partial<MessageReplyMetadataEntity> & ToData<CompositeKeyEntity>) {
@@ -20,7 +21,9 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity {
 
 export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageReplyMetadataEntity>();
 
-export const messageReplyMetadataEntitySchema = messageMetadataEntitySchema.merge(
+export const messageReplyMetadataEntitySchema = createMessageMetadataEntitySchema(
+  z.literal(MessageMetadataType.Reply),
+).merge(
   z.object({
     message: messageEntitySchema.shape.message,
     messageReplyRowKey: messageEntitySchema.shape.rowKey,

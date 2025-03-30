@@ -4,15 +4,13 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 
 import { TableClient } from "@azure/data-tables";
 
-export const useTableClient = async <TAzureTable extends AzureTable>(
-  tableName: TAzureTable,
-): Promise<CustomTableClient<AzureTableEntityMap[TAzureTable]>> => {
+export const useTableClient = async <TAzureTable extends AzureTable>(tableName: TAzureTable) => {
   const runtimeConfig = useRuntimeConfig();
   const tableClient = TableClient.fromConnectionString(runtimeConfig.azure.storageAccountConnectionString, tableName);
   try {
     await tableClient.createTable();
-    return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
-  } catch {
+  } finally {
+    // eslint-disable-next-line no-unsafe-finally
     return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
   }
 };

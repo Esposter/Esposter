@@ -1,7 +1,7 @@
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { authClient } from "@/services/auth/authClient";
 import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/constants";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
   const { $trpc } = useNuxtApp();

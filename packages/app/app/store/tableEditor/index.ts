@@ -11,7 +11,7 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditor
 import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 

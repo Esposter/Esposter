@@ -1,7 +1,7 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { authClient } from "@/services/auth/authClient";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useDashboardStore = defineStore("dashboard", () => {
   const { $trpc } = useNuxtApp();

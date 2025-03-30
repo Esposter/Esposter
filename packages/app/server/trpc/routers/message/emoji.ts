@@ -42,7 +42,7 @@ export const emojiRouter = router({
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.EmojiTag}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
+        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
       });
       if (foundEmojis.length > 0) return;
 
@@ -51,7 +51,7 @@ export const emojiRouter = router({
         messageRowKey: input.messageRowKey,
         partitionKey: input.partitionKey,
         rowKey: getReverseTickedTimestamp(),
-        type: MessageMetadataType.EmojiTag,
+        type: MessageMetadataType.Emoji,
         userIds: [ctx.session.user.id],
       });
       await createEntity(messagesMetadataClient, newEmoji);
@@ -91,7 +91,7 @@ export const emojiRouter = router({
       const { messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
-          MessageMetadataType.EmojiTag
+          MessageMetadataType.Emoji
         }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
       });
     }),

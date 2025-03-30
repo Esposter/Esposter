@@ -1,7 +1,7 @@
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
 import { authClient } from "@/services/auth/authClient";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useClickerStore = defineStore("clicker", () => {
   const { $trpc } = useNuxtApp();

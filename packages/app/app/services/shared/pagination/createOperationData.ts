@@ -5,12 +5,9 @@ import type { OperationDataKey } from "@/models/shared/pagination/OperationDataK
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";
 
-export const createOperationData = <
-  TItem extends Pick<AItemEntity, "id">,
-  TEntityTypeKey extends EntityTypeKey = "Item",
->(
+export const createOperationData = <TItem extends Pick<AItemEntity, "id">, TEntityTypeKey extends EntityTypeKey>(
   itemList: Ref<TItem[]>,
-  entityTypeKey: TEntityTypeKey = "Item" as TEntityTypeKey,
+  entityTypeKey: TEntityTypeKey,
 ) => {
   const pushItemList = (...items: TItem[]) => {
     itemList.value.push(...items);
