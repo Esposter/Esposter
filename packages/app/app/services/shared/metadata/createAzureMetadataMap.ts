@@ -1,4 +1,3 @@
-import type { AzureMetadataEntity } from "#shared/models/azure/AzureMetadataEntity";
 import type { MessageMetadataEntityMap } from "#shared/models/db/message/metadata/MessageMetadataEntityMap";
 import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
@@ -6,9 +5,7 @@ import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/Azu
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
-type TEntity<TType extends string> = TType extends MessageMetadataType
-  ? MessageMetadataEntityMap[TType]
-  : AzureMetadataEntity<TType>;
+type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
 export const createAzureMetadataMap = <TType extends string>(
   currentId: MaybeRefOrGetter<string | undefined>,
