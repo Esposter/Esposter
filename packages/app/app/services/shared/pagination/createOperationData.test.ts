@@ -13,10 +13,10 @@ describe("createOperationData", () => {
     expect.hasAssertions();
 
     const { itemList, pushItemList } = operationData;
-    const newItem = new TodoListItem();
 
     expect(itemList.value).toHaveLength(0);
 
+    const newItem = new TodoListItem();
     pushItemList(newItem);
 
     expect(itemList.value).toHaveLength(1);
@@ -27,10 +27,10 @@ describe("createOperationData", () => {
     expect.hasAssertions();
 
     const { createItem, itemList } = operationData;
-    const newItem = new TodoListItem();
 
     expect(itemList.value).toHaveLength(0);
 
+    const newItem = new TodoListItem();
     createItem(newItem);
 
     expect(itemList.value).toHaveLength(1);

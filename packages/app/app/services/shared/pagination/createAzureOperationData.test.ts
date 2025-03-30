@@ -14,10 +14,10 @@ describe("createAzureOperationData", () => {
     expect.hasAssertions();
 
     const { messageList, pushMessageList } = azureOperationData;
-    const newMessage = new MessageEntity();
 
     expect(messageList.value).toHaveLength(0);
 
+    const newMessage = new MessageEntity();
     pushMessageList(newMessage);
 
     expect(messageList.value).toHaveLength(1);
@@ -28,10 +28,10 @@ describe("createAzureOperationData", () => {
     expect.hasAssertions();
 
     const { createMessage, messageList } = azureOperationData;
-    const newMessage = new MessageEntity();
 
     expect(messageList.value).toHaveLength(0);
 
+    const newMessage = new MessageEntity();
     createMessage(newMessage);
 
     expect(messageList.value).toHaveLength(1);
