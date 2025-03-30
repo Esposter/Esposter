@@ -29,15 +29,15 @@ catalog:
   "@rollup/plugin-json": ^6.1.0
   "@rollup/plugin-node-resolve": ^16.0.1
   "@rollup/plugin-typescript": ^12.1.2
-  "@tiptap/core": ^2.11.6
-  "@tiptap/extension-character-count": ^2.11.6
-  "@tiptap/extension-link": ^2.11.6
-  "@tiptap/extension-mention": ^2.11.6
-  "@tiptap/extension-placeholder": ^2.11.6
-  "@tiptap/pm": ^2.11.6
-  "@tiptap/starter-kit": ^2.11.6
-  "@tiptap/suggestion": ^2.11.6
-  "@tiptap/vue-3": ^2.11.6
+  "@tiptap/core": ^2.11.7
+  "@tiptap/extension-character-count": ^2.11.7
+  "@tiptap/extension-link": ^2.11.7
+  "@tiptap/extension-mention": ^2.11.7
+  "@tiptap/extension-placeholder": ^2.11.7
+  "@tiptap/pm": ^2.11.7
+  "@tiptap/starter-kit": ^2.11.7
+  "@tiptap/suggestion": ^2.11.7
+  "@tiptap/vue-3": ^2.11.7
   "@trpc/client": ^11.0.1
   "@trpc/server": ^11.0.1
   "@types/data-urls": ^3.0.4
