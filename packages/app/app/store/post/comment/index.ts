@@ -11,9 +11,9 @@ import { uuidValidateV4 } from "@esposter/shared";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
-  const router = useRouter();
+  const route = useRoute();
   const currentPostId = computed(() => {
-    const postId = router.currentRoute.value.params.id;
+    const postId = route.params.id;
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
   });
   const currentPost = ref<PostWithRelations>();

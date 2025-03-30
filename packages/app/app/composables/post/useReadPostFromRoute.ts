@@ -6,6 +6,7 @@ export const useReadPostFromRoute = async () => {
   const route = useRoute();
   const postId = route.params.id as string;
   const post = await $trpc.post.readPost.query(postId);
+
   if (!post)
     throw createError({
       statusCode: 404,

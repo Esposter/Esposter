@@ -7,6 +7,7 @@ import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
+import { uuidValidateV4 } from "@esposter/shared";
 import { useFuse } from "@vueuse/integrations/useFuse";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
@@ -19,7 +20,11 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Room);
-  const currentRoomId = ref();
+  const route = useRoute();
+  const currentRoomId = computed(() => {
+    const roomId = route.params.id;
+    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
+  });
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
     const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);

@@ -1,21 +1,17 @@
 <script setup lang="ts">
+import { validate } from "@/services/router/validate";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { uuidValidateV4 } from "@esposter/shared";
 
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: "auth", validate });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
+useSubscribables();
+
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
-const { currentRoomId, currentRoomName, roomList, roomSearchQuery } = storeToRefs(roomStore);
-const isRoomExisting = computed(() => roomList.value.some((r) => r.id === currentRoomId.value));
-const route = useRoute();
-const roomId = route.params.id;
-currentRoomId.value = typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
-roomSearchQuery.value = "";
-
-useSubscribables();
+const { currentRoomId, currentRoomName, roomList } = storeToRefs(roomStore);
+const isRoomExisting = computed(() => roomList.value.some(({ id }) => id === currentRoomId.value));
 </script>
 
 <template>
