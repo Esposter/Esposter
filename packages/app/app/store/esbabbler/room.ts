@@ -27,7 +27,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   });
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";
-    const currentRoom = roomList.value.find((r) => r.id === currentRoomId.value);
+    const currentRoom = roomList.value.find(({ id }) => id === currentRoomId.value);
     return currentRoom?.name ?? "";
   });
 
@@ -60,7 +60,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
         keys: ["name"],
       },
     });
-    return results.value.map((x) => x.item);
+    return results.value.map(({ item }) => item);
   });
 
   return {

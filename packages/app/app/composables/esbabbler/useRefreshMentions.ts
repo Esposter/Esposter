@@ -9,7 +9,7 @@ export const useRefreshMentions = (message: string) => {
 
   for (const mention of mentions) {
     const memberId = mention.getAttribute("data-id");
-    const member = memberList.value.find((m) => m.id === memberId);
+    const member = memberList.value.find(({ id }) => id === memberId);
     if (!member?.name) continue;
 
     mention.textContent = `@${member.name}`;

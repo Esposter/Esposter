@@ -13,5 +13,5 @@ export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) 
     );
 
   const randomCumulativeWeight = generateRandomNumber(maxCumulativeWeight);
-  return values[values.filter((v) => v.cumulativeWeight <= randomCumulativeWeight).length];
+  return values[values.filter(({ cumulativeWeight }) => cumulativeWeight <= randomCumulativeWeight).length];
 };

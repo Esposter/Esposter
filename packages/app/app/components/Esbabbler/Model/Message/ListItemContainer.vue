@@ -12,7 +12,7 @@ const { currentMessage, nextMessage } = defineProps<MessageListItemContainerProp
 const memberStore = useMemberStore();
 const { memberList } = storeToRefs(memberStore);
 // We won't show messages from members that have left the room for simplicity
-const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.userId));
+const creator = computed(() => memberList.value.find(({ id }) => id === currentMessage.userId));
 </script>
 
 <template>

@@ -17,8 +17,8 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     upgradeMap.value = newUpgradeMap;
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
-    upgradeList.value.filter((u) =>
-      u.unlockConditions.every((uc) => {
+    upgradeList.value.filter(({ unlockConditions }) =>
+      unlockConditions.every((uc) => {
         const { type } = uc;
 
         switch (type) {

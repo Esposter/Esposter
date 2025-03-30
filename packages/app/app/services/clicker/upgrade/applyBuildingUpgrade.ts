@@ -10,7 +10,7 @@ export const applyBuildingUpgrade = (
 ) =>
   applyUpgrades(
     building.baseValue,
-    (u) => u.effects.some((e) => e.targets.includes(building.id)),
+    ({ effects }) => effects.some(({ targets }) => targets.includes(building.id)),
     boughtUpgrades,
     boughtBuildings,
   ) * building.amount;

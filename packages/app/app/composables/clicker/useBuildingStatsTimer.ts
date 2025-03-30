@@ -22,7 +22,7 @@ export const useBuildingStatsTimer = () => {
     buildingPowers: typeof boughtBuildingPowers.value,
   ) => {
     for (const boughtBuilding of boughtBuildings) {
-      const buildingPower = buildingPowers.find((b) => b.id === boughtBuilding.id);
+      const buildingPower = buildingPowers.find(({ id }) => id === boughtBuilding.id);
       if (!buildingPower) return;
 
       buildingStatsTimers.value.push(

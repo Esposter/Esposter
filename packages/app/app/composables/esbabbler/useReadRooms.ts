@@ -20,7 +20,7 @@ export const useReadRooms = async () => {
     currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : null,
     $trpc.room.readRooms.query(),
   ]);
-  if (item && !response.items.some((r) => r.id === item.id)) response.items.push(item);
+  if (item && !response.items.some(({ id }) => id === item.id)) response.items.push(item);
   initializeCursorPaginationData(response);
   return readMoreRooms;
 };

@@ -12,7 +12,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const newLike = await $trpc.like.createLike.mutate(input);
     if (!newLike) return;
 
-    const post = toValue(allPosts).find((p) => p.id === newLike.postId);
+    const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
@@ -22,13 +22,15 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const updatedLike = await $trpc.like.updateLike.mutate(input);
     if (!updatedLike) return;
 
-    const post = toValue(allPosts).find((p) => p.id === updatedLike.postId);
+    const post = toValue(allPosts).find(({ id }) => id === updatedLike.postId);
     if (!post) return;
 
-    const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
+    const index = post.likes.findIndex(
+      ({ postId, userId }) => userId === updatedLike.userId && postId === updatedLike.postId,
+    );
     if (index === -1) return;
 
-    post.likes[index] = { ...post.likes[index], ...updatedLike };
+    Object.assign(post.likes[index], updatedLike);
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
@@ -38,13 +40,15 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
 
     await $trpc.like.deleteLike.mutate(postId);
 
-    const post = toValue(allPosts).find((p) => p.id === postId);
+    const post = toValue(allPosts).find(({ id }) => id === postId);
     if (!post) return;
 
-    const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);
+    const deletedLike = post.likes.find(({ postId, userId }) => userId === userId && postId === postId);
     if (!deletedLike) return;
 
-    post.likes = post.likes.filter((l) => !(l.userId === deletedLike.userId && l.postId === deletedLike.postId));
+    post.likes = post.likes.filter(
+      ({ postId, userId }) => !(userId === deletedLike.userId && postId === deletedLike.postId),
+    );
     post.noLikes -= deletedLike.value;
   };
 

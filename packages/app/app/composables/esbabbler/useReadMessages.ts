@@ -20,7 +20,7 @@ export const useReadMessages = async () => {
       pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
-      await readEmojis(response.items.map((m) => m.rowKey));
+      await readEmojis(response.items.map(({ rowKey }) => rowKey));
     } finally {
       onComplete();
     }
@@ -29,7 +29,7 @@ export const useReadMessages = async () => {
   if (currentRoomId.value) {
     const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
     initializeCursorPaginationData(response);
-    if (response.items.length > 0) await readEmojis(response.items.map((m) => m.rowKey));
+    if (response.items.length > 0) await readEmojis(response.items.map(({ rowKey }) => rowKey));
   }
 
   return readMoreMessages;

@@ -61,14 +61,12 @@ export class TiledJSONExternalFile extends MultiFile {
       const responseData = await parseXmlString(response);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
-      tilemapFile.data.tilesets[index] = {
-        ...tilemapFile.data.tilesets[index],
-        ...tilesetData,
+      Object.assign(tilemapFile.data.tilesets[index], tilesetData, {
         imageheight: tilesetData.image.height,
         imagewidth: tilesetData.image.width,
         // Avoid throwing in tilemap creator
         source: undefined,
-      };
+      });
     }
 
     this.loader.cacheManager.tilemap.add(tilemapFile.key, {

@@ -7,7 +7,7 @@ export const serialize = <TItem extends ItemMetadata>(
 ): string | undefined => {
   if (!item) return undefined;
 
-  const keys = sortBy.map((s) => s.key);
+  const keys = sortBy.map(({ key }) => key);
   const itemCursors = keys.reduce<Record<string, unknown>>((acc, key) => {
     const value = item[key];
     acc[key] = value;
