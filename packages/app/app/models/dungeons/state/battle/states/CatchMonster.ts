@@ -2,7 +2,7 @@ import type { State } from "@/models/dungeons/state/State";
 
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { generateCaptureResult } from "@/services/dungeons/item/generateCaptureResult";
+import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -16,7 +16,7 @@ export const CatchMonster: State<StateName> = {
     const { showMessages } = battleDialogStore;
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
-    const captureResult = generateCaptureResult(activeMonster.value);
+    const captureResult = createCaptureResult(activeMonster.value);
     await useThrowBallAnimation(scene, captureResult);
 
     if (captureResult === CaptureResult.Success) {

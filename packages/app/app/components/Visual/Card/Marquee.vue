@@ -45,7 +45,7 @@ const { "on-surface": onSurface, surface } = useColors();
 <style scoped lang="scss">
 @use "sass:math";
 // @NOTE: Make sure to manually change this when the total number of cards are changed
-// Unfortunately we have to do this manually because sass generates the css at compile-time and is "static"
+// Unfortunately we have to do this manually because sass creates the css at compile-time and is "static"
 // whereas we cannot use vue props as an index for sass loops since vue props are run-time and are "dynamic" :C
 $card-length: 6;
 

@@ -8,7 +8,7 @@ const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const runtimeConfig = useRuntimeConfig();
 const dialog = ref(false);
 const inviteCode = ref(
-  currentRoomId.value ? await $trpc.room.generateInviteCode.mutate({ roomId: currentRoomId.value }) : "",
+  currentRoomId.value ? await $trpc.room.createInviteCode.mutate({ roomId: currentRoomId.value }) : "",
 );
 const inviteLink = computed(() =>
   inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
@@ -29,7 +29,7 @@ const inviteLink = computed(() =>
         Invite friends to <span font-bold>{{ currentRoomName }}</span>
       </v-card-title>
       <v-card-text px-0="!">
-        <div mb-2>Send a room invite link to a friend</div>
+        <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field v-model="inviteLink" variant="filled" hide-details readonly>
           <template #append-inner>
             <StyledClipboardButton :source="inviteLink" />

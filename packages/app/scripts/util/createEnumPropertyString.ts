@@ -1,6 +1,6 @@
 import { startsWithNumber } from "@/util/regex/startsWithNumber";
 
-export const generateEnumPropertyString = (name: string) => {
+export const createEnumPropertyString = (name: string) => {
   // We'll support enum properties that start with numbers
   // as tools like Tiled may contain them in enums
   if (startsWithNumber(name)) return `"@${name}"`;

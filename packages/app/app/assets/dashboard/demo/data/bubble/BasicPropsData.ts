@@ -1,6 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-import { generateData } from "@/services/dashboard/demo/generateData";
+import { createData } from "@/services/dashboard/demo/createData";
 
 export const BasicPropsData = {
   options: {
@@ -17,28 +17,28 @@ export const BasicPropsData = {
   },
   series: [
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Bubble1",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Bubble2",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Bubble3",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),

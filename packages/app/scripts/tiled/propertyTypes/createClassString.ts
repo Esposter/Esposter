@@ -5,12 +5,12 @@ import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { generateImportTypeLinesString } from "@@/scripts/util/generateImportTypeLinesString";
-import { generateInterfaceString } from "@@/scripts/util/generateInterfaceString";
+import { createImportTypeLinesString } from "@@/scripts/util/createImportTypeLinesString";
+import { createInterfaceString } from "@@/scripts/util/createInterfaceString";
 
 const TILED_ROOT_DIRECTORY_IMPORT_PATH = `#${TILED_ROOT_DIRECTORY}/${DIRECTORY}`;
 
-export const generateClassString = (name: string, properties: TiledObjectProperty[]) => {
+export const createClassString = (name: string, properties: TiledObjectProperty[]) => {
   const importLines: ImportTypeLine[] = [];
   const interfaceProperties: InterfaceProperty[] = [];
 
@@ -40,5 +40,5 @@ export const generateClassString = (name: string, properties: TiledObjectPropert
     interfaceProperties.push({ name, type: type === PropertyType.int ? "number" : type });
   }
 
-  return `${generateImportTypeLinesString(importLines)}${generateInterfaceString(name, interfaceProperties)}`;
+  return `${createImportTypeLinesString(importLines)}${createInterfaceString(name, interfaceProperties)}`;
 };

@@ -10,7 +10,7 @@ import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { generateCode } from "#shared/util/math/random/generateCode";
+import { createCode } from "#shared/util/math/random/createCode";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
@@ -52,14 +52,46 @@ const createMembersInputSchema = z.object({
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
-const generateInviteCodeInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-});
-export type GenerateInviteCodeInput = z.infer<typeof generateInviteCodeInputSchema>;
+const createInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type CreateInviteCodeInput = z.infer<typeof createInviteCodeInputSchema>;
 
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
+  createInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
+    .input(createInviteCodeInputSchema)
+    .mutation<string>(async ({ input: { roomId } }) => {
+      const inviteClient = await useTableClient(AzureTable.Invites);
+      // We only allow one invite code per room
+      // So let's return the code to the user if it exists
+      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
+        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
+      });
+      if (invites.length > 0) return invites[0].rowKey;
+      // Create non-colliding invite code
+      let inviteCode = createCode(8);
+      invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
+        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
+      });
+
+      while (invites.length > 0) {
+        inviteCode = createCode(8);
+        invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
+          filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
+        });
+      }
+
+      const createdAt = new Date();
+      const newInvite = new InviteEntity({
+        createdAt,
+        partitionKey: AZURE_DEFAULT_PARTITION_KEY,
+        roomId,
+        rowKey: inviteCode,
+        updatedAt: createdAt,
+      });
+      await createEntity(inviteClient, newInvite);
+      return inviteCode;
+    }),
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
@@ -98,40 +130,6 @@ export const roomRouter = router({
     ).find(Boolean);
     return deletedRoom ?? null;
   }),
-  generateInviteCode: getRoomOwnerProcedure(generateInviteCodeInputSchema, "roomId")
-    .input(generateInviteCodeInputSchema)
-    .mutation<string>(async ({ input: { roomId } }) => {
-      const inviteClient = await useTableClient(AzureTable.Invites);
-      // We only allow one invite code per room
-      // So let's return the code to the user if it exists
-      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
-      });
-      if (invites.length > 0) return invites[0].rowKey;
-      // Generate non-colliding invite code
-      let inviteCode = generateCode(8);
-      invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
-      });
-
-      while (invites.length > 0) {
-        inviteCode = generateCode(8);
-        invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-          filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
-        });
-      }
-
-      const createdAt = new Date();
-      const newInvite = new InviteEntity({
-        createdAt,
-        partitionKey: AZURE_DEFAULT_PARTITION_KEY,
-        roomId,
-        rowKey: inviteCode,
-        updatedAt: createdAt,
-      });
-      await createEntity(inviteClient, newInvite);
-      return inviteCode;
-    }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<null | UserToRoom>(async ({ ctx, input }) => {
     const inviteClient = await useTableClient(AzureTable.Invites);
     const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {

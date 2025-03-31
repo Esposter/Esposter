@@ -19,6 +19,7 @@ const modelValue = defineModel<string>({ required: true });
 const { extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
+  "prepend-external-footer": (props: Record<string, never>) => unknown;
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
 }>();
 const editor = useEditor({
@@ -54,8 +55,11 @@ onUnmounted(() => editor.value?.destroy());
         </template>
       </RichTextEditorFooterBar>
     </StyledCard>
-    <div flex justify-end pt-2 pr-4 h-6.5>
-      <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+    <div flex justify-between p-1>
+      <slot name="prepend-external-footer" />
+      <div>
+        <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+      </div>
     </div>
   </div>
 </template>

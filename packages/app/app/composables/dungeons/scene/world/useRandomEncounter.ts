@@ -13,7 +13,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
 import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
+import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
@@ -28,7 +28,7 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   stepsSinceLastEncounter.value++;
 
   const encounterChance = stepsSinceLastEncounter.value / MAX_STEPS_BEFORE_NEXT_ENCOUNTER;
-  const isEncounter = generateRandomBoolean(encounterChance);
+  const isEncounter = createRandomBoolean(encounterChance);
   if (!isEncounter) return;
 
   const worldSceneStore = useWorldSceneStore();

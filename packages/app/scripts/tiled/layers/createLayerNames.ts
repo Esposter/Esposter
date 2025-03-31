@@ -2,7 +2,7 @@ import type { TMXGroupLayerParsed, TMXLayerParsed } from "parse-tmx";
 
 import { LayerType } from "@@/scripts/tiled/models/LayerType";
 
-export const generateLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed)[], filepath = "") => {
+export const createLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed)[], filepath = "") => {
   const objectgroupNames: string[] = [];
   const layerNames: string[] = [];
 
@@ -10,7 +10,7 @@ export const generateLayerNames = (layers: (TMXGroupLayerParsed | TMXLayerParsed
     const layerName = `${filepath}${layer.name}`;
     switch (layer.type) {
       case LayerType.group: {
-        const result = generateLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
+        const result = createLayerNames((layer as TMXGroupLayerParsed).layers, `${layerName}/`);
         objectgroupNames.push(...result.objectgroupNames);
         layerNames.push(...result.layerNames);
         break;

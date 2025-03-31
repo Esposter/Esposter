@@ -4,7 +4,5 @@ import type { MessageReplyMetadataEntity } from "#shared/models/db/message/metad
 
 export interface MessageMetadataEntityMap {
   [MessageMetadataType.Emoji]: MessageEmojiMetadataEntity;
-  // @TODO: Not Implemented
-  [MessageMetadataType.ReadReceipt]: MessageEmojiMetadataEntity;
   [MessageMetadataType.Reply]: MessageReplyMetadataEntity;
 }

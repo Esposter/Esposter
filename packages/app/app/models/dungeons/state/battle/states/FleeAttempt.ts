@@ -5,7 +5,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
+import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 
 export const FleeAttempt: State<StateName> = {
   name: StateName.FleeAttempt,
@@ -13,7 +13,7 @@ export const FleeAttempt: State<StateName> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
 
-    if (generateRandomBoolean()) {
+    if (createRandomBoolean()) {
       await showMessages(scene, ["You failed to run away..."]);
       await battleStateMachine.setState(StateName.EnemyInput);
       return;

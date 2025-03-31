@@ -4,14 +4,14 @@ import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { trimFileExtension } from "@/util/trimFileExtension";
 import { CONTENT_TYPE_PHASER_METHOD_MAP } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
-import { generateEnumString } from "@@/scripts/util/generateEnumString";
+import { createEnumString } from "@@/scripts/util/createEnumString";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
 import { format, resolveConfig } from "prettier";
 
-export const generateFilePack = async () => {
+export const createFilePack = async () => {
   config();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(AzureContainer.DungeonsAssets);
@@ -41,7 +41,7 @@ export const generateFilePack = async () => {
     }
 
   await Promise.all([
-    outputFile(`${enumName}.ts`, generateEnumString(enumName, [...fileKeys])),
+    outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
     (async () => {
       const options = await resolveConfig(process.cwd());
       if (!options)

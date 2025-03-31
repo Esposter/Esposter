@@ -7,7 +7,7 @@ import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 
 const cache = new Map<TilemapKey, Map<TilesetKey, Tilemaps.Tileset>>();
-// Only our generated base tileset keys are used in all our tilemaps
+// Only our created base tileset keys are used in all our tilemaps
 export const addTilesetImage = (tilemapKey: TilemapKey, tilesetKey: BaseTilesetKey) => {
   const tilesetMap = cache.get(tilemapKey);
   if (!tilesetMap) {

@@ -5,9 +5,9 @@ import { getFilename } from "@/util/getFilename";
 import { trimFileExtension } from "@/util/trimFileExtension";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { outputFile } from "@@/scripts/tiled/util/outputFile";
-import { generateEnumString } from "@@/scripts/util/generateEnumString";
+import { createEnumString } from "@@/scripts/util/createEnumString";
 
-export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
+export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
   const tilesetKeys = new Set<string>();
   const enumName = "BaseTilesetKey";
 
@@ -17,5 +17,5 @@ export const generateBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[
     tilesetKeys.add(tilesetKey);
   }
 
-  await outputFile(`${DIRECTORY}/${PropertyType.enum}/${enumName}.ts`, generateEnumString(enumName, [...tilesetKeys]));
+  await outputFile(`${DIRECTORY}/${PropertyType.enum}/${enumName}.ts`, createEnumString(enumName, [...tilesetKeys]));
 };

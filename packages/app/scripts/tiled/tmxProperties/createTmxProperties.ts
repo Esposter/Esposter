@@ -3,13 +3,13 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
-import { generateLayers } from "@@/scripts/tiled/layers/generateLayers";
-import { generateBaseTilesetKey } from "@@/scripts/tiled/tmxProperties/generateBaseTilesetKey";
+import { createLayers } from "@@/scripts/tiled/layers/createLayers";
+import { createBaseTilesetKey } from "@@/scripts/tiled/tmxProperties/createBaseTilesetKey";
 import { getTilemapDirectory } from "@@/scripts/tiled/util/getTilemapDirectory";
 import { readFile } from "node:fs/promises";
 import { parseTmx } from "parse-tmx";
 
-export const generateTmxProperties = async () => {
+export const createTmxProperties = async () => {
   const layersData: LayerData[] = [];
   const externalTilesets: TMXExternalTilesetParsed[] = [];
 
@@ -21,5 +21,5 @@ export const generateTmxProperties = async () => {
     externalTilesets.push(...(tilesets as TMXExternalTilesetParsed[]));
   }
 
-  await Promise.all([generateLayers(layersData), generateBaseTilesetKey(externalTilesets)]);
+  await Promise.all([createLayers(layersData), createBaseTilesetKey(externalTilesets)]);
 };

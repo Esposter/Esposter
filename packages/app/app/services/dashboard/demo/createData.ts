@@ -1,5 +1,5 @@
 /*
-  Generate output in this format:
+  Create output in this format:
   Every array in data is of the format [x, y, z] where x (timestamp) and y are the two axes coordinates,
   z is the third coordinate, which you can interpret as the size of the bubble formed too.
   data = [
@@ -9,7 +9,7 @@
       ...
   ]
   */
-export const generateData = (count: number, { max, min }: { max: number; min: number }) => {
+export const createData = (count: number, { max, min }: { max: number; min: number }) => {
   const series: [number, number, number][] = [];
   for (let i = 0; i < count; i++) {
     const x = Math.floor(Math.random() * (750 - 1 + 1)) + 1;

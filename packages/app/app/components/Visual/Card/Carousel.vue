@@ -78,7 +78,7 @@ const classes = computed<string[]>(() => {
   return newClasses;
 });
 
-// There are 4 types of cards to generate
+// There are 4 types of cards to create
 // Active, this is the card moving from right -> left -> right
 // Overflow, these cards don't move since even though we show them they are hidden behind the second last card.  These don't have any animations.
 // Inactive, this is a card that used to be active but now is the right most card, now needs an animation to become overflow (in some cases)
@@ -283,7 +283,7 @@ watch(
 
 // We can't rely on vue's SFC v-bind pickup code, since it runs too early
 // we can rely on its variable rewriting code since that runs *after* postcss
-// thus we can generate v-binds like this, but the code that picks them up
+// thus we can create v-binds like this, but the code that picks them up
 // runs precss (before sass) meaning we can't use sass variables.
 @function sassVariableRename($char, $other) {
   @return "v-bind" + "('normalCardStyles[#{$char}].#{$other}')";

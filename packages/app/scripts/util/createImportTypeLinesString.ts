@@ -1,6 +1,6 @@
 import type { ImportTypeLine } from "@@/scripts/models/ImportTypeLine";
 
-export const generateImportTypeLinesString = (lines: ImportTypeLine[]) =>
+export const createImportTypeLinesString = (lines: ImportTypeLine[]) =>
   lines.length === 0
     ? ""
     : `${lines
