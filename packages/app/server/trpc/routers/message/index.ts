@@ -76,7 +76,7 @@ export const messageRouter = router({
     }),
   createTyping: getRoomUserProcedure(createTypingInputSchema, "roomId")
     .input(createTypingInputSchema)
-    // Query instead of mutation as there are no concurrency issues with ordering
+    // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ input }) => {
       messageEventEmitter.emit("createTyping", input);
     }),

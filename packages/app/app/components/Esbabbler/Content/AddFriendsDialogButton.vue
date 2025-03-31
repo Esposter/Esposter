@@ -5,14 +5,14 @@ import { useRoomStore } from "@/store/esbabbler/room";
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const inviteCode = ref<null | string>(null);
+if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.mutate({ roomId: currentRoomId.value });
+
 const runtimeConfig = useRuntimeConfig();
-const dialog = ref(false);
-const inviteCode = ref(
-  currentRoomId.value ? await $trpc.room.createInviteCode.mutate({ roomId: currentRoomId.value }) : "",
-);
 const inviteLink = computed(() =>
   inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
+const dialog = ref(false);
 </script>
 
 <template>
@@ -30,9 +30,24 @@ const inviteLink = computed(() =>
       </v-card-title>
       <v-card-text px-0="!">
         <div mb-2>Send An Invite Link To A Friend!</div>
-        <v-text-field v-model="inviteLink" variant="filled" hide-details readonly>
+        <v-text-field
+          v-model="inviteLink"
+          variant="filled"
+          hide-details
+          readonly
+          :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg('example')}`"
+        >
           <template #append-inner>
-            <StyledClipboardButton :source="inviteLink" />
+            <StyledClipboardButton
+              w-20
+              :source="inviteLink"
+              @create="
+                async () => {
+                  if (!currentRoomId) return;
+                  inviteCode = await $trpc.room.createInviteCode.mutate({ roomId: currentRoomId });
+                }
+              "
+            />
           </template>
         </v-text-field>
       </v-card-text>

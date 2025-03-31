@@ -5,7 +5,7 @@ import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
-import { InviteEntity, InviteEntityPropertyNames, inviteEntitySchema } from "#shared/models/db/room/InviteEntity";
+import { InviteEntity, inviteEntitySchema } from "#shared/models/db/room/InviteEntity";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
@@ -16,6 +16,7 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -61,16 +62,12 @@ export const roomRouter = router({
   createInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
     .input(createInviteCodeInputSchema)
     .mutation<string>(async ({ input: { roomId } }) => {
-      const inviteClient = await useTableClient(AzureTable.Invites);
-      // We only allow one invite code per room
-      // So let's return the code to the user if it exists
-      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
-      });
-      if (invites.length > 0) return invites[0].rowKey;
+      let inviteCode = await readInviteCode(roomId);
+      if (inviteCode) return inviteCode;
       // Create non-colliding invite code
-      let inviteCode = createCode(8);
-      invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
+      const inviteClient = await useTableClient(AzureTable.Invites);
+      inviteCode = createCode(8);
+      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
         filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
       });
 
@@ -152,6 +149,10 @@ export const roomRouter = router({
     ).find(Boolean);
     return userToRoom ?? null;
   }),
+  readInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
+    .input(createInviteCodeInputSchema)
+    // Mutation instead of query as readInviteCode auto deletes expired codes
+    .mutation<null | string>(async ({ input: { roomId } }) => readInviteCode(roomId)),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
