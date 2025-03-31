@@ -8,13 +8,11 @@ export const useMessageSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage, typingList } = messageStore;
+  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = messageStore;
 
   const createMessageUnsubscribable = ref<Unsubscribable>();
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
-
-  const createTypingUnsubscribable = ref<Unsubscribable>();
 
   onMounted(() => {
     if (!currentRoomId.value) return;
@@ -41,15 +39,6 @@ export const useMessageSubscribables = () => {
       {
         onData: (data) => {
           storeDeleteMessage(data);
-        },
-      },
-    );
-
-    createTypingUnsubscribable.value = $trpc.message.onCreateTyping.subscribe(
-      { roomId },
-      {
-        onData: (data) => {
-          typingList.push(data);
         },
       },
     );

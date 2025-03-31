@@ -27,6 +27,7 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
 
   return {
     data,
+    dataMap,
     initializeData,
     resetData,
   };

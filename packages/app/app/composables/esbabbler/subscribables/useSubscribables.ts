@@ -1,4 +1,5 @@
 export const useSubscribables = () => {
-  useMessageSubscribables();
   useEmojiSubscribables();
+  useMessageSubscribables();
+  useTypingSubscribables();
 };
