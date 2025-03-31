@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
+
+### Bug Fixes
+
+* uuid search regex ([de006ab](https://github.com/Esposter/Esposter/commit/de006ab5486a55f8ba6c67154567d889f5d9b9ca))
+
 # [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
 
 **Note:** Version bump only for package @esposter/shared

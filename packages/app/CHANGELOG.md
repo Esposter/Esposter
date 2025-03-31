@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
+
+### Bug Fixes
+
+* Add back show room list button ([23b62ac](https://github.com/Esposter/Esposter/commit/23b62ac24945e0feb96b10411fdd459e1f49d08f))
+* Add emitSerialized and onDeserialized ([3ffad0b](https://github.com/Esposter/Esposter/commit/3ffad0b70c6bba815419e35e62c4cab16cef217a))
+* add file ([696eb31](https://github.com/Esposter/Esposter/commit/696eb319ed8b14845b1df0876672424fb40f33bb))
+* cleanup logic ([9a4867c](https://github.com/Esposter/Esposter/commit/9a4867c63afabf238445b202616fc56d6f0e0313))
+* cleanup remaining unnecessary funcs ([21110cb](https://github.com/Esposter/Esposter/commit/21110cbf3307c4861e85ebfbc5ec0f15aed9304d))
+* completely fix up room sql queries ([e891c07](https://github.com/Esposter/Esposter/commit/e891c07cb248e345ceb3f3641c38804dca21fd80))
+* condition ([d473d3a](https://github.com/Esposter/Esposter/commit/d473d3a3f090f3e439d49702ab15173da78eeed6))
+* creating emojis + add azure operation tests ([ed7a50b](https://github.com/Esposter/Esposter/commit/ed7a50b179f78eba342068a24f0af111f543edca))
+* don't need mutation return values since they will be returned via subscriptions ([79b9ac5](https://github.com/Esposter/Esposter/commit/79b9ac52d2bc4f74c80c5dd27079c8c46dc225fb))
+* don't put comments at root node ([243da7d](https://github.com/Esposter/Esposter/commit/243da7d26ccf6848d31379193ab50844b106c0cd))
+* don't use permanent on left nav drawer since it's not compatible with nuxt ([85356f4](https://github.com/Esposter/Esposter/commit/85356f42cbb1af71b3093ac86c480e70b47517b7))
+* Finally fix up all the superjson issues ([0a6bb49](https://github.com/Esposter/Esposter/commit/0a6bb49a01bc67025507fed5e63e71dd2e173e5f))
+* get headers from http req ([d006d51](https://github.com/Esposter/Esposter/commit/d006d51d9ae6ddda257bb592dc6eab0b800a6e59))
+* move doc query select outside ([06a8d9b](https://github.com/Esposter/Esposter/commit/06a8d9b9a2bbf8531b91a21159f3960750e4d87f))
+* override parent head ([4cc0697](https://github.com/Esposter/Esposter/commit/4cc0697b2cfe4639d83e6a67914fa43ca4faadca))
+* permanent with proper model value changes ([f80a553](https://github.com/Esposter/Esposter/commit/f80a55364c6bc5bc50fd2895294981257a17793b))
+* refactor the legacy react code for our vue use case c: ([d940e26](https://github.com/Esposter/Esposter/commit/d940e262c8799099fa0509864a5a5c280304eb90))
+* remove bad padding ([ddc5d1a](https://github.com/Esposter/Esposter/commit/ddc5d1aa7babb81b4a92c18fcc037129f6231f67))
+* remove unnecessary if condition ([96a931b](https://github.com/Esposter/Esposter/commit/96a931b6bbb3296ecae0fd5c40c8b76bb9aae3e8))
+* return if undefined ([7a716ef](https://github.com/Esposter/Esposter/commit/7a716ef3ee1beb0f5562322efd31ed3a17ae3410))
+* rich text editor height ([eb2ed18](https://github.com/Esposter/Esposter/commit/eb2ed18176466420c214290c42e54dadadfca7f4))
+* room padding ([0c33c87](https://github.com/Esposter/Esposter/commit/0c33c8737334747c1a4dcb3d1857eb199d1c31f6))
+* run onLoaded after onMounted ([c57d9d1](https://github.com/Esposter/Esposter/commit/c57d9d17512e5faa62ecd6963148ba844a22ce65))
+* some message stylings + make navigation drawer props available ([b216f4d](https://github.com/Esposter/Esposter/commit/b216f4d40eeefd812a5c3538f0bc20051f3a3d2d))
+* subscriptions ([eaf8393](https://github.com/Esposter/Esposter/commit/eaf839344eba816574b36d9b539a217427c30361))
+* tests ([e482bdd](https://github.com/Esposter/Esposter/commit/e482bdd208cba6da0cad755c60ae55df094c9e25))
+* update messages ([509a749](https://github.com/Esposter/Esposter/commit/509a749713a907e9c8480d8c8c0e7c2e9240c25f))
+* use reverse ticked timestamp ([15feef8](https://github.com/Esposter/Esposter/commit/15feef8f9d08ffe823eca9d2821efbffd0976213))
+* uuid search regex ([de006ab](https://github.com/Esposter/Esposter/commit/de006ab5486a55f8ba6c67154567d889f5d9b9ca))
+
+### Features
+
+* Add completely type-safe metadata map ([76d205a](https://github.com/Esposter/Esposter/commit/76d205a9a7dbb9ccea28cc08a4c842791b9985b5))
+* Add creating invite codes ([0ea90f1](https://github.com/Esposter/Esposter/commit/0ea90f106246a85686823c7412faf49e79758b92))
+* Add metadata map tests ([84aa954](https://github.com/Esposter/Esposter/commit/84aa9547d4dbb76ccee020be16463075e788e2cf))
+* Add onCreateTyping ([12a3d8e](https://github.com/Esposter/Esposter/commit/12a3d8e15dd8c44eff2d7f19276024ea46260b0e))
+* Migrate from class-transformer to custom serialisation/deserialisation ([7917419](https://github.com/Esposter/Esposter/commit/791741920da64bec7a2b056da10107efec8cf3a1))
+
+### Performance Improvements
+
+* disable devtools unless necessary ([f89d2fd](https://github.com/Esposter/Esposter/commit/f89d2fd65c896e2bceb5391ad409be9852d6441d))
+
 # [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
 
 ### Bug Fixes

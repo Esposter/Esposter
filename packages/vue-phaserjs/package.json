@@ -1,6 +1,6 @@
 {
   "name": "vue-phaserjs",
-  "version": "1.39.0",
+  "version": "1.40.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
   "type": "module",
   "keywords": [
