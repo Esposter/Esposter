@@ -8,17 +8,20 @@ export const useMessageSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = messageStore;
+  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage, typingList } = messageStore;
 
   const createMessageUnsubscribable = ref<Unsubscribable>();
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
 
+  const createTypingUnsubscribable = ref<Unsubscribable>();
+
   onMounted(() => {
     if (!currentRoomId.value) return;
 
+    const roomId = currentRoomId.value;
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeCreateMessage(data);
@@ -26,7 +29,7 @@ export const useMessageSubscribables = () => {
       },
     );
     updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeUpdateMessage(data);
@@ -34,10 +37,19 @@ export const useMessageSubscribables = () => {
       },
     );
     deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeDeleteMessage(data);
+        },
+      },
+    );
+
+    createTypingUnsubscribable.value = $trpc.message.onCreateTyping.subscribe(
+      { roomId },
+      {
+        onData: (data) => {
+          typingList.push(data);
         },
       },
     );

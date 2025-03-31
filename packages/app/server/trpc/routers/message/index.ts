@@ -2,6 +2,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
+import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
@@ -48,6 +49,9 @@ export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
+const onCreateTypingInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
+
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
@@ -70,6 +74,12 @@ export const messageRouter = router({
       await createEntity(messageClient, newMessage);
       messageEventEmitter.emit("createMessage", newMessage);
     }),
+  createTyping: getRoomUserProcedure(createTypingInputSchema, "roomId")
+    .input(createTypingInputSchema)
+    // Query instead of mutation as there are no concurrency issues with ordering
+    .query(({ input }) => {
+      messageEventEmitter.emit("createTyping", input);
+    }),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
     .mutation(async ({ input }) => {
@@ -82,6 +92,14 @@ export const messageRouter = router({
     .subscription(async function* ({ input, signal }) {
       for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+    }),
+  onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
+    .input(onCreateTypingInputSchema)
+    .subscription(async function* ({ ctx, input, signal }) {
+      // We will add typing inputs for self user in the frontend
+      // without going through the server to avoid duplications and reduce performance overhead
+      for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
+        if (data.roomId === input.roomId && data.userId !== ctx.session.user.id) yield data;
     }),
   onDeleteMessage: getRoomUserProcedure(onDeleteMessageInputSchema, "roomId")
     .input(onDeleteMessageInputSchema)

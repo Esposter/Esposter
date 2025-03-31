@@ -17,8 +17,9 @@ export const useEmojiSubscribables = () => {
   onMounted(() => {
     if (!currentRoomId.value) return;
 
+    const roomId = currentRoomId.value;
     createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeCreateEmoji(data);
@@ -26,7 +27,7 @@ export const useEmojiSubscribables = () => {
       },
     );
     updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeUpdateEmoji(data);
@@ -34,7 +35,7 @@ export const useEmojiSubscribables = () => {
       },
     );
     deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
-      { roomId: currentRoomId.value },
+      { roomId },
       {
         onData: (data) => {
           storeDeleteEmoji(data);
