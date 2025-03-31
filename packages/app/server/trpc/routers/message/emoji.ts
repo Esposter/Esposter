@@ -99,7 +99,7 @@ export const emojiRouter = router({
   updateEmoji: getRoomUserProcedure(updateEmojiInputSchema, "partitionKey")
     .input(updateEmojiInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const updatedEmoji = { ...input, updatedAt: new Date(), userIds: [...input.userIds, ctx.session.user.id] };
+      const updatedEmoji = { ...input, userIds: [...input.userIds, ctx.session.user.id] };
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
       await updateEntity(messagesMetadataClient, updatedEmoji);
       emojiEventEmitter.emit("updateEmoji", updatedEmoji);
