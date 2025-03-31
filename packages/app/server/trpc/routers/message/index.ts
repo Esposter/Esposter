@@ -38,7 +38,7 @@ const readMessagesInputSchema = z
   // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
   // as we insert our messages with a reverse-ticked timestamp as our rowkey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-  // always requires a sortBy
+  // always requires a sortBy even though we don't actually need the user to specify it
   .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
