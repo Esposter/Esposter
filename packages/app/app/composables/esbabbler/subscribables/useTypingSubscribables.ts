@@ -18,7 +18,7 @@ export const useTypingSubscribables = () => {
   const typingTimeouts = ref<TypingTimeout[]>([]);
   const clearTypingTimeout = (userId: string) => {
     const timeout = typingTimeouts.value.find((t) => t.userId === userId);
-    if (timeout) clearTimeout(timeout.id);
+    if (timeout) window.clearTimeout(timeout.id);
   };
 
   const createTypingUnsubscribable = ref<Unsubscribable>();
@@ -40,10 +40,7 @@ export const useTypingSubscribables = () => {
             clearTypingTimeout(data.userId);
           }, dayjs.duration(3, "seconds").asMilliseconds());
 
-          typingTimeouts.value = typingTimeouts.value
-            .filter((t) => t.userId !== data.userId)
-            .concat({ id, userId: data.userId });
-
+          typingTimeouts.value.push({ id, userId: data.userId });
           if (!typingList.value.some(({ userId }) => userId === data.userId)) typingList.value.push(data);
         },
       },
@@ -51,6 +48,7 @@ export const useTypingSubscribables = () => {
   });
 
   onUnmounted(() => {
+    for (const { userId } of typingTimeouts.value) clearTypingTimeout(userId);
     createTypingUnsubscribable.value?.unsubscribe();
   });
 };
