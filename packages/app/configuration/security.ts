@@ -32,4 +32,6 @@ export const security: NuxtConfig["security"] = {
   rateLimiter: {
     whiteList: ["127.0.0.1"],
   },
+  // @TODO: https://github.com/wobsoriano/trpc-nuxt/issues/215
+  xssValidator: false,
 };
