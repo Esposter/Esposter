@@ -160,8 +160,8 @@ catalogs:
       specifier: ^0.175.0
       version: 0.175.0
     '@types/ws':
-      specifier: ^8.18.0
-      version: 8.18.0
+      specifier: ^8.18.1
+      version: 8.18.1
     '@types/xml2js':
       specifier: ^0.4.14
       version: 0.4.14
@@ -969,7 +969,7 @@ importers:
         version: 0.175.0
       '@types/ws':
         specifier: 'catalog:'
-        version: 8.18.0
+        version: 8.18.1
       '@unocss/nuxt':
         specifier: 'catalog:'
         version: 66.0.0(magicast@0.3.5)(postcss@8.5.3)(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))(webpack@5.98.0(esbuild@0.23.1))
@@ -4090,8 +4090,8 @@ packages:
   '@types/whatwg-url@13.0.0':
     resolution: {integrity: sha512-N8WXpbE6Wgri7KUSvrmQcqrMllKZ9uxkYWMt+mCSGwNc0Hsw9VQTW7ApqI4XNrx6/SaM2QQJCzMPDEXE058s+Q==}
 
-  '@types/ws@8.18.0':
-    resolution: {integrity: sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==}
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/xml2js@0.4.14':
     resolution: {integrity: sha512-4YnrRemBShWRO2QjvUin8ESA41rH+9nQGLUGZV/1IDhi3SL9OhdpNC/MrulTWuptXKwhx/aDxE7toV0f/ypIXQ==}
@@ -14290,7 +14290,7 @@ snapshots:
     dependencies:
       '@types/webidl-conversions': 7.0.3
 
-  '@types/ws@8.18.0':
+  '@types/ws@8.18.1':
     dependencies:
       '@types/node': 22.13.14
 
