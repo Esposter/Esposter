@@ -43,12 +43,10 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const post = toValue(allPosts).find(({ id }) => id === postId);
     if (!post) return;
 
-    const deletedLike = post.likes.find(({ postId, userId }) => userId === userId && postId === postId);
+    const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);
     if (!deletedLike) return;
 
-    post.likes = post.likes.filter(
-      ({ postId, userId }) => !(userId === deletedLike.userId && postId === deletedLike.postId),
-    );
+    post.likes = post.likes.filter((l) => !(l.userId === deletedLike.userId && l.postId === deletedLike.postId));
     post.noLikes -= deletedLike.value;
   };
 
