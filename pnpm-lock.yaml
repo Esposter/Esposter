@@ -478,7 +478,7 @@ catalogs:
       specifier: ^19.1.2
       version: 19.1.2
     vite:
-      specifier: ^6.2.3
+      specifier: ^6.2.4
       version: 6.2.4
     vite-plugin-dts:
       specifier: ^4.5.3
