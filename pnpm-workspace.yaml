@@ -48,7 +48,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/json-schema": ^7.0.15
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^22.13.14
+  "@types/node": ^22.13.17
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/three": ^0.175.0
@@ -131,7 +131,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.16.1
+  nuxt: ^3.16.2
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -158,7 +158,7 @@ catalog:
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.4
   tsx: ^4.19.3
-  type-fest: ^4.38.0
+  type-fest: ^4.39.0
   typedoc: ^0.28.1
   typescript: ^5.8.2
   typescript-eslint: ^8.29.0
@@ -176,8 +176,8 @@ catalog:
   vue-tsc: ^2.2.8
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.7.19
-  vuetify-nuxt-module: ^0.18.4
+  vuetify: ^3.8.0
+  vuetify-nuxt-module: ^0.18.5
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.20
   ws: ^8.18.1
