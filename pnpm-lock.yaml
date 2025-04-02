@@ -181,8 +181,8 @@ catalogs:
       specifier: ^3.1.1
       version: 3.1.1
     '@vitest/eslint-plugin':
-      specifier: ^1.1.38
-      version: 1.1.38
+      specifier: ^1.1.39
+      version: 1.1.39
     '@vue-flow/background':
       specifier: ^1.3.2
       version: 1.3.2
@@ -1047,7 +1047,7 @@ importers:
         version: 5.2.3(vite@6.2.4(@types/node@22.13.17)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       '@vitest/eslint-plugin':
         specifier: 'catalog:'
-        version: 1.1.38(@typescript-eslint/utils@8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.1(@types/node@22.13.17)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
+        version: 1.1.39(@typescript-eslint/utils@8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.1(@types/node@22.13.17)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
       eslint-config-prettier:
         specifier: 'catalog:'
         version: 10.1.1(eslint@9.23.0(jiti@2.4.2))
@@ -4376,8 +4376,8 @@ packages:
       '@vitest/browser':
         optional: true
 
-  '@vitest/eslint-plugin@1.1.38':
-    resolution: {integrity: sha512-KcOTZyVz8RiM5HyriiDVrP1CyBGuhRxle+lBsmSs6NTJEO/8dKVAq+f5vQzHj1/Kc7bYXSDO6yBe62Zx0t5iaw==}
+  '@vitest/eslint-plugin@1.1.39':
+    resolution: {integrity: sha512-l5/MUFCYI8nxwr62JHlWwXfeQNS8E7xy71lSLGQ3CrjGjBdWLs1Rtee+BvYwy2m4YVPwYqUwdcAIOaZOwPUpfg==}
     peerDependencies:
       '@typescript-eslint/utils': ^8.24.0
       eslint: '>= 8.57.0'
@@ -14731,7 +14731,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.38(@typescript-eslint/utils@8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.1(@types/node@22.13.17)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))':
+  '@vitest/eslint-plugin@1.1.39(@typescript-eslint/utils@8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.1.1(@types/node@22.13.17)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.1)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))':
     dependencies:
       '@typescript-eslint/utils': 8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)
       eslint: 9.23.0(jiti@2.4.2)
