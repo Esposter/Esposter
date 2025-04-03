@@ -1,11 +1,12 @@
 import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { VForm } from "vuetify/components";
 
 import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
-import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
+import { toRawDeep } from "@/util/reactivity/toRawDeep";
 import deepEqual from "fast-deep-equal";
 
-export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef<TItem[]>) => {
+export const createEditFormData = <TItem extends ToData<AItemEntity>>(items: ComputedRef<TItem[]>) => {
   const router = useRouter();
   const editFormDialog = ref(false);
   const editFormRef = ref<InstanceType<typeof VForm>>();
@@ -28,7 +29,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
         isEditFormValid.value &&
         // The edited item is a clone of original item which does not clone the class information
         // so it's not "strictly" equal including the Object prototype
-        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toDeepRaw(originalItem.value))))
+        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value))))
       );
   });
   // We know the form is dirty if:
@@ -40,7 +41,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
     const item = items.value.find((item) => item.id === id);
     if (!item) return;
 
-    editedItem.value = structuredClone(toDeepRaw(item));
+    editedItem.value = structuredClone(toRawDeep(item));
     editedIndex.value = items.value.findIndex((item) => item.id === id);
     editFormDialog.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });

@@ -2,7 +2,10 @@ import type { Serializable } from "#shared/models/entity/Serializable";
 import type { Class } from "type-fest";
 
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
+import { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
+import { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageReplyMetadataEntity } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
@@ -17,6 +20,8 @@ import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponen
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 
 export const JSONClassMap = {
+  BasicChartConfiguration,
+  Chart,
   ClickerGame,
   Dashboard,
   DungeonsGame,
@@ -29,6 +34,7 @@ export const JSONClassMap = {
   TableEditor,
   TableEditorConfiguration,
   TodoListItem,
+  Visual,
   VuetifyComponentItem,
   WebpageEditor,
 } as const satisfies Record<string, Class<Serializable>>;

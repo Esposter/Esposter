@@ -1,10 +1,9 @@
+import type { ToData } from "#shared/models/entity/ToData";
 import type { Item } from "#shared/models/tableEditor/Item";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import type { RecursiveDeepOmit } from "#shared/util/types/RecursiveDeepOmit";
 
-import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
-import { Serializable } from "#shared/models/entity/Serializable";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/TableEditor";
 import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
@@ -15,16 +14,14 @@ type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
 };
 
-class BaseTableEditorConfiguration extends Serializable implements TableEditorTypes {
+export class TableEditorConfiguration extends AItemEntity implements TableEditorTypes {
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 }
-export const TableEditorConfiguration = applyItemMetadataMixin(BaseTableEditorConfiguration);
-export type TableEditorConfiguration = typeof TableEditorConfiguration.prototype;
 
 export const tableEditorConfigurationSchema = z
   .object({
     [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
     [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<RecursiveDeepOmit<TableEditorConfiguration, ["props", "toJSON"]>>;
+  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

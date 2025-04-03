@@ -1,9 +1,9 @@
-import type { RecursiveDeepOmitItemMetadata } from "#shared/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
-import { omitDeepItemMetadata } from "@/services/shared/metadata/omitDeepItemMetadata";
+import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useDashboardStore } from "@/store/dashboard";
 import deepEqual from "fast-deep-equal";
 
@@ -12,8 +12,8 @@ export const useReadDashboard = async () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const dashboardChangedTracker = computed<RecursiveDeepOmitItemMetadata<Dashboard>>((oldDashboardChangedTracker) => {
-    const newDashboardChangedTracker = omitDeepItemMetadata(dashboard.value);
+  const dashboardChangedTracker = computed<RecursiveDeepOmitItemEntity<Dashboard>>((oldDashboardChangedTracker) => {
+    const newDashboardChangedTracker = omitDeepItemEntity(dashboard.value);
     return oldDashboardChangedTracker && deepEqual(newDashboardChangedTracker, oldDashboardChangedTracker)
       ? oldDashboardChangedTracker
       : newDashboardChangedTracker;

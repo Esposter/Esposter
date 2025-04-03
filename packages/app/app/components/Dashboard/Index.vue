@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useVisualStore } from "@/store/dashboard/visual";
-import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
+import { toRawDeep } from "@/util/reactivity/toRawDeep";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { noColumns, visualList } = storeToRefs(visualStore);
 // The main dashboard shouldn't actually modify any persisted data
-const layout = ref(structuredClone(toDeepRaw(visualList.value)));
+const layout = ref(structuredClone(toRawDeep(visualList.value)));
 </script>
 
 <template>

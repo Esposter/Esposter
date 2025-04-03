@@ -1,7 +1,6 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { createItemMetadata } from "@/services/shared/metadata/createItemMetadata";
 import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { useDashboardStore } from "@/store/dashboard";
 
@@ -30,7 +29,6 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
         x: (visualList.value.length * 2) % noColumns.value,
         // Puts the item at the bottom
         y: visualList.value.length + noColumns.value,
-        ...createItemMetadata(),
       }),
     );
   };

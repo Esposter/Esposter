@@ -1,5 +1,4 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { Position } from "grid-engine";
 
 import { NpcObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
@@ -7,10 +6,10 @@ import { NpcPathObjectProperty } from "#shared/generated/tiled/propertyTypes/cla
 import { ObjectType } from "#shared/generated/tiled/propertyTypes/class/ObjectType";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import { Npc } from "@/models/dungeons/scene/world/Npc";
 import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
-import { createItemMetadata } from "@/services/shared/metadata/createItemMetadata";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
@@ -39,39 +38,38 @@ export const useReadNpcList = () => {
 
     const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
     const { frame, id, ...rest } = getNpc(idTiledObjectProperty.value);
-    npcList.push({
-      asset: { frame, key: AssetKey.Npc },
-      id: `${CharacterId.Npc}${id}`,
-      isMoving: false,
-      name: id,
-      path: npcPath,
-      pathIndex: 0,
-      singleSidedSpritesheetDirection: Direction.RIGHT,
-      walkingAnimationMapping: {
-        down: {
-          leftFoot: frame + 4,
-          rightFoot: frame + 5,
-          standing: frame,
+    npcList.push(
+      new Npc({
+        asset: { frame, key: AssetKey.Npc },
+        id: `${CharacterId.Npc}${id}`,
+        name: id,
+        path: npcPath,
+        singleSidedSpritesheetDirection: Direction.RIGHT,
+        walkingAnimationMapping: {
+          down: {
+            leftFoot: frame + 4,
+            rightFoot: frame + 5,
+            standing: frame,
+          },
+          left: {
+            leftFoot: frame + 8,
+            rightFoot: frame + 9,
+            standing: frame + 2,
+          },
+          right: {
+            leftFoot: frame + 8,
+            rightFoot: frame + 9,
+            standing: frame + 2,
+          },
+          up: {
+            leftFoot: frame + 6,
+            rightFoot: frame + 7,
+            standing: frame + 1,
+          },
         },
-        left: {
-          leftFoot: frame + 8,
-          rightFoot: frame + 9,
-          standing: frame + 2,
-        },
-        right: {
-          leftFoot: frame + 8,
-          rightFoot: frame + 9,
-          standing: frame + 2,
-        },
-        up: {
-          leftFoot: frame + 6,
-          rightFoot: frame + 7,
-          standing: frame + 1,
-        },
-      },
-      ...rest,
-      ...createItemMetadata(),
-    });
+        ...rest,
+      }),
+    );
   }
 
   initializeCursorPaginationData({ hasMore: false, items: npcList });

@@ -1,7 +1,8 @@
-import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-export const serialize = <TItem extends ItemMetadata>(
+export const serialize = <TItem extends ToData<AItemEntity>>(
   item: TItem | undefined,
   sortBy: SortItem<keyof TItem & string>[],
 ): string | undefined => {

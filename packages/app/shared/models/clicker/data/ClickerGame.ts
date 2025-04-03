@@ -6,20 +6,15 @@ import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/Bu
 import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "#shared/models/clicker/data/upgrade/UpgradeId";
-import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
-import { Serializable } from "#shared/models/entity/Serializable";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { z } from "zod";
 
-export type ClickerGame = typeof ClickerGame.prototype;
-
-class BaseClickerGame extends Serializable {
+export class ClickerGame extends AItemEntity {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
-  id: string = crypto.randomUUID();
   noPoints = 0;
   type = ClickerType.Default;
 }
-export const ClickerGame = applyItemMetadataMixin(BaseClickerGame);
 
 export const clickerGameSchema = z
   .object({
@@ -29,4 +24,4 @@ export const clickerGameSchema = z
     noPoints: z.number(),
     type: clickerTypeSchema,
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<ClickerGame>>;
+  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<ClickerGame>>;

@@ -1,5 +1,6 @@
-import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 
 import { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 
-export class OffsetPaginationData<TItem extends ItemMetadata> extends BasePaginationData<TItem> {}
+export class OffsetPaginationData<TItem extends ToData<AItemEntity>> extends BasePaginationData<TItem> {}

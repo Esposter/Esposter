@@ -1,9 +1,9 @@
-import type { RecursiveDeepOmitItemMetadata } from "#shared/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
 
 import { ClickerGame } from "#shared/models/clicker/data/ClickerGame";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
-import { omitDeepItemMetadata } from "@/services/shared/metadata/omitDeepItemMetadata";
+import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useClickerStore } from "@/store/clicker";
 import deepEqual from "fast-deep-equal";
 
@@ -15,9 +15,9 @@ export const useReadClickerGame = async () => {
   // This is used for tracking when we should save the game
   // i.e. every time the user manually updates the game state
   // which is everything excluding automatic updates like noPoints
-  const gameChangedTracker = computed<RecursiveDeepOmitItemMetadata<ClickerGame, ["noPoints", "producedValue"]>>(
+  const gameChangedTracker = computed<RecursiveDeepOmitItemEntity<ClickerGame, ["noPoints", "producedValue"]>>(
     (oldGameChangedTracker) => {
-      const newGameChangedTracker = omitDeepItemMetadata(game.value, "noPoints", "producedValue");
+      const newGameChangedTracker = omitDeepItemEntity(game.value, "noPoints", "producedValue");
       return oldGameChangedTracker && deepEqual(newGameChangedTracker, oldGameChangedTracker)
         ? oldGameChangedTracker
         : newGameChangedTracker;

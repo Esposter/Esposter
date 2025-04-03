@@ -10,7 +10,7 @@ export const useInteractWithNpc = async (scene: SceneWithPlugins): Promise<boole
   const { player } = storeToRefs(playerStore);
   const npcStore = useNpcStore();
   const { npcList } = storeToRefs(npcStore);
-  const npc = useGetInteractiveObject(npcList.value.map((npc) => ({ ...npc, ...npc.path[npc.pathIndex] })));
+  const npc = useGetInteractiveObject(npcList.value.map((npc) => Object.assign(npc, npc.path[npc.pathIndex])));
   if (!npc) return false;
 
   scene.gridEngine.turnTowards(npc.id, getOppositeDirection(player.value.direction));

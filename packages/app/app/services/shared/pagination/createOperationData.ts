@@ -1,11 +1,12 @@
 import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";
 
-export const createOperationData = <TItem extends Pick<AItemEntity, "id">, TEntityTypeKey extends EntityTypeKey>(
+export const createOperationData = <TItem extends ToData<AItemEntity>, TEntityTypeKey extends EntityTypeKey>(
   itemList: Ref<TItem[]>,
   entityTypeKey: TEntityTypeKey,
 ) => {
