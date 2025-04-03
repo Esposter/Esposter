@@ -460,8 +460,8 @@ catalogs:
       specifier: ^4.19.3
       version: 4.19.3
     type-fest:
-      specifier: ^4.39.0
-      version: 4.39.0
+      specifier: ^4.39.1
+      version: 4.39.1
     typedoc:
       specifier: ^0.28.1
       version: 0.28.1
@@ -569,7 +569,7 @@ importers:
         version: 4.39.0
       type-fest:
         specifier: 'catalog:'
-        version: 4.39.0
+        version: 4.39.1
       typedoc:
         specifier: 'catalog:'
         version: 0.28.1(typescript@5.8.2)
@@ -9736,6 +9736,10 @@ packages:
     resolution: {integrity: sha512-w2IGJU1tIgcrepg9ZJ82d8UmItNQtOFJG0HCUE3SzMokKkTsruVDALl2fAdiEzJlfduoU+VyXJWIIUZ+6jV+nw==}
     engines: {node: '>=16'}
 
+  type-fest@4.39.1:
+    resolution: {integrity: sha512-uW9qzd66uyHYxwyVBYiwS4Oi0qZyUqwjU+Oevr6ZogYiXt99EOYtwvzMSLw1c3lYo2HzJsep/NB23iEVEgjG/w==}
+    engines: {node: '>=16'}
+
   type-level-regexp@0.1.17:
     resolution: {integrity: sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg==}
 
@@ -16223,7 +16227,7 @@ snapshots:
       ts-pattern: 5.7.0
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.39.0
+      type-fest: 4.39.1
       typescript: 5.8.2
       yaml: 2.7.1
       yargs: 17.7.2
@@ -19336,7 +19340,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.26.2
       index-to-position: 1.0.0
-      type-fest: 4.39.0
+      type-fest: 4.39.1
 
   parse-ms@4.0.0: {}
 
@@ -19858,7 +19862,7 @@ snapshots:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 8.2.0
-      type-fest: 4.39.0
+      type-fest: 4.39.1
       unicorn-magic: 0.1.0
 
   readable-stream@2.3.8:
@@ -20909,6 +20913,8 @@ snapshots:
   type-fest@2.19.0: {}
 
   type-fest@4.39.0: {}
+
+  type-fest@4.39.1: {}
 
   type-level-regexp@0.1.17: {}
 
@@ -21962,7 +21968,7 @@ snapshots:
       deepmerge-ts: 7.1.5
       read-pkg: 9.0.1
       sort-keys: 5.1.0
-      type-fest: 4.39.0
+      type-fest: 4.39.1
       write-json-file: 6.0.0
 
   ws@8.18.1: {}
