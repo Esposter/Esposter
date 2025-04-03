@@ -1,9 +1,9 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
-export const createOffsetPaginationData = <TItem extends ToData<AItemEntity>>(items?: Ref<TItem[]>) => {
+export const createOffsetPaginationData = <TItem extends ToData<AEntity>>(items?: Ref<TItem[]>) => {
   const offsetPaginationData = ref(new OffsetPaginationData()) as Ref<OffsetPaginationData<TItem>>;
   const itemList =
     items ??

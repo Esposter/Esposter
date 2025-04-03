@@ -1,10 +1,10 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 // It's a little annoying, but because we can have initial reactive data,
 // we have to account for that and handle that instead of our own created items array
-export const createCursorPaginationData = <TItem extends ToData<AItemEntity>>(items?: Ref<TItem[]>) => {
+export const createCursorPaginationData = <TItem extends ToData<AEntity>>(items?: Ref<TItem[]>) => {
   const cursorPaginationData = ref(new CursorPaginationData()) as Ref<CursorPaginationData<TItem>>;
   const itemList =
     items ??

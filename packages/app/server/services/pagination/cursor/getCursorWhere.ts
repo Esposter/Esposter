@@ -1,4 +1,4 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { TableConfig } from "drizzle-orm";
@@ -8,7 +8,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { parse } from "@@/server/services/pagination/cursor/parse";
 import { and, gt, lt } from "drizzle-orm";
 
-export const getCursorWhere = <TTable extends TableConfig, TItem extends ToData<AItemEntity>>(
+export const getCursorWhere = <TTable extends TableConfig, TItem extends ToData<AEntity>>(
   table: PgTableWithColumns<TTable>,
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
@@ -22,7 +22,7 @@ export const getCursorWhere = <TTable extends TableConfig, TItem extends ToData<
   );
 };
 
-export const getCursorWhereAzureTable = <TItem extends ToData<AItemEntity>>(
+export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
