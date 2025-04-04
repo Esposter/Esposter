@@ -1,5 +1,5 @@
 export const createDataMap = <TItem extends NonNullable<unknown>>(
-  currentId: MaybeRefOrGetter<string | undefined>,
+  currentId: MaybeRefOrGetter<null | string>,
   defaultValue: TItem,
 ) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
