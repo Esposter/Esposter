@@ -23,14 +23,19 @@ export const useTypingSubscribables = () => {
 
   const createTypingUnsubscribable = ref<Unsubscribable>();
 
+  const unsubscribe = () => {
+    for (const { userId } of typingTimeouts.value) clearTypingTimeout(userId);
+    createTypingUnsubscribable.value?.unsubscribe();
+  };
+
   useCreateTyping();
 
-  onMounted(() => {
-    if (!currentRoomId.value) return;
+  watch(currentRoomId, (newRoomId, oldRoomId) => {
+    if (oldRoomId) unsubscribe();
+    if (!newRoomId) return;
 
-    const roomId = currentRoomId.value;
     createTypingUnsubscribable.value = $trpc.message.onCreateTyping.subscribe(
-      { roomId },
+      { roomId: newRoomId },
       {
         onData: (data) => {
           clearTypingTimeout(data.userId);
@@ -48,7 +53,6 @@ export const useTypingSubscribables = () => {
   });
 
   onUnmounted(() => {
-    for (const { userId } of typingTimeouts.value) clearTypingTimeout(userId);
-    createTypingUnsubscribable.value?.unsubscribe();
+    unsubscribe();
   });
 };

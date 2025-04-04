@@ -24,7 +24,7 @@ const displayDate = computed(() => {
       <v-col flex-1>
         <v-divider />
       </v-col>
-      <div class="text-subtitle-2 border-sm" text-center py-2 px-4 rd-full>
+      <div class="text-subtitle-2" text-center>
         {{ displayDate }}
       </div>
       <v-col flex-1>

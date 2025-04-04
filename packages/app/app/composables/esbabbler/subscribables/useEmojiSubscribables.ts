@@ -14,12 +14,18 @@ export const useEmojiSubscribables = () => {
   const updateEmojiUnsubscribable = ref<Unsubscribable>();
   const deleteEmojiUnsubscribable = ref<Unsubscribable>();
 
-  onMounted(() => {
-    if (!currentRoomId.value) return;
+  const unsubscribe = () => {
+    createEmojiUnsubscribable.value?.unsubscribe();
+    updateEmojiUnsubscribable.value?.unsubscribe();
+    deleteEmojiUnsubscribable.value?.unsubscribe();
+  };
 
-    const roomId = currentRoomId.value;
+  watch(currentRoomId, (newRoomId, oldRoomId) => {
+    if (oldRoomId) unsubscribe();
+    if (!newRoomId) return;
+
     createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
-      { roomId },
+      { roomId: newRoomId },
       {
         onData: (data) => {
           storeCreateEmoji(data);
@@ -27,7 +33,7 @@ export const useEmojiSubscribables = () => {
       },
     );
     updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
-      { roomId },
+      { roomId: newRoomId },
       {
         onData: (data) => {
           storeUpdateEmoji(data);
@@ -35,7 +41,7 @@ export const useEmojiSubscribables = () => {
       },
     );
     deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
-      { roomId },
+      { roomId: newRoomId },
       {
         onData: (data) => {
           storeDeleteEmoji(data);
@@ -45,8 +51,6 @@ export const useEmojiSubscribables = () => {
   });
 
   onUnmounted(() => {
-    createEmojiUnsubscribable.value?.unsubscribe();
-    updateEmojiUnsubscribable.value?.unsubscribe();
-    deleteEmojiUnsubscribable.value?.unsubscribe();
+    unsubscribe();
   });
 };
