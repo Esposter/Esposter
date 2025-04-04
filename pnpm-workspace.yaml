@@ -146,7 +146,7 @@ catalog:
   rollup: ^4.39.0
   rollup-plugin-dts: ^6.2.1
   rxjs: ^7.8.2
-  sass-embedded: ^1.86.2
+  sass-embedded: ^1.86.3
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
   survey-core: ^2.0.3
