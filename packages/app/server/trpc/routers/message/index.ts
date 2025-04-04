@@ -117,9 +117,8 @@ export const messageRouter = router({
     .input(readMessagesInputSchema)
     .query(async ({ input: { cursor, limit, roomId } }) => {
       const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
-      const filter = cursor
-        ? `${getMessagesPartitionKeyFilter(roomId)} and ${getCursorWhereAzureTable(cursor, sortBy)}`
-        : getMessagesPartitionKeyFilter(roomId);
+      let filter = getMessagesPartitionKeyFilter(roomId);
+      if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
       const messageClient = await useTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
       return getCursorPaginationData(messages, limit, sortBy);

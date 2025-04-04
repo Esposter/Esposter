@@ -1,3 +1,4 @@
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
@@ -7,9 +8,10 @@ import {
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
@@ -17,11 +19,22 @@ import { replyEventEmitter } from "@@/server/services/esbabbler/events/replyEven
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
 import { on } from "@@/server/services/events/on";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { z } from "zod";
+
+const readRepliesInputSchema = readMetadataInputSchema
+  .merge(
+    createCursorPaginationParamsSchema(messageReplyMetadataEntitySchema.keyof(), [
+      { key: "createdAt", order: SortOrder.Desc },
+    ]),
+  )
+  .omit({ sortBy: true });
+export type ReadRepliesInput = z.infer<typeof readRepliesInputSchema>;
 
 const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
@@ -53,17 +66,19 @@ export const replyRouter = router({
       for await (const [data] of on(replyEventEmitter, "createReply", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
     }),
-  readReplies: getRoomUserProcedure(readMetadataInputSchema, "roomId")
-    .input(readMetadataInputSchema)
-    .query(async ({ input: { messageRowKeys, roomId } }) => {
+  readReplies: getRoomUserProcedure(readRepliesInputSchema, "roomId")
+    .input(readRepliesInputSchema)
+    .query(async ({ input: { cursor, limit, messageRowKeys, roomId } }) => {
+      const { messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;
+      const sortBy: SortItem<keyof MessageReplyMetadataEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
+      let filter = `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
+        MessageMetadataType.Reply
+      }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`;
+      if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageReplyMetadataEntity>;
-      const { messageRowKey, type } = MessageReplyMetadataEntityPropertyNames;
-      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageReplyMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
-          MessageMetadataType.Reply
-        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
-      });
+      const replies = await getTopNEntities(messagesMetadataClient, limit + 1, MessageReplyMetadataEntity, { filter });
+      return getCursorPaginationData(replies, limit, sortBy);
     }),
 });
