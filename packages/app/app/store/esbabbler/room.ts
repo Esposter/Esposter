@@ -20,10 +20,10 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, DatabaseEntityType.Room);
-  const route = useRoute();
+  const router = useRouter();
   const currentRoomId = computed(() => {
-    const roomId = route.params.id;
-    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
+    const roomId = router.currentRoute.value.params.id;
+    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
   });
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";

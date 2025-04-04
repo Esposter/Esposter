@@ -90,8 +90,11 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) {
+        console.log(data.partitionKey);
+        console.log(input.roomId);
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      }
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
     .input(onCreateTypingInputSchema)

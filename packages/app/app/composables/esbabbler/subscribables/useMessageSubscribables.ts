@@ -14,18 +14,12 @@ export const useMessageSubscribables = () => {
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
 
-  const unsubscribe = () => {
-    createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
-  };
+  onMounted(() => {
+    if (!currentRoomId.value) return;
 
-  watch(currentRoomId, (newRoomId, oldRoomId) => {
-    if (oldRoomId) unsubscribe();
-    if (!newRoomId) return;
-
+    const roomId = currentRoomId.value;
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
-      { roomId: newRoomId },
+      { roomId },
       {
         onData: (data) => {
           storeCreateMessage(data);
@@ -33,7 +27,7 @@ export const useMessageSubscribables = () => {
       },
     );
     updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
-      { roomId: newRoomId },
+      { roomId },
       {
         onData: (data) => {
           storeUpdateMessage(data);
@@ -41,7 +35,7 @@ export const useMessageSubscribables = () => {
       },
     );
     deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
-      { roomId: newRoomId },
+      { roomId },
       {
         onData: (data) => {
           storeDeleteMessage(data);
@@ -51,6 +45,8 @@ export const useMessageSubscribables = () => {
   });
 
   onUnmounted(() => {
-    unsubscribe();
+    createMessageUnsubscribable.value?.unsubscribe();
+    updateMessageUnsubscribable.value?.unsubscribe();
+    deleteMessageUnsubscribable.value?.unsubscribe();
   });
 };
