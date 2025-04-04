@@ -39,13 +39,10 @@ export const replyRouter = router({
     .input(createReplyInputSchema)
     .mutation(async ({ input }) => {
       const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
-      const createdAt = new Date();
       const newReply = new MessageReplyMetadataEntity({
         ...input,
-        createdAt,
         rowKey: getReverseTickedTimestamp(),
         type: MessageMetadataType.Reply,
-        updatedAt: createdAt,
       });
       await createEntity(messagesMetadataClient, newReply);
       replyEventEmitter.emit("createReply", newReply);

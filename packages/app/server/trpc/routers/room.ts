@@ -78,14 +78,7 @@ export const roomRouter = router({
         });
       }
 
-      const createdAt = new Date();
-      const newInvite = new InviteEntity({
-        createdAt,
-        partitionKey: AZURE_DEFAULT_PARTITION_KEY,
-        roomId,
-        rowKey: inviteCode,
-        updatedAt: createdAt,
-      });
+      const newInvite = new InviteEntity({ partitionKey: AZURE_DEFAULT_PARTITION_KEY, roomId, rowKey: inviteCode });
       await createEntity(inviteClient, newInvite);
       return inviteCode;
     }),

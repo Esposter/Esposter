@@ -32,17 +32,10 @@ export const surveyRouter = router({
       (await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
   ),
   createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<null | Survey>(async ({ ctx, input }) => {
-    const createdAt = new Date();
     const newSurvey = (
       await ctx.db
         .insert(surveys)
-        .values({
-          ...input,
-          createdAt,
-          modelVersion: 1,
-          updatedAt: createdAt,
-          userId: ctx.session.user.id,
-        })
+        .values({ ...input, modelVersion: 1, userId: ctx.session.user.id })
         .returning()
     ).find(Boolean);
     return newSurvey ?? null;
