@@ -1,7 +1,7 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { useDashboardStore } from "@/store/dashboard";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {

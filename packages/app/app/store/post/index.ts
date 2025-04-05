@@ -4,7 +4,7 @@ import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {

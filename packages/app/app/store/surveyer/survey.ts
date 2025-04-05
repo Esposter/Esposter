@@ -4,7 +4,7 @@ import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInp
 import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {

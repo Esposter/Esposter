@@ -4,7 +4,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 
 import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { uuidValidateV4 } from "@esposter/shared";

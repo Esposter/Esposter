@@ -4,7 +4,7 @@ import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { createDataMap } from "@/services/shared/createDataMap";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";

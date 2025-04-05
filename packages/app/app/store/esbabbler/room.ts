@@ -5,7 +5,7 @@ import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
 import { useFuse } from "@vueuse/integrations/useFuse";

@@ -1,7 +1,7 @@
 import type { User } from "#shared/db/schema/users";
 
 import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useRoomStore } from "@/store/esbabbler/room";
 

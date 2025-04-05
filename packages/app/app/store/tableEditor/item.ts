@@ -1,4 +1,4 @@
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 import { useTableEditorStore } from "@/store/tableEditor";
 
