@@ -40,9 +40,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
         <div text-center font-bold>
           {{ event.title }}
         </div>
-        <div v-if="event.extendedProps.description" pt-2>
-          {{ event.extendedProps.description }}
-        </div>
+        <div v-if="event.extendedProps.description" pt-2 v-html="event.extendedProps.description" />
       </v-tooltip>
     </template>
   </FullCalendar>
