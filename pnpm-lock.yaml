@@ -118,11 +118,11 @@ catalogs:
       specifier: ^2.11.7
       version: 2.11.7
     '@trpc/client':
-      specifier: ^11.0.1
-      version: 11.0.1
+      specifier: ^11.0.2
+      version: 11.0.2
     '@trpc/server':
-      specifier: ^11.0.1
-      version: 11.0.1
+      specifier: ^11.0.2
+      version: 11.0.2
     '@types/data-urls':
       specifier: ^3.0.4
       version: 3.0.4
@@ -517,8 +517,8 @@ catalogs:
       specifier: ^3.8.0
       version: 3.8.0
     vuetify-nuxt-module:
-      specifier: ^0.18.5
-      version: 0.18.5
+      specifier: ^0.18.6
+      version: 0.18.6
     vuetify-sonner:
       specifier: ^0.3.21
       version: 0.3.21
@@ -665,10 +665,10 @@ importers:
         version: 2.11.7(@tiptap/core@2.11.7(@tiptap/pm@2.11.7))(@tiptap/pm@2.11.7)(vue@3.5.13(typescript@5.8.2))
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2)
+        version: 11.0.2(@trpc/server@11.0.2(typescript@5.8.2))(typescript@5.8.2)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.0.1(typescript@5.8.2)
+        version: 11.0.2(typescript@5.8.2)
       '@vue-flow/background':
         specifier: 'catalog:'
         version: 1.3.2(@vue-flow/core@1.42.5(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))
@@ -881,7 +881,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 1.0.4(@trpc/client@11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.1(typescript@5.8.2))
+        version: 1.0.4(@trpc/client@11.0.2(@trpc/server@11.0.2(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.2(typescript@5.8.2))
       vue-codemirror:
         specifier: 'catalog:'
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.8.2))
@@ -1023,7 +1023,7 @@ importers:
         version: 3.1.1(@types/node@22.14.0)(happy-dom@17.4.4)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1)
       vuetify-nuxt-module:
         specifier: 'catalog:'
-        version: 0.18.5(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
+        version: 0.18.6(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
 
   packages/configuration:
     devDependencies:
@@ -3915,14 +3915,14 @@ packages:
       '@tiptap/pm': ^2.7.0
       vue: ^3.0.0
 
-  '@trpc/client@11.0.1':
-    resolution: {integrity: sha512-HvOrvWAXbGBwt4om+NfuxrK4f+ik2aaNIXq7WLrJbEp7U+YXfh5++1a5p4JDaikrvSaObJ389DhYAGWz90xSGw==}
+  '@trpc/client@11.0.2':
+    resolution: {integrity: sha512-GlPEedbMTerkUfAJBsrwU6dg8N65lt3LBwrCoqR3MTZ64lRU/DQqyLjzpz5nRkEN0x4S2JmX0hASV9vc2KlSHA==}
     peerDependencies:
-      '@trpc/server': 11.0.1
+      '@trpc/server': 11.0.2
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.1':
-    resolution: {integrity: sha512-DZS3+bONLno4oJjHBMrS3xRPtoZsnmBImDH/Mmo1QhaFt3Xp/S0Riu7WU/oofsLTVj2m1UO5LlgLJFumvlSNoQ==}
+  '@trpc/server@11.0.2':
+    resolution: {integrity: sha512-PIcm8UWFyE0AnIYjxsyc1zfVa6X10m9Opm1SJ2ou9Vu8dlXO6rMtmafLUXJsMeQk/3ecxObFtEiZIX8TvB3eCg==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -10330,8 +10330,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.18.5:
-    resolution: {integrity: sha512-XJ6tgzkPvEaWWs7zQ/vu5zUvC1Bs40OVOfhWNkj1vSTjYxi/RnJS2M5j8NPdMyZHK0dFgtmm27qudSwU/IZjug==}
+  vuetify-nuxt-module@0.18.6:
+    resolution: {integrity: sha512-IEoV2XlAWkAVkUWnNx2dkFmScgZLZ58AxFnmXYS7ECQJvmskLODc/BUhonK6Ueqzu+SQhYkHjmaOi5ZukLl4PQ==}
 
   vuetify-sonner@0.3.21:
     resolution: {integrity: sha512-sAAPReHNqZf9ish2JmFYDbp0E8UQLLqcTJ1Cvm6u75Lom0/Yg9NQf8CU32yYlnQq6pYpk0rGJNZADPYmyT3/vg==}
@@ -14116,12 +14116,12 @@ snapshots:
       '@tiptap/pm': 2.11.7
       vue: 3.5.13(typescript@5.8.2)
 
-  '@trpc/client@11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2)':
+  '@trpc/client@11.0.2(@trpc/server@11.0.2(typescript@5.8.2))(typescript@5.8.2)':
     dependencies:
-      '@trpc/server': 11.0.1(typescript@5.8.2)
+      '@trpc/server': 11.0.2(typescript@5.8.2)
       typescript: 5.8.2
 
-  '@trpc/server@11.0.1(typescript@5.8.2)':
+  '@trpc/server@11.0.2(typescript@5.8.2)':
     dependencies:
       typescript: 5.8.2
 
@@ -20856,10 +20856,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@1.0.4(@trpc/client@11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.1(typescript@5.8.2)):
+  trpc-nuxt@1.0.4(@trpc/client@11.0.2(@trpc/server@11.0.2(typescript@5.8.2))(typescript@5.8.2))(@trpc/server@11.0.2(typescript@5.8.2)):
     dependencies:
-      '@trpc/client': 11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2)
-      '@trpc/server': 11.0.1(typescript@5.8.2)
+      '@trpc/client': 11.0.2(@trpc/server@11.0.2(typescript@5.8.2))(typescript@5.8.2)
+      '@trpc/server': 11.0.2(typescript@5.8.2)
       h3: 1.15.1
       ofetch: 1.4.1
       ohash: 2.0.11
@@ -21604,7 +21604,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.2
 
-  vuetify-nuxt-module@0.18.5(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2)):
+  vuetify-nuxt-module@0.18.6(magicast@0.3.5)(typescript@5.8.2)(vite@6.2.5(@types/node@22.14.0)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
       defu: 6.1.4
