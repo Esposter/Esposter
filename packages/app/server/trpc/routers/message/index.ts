@@ -8,6 +8,7 @@ import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/Me
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
@@ -36,12 +37,18 @@ export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 const readMessagesInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })
   // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-  // as we insert our messages with a reverse-ticked timestamp as our rowkey
+  // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
   .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
+// @TODO: Use this for getting replies
+const readMessagesByRowKeysInputSchema = z.object({
+  roomId: selectRoomSchema.shape.id,
+  rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
+});
+export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -90,11 +97,8 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) {
-        console.log(data.partitionKey);
-        console.log(input.roomId);
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
         if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-      }
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
     .input(onCreateTypingInputSchema)
@@ -125,6 +129,14 @@ export const messageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
       return getCursorPaginationData(messages, limit, sortBy);
+    }),
+  readMessagesByRowKeys: getRoomUserProcedure(readMessagesByRowKeysInputSchema, "roomId")
+    .input(readMessagesByRowKeysInputSchema)
+    .query(async ({ input: { roomId, rowKeys } }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rk) => `RowKey eq '${rk}'`).join(" or ")})`,
+      });
     }),
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))

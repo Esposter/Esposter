@@ -9,6 +9,7 @@ export const useReadMessages = async () => {
   const { initializeCursorPaginationData, pushMessageList } = messageStore;
   const { hasMore, nextCursor } = storeToRefs(messageStore);
   const readEmojis = useReadEmojis();
+  const readMissingMembers = useReadMissingMembers();
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
@@ -20,17 +21,22 @@ export const useReadMessages = async () => {
       pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
-      await readEmojis(response.items.map(({ rowKey }) => rowKey));
+      await Promise.all([readEmojis(response.items), readMissingMembers(response.items)]);
     } finally {
       onComplete();
     }
   };
 
-  if (currentRoomId.value) {
+  const onComplete = async () => {
+    if (!currentRoomId.value) return;
+
     const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
     initializeCursorPaginationData(response);
-    if (response.items.length > 0) await readEmojis(response.items.map(({ rowKey }) => rowKey));
-  }
+    if (response.items.length === 0) return;
 
+    await Promise.all([readEmojis(response.items), readMissingMembers(response.items)]);
+  };
+
+  await onComplete();
   return readMoreMessages;
 };

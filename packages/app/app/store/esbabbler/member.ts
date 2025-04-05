@@ -8,8 +8,11 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useMemberStore = defineStore("esbabbler/member", () => {
   const roomStore = useRoomStore();
   const { itemList, ...rest } = createCursorPaginationDataMap<User>(() => roomStore.currentRoomId);
+  const { memberList, ...restOperationData } = createOperationData(itemList, ["id"], DerivedDatabaseEntityType.Member);
+  const members = computed(() => memberList.value.toSorted((a, b) => a.name.localeCompare(b.name)));
   return {
-    ...createOperationData(itemList, ["id"], DerivedDatabaseEntityType.Member),
+    members,
+    ...restOperationData,
     ...rest,
   };
 });

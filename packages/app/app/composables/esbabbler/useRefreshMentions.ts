@@ -3,13 +3,13 @@ import { parse } from "node-html-parser";
 
 export const useRefreshMentions = (message: string) => {
   const memberStore = useMemberStore();
-  const { memberList } = storeToRefs(memberStore);
+  const { members } = storeToRefs(memberStore);
   const messageHtml = parse(message);
   const mentions = messageHtml.querySelectorAll("span[data-type='mention']");
 
   for (const mention of mentions) {
     const memberId = mention.getAttribute("data-id");
-    const member = memberList.value.find(({ id }) => id === memberId);
+    const member = members.value.find(({ id }) => id === memberId);
     if (!member?.name) continue;
 
     mention.textContent = `@${member.name}`;

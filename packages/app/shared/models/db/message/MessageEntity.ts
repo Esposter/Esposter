@@ -14,6 +14,8 @@ export class MessageEntity extends AzureEntity {
 
   message!: string;
 
+  replyToMessageRowKey?: string;
+
   userId!: string;
 
   constructor(init?: Partial<MessageEntity> & ToData<CompositeKeyEntity>) {

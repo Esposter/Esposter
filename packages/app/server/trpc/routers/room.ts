@@ -10,6 +10,7 @@ import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
@@ -25,7 +26,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { and, desc, eq, exists, ilike, sql } from "drizzle-orm";
+import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -47,6 +48,12 @@ const readMembersInputSchema = z
   .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]));
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
+const readMembersByIdsInputSchema = z.object({
+  ids: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.shape.id,
+});
+export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
+
 const createMembersInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
   userIds: z.array(selectUserSchema.shape.id).min(1),
@@ -55,7 +62,6 @@ export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
 const createInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type CreateInviteCodeInput = z.infer<typeof createInviteCodeInputSchema>;
-
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
@@ -161,6 +167,16 @@ export const roomRouter = router({
         .limit(limit + 1);
       const resultUsers = joinedUsers.map(({ users }) => users);
       return getCursorPaginationData(resultUsers, limit, sortBy);
+    }),
+  readMembersByIds: getRoomUserProcedure(readMembersByIdsInputSchema, "roomId")
+    .input(readMembersByIdsInputSchema)
+    .query(async ({ ctx, input: { ids, roomId } }) => {
+      const joinedUsers = await ctx.db
+        .select()
+        .from(users)
+        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids)));
+      return joinedUsers.map(({ users }) => users);
     }),
   readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
     if (input) {
