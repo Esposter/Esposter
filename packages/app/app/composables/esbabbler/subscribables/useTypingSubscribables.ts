@@ -9,7 +9,7 @@ interface TypingTimeout {
   userId: string;
 }
 
-export const useTypingSubscribables = () => {
+export const useTypingSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { typingList } = storeToRefs(messageStore);
@@ -23,7 +23,7 @@ export const useTypingSubscribables = () => {
 
   const createTypingUnsubscribable = ref<Unsubscribable>();
 
-  useCreateTyping();
+  await useCreateTyping();
 
   onMounted(() => {
     if (!currentRoomId.value) return;

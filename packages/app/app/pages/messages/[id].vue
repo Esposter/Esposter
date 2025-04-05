@@ -6,7 +6,7 @@ definePageMeta({ middleware: "auth", validate });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
-useSubscribables();
+await useSubscribables();
 
 const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();

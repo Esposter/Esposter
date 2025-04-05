@@ -1,5 +1,5 @@
-export const useSubscribables = () => {
+export const useSubscribables = async () => {
   useEmojiSubscribables();
   useMessageSubscribables();
-  useTypingSubscribables();
+  await useTypingSubscribables();
 };
