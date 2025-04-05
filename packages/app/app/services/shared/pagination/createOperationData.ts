@@ -1,13 +1,21 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { AEntity } from "#shared/models/entity/AEntity";
+import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 
+import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
 import { uncapitalize } from "@/util/text/uncapitalize";
 import { Operation } from "@esposter/shared";
 
-export const createOperationData = <TItem extends ToData<AItemEntity>, TEntityTypeKey extends EntityTypeKey>(
+export const createOperationData = <
+  TItem extends ToData<AEntity>,
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  TIdKeys extends EntityIdKeys<TItem>,
+  TEntityTypeKey extends EntityTypeKey,
+>(
   itemList: Ref<TItem[]>,
+  idKeys: [...TIdKeys],
   entityTypeKey: TEntityTypeKey,
 ) => {
   const pushItemList = (...items: TItem[]) => {
@@ -18,13 +26,13 @@ export const createOperationData = <TItem extends ToData<AItemEntity>, TEntityTy
     else itemList.value.push(newItem);
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
-    const index = itemList.value.findIndex(({ id }) => id === updatedItem.id);
+    const index = itemList.value.findIndex(getEntityIdComparator(idKeys, updatedItem));
     if (index === -1) return;
 
     Object.assign(itemList.value[index], updatedItem);
   };
-  const deleteItem = (id: TItem["id"]) => {
-    itemList.value = itemList.value.filter((i) => i.id !== id);
+  const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
+    itemList.value = itemList.value.filter((i) => !getEntityIdComparator(idKeys, ids)(i));
   };
   return {
     [`${uncapitalize(entityTypeKey)}List`]: itemList,

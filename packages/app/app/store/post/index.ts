@@ -15,7 +15,7 @@ export const usePostStore = defineStore("post", () => {
     deletePost: storeDeletePost,
     updatePost: storeUpdatePost,
     ...restOperationData
-  } = createOperationData(itemList, DatabaseEntityType.Post);
+  } = createOperationData(itemList, ["id"], DatabaseEntityType.Post);
 
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $trpc.post.createPost.mutate(input);
@@ -33,7 +33,7 @@ export const usePostStore = defineStore("post", () => {
     const deletedPost = await $trpc.post.deletePost.mutate(input);
     if (!deletedPost) return;
 
-    storeDeletePost(deletedPost.id);
+    storeDeletePost({ id: deletedPost.id });
   };
 
   return {

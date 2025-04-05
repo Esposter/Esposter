@@ -4,7 +4,7 @@ import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { createDataMap } from "@/services/shared/createDataMap";
-import { createAzureOperationData } from "@/services/shared/pagination/createAzureOperationData";
+import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -20,7 +20,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     deleteMessage: storeDeleteMessage,
     updateMessage: storeUpdateMessage,
     ...restOperationData
-  } = createAzureOperationData(itemList, AzureEntityType.Message);
+  } = createOperationData(itemList, ["partitionKey", "rowKey"], AzureEntityType.Message);
   // Our messages list is reversed
   // i.e. most recent messages are at the front
   const storeCreateMessage = (message: MessageEntity) => {

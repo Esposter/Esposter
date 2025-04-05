@@ -29,7 +29,7 @@ const events = computed<EventSourceInput>(() => {
           :calendar-options="{
             events,
             eventChange: async ({ event: { id, start } }) => {
-              await editItem(id);
+              await editItem({ id });
               if (!editedItem) return;
               editedItem.dueAt = start;
               await save();

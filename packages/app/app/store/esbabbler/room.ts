@@ -19,7 +19,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     roomList,
     updateRoom: storeUpdateRoom,
     ...restOperationData
-  } = createOperationData(itemList, DatabaseEntityType.Room);
+  } = createOperationData(itemList, ["id"], DatabaseEntityType.Room);
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -47,7 +47,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const deletedRoom = await $trpc.room.deleteRoom.mutate(input);
     if (!deletedRoom) return;
 
-    storeDeleteRoom(deletedRoom.id);
+    storeDeleteRoom({ id: deletedRoom.id });
   };
   const leaveRoom = (input: LeaveRoomInput) => $trpc.room.leaveRoom.mutate(input);
 

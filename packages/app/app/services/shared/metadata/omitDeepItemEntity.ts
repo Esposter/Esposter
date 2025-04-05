@@ -9,7 +9,7 @@ export const omitDeepItemEntity = <
   TKeys extends Exclude<RecursiveKeyOf<T>, "toJSON" | "updatedAt">[],
 >(
   itemMetadata: T,
-  ...keys: TKeys
+  ...keys: [...TKeys]
 ) =>
   omitDeep(
     itemMetadata,

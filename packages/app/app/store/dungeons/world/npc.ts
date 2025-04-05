@@ -6,7 +6,7 @@ import { createCursorPaginationData } from "@/services/shared/pagination/cursor/
 export const useNpcStore = defineStore("dungeons/world/npc", () => {
   const { itemList, ...restData } = createCursorPaginationData<Npc>();
   return {
-    ...createOperationData(itemList, "Npc"),
+    ...createOperationData(itemList, ["id"], "Npc"),
     ...restData,
   };
 });

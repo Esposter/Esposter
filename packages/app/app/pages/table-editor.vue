@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
-import { ITEM_ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { uuidValidateV4 } from "@esposter/shared";
@@ -21,8 +21,8 @@ onMounted(async () => {
   if (Object.values(TableEditorType).some((type) => type === itemType))
     tableEditorType.value = itemType as TableEditorType;
 
-  const itemId = route.query[ITEM_ID_QUERY_PARAM_KEY];
-  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem(itemId);
+  const itemId = route.query[ID_QUERY_PARAM_KEY];
+  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: itemId });
 });
 </script>
 

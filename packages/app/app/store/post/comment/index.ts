@@ -23,7 +23,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     deleteComment: storeDeleteComment,
     updateComment: storeUpdateComment,
     ...restOperationData
-  } = createOperationData(itemList, DerivedDatabaseEntityType.Comment);
+  } = createOperationData(itemList, ["id"], DerivedDatabaseEntityType.Comment);
 
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
@@ -46,7 +46,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     const deletedComment = await $trpc.post.deleteComment.mutate(input);
     if (!deletedComment) return;
 
-    storeDeleteComment(deletedComment.id);
+    storeDeleteComment({ id: deletedComment.id });
     currentPost.value.noComments -= 1;
   };
 

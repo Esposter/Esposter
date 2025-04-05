@@ -15,7 +15,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     deleteSurvey: storeDeleteSurvey,
     updateSurvey: storeUpdateSurvey,
     ...restOperationData
-  } = createOperationData(itemList, DatabaseEntityType.Survey);
+  } = createOperationData(itemList, ["id"], DatabaseEntityType.Survey);
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $trpc.survey.createSurvey.mutate(input);
@@ -37,7 +37,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
     if (!deletedSurvey) return;
 
-    storeDeleteSurvey(deletedSurvey.id);
+    storeDeleteSurvey({ id: deletedSurvey.id });
   };
 
   const searchQuery = ref("");

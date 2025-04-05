@@ -9,7 +9,7 @@ export const useMemberStore = defineStore("esbabbler/member", () => {
   const roomStore = useRoomStore();
   const { itemList, ...rest } = createCursorPaginationDataMap<User>(() => roomStore.currentRoomId);
   return {
-    ...createOperationData(itemList, DerivedDatabaseEntityType.Member),
+    ...createOperationData(itemList, ["id"], DerivedDatabaseEntityType.Member),
     ...rest,
   };
 });

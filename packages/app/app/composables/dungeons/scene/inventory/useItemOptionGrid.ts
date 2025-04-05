@@ -22,7 +22,7 @@ export const useItemOptionGrid = () => {
   const { inventory } = storeToRefs(inventorySceneStore);
 
   if (!isInitialized) {
-    ItemOptionGrid.grid = computed(() => [...inventory.value.map((item) => [item]), [PlayerSpecialInput.Cancel]]);
+    ItemOptionGrid.grid = computed(() => [...inventory.value.map((i) => [i]), [PlayerSpecialInput.Cancel]]);
 
     watch(
       inventory,

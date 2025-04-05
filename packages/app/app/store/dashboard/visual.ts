@@ -20,6 +20,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
         dashboardStore.dashboard.visuals = newVisuals;
       },
     }),
+    ["id"],
     "Visual",
   );
   const createVisual = () => {
@@ -33,7 +34,10 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     );
   };
   const noColumns = ref(12);
-  const editFormData = createEditFormData(computed(() => visualList.value));
+  const editFormData = createEditFormData(
+    computed(() => visualList.value),
+    ["id"],
+  );
   const save = async (editedVisual: Visual) => {
     const { editFormDialog } = editFormData;
     updateVisual(editedVisual);
