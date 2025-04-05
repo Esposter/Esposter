@@ -177,7 +177,7 @@ catalog:
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
   vuetify: ^3.8.0
-  vuetify-nuxt-module: ^0.18.5
+  vuetify-nuxt-module: ^0.18.6
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.20
   ws: ^8.18.1
