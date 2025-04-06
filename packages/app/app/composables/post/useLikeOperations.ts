@@ -6,6 +6,7 @@ import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import { authClient } from "@/services/auth/authClient";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
 
   const createLike = async (input: CreateLikeInput) => {
@@ -34,7 +35,6 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
-    const session = authClient.useSession();
     const userId = session.value.data?.user.id;
     if (!userId) return;
 

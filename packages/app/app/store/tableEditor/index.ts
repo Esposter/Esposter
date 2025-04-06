@@ -29,6 +29,7 @@ type TableEditorStoreState<
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
@@ -47,8 +48,6 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
-
-    const session = authClient.useSession();
 
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);

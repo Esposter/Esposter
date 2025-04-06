@@ -4,11 +4,10 @@ import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/c
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const flowchartEditor = ref(new FlowchartEditor());
   const saveFlowchartEditor = async () => {
-    const session = authClient.useSession();
-
     if (session.value.data) {
       saveItemMetadata(flowchartEditor.value);
       await $trpc.flowchartEditor.saveFlowchartEditor.mutate(flowchartEditor.value);

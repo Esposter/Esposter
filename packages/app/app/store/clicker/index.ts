@@ -4,11 +4,10 @@ import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useClickerStore = defineStore("clicker", () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const game = ref(new ClickerGame());
   const saveGame = async () => {
-    const session = authClient.useSession();
-
     if (session.value.data) {
       saveItemMetadata(game.value);
       await $trpc.clicker.saveGame.mutate(game.value);
