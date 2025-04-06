@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
+
+### Bug Fixes
+
+* also check for empty text ([95bc612](https://github.com/Esposter/Esposter/commit/95bc61230ad8638bba24665c3dbd0d38e486d914))
+* configuration shouldn't have metadata since it auto creates fields ([6beaead](https://github.com/Esposter/Esposter/commit/6beaead7f78cb1b944ba72245d6145628a4bc8d3))
+* disable xss validator for now ([d309123](https://github.com/Esposter/Esposter/commit/d3091232dc4ce951c4008916f0acb9584595a99f))
+* edit item ([e96dc31](https://github.com/Esposter/Esposter/commit/e96dc319e5aac6a90296da49f9fafe997b848f34))
+* likes ([51d3d3b](https://github.com/Esposter/Esposter/commit/51d3d3b6d6b9cea619f5270b1b23b7fdfe163981))
+* loosen types to include AzureEntity for paginations ([7250f7a](https://github.com/Esposter/Esposter/commit/7250f7a88402f330907283d242bf04caa4fc9a09))
+* reactivity issue with room id ([a6c1c16](https://github.com/Esposter/Esposter/commit/a6c1c1656b58cf38a1fcd6101444d5b86f9afd93))
+* render rich text in tooltip ([fbec71b](https://github.com/Esposter/Esposter/commit/fbec71b718e495c65449d63e164628f2ed953685))
+* subscibe on watch + fix up timeline ([d62a351](https://github.com/Esposter/Esposter/commit/d62a351418bd643fc209fc413312749c6c0cbbc2))
+* toast too many requests error ([dec0c61](https://github.com/Esposter/Esposter/commit/dec0c613619c51da3b6c3700d797af231091d1fe))
+* types ([e49c693](https://github.com/Esposter/Esposter/commit/e49c6933e8b2b57681e8d7526149e66cacaa040f))
+* types ([e66131a](https://github.com/Esposter/Esposter/commit/e66131a6b7f635d0367368beac675e3467fa80a4))
+* use session at the top ([4b47e82](https://github.com/Esposter/Esposter/commit/4b47e82fb2a418604bc8e08228148e863e0a836d))
+* use throttle instead of debounce + don't use ssr useFetch for subscribables, not needed ([047b287](https://github.com/Esposter/Esposter/commit/047b2870101337e0f51e3798faf0eec45a4d6407))
+* useFetch to be SSR compatible ([2e90a6a](https://github.com/Esposter/Esposter/commit/2e90a6a8504d305fe8ddea411c91917d1e6ee10c))
+
+### Features
+
+* Add crazy typing to make generic operations data ([ffdb026](https://github.com/Esposter/Esposter/commit/ffdb02643cdfb6dc1d00cbdd5dbf77de6d7a0d77))
+* Add readReplies pagination ([95c81e7](https://github.com/Esposter/Esposter/commit/95c81e71bedf556863df3d7d9797602f25f173be))
+
 # [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
 
 ### Bug Fixes

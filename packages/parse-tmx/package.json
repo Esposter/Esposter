@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "1.40.0",
+  "version": "1.41.0",
   "description": "A parser for tmx.",
   "type": "module",
   "main": "dist/index.js",

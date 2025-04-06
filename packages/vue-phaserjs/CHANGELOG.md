@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
+
+### Bug Fixes
+
+* use throttle instead of debounce + don't use ssr useFetch for subscribables, not needed ([047b287](https://github.com/Esposter/Esposter/commit/047b2870101337e0f51e3798faf0eec45a4d6407))
+
 # [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
 
 **Note:** Version bump only for package vue-phaserjs
