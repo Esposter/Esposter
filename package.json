@@ -47,7 +47,7 @@
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "rollup": "catalog:",
+    "rolldown": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
