@@ -27,14 +27,14 @@ export const useInitializeGameObject = <
   let gameObject: TGameObject;
   const parentContainerStore = useParentContainerStore();
   const { pushGameObject } = parentContainerStore;
-  const { initializeGameObjectSetters, setterStopHandlers } = useInitializeGameObjectSetters(
+  const { initializeGameObjectSetters, setterWatchHandles } = useInitializeGameObjectSetters(
     () => gameObject,
     configuration,
     emit,
     setterMap,
     immediate,
   );
-  const { eventStopHandlers, initializeGameObjectEvents } = useInitializeGameObjectEvents();
+  const { eventStopHandles, initializeGameObjectEvents } = useInitializeGameObjectEvents();
   // This is only used to track if the current gameObject we are rendering
   // is in a parent container and append to it if it exists. We need to use
   // the vue provide / inject api as this context should not be shared across every component,
@@ -67,8 +67,8 @@ export const useInitializeGameObject = <
     });
 
   onUnmounted(() => {
-    for (const setterStopHandler of setterStopHandlers) setterStopHandler();
-    for (const eventStopHandler of eventStopHandlers) eventStopHandler();
+    for (const setterWatchHandle of setterWatchHandles) setterWatchHandle();
+    for (const eventStopHandle of eventStopHandles) eventStopHandle();
     gameObject.destroy();
   });
 };

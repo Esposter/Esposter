@@ -1,6 +1,6 @@
 import type { SetterMap } from "@/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
-import type { SetupContext, WatchStopHandle } from "vue";
+import type { SetupContext, WatchHandle } from "vue";
 
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onNextTick } from "@/hooks/onNextTick";
@@ -19,7 +19,7 @@ export const useInitializeGameObjectSetters = <
 ) => {
   const sceneKey = useInjectSceneKey();
   const setters: ((gameObject: TGameObject) => void)[] = [];
-  const setterStopHandlers: WatchStopHandle[] = [];
+  const setterWatchHandles: WatchHandle[] = [];
 
   for (const [key, value] of Object.entries(toValue(configuration)) as [
     keyof TConfiguration,
@@ -35,7 +35,7 @@ export const useInitializeGameObjectSetters = <
       else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
     });
 
-    setterStopHandlers.push(
+    setterWatchHandles.push(
       watch(
         () => toValue(configuration)[key],
         (newValue) => {
@@ -57,5 +57,5 @@ export const useInitializeGameObjectSetters = <
   const initializeGameObjectSetters = (gameObject: TGameObject) => {
     for (const setter of setters) setter(gameObject);
   };
-  return { initializeGameObjectSetters, setterStopHandlers };
+  return { initializeGameObjectSetters, setterWatchHandles };
 };
