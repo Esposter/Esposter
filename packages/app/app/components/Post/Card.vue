@@ -28,7 +28,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
           <v-avatar>
             <v-img v-if="post.user.image" :src="post.user.image" :alt="post.user.name" />
           </v-avatar>
-          Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
+          Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-gray">{{ createdAtTimeAgo }}</span>
           <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
             {{ post.title }}
           </v-card-title>
@@ -52,7 +52,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
         <v-avatar>
           <v-img v-if="post.user.image" :src="post.user.image" :alt="post.user.name" />
         </v-avatar>
-        Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-grey">{{ createdAtTimeAgo }}</span>
+        Posted by <span font-bold>{{ post.user.name }}</span> <span class="text-gray">{{ createdAtTimeAgo }}</span>
         <v-card-title class="text-h6" px-0="!" font-bold="!" whitespace="normal!">
           {{ post.title }}
         </v-card-title>

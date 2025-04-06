@@ -28,7 +28,7 @@ const dialog = ref(false);
       <v-card-title px-0="!">
         Invite friends to <span font-bold>{{ currentRoomName }}</span>
       </v-card-title>
-      <v-card-text px-0="!">
+      <v-card-text px-0="!" py-2="!">
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
@@ -50,6 +50,7 @@ const dialog = ref(false);
             />
           </template>
         </v-text-field>
+        <div v-if="inviteLink" class="text-gray text-subtitle-2" pt-2>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>
