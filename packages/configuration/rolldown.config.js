@@ -4,11 +4,11 @@ import { dts } from "rolldown-plugin-dts";
 export default defineConfig([
   {
     input: "src/index.ts",
-    output: [{ file: "dist/index.js", format: "esm" }],
+    output: [{ file: "dist/index.js", format: "es" }],
   },
   {
     input: "src/index.ts",
-    output: [{ file: "dist/index.d.ts", format: "esm" }],
+    output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts({ tsconfig: "tsconfig.build.json" })],
     resolve: {
       tsconfigFilename: "tsconfig.build.json",
