@@ -463,8 +463,8 @@ catalogs:
       specifier: ^4.39.1
       version: 4.39.1
     typedoc:
-      specifier: ^0.28.1
-      version: 0.28.1
+      specifier: ^0.28.2
+      version: 0.28.2
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
@@ -572,7 +572,7 @@ importers:
         version: 4.39.1
       typedoc:
         specifier: 'catalog:'
-        version: 0.28.1(typescript@5.8.3)
+        version: 0.28.2(typescript@5.8.3)
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -9763,8 +9763,8 @@ packages:
     resolution: {integrity: sha512-EGjWssW7Tsk4DGfE+5yluuljS1OGYWiI1J6e8puZz9nTMM51Oug8CD5Zo4gWMsOhq5BI+1bF+rWTm4Vbj3ivRA==}
     engines: {node: '>= 18'}
 
-  typedoc@0.28.1:
-    resolution: {integrity: sha512-Mn2VPNMaxoe/hlBiLriG4U55oyAa3Xo+8HbtEwV7F5WEOPXqtxzGuMZhJYHaqFJpajeQ6ZDUC2c990NAtTbdgw==}
+  typedoc@0.28.2:
+    resolution: {integrity: sha512-9Giuv+eppFKnJ0oi+vxqLM817b/IrIsEMYgy3jj6zdvppAfDqV3d6DXL2vXUg2TnlL62V48th25Zf/tcQKAJdg==}
     engines: {node: '>= 18', pnpm: '>= 10'}
     hasBin: true
     peerDependencies:
@@ -20958,7 +20958,7 @@ snapshots:
 
   typed-function@4.2.1: {}
 
-  typedoc@0.28.1(typescript@5.8.3):
+  typedoc@0.28.2(typescript@5.8.3):
     dependencies:
       '@gerrit0/mini-shiki': 3.2.2
       lunr: 2.3.9
