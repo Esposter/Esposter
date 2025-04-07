@@ -367,8 +367,8 @@ catalogs:
       specifier: ^1.15.4
       version: 1.15.4
     marked:
-      specifier: ^15.0.7
-      version: 15.0.7
+      specifier: ^15.0.8
+      version: 15.0.8
     mjml-browser:
       specifier: ^4.15.3
       version: 4.15.3
@@ -809,7 +809,7 @@ importers:
         version: 1.15.4
       marked:
         specifier: 'catalog:'
-        version: 15.0.7
+        version: 15.0.8
       mjml-browser:
         specifier: 'catalog:'
         version: 4.15.3
@@ -7609,8 +7609,8 @@ packages:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
     hasBin: true
 
-  marked@15.0.7:
-    resolution: {integrity: sha512-dgLIeKGLx5FwziAnsk4ONoGwHwGPJzselimvlVskE9XLN4Orv9u2VA3GWw/lYUqjfA0rUT/6fqKwfZJapP9BEg==}
+  marked@15.0.8:
+    resolution: {integrity: sha512-rli4l2LyZqpQuRve5C0rkn6pj3hT8EWPC+zkAxFTAJLxRbENfTAhEQq9itrmf1Y81QtAX5D/MYlGlIomNgj9lA==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -12315,7 +12315,7 @@ snapshots:
       debug: 4.4.0
       immer: 10.1.1
       magicast: 0.3.5
-      marked: 15.0.7
+      marked: 15.0.8
     transitivePeerDependencies:
       - supports-color
 
@@ -18366,7 +18366,7 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  marked@15.0.7: {}
+  marked@15.0.8: {}
 
   marky@1.2.5: {}
 
