@@ -5,6 +5,9 @@ export default defineConfig([
   {
     input: "src/index.ts",
     output: [{ file: "dist/index.js", format: "es" }],
+    resolve: {
+      tsconfigFilename: "tsconfig.json",
+    }
   },
   {
     input: "src/index.ts",
