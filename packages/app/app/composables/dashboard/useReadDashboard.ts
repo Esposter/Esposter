@@ -12,12 +12,17 @@ export const useReadDashboard = async () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const dashboardChangedTracker = computed<RecursiveDeepOmitItemEntity<Dashboard>>((oldDashboardChangedTracker) => {
-    const newDashboardChangedTracker = omitDeepItemEntity(dashboard.value);
-    return oldDashboardChangedTracker && deepEqual(newDashboardChangedTracker, oldDashboardChangedTracker)
-      ? oldDashboardChangedTracker
-      : newDashboardChangedTracker;
+  const virtualDashboard = computed<RecursiveDeepOmitItemEntity<Dashboard>>((oldVirtualDashboard) => {
+    const newVirtualDashboard = omitDeepItemEntity(dashboard.value);
+    return oldVirtualDashboard && deepEqual(newVirtualDashboard, oldVirtualDashboard)
+      ? oldVirtualDashboard
+      : newVirtualDashboard;
   });
+
+  watch(virtualDashboard, async () => {
+    await saveDashboard();
+  });
+
   await useReadData(
     () => {
       const dashboardJson = localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY);
@@ -28,8 +33,4 @@ export const useReadDashboard = async () => {
       dashboard.value = await $trpc.dashboard.readDashboard.query();
     },
   );
-
-  watchTracker(dashboardChangedTracker, async () => {
-    await saveDashboard();
-  });
 };

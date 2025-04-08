@@ -15,14 +15,16 @@ export const useReadClickerGame = async () => {
   // This is used for tracking when we should save the game
   // i.e. every time the user manually updates the game state
   // which is everything excluding automatic updates like noPoints
-  const gameChangedTracker = computed<RecursiveDeepOmitItemEntity<ClickerGame, ["noPoints", "producedValue"]>>(
-    (oldGameChangedTracker) => {
-      const newGameChangedTracker = omitDeepItemEntity(game.value, "noPoints", "producedValue");
-      return oldGameChangedTracker && deepEqual(newGameChangedTracker, oldGameChangedTracker)
-        ? oldGameChangedTracker
-        : newGameChangedTracker;
+  const virtualGame = computed<RecursiveDeepOmitItemEntity<ClickerGame, ["noPoints", "producedValue"]>>(
+    (oldVirtualGame) => {
+      const newVirtualGame = omitDeepItemEntity(game.value, "noPoints", "producedValue");
+      return oldVirtualGame && deepEqual(newVirtualGame, oldVirtualGame) ? oldVirtualGame : newVirtualGame;
     },
   );
+
+  watch(virtualGame, async () => {
+    await saveGame();
+  });
 
   await useReadData(
     () => {
@@ -34,8 +36,4 @@ export const useReadClickerGame = async () => {
       game.value = await $trpc.clicker.readGame.query();
     },
   );
-
-  watchTracker(gameChangedTracker, async () => {
-    await saveGame();
-  });
 };
