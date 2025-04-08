@@ -38,8 +38,8 @@ catalog:
   "@tiptap/starter-kit": ^2.11.7
   "@tiptap/suggestion": ^2.11.7
   "@tiptap/vue-3": ^2.11.7
-  "@trpc/client": ^11.0.2
-  "@trpc/server": ^11.0.2
+  "@trpc/client": ^11.0.3
+  "@trpc/server": ^11.0.3
   "@types/data-urls": ^3.0.4
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
