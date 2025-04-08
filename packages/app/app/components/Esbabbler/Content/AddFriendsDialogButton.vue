@@ -13,6 +13,7 @@ const inviteLink = computed(() =>
   inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
 );
 const dialog = ref(false);
+const isCopied = ref(false);
 </script>
 
 <template>
@@ -32,15 +33,18 @@ const dialog = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          variant="filled"
+          class="bg-background"
+          variant="outlined"
           hide-details
           readonly
+          :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg('example')}`"
         >
           <template #append-inner>
             <StyledClipboardButton
               w-20
               :source="inviteLink"
+              @copied="(value) => (isCopied = value)"
               @create="
                 async () => {
                   if (!currentRoomId) return;
@@ -55,17 +59,3 @@ const dialog = ref(false);
     </StyledCard>
   </v-dialog>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-field) {
-  align-items: center;
-}
-
-:deep(.v-field__append-inner) {
-  padding-top: 0;
-}
-
-:deep(.v-field__outline) {
-  display: none;
-}
-</style>
