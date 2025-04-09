@@ -38,9 +38,9 @@ export const selectInviteSchema = createSelectSchema(invites, {
 });
 
 export const invitesRelations = relations(invites, ({ one }) => ({
-  room: one(invites, {
+  room: one(rooms, {
     fields: [invites.roomId],
-    references: [invites.id],
+    references: [rooms.id],
   }),
   user: one(users, {
     fields: [invites.userId],

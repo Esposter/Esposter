@@ -1,5 +1,5 @@
 {
-  "id": "9ab1f394-0a58-4ab9-9192-71b9d8315819",
+  "id": "6f12a088-f845-4fd8-b354-8e2c490fbebd",
   "prevId": "bd0ef2af-175a-4c58-b998-821ef077589b",
   "version": "7",
   "dialect": "postgresql",
@@ -153,7 +153,7 @@
         },
         "roomId": {
           "name": "roomId",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -166,10 +166,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "invites_roomId_users_id_fk": {
-          "name": "invites_roomId_users_id_fk",
+        "invites_roomId_rooms_id_fk": {
+          "name": "invites_roomId_rooms_id_fk",
           "tableFrom": "invites",
-          "tableTo": "users",
+          "tableTo": "rooms",
           "columnsFrom": [
             "roomId"
           ],

@@ -61,15 +61,8 @@
     {
       "idx": 8,
       "version": "7",
-      "when": 1744156744821,
-      "tag": "0008_dark_blindfold",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1744158300774,
-      "tag": "0009_complex_phalanx",
+      "when": 1744158529883,
+      "tag": "0008_deep_sinister_six",
       "breakpoints": true
     }
   ]

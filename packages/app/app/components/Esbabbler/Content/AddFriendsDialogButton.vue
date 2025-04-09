@@ -59,3 +59,11 @@ const isCopied = ref(false);
     </StyledCard>
   </v-dialog>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-field__input) {
+  min-height: auto;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+</style>
