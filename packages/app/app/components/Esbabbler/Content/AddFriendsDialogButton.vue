@@ -10,7 +10,7 @@ if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.muta
 
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
-  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
+  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",
 );
 const dialog = ref(false);
 const isCopied = ref(false);
@@ -38,7 +38,7 @@ const isCopied = ref(false);
           hide-details
           readonly
           :color="isCopied ? 'success' : undefined"
-          :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg('example')}`"
+          :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >
           <template #append-inner>
             <StyledClipboardButton

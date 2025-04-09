@@ -57,6 +57,13 @@
       "when": 1736845513600,
       "tag": "0007_wakeful_mulholland_black",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1744156744821,
+      "tag": "0008_dark_blindfold",
+      "breakpoints": true
     }
   ]
 }

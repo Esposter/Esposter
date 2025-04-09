@@ -1,22 +1,24 @@
-import { InviteEntity, InviteEntityPropertyNames } from "#shared/models/db/room/InviteEntity";
-import { dayjs } from "#shared/services/dayjs";
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
-import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
-import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import type { Context } from "@@/server/trpc/context";
 
-export const readInviteCode = async (roomId: string) => {
-  const inviteClient = await useTableClient(AzureTable.Invites);
-  // We only allow one invite code per room so let's find and return the code to the user if it exists
-  const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-    filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
-  });
-  const invite = invites.find(Boolean);
+import { invites } from "#shared/db/schema/invites";
+import { rooms } from "#shared/db/schema/rooms";
+import { users } from "#shared/db/schema/users";
+import { dayjs } from "#shared/services/dayjs";
+import { and, eq } from "drizzle-orm";
+
+export const readInviteCode = async (db: Context["db"], userId: string, roomId: string) => {
+  const invite = (
+    await db
+      .select()
+      .from(invites)
+      .innerJoin(users, and(eq(users.id, invites.userId)))
+      .innerJoin(rooms, and(eq(rooms.id, invites.roomId)))
+      .where(and(eq(invites.userId, userId), eq(invites.roomId, roomId)))
+  ).find(Boolean);
   if (!invite) return null;
-  else if (dayjs(invite.createdAt).add(24, "hours").isAfter(new Date())) return invite.rowKey;
+  else if (dayjs(invite.invites.createdAt).add(24, "hours").isAfter(new Date())) return invite.invites.code;
   else {
-    await deleteEntity(inviteClient, AZURE_DEFAULT_PARTITION_KEY, invite.rowKey);
+    await db.delete(invites).where(and(eq(invites.userId, userId), eq(invites.roomId, roomId)));
     return null;
   }
 };

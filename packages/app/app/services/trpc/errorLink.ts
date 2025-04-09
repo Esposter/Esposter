@@ -19,6 +19,7 @@ export const errorLink: TRPCLink<TRPCRouter> =
           switch (err.data.code) {
             case "BAD_REQUEST":
             case "TOO_MANY_REQUESTS":
+            case "UNPROCESSABLE_CONTENT":
               toast(err.message, { cardProps: { color: "error" } });
               break;
             case "FORBIDDEN":
