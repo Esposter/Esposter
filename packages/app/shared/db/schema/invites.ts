@@ -1,5 +1,5 @@
 import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
+import type { User, UserToRoom } from "#shared/db/schema/users";
 
 import { pgTable } from "#shared/db/pgTable";
 import { rooms } from "#shared/db/schema/rooms";
@@ -28,10 +28,14 @@ export const invites = pgTable(
 export type Invite = typeof invites.$inferSelect;
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const InviteRelations = {
-  room: true,
+  room: {
+    with: {
+      usersToRooms: true,
+    },
+  },
   user: true,
 } as const;
-export type InviteWithRelations = Invite & { room: Room; user: User };
+export type InviteWithRelations = Invite & { room: Room & { usersToRooms: UserToRoom[] }; user: User };
 
 export const selectInviteSchema = createSelectSchema(invites, {
   code: z.string().length(CODE_LENGTH),

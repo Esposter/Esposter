@@ -16,6 +16,7 @@ definePageMeta({
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 const code = route.params.code as string;
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/3493
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
   throw createError({
@@ -47,6 +48,9 @@ if (!invite)
               by
               <div text-2xl font-bold>
                 {{ invite.user.name }}
+              </div>
+              <div>
+                {{ invite.room.usersToRooms.length }} Member{{ invite.room.usersToRooms.length === 1 ? "" : "s" }}
               </div>
             </div>
           </v-card-text>

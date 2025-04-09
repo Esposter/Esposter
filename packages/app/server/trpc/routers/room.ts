@@ -1,4 +1,3 @@
-import type { InviteWithRelations } from "#shared/db/schema/invites";
 import type { Room } from "#shared/db/schema/rooms";
 import type { UserToRoom } from "#shared/db/schema/users";
 
@@ -146,7 +145,7 @@ export const roomRouter = router({
     ).find(Boolean);
     return userToRoom ?? null;
   }),
-  readInvite: authedProcedure.input(readInviteInputSchema).query<InviteWithRelations | null>(
+  readInvite: authedProcedure.input(readInviteInputSchema).query(
     async ({ ctx, input }) =>
       (await ctx.db.query.invites.findFirst({
         where: (invites, { eq }) => eq(invites.code, input),
