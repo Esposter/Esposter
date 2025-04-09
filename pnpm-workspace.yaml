@@ -139,8 +139,8 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
-  rolldown: ^1.0.0-beta.7
-  rolldown-plugin-dts: "^0.1.0"
+  rolldown: npm:rolldown@nightly
+  rolldown-plugin-dts: "^0.2.0"
   rxjs: ^7.8.2
   sass-embedded: ^1.86.3
   sql-highlight: ^6.0.0
@@ -184,4 +184,5 @@ onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
   - esbuild
+  - rolldown
   - vue-demi
