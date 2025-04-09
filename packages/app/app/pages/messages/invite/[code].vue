@@ -2,6 +2,7 @@
 import { selectInviteSchema } from "#shared/db/schema/invites";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
+import { authClient } from "@/services/auth/authClient";
 import { NotFoundError } from "@esposter/shared";
 
 definePageMeta({
@@ -13,6 +14,7 @@ definePageMeta({
   },
 });
 
+const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 const code = route.params.code as string;
@@ -23,6 +25,8 @@ if (!invite)
     message: new NotFoundError(DatabaseEntityType.Invite, `${code}, the code may have expired`).message,
     statusCode: 404,
   });
+else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
+  await navigateTo(RoutePath.MessagesInvite(invite.roomId));
 </script>
 
 <template>
