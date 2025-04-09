@@ -14,7 +14,7 @@ const { smAndDown } = useDisplay();
       JavaScript Application
     </div>
     <br />
-    <div class="text-gray" text-2xl>An approachable, performant and versatile javascript application powered by</div>
+    <div text-gray text-2xl>An approachable, performant and versatile javascript application powered by</div>
     <v-img id="uwu" width="100%" max-width="45rem" :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
   </div>
 </template>

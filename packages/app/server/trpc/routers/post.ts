@@ -19,6 +19,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { NotFoundError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -36,7 +37,11 @@ export const postRouter = router({
     .input(createCommentInputSchema)
     .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
       const parentPost = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
-      if (!parentPost) throw new NotFoundError(`Parent ${DatabaseEntityType.Post}`, input.parentId);
+      if (!parentPost)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(`Parent ${DatabaseEntityType.Post}`, input.parentId).message,
+        });
 
       const newComment = await ctx.db.transaction(async (tx) => {
         const createdAt = new Date();
@@ -173,7 +178,11 @@ export const postRouter = router({
         where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
       });
       if (!post)
-        throw new NotFoundError(DatabaseEntityType.Post, `${posts.id}, you might be trying to update a comment`);
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, `${posts.id}, you might be trying to update a comment`)
+            .message,
+        });
 
       const updatedPost = (
         await ctx.db

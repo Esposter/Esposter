@@ -6,13 +6,14 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const inviteCode = ref<null | string>(null);
-if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.mutate({ roomId: currentRoomId.value });
+if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
 
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
-  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg(inviteCode.value)}` : "",
+  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",
 );
 const dialog = ref(false);
+const isCopied = ref(false);
 </script>
 
 <template>
@@ -32,40 +33,37 @@ const dialog = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          variant="filled"
+          class="bg-background"
+          variant="outlined"
           hide-details
           readonly
-          :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesGg('example')}`"
+          :color="isCopied ? 'success' : undefined"
+          :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >
           <template #append-inner>
             <StyledClipboardButton
               w-20
               :source="inviteLink"
+              @copied="(value) => (isCopied = value)"
               @create="
                 async () => {
                   if (!currentRoomId) return;
-                  inviteCode = await $trpc.room.createInviteCode.mutate({ roomId: currentRoomId });
+                  inviteCode = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
                 }
               "
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-gray text-subtitle-2" pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" class="text-subtitle-2" text-gray pt-2>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>
 </template>
 
 <style scoped lang="scss">
-:deep(.v-field) {
-  align-items: center;
-}
-
-:deep(.v-field__append-inner) {
-  padding-top: 0;
-}
-
-:deep(.v-field__outline) {
-  display: none;
+:deep(.v-field__input) {
+  min-height: auto;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 </style>

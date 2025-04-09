@@ -7,7 +7,9 @@ const { onClick } = popupStore;
 
 <template>
   <div mt-12 relative>
-    <ClickerModelRotatingCursors />
+    <ClientOnly>
+      <ClickerModelRotatingCursors />
+    </ClientOnly>
     <ClickerModelItem
       relative
       size-50

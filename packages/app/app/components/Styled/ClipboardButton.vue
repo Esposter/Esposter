@@ -4,8 +4,12 @@ interface StyledClipboardButtonProps {
 }
 
 const { source } = defineProps<StyledClipboardButtonProps>();
-const emit = defineEmits<{ create: [] }>();
+const emit = defineEmits<{ copied: [boolean]; create: [] }>();
 const { copied, copy } = useClipboard({ source });
+
+watch(copied, (newCopied) => {
+  emit("copied", newCopied);
+});
 </script>
 
 <template>

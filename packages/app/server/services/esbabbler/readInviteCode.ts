@@ -1,22 +1,15 @@
-import { InviteEntity, InviteEntityPropertyNames } from "#shared/models/db/room/InviteEntity";
-import { dayjs } from "#shared/services/dayjs";
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
-import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
-import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import type { Context } from "@@/server/trpc/context";
 
-export const readInviteCode = async (roomId: string) => {
-  const inviteClient = await useTableClient(AzureTable.Invites);
-  // We only allow one invite code per room so let's find and return the code to the user if it exists
-  const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-    filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and ${InviteEntityPropertyNames.roomId} eq '${roomId}'`,
+import { invites } from "#shared/db/schema/invites";
+import { dayjs } from "#shared/services/dayjs";
+import { and, eq } from "drizzle-orm";
+
+export const readInviteCode = async (db: Context["db"], userId: string, roomId: string, isAutoDelete = false) => {
+  const invite = await db.query.invites.findFirst({
+    where: (invites, { and, eq }) => and(eq(invites.userId, userId), eq(invites.roomId, roomId)),
   });
-  const invite = invites.find(Boolean);
   if (!invite) return null;
-  else if (dayjs(invite.createdAt).add(24, "hours").isAfter(new Date())) return invite.rowKey;
-  else {
-    await deleteEntity(inviteClient, AZURE_DEFAULT_PARTITION_KEY, invite.rowKey);
-    return null;
-  }
+  else if (dayjs(invite.createdAt).add(24, "hours").isAfter(new Date())) return invite.code;
+  else if (isAutoDelete) await db.delete(invites).where(and(eq(invites.userId, userId), eq(invites.roomId, roomId)));
+  return null;
 };

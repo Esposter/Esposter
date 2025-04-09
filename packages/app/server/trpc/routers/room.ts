@@ -1,22 +1,18 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { UserToRoom } from "#shared/db/schema/users";
 
+import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
-import { InviteEntity, inviteEntitySchema } from "#shared/models/db/room/InviteEntity";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { AZURE_DEFAULT_PARTITION_KEY } from "@@/server/services/azure/table/constants";
-import { createEntity } from "@@/server/services/azure/table/createEntity";
-import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -26,6 +22,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { TRPCError } from "@trpc/server";
 import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -37,7 +34,7 @@ const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema
 ]).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const joinRoomInputSchema = inviteEntitySchema.shape.rowKey;
+const joinRoomInputSchema = selectInviteSchema.shape.code;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 
 const readMembersInputSchema = z
@@ -60,33 +57,37 @@ const createMembersInputSchema = z.object({
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
-const createInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type CreateInviteCodeInput = z.infer<typeof createInviteCodeInputSchema>;
+const readInviteInputSchema = selectInviteSchema.shape.code;
+export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
+
+const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
+
+const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
-  createInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
-    .input(createInviteCodeInputSchema)
-    .mutation<string>(async ({ input: { roomId } }) => {
-      let inviteCode = await readInviteCode(roomId);
+  createInvite: getRoomOwnerProcedure(createInviteInputSchema, "roomId")
+    .input(createInviteInputSchema)
+    .mutation<null | string>(async ({ ctx, input: { roomId } }) => {
+      let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
       if (inviteCode) return inviteCode;
-      // Create non-colliding invite code
-      const inviteClient = await useTableClient(AzureTable.Invites);
-      inviteCode = createCode(8);
-      let invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-        filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
+
+      for (let i = 0; i < 3; i++)
+        try {
+          // Create non-colliding invite code
+          inviteCode = createCode(CODE_LENGTH);
+          await ctx.db.insert(invites).values({ code: inviteCode, roomId, userId: ctx.session.user.id });
+          return inviteCode;
+        } catch {
+          continue;
+        }
+
+      throw new TRPCError({
+        code: "UNPROCESSABLE_CONTENT",
+        message: "Failed to create invite code. Please try again.",
       });
-
-      while (invites.length > 0) {
-        inviteCode = createCode(8);
-        invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-          filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${inviteCode}'`,
-        });
-      }
-
-      const newInvite = new InviteEntity({ partitionKey: AZURE_DEFAULT_PARTITION_KEY, roomId, rowKey: inviteCode });
-      await createEntity(inviteClient, newInvite);
-      return inviteCode;
     }),
   createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
@@ -127,13 +128,9 @@ export const roomRouter = router({
     return deletedRoom ?? null;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<null | UserToRoom>(async ({ ctx, input }) => {
-    const inviteClient = await useTableClient(AzureTable.Invites);
-    const invites = await getTopNEntities(inviteClient, 1, InviteEntity, {
-      filter: `PartitionKey eq '${AZURE_DEFAULT_PARTITION_KEY}' and RowKey eq '${input}'`,
-    });
-    if (invites.length === 0) return null;
+    const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
+    if (!invite) return null;
 
-    const [invite] = invites;
     const userToRoom = (
       await ctx.db.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
     ).find(Boolean);
@@ -148,10 +145,16 @@ export const roomRouter = router({
     ).find(Boolean);
     return userToRoom ?? null;
   }),
-  readInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
-    .input(createInviteCodeInputSchema)
-    // Mutation instead of query as readInviteCode auto deletes expired codes
-    .mutation<null | string>(async ({ input: { roomId } }) => readInviteCode(roomId)),
+  readInvite: authedProcedure.input(readInviteInputSchema).query(
+    async ({ ctx, input }) =>
+      (await ctx.db.query.invites.findFirst({
+        where: (invites, { eq }) => eq(invites.code, input),
+        with: InviteRelations,
+      })) ?? null,
+  ),
+  readInviteCode: getRoomOwnerProcedure(readInviteCodeInputSchema, "roomId")
+    .input(readInviteCodeInputSchema)
+    .query<null | string>(async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId)),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -179,12 +182,10 @@ export const roomRouter = router({
       return joinedUsers.map(({ users }) => users);
     }),
   readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
-    if (input) {
-      const joinedRoom = (
-        await ctx.db
-          .select()
-          .from(rooms)
-          .where(
+    if (input)
+      return (
+        (await ctx.db.query.rooms.findFirst({
+          where: (rooms, { eq }) =>
             and(
               eq(rooms.id, input),
               exists(
@@ -202,10 +203,8 @@ export const roomRouter = router({
                   ),
               ),
             ),
-          )
-      ).find(Boolean);
-      return joinedRoom ?? null;
-    }
+        })) ?? null
+      );
     // By default, we will return the latest updated room
     const joinedRoom = (
       await ctx.db
