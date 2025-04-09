@@ -29,7 +29,7 @@ onMounted(() => {
     bg="center cover black"
   >
     <slot />
-    <div class="hover" absolute top-0 right-0>
+    <div class="hover" absolute top-8 right-18>
       <VisualFloatingAstronaut />
     </div>
   </div>
