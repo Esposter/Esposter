@@ -15,6 +15,7 @@ import { getPublishPath } from "@@/server/services/publish/getPublishPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;
@@ -53,7 +54,11 @@ export const surveyRouter = router({
     const survey = await ctx.db.query.surveys.findFirst({
       where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
     });
-    if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
+    if (!survey)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.Survey, id).message,
+      });
 
     rest.publishVersion++;
     if (rest.publishVersion <= survey.publishVersion)
@@ -88,7 +93,11 @@ export const surveyRouter = router({
       const survey = await ctx.db.query.surveys.findFirst({
         where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
       });
-      if (!survey) throw new NotFoundError(DatabaseEntityType.Survey, id);
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, id).message,
+        });
 
       if (rest.model !== survey.model) {
         rest.modelVersion++;

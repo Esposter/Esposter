@@ -6,7 +6,6 @@ interface StyledSideBar {
 }
 
 const { items } = defineProps<StyledSideBar>();
-const route = useRoute();
 </script>
 
 <template>
@@ -16,7 +15,7 @@ const route = useRoute();
         v-for="{ title, href } of items"
         :key="href"
         rd="!"
-        :active="route.path === href"
+        :active="$route.path === href"
         @click="navigateTo(href)"
       >
         {{ title }}

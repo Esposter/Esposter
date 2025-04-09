@@ -28,10 +28,10 @@ export const invites = pgTable(
 export type Invite = typeof invites.$inferSelect;
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const InviteRelations = {
-  likes: true,
+  room: true,
   user: true,
 } as const;
-export type InviteWithRelations = Invite & { Room: Room[]; user: User };
+export type InviteWithRelations = Invite & { room: Room; user: User };
 
 export const selectInviteSchema = createSelectSchema(invites, {
   code: z.string().length(CODE_LENGTH),

@@ -5,7 +5,6 @@ import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 
-const router = useRouter();
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
@@ -24,7 +23,7 @@ const { visualType } = storeToRefs(visualStore);
             hide-details
             @update:model-value="
               (value) =>
-                router.replace({ query: { ...router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAM_KEY]: value } })
+                $router.replace({ query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAM_KEY]: value } })
             "
           />
           <v-divider mx-4="!" thickness="2" vertical inset />

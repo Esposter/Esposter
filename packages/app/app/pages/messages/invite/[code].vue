@@ -1,5 +1,70 @@
 <script setup lang="ts">
-definePageMeta({ middleware: "auth" });
+import { selectInviteSchema } from "#shared/db/schema/invites";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { RoutePath } from "#shared/models/router/RoutePath";
+import { NotFoundError } from "@esposter/shared";
+
+definePageMeta({
+  middleware: "auth",
+  validate: async (route) => {
+    const code = route.params.code;
+    const result = await selectInviteSchema.shape.code.safeParseAsync(code);
+    return result.success;
+  },
+});
+
+const { $trpc } = useNuxtApp();
+const route = useRoute();
+const code = route.params.code as string;
+const invite = await $trpc.room.readInvite.query(code);
+if (!invite)
+  throw createError({
+    message: new NotFoundError(DatabaseEntityType.Invite, `${code}, the code may have expired`).message,
+    statusCode: 404,
+  });
 </script>
 
-<template></template>
+<template>
+  <NuxtLayout>
+    <VisualSpaceBackground>
+      <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
+        <StyledCard class="bg-background" items-center p-8>
+          <v-card-title>
+            <v-avatar v-if="invite.user.image">
+              <v-img :src="invite.user.image" :alt="invite.user.name" />
+            </v-avatar>
+            <StyledDefaultAvatar v-else :name="invite.user.name" />
+          </v-card-title>
+          <v-card-text>
+            <div text-center>
+              You've been invited to join
+              <span font-bold>
+                {{ invite.room.name }}
+              </span>
+              by
+              <div text-2xl font-bold>
+                {{ invite.user.name }}
+              </div>
+            </div>
+          </v-card-text>
+          <v-card-actions w-full>
+            <StyledButton
+              w-full
+              @click="
+                async () => {
+                  const code = $route.params.code;
+                  if (typeof code !== 'string') return;
+                  const userToRoom = await $trpc.room.joinRoom.mutate(code);
+                  if (!userToRoom) return;
+                  await navigateTo(RoutePath.MessagesInvite(userToRoom.roomId));
+                }
+              "
+            >
+              Accept Invite
+            </StyledButton>
+          </v-card-actions>
+        </StyledCard>
+      </v-dialog>
+    </VisualSpaceBackground>
+  </NuxtLayout>
+</template>

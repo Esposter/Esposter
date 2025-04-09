@@ -6,7 +6,7 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const inviteCode = ref<null | string>(null);
-if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.mutate({ roomId: currentRoomId.value });
+if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
 
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
@@ -48,13 +48,13 @@ const isCopied = ref(false);
               @create="
                 async () => {
                   if (!currentRoomId) return;
-                  inviteCode = await $trpc.room.createInviteCode.mutate({ roomId: currentRoomId });
+                  inviteCode = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
                 }
               "
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-gray text-subtitle-2" pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" class="text-subtitle-2" text-gray pt-2>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>

@@ -1,7 +1,8 @@
+import type { InviteWithRelations } from "#shared/db/schema/invites";
 import type { Room } from "#shared/db/schema/rooms";
 import type { UserToRoom } from "#shared/db/schema/users";
 
-import { invites, selectInviteSchema } from "#shared/db/schema/invites";
+import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema, users, usersToRooms } from "#shared/db/schema/users";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -57,15 +58,21 @@ const createMembersInputSchema = z.object({
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
-const createInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type CreateInviteCodeInput = z.infer<typeof createInviteCodeInputSchema>;
+const readInviteInputSchema = selectInviteSchema.shape.code;
+export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
+
+const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
+
+const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
-  createInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
-    .input(createInviteCodeInputSchema)
+  createInvite: getRoomOwnerProcedure(createInviteInputSchema, "roomId")
+    .input(createInviteInputSchema)
     .mutation<null | string>(async ({ ctx, input: { roomId } }) => {
-      let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId);
+      let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
       for (let i = 0; i < 3; i++)
@@ -122,7 +129,7 @@ export const roomRouter = router({
     return deletedRoom ?? null;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<null | UserToRoom>(async ({ ctx, input }) => {
-    const invite = (await ctx.db.select().from(invites).where(eq(invites.code, input))).find(Boolean);
+    const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
     if (!invite) return null;
 
     const userToRoom = (
@@ -139,10 +146,16 @@ export const roomRouter = router({
     ).find(Boolean);
     return userToRoom ?? null;
   }),
-  readInviteCode: getRoomOwnerProcedure(createInviteCodeInputSchema, "roomId")
-    .input(createInviteCodeInputSchema)
-    // Mutation instead of query as readInviteCode auto deletes expired codes
-    .mutation<null | string>(async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId)),
+  readInvite: authedProcedure.input(readInviteInputSchema).query<InviteWithRelations | null>(
+    async ({ ctx, input }) =>
+      (await ctx.db.query.invites.findFirst({
+        where: (invites, { eq }) => eq(invites.code, input),
+        with: InviteRelations,
+      })) ?? null,
+  ),
+  readInviteCode: getRoomOwnerProcedure(readInviteCodeInputSchema, "roomId")
+    .input(readInviteCodeInputSchema)
+    .query<null | string>(async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId)),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -170,12 +183,10 @@ export const roomRouter = router({
       return joinedUsers.map(({ users }) => users);
     }),
   readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
-    if (input) {
-      const joinedRoom = (
-        await ctx.db
-          .select()
-          .from(rooms)
-          .where(
+    if (input)
+      return (
+        (await ctx.db.query.rooms.findFirst({
+          where: (rooms, { eq }) =>
             and(
               eq(rooms.id, input),
               exists(
@@ -193,10 +204,8 @@ export const roomRouter = router({
                   ),
               ),
             ),
-          )
-      ).find(Boolean);
-      return joinedRoom ?? null;
-    }
+        })) ?? null
+      );
     // By default, we will return the latest updated room
     const joinedRoom = (
       await ctx.db

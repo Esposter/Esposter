@@ -7,7 +7,7 @@ const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 
-useServerSeoMeta({
+useSeoMeta({
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
   appleMobileWebAppTitle: SITE_NAME,
