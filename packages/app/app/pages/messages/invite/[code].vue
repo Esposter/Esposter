@@ -26,6 +26,9 @@ if (!invite)
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>Invite</Title>
+    </Head>
     <VisualSpaceBackground>
       <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
         <StyledCard class="bg-background" items-center p-8>
