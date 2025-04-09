@@ -25,10 +25,11 @@ onMounted(() => {
     justify-center
     items-center
     flex-col
+    relative
     bg="center cover black"
   >
     <slot />
-    <div class="hover">
+    <div class="hover" absolute top-0 right-0>
       <VisualFloatingAstronaut />
     </div>
   </div>
