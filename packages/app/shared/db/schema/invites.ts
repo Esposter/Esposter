@@ -2,6 +2,7 @@ import type { Room } from "#shared/db/schema/rooms";
 import type { User } from "#shared/db/schema/users";
 
 import { pgTable } from "#shared/db/pgTable";
+import { rooms } from "#shared/db/schema/rooms";
 import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { relations, sql } from "drizzle-orm";
@@ -14,9 +15,9 @@ export const invites = pgTable(
   {
     code: text("code").notNull().unique(),
     id: uuid("id").primaryKey().defaultRandom(),
-    roomId: text("roomId")
+    roomId: uuid("roomId")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => rooms.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
