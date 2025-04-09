@@ -30,7 +30,7 @@ if (!invite)
       <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
         <StyledCard class="bg-background" items-center p-8>
           <v-card-title>
-            <v-avatar v-if="invite.user.image">
+            <v-avatar v-if="invite.user.image" size="6rem">
               <v-img :src="invite.user.image" :alt="invite.user.name" />
             </v-avatar>
             <StyledDefaultAvatar v-else :name="invite.user.name" />
