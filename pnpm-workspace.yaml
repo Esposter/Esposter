@@ -138,7 +138,7 @@ catalog:
   pathe: ^2.0.3
   phaser: ^3.88.2
   phaser3-rex-plugins: ^1.80.15
-  pinia: ^3.0.1
+  pinia: ^3.0.2
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
