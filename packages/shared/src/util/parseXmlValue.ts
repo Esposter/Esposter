@@ -1,4 +1,4 @@
-export const parseXmlValue = (value: string) => {
+export const parseXmlValue = (value: string): boolean | number | string => {
   if (value === "true") return true;
   if (value === "false") return false;
   if (/^[+-]?\d+(\.\d+)?$/g.test(value)) {

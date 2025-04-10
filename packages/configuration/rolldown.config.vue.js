@@ -5,9 +5,9 @@ export default defineConfig([
   {
     input: "src/index.ts",
     output: [{ dir: "dist", format: "es" }],
-    plugins: [dts({ tsconfig: "tsconfig.build.json" })],
+    plugins: [dts({ tsconfig: "tsconfig.build.vue.json" })],
     resolve: {
-      tsconfigFilename: "tsconfig.build.json",
+      tsconfigFilename: "tsconfig.build.vue.json",
     }
   },
 ]);

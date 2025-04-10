@@ -1,5 +1,5 @@
 import type { TilemapFile } from "@/models/plugins/TilemapFile";
-import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
+import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed, TMXTilesetNode } from "parse-tmx";
 import type { Types } from "phaser";
 
 import { TilesetFile } from "@/models/plugins/TilesetFile";
@@ -58,7 +58,7 @@ export class TiledJSONExternalFile extends MultiFile {
       const response = tilesetFile.xhrLoader?.responseText;
       if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
 
-      const responseData = await parseXmlString(response);
+      const responseData = await parseXmlString<TMXTilesetNode>(response);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
       Object.assign(tilemapFile.data.tilesets[index], tilesetData, {

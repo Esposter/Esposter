@@ -15,7 +15,7 @@ import { exhaustiveGuard, parseXmlString } from "@esposter/shared";
 export const parseTmx = async (xmlString: string, translateFlips = false): Promise<TMXParsed> => {
   const {
     map: { $, $$ },
-  } = (await parseXmlString(xmlString)) as TMX;
+  } = (await parseXmlString<TMX>(xmlString));
   const map = new TMXMapParsed($);
   const expectedCount = map.width * map.height * 4;
 
