@@ -23,10 +23,10 @@ export class TiledJSONExternalFile extends MultiFile {
 
   constructor(
     loader: Loader.LoaderPlugin,
-    key: Record<PropertyKey, unknown> | string,
-    tilemapURL?: Record<PropertyKey, unknown> | string,
-    path?: Record<PropertyKey, unknown> | string,
-    baseURL?: Record<PropertyKey, unknown> | string,
+    key: object | string,
+    tilemapURL?: object | string,
+    path?: object | string,
+    baseURL?: object | string,
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
