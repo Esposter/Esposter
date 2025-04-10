@@ -256,8 +256,8 @@ catalogs:
       specifier: ^6.1.4
       version: 6.1.4
     dotenv:
-      specifier: ^16.4.7
-      version: 16.4.7
+      specifier: ^16.5.0
+      version: 16.5.0
     drizzle-kit:
       specifier: ^0.30.6
       version: 0.30.6
@@ -560,7 +560,7 @@ importers:
         version: 2.7.0(prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.8(typescript@5.8.3)))(prettier@3.5.3)(typescript@5.8.3)
       dotenv:
         specifier: 'catalog:'
-        version: 16.4.7
+        version: 16.5.0
       eslint:
         specifier: 'catalog:'
         version: 9.24.0(jiti@2.4.2)
@@ -5909,6 +5909,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
   drizzle-kit@0.30.6:
@@ -12395,7 +12399,7 @@ snapshots:
       '@lerna-lite/init': 4.0.0(@types/node@22.14.0)(typescript@5.8.3)
       '@lerna-lite/npmlog': 4.0.0
       dedent: 1.5.3
-      dotenv: 16.4.7
+      dotenv: 16.5.0
       import-local: 3.2.0
       load-json-file: 7.0.1
       yargs: 17.7.2
@@ -16531,6 +16535,8 @@ snapshots:
       type-fest: 4.39.1
 
   dotenv@16.4.7: {}
+
+  dotenv@16.5.0: {}
 
   drizzle-kit@0.30.6:
     dependencies:
