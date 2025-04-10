@@ -23,10 +23,10 @@ export class TiledJSONExternalFile extends MultiFile {
 
   constructor(
     loader: Loader.LoaderPlugin,
-    key: object | string,
-    tilemapURL?: object | string,
-    path?: object | string,
-    baseURL?: object | string,
+    key: Record<PropertyKey, unknown> | string,
+    tilemapURL?: Record<PropertyKey, unknown> | string,
+    path?: Record<PropertyKey, unknown> | string,
+    baseURL?: Record<PropertyKey, unknown> | string,
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
@@ -85,7 +85,6 @@ export class TiledJSONExternalFile extends MultiFile {
     this.pending--;
 
     if (!(file.type === "json" && Object.hasOwn(file.data, "tilesets"))) return;
-
     //  Inspect the data for the files to now load
     const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
     const config = this.config;

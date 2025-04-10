@@ -1,10 +1,7 @@
 import { isPlainObject } from "@esposter/shared";
 import { z } from "zod";
 
-export const zodStrictRecord = <K extends z.ZodType<number | string | symbol>, V extends z.ZodSchema>(
-  zKey: K,
-  zValue: V,
-) =>
+export const zodStrictRecord = <K extends z.ZodType<PropertyKey>, V extends z.ZodSchema>(zKey: K, zValue: V) =>
   z.custom<Record<z.infer<K>, z.infer<V>>>(
     (input) =>
       isPlainObject(input) &&
