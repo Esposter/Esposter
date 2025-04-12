@@ -1,7 +1,4 @@
-import { selectPostSchema } from "#shared/db/schema/posts";
-import { z } from "zod";
+import { selectCommentSchema } from "#shared/db/schema/posts";
 
-export const createCommentInputSchema = selectPostSchema
-  .pick("parentId", "description")
-  .extend({ description: z.string().min(1) });
+export const createCommentInputSchema = selectCommentSchema.pick("parentId", "description");
 export type CreateCommentInput = typeof createCommentInputSchema.infer;

@@ -43,6 +43,11 @@ export const selectPostSchema = createSelectSchema(posts, {
   title: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(POST_TITLE_MAX_LENGTH)),
 });
 
+export const selectCommentSchema = createSelectSchema(posts, {
+  description: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(POST_DESCRIPTION_MAX_LENGTH)),
+  title: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(POST_TITLE_MAX_LENGTH)),
+});
+
 export const postsRelations = relations(posts, ({ many, one }) => ({
   likes: many(likes),
   parent: one(posts, {
