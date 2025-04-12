@@ -24,7 +24,7 @@ import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProc
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { TRPCError } from "@trpc/server";
 import { type } from "arktype";
-import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 
 const readRoomInputSchema = selectRoomSchema.get("id").optional();
 export type ReadRoomInput = typeof readRoomInputSchema.infer;
@@ -187,7 +187,7 @@ export const roomRouter = router({
     if (input)
       return (
         (await ctx.db.query.rooms.findFirst({
-          where: (rooms, { eq }) =>
+          where: (rooms, { and, eq, exists }) =>
             and(
               eq(rooms.id, input),
               exists(
