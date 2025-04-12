@@ -27,7 +27,7 @@ import { type } from "arktype";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 
 const readRoomInputSchema = selectRoomSchema.get("id").optional();
-export type ReadRoomInput = typeof readRoomInputSchema.infer;
+export type ReadRoomInput = type.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
   { key: "updatedAt", order: SortOrder.Desc },
