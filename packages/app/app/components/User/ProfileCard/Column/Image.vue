@@ -10,7 +10,7 @@ export interface UserProfileCardColumnImageProps {
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $trpc } = useNuxtApp();
-const imageModelValue = ref<File | null>(null);
+const imageModelValue = ref<File>();
 const isLoading = ref(false);
 const onFileChange = async (files: File | File[] | undefined) => {
   if (!files) return;

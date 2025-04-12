@@ -2,7 +2,7 @@ import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("createOperationData", () => {
+describe(createOperationData, () => {
   let operationData: ReturnType<typeof createOperationData<TodoListItem, ["id"], "Item">>;
 
   beforeEach(() => {

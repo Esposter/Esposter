@@ -25,7 +25,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
-    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
+    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoomName = computed(() => {
     if (!currentRoomId.value) return "";

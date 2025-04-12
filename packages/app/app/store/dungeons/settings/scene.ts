@@ -40,7 +40,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
 
       const value = settingsStore.settings[selectedSettingsOption.value as keyof typeof settingsStore.settings];
       const x = SettingsOptionGrid.getPositionX(value as typeof SettingsOptionGrid.value, newY);
-      if (x === null) return;
+      if (x === undefined) return;
 
       SettingsOptionGrid.position.value.x = x;
       autoUpdateGridX = true;
