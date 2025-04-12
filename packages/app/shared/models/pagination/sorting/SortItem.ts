@@ -12,4 +12,4 @@ export const createSortItemSchema = <T extends string>(sortKeySchema: type.Any<T
   type({
     key: sortKeySchema,
     order: sortOrderSchema,
-  }) as type.Any<SortItem<T>>;
+  });
