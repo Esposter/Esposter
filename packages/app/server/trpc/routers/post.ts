@@ -27,9 +27,7 @@ export type ReadPostInput = typeof readPostInputSchema.infer;
 
 const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
   { key: "ranking", order: SortOrder.Desc },
-])
-  .merge(selectPostSchema.pick("parentId"))
-  .default({ parentId: null });
+]).merge(selectPostSchema.pick("parentId").default(() => ({ parentId: null })));
 export type ReadPostsInput = typeof readPostsInputSchema.infer;
 
 export const postRouter = router({

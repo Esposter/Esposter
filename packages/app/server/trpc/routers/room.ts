@@ -26,8 +26,8 @@ import { TRPCError } from "@trpc/server";
 import { type } from "arktype";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 
-const readRoomInputSchema = selectRoomSchema.get("id").optional();
-export type ReadRoomInput = type.infer<typeof readRoomInputSchema>;
+const readRoomInputSchema = selectRoomSchema.pick("id").partial().get("id");
+export type ReadRoomInput = typeof readRoomInputSchema.infer;
 
 const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
   { key: "updatedAt", order: SortOrder.Desc },

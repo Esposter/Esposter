@@ -1,6 +1,5 @@
 import type { BasePaginationParams } from "#shared/models/pagination/BasePaginationParams";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Type } from "arktype";
 
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
 import { type } from "arktype";

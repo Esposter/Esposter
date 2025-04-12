@@ -16,5 +16,8 @@ export const createBasePaginationParamsSchema = <TSortKey extends string>(
 ) =>
   type({
     limit: `0 < number.integer <= ${MAX_READ_LIMIT} = ${DEFAULT_READ_LIMIT}`,
-    sortBy: createSortItemSchema(sortKeySchema).array().atLeastLength(minSortBy).default(defaultSortBy),
+    sortBy: createSortItemSchema(sortKeySchema)
+      .array()
+      .atLeastLength(minSortBy)
+      .default(() => defaultSortBy),
   });

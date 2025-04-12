@@ -39,8 +39,8 @@ export const PostRelations = {
 export type PostWithRelations = Post & { likes: Like[]; user: User };
 
 export const selectPostSchema = createSelectSchema(posts, {
-  description: (schema) => type.pipe(schema, type.string.atMostLength(POST_DESCRIPTION_MAX_LENGTH)),
-  title: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(POST_TITLE_MAX_LENGTH)),
+  description: (schema) => schema.atMostLength(POST_DESCRIPTION_MAX_LENGTH),
+  title: (schema) => schema.moreThanLength(0).atMostLength(POST_TITLE_MAX_LENGTH),
 });
 
 export const selectCommentSchema = createSelectSchema(posts, {
