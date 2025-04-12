@@ -1,7 +1,7 @@
 import { prettify } from "@/util/text/prettify";
 import { describe, expect, test } from "vitest";
 
-describe("prettify", () => {
+describe(prettify, () => {
   test("single character should be the same", () => {
     expect.hasAssertions();
 
