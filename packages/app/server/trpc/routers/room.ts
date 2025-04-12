@@ -23,7 +23,7 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -185,7 +185,7 @@ export const roomRouter = router({
     if (input)
       return (
         (await ctx.db.query.rooms.findFirst({
-          where: (rooms, { eq }) =>
+          where: (rooms, { and, eq, exists }) =>
             and(
               eq(rooms.id, input),
               exists(
