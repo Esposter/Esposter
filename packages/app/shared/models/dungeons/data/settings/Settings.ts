@@ -1,3 +1,5 @@
+import type { Type } from "arktype";
+
 import { AnimationsSetting, animationsSettingSchema } from "#shared/models/dungeons/data/settings/AnimationsSetting";
 import { BattleStyleSetting, battleStyleSettingSchema } from "#shared/models/dungeons/data/settings/BattleStyleSetting";
 import { SoundSetting, soundSettingSchema } from "#shared/models/dungeons/data/settings/SoundSetting";
@@ -5,7 +7,7 @@ import { TextSpeedSetting, textSpeedSettingSchema } from "#shared/models/dungeon
 import { ThemeModeSetting, themeModeSettingSchema } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { z } from "zod";
+import { type } from "arktype";
 
 const InitialSettings = {
   [SettingsOption.Animations]: AnimationsSetting.On,
@@ -21,11 +23,11 @@ export type Settings = Record<
   (typeof InitialSettings)[keyof typeof InitialSettings]
 >;
 
-export const settingsSchema = z.object({
+export const settingsSchema = type({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
-  [SettingsOption.VolumePercentage]: z.number().int().nonnegative().max(100),
+  [SettingsOption.VolumePercentage]: "0 <= number.integer <= 100",
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,
-}) satisfies z.ZodType<Settings>;
+}) satisfies Type<Settings>;

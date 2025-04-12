@@ -5,10 +5,10 @@ import { pgTable } from "#shared/db/pgTable";
 import { rooms } from "#shared/db/schema/rooms";
 import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
+import { type } from "arktype";
+import { createSelectSchema } from "drizzle-arktype";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const invites = pgTable(
   "invites",
@@ -38,7 +38,7 @@ export const InviteRelations = {
 export type InviteWithRelations = Invite & { room: Room & { usersToRooms: UserToRoom[] }; user: User };
 
 export const selectInviteSchema = createSelectSchema(invites, {
-  code: z.string().length(CODE_LENGTH),
+  code: (schema) => type.pipe(schema, type.string.exactlyLength(CODE_LENGTH)),
 });
 
 export const invitesRelations = relations(invites, ({ one }) => ({

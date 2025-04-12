@@ -1,10 +1,10 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users, usersToRooms } from "#shared/db/schema/users";
 import { ROOM_NAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { type } from "arktype";
+import { createSelectSchema } from "drizzle-arktype";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const rooms = pgTable(
   "rooms",
@@ -24,7 +24,7 @@ export const rooms = pgTable(
 export type Room = typeof rooms.$inferSelect;
 
 export const selectRoomSchema = createSelectSchema(rooms, {
-  name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
+  name: (schema) => type.pipe(schema, type.string.moreThanLength(0).atLeastLength(ROOM_NAME_MAX_LENGTH)),
 });
 
 export const roomsRelations = relations(rooms, ({ many }) => ({

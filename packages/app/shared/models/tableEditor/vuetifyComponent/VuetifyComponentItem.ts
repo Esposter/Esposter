@@ -1,5 +1,6 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { ToData } from "#shared/models/entity/ToData";
+import type { Type } from "arktype";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
@@ -14,7 +15,7 @@ import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
 } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentType";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
   component: VuetifyComponentType = VuetifyComponentType["v-alert"];
@@ -25,5 +26,5 @@ export class VuetifyComponentItem extends ATableEditorItemEntity implements Item
 export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
   .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
   .merge(
-    z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.string().min(1), z.unknown()) }),
-  ) satisfies z.ZodType<ToData<VuetifyComponentItem>>;
+    type({ component: vuetifyComponentTypeSchema, props: type.Record("string > 0", type.unknown) }),
+  ) satisfies Type<ToData<VuetifyComponentItem>>;

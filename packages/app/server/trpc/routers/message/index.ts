@@ -26,41 +26,41 @@ import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/g
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { z } from "zod";
+import { type } from "arktype";
 
-export const readMetadataInputSchema = z.object({
-  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
-  roomId: selectRoomSchema.shape.id,
+export const readMetadataInputSchema = type({
+  messageRowKeys: messageEntitySchema.get("rowKey").array().moreThanLength(0).atMostLength(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.get("id"),
 });
-export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
+export type ReadMetadataInput = typeof readMetadataInputSchema.infer;
 
-const readMessagesInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
+const readMessagesInputSchema =
   // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
   // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
-  .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
-  .omit({ sortBy: true });
-export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
+  createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
+    .merge(type({ roomId: selectRoomSchema.get("id") }))
+    .omit({ sortBy: true });
+export type ReadMessagesInput = typeof readMessagesInputSchema.infer;
 // @TODO: Use this for getting replies
-const readMessagesByRowKeysInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
+const readMessagesByRowKeysInputSchema = type({
+  roomId: selectRoomSchema.get("id"),
+  rowKeys: messageEntitySchema.get("rowKey").array().moreThanLength(0).atMostLength(MAX_READ_LIMIT),
 });
-export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
+export type ReadMessagesByRowKeysInput = typeof readMessagesByRowKeysInputSchema.infer;
 
-const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
+const onCreateMessageInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnCreateMessageInput = typeof onCreateMessageInputSchema.infer;
 
-const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
+const onUpdateMessageInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnUpdateMessageInput = typeof onUpdateMessageInputSchema.infer;
 
-const onCreateTypingInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
+const onCreateTypingInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnCreateTypingInput = typeof onCreateTypingInputSchema.infer;
 
-const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
+const onDeleteMessageInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnDeleteMessageInput = typeof onDeleteMessageInputSchema.infer;
 
 export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")

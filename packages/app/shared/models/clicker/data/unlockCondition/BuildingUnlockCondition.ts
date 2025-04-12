@@ -1,8 +1,9 @@
 import type { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
+import type { Type } from "arktype";
 
 import { buildingIdSchema } from "#shared/models/clicker/data/building/BuildingId";
 import { ItemType } from "#shared/models/clicker/data/ItemType";
-import { z } from "zod";
+import { type } from "arktype";
 
 export interface BuildingUnlockCondition {
   amount: number;
@@ -10,8 +11,8 @@ export interface BuildingUnlockCondition {
   type: ItemType.Building;
 }
 
-export const buildingUnlockConditionSchema = z.object({
-  amount: z.number().int(),
+export const buildingUnlockConditionSchema = type({
+  amount: "number.integer",
   id: buildingIdSchema,
-  type: z.literal(ItemType.Building),
-}) satisfies z.ZodType<BuildingUnlockCondition>;
+  type: type.enumerated(ItemType.Building),
+}) satisfies Type<BuildingUnlockCondition>;

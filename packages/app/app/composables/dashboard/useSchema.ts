@@ -2,13 +2,13 @@ import type { ChartType } from "#shared/models/dashboard/data/chart/type/ChartTy
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
-import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
+import { toJsonSchema } from "@/services/dashboard/jsonSchema/toJsonSchema";
 import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
-import { z } from "zod";
+import { type } from "arktype";
 
 export const useSchema = (chartType: MaybeRefOrGetter<ChartType>, visualType: MaybeRefOrGetter<VisualType>) =>
   computed(() => {
-    let schema = z.object({});
+    let schema = type({});
     const chartTypeValue = toValue(chartType);
     const chartTypeResolvers = getActiveChartTypeResolvers(chartTypeValue);
     for (const chartTypeResolver of chartTypeResolvers) schema = chartTypeResolver.handleSchema(schema);
@@ -17,5 +17,5 @@ export const useSchema = (chartType: MaybeRefOrGetter<ChartType>, visualType: Ma
     const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
     for (const visualTypeResolver of visualTypeResolvers) schema = visualTypeResolver.handleSchema(schema);
 
-    return zodToJsonSchema(schema);
+    return toJsonSchema(schema);
   });

@@ -1,7 +1,8 @@
 import type { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
+import type { Type } from "arktype";
 
 import { buildingIdSchema } from "#shared/models/clicker/data/building/BuildingId";
-import { z } from "zod";
+import { type } from "arktype";
 
 export interface Building {
   basePrice: number;
@@ -10,9 +11,9 @@ export interface Building {
   id: BuildingId;
 }
 
-export const buildingSchema = z.object({
-  basePrice: z.number(),
-  baseValue: z.number(),
-  flavorDescription: z.string().min(1),
+export const buildingSchema = type({
+  basePrice: "number",
+  baseValue: "number",
+  flavorDescription: "string > 0",
   id: buildingIdSchema,
-}) satisfies z.ZodType<Building>;
+}) satisfies Type<Building>;

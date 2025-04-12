@@ -1,20 +1,19 @@
-import type { z } from "zod";
+import type { Type } from "arktype";
 
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
 import { middleware } from "@@/server/trpc";
 import { TRPCError } from "@trpc/server";
 
-export const getProfanityFilterMiddleware = <T extends z.ZodObject<z.ZodRawShape>>(
+export const getProfanityFilterMiddleware = <T extends Type<object>>(
   schema: T,
-  keys: (keyof T["shape"] & string)[],
+  keys: (keyof T["inferIn"] & string)[],
 ) =>
   middleware(async ({ getRawInput, next }) => {
     const rawInput = await getRawInput();
-    const result = schema.safeParse(rawInput);
-    if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
+    if (!schema.allows(rawInput)) throw new TRPCError({ code: "BAD_REQUEST" });
 
     for (const key of keys) {
-      const value = result.data[key];
+      const value = rawInput[key];
       if (typeof value !== "string" || profanityMatcher.hasMatch(value))
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key} contains profanity: ${value}.` });
     }

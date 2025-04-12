@@ -1,6 +1,7 @@
+import type { Type } from "arktype";
 import type { Class } from "type-fest";
 
-import { z } from "zod";
+import { type } from "arktype";
 
 export class ItemMetadata {
   createdAt = new Date();
@@ -8,11 +9,11 @@ export class ItemMetadata {
   updatedAt = new Date();
 }
 
-export const itemMetadataSchema = z.object({
-  createdAt: z.date(),
-  deletedAt: z.date().nullable(),
-  updatedAt: z.date(),
-}) satisfies z.ZodType<ItemMetadata>;
+export const itemMetadataSchema = type({
+  createdAt: "Date",
+  deletedAt: "Date | null",
+  updatedAt: "Date",
+}) satisfies Type<ItemMetadata>;
 
 export const applyItemMetadataMixin = <TBase extends Class<NonNullable<unknown>>>(Base: TBase) =>
   class ItemWithMetadata extends Base implements ItemMetadata {

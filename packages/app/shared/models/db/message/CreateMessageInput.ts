@@ -1,8 +1,8 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { z } from "zod";
+import { type } from "arktype";
 
-export const createMessageInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageEntitySchema.pick({ message: true }));
-export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
+export const createMessageInputSchema = messageEntitySchema
+  .pick("message")
+  .merge(type({ roomId: selectRoomSchema.get("id") }));
+export type CreateMessageInput = typeof createMessageInputSchema.infer;

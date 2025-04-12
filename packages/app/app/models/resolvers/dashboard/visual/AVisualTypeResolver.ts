@@ -1,5 +1,5 @@
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod";
+import type { Type } from "arktype";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 
@@ -12,7 +12,7 @@ export abstract class AVisualTypeResolver {
 
   handleConfiguration(_apexOptions: ApexOptions, _type: VisualType) {}
 
-  handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
+  handleSchema(schema: Type<object>): Type<object> {
     return schema;
   }
 

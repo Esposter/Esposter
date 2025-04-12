@@ -1,10 +1,10 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema } from "#shared/db/schema/users";
-import { z } from "zod";
+import { type } from "arktype";
 
-export const createTypingInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userId: selectUserSchema.shape.id,
-  username: selectUserSchema.shape.name,
+export const createTypingInputSchema = type({
+  roomId: selectRoomSchema.get("id"),
+  userId: selectUserSchema.get("id"),
+  username: selectUserSchema.get("name"),
 });
-export type CreateTypingInput = z.infer<typeof createTypingInputSchema>;
+export type CreateTypingInput = typeof createTypingInputSchema.infer;

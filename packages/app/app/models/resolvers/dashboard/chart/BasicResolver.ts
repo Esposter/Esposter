@@ -1,6 +1,6 @@
 import type { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod";
+import type { Type } from "arktype";
 
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
@@ -41,8 +41,8 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     );
   }
 
-  override handleSchema(schema: z.AnyZodObject) {
-    return schema.merge(basicChartConfigurationSchema);
+  override handleSchema(schema: Type<object>) {
+    return basicChartConfigurationSchema.merge(schema);
   }
   // This is our base resolver that's always active
   override isActive() {

@@ -1,5 +1,4 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { z } from "zod";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
@@ -18,14 +17,14 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 
-const readSurveyInputSchema = selectSurveySchema.shape.id;
-export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
+const readSurveyInputSchema = selectSurveySchema.get("id");
+export type ReadSurveyInput = typeof readSurveyInputSchema.infer;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
-export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
+export type ReadSurveysInput = typeof readSurveysInputSchema.infer;
 
-const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
-export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
+const publishSurveyInputSchema = selectSurveySchema.pick("id", "publishVersion");
+export type PublishSurveyInput = typeof publishSurveyInputSchema.infer;
 
 export const surveyRouter = router({
   count: authedProcedure.query(

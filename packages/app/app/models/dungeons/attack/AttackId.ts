@@ -1,8 +1,10 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum AttackId {
   "Ice Shard" = "Ice Shard",
   Slash = "Slash",
 }
 
-export const attackIdSchema = z.nativeEnum(AttackId) satisfies z.ZodType<AttackId>;
+export const attackIdSchema = type.valueOf(AttackId) satisfies Type<AttackId>;

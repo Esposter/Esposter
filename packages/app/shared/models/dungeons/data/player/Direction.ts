@@ -1,4 +1,6 @@
-import { Direction } from "grid-engine";
-import { z } from "zod";
+import type { Type } from "arktype";
 
-export const directionSchema = z.nativeEnum(Direction) satisfies z.ZodType<Direction>;
+import { type } from "arktype";
+import { Direction } from "grid-engine";
+
+export const directionSchema = type.valueOf(Direction) satisfies Type<Direction>;

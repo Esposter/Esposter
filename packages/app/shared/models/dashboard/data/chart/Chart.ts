@@ -1,4 +1,5 @@
 import type { ToData } from "#shared/models/entity/ToData";
+import type { Type } from "arktype";
 
 import {
   BasicChartConfiguration,
@@ -6,16 +7,16 @@ import {
 } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType, chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class Chart extends AItemEntity {
   configuration = new BasicChartConfiguration();
   type: ChartType = ChartType.Basic;
 }
 
-export const chartSchema = z
-  .object({
+export const chartSchema = aItemEntitySchema.merge(
+  type({
     configuration: basicChartConfigurationSchema,
     type: chartTypeSchema,
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<Chart>>;
+  }),
+) satisfies Type<ToData<Chart>>;

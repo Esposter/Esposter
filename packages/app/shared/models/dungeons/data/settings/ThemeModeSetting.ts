@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum ThemeModeSetting {
   Blue = "Blue",
@@ -6,4 +8,4 @@ export enum ThemeModeSetting {
   Purple = "Purple",
 }
 
-export const themeModeSettingSchema = z.nativeEnum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;
+export const themeModeSettingSchema = type.valueOf(ThemeModeSetting) satisfies Type<ThemeModeSetting>;

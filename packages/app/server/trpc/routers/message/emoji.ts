@@ -24,16 +24,16 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { z } from "zod";
+import { type } from "arktype";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
+const onCreateEmojiInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnCreateEmojiInput = typeof onCreateEmojiInputSchema.infer;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
+const onUpdateEmojiInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnUpdateEmojiInput = typeof onUpdateEmojiInputSchema.infer;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
+const onDeleteEmojiInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnDeleteEmojiInput = typeof onDeleteEmojiInputSchema.infer;
 
 export const emojiRouter = router({
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")

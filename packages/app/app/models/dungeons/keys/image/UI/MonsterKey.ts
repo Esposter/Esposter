@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum MonsterKey {
   Aquavalor = "Aquavalor",
@@ -8,4 +10,4 @@ export enum MonsterKey {
   Iguanignite = "Iguanignite",
 }
 
-export const monsterKeySchema = z.nativeEnum(MonsterKey) satisfies z.ZodType<MonsterKey>;
+export const monsterKeySchema = type.valueOf(MonsterKey) satisfies Type<MonsterKey>;

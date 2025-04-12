@@ -3,10 +3,10 @@ import type { Like, User } from "#shared/db/schema/users";
 import { pgTable } from "#shared/db/pgTable";
 import { likes, users } from "#shared/db/schema/users";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#shared/services/post/constants";
+import { type } from "arktype";
+import { createSelectSchema } from "drizzle-arktype";
 import { relations, sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const posts = pgTable(
   "posts",
@@ -39,8 +39,8 @@ export const PostRelations = {
 export type PostWithRelations = Post & { likes: Like[]; user: User };
 
 export const selectPostSchema = createSelectSchema(posts, {
-  description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
-  title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
+  description: (schema) => type.pipe(schema, type.string.atMostLength(POST_DESCRIPTION_MAX_LENGTH)),
+  title: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(POST_TITLE_MAX_LENGTH)),
 });
 
 export const postsRelations = relations(posts, ({ many, one }) => ({

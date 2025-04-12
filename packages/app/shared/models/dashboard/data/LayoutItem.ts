@@ -1,21 +1,22 @@
+import type { Type } from "arktype";
 import type { LayoutItem as BaseLayoutItem } from "grid-layout-plus";
 
-import { z } from "zod";
+import { type } from "arktype";
 
 export type LayoutItem = BaseLayoutItem & { i: string };
 
-export const layoutItemSchema = z.object({
-  h: z.number().int().nonnegative(),
-  i: z.string().uuid(),
-  isDraggable: z.boolean().optional(),
-  isResizable: z.boolean().optional(),
-  maxH: z.number().int().nonnegative().optional(),
-  maxW: z.number().int().nonnegative().optional(),
-  minH: z.number().int().nonnegative().optional(),
-  minW: z.number().int().nonnegative().optional(),
-  moved: z.boolean().optional(),
-  static: z.boolean().optional(),
-  w: z.number().int().nonnegative(),
-  x: z.number().int().nonnegative(),
-  y: z.number().int().nonnegative(),
-}) satisfies z.ZodType<LayoutItem>;
+export const layoutItemSchema = type({
+  h: "number >= 0",
+  i: "string.uuid",
+  isDraggable: "boolean?",
+  isResizable: "boolean?",
+  maxH: "number >= 0?",
+  maxW: "number >= 0?",
+  minH: "number >= 0?",
+  minW: "number >= 0?",
+  moved: "boolean?",
+  static: "boolean?",
+  w: "number >= 0",
+  x: "number >= 0",
+  y: "number >= 0",
+}) satisfies Type<LayoutItem>;

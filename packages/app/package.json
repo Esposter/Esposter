@@ -84,6 +84,7 @@
     "ajv-formats": "catalog:",
     "ajv-i18n": "catalog:",
     "apexcharts": "catalog:",
+    "arktype": "catalog:",
     "better-auth": "catalog:",
     "codemirror": "catalog:",
     "dayjs": "catalog:",
@@ -91,7 +92,7 @@
     "dedent": "catalog:",
     "defu": "catalog:",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
+    "drizzle-arktype": "catalog:",
     "emoji-mart-vue-fast": "catalog:",
     "eventemitter3": "catalog:",
     "fast-deep-equal": "catalog:",
@@ -150,9 +151,7 @@
     "vuetify": "catalog:",
     "vuetify-sonner": "catalog:",
     "worker-timers": "catalog:",
-    "ws": "catalog:",
-    "zod": "catalog:",
-    "zod-to-json-schema": "catalog:"
+    "ws": "catalog:"
   },
   "dependenciesComments": {
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"

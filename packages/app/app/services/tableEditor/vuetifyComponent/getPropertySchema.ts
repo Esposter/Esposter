@@ -1,7 +1,7 @@
-import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
+import type { JsonSchema } from "arktype";
 import type { Class } from "type-fest";
 
-export const getPropertySchema = (type: Class<unknown>): JSONSchema<object> | undefined => {
+export const getPropertySchema = (type: Class<unknown>): JsonSchema | undefined => {
   switch (type) {
     case Boolean:
       return {

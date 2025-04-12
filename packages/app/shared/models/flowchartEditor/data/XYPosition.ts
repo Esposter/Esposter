@@ -1,8 +1,9 @@
 import type { XYPosition } from "@vue-flow/core";
+import type { Type } from "arktype";
 
-import { z } from "zod";
+import { type } from "arktype";
 
-export const xyPositionSchema = z.object({
-  x: z.number(),
-  y: z.number(),
-}) satisfies z.ZodType<XYPosition>;
+export const xyPositionSchema = type({
+  x: "number",
+  y: "number",
+}) satisfies Type<XYPosition>;

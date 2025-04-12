@@ -1,9 +1,10 @@
 import type { Edge } from "@vue-flow/core";
+import type { Type } from "arktype";
 
-import { z } from "zod";
+import { type } from "arktype";
 
-export const edgeSchema = z.object({
-  id: z.string(),
-  source: z.string(),
-  target: z.string(),
-}) satisfies z.ZodType<Edge>;
+export const edgeSchema = type({
+  id: "string",
+  source: "string",
+  target: "string",
+}) satisfies Type<Edge>;

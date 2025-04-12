@@ -79,6 +79,7 @@ catalog:
   # https://github.com/json-layout/json-layout/issues/5
   ajv-i18n: ^4.2.0
   apexcharts: ^4.5.0
+  arktype: ^2.1.19
   # @TODO: https://github.com/better-auth/better-auth/issues/1669
   better-auth: 1.1.21
   codemirror: ^6.0.1
@@ -93,7 +94,7 @@ catalog:
   dotenv: ^16.5.0
   drizzle-kit: ^0.30.6
   drizzle-orm: ^0.41.0
-  drizzle-zod: ^0.7.1
+  drizzle-arktype: ^0.1.2
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.24.0
   eslint-config-prettier: ^10.1.2
@@ -182,8 +183,6 @@ catalog:
   worker-timers: ^8.0.20
   ws: ^8.18.1
   xml2js: ^0.6.2
-  zod: ^3.24.2
-  zod-to-json-schema: ^3.24.5
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js

@@ -1,5 +1,6 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { ToData } from "#shared/models/entity/ToData";
+import type { Type } from "arktype";
 
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import {
@@ -8,7 +9,7 @@ import {
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class MessageReplyMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Reply> {
   message!: string;
@@ -22,10 +23,10 @@ export class MessageReplyMetadataEntity extends MessageMetadataEntity<MessageMet
 export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageReplyMetadataEntity>();
 
 export const messageReplyMetadataEntitySchema = createMessageMetadataEntitySchema(
-  z.literal(MessageMetadataType.Reply),
+  type.enumerated(MessageMetadataType.Reply),
 ).merge(
-  z.object({
-    message: messageEntitySchema.shape.message,
-    messageReplyRowKey: messageEntitySchema.shape.rowKey,
+  type({
+    message: messageEntitySchema.get("message"),
+    messageReplyRowKey: messageEntitySchema.get("rowKey"),
   }),
-) satisfies z.ZodType<ToData<MessageReplyMetadataEntity>>;
+) satisfies Type<ToData<MessageReplyMetadataEntity>>;

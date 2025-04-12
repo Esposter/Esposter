@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum ClickerType {
   Default = "Default",
@@ -6,4 +8,4 @@ export enum ClickerType {
   Physical = "Physical",
 }
 
-export const clickerTypeSchema = z.nativeEnum(ClickerType) satisfies z.ZodType<ClickerType>;
+export const clickerTypeSchema = type.valueOf(ClickerType) satisfies Type<ClickerType>;

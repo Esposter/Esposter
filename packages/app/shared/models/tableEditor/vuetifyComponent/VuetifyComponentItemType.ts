@@ -1,9 +1,11 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum VuetifyComponentItemType {
   VuetifyComponent = "VuetifyComponent",
 }
 
-export const vuetifyComponentItemTypeSchema = z.nativeEnum(
+export const vuetifyComponentItemTypeSchema = type.valueOf(
   VuetifyComponentItemType,
-) satisfies z.ZodType<VuetifyComponentItemType>;
+) satisfies Type<VuetifyComponentItemType>;

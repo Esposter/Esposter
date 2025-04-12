@@ -1,4 +1,5 @@
 import type { Item } from "@/models/dungeons/item/Item";
+import type { Type } from "arktype";
 import type { Direction, Position } from "grid-engine";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
@@ -12,7 +13,7 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class Player {
   direction: Direction;
@@ -45,10 +46,10 @@ export class Player {
   }
 }
 
-export const playerSchema = z.object({
+export const playerSchema = type({
   direction: directionSchema,
   inventory: inventorySchema,
-  monsters: z.array(monsterSchema),
+  monsters: monsterSchema.array(),
   position: positionSchema,
   respawnLocation: respawnLocationSchema,
-}) satisfies z.ZodType<Player>;
+}) satisfies Type<Player>;

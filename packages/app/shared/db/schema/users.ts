@@ -4,10 +4,10 @@ import { rooms } from "#shared/db/schema/rooms";
 import { sessions } from "#shared/db/schema/sessions";
 import { surveys } from "#shared/db/schema/surveys";
 import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
+import { type } from "arktype";
+import { createSelectSchema } from "drizzle-arktype";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const users = pgTable(
   "users",
@@ -29,7 +29,7 @@ export const users = pgTable(
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
+  name: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(USER_NAME_MAX_LENGTH)),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -86,11 +86,7 @@ export const likes = pgTable(
 export type Like = typeof likes.$inferSelect;
 
 export const selectLikeSchema = createSelectSchema(likes, {
-  value: z
-    .number()
-    .int()
-    .refine((value) => value === 1 || value === -1)
-    .innerType(),
+  value: (schema) => type.pipe(schema, type.enumerated(1, -1)),
 });
 
 export const likesRelations = relations(likes, ({ one }) => ({

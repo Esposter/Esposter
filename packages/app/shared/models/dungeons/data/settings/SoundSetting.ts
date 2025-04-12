@@ -1,8 +1,10 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum SoundSetting {
   Off = "Off",
   On = "On",
 }
 
-export const soundSettingSchema = z.nativeEnum(SoundSetting) satisfies z.ZodType<SoundSetting>;
+export const soundSettingSchema = type.valueOf(SoundSetting) satisfies Type<SoundSetting>;

@@ -228,6 +228,9 @@ catalogs:
     apexcharts:
       specifier: ^4.5.0
       version: 4.5.0
+    arktype:
+      specifier: ^2.1.19
+      version: 2.1.19
     better-auth:
       specifier: 1.1.21
       version: 1.1.21
@@ -258,15 +261,15 @@ catalogs:
     dotenv:
       specifier: ^16.5.0
       version: 16.5.0
+    drizzle-arktype:
+      specifier: ^0.1.2
+      version: 0.1.2
     drizzle-kit:
       specifier: ^0.30.6
       version: 0.30.6
     drizzle-orm:
       specifier: ^0.41.0
       version: 0.41.0
-    drizzle-zod:
-      specifier: ^0.7.1
-      version: 0.7.1
     emoji-mart-vue-fast:
       specifier: ^15.0.4
       version: 15.0.4
@@ -531,12 +534,6 @@ catalogs:
     xml2js:
       specifier: ^0.6.2
       version: 0.6.2
-    zod:
-      specifier: ^3.24.2
-      version: 3.24.2
-    zod-to-json-schema:
-      specifier: ^3.24.5
-      version: 3.24.5
 
 importers:
 
@@ -708,6 +705,9 @@ importers:
       apexcharts:
         specifier: 'catalog:'
         version: 4.5.0
+      arktype:
+        specifier: 'catalog:'
+        version: 2.1.19
       better-auth:
         specifier: 'catalog:'
         version: 1.1.21
@@ -726,12 +726,12 @@ importers:
       defu:
         specifier: 'catalog:'
         version: 6.1.4
+      drizzle-arktype:
+        specifier: 'catalog:'
+        version: 0.1.2(arktype@2.1.19)(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)
-      drizzle-zod:
-        specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@3.24.2)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.13(typescript@5.8.3))
@@ -909,12 +909,6 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.1
-      zod:
-        specifier: 'catalog:'
-        version: 3.24.2
-      zod-to-json-schema:
-        specifier: 'catalog:'
-        version: 3.24.5(zod@3.24.2)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1160,6 +1154,12 @@ packages:
   '@apidevtools/json-schema-ref-parser@11.9.3':
     resolution: {integrity: sha512-60vepv88RwcJtSHrD6MjIL6Ta3SOYbgfnkHb+ppAVK+o9mXprRtulx7VlRl3lN3bbvysAfCS7WMVfhUYemB0IQ==}
     engines: {node: '>= 16'}
+
+  '@ark/schema@0.45.9':
+    resolution: {integrity: sha512-rG0v/JI0sibn/0wERAHTYVLCtEqoMP2IIlxnb+S5DrEjCI5wpubbZSWMDW50tZ8tV6FANu6zzHDeeKbp6lsZdg==}
+
+  '@ark/util@0.45.9':
+    resolution: {integrity: sha512-0WYNAb8aRGp7dNt6xIvIrRzL7V1XL3u3PK2vcklhtTrdaP235DjC9qJhzidrxtWr68mA5ySSjUrgrXk622bKkw==}
 
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
@@ -4842,6 +4842,9 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
+  arktype@2.1.19:
+    resolution: {integrity: sha512-notORSuTSpfLV7rq0kYC4mTgIVlVR0xQuvtFxOaE9aKiXyON/kgoIBwZZcKeSSb4BebNcfJoGlxJicAUl/HMdw==}
+
   array-buffer-byte-length@1.0.2:
     resolution: {integrity: sha512-LHE+8BuR7RYGDKvnrmcuSq3tDcKv9OFEXQt/HpbZhY7V6h0zlUXutnAD82GiFx9rdieCMjkvtcsPqBwgUl1Iiw==}
     engines: {node: '>= 0.4'}
@@ -5914,6 +5917,12 @@ packages:
     resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
+  drizzle-arktype@0.1.2:
+    resolution: {integrity: sha512-g4B7XEgjJZiu6PWlq0CvvCt0fmJJpZp+DG2aCrl9j9MHgrB44OEOcAkkAIUgfaisscNZ+EA31Wr1t6ndMR98mQ==}
+    peerDependencies:
+      arktype: '>=2.0.0'
+      drizzle-orm: '>=0.36.0'
+
   drizzle-kit@0.30.6:
     resolution: {integrity: sha512-U4wWit0fyZuGuP7iNmRleQyK2V8wCuv57vf5l3MnG4z4fzNTjY/U13M8owyQ5RavqvqxBifWORaR3wIUzlN64g==}
     hasBin: true
@@ -6006,12 +6015,6 @@ packages:
         optional: true
       sqlite3:
         optional: true
-
-  drizzle-zod@0.7.1:
-    resolution: {integrity: sha512-nZzALOdz44/AL2U005UlmMqaQ1qe5JfanvLujiTHiiT8+vZJTBFhj3pY4Vk+L6UWyKFfNmLhk602Hn4kCTynKQ==}
-    peerDependencies:
-      drizzle-orm: '>=0.36.0'
-      zod: '>=3.0.0'
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -10698,11 +10701,6 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod-to-json-schema@3.24.5:
-    resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
-    peerDependencies:
-      zod: ^3.24.1
-
   zod@3.24.2:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
@@ -10734,6 +10732,12 @@ snapshots:
       '@jsdevtools/ono': 7.1.3
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.0
+
+  '@ark/schema@0.45.9':
+    dependencies:
+      '@ark/util': 0.45.9
+
+  '@ark/util@0.45.9': {}
 
   '@azure/abort-controller@2.1.2':
     dependencies:
@@ -15348,6 +15352,11 @@ snapshots:
 
   argparse@2.0.1: {}
 
+  arktype@2.1.19:
+    dependencies:
+      '@ark/schema': 0.45.9
+      '@ark/util': 0.45.9
+
   array-buffer-byte-length@1.0.2:
     dependencies:
       call-bound: 1.0.4
@@ -16538,6 +16547,11 @@ snapshots:
 
   dotenv@16.5.0: {}
 
+  drizzle-arktype@0.1.2(arktype@2.1.19)(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)):
+    dependencies:
+      arktype: 2.1.19
+      drizzle-orm: 0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)
+
   drizzle-kit@0.30.6:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
@@ -16553,11 +16567,6 @@ snapshots:
       gel: 2.0.2
       kysely: 0.27.6
       postgres: 3.4.5
-
-  drizzle-zod@0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@3.24.2):
-    dependencies:
-      drizzle-orm: 0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)
-      zod: 3.24.2
 
   dunder-proto@1.0.1:
     dependencies:
@@ -22104,9 +22113,5 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
-
-  zod-to-json-schema@3.24.5(zod@3.24.2):
-    dependencies:
-      zod: 3.24.2
 
   zod@3.24.2: {}

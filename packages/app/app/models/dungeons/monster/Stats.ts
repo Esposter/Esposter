@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export interface Stats {
   attack: number;
@@ -8,9 +10,9 @@ export interface Stats {
   maxHp: number;
 }
 
-export const statsSchema = z.object({
-  attack: z.number().int().positive(),
-  baseExp: z.number().int().positive(),
-  level: z.number().int().positive(),
-  maxHp: z.number().int().positive(),
-}) satisfies z.ZodType<Stats>;
+export const statsSchema = type({
+  attack: "number > 0",
+  baseExp: "number > 0",
+  level: "number > 0",
+  maxHp: "number > 0",
+}) satisfies Type<Stats>;

@@ -1,8 +1,8 @@
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class WebpageEditor extends AItemEntity implements ProjectData {}
 
-export const webpageEditorSchema = z.record(z.string().min(1), z.unknown());
+export const webpageEditorSchema = type.Record("string > 0", type.unknown);

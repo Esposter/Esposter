@@ -21,16 +21,16 @@ import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProced
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
-import { z } from "zod";
 
-const readPostInputSchema = selectPostSchema.shape.id;
-export type ReadPostInput = z.infer<typeof readPostInputSchema>;
+const readPostInputSchema = selectPostSchema.get("id");
+export type ReadPostInput = typeof readPostInputSchema.infer;
 
-const readPostsInputSchema = z
-  .object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.default(null) })
-  .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]))
-  .default({});
-export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
+const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
+  { key: "ranking", order: SortOrder.Desc },
+])
+  .merge(selectPostSchema.pick("parentId"))
+  .default({ parentId: null });
+export type ReadPostsInput = typeof readPostsInputSchema.infer;
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])

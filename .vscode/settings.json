@@ -2,11 +2,17 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.gotoLocation.multipleDefinitions": "goto",
+  // allow autocomplete for ArkType expressions like "string | num"
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
   "files.associations": {
     ".env": "env",
     ".env.example": "env",
     ".tsx": "xml"
   },
+  // prioritize ArkType's "type" for autoimports
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
   "typescript.tsdk": "node_modules/typescript/lib",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",

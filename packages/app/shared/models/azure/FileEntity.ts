@@ -1,12 +1,13 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export class FileEntity {
   mimetype!: string;
-
   url!: string;
 }
 
-export const fileEntitySchema = z.object({
-  mimetype: z.string(),
-  url: z.string(),
-}) satisfies z.ZodType<FileEntity>;
+export const fileEntitySchema = type({
+  mimetype: "string",
+  url: "string",
+}) satisfies Type<FileEntity>;

@@ -1,13 +1,14 @@
 import type { BuildingUnlockCondition } from "#shared/models/clicker/data/unlockCondition/BuildingUnlockCondition";
 import type { UpgradeUnlockCondition } from "#shared/models/clicker/data/unlockCondition/UpgradeUnlockCondition";
+import type { Type } from "arktype";
 
 import { buildingUnlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/BuildingUnlockCondition";
 import { upgradeUnlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/UpgradeUnlockCondition";
-import { z } from "zod";
+import { type } from "arktype";
 
 export type UnlockCondition = BuildingUnlockCondition | UpgradeUnlockCondition;
 
-export const unlockConditionSchema = z.union([
+export const unlockConditionSchema = type.or(
   buildingUnlockConditionSchema,
   upgradeUnlockConditionSchema,
-]) satisfies z.ZodType<UnlockCondition>;
+) satisfies Type<UnlockCondition>;

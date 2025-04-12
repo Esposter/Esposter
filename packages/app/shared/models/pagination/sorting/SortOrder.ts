@@ -1,8 +1,10 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum SortOrder {
   Asc = "asc",
   Desc = "desc",
 }
 
-export const sortOrderSchema = z.nativeEnum(SortOrder) satisfies z.ZodType<SortOrder>;
+export const sortOrderSchema = type.valueOf(SortOrder) satisfies Type<SortOrder>;

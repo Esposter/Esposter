@@ -1,14 +1,15 @@
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import type { Type } from "arktype";
 
 import { itemEffectTypeSchema } from "@/models/dungeons/item/ItemEffectType";
-import { z } from "zod";
+import { type } from "arktype";
 
 export interface ItemEffect {
   type: ItemEffectType;
   value: number;
 }
 
-export const itemEffectSchema = z.object({
+export const itemEffectSchema = type({
   type: itemEffectTypeSchema,
-  value: z.number(),
-}) satisfies z.ZodType<ItemEffect>;
+  value: "number",
+}) satisfies Type<ItemEffect>;

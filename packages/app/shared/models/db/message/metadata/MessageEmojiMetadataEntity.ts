@@ -1,5 +1,6 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { ToData } from "#shared/models/entity/ToData";
+import type { Type } from "arktype";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import {
@@ -8,7 +9,7 @@ import {
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {
   emojiTag!: string;
@@ -24,7 +25,7 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMet
 export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageEmojiMetadataEntity>();
 
 export const messageEmojiMetadataEntitySchema = createMessageMetadataEntitySchema(
-  z.literal(MessageMetadataType.Emoji),
-).merge(z.object({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) })) satisfies z.ZodType<
+  type.enumerated(MessageMetadataType.Emoji),
+).merge(type({ emojiTag: "string", userIds: selectUserSchema.get("id").array() })) satisfies Type<
   ToData<MessageEmojiMetadataEntity>
 >;

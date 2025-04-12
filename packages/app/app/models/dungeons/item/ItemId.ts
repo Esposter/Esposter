@@ -1,4 +1,6 @@
-import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
-import { z } from "zod";
+import type { Type } from "arktype";
 
-export const itemIdSchema = z.nativeEnum(ItemId) satisfies z.ZodType<ItemId>;
+import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
+import { type } from "arktype";
+
+export const itemIdSchema = type.valueOf(ItemId) satisfies Type<ItemId>;

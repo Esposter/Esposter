@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum TextSpeedSetting {
   Fast = "Fast",
@@ -6,4 +8,4 @@ export enum TextSpeedSetting {
   Slow = "Slow",
 }
 
-export const textSpeedSettingSchema = z.nativeEnum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;
+export const textSpeedSettingSchema = type.valueOf(TextSpeedSetting) satisfies Type<TextSpeedSetting>;

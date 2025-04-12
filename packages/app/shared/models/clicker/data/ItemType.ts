@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum ItemType {
   Building = "Building",
@@ -6,4 +8,4 @@ export enum ItemType {
   Upgrade = "Upgrade",
 }
 
-export const itemTypeSchema = z.nativeEnum(ItemType) satisfies z.ZodType<ItemType>;
+export const itemTypeSchema = type.valueOf(ItemType) satisfies Type<ItemType>;

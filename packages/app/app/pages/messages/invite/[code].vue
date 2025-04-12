@@ -7,11 +7,7 @@ import { NotFoundError } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
-  validate: async (route) => {
-    const code = route.params.code;
-    const result = await selectInviteSchema.shape.code.safeParseAsync(code);
-    return result.success;
-  },
+  validate: (route) => selectInviteSchema.get("code").allows(route.params.code),
 });
 
 const { data: session } = await authClient.useSession(useFetch);

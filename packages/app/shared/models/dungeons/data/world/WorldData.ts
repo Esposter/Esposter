@@ -1,12 +1,13 @@
 import type { Chest } from "#shared/models/dungeons/data/world/Chest";
+import type { Type } from "arktype";
 
 import { chestSchema } from "#shared/models/dungeons/data/world/Chest";
-import { z } from "zod";
+import { type } from "arktype";
 
 export class WorldData {
   chestMap: Record<string, Chest> = {};
 }
 
-export const worldDataSchema = z.object({
-  chestMap: z.record(z.string().min(1), chestSchema),
-}) satisfies z.ZodType<WorldData>;
+export const worldDataSchema = type({
+  chestMap: type.Record("string > 0", chestSchema),
+}) satisfies Type<WorldData>;

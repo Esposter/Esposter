@@ -25,7 +25,7 @@ import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { z } from "zod";
+import { type } from "arktype";
 
 const readRepliesInputSchema = readMetadataInputSchema
   .merge(
@@ -33,18 +33,14 @@ const readRepliesInputSchema = readMetadataInputSchema
       { key: "createdAt", order: SortOrder.Desc },
     ]),
   )
-  .omit({ sortBy: true });
-export type ReadRepliesInput = z.infer<typeof readRepliesInputSchema>;
+  .omit("sortBy");
+export type ReadRepliesInput = typeof readRepliesInputSchema.infer;
 
-const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
+const onCreateReplyInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type OnCreateReplyInput = typeof onCreateReplyInputSchema.infer;
 
-const createReplyInputSchema = messageReplyMetadataEntitySchema.pick({
-  message: true,
-  messageRowKey: true,
-  partitionKey: true,
-});
-export type CreateReplyInput = z.infer<typeof createReplyInputSchema>;
+const createReplyInputSchema = messageReplyMetadataEntitySchema.pick("partitionKey", "messageRowKey", "message");
+export type CreateReplyInput = typeof createReplyInputSchema.infer;
 
 export const replyRouter = router({
   createReply: getRoomUserProcedure(createReplyInputSchema, "partitionKey")

@@ -1,8 +1,9 @@
+import type { Type } from "arktype";
 import type { Position } from "grid-engine";
 
-import { z } from "zod";
+import { type } from "arktype";
 
-export const positionSchema = z.object({
-  x: z.number().int().nonnegative(),
-  y: z.number().int().nonnegative(),
-}) satisfies z.ZodType<Position>;
+export const positionSchema = type({
+  x: "number.integer >= 0",
+  y: "number.integer >= 0",
+}) satisfies Type<Position>;

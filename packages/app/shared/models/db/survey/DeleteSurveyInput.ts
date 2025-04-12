@@ -1,6 +1,4 @@
-import type { z } from "zod";
-
 import { selectSurveySchema } from "#shared/db/schema/surveys";
 
-export const deleteSurveyInputSchema = selectSurveySchema.shape.id;
-export type DeleteSurveyInput = z.infer<typeof deleteSurveyInputSchema>;
+export const deleteSurveyInputSchema = selectSurveySchema.get("id");
+export type DeleteSurveyInput = typeof deleteSurveyInputSchema.infer;

@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum VisualType {
   Area = "Area",
@@ -21,4 +23,4 @@ export enum VisualType {
   Treemap = "Treemap",
 }
 
-export const visualTypeSchema = z.nativeEnum(VisualType) satisfies z.ZodType<VisualType>;
+export const visualTypeSchema = type.valueOf(VisualType) satisfies Type<VisualType>;

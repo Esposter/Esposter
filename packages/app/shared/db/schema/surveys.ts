@@ -1,10 +1,10 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
+import { type } from "arktype";
+import { createSelectSchema } from "drizzle-arktype";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const surveys = pgTable(
   "surveys",
@@ -28,7 +28,7 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
+  name: (schema) => type.pipe(schema, type.string.moreThanLength(0).atMostLength(SURVEY_NAME_MAX_LENGTH)),
 });
 
 export const surveysRelations = relations(surveys, ({ one }) => ({

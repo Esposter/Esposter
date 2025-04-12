@@ -1,9 +1,10 @@
 import type { Node } from "@vue-flow/core";
+import type { Type } from "arktype";
 
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
-import { z } from "zod";
+import { type } from "arktype";
 
-export const nodeSchema = z.object({
-  id: z.string(),
+export const nodeSchema = type({
+  id: "string",
   position: xyPositionSchema,
-}) satisfies z.ZodType<Node>;
+}) satisfies Type<Node>;

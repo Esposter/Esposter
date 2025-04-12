@@ -1,8 +1,10 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum ItemEffectType {
   Capture = "Capture",
   Heal = "Heal",
 }
 
-export const itemEffectTypeSchema = z.nativeEnum(ItemEffectType) satisfies z.ZodType<ItemEffectType>;
+export const itemEffectTypeSchema = type.valueOf(ItemEffectType) satisfies Type<ItemEffectType>;

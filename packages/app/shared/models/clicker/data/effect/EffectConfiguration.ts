@@ -1,11 +1,12 @@
 import type { EffectType } from "#shared/models/clicker/data/effect/EffectType";
 import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Target } from "#shared/models/clicker/data/Target";
+import type { Type } from "arktype";
 
 import { effectTypeSchema } from "#shared/models/clicker/data/effect/EffectType";
 import { itemTypeSchema } from "#shared/models/clicker/data/ItemType";
 import { targetSchema } from "#shared/models/clicker/data/Target";
-import { z } from "zod";
+import { type } from "arktype";
 
 export interface EffectConfiguration {
   // e.g. "Upgrade" item type would apply the effect to enhance the upgrade effects themselves
@@ -17,8 +18,8 @@ export interface EffectConfiguration {
   type: EffectType;
 }
 
-export const effectConfigurationSchema = z.object({
+export const effectConfigurationSchema = type({
   itemType: itemTypeSchema.optional(),
-  targets: z.array(targetSchema).optional(),
+  targets: targetSchema.array().optional(),
   type: effectTypeSchema,
-}) satisfies z.ZodType<EffectConfiguration>;
+}) satisfies Type<EffectConfiguration>;

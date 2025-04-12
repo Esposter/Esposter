@@ -1,4 +1,6 @@
-import { z } from "zod";
+import type { Type } from "arktype";
+
+import { type } from "arktype";
 
 export enum EffectType {
   Additive = "Additive",
@@ -9,4 +11,4 @@ export enum EffectType {
   Multiplicative = "Multiplicative",
 }
 
-export const effectTypeSchema = z.nativeEnum(EffectType) satisfies z.ZodType<EffectType>;
+export const effectTypeSchema = type.valueOf(EffectType) satisfies Type<EffectType>;

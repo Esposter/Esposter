@@ -23,48 +23,50 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { TRPCError } from "@trpc/server";
+import { type } from "arktype";
 import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
-import { z } from "zod";
 
-const readRoomInputSchema = selectRoomSchema.shape.id.optional();
-export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+const readRoomInputSchema = selectRoomSchema.get("id").optional();
+export type ReadRoomInput = typeof readRoomInputSchema.infer;
 
 const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
   { key: "updatedAt", order: SortOrder.Desc },
 ]).default({});
-export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
+export type ReadRoomsInput = typeof readRoomsInputSchema.infer;
 
-const joinRoomInputSchema = selectInviteSchema.shape.code;
-export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
+const joinRoomInputSchema = selectInviteSchema.get("code");
+export type JoinRoomInput = typeof joinRoomInputSchema.infer;
 
-const readMembersInputSchema = z
-  .object({
-    filter: selectUserSchema.pick({ name: true }).optional(),
-    roomId: selectRoomSchema.shape.id,
-  })
-  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]));
-export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
+const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
+  { key: "updatedAt", order: SortOrder.Desc },
+]).merge(
+  type({
+    filter: selectUserSchema.pick("name").optional(),
+    roomId: selectRoomSchema.get("id"),
+  }),
+);
+export type ReadMembersInput = typeof readMembersInputSchema.infer;
 
-const readMembersByIdsInputSchema = z.object({
-  ids: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
+const readMembersByIdsInputSchema = type({
+  ids: selectUserSchema.get("id").array().moreThanLength(0).atMostLength(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.get("id"),
 });
-export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
+export type ReadMembersByIdsInput = typeof readMembersByIdsInputSchema.infer;
 
-const createMembersInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userIds: z.array(selectUserSchema.shape.id).min(1),
+const createMembersInputSchema = type({
+  roomId: selectRoomSchema.get("id"),
+  userIds: selectUserSchema.get("id").array().moreThanLength(0).atMostLength(MAX_READ_LIMIT),
 });
-export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
+export type CreateMembersInput = typeof createMembersInputSchema.infer;
 
-const readInviteInputSchema = selectInviteSchema.shape.code;
-export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
+const readInviteInputSchema = selectInviteSchema.get("code");
+export type ReadInviteInput = typeof readInviteInputSchema.infer;
 
-const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
+const readInviteCodeInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type ReadInviteCodeInput = typeof readInviteCodeInputSchema.infer;
 
-const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
+const createInviteInputSchema = type({ roomId: selectRoomSchema.get("id") });
+export type CreateInviteInput = typeof createInviteInputSchema.infer;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
@@ -158,7 +160,7 @@ export const roomRouter = router({
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
+      const filterWhere = ilike(users.name, `%${filter.name ?? ""}%`);
       const cursorWhere = cursor ? getCursorWhere(users, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
       const joinedUsers = await ctx.db

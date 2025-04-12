@@ -1,17 +1,15 @@
 import type { BasePaginationParams } from "#shared/models/pagination/BasePaginationParams";
 
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
-import { z } from "zod";
+import { type } from "arktype";
 
 export interface OffsetPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
   offset?: number;
 }
 
-export const createOffsetPaginationParamsSchema = <TSortKeySchema extends z.ZodType<string>>(
-  sortKeySchema: TSortKeySchema,
-) =>
+export const createOffsetPaginationParamsSchema = <T extends string>(sortKeySchema: type.Any<T>) =>
   createBasePaginationParamsSchema(sortKeySchema).merge(
-    z.object({
-      offset: z.number().int().nonnegative().default(0),
+    type({
+      offset: "number >= 0 = 0",
     }),
   );
