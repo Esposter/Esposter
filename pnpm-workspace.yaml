@@ -84,7 +84,7 @@ catalog:
   better-auth: 1.1.21
   codemirror: ^6.0.1
   cross-env: ^7.0.3
-  ctix: ^2.7.0
+  ctix: ^2.7.1
   data-urls: ^5.0.0
   dayjs: ^1.11.13
   # https://github.com/json-layout/json-layout/issues/5
@@ -120,7 +120,7 @@ catalog:
   grapesjs-touch: ^0.1.1
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
-  grid-engine: ^2.47.1
+  grid-engine: ^2.48.0
   grid-layout-plus: ^1.0.6
   gsap: ^3.12.7
   h3: ^1.15.1
@@ -144,7 +144,7 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
-  rollup: ^4.39.0
+  rollup: ^4.40.0
   rollup-plugin-dts: ^6.2.1
   rxjs: ^7.8.2
   sass-embedded: ^1.86.3
