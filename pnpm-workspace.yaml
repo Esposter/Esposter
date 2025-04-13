@@ -83,7 +83,7 @@ catalog:
   better-auth: 1.1.21
   codemirror: ^6.0.1
   cross-env: ^7.0.3
-  ctix: ^2.7.0
+  ctix: ^2.7.1
   data-urls: ^5.0.0
   dayjs: ^1.11.13
   # https://github.com/json-layout/json-layout/issues/5
