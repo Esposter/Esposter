@@ -5,4 +5,4 @@ export enum SoundSetting {
   On = "On",
 }
 
-export const soundSettingSchema = z.nativeEnum(SoundSetting) satisfies z.ZodType<SoundSetting>;
+export const soundSettingSchema = z.enum(SoundSetting) satisfies z.ZodType<SoundSetting>;

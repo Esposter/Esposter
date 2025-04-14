@@ -12,7 +12,7 @@ export abstract class AChartTypeResolver<T extends Chart["configuration"]> {
 
   handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
-  handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
+  handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
   }
 

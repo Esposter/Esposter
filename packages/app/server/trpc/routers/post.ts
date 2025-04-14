@@ -26,9 +26,10 @@ import { z } from "zod";
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = z
-  .object({ [selectPostSchema.keyof().Values.parentId]: selectPostSchema.shape.parentId.default(null) })
-  .merge(createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]))
+const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
+  { key: "ranking", order: SortOrder.Desc },
+])
+  .extend(z.object({ [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null) }))
   .default({});
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 

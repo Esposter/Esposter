@@ -26,6 +26,6 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
 }
 
 export const visualSchema = aItemEntitySchema
-  .merge(createItemEntityTypeSchema(visualTypeSchema))
-  .merge(layoutItemSchema)
-  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<ToData<Visual>>;
+  .extend(createItemEntityTypeSchema(visualTypeSchema))
+  .extend(layoutItemSchema)
+  .extend(z.object({ chart: chartSchema })) satisfies z.ZodType<ToData<Visual>>;

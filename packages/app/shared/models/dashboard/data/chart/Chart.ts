@@ -13,9 +13,9 @@ export class Chart extends AItemEntity {
   type: ChartType = ChartType.Basic;
 }
 
-export const chartSchema = z
-  .object({
+export const chartSchema = aItemEntitySchema.extend(
+  z.object({
     configuration: basicChartConfigurationSchema,
     type: chartTypeSchema,
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<Chart>>;
+  }),
+) satisfies z.ZodType<ToData<Chart>>;

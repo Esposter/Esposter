@@ -8,7 +8,7 @@ export abstract class ATableEditorItemEntity extends AItemEntity {
   name = DEFAULT_NAME;
 }
 
-export const aTableEditorItemEntitySchema = aItemEntitySchema.merge(
+export const aTableEditorItemEntitySchema = aItemEntitySchema.extend(
   z.object({
     name: z.string().min(1),
   }),

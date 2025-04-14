@@ -6,4 +6,4 @@ import { z } from "zod";
 export const SpritesheetKey = mergeObjectsStrict(AttackKey, CharacterKey);
 export type SpritesheetKey = AttackKey | CharacterKey;
 
-export const spriteSheetKeySchema = z.nativeEnum(SpritesheetKey) satisfies z.ZodType<SpritesheetKey>;
+export const spriteSheetKeySchema = z.enum(SpritesheetKey) satisfies z.ZodType<SpritesheetKey>;

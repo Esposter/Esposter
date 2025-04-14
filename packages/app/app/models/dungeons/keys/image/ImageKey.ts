@@ -10,4 +10,4 @@ import { z } from "zod";
 export const ImageKey = mergeObjectsStrict(BattleKey, InventoryKey, MonsterPartyKey, TitleKey, WorldKey, UIImageKey);
 export type ImageKey = BattleKey | InventoryKey | MonsterPartyKey | TitleKey | UIImageKey | WorldKey;
 
-export const imageKeySchema = z.nativeEnum(ImageKey) satisfies z.ZodType<ImageKey>;
+export const imageKeySchema = z.enum(ImageKey) satisfies z.ZodType<ImageKey>;

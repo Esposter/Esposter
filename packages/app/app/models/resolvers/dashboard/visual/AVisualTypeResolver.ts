@@ -12,7 +12,7 @@ export abstract class AVisualTypeResolver {
 
   handleConfiguration(_apexOptions: ApexOptions, _type: VisualType) {}
 
-  handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
+  handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
   }
 

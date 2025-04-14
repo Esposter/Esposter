@@ -10,6 +10,6 @@ export interface Asset {
 }
 
 export const assetSchema = z.object({
-  frame: z.number().int().nonnegative().optional(),
+  frame: z.int().nonnegative().optional(),
   key: assetKeySchema,
 }) satisfies z.ZodType<Asset>;

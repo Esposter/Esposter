@@ -60,7 +60,7 @@ export class FunnelResolver extends AVisualTypeResolver {
     );
   }
 
-  override handleSchema(schema: z.AnyZodObject) {
+  override handleSchema(schema: z.ZodObject) {
     return schema.omit({ [basicChartConfigurationSchema.keyof().Values.dataLabels]: true });
   }
 }

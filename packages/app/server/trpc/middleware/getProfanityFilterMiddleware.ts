@@ -4,10 +4,7 @@ import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
 import { middleware } from "@@/server/trpc";
 import { TRPCError } from "@trpc/server";
 
-export const getProfanityFilterMiddleware = <T extends z.ZodObject<z.ZodRawShape>>(
-  schema: T,
-  keys: (keyof T["shape"] & string)[],
-) =>
+export const getProfanityFilterMiddleware = <T>(schema: z.ZodType<T>, keys: (keyof T & string)[]) =>
   middleware(async ({ getRawInput, next }) => {
     const rawInput = await getRawInput();
     const result = schema.safeParse(rawInput);

@@ -9,12 +9,12 @@ export interface CursorPaginationParams<TSortKey extends string> extends BasePag
   cursor?: string;
 }
 
-export const createCursorPaginationParamsSchema = <TSortKeySchema extends z.ZodType<string>>(
-  sortKeySchema: TSortKeySchema,
-  defaultSortBy: SortItem<TSortKeySchema["_type"]>[],
+export const createCursorPaginationParamsSchema = <TSortKey extends string>(
+  sortKeySchema: z.ZodType<TSortKey>,
+  defaultSortBy: SortItem<TSortKey>[],
 ) =>
   // We need at least one sort item so we can derive a primary cursor for pagination
-  createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).merge(
+  createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).extend(
     z.object({
       cursor: z.string().optional(),
     }),

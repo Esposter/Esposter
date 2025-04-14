@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export type UnlockCondition = BuildingUnlockCondition | UpgradeUnlockCondition;
 
-export const unlockConditionSchema = z.union([
+export const unlockConditionSchema = z.discriminatedUnion([
   buildingUnlockConditionSchema,
   upgradeUnlockConditionSchema,
 ]) satisfies z.ZodType<UnlockCondition>;

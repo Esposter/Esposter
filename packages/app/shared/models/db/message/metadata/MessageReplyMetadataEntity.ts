@@ -23,7 +23,7 @@ export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageR
 
 export const messageReplyMetadataEntitySchema = createMessageMetadataEntitySchema(
   z.literal(MessageMetadataType.Reply),
-).merge(
+).extend(
   z.object({
     message: messageEntitySchema.shape.message,
     messageReplyRowKey: messageEntitySchema.shape.rowKey,

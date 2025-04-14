@@ -6,4 +6,4 @@ export enum ThemeModeSetting {
   Purple = "Purple",
 }
 
-export const themeModeSettingSchema = z.nativeEnum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;
+export const themeModeSettingSchema = z.enum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;

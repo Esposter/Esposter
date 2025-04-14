@@ -5,4 +5,4 @@ export enum SortOrder {
   Desc = "desc",
 }
 
-export const sortOrderSchema = z.nativeEnum(SortOrder) satisfies z.ZodType<SortOrder>;
+export const sortOrderSchema = z.enum(SortOrder) satisfies z.ZodType<SortOrder>;

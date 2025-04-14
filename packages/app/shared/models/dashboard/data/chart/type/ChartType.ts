@@ -12,4 +12,4 @@ enum BaseChartType {
 export const ChartType = mergeObjectsStrict(BaseChartType, BubbleType, FunnelType, PieType, TreemapType);
 export type ChartType = BaseChartType | BubbleType | FunnelType | PieType | TreemapType;
 
-export const chartTypeSchema = z.nativeEnum(ChartType) satisfies z.ZodType<ChartType>;
+export const chartTypeSchema = z.enum(ChartType) satisfies z.ZodType<ChartType>;

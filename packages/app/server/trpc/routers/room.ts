@@ -37,12 +37,14 @@ export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 const joinRoomInputSchema = selectInviteSchema.shape.code;
 export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 
-const readMembersInputSchema = z
-  .object({
+const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
+  { key: "updatedAt", order: SortOrder.Desc },
+]).extend(
+  z.object({
     filter: selectUserSchema.pick({ name: true }).optional(),
     roomId: selectRoomSchema.shape.id,
-  })
-  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]));
+  }),
+);
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({

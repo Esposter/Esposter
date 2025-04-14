@@ -16,12 +16,12 @@ export class ClickerGame extends AItemEntity {
   type = ClickerType.Default;
 }
 
-export const clickerGameSchema = z
-  .object({
+export const clickerGameSchema = aItemEntitySchema.extend(
+  z.object({
     boughtBuildings: z.array(buildingWithStatsSchema),
     boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
-    id: z.string().uuid(),
+    id: z.uuid(),
     noPoints: z.number(),
     type: clickerTypeSchema,
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<ClickerGame>>;
+  }),
+) satisfies z.ZodType<ToData<ClickerGame>>;

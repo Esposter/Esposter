@@ -19,9 +19,9 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 }
 
-export const tableEditorConfigurationSchema = z
-  .object({
+export const tableEditorConfigurationSchema = aItemEntitySchema.extend(
+  z.object({
     [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
     [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<TableEditorConfiguration>>;
+  }),
+) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

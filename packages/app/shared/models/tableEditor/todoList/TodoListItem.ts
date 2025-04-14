@@ -17,8 +17,8 @@ export class TodoListItem extends ATableEditorItemEntity implements ItemEntityTy
 }
 
 export const todoListItemSchema = aTableEditorItemEntitySchema
-  .merge(createItemEntityTypeSchema(todoListItemTypeSchema))
-  .merge(
+  .extend(createItemEntityTypeSchema(todoListItemTypeSchema))
+  .extend(
     z.object({
       dueAt: z.date().nullable(),
       notes: z.string().max(NOTES_MAX_LENGTH),

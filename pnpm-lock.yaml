@@ -141,9 +141,6 @@ catalogs:
     '@types/js-beautify':
       specifier: ^1.14.3
       version: 1.14.3
-    '@types/json-schema':
-      specifier: ^7.0.15
-      version: 7.0.15
     '@types/mjml-browser':
       specifier: ^4.15.0
       version: 4.15.0
@@ -532,11 +529,8 @@ catalogs:
       specifier: ^0.6.2
       version: 0.6.2
     zod:
-      specifier: ^3.24.2
-      version: 3.24.2
-    zod-to-json-schema:
-      specifier: ^3.24.5
-      version: 3.24.5
+      specifier: ^4.0.0-beta
+      version: 4.0.0-beta.20250412T085909
 
 importers:
 
@@ -731,7 +725,7 @@ importers:
         version: 0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@3.24.2)
+        version: 0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@4.0.0-beta.20250412T085909)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.13(typescript@5.8.3))
@@ -911,10 +905,7 @@ importers:
         version: 8.18.1
       zod:
         specifier: 'catalog:'
-        version: 3.24.2
-      zod-to-json-schema:
-        specifier: 'catalog:'
-        version: 3.24.5(zod@3.24.2)
+        version: 4.0.0-beta.20250412T085909
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -952,9 +943,6 @@ importers:
       '@types/js-beautify':
         specifier: 'catalog:'
         version: 1.14.3
-      '@types/json-schema':
-        specifier: 'catalog:'
-        version: 7.0.15
       '@types/mjml-browser':
         specifier: 'catalog:'
         version: 4.15.0
@@ -4797,6 +4785,9 @@ packages:
 
   '@yr/monotone-cubic-spline@1.0.3':
     resolution: {integrity: sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==}
+
+  '@zod/core@0.4.6':
+    resolution: {integrity: sha512-0IeEldTobOdkoJPyINVQgOHlgCWbpozSsDjdcd2+VcxKvf8T+SYLDVk7NKt0XJx3C0ImNXAXh3V3yIw46NJyQA==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -10806,13 +10797,11 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod-to-json-schema@3.24.5:
-    resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
-    peerDependencies:
-      zod: ^3.24.1
-
   zod@3.24.2:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+
+  zod@4.0.0-beta.20250412T085909:
+    resolution: {integrity: sha512-W4OjoCnF5XTuljw4X6Hh3Inp45Ug7mmCWzWfFPv+RZcSIAGz7OPqBKOEDtLjfnJAvoxvY3vO0SkxH1zr0Md/Ag==}
 
 snapshots:
 
@@ -15419,6 +15408,8 @@ snapshots:
 
   '@yr/monotone-cubic-spline@1.0.3': {}
 
+  '@zod/core@0.4.6': {}
+
   abbrev@2.0.0: {}
 
   abbrev@3.0.0: {}
@@ -16770,10 +16761,10 @@ snapshots:
       kysely: 0.27.6
       postgres: 3.4.5
 
-  drizzle-zod@0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@3.24.2):
+  drizzle-zod@0.7.1(drizzle-orm@0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5))(zod@4.0.0-beta.20250412T085909):
     dependencies:
       drizzle-orm: 0.41.0(gel@2.0.2)(kysely@0.27.6)(postgres@3.4.5)
-      zod: 3.24.2
+      zod: 4.0.0-beta.20250412T085909
 
   dunder-proto@1.0.1:
     dependencies:
@@ -22347,8 +22338,8 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-to-json-schema@3.24.5(zod@3.24.2):
-    dependencies:
-      zod: 3.24.2
-
   zod@3.24.2: {}
+
+  zod@4.0.0-beta.20250412T085909:
+    dependencies:
+      '@zod/core': 0.4.6

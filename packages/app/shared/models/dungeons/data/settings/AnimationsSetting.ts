@@ -5,4 +5,4 @@ export enum AnimationsSetting {
   On = "On",
 }
 
-export const animationsSettingSchema = z.nativeEnum(AnimationsSetting) satisfies z.ZodType<AnimationsSetting>;
+export const animationsSettingSchema = z.enum(AnimationsSetting) satisfies z.ZodType<AnimationsSetting>;

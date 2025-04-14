@@ -8,14 +8,14 @@ export abstract class MessageMetadataEntity<TType extends MessageMetadataType> e
   messageRowKey!: string;
 }
 
-export const createMessageMetadataEntitySchema = <TTypeSchema extends z.ZodType<string>>(typeSchema: TTypeSchema) =>
+export const createMessageMetadataEntitySchema = <TType extends string>(typeSchema: z.ZodType<TType>) =>
   createAzureMetadataEntitySchema(
     z.object({
       partitionKey: messageEntitySchema.shape.partitionKey,
       rowKey: z.string(),
       type: typeSchema,
     }),
-  ).merge(
+  ).extend(
     z.object({
       messageRowKey: messageEntitySchema.shape.rowKey,
     }),

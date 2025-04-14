@@ -151,8 +151,7 @@
     "vuetify-sonner": "catalog:",
     "worker-timers": "catalog:",
     "ws": "catalog:",
-    "zod": "catalog:",
-    "zod-to-json-schema": "catalog:"
+    "zod": "catalog:"
   },
   "dependenciesComments": {
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
@@ -170,7 +169,6 @@
     "@types/fs-extra": "catalog:",
     "@types/howler": "catalog:",
     "@types/js-beautify": "catalog:",
-    "@types/json-schema": "catalog:",
     "@types/mjml-browser": "catalog:",
     "@types/omit-deep-lodash": "catalog:",
     "@types/pluralize": "catalog:",

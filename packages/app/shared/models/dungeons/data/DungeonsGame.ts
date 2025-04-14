@@ -11,10 +11,10 @@ export class DungeonsGame extends AItemEntity {
   settings = getInitialSettings();
 }
 
-export const dungeonsGameSchema = z
-  .object({
-    id: z.string().uuid(),
+export const dungeonsGameSchema = aItemEntitySchema.extend(
+  z.object({
+    id: z.uuid(),
     saves: z.array(saveSchema),
     settings: settingsSchema,
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<DungeonsGame>>;
+  }),
+) satisfies z.ZodType<ToData<DungeonsGame>>;

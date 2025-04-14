@@ -28,7 +28,7 @@ import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { z } from "zod";
 
 const readRepliesInputSchema = readMetadataInputSchema
-  .merge(
+  .extend(
     createCursorPaginationParamsSchema(messageReplyMetadataEntitySchema.keyof(), [
       { key: "createdAt", order: SortOrder.Desc },
     ]),

@@ -12,6 +12,6 @@ export type AItemEntity = typeof AItemEntity.prototype;
 
 export const aItemEntitySchema = z
   .object({
-    id: z.string().uuid(),
+    id: z.uuid(),
   })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<AItemEntity>>;
+  .extend(itemMetadataSchema) satisfies z.ZodType<ToData<AItemEntity>>;

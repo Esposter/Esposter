@@ -24,8 +24,8 @@ export class MessageEntity extends AzureEntity {
   }
 }
 
-export const messageEntitySchema = z
-  .object({
+export const messageEntitySchema = itemMetadataSchema.extend(
+  z.object({
     files: z.array(fileEntitySchema),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}
@@ -33,5 +33,5 @@ export const messageEntitySchema = z
     // reverse-ticked timestamp
     rowKey: z.string(),
     userId: selectUserSchema.shape.id,
-  })
-  .merge(itemMetadataSchema) satisfies z.ZodType<ToData<MessageEntity>>;
+  }),
+) satisfies z.ZodType<ToData<MessageEntity>>;

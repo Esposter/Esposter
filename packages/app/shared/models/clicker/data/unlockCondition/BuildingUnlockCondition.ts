@@ -11,7 +11,7 @@ export interface BuildingUnlockCondition {
 }
 
 export const buildingUnlockConditionSchema = z.object({
-  amount: z.number().int(),
+  amount: z.int(),
   id: buildingIdSchema,
   type: z.literal(ItemType.Building),
 }) satisfies z.ZodType<BuildingUnlockCondition>;

@@ -10,6 +10,6 @@ import { z } from "zod";
 // to enforce that all entities implement Item
 export type Item = ATableEditorItemEntity & ItemEntityType<string>;
 
-export const itemSchema = aTableEditorItemEntitySchema.merge(
+export const itemSchema = aTableEditorItemEntitySchema.extend(
   createItemEntityTypeSchema(z.string()),
 ) satisfies z.ZodType<ToData<Item>>;

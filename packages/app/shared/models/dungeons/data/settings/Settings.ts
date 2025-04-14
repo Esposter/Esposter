@@ -24,7 +24,7 @@ export type Settings = Record<
 export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
-  [SettingsOption.VolumePercentage]: z.number().int().nonnegative().max(100),
+  [SettingsOption.VolumePercentage]: z.int().nonnegative().max(100),
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,

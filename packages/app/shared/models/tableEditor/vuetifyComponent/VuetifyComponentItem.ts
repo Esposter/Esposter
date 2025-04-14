@@ -23,7 +23,7 @@ export class VuetifyComponentItem extends ATableEditorItemEntity implements Item
 }
 
 export const vuetifyComponentItemSchema = aTableEditorItemEntitySchema
-  .merge(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
-  .merge(
+  .extend(createItemEntityTypeSchema(vuetifyComponentItemTypeSchema))
+  .extend(
     z.object({ component: vuetifyComponentTypeSchema, props: z.record(z.string().min(1), z.unknown()) }),
   ) satisfies z.ZodType<ToData<VuetifyComponentItem>>;

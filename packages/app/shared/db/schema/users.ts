@@ -86,11 +86,7 @@ export const likes = pgTable(
 export type Like = typeof likes.$inferSelect;
 
 export const selectLikeSchema = createSelectSchema(likes, {
-  value: z
-    .number()
-    .int()
-    .refine((value) => value === 1 || value === -1)
-    .innerType(),
+  value: z.int().refine((value) => value === 1 || value === -1),
 });
 
 export const likesRelations = relations(likes, ({ one }) => ({

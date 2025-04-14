@@ -7,6 +7,6 @@ export interface Status {
 }
 
 export const statusSchema = z.object({
-  exp: z.number().int().nonnegative(),
-  hp: z.number().int().nonnegative(),
+  exp: z.int().nonnegative(),
+  hp: z.int().nonnegative(),
 }) satisfies z.ZodType<Status>;
