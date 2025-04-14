@@ -1,7 +1,7 @@
-import type { JSONSchema } from "@/models/jsonSchema/JSONSchema";
 import type { Class } from "type-fest";
+import type { core } from "zod";
 
-export const getPropertySchema = (type: Class<unknown>): JSONSchema<object> | undefined => {
+export const getPropertySchema = (type: Class<unknown>): core.JSONSchema.BaseSchema | undefined => {
   switch (type) {
     case Boolean:
       return {
