@@ -1,15 +1,16 @@
 import type { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 
 import { sortOrderSchema } from "#shared/models/pagination/sorting/SortOrder";
-import { type } from "arktype";
+import { scope } from "arktype";
 
 export interface SortItem<T extends string> {
   key: T;
   order: SortOrder;
 }
 
-export const createSortItemSchema = <T extends string>(sortKeySchema: type.Any<T>) =>
-  type({
-    key: sortKeySchema,
+export const sortItemScope = scope({
+  "SortItem<T extends string>": {
+    key: "T",
     order: sortOrderSchema,
-  });
+  },
+});

@@ -8,7 +8,7 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { cursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -28,23 +28,24 @@ import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 
 const readRoomInputSchema = selectRoomSchema.pick("id").partial().get("id");
 export type ReadRoomInput = typeof readRoomInputSchema.infer;
-
-const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-]).default({});
+/*
+@TODO: Default: {
+  sortBy: [{ key: "updatedAt", order: SortOrder.Desc }],
+}
+*/
+const readRoomsInputSchema = cursorPaginationParamsSchema(selectRoomSchema.keyof());
 export type ReadRoomsInput = typeof readRoomsInputSchema.infer;
 
 const joinRoomInputSchema = selectInviteSchema.get("code");
 export type JoinRoomInput = typeof joinRoomInputSchema.infer;
 
-const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-]).merge(
-  type({
-    filter: selectUserSchema.pick("name").optional(),
-    roomId: selectRoomSchema.get("id"),
-  }),
-);
+const readMembersInputSchema = type({
+  "...": cursorPaginationParamsSchema(selectUserSchema.keyof()).default(() => ({
+    sortBy: [{ key: "updatedAt", order: SortOrder.Desc }],
+  })),
+  filter: selectUserSchema.pick("name").optional(),
+  roomId: selectRoomSchema.get("id"),
+});
 export type ReadMembersInput = typeof readMembersInputSchema.infer;
 
 const readMembersByIdsInputSchema = type({

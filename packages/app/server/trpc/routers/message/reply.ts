@@ -8,7 +8,7 @@ import {
   MessageReplyMetadataEntityPropertyNames,
   messageReplyMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { cursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
@@ -29,9 +29,9 @@ import { type } from "arktype";
 
 const readRepliesInputSchema = readMetadataInputSchema
   .merge(
-    createCursorPaginationParamsSchema(messageReplyMetadataEntitySchema.keyof(), [
-      { key: "createdAt", order: SortOrder.Desc },
-    ]),
+    cursorPaginationParamsSchema(messageReplyMetadataEntitySchema.keyof()).default(() => ({
+      sortBy: [{ key: "createdAt", order: SortOrder.Desc }],
+    })),
   )
   .omit("sortBy");
 export type ReadRepliesInput = typeof readRepliesInputSchema.infer;

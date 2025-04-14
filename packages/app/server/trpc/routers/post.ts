@@ -8,8 +8,7 @@ import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { cursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -24,10 +23,15 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 
 const readPostInputSchema = selectPostSchema.get("id");
 export type ReadPostInput = typeof readPostInputSchema.infer;
-
-const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
-  { key: "ranking", order: SortOrder.Desc },
-]).merge(selectPostSchema.pick("parentId").default(() => ({ parentId: null })));
+/*
+@TODO: Default: {
+    parentId: null,
+    sortBy: [{ key: "ranking", order: SortOrder.Desc }],
+  }
+*/
+const readPostsInputSchema = cursorPaginationParamsSchema(selectPostSchema.keyof()).merge(
+  selectPostSchema.pick("parentId"),
+);
 export type ReadPostsInput = typeof readPostsInputSchema.infer;
 
 export const postRouter = router({

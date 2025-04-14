@@ -6,7 +6,7 @@ import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingI
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { cursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
@@ -39,9 +39,12 @@ const readMessagesInputSchema =
   // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
-  createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
-    .merge(type({ roomId: selectRoomSchema.get("id") }))
-    .omit({ sortBy: true });
+  type({
+    "...": cursorPaginationParamsSchema(messageEntitySchema.keyof()).default(() => ({
+      sortBy: [{ key: "createdAt", order: SortOrder.Desc }],
+    })),
+    roomId: selectRoomSchema.get("id"),
+  }).omit("sortBy");
 export type ReadMessagesInput = typeof readMessagesInputSchema.infer;
 // @TODO: Use this for getting replies
 const readMessagesByRowKeysInputSchema = type({

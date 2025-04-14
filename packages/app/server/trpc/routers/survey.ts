@@ -6,7 +6,7 @@ import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyIn
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { offsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -20,7 +20,7 @@ import { and, count, desc, eq } from "drizzle-orm";
 const readSurveyInputSchema = selectSurveySchema.get("id");
 export type ReadSurveyInput = typeof readSurveyInputSchema.infer;
 
-const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
+const readSurveysInputSchema = offsetPaginationParamsSchema(selectSurveySchema.keyof());
 export type ReadSurveysInput = typeof readSurveysInputSchema.infer;
 
 const publishSurveyInputSchema = selectSurveySchema.pick("id", "publishVersion");
