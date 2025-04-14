@@ -153,9 +153,9 @@ catalog:
   survey-creator-vue: ^2.0.4
   survey-vue3-ui: ^2.0.4
   three: ^0.175.0
-  three-globe: ^2.42.3
+  three-globe: ^2.42.4
   tippy.js: ^6.3.7
-  trpc-nuxt: ^1.0.4
+  trpc-nuxt: ^1.0.5
   tsx: ^4.19.3
   type-fest: ^4.39.1
   typedoc: ^0.28.2
