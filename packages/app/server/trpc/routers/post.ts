@@ -14,6 +14,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { ranking } from "@@/server/services/post/ranking";
+import { prefault } from "@@/server/services/zod/prefault";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -26,11 +27,12 @@ import { z } from "zod";
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
-const readPostsInputSchema = createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
-  { key: "ranking", order: SortOrder.Desc },
-])
-  .extend(z.object({ [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null) }))
-  .default({});
+const readPostsInputSchema = prefault(
+  createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]).extend(
+    z.object({ [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null) }),
+  ),
+  {},
+);
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 export const postRouter = router({

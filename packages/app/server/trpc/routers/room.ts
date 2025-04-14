@@ -17,6 +17,7 @@ import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { prefault } from "@@/server/services/zod/prefault";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
@@ -29,9 +30,10 @@ import { z } from "zod";
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-]).default({});
+const readRoomsInputSchema = prefault(
+  createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]),
+  {},
+);
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const joinRoomInputSchema = selectInviteSchema.shape.code;

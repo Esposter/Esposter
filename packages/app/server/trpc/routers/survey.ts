@@ -12,6 +12,7 @@ import { useUpload } from "@@/server/composables/azure/useUpload";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@@/server/services/publish/getPublishPath";
+import { prefault } from "@@/server/services/zod/prefault";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -21,7 +22,7 @@ import { and, count, desc, eq } from "drizzle-orm";
 const readSurveyInputSchema = selectSurveySchema.shape.id;
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
-const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
+const readSurveysInputSchema = prefault(createOffsetPaginationParamsSchema(selectSurveySchema.keyof()), {});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
