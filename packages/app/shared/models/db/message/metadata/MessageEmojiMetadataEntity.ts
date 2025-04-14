@@ -3,8 +3,8 @@ import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import {
-  createMessageMetadataEntitySchema,
-  MessageMetadataEntity,
+    createMessageMetadataEntitySchema,
+    MessageMetadataEntity,
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
@@ -25,6 +25,6 @@ export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageE
 
 export const messageEmojiMetadataEntitySchema = createMessageMetadataEntitySchema(
   z.literal(MessageMetadataType.Emoji),
-).extend(z.object({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) })) satisfies z.ZodType<
+).extend(z.interface({ emojiTag: z.string(), userIds: z.array(selectUserSchema.shape.id) })) satisfies z.ZodType<
   ToData<MessageEmojiMetadataEntity>
 >;

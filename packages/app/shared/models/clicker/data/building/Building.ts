@@ -10,7 +10,7 @@ export interface Building {
   id: BuildingId;
 }
 
-export const buildingSchema = z.object({
+export const buildingSchema = z.interface({
   basePrice: z.number(),
   baseValue: z.number(),
   flavorDescription: z.string().min(1),

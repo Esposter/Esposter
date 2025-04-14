@@ -7,6 +7,6 @@ export class WorldData {
   chestMap: Record<string, Chest> = {};
 }
 
-export const worldDataSchema = z.object({
+export const worldDataSchema = z.interface({
   chestMap: z.record(z.string().min(1), chestSchema),
 }) satisfies z.ZodType<WorldData>;

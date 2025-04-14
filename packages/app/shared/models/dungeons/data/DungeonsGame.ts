@@ -12,7 +12,7 @@ export class DungeonsGame extends AItemEntity {
 }
 
 export const dungeonsGameSchema = aItemEntitySchema.extend(
-  z.object({
+  z.interface({
     id: z.uuid(),
     saves: z.array(saveSchema),
     settings: settingsSchema,

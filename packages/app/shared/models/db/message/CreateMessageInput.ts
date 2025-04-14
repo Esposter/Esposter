@@ -4,5 +4,5 @@ import { z } from "zod";
 
 export const createMessageInputSchema = messageEntitySchema
   .pick({ message: true })
-  .extend(z.object({ roomId: selectRoomSchema.shape.id }));
+  .extend(z.interface({ roomId: selectRoomSchema.shape.id }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;

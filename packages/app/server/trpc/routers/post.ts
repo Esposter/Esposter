@@ -29,7 +29,7 @@ export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
 const readPostsInputSchema = prefault(
   createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]).extend(
-    z.object({ [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null) }),
+    z.interface({ [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null) }),
   ),
   {},
 );

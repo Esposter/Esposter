@@ -4,8 +4,8 @@ import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
+    MessageEmojiMetadataEntity,
+    MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
@@ -26,13 +26,13 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onUpdateEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onDeleteEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({

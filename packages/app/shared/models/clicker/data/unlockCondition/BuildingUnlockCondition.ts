@@ -10,7 +10,7 @@ export interface BuildingUnlockCondition {
   type: ItemType.Building;
 }
 
-export const buildingUnlockConditionSchema = z.object({
+export const buildingUnlockConditionSchema = z.interface({
   amount: z.int(),
   id: buildingIdSchema,
   type: z.literal(ItemType.Building),

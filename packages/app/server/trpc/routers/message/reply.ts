@@ -4,9 +4,9 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import {
-  MessageReplyMetadataEntity,
-  MessageReplyMetadataEntityPropertyNames,
-  messageReplyMetadataEntitySchema,
+    MessageReplyMetadataEntity,
+    MessageReplyMetadataEntityPropertyNames,
+    messageReplyMetadataEntitySchema,
 } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -36,7 +36,7 @@ const readRepliesInputSchema = readMetadataInputSchema
   .omit({ sortBy: true });
 export type ReadRepliesInput = z.infer<typeof readRepliesInputSchema>;
 
-const onCreateReplyInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateReplyInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnCreateReplyInput = z.infer<typeof onCreateReplyInputSchema>;
 
 const createReplyInputSchema = messageReplyMetadataEntitySchema.pick({

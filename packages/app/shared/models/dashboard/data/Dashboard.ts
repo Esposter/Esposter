@@ -10,5 +10,5 @@ export class Dashboard extends AItemEntity {
 }
 
 export const dashboardSchema = aItemEntitySchema.extend(
-  z.object({ visuals: z.array(visualSchema) }),
+  z.interface({ visuals: z.array(visualSchema) }),
 ) satisfies z.ZodType<ToData<Dashboard>>;

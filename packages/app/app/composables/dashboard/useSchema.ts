@@ -8,7 +8,7 @@ import { z } from "zod";
 
 export const useSchema = (chartType: MaybeRefOrGetter<ChartType>, visualType: MaybeRefOrGetter<VisualType>) =>
   computed(() => {
-    let schema = z.object({});
+    let schema = z.interface({});
     const chartTypeValue = toValue(chartType);
     const chartTypeResolvers = getActiveChartTypeResolvers(chartTypeValue);
     for (const chartTypeResolver of chartTypeResolvers) schema = chartTypeResolver.handleSchema(schema);

@@ -3,8 +3,8 @@ import type { ToData } from "#shared/models/entity/ToData";
 
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import {
-  createMessageMetadataEntitySchema,
-  MessageMetadataEntity,
+    createMessageMetadataEntitySchema,
+    MessageMetadataEntity,
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
@@ -24,7 +24,7 @@ export const MessageReplyMetadataEntityPropertyNames = getPropertyNames<MessageR
 export const messageReplyMetadataEntitySchema = createMessageMetadataEntitySchema(
   z.literal(MessageMetadataType.Reply),
 ).extend(
-  z.object({
+  z.interface({
     message: messageEntitySchema.shape.message,
     messageReplyRowKey: messageEntitySchema.shape.rowKey,
   }),

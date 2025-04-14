@@ -42,20 +42,20 @@ export type JoinRoomInput = z.infer<typeof joinRoomInputSchema>;
 const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
   { key: "updatedAt", order: SortOrder.Desc },
 ]).extend(
-  z.object({
+  z.interface({
     filter: selectUserSchema.pick({ name: true }).optional(),
     roomId: selectRoomSchema.shape.id,
   }),
 );
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
-const readMembersByIdsInputSchema = z.object({
+const readMembersByIdsInputSchema = z.interface({
   ids: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
-const createMembersInputSchema = z.object({
+const createMembersInputSchema = z.interface({
   roomId: selectRoomSchema.shape.id,
   userIds: z.array(selectUserSchema.shape.id).min(1),
 });
@@ -64,10 +64,10 @@ export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
-const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const readInviteCodeInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
 
-const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const createInviteInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room

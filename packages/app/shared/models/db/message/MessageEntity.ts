@@ -25,7 +25,7 @@ export class MessageEntity extends AzureEntity {
 }
 
 export const messageEntitySchema = itemMetadataSchema.extend(
-  z.object({
+  z.interface({
     files: z.array(fileEntitySchema),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}

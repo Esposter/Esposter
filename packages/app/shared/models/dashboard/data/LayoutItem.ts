@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export type LayoutItem = BaseLayoutItem & { i: string };
 
-export const layoutItemSchema = z.object({
+export const layoutItemSchema = z.interface({
   h: z.int().nonnegative(),
   i: z.uuid(),
   isDraggable: z.boolean().optional(),

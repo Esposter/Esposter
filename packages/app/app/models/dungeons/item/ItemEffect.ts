@@ -8,7 +8,7 @@ export interface ItemEffect {
   value: number;
 }
 
-export const itemEffectSchema = z.object({
+export const itemEffectSchema = z.interface({
   type: itemEffectTypeSchema,
   value: z.number(),
 }) satisfies z.ZodType<ItemEffect>;

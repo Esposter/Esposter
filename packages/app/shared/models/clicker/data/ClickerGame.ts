@@ -17,7 +17,7 @@ export class ClickerGame extends AItemEntity {
 }
 
 export const clickerGameSchema = aItemEntitySchema.extend(
-  z.object({
+  z.interface({
     boughtBuildings: z.array(buildingWithStatsSchema),
     boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
     id: z.uuid(),

@@ -28,7 +28,7 @@ import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfa
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { z } from "zod";
 
-export const readMetadataInputSchema = z.object({
+export const readMetadataInputSchema = z.interface({
   messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
   roomId: selectRoomSchema.shape.id,
 });
@@ -40,26 +40,26 @@ const readMessagesInputSchema =
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
   createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
-    .extend(z.object({ roomId: selectRoomSchema.shape.id }))
+    .extend(z.interface({ roomId: selectRoomSchema.shape.id }))
     .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 // @TODO: Use this for getting replies
-const readMessagesByRowKeysInputSchema = z.object({
+const readMessagesByRowKeysInputSchema = z.interface({
   roomId: selectRoomSchema.shape.id,
   rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateMessageInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
-const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onUpdateMessageInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
-const onCreateTypingInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateTypingInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 
-const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onDeleteMessageInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const messageRouter = router({

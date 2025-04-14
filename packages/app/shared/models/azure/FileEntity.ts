@@ -6,7 +6,7 @@ export class FileEntity {
   url!: string;
 }
 
-export const fileEntitySchema = z.object({
+export const fileEntitySchema = z.interface({
   mimetype: z.string(),
   url: z.string(),
 }) satisfies z.ZodType<FileEntity>;

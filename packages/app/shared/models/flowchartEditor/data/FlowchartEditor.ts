@@ -12,7 +12,7 @@ export class FlowchartEditor extends AItemEntity {
 }
 
 export const flowchartEditorSchema = aItemEntitySchema.extend(
-  z.object({
+  z.interface({
     edges: z.array(edgeSchema),
     nodes: z.array(nodeSchema),
   }),

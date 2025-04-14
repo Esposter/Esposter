@@ -20,7 +20,7 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
 }
 
 export const tableEditorConfigurationSchema = aItemEntitySchema.extend(
-  z.object({
+  z.interface({
     [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
     [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
   }),

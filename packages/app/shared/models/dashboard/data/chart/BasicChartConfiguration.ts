@@ -9,7 +9,7 @@ export class BasicChartConfiguration extends Serializable {
   title?: string;
 }
 
-export const basicChartConfigurationSchema = z.object({
+export const basicChartConfigurationSchema = z.interface({
   dataLabels: z.boolean().default(false),
   subtitle: z.string().default(""),
   title: z.string().default(""),

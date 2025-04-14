@@ -17,7 +17,7 @@ export interface EffectConfiguration {
   type: EffectType;
 }
 
-export const effectConfigurationSchema = z.object({
+export const effectConfigurationSchema = z.interface({
   itemType: itemTypeSchema.optional(),
   targets: z.array(targetSchema).optional(),
   type: effectTypeSchema,

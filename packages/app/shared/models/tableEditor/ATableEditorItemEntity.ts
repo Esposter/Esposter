@@ -9,7 +9,7 @@ export abstract class ATableEditorItemEntity extends AItemEntity {
 }
 
 export const aTableEditorItemEntitySchema = aItemEntitySchema.extend(
-  z.object({
+  z.interface({
     name: z.string().min(1),
   }),
 ) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;

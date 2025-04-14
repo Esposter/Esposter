@@ -13,7 +13,7 @@ export class RespawnLocation {
   tilemapKey = TilemapKey.HomeBuilding1;
 }
 
-export const respawnLocationSchema = z.object({
+export const respawnLocationSchema = z.interface({
   direction: directionSchema,
   position: positionSchema,
   tilemapKey: tilemapKeySchema,

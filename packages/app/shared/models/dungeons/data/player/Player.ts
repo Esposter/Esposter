@@ -45,7 +45,7 @@ export class Player {
   }
 }
 
-export const playerSchema = z.object({
+export const playerSchema = z.interface({
   direction: directionSchema,
   inventory: inventorySchema,
   monsters: z.array(monsterSchema),
