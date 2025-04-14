@@ -1,6 +1,8 @@
-import type { input, ZodObjectLike } from "zod";
+import type { ZodObjectLike } from "zod";
 
 import { transform } from "zod";
 
-export const prefault = <T extends ZodObjectLike>(schema: T, value: input<T>) =>
-  transform((input) => input ?? value).pipe(schema);
+export const prefault = <TInput, TOutput, TSchema extends ZodObjectLike<TOutput, Awaited<TInput>>>(
+  schema: TSchema,
+  value: TInput,
+) => transform<TInput | undefined>((input) => input ?? value).pipe(schema);
