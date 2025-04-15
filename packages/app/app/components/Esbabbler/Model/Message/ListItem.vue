@@ -57,7 +57,7 @@ const selectEmoji = await useSelectEmoji(message);
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
         />
-        <v-list-item-subtitle v-else op="100!" v-html="messageHtml" />
+        <v-list-item-subtitle v-else op-100="!" v-html="messageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div relative z-1>
@@ -95,7 +95,7 @@ const selectEmoji = await useSelectEmoji(message);
         <v-list-item-title font-bold="!">
           {{ creator.name }}
         </v-list-item-title>
-        <v-list-item-subtitle op="100!" v-html="messageHtml" />
+        <v-list-item-subtitle op-100="!" v-html="messageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
     </template>

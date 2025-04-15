@@ -60,11 +60,11 @@ const items = computed(() => {
 
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
-    <v-card-actions p-0="!" min-h="auto!">
+    <v-card-actions p-0="!" gap-0 min-h-auto="!">
       <StyledEmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
-        :button-attrs="{ rd: '0!' }"
+        :button-attrs="{ 'rd-none': '!' }"
         @update:menu="(value) => emit('update:menu', value)"
         @select="(emoji) => emit('update:select-emoji', emoji)"
       />
