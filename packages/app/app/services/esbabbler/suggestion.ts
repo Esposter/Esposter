@@ -16,7 +16,6 @@ export const suggestion: MentionOptions["suggestion"] = {
     const { items } = await $trpc.room.readMembers.query({ filter: { name: query }, roomId: currentRoomId.value });
     return items;
   },
-
   render: () => {
     let component: VueRenderer;
     let popup: Instance[];
