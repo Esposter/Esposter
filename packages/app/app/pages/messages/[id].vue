@@ -8,7 +8,6 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 
 useSubscribables();
 
-const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName, rooms } = storeToRefs(roomStore);
 const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === currentRoomId.value));
