@@ -2,7 +2,6 @@
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
-import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useMemberStore } from "@/store/esbabbler/member";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
@@ -35,6 +34,7 @@ const keyboardExtension = new Extension({
     };
   },
 });
+const mentionExtension = useMentionExtension();
 </script>
 
 <template>
