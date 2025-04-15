@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { AnyExtension } from "@tiptap/vue-3";
+import type { VCard } from "vuetify/components";
 
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Link } from "@tiptap/extension-link";
@@ -9,6 +10,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
+  cardAttrs?: VCard["$attrs"];
   extensions?: AnyExtension[];
   height?: string;
   limit: number;
@@ -16,7 +18,13 @@ interface RichTextEditorProps {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
+const {
+  cardAttrs,
+  extensions,
+  height = "auto",
+  limit,
+  placeholder = "Text (optional)",
+} = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
   "prepend-external-footer": (props: Record<string, never>) => unknown;
@@ -41,7 +49,7 @@ onUnmounted(() => editor.value?.destroy());
 
 <template>
   <div flex flex-col w-full>
-    <StyledCard>
+    <StyledCard :="cardAttrs">
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
       <EditorContent :editor />

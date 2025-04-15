@@ -12,7 +12,6 @@ import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {
   emojiTag!: string;
-
   userIds: string[] = [];
 
   constructor(init?: Partial<MessageEmojiMetadataEntity> & ToData<CompositeKeyEntity>) {

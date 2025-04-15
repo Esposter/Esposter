@@ -11,11 +11,8 @@ import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];
-
   message!: string;
-
   replyToMessageRowKey?: string;
-
   userId!: string;
 
   constructor(init?: Partial<MessageEntity> & ToData<CompositeKeyEntity>) {
@@ -30,6 +27,7 @@ export const messageEntitySchema = itemMetadataSchema.extend(
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}
     partitionKey: z.string(),
+    replyToMessageRowKey: z.string().optional(),
     // reverse-ticked timestamp
     rowKey: z.string(),
     userId: selectUserSchema.shape.id,

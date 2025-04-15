@@ -66,13 +66,13 @@ export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input: { roomId, ...rest } }) => {
       const createdAt = new Date();
       const newMessage = new MessageEntity({
+        ...rest,
         createdAt,
         files: [],
-        message: input.message,
-        partitionKey: getMessagesPartitionKey(input.roomId, createdAt),
+        partitionKey: getMessagesPartitionKey(roomId, createdAt),
         rowKey: getReverseTickedTimestamp(),
         updatedAt: createdAt,
         userId: ctx.session.user.id,

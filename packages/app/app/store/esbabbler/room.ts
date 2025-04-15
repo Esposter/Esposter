@@ -27,11 +27,11 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
-  const currentRoomName = computed(() => {
-    if (!currentRoomId.value) return "";
-    const currentRoom = roomList.value.find(({ id }) => id === currentRoomId.value);
-    return currentRoom?.name ?? "";
+  const currentRoom = computed(() => {
+    if (!currentRoomId.value) return undefined;
+    return roomList.value.find(({ id }) => id === currentRoomId.value);
   });
+  const currentRoomName = computed(() => currentRoom.value?.name ?? "");
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
@@ -73,6 +73,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     leaveRoom,
     updateRoom,
     ...restData,
+    currentRoom,
     currentRoomId,
     currentRoomName,
     roomSearchQuery,

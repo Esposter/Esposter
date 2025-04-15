@@ -2,16 +2,17 @@
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+
 interface MessageListItemProps {
   creator: User;
   message: MessageEntity;
 }
 
 const { message } = defineProps<MessageListItemProps>();
-const messageHtml = computed(() => {
-  const newMessage = useRefreshMentions(message.message);
-  return newMessage;
-});
+const messageInputStore = useMessageInputStore();
+const { replyToMessage } = storeToRefs(messageInputStore);
+const messageHtml = useRefreshMentions(message.message);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
@@ -21,6 +22,7 @@ const active = computed(
   () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value,
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
+const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
@@ -52,7 +54,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
         />
-        <v-list-item-subtitle v-else op="100!" v-html="messageHtml" />
+        <v-list-item-subtitle v-else op-100="!" v-html="messageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div relative z-1>
@@ -69,9 +71,11 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
               :message
               :is-hovering
               :hover-props
-              @update:menu="(value) => (isOptionsChildrenActive = value)"
-              @update:update-mode="(value) => (isUpdateMode = value)"
               @update:delete-mode="updateIsOpen"
+              @update:menu="(value) => (isOptionsChildrenActive = value)"
+              @update:reply="(message) => (replyToMessage = message)"
+              @update:select-emoji="selectEmoji"
+              @update:update-mode="(value) => (isUpdateMode = value)"
             />
           </v-hover>
         </div>
@@ -88,7 +92,7 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
         <v-list-item-title font-bold="!">
           {{ creator.name }}
         </v-list-item-title>
-        <v-list-item-subtitle op="100!" v-html="messageHtml" />
+        <v-list-item-subtitle op-100="!" v-html="messageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
     </template>
@@ -103,7 +107,6 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
 :deep(.v-list-item__content) {
   overflow: visible;
 }
-
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;

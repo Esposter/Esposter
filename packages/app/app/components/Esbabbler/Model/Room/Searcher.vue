@@ -9,7 +9,7 @@ const dialog = ref(false);
 <template>
   <v-dialog v-model="dialog">
     <template #activator>
-      <v-btn case-normal="!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+      <v-btn variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
     </template>
     <StyledCard>
       <v-card-title>

@@ -32,7 +32,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
     const savedMessageInput = messageInputStore.messageInput;
     editor.commands.clearContent(true);
-    await $trpc.message.createMessage.mutate({ message: savedMessageInput, roomId: roomStore.currentRoomId });
+    await $trpc.message.createMessage.mutate({
+      message: savedMessageInput,
+      replyToMessageRowKey: messageInputStore.replyToMessage?.rowKey,
+      roomId: roomStore.currentRoomId,
+    });
   };
   const { data: typingList } = createDataMap<CreateTypingInput[]>(() => roomStore.currentRoomId, []);
   // We only expose the internal store crud message functions for subscriptions

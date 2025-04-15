@@ -1,13 +1,14 @@
 import type { MentionOptions } from "@tiptap/extension-mention";
 import type { Instance } from "tippy.js";
 
+import { dayjs } from "#shared/services/dayjs";
 import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 
 export const suggestion: MentionOptions["suggestion"] = {
-  items: async ({ query }) => {
+  items: useDebounceFn(async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);
     if (!(currentRoomId.value && query)) return [];
@@ -15,8 +16,7 @@ export const suggestion: MentionOptions["suggestion"] = {
     const { $trpc } = useNuxtApp();
     const { items } = await $trpc.room.readMembers.query({ filter: { name: query }, roomId: currentRoomId.value });
     return items;
-  },
-
+  }, dayjs.duration(0.3, "seconds").asMilliseconds()),
   render: () => {
     let component: VueRenderer;
     let popup: Instance[];
