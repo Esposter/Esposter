@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const editedMessageHtml = ref(useRefreshMentions(message.message));
+const editedMessageHtml = ref(useRefreshMentions(message.message).value);
 const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;

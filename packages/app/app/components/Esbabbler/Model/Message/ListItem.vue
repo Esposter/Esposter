@@ -12,10 +12,7 @@ interface MessageListItemProps {
 const { message } = defineProps<MessageListItemProps>();
 const messageInputStore = useMessageInputStore();
 const { replyToMessage } = storeToRefs(messageInputStore);
-const messageHtml = computed(() => {
-  const newMessage = useRefreshMentions(message.message);
-  return newMessage;
-});
+const messageHtml = useRefreshMentions(message.message);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
