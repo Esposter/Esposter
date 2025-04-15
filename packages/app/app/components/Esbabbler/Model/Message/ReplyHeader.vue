@@ -14,7 +14,7 @@ const creator = computed(() => members.value.find(({ id }) => id === userId));
 </script>
 
 <template>
-  <div v-if="creator" class="bg-background" relative rd-t-2 text-sm px-4 py-2>
+  <div v-if="creator" class="bg-background" relative text-sm px-4 py-2 rd-t-2>
     Replying to <span font-bold>{{ creator.name }}</span>
     <v-btn
       class="custom-border"
