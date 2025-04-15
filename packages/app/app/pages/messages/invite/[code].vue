@@ -26,7 +26,7 @@ if (!invite)
     statusCode: 404,
   });
 else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
-  await navigateTo(RoutePath.MessagesInvite(invite.roomId));
+  await navigateTo(RoutePath.Messages(invite.roomId));
 </script>
 
 <template>
@@ -67,7 +67,7 @@ else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?
                   if (typeof code !== 'string') return;
                   const userToRoom = await $trpc.room.joinRoom.mutate(code);
                   if (!userToRoom) return;
-                  await navigateTo(RoutePath.MessagesInvite(userToRoom.roomId));
+                  await navigateTo(RoutePath.Messages(userToRoom.roomId));
                 }
               "
             >
