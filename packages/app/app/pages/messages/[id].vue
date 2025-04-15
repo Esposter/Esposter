@@ -36,8 +36,8 @@ const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === curren
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
-:deep(.mention) {
+<style lang="scss">
+.mention {
   color: v-bind(info);
   background-color: v-bind(infoOpacity10);
   border-radius: $border-radius-root;

@@ -2,12 +2,16 @@
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+
 interface MessageListItemProps {
   creator: User;
   message: MessageEntity;
 }
 
 const { message } = defineProps<MessageListItemProps>();
+const messageInputStore = useMessageInputStore();
+const { replyToMessage } = storeToRefs(messageInputStore);
 const messageHtml = computed(() => {
   const newMessage = useRefreshMentions(message.message);
   return newMessage;
@@ -21,6 +25,7 @@ const active = computed(
   () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value,
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
+const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
@@ -69,9 +74,11 @@ const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.valu
               :message
               :is-hovering
               :hover-props
-              @update:menu="(value) => (isOptionsChildrenActive = value)"
-              @update:update-mode="(value) => (isUpdateMode = value)"
               @update:delete-mode="updateIsOpen"
+              @update:menu="(value) => (isOptionsChildrenActive = value)"
+              @update:reply="(message) => (replyToMessage = message)"
+              @update:select-emoji="selectEmoji"
+              @update:update-mode="(value) => (isUpdateMode = value)"
             />
           </v-hover>
         </div>

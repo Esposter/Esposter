@@ -2,8 +2,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
-import { useEmojiStore } from "@/store/esbabbler/emoji";
-import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface Item {
@@ -23,74 +21,41 @@ const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>
 const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:menu": [value: boolean];
+  "update:reply": [message: MessageEntity];
+  "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
 const { data: session } = await authClient.useSession(useFetch);
-const { $trpc } = useNuxtApp();
-const emojiStore = useEmojiStore();
-const { getEmojiList } = emojiStore;
-const emojis = computed(() => getEmojiList(message.rowKey));
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const items = computed(() => {
   if (!isCreator.value) return [];
 
-  const result: Item[] = [];
-  result.unshift({
-    icon: "mdi-pencil",
-    onClick: () => {
-      emit("update:update-mode", true);
+  const result: Item[] = [
+    {
+      icon: "mdi-pencil",
+      onClick: () => {
+        emit("update:update-mode", true);
+      },
+      title: "Edit Message",
     },
-    title: "Edit Message",
-  });
-  result.push({
-    color: "error",
-    icon: "mdi-delete",
-    onClick: () => {
-      emit("update:delete-mode", true);
+    {
+      icon: "mdi-reply",
+      onClick: () => {
+        emit("update:reply", message);
+      },
+      title: "Reply",
     },
-    title: "Delete Message",
-  });
+    {
+      color: "error",
+      icon: "mdi-delete",
+      onClick: () => {
+        emit("update:delete-mode", true);
+      },
+      title: "Delete Message",
+    },
+  ];
   return result;
 });
-
-const onSelect = async (emoji: string) => {
-  if (!session.value) return;
-
-  const emojiTag = unemojify(emoji);
-  const foundEmoji = emojis.value.find((e) => e.emojiTag === emojiTag);
-  if (!foundEmoji) {
-    await $trpc.emoji.createEmoji.mutate({
-      emojiTag,
-      messageRowKey: message.rowKey,
-      partitionKey: message.partitionKey,
-    });
-    return;
-  }
-
-  if (foundEmoji.userIds.includes(session.value.user.id)) {
-    if (foundEmoji.userIds.length === 1)
-      await $trpc.emoji.deleteEmoji.mutate({
-        messageRowKey: foundEmoji.messageRowKey,
-        partitionKey: foundEmoji.partitionKey,
-        rowKey: foundEmoji.rowKey,
-      });
-    else
-      await $trpc.emoji.updateEmoji.mutate({
-        messageRowKey: foundEmoji.messageRowKey,
-        partitionKey: foundEmoji.partitionKey,
-        rowKey: foundEmoji.rowKey,
-        userIds: foundEmoji.userIds.filter((userId) => userId !== session.value?.user.id),
-      });
-    return;
-  }
-
-  await $trpc.emoji.updateEmoji.mutate({
-    messageRowKey: foundEmoji.messageRowKey,
-    partitionKey: foundEmoji.partitionKey,
-    rowKey: foundEmoji.rowKey,
-    userIds: [...foundEmoji.userIds, session.value.user.id],
-  });
-};
 </script>
 
 <template>
@@ -101,7 +66,7 @@ const onSelect = async (emoji: string) => {
         :button-props="{ size: 'small' }"
         :button-attrs="{ rd: '0!' }"
         @update:menu="(value) => emit('update:menu', value)"
-        @select="onSelect"
+        @select="(emoji) => emit('update:select-emoji', emoji)"
       />
       <v-tooltip text="Edit">
         <template #activator="{ props: tooltipProps }">
