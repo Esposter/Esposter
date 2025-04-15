@@ -70,6 +70,6 @@ watch(
 
 <style scoped lang="scss">
 .button {
-  background-color: v-bind(infoOpacity10);
+  background-color: v-bind(infoOpacity10) !important;
 }
 </style>
