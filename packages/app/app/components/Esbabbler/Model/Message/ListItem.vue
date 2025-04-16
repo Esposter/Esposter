@@ -30,21 +30,25 @@ const selectEmoji = await useSelectEmoji(message);
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         v-if="creator.name"
+        mt-4
+        py-1="!"
+        min-h-auto="!"
         :active="active && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
-          <v-avatar v-if="creator.image">
-            <v-img :src="creator.image" :alt="creator.name" />
-          </v-avatar>
-          <StyledDefaultAvatar v-else :name="creator.name" />
+          <StyledAvatar :image="creator.image" :name="creator.name" />
         </template>
         <v-list-item-title>
+          <EsbabblerModelMessageReplyMessage
+            v-if="message.replyToMessageRowKey"
+            :reply-to-message-row-key="message.replyToMessageRowKey"
+          />
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span class="text-subtitle-2" pl-2 text-gray>
+          <span pl-2 text-xs text-gray>
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
@@ -62,7 +66,7 @@ const selectEmoji = await useSelectEmoji(message);
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
           right-0
-          top--6
+          top--2
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
@@ -84,10 +88,7 @@ const selectEmoji = await useSelectEmoji(message);
     <template #messagePreview>
       <v-list-item v-if="creator.name">
         <template #prepend>
-          <v-avatar v-if="creator.image">
-            <v-img :src="creator.image" :alt="creator.name" />
-          </v-avatar>
-          <StyledDefaultAvatar v-else :name="creator.name" />
+          <StyledAvatar :image="creator.image" :name="creator.name" />
         </template>
         <v-list-item-title font-bold="!">
           {{ creator.name }}
@@ -101,7 +102,7 @@ const selectEmoji = await useSelectEmoji(message);
 
 <style scoped lang="scss">
 :deep(.v-list-item__prepend) {
-  align-self: flex-start;
+  align-self: flex-end;
 }
 
 :deep(.v-list-item__content) {

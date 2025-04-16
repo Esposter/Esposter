@@ -17,10 +17,7 @@ const { roomsSearched } = storeToRefs(roomStore);
     >
       <v-list-item :title="room.name" :value="room.id">
         <template #prepend>
-          <v-avatar v-if="room.image">
-            <v-img :src="room.image" :alt="room.name" />
-          </v-avatar>
-          <StyledDefaultAvatar v-else :name="room.name" />
+          <StyledAvatar :image="room.image" :name="room.name" />
         </template>
       </v-list-item>
     </NuxtInvisibleLink>

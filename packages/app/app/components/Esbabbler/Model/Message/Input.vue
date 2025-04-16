@@ -2,7 +2,6 @@
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
-import { useMemberStore } from "@/store/esbabbler/member";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -10,19 +9,17 @@ import { Extension } from "@tiptap/vue-3";
 
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
-const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
+const messageStore = useMessageStore();
+const { sendMessage } = messageStore;
+const { creatorMap, typingList } = storeToRefs(messageStore);
 const placeholder = computed(() => {
   const userId = currentRoom.value?.userId;
   if (!userId) return "";
-  const creator = members.value.find(({ id }) => id === userId);
+  const creator = creatorMap.value.get(userId);
   return creator ? `Message ${creator.name}'s Room` : "";
 });
 const messageInputStore = useMessageInputStore();
 const { messageInput, replyToMessage } = storeToRefs(messageInputStore);
-const messageStore = useMessageStore();
-const { sendMessage } = messageStore;
-const { typingList } = storeToRefs(messageStore);
 const typingMessage = computed(() => getTypingMessage(typingList.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {

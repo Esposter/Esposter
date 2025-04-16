@@ -1,3 +1,4 @@
+import type { User } from "#shared/db/schema/users";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
@@ -31,14 +32,18 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
     const savedMessageInput = messageInputStore.messageInput;
+    const savedReplyToMessageRowKey = messageInputStore.replyToMessage?.rowKey;
     editor.commands.clearContent(true);
+    messageInputStore.replyToMessage = undefined;
     await $trpc.message.createMessage.mutate({
       message: savedMessageInput,
-      replyToMessageRowKey: messageInputStore.replyToMessage?.rowKey,
+      replyToMessageRowKey: savedReplyToMessageRowKey,
       roomId: roomStore.currentRoomId,
     });
   };
-  const { data: typingList } = createDataMap<CreateTypingInput[]>(() => roomStore.currentRoomId, []);
+  const { data: creatorMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, User>());
+  const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
+  const typingList = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
@@ -48,6 +53,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
+    creatorMap,
+    replyMap,
     typingList,
   };
 });
