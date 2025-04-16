@@ -10,7 +10,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
-  cardAttrs?: VCard["$attrs"];
+  cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
   height?: string;
   limit: number;
@@ -19,7 +19,7 @@ interface RichTextEditorProps {
 
 const modelValue = defineModel<string>({ required: true });
 const {
-  cardAttrs,
+  cardProps,
   extensions,
   height = "auto",
   limit,
@@ -49,7 +49,7 @@ onUnmounted(() => editor.value?.destroy());
 
 <template>
   <div flex flex-col w-full>
-    <StyledCard :="cardAttrs">
+    <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
       <EditorContent :editor />
