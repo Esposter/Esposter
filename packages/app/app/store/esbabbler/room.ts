@@ -1,5 +1,4 @@
 import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
@@ -7,7 +6,6 @@ import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { dayjs } from "#shared/services/dayjs";
-import { createDataMap } from "@/services/shared/createDataMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
@@ -67,8 +65,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     return results.value.map(({ item }) => item);
   });
 
-  const { data: creatorMap } = createDataMap(currentRoomId, new Map<string, User>());
-
   return {
     rooms,
     ...restOperationData,
@@ -77,7 +73,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     leaveRoom,
     updateRoom,
     ...restData,
-    creatorMap,
     currentRoom,
     currentRoomId,
     currentRoomName,

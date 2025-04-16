@@ -1,4 +1,3 @@
-import type { User } from "#shared/db/schema/users";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
@@ -51,7 +50,6 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
       roomId: roomStore.currentRoomId,
     });
   };
-  const { data: creatorMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, User>());
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   const typingList = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
@@ -63,7 +61,6 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
-    creatorMap,
     replyMap,
     typingList,
   };

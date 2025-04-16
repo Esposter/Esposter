@@ -9,12 +9,12 @@ export const useReadMessages = async () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
   const { initializeCursorPaginationData, pushMessageList } = messageStore;
-  const { creatorMap, hasMore, nextCursor } = storeToRefs(messageStore);
-  const readCreators = useReadCreators(creatorMap);
+  const { hasMore, nextCursor } = storeToRefs(messageStore);
+  const readUsers = useReadUsers();
   const readReplies = useReadReplies();
   const readEmojis = useReadEmojis();
   const readMetadata = (messages: MessageEntity[]) =>
-    Promise.all([readCreators(messages.map(({ userId }) => userId)), readReplies(messages), readEmojis(messages)]);
+    Promise.all([readUsers(messages.map(({ userId }) => userId)), readReplies(messages), readEmojis(messages)]);
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
@@ -25,24 +25,18 @@ export const useReadMessages = async () => {
       });
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
-      if (response.items.length === 0) return;
-      pushMessageList(...response.items);
       await readMetadata(response.items);
+      pushMessageList(...response.items);
     } finally {
       onComplete();
     }
   };
 
-  const onComplete = async () => {
-    if (!currentRoomId.value) return;
-
+  if (currentRoomId.value) {
     const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
-    initializeCursorPaginationData(response);
-    if (response.items.length === 0) return;
-
     await readMetadata(response.items);
-  };
+    initializeCursorPaginationData(response);
+  }
 
-  await onComplete();
   return readMoreMessages;
 };

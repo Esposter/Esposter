@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 
 interface ReplyProps {
@@ -6,10 +7,12 @@ interface ReplyProps {
 }
 
 const { replyRowKey } = defineProps<ReplyProps>();
+const esbabblerStore = useEsbabblerStore();
+const { userMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
-const { creatorMap, replyMap } = storeToRefs(messageStore);
+const { replyMap } = storeToRefs(messageStore);
 const reply = computed(() => replyMap.value.get(replyRowKey));
-const creator = computed(() => (reply.value ? creatorMap.value.get(reply.value.userId) : undefined));
+const creator = computed(() => (reply.value ? userMap.value.get(reply.value.userId) : undefined));
 </script>
 
 <template>

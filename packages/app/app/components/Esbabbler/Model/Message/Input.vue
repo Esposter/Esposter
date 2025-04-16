@@ -2,17 +2,20 @@
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { Extension } from "@tiptap/vue-3";
 
+const esbabblerStore = useEsbabblerStore();
+const { userMap } = storeToRefs(esbabblerStore);
 const roomStore = useRoomStore();
-const { creatorMap, currentRoom } = storeToRefs(roomStore);
+const { currentRoom } = storeToRefs(roomStore);
 const placeholder = computed(() => {
   if (!currentRoom.value) return "";
-  const creator = creatorMap.value.get(currentRoom.value.userId);
-  return creator ? `Message ${creator.name}'s Room` : "";
+  const user = userMap.value.get(currentRoom.value.userId);
+  return user ? `Message ${user.name}'s Room` : "";
 });
 const messageInputStore = useMessageInputStore();
 const { messageInput, reply } = storeToRefs(messageInputStore);
