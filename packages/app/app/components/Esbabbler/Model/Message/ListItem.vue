@@ -11,7 +11,7 @@ interface MessageListItemProps {
 
 const { message } = defineProps<MessageListItemProps>();
 const messageInputStore = useMessageInputStore();
-const { replyToMessage } = storeToRefs(messageInputStore);
+const { reply } = storeToRefs(messageInputStore);
 const messageHtml = useRefreshMentions(message.message);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
@@ -41,10 +41,7 @@ const selectEmoji = await useSelectEmoji(message);
           <StyledAvatar :image="creator.image" :name="creator.name" />
         </template>
         <v-list-item-title>
-          <EsbabblerModelMessageReplyMessage
-            v-if="message.replyToMessageRowKey"
-            :reply-to-message-row-key="message.replyToMessageRowKey"
-          />
+          <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
           <span font-bold>
             {{ creator.name }}
           </span>
@@ -77,7 +74,7 @@ const selectEmoji = await useSelectEmoji(message);
               :hover-props
               @update:delete-mode="updateIsOpen"
               @update:menu="(value) => (isOptionsChildrenActive = value)"
-              @update:reply="(message) => (replyToMessage = message)"
+              @update:reply="(message) => (reply = message)"
               @update:select-emoji="selectEmoji"
               @update:update-mode="(value) => (isUpdateMode = value)"
             />

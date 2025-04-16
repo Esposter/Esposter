@@ -16,7 +16,10 @@ export const createAzureMetadataMap = <TType extends string>(
   const getMetadataList = (rowKey: string) => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return [];
-    return metadataMap.value.get(currentIdValue)?.get(rowKey) ?? [];
+    const dataMap = metadataMap.value.get(currentIdValue);
+    if (!dataMap) return [];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return dataMap.get(rowKey) ?? dataMap.set(rowKey, []).get(rowKey)!;
   };
   const setMetadataList = (rowKey: string, metadataList: TEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);

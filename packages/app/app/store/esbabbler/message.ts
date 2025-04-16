@@ -1,5 +1,6 @@
 import type { User } from "#shared/db/schema/users";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
+import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
@@ -18,26 +19,35 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
-    deleteMessage: storeDeleteMessage,
+    deleteMessage: baseStoreDeleteMessage,
     updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createOperationData(itemList, ["partitionKey", "rowKey"], AzureEntityType.Message);
-  // Our messages list is reversed
-  // i.e. most recent messages are at the front
+
   const storeCreateMessage = (message: MessageEntity) => {
+    if (message.replyRowKey) {
+      const reply = restOperationData.messageList.value.find(({ rowKey }) => rowKey === message.replyRowKey);
+      if (reply) replyMap.value.set(message.replyRowKey, reply);
+    }
+    // Our messages list is reversed i.e. most recent messages are at the front
     baseStoreCreateMessage(message, true);
+  };
+
+  const storeDeleteMessage = (input: DeleteMessageInput) => {
+    replyMap.value.delete(input.rowKey);
+    baseStoreDeleteMessage(input);
   };
 
   const sendMessage = async (editor: Editor) => {
     if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
     const savedMessageInput = messageInputStore.messageInput;
-    const savedReplyToMessageRowKey = messageInputStore.replyToMessage?.rowKey;
+    const savedreplyRowKey = messageInputStore.reply?.rowKey;
     editor.commands.clearContent(true);
-    messageInputStore.replyToMessage = undefined;
+    messageInputStore.reply = undefined;
     await $trpc.message.createMessage.mutate({
       message: savedMessageInput,
-      replyToMessageRowKey: savedReplyToMessageRowKey,
+      replyRowKey: savedreplyRowKey,
       roomId: roomStore.currentRoomId,
     });
   };

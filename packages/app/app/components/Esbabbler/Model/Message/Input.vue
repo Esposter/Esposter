@@ -15,7 +15,7 @@ const placeholder = computed(() => {
   return creator ? `Message ${creator.name}'s Room` : "";
 });
 const messageInputStore = useMessageInputStore();
-const { messageInput, replyToMessage } = storeToRefs(messageInputStore);
+const { messageInput, reply } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 const { typingList } = storeToRefs(messageStore);
@@ -35,17 +35,13 @@ const mentionExtension = useMentionExtension();
 
 <template>
   <div w-full>
-    <EsbabblerModelMessageReplyHeader
-      v-if="replyToMessage"
-      :user-id="replyToMessage.userId"
-      @close="replyToMessage = undefined"
-    />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="reply = undefined" />
     <RichTextEditor
       v-model="messageInput"
       :placeholder
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
-      :card-attrs="replyToMessage ? { 'rd-t-0': '' } : undefined"
+      :card-attrs="reply ? { 'rd-t-0': '' } : undefined"
     >
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />
