@@ -14,7 +14,6 @@ const creator = computed(() => (reply.value ? creatorMap.value.get(reply.value.u
 
 <template>
   <div relative flex items-center>
-    <div class="spine" absolute bottom-0 left--9 />
     <template v-if="reply && creator">
       <div flex items-center gap-1>
         <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
