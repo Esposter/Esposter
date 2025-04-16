@@ -12,7 +12,11 @@ export const createCursorPaginationDataMap = <TItem extends ToData<AEntity>>(
     get: () => {
       const currentIdValue = toValue(currentId);
       if (!currentIdValue) return new CursorPaginationData<TItem>();
-      return cursorPaginationDataMap.value.get(currentIdValue) ?? new CursorPaginationData<TItem>();
+      return (
+        cursorPaginationDataMap.value.get(currentIdValue) ??
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        cursorPaginationDataMap.value.set(currentIdValue, new CursorPaginationData<TItem>()).get(currentIdValue)!
+      );
     },
     set: (newCursorPaginationData) => {
       const currentIdValue = toValue(currentId);
