@@ -90,8 +90,8 @@ catalog:
   dedent: ^1.5.3
   defu: ^6.1.4
   dotenv: ^16.5.0
-  drizzle-kit: ^0.30.6
-  drizzle-orm: ^0.41.0
+  drizzle-kit: ^0.31.0
+  drizzle-orm: ^0.42.0
   drizzle-zod: ^0.7.1
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.24.0
@@ -148,16 +148,16 @@ catalog:
   sass-embedded: ^1.86.3
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
-  survey-core: ^2.0.4
-  survey-creator-core: ^2.0.4
-  survey-creator-vue: ^2.0.4
-  survey-vue3-ui: ^2.0.4
+  survey-core: ^2.0.5
+  survey-creator-core: ^2.0.5
+  survey-creator-vue: ^2.0.5
+  survey-vue3-ui: ^2.0.5
   three: ^0.175.0
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
   tsx: ^4.19.3
-  type-fest: ^4.39.1
+  type-fest: ^4.40.0
   typedoc: ^0.28.2
   typescript: ^5.8.3
   typescript-eslint: ^8.30.1

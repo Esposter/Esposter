@@ -1,18 +1,17 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
-
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <TItem extends ToData<AEntity>>(
-  currentId: MaybeRefOrGetter<string | undefined>,
-) => {
+export const createCursorPaginationDataMap = <TItem>(currentId: MaybeRefOrGetter<string | undefined>) => {
   const cursorPaginationDataMap: Ref<Map<string, CursorPaginationData<TItem>>> = ref(new Map());
   const cursorPaginationData = computed({
     get: () => {
       const currentIdValue = toValue(currentId);
       if (!currentIdValue) return new CursorPaginationData<TItem>();
-      return cursorPaginationDataMap.value.get(currentIdValue) ?? new CursorPaginationData<TItem>();
+      return (
+        cursorPaginationDataMap.value.get(currentIdValue) ??
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        cursorPaginationDataMap.value.set(currentIdValue, new CursorPaginationData<TItem>()).get(currentIdValue)!
+      );
     },
     set: (newCursorPaginationData) => {
       const currentIdValue = toValue(currentId);

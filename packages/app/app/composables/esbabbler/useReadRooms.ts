@@ -1,3 +1,5 @@
+import type { Room } from "#shared/db/schema/rooms";
+
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadRooms = async () => {
@@ -5,22 +7,29 @@ export const useReadRooms = async () => {
   const roomStore = useRoomStore();
   const { initializeCursorPaginationData, pushRoomList } = roomStore;
   const { currentRoomId, hasMore, nextCursor } = storeToRefs(roomStore);
+  const readUsers = useReadUsers();
+  const readMetadata = (rooms: Room[]) => Promise.all([readUsers(rooms.map(({ userId }) => userId))]);
   const readMoreRooms = async (onComplete: () => void) => {
     try {
       const response = await $trpc.room.readRooms.query({ cursor: nextCursor.value });
-      pushRoomList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      await readMetadata(response.items);
+      pushRoomList(...response.items);
     } finally {
       onComplete();
     }
   };
 
-  const [item, response] = await Promise.all([
-    currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : null,
-    $trpc.room.readRooms.query(),
-  ]);
-  if (item && !response.items.some(({ id }) => id === item.id)) response.items.push(item);
-  initializeCursorPaginationData(response);
+  if (currentRoomId.value) {
+    const [item, response] = await Promise.all([
+      currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : null,
+      $trpc.room.readRooms.query(),
+    ]);
+    if (item && !response.items.some(({ id }) => id === item.id)) response.items.push(item);
+    await readMetadata(response.items);
+    initializeCursorPaginationData(response);
+  }
+
   return readMoreRooms;
 };

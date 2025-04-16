@@ -2,24 +2,23 @@
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
-import { useMemberStore } from "@/store/esbabbler/member";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { Extension } from "@tiptap/vue-3";
 
+const esbabblerStore = useEsbabblerStore();
+const { userMap } = storeToRefs(esbabblerStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
-const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
 const placeholder = computed(() => {
-  const userId = currentRoom.value?.userId;
-  if (!userId) return "";
-  const creator = members.value.find(({ id }) => id === userId);
-  return creator ? `Message ${creator.name}'s Room` : "";
+  if (!currentRoom.value) return "";
+  const user = userMap.value.get(currentRoom.value.userId);
+  return user ? `Message ${user.name}'s Room` : "";
 });
 const messageInputStore = useMessageInputStore();
-const { messageInput, replyToMessage } = storeToRefs(messageInputStore);
+const { messageInput, reply } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 const { typingList } = storeToRefs(messageStore);
@@ -39,17 +38,13 @@ const mentionExtension = useMentionExtension();
 
 <template>
   <div w-full>
-    <EsbabblerModelMessageReplyHeader
-      v-if="replyToMessage"
-      :user-id="replyToMessage.userId"
-      @close="replyToMessage = undefined"
-    />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="reply = undefined" />
     <RichTextEditor
       v-model="messageInput"
       :placeholder
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
-      :card-attrs="replyToMessage ? { 'rd-t-0': '' } : undefined"
+      :card-attrs="reply ? { 'rd-t-0': '' } : undefined"
     >
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />

@@ -1,3 +1,5 @@
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -8,8 +10,11 @@ export const useReadMessages = async () => {
   const messageStore = useMessageStore();
   const { initializeCursorPaginationData, pushMessageList } = messageStore;
   const { hasMore, nextCursor } = storeToRefs(messageStore);
+  const readUsers = useReadUsers();
+  const readReplies = useReadReplies();
   const readEmojis = useReadEmojis();
-  const readMissingMembers = useReadMissingMembers();
+  const readMetadata = (messages: MessageEntity[]) =>
+    Promise.all([readUsers(messages.map(({ userId }) => userId)), readReplies(messages), readEmojis(messages)]);
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
@@ -18,25 +23,20 @@ export const useReadMessages = async () => {
         cursor: nextCursor.value,
         roomId: currentRoomId.value,
       });
-      pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
-      await Promise.all([readEmojis(response.items), readMissingMembers(response.items)]);
+      await readMetadata(response.items);
+      pushMessageList(...response.items);
     } finally {
       onComplete();
     }
   };
 
-  const onComplete = async () => {
-    if (!currentRoomId.value) return;
-
+  if (currentRoomId.value) {
     const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
+    await readMetadata(response.items);
     initializeCursorPaginationData(response);
-    if (response.items.length === 0) return;
+  }
 
-    await Promise.all([readEmojis(response.items), readMissingMembers(response.items)]);
-  };
-
-  await onComplete();
   return readMoreMessages;
 };

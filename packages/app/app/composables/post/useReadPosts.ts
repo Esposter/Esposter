@@ -8,9 +8,9 @@ export const useReadPosts = async () => {
   const readMorePosts = async (onComplete: () => void) => {
     try {
       const response = await $trpc.post.readPosts.query({ cursor: nextCursor.value });
-      pushPostList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      pushPostList(...response.items);
     } finally {
       onComplete();
     }
