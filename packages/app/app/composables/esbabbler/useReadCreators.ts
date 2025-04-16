@@ -1,24 +1,18 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { User } from "#shared/db/schema/users";
 
-import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
-export const useReadCreators = () => {
+export const useReadCreators = (creatorMap: Ref<Map<string, User>>) => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageStore = useMessageStore();
-  const { creatorMap } = storeToRefs(messageStore);
-  return async (messages: MessageEntity[]) => {
+  return async (userIds: string[]) => {
     if (!currentRoomId.value) return;
 
-    const creators = messages.filter(({ userId }) => !creatorMap.value.has(userId));
-    if (creators.length === 0) return;
+    const creatorIds = userIds.filter((id) => !creatorMap.value.has(id));
+    if (creatorIds.length === 0) return;
 
-    const membersByIds = await $trpc.room.readMembersByIds.query({
-      ids: creators.map(({ userId }) => userId),
-      roomId: currentRoomId.value,
-    });
-    for (const memberById of membersByIds) creatorMap.value.set(memberById.id, memberById);
+    const creators = await $trpc.room.readMembersByIds.query({ ids: creatorIds, roomId: currentRoomId.value });
+    for (const creator of creators) creatorMap.value.set(creator.id, creator);
   };
 };

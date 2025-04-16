@@ -9,12 +9,12 @@ export const useReadMessages = async () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
   const { initializeCursorPaginationData, pushMessageList } = messageStore;
-  const { hasMore, nextCursor } = storeToRefs(messageStore);
-  const readCreators = useReadCreators();
+  const { creatorMap, hasMore, nextCursor } = storeToRefs(messageStore);
+  const readCreators = useReadCreators(creatorMap);
   const readReplies = useReadReplies();
   const readEmojis = useReadEmojis();
   const readMetadata = (messages: MessageEntity[]) =>
-    Promise.all([readCreators(messages), readReplies(messages), readEmojis(messages)]);
+    Promise.all([readCreators(messages.map(({ userId }) => userId)), readReplies(messages), readEmojis(messages)]);
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
@@ -23,9 +23,10 @@ export const useReadMessages = async () => {
         cursor: nextCursor.value,
         roomId: currentRoomId.value,
       });
-      pushMessageList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      if (response.items.length === 0) return;
+      pushMessageList(...response.items);
       await readMetadata(response.items);
     } finally {
       onComplete();

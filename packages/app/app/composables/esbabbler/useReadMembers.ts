@@ -13,9 +13,10 @@ export const useReadMembers = async () => {
       if (!currentRoomId.value) return;
 
       const response = await $trpc.room.readMembers.query({ cursor: nextCursor.value, roomId: currentRoomId.value });
-      pushMemberList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      if (response.items.length === 0) return;
+      pushMemberList(...response.items);
     } finally {
       onComplete();
     }

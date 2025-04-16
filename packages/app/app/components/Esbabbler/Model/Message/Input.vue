@@ -8,18 +8,17 @@ import { useRoomStore } from "@/store/esbabbler/room";
 import { Extension } from "@tiptap/vue-3";
 
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
-const messageStore = useMessageStore();
-const { sendMessage } = messageStore;
-const { creatorMap, typingList } = storeToRefs(messageStore);
+const { creatorMap, currentRoom } = storeToRefs(roomStore);
 const placeholder = computed(() => {
-  const userId = currentRoom.value?.userId;
-  if (!userId) return "";
-  const creator = creatorMap.value.get(userId);
+  if (!currentRoom.value) return "";
+  const creator = creatorMap.value.get(currentRoom.value.userId);
   return creator ? `Message ${creator.name}'s Room` : "";
 });
 const messageInputStore = useMessageInputStore();
 const { messageInput, replyToMessage } = storeToRefs(messageInputStore);
+const messageStore = useMessageStore();
+const { sendMessage } = messageStore;
+const { typingList } = storeToRefs(messageStore);
 const typingMessage = computed(() => getTypingMessage(typingList.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {

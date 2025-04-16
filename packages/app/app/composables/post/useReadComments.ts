@@ -8,9 +8,10 @@ export const useReadComments = async (postId: string) => {
   const readMoreComments = async (onComplete: () => void) => {
     try {
       const response = await $trpc.post.readPosts.query({ cursor: nextCursor.value, parentId: postId });
-      pushCommentList(...response.items);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      if (response.items.length === 0) return;
+      pushCommentList(...response.items);
     } finally {
       onComplete();
     }
