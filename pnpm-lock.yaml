@@ -532,7 +532,7 @@ catalogs:
       specifier: ^0.6.2
       version: 0.6.2
     zod:
-      specifier: ^3.24.2
+      specifier: ^3.24.3
       version: 3.24.3
     zod-to-json-schema:
       specifier: ^3.24.5
