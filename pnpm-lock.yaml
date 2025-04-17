@@ -567,9 +567,6 @@ importers:
       rollup:
         specifier: 'catalog:'
         version: 4.40.0
-      tsx:
-        specifier: 'catalog:'
-        version: 4.19.3
       type-fest:
         specifier: 'catalog:'
         version: 4.40.0
@@ -1015,6 +1012,9 @@ importers:
       sass-embedded:
         specifier: 'catalog:'
         version: 1.86.3
+      tsx:
+        specifier: 'catalog:'
+        version: 4.19.3
       unocss:
         specifier: 'catalog:'
         version: 66.1.0-beta.11(@unocss/webpack@66.1.0-beta.11(webpack@5.99.5(esbuild@0.23.1)))(postcss@8.5.3)(vite@6.3.1(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))

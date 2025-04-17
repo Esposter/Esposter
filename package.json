@@ -16,7 +16,7 @@
   "scripts": {
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "lerna run build --scope=@esposter/app",
-    "build:docs": "typedoc && tsx packages/app/scripts/fixTypedocRelativePaths.ts",
+    "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
@@ -48,7 +48,6 @@
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "rollup": "catalog:",
-    "tsx": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
