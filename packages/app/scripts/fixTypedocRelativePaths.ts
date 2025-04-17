@@ -13,7 +13,7 @@ for (const filename of filenames) {
   const relativeMarker = "./";
   await writeFile(
     path,
-    file.replaceAll(/(href|src)="([^"]*(?:assets|media)[^"]*)"/g, (_, attribute, originalPath) => {
+    file.replaceAll(/(href|src)="([^"]*(?:assets|media|modules)[^"]*)"/g, (_, attribute, originalPath) => {
       const lastIndex = originalPath.lastIndexOf(relativeMarker);
       if (lastIndex === -1) return `${attribute}="${RoutePath.Docs}/${originalPath}"`;
       // -1 to insert before the /
