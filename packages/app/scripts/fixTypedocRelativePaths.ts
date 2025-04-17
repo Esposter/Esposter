@@ -1,22 +1,27 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import { extname } from "node:path";
 
 import typedocConfiguration from "../../../typedoc.config.js";
 import { RoutePath } from "../shared/models/router/RoutePath.ts";
 
-const ASSETS_FOLDER_PATH = "assets";
-const MEDIA_FOLDER_PATH = "media";
-const HREF_ATTRIBUTE = "href";
-const SRC_ATTRIBUTE = "src";
-const filenames = ["hierarchy.html", "index.html", "modules.html"];
+const filenames = await readdir(typedocConfiguration.out, { recursive: true });
 
 for (const filename of filenames) {
+  if (extname(filename).toLowerCase() !== ".html") continue;
   const path = `${typedocConfiguration.out}/${filename}`;
   const file = await readFile(path, "utf-8");
   await writeFile(
     path,
-    file.replaceAll(
-      new RegExp(`(${HREF_ATTRIBUTE}|${SRC_ATTRIBUTE})="(${ASSETS_FOLDER_PATH}|${MEDIA_FOLDER_PATH})`, "g"),
-      `$1="${RoutePath.Docs}/$2`,
-    ),
+    file.replaceAll(/(href|src)="(?!https?:\/\/|..\/|#)(.+?)"/g, (_, attribute, originalPath) => {
+      const relativeMarker = "./";
+      const lastIndex = originalPath.lastIndexOf(relativeMarker);
+      if (lastIndex === -1) return `${attribute}="${RoutePath.Docs}/${originalPath}"`;
+      // -1 to insert before the /
+      const insertionPoint = lastIndex + relativeMarker.length - 1;
+      const partBefore = originalPath.substring(0, insertionPoint);
+      const partAfter = originalPath.substring(insertionPoint);
+      const newPath = `${partBefore}${RoutePath.Docs}${partAfter}`;
+      return `${attribute}="${newPath}"`;
+    }),
   );
 }
