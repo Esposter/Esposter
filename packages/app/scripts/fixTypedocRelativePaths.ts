@@ -12,15 +12,14 @@ for (const filename of filenames) {
   const file = await readFile(path, "utf-8");
   await writeFile(
     path,
-    file.replaceAll(/(href|src)="(?!https?:\/\/|..\/|#)(.+?)"/g, (_, attribute, originalPath) => {
+    file.replaceAll(/(href|src)="(?!https?:\/\/|#)(.+?)"/g, (_, attribute, originalPath) => {
       const relativeMarker = "./";
       const lastIndex = originalPath.lastIndexOf(relativeMarker);
       if (lastIndex === -1) return `${attribute}="${RoutePath.Docs}/${originalPath}"`;
       // -1 to insert before the /
-      const insertionPoint = lastIndex + relativeMarker.length - 1;
-      const partBefore = originalPath.substring(0, insertionPoint);
-      const partAfter = originalPath.substring(insertionPoint);
-      const newPath = `${partBefore}${RoutePath.Docs}${partAfter}`;
+      const insertIndex = lastIndex + relativeMarker.length - 1;
+      const pathAfter = originalPath.substring(insertIndex);
+      const newPath = `${RoutePath.Docs}${pathAfter}`;
       return `${attribute}="${newPath}"`;
     }),
   );
