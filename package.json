@@ -48,6 +48,7 @@
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "rollup": "catalog:",
+    "tsx": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",

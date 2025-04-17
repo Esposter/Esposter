@@ -190,7 +190,6 @@
     "nuxt-security": "catalog:",
     "prettier": "catalog:",
     "sass-embedded": "catalog:",
-    "tsx": "catalog:",
     "unocss": "catalog:",
     "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
