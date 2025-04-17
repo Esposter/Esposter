@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 
 config({ path: "packages/app/.env" });
-/** @type {Partial<import('typedoc').TypeDocOptions>} */
+/** @satisfies {import('typedoc').TypeDocOptions} */
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
   name: "Esposter",

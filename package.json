@@ -26,11 +26,11 @@
     "lint:fix": "lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
-    "cross-os": "node packages/app/scripts/cross-os.ts",
+    "refresh:lockfile": "pnpm crossOS refresh:lockfile",
+    "crossOS": "node scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
-  "cross-os": {
+  "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",
