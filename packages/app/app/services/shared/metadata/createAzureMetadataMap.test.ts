@@ -9,7 +9,7 @@ describe(createAzureMetadataMap, () => {
   const rowKey = "0";
 
   beforeEach(() => {
-    azureMetadataMap = createAzureMetadataMap(currentId, MessageMetadataType.Emoji);
+    azureMetadataMap = createAzureMetadataMap(() => currentId, MessageMetadataType.Emoji);
   });
 
   test("gets", () => {

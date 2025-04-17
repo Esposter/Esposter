@@ -1,4 +1,6 @@
-export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, displayWidth: Ref<number>) => {
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
+
+export const useDisplayWidths = (totalDisplayWidth: ReadonlyRefOrGetter<number>, displayWidth: Ref<number>) => {
   const totalLeftCapDisplayWidth = ref<number>();
   const leftCapDisplayWidth = ref<number>();
   const totalMiddleDisplayWidth = ref<number>();
