@@ -1,8 +1,8 @@
+import { RoutePath } from "#shared/models/router/RoutePath";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { extname } from "node:path";
 
 import typedocConfiguration from "../../../typedoc.config.js";
-import { RoutePath } from "../shared/models/router/RoutePath.ts";
 
 const filenames = await readdir(typedocConfiguration.out, { recursive: true });
 
