@@ -1,5 +1,7 @@
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
+
 export const createDataMap = <TItem extends NonNullable<unknown>>(
-  currentId: MaybeRefOrGetter<null | string>,
+  currentId: ReadonlyRefOrGetter<string | undefined>,
   defaultValue: TItem,
 ) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
@@ -7,7 +9,8 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
     get: () => {
       const currentIdValue = toValue(currentId);
       if (!currentIdValue) return defaultValue;
-      return dataMap.value.get(currentIdValue) ?? defaultValue;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return dataMap.value.get(currentIdValue) ?? dataMap.value.set(currentIdValue, defaultValue).get(currentIdValue)!;
     },
     set: (newData) => {
       const currentIdValue = toValue(currentId);
@@ -27,7 +30,6 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
 
   return {
     data,
-    dataMap,
     initializeData,
     resetData,
   };

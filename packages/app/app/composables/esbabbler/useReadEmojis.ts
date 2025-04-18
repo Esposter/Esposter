@@ -10,7 +10,7 @@ export const useReadEmojis = () => {
   const emojiStore = useEmojiStore();
   const { setEmojiList } = emojiStore;
   return async (messages: MessageEntity[]) => {
-    if (!currentRoomId.value) return;
+    if (!currentRoomId.value || messages.length === 0) return;
 
     const messageRowKeys = messages.map(({ rowKey }) => rowKey);
     const emojis = await $trpc.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });

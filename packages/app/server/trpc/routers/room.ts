@@ -23,7 +23,7 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, ilike, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -68,7 +68,7 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
-  createInvite: getRoomOwnerProcedure(createInviteInputSchema, "roomId")
+  createInvite: getRoomUserProcedure(createInviteInputSchema, "roomId")
     .input(createInviteInputSchema)
     .mutation<null | string>(async ({ ctx, input: { roomId } }) => {
       let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
@@ -152,7 +152,7 @@ export const roomRouter = router({
         with: InviteRelations,
       })) ?? null,
   ),
-  readInviteCode: getRoomOwnerProcedure(readInviteCodeInputSchema, "roomId")
+  readInviteCode: getRoomUserProcedure(readInviteCodeInputSchema, "roomId")
     .input(readInviteCodeInputSchema)
     .query<null | string>(async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId)),
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
@@ -185,7 +185,7 @@ export const roomRouter = router({
     if (input)
       return (
         (await ctx.db.query.rooms.findFirst({
-          where: (rooms, { eq }) =>
+          where: (rooms, { and, eq, exists }) =>
             and(
               eq(rooms.id, input),
               exists(

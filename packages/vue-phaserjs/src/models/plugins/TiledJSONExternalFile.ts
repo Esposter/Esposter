@@ -85,7 +85,6 @@ export class TiledJSONExternalFile extends MultiFile {
     this.pending--;
 
     if (!(file.type === "json" && Object.hasOwn(file.data, "tilesets"))) return;
-
     //  Inspect the data for the files to now load
     const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
     const config = this.config;

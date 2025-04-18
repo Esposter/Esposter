@@ -6,7 +6,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 export const useReadSurveys = async () => {
   const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initializeOffsetPaginationData } = surveyStore;
+  const { initializeOffsetPaginationData, pushSurveyList } = surveyStore;
   const { hasMore, surveyList, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
   const readMoreSurveys = async ({
@@ -27,6 +27,8 @@ export const useReadSurveys = async () => {
       });
       surveyList.value = response.items;
       hasMore.value = response.hasMore;
+      if (response.items.length === 0) return;
+      pushSurveyList(...response.items);
     } finally {
       isLoading.value = false;
     }

@@ -1,20 +1,24 @@
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
+
 import { useMemberStore } from "@/store/esbabbler/member";
 import { parse } from "node-html-parser";
 
-export const useRefreshMentions = (message: string) => {
+export const useRefreshMentions = (message: ReadonlyRefOrGetter<string>) => {
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);
-  const messageHtml = parse(message);
-  const mentions = messageHtml.querySelectorAll("span[data-type='mention']");
+  return computed(() => {
+    const messageHtml = parse(toValue(message));
+    const mentions = messageHtml.querySelectorAll("span[data-type='mention']");
 
-  for (const mention of mentions) {
-    const memberId = mention.getAttribute("data-id");
-    const member = members.value.find(({ id }) => id === memberId);
-    if (!member?.name) continue;
+    for (const mention of mentions) {
+      const memberId = mention.getAttribute("data-id");
+      const member = members.value.find(({ id }) => id === memberId);
+      if (!member?.name || member.name === mention.textContent.substring(1)) continue;
 
-    mention.textContent = `@${member.name}`;
-    mention.setAttribute("data-label", member.name);
-  }
+      mention.textContent = `@${member.name}`;
+      mention.setAttribute("data-label", member.name);
+    }
 
-  return messageHtml.toString();
+    return messageHtml.toString();
+  });
 };

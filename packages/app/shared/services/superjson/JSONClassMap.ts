@@ -8,7 +8,6 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { MessageReplyMetadataEntity } from "#shared/models/db/message/metadata/MessageReplyMetadataEntity";
 import { DungeonsGame } from "#shared/models/dungeons/data/DungeonsGame";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
@@ -28,7 +27,6 @@ export const JSONClassMap = {
   FlowchartEditor,
   MessageEmojiMetadataEntity,
   MessageEntity,
-  MessageReplyMetadataEntity,
   TableEditor,
   TableEditorConfiguration,
   TodoListItem,

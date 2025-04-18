@@ -26,7 +26,7 @@ if (!invite)
     statusCode: 404,
   });
 else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
-  await navigateTo(RoutePath.MessagesInvite(invite.roomId));
+  await navigateTo(RoutePath.Messages(invite.roomId));
 </script>
 
 <template>
@@ -38,10 +38,7 @@ else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?
       <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
         <StyledCard class="bg-background" items-center p-8>
           <v-card-title>
-            <v-avatar v-if="invite.user.image" size="6rem">
-              <v-img :src="invite.user.image" :alt="invite.user.name" />
-            </v-avatar>
-            <StyledDefaultAvatar v-else :name="invite.user.name" />
+            <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
           </v-card-title>
           <v-card-text>
             <div text-center>
@@ -67,7 +64,7 @@ else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?
                   if (typeof code !== 'string') return;
                   const userToRoom = await $trpc.room.joinRoom.mutate(code);
                   if (!userToRoom) return;
-                  await navigateTo(RoutePath.MessagesInvite(userToRoom.roomId));
+                  await navigateTo(RoutePath.Messages(userToRoom.roomId));
                 }
               "
             >

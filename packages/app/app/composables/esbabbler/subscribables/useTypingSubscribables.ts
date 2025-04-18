@@ -4,21 +4,19 @@ import { dayjs } from "#shared/services/dayjs";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
-interface TypingTimeout {
-  id: number;
-  userId: string;
-}
-
 export const useTypingSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { typingList } = storeToRefs(messageStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const typingTimeouts = ref<TypingTimeout[]>([]);
+  const typingTimeoutIdMap = ref(new Map<string, number>());
   const clearTypingTimeout = (userId: string) => {
-    const timeout = typingTimeouts.value.find((t) => t.userId === userId);
-    if (timeout) window.clearTimeout(timeout.id);
+    const timeoutId = typingTimeoutIdMap.value.get(userId);
+    if (timeoutId) {
+      typingTimeoutIdMap.value.delete(userId);
+      window.clearTimeout(timeoutId);
+    }
   };
 
   const createTypingUnsubscribable = ref<Unsubscribable>();
@@ -40,7 +38,7 @@ export const useTypingSubscribables = () => {
             clearTypingTimeout(data.userId);
           }, dayjs.duration(3, "seconds").asMilliseconds());
 
-          typingTimeouts.value.push({ id, userId: data.userId });
+          typingTimeoutIdMap.value.set(data.userId, id);
           if (!typingList.value.some(({ userId }) => userId === data.userId)) typingList.value.push(data);
         },
       },
@@ -48,7 +46,8 @@ export const useTypingSubscribables = () => {
   });
 
   onUnmounted(() => {
-    for (const { userId } of typingTimeouts.value) clearTypingTimeout(userId);
     createTypingUnsubscribable.value?.unsubscribe();
+    for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+    typingList.value = [];
   });
 };

@@ -4,7 +4,6 @@ import type { Editor } from "@tiptap/core";
 
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { mentionExtension } from "@/services/esbabbler/mentionExtension";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Extension } from "@tiptap/vue-3";
@@ -21,7 +20,7 @@ const emit = defineEmits<{
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const editedMessageHtml = ref(useRefreshMentions(message.message));
+const editedMessageHtml = ref(useRefreshMentions(() => message.message).value);
 const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
@@ -54,6 +53,7 @@ const keyboardExtension = new Extension({
     };
   },
 });
+const mentionExtension = useMentionExtension();
 </script>
 
 <template>

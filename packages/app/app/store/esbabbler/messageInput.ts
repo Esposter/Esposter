@@ -1,3 +1,5 @@
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMessageInputStore = defineStore("esbabbler/messageInput", () => {
@@ -13,5 +15,6 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
       messageInputMap.value.set(roomStore.currentRoomId, newMessageInput);
     },
   });
-  return { messageInput };
+  const reply = shallowRef<MessageEntity>();
+  return { messageInput, reply };
 });

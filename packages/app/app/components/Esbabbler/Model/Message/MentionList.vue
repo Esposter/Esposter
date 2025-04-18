@@ -59,7 +59,7 @@ watch(
         <v-avatar v-if="item.image" size="x-small">
           <v-img :src="item.image" :alt="item.name" />
         </v-avatar>
-        <span font-bold pl-2 case-normal>
+        <span font-bold pl-2>
           {{ item.name }}
         </span>
       </v-btn>
@@ -70,6 +70,6 @@ watch(
 
 <style scoped lang="scss">
 .button {
-  background-color: v-bind(infoOpacity10);
+  background-color: v-bind(infoOpacity10) !important;
 }
 </style>

@@ -8,7 +8,6 @@ useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler
 
 useSubscribables();
 
-const { info, infoOpacity10 } = useColors();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName, rooms } = storeToRefs(roomStore);
 const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === currentRoomId.value));
@@ -17,7 +16,7 @@ const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === curren
 <template>
   <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
-  <NuxtLayout :main-style="{ 'max-height': '100dvh' }">
+  <NuxtLayout :main-style="{ maxHeight: '100dvh' }">
     <template #left>
       <EsbabblerLeftSideBar />
     </template>
@@ -35,11 +34,3 @@ const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === curren
     </template>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-:deep(.mention) {
-  color: v-bind(info);
-  background-color: v-bind(infoOpacity10);
-  border-radius: $border-radius-root;
-}
-</style>

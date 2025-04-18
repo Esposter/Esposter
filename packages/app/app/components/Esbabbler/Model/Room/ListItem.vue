@@ -21,10 +21,7 @@ const active = computed(() => room.id === currentRoomId.value);
       <v-list-item :active :value="room.id">
         <template #prepend>
           <v-badge mr-4 color="green" location="bottom end" dot>
-            <v-avatar v-if="room.image">
-              <v-img :src="room.image" :alt="room.name" />
-            </v-avatar>
-            <StyledDefaultAvatar v-else :name="room.name" />
+            <StyledAvatar :image="room.image" :name="room.name" />
           </v-badge>
         </template>
         <v-list-item-title pr-6>

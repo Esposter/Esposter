@@ -71,10 +71,7 @@ const menu = ref(false);
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
             <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">
-              <v-avatar v-if="session.user.image">
-                <v-img :src="session.user.image" :alt="session.user.name" />
-              </v-avatar>
-              <StyledDefaultAvatar v-else :name="session.user.name" />
+              <StyledAvatar :image="session.user.image ?? null" :name="session.user.name" />
             </v-btn>
           </v-avatar>
         </template>

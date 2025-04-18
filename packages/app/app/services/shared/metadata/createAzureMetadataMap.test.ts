@@ -3,13 +3,13 @@ import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageM
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("createAzureMetadataMap", () => {
+describe(createAzureMetadataMap, () => {
   let azureMetadataMap: ReturnType<typeof createAzureMetadataMap<MessageMetadataType.Emoji>>;
   const currentId = "0";
   const rowKey = "0";
 
   beforeEach(() => {
-    azureMetadataMap = createAzureMetadataMap(currentId, MessageMetadataType.Emoji);
+    azureMetadataMap = createAzureMetadataMap(() => currentId, MessageMetadataType.Emoji);
   });
 
   test("gets", () => {
