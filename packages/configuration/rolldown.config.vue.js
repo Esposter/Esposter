@@ -8,6 +8,6 @@ export default defineConfig([
     plugins: [dts({ tsconfig: "tsconfig.build.vue.json" })],
     resolve: {
       tsconfigFilename: "tsconfig.build.vue.json",
-    }
+    },
   },
 ]);

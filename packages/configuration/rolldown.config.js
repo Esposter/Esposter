@@ -8,6 +8,6 @@ export default defineConfig([
     plugins: [dts({ tsconfig: "tsconfig.build.json" })],
     resolve: {
       tsconfigFilename: "tsconfig.build.json",
-    }
+    },
   },
 ]);
