@@ -45,7 +45,7 @@ const selectEmoji = await useSelectEmoji(message);
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span pl-2 text-xs text-gray>
+          <span pl-2 text-gray text-xs>
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
