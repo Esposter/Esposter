@@ -1,3 +1,3 @@
 import type { GameObjects } from "phaser";
 
-export type GameObjectConfiguration = Pick<GameObjects.GameObject, "active">;
+export interface GameObjectConfiguration extends Pick<GameObjects.GameObject, "active"> {}

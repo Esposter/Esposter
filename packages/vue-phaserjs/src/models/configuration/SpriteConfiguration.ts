@@ -16,19 +16,20 @@ import type { AnimationConfiguration } from "@/models/configuration/shared/Anima
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type SpriteConfiguration = AlphaConfiguration &
-  AnimationConfiguration &
-  BlendModeConfiguration &
-  DepthConfiguration &
-  Except<Types.GameObjects.Sprite.SpriteConfig, "anims" | keyof Types.GameObjects.GameObjectConfig> &
-  FlipConfiguration &
-  GlobalConfiguration &
-  MaskConfiguration &
-  OriginConfiguration &
-  PipelineConfiguration &
-  ScrollFactorConfiguration &
-  SizeConfiguration &
-  TextureConfiguration &
-  TintConfiguration &
-  TransformConfiguration &
-  VisibleConfiguration;
+export interface SpriteConfiguration
+  extends AlphaConfiguration,
+    AnimationConfiguration,
+    BlendModeConfiguration,
+    DepthConfiguration,
+    Except<Types.GameObjects.Sprite.SpriteConfig, "anims" | "frame" | keyof Types.GameObjects.GameObjectConfig>,
+    FlipConfiguration,
+    GlobalConfiguration,
+    MaskConfiguration,
+    OriginConfiguration,
+    PipelineConfiguration,
+    ScrollFactorConfiguration,
+    SizeConfiguration,
+    TextureConfiguration,
+    TintConfiguration,
+    TransformConfiguration,
+    VisibleConfiguration {}
