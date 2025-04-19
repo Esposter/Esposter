@@ -32,11 +32,9 @@
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "rolldown-vite": "catalog:"
   },
   "peerDependencies": {

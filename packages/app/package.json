@@ -52,7 +52,6 @@
     "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@codemirror/view": "catalog:",
-    "@esposter/shared": "workspace:*",
     "@fullcalendar/core": "catalog:",
     "@fullcalendar/daygrid": "catalog:",
     "@fullcalendar/interaction": "catalog:",
@@ -158,7 +157,6 @@
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/scripts": "catalog:",

@@ -29,11 +29,7 @@
     "typecheck": "tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*"
-  },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:"
   }
 }
