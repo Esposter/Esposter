@@ -36,7 +36,8 @@
     "parse-tmx": "workspace:*"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "rolldown-vite": "catalog:"
   },
   "peerDependencies": {
     "phaser": "catalog:",
