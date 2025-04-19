@@ -27,7 +27,7 @@
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "crossOS": "node packages/app/scripts/crossOS.ts",
+    "crossOS": "node scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "crossOS": {
