@@ -78,6 +78,9 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^0.11.0
       version: 0.11.0
+    '@rolldown/plugin-node-polyfills':
+      specifier: ^1.0.0
+      version: 1.0.0
     '@tiptap/core':
       specifier: ^2.11.7
       version: 2.11.7
@@ -567,9 +570,6 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1)
-      vite-plugin-node-polyfills:
-        specifier: 'catalog:'
-        version: 0.23.0(rollup@4.40.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
       vue-tsc:
         specifier: 'catalog:'
         version: 2.2.8(typescript@5.8.3)
@@ -1015,6 +1015,9 @@ importers:
 
   packages/configuration:
     devDependencies:
+      '@rolldown/plugin-node-polyfills':
+        specifier: 'catalog:'
+        version: 1.0.0
       '@unocss/eslint-config':
         specifier: 'catalog:'
         version: 66.1.0-beta.12(eslint@9.24.0(jiti@2.4.2))(typescript@5.8.3)
@@ -1051,6 +1054,9 @@ importers:
       vite-plugin-mkcert:
         specifier: 'catalog:'
         version: 1.17.8(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
+      vite-plugin-node-polyfills:
+        specifier: 'catalog:'
+        version: 0.23.0(rollup@4.40.0)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
@@ -3687,6 +3693,9 @@ packages:
     resolution: {integrity: sha512-WWZHGk1iJt1bOtUFFmap8S5Vt2HJ0JwAj3u1XKec27nspYXEhyIQMnLCT3Mhnl37oC/gzFZ2eGLlfbc2F9Mwtg==}
     cpu: [x64]
     os: [win32]
+
+  '@rolldown/plugin-node-polyfills@1.0.0':
+    resolution: {integrity: sha512-JUmEhvz+B6+0AaeUGvZ7SnJec7wpwYqZ+FcAng1I3UVGYKA1uSmE1H4vKHUewU665Nb37znDd9N4o/iImmKeVg==}
 
   '@rollup/plugin-alias@5.1.1':
     resolution: {integrity: sha512-PR9zDb+rOzkRb2VD+EuKB7UC41vU5DIwZ5qqCpk0KJudcWAyi8rvYOhS7+L5aZCspw1stTViLgN5v6FF1p5cgQ==}
@@ -14697,6 +14706,8 @@ snapshots:
 
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.7-commit.cef50bd':
     optional: true
+
+  '@rolldown/plugin-node-polyfills@1.0.0': {}
 
   '@rollup/plugin-alias@5.1.1(rollup@4.40.0)':
     optionalDependencies:

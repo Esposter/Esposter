@@ -52,7 +52,6 @@
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
     "vue-tsc": "catalog:"
   },
   "engines": {

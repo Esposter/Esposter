@@ -22,6 +22,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "devDependencies": {
+    "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
@@ -34,6 +35,7 @@
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:",
+    "vite-plugin-node-polyfills": "catalog:",
     "vite-tsconfig-paths": "catalog:"
   }
 }
