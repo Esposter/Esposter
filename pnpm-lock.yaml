@@ -409,8 +409,8 @@ catalogs:
       specifier: npm:rolldown@nightly
       version: 1.0.0-beta.7-commit.46fbc61
     rolldown-plugin-dts:
-      specifier: ^0.7.11
-      version: 0.7.11
+      specifier: ^0.8.1
+      version: 0.8.1
     rolldown-vite:
       specifier: ^6.3.1
       version: 6.3.1
@@ -1053,7 +1053,7 @@ importers:
         version: 5.2.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.2(eslint@9.25.0(jiti@2.4.2)))(eslint@9.25.0(jiti@2.4.2))(prettier@3.5.3)
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.7.11(rolldown@1.0.0-beta.7-commit.a7cf9ac(@oxc-project/runtime@0.64.0)(typescript@5.8.3))(typescript@5.8.3)
+        version: 0.8.1(rolldown@1.0.0-beta.7-commit.a7cf9ac(@oxc-project/runtime@0.64.0)(typescript@5.8.3))(typescript@5.8.3)
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.30.1(eslint@9.25.0(jiti@2.4.2))(typescript@5.8.3)
@@ -9711,8 +9711,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.7.11:
-    resolution: {integrity: sha512-zSE04cCZECUnNOSB3fJvjJcGR7u+o3cCUYamgaKtoXEsMfUcSpVE7Ph6ojLvN5TdnqpBc6fcqEEORvXp6e9lYg==}
+  rolldown-plugin-dts@0.8.1:
+    resolution: {integrity: sha512-6F/BrP1tmroEz33fiyZ8MARph07Z/UWmsT6ihbs11dK1qAaw5s+D/5sojTzH8zcTO3TQSzOcsdZ4Vmql+1XrVw==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       rolldown: ^1.0.0-beta.7
@@ -21843,7 +21843,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.7.11(rolldown@1.0.0-beta.7-commit.a7cf9ac(@oxc-project/runtime@0.64.0)(typescript@5.8.3))(typescript@5.8.3):
+  rolldown-plugin-dts@0.8.1(rolldown@1.0.0-beta.7-commit.a7cf9ac(@oxc-project/runtime@0.64.0)(typescript@5.8.3))(typescript@5.8.3):
     dependencies:
       debug: 4.4.0
       dts-resolver: 1.0.0

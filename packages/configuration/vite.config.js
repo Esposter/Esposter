@@ -22,7 +22,8 @@ export default defineConfig({
     tsconfigPaths(),
     nodePolyfills({ include: ["zlib"] }),
     vue(),
-    dts(),
+    // @TODO: https://github.com/qmhc/vite-plugin-dts/issues/302
+    dts({ tsconfigPath: "tsconfig.build.json" }),
     mkcert(),
   ],
 });

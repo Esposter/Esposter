@@ -6,7 +6,7 @@ export default defineConfig([
   {
     input: "src/index.ts",
     output: [{ dir: "dist", format: "es" }],
-    plugins: [nodePolyfills(), dts({ tsconfig: "tsconfig.build.json" })],
+    plugins: [nodePolyfills(), dts({ resolve: ["type-fest"], tsconfig: "tsconfig.build.json" })],
     resolve: {
       tsconfigFilename: "tsconfig.build.json",
     },
