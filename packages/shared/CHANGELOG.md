@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Bug Fixes
+
+* some formatting/lint ([a4dd6d8](https://github.com/Esposter/Esposter/commit/a4dd6d8921ea0b0e6e38ebbf66cc308d20a9a99d))
+
+### Features
+
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
+
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
 
 **Note:** Version bump only for package @esposter/shared

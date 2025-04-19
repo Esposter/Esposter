@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Bug Fixes
+
+* add eslint ([948ce6c](https://github.com/Esposter/Esposter/commit/948ce6c29136cb497ef71b8e4e60af299fe41b0f))
+* add resolve tsConfig for dts ([d623f62](https://github.com/Esposter/Esposter/commit/d623f6207ede56cb19daf10a141dea9362a51454))
+* add trying to resolve tsconfig ([594e874](https://github.com/Esposter/Esposter/commit/594e8746663057c3bd97f935d84226f35546b2f1))
+* format ([403fb3c](https://github.com/Esposter/Esposter/commit/403fb3c9782c32f2a6980be73848587061a7b4da))
+* should try and use build tsconfig ([3d5ab1f](https://github.com/Esposter/Esposter/commit/3d5ab1f391ecd5c9504f25713ed9a6d75cfaf9b6))
+* update rolldown-plugin-dts to resolve external lib types ([ec85376](https://github.com/Esposter/Esposter/commit/ec8537604995279c0a97bd501410a6cf8867e6d9))
+
+### Features
+
+* Add polyfills ([f2e60ba](https://github.com/Esposter/Esposter/commit/f2e60baa41aacdf1d0f49ecfe0876312c7ad8f12))
+* Add tsconfig.json at root to enable complete devtooling with eslint + tsconfig across the whole monorepo in both packages and at the root for scripts ([5b1e48c](https://github.com/Esposter/Esposter/commit/5b1e48c742a023852a7ab1ed5a53f2400228be20))
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
+
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
 
 **Note:** Version bump only for package @esposter/configuration
