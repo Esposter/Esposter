@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    AutoImport({ imports: ["vue", "pinia"], dts: true }),
+    AutoImport({ dts: true, imports: ["vue", "pinia"] }),
     tsconfigPaths(),
     nodePolyfills({ include: ["zlib"] }),
     vue(),
