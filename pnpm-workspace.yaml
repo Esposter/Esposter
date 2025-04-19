@@ -19,16 +19,13 @@ catalog:
   "@lerna-lite/publish": ^4.0.0
   "@lerna-lite/run": ^4.0.0
   "@mdi/font": ^7.4.47
+  "@rolldown/plugin-node-polyfills": ^1.0.0
   "@nuxt/eslint": ^1.3.0
   "@nuxt/fonts": ^0.11.1
   "@nuxt/scripts": ^0.11.6
   "@nuxt/test-utils": ^3.17.2
   "@nuxtjs/seo": ^3.0.3
   "@pinia/nuxt": ^0.11.0
-  "@rollup/plugin-commonjs": ^28.0.3
-  "@rollup/plugin-json": ^6.1.0
-  "@rollup/plugin-node-resolve": ^16.0.1
-  "@rollup/plugin-typescript": ^12.1.2
   "@tiptap/core": ^2.11.7
   "@tiptap/extension-character-count": ^2.11.7
   "@tiptap/extension-link": ^2.11.7
@@ -143,8 +140,8 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
-  rollup: ^4.40.0
-  rollup-plugin-dts: ^6.2.1
+  rolldown: npm:rolldown@nightly
+  rolldown-plugin-dts: "^0.7.8"
   rxjs: ^7.8.2
   sass-embedded: ^1.86.3
   sql-highlight: ^6.0.0
@@ -188,4 +185,5 @@ onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
   - esbuild
+  - rolldown
   - vue-demi

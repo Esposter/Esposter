@@ -47,12 +47,11 @@
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "rollup": "catalog:",
+    "rolldown": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
     "vue-tsc": "catalog:"
   },
   "engines": {
