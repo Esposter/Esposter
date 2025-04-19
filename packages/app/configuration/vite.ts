@@ -1,7 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export const vite: NuxtConfig["vite"] = {
   build: {
@@ -26,5 +25,4 @@ export const vite: NuxtConfig["vite"] = {
   optimizeDeps: {
     include: commonjsDeps,
   },
-  plugins: [nodePolyfills({ include: ["stream", "timers", "zlib"] })],
 };

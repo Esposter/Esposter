@@ -16,7 +16,7 @@ const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === curren
 <template>
   <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
-  <NuxtLayout :main-style="{ 'max-height': '100dvh' }">
+  <NuxtLayout :main-style="{ maxHeight: '100dvh' }">
     <template #left>
       <EsbabblerLeftSideBar />
     </template>

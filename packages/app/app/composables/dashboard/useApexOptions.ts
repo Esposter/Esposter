@@ -1,13 +1,14 @@
 import type { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import type { ApexOptions } from "apexcharts";
 
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
 import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
 
 export const useApexOptions = (
-  chart: MaybeRefOrGetter<Chart>,
-  visualType: MaybeRefOrGetter<VisualType>,
+  chart: ReadonlyRefOrGetter<Chart>,
+  visualType: ReadonlyRefOrGetter<VisualType>,
   initialOptions: ComputedRef<ApexOptions>,
 ) =>
   computed(() => {

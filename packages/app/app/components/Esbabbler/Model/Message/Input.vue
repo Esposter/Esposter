@@ -44,7 +44,7 @@ const mentionExtension = useMentionExtension();
       :placeholder
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
-      :card-attrs="reply ? { 'rd-t-0': '' } : undefined"
+      :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />

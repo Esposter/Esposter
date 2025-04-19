@@ -1,0 +1,11 @@
+{
+  "extends": "../app/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "${configDir}/src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  },
+  "include": ["${configDir}/auto-imports.d.ts", "${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
+  "exclude": ["${configDir}/node_modules"]
+}

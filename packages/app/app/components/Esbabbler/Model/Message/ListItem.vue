@@ -12,7 +12,7 @@ interface MessageListItemProps {
 const { message } = defineProps<MessageListItemProps>();
 const messageInputStore = useMessageInputStore();
 const { reply } = storeToRefs(messageInputStore);
-const messageHtml = useRefreshMentions(message.message);
+const messageHtml = useRefreshMentions(() => message.message);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
@@ -45,7 +45,7 @@ const selectEmoji = await useSelectEmoji(message);
           <span font-bold>
             {{ creator.name }}
           </span>
-          <span pl-2 text-xs text-gray>
+          <span pl-2 text-gray text-xs>
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>

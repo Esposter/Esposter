@@ -1,7 +1,9 @@
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
+
 import { useMemberStore } from "@/store/esbabbler/member";
 import { parse } from "node-html-parser";
 
-export const useRefreshMentions = (message: MaybeRefOrGetter<string>) => {
+export const useRefreshMentions = (message: ReadonlyRefOrGetter<string>) => {
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);
   return computed(() => {

@@ -7,7 +7,7 @@
   "keywords": [
     "ctix",
     "eslint",
-    "rollup",
+    "rolldown",
     "typescript",
     "vite"
   ],
@@ -22,10 +22,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "catalog:",
-    "@rollup/plugin-json": "catalog:",
-    "@rollup/plugin-node-resolve": "catalog:",
-    "@rollup/plugin-typescript": "catalog:",
+    "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
@@ -33,11 +30,12 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
-    "rollup-plugin-dts": "catalog:",
+    "rolldown-plugin-dts": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:",
+    "vite-plugin-node-polyfills": "catalog:",
     "vite-tsconfig-paths": "catalog:"
   }
 }

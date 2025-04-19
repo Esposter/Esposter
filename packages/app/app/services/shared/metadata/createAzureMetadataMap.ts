@@ -1,6 +1,7 @@
 import type { MessageMetadataEntityMap } from "#shared/models/db/message/metadata/MessageMetadataEntityMap";
 import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
 import { uncapitalize } from "@/util/text/uncapitalize";
@@ -8,7 +9,7 @@ import { uncapitalize } from "@/util/text/uncapitalize";
 type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
 export const createAzureMetadataMap = <TType extends string>(
-  currentId: MaybeRefOrGetter<string | undefined>,
+  currentId: ReadonlyRefOrGetter<string | undefined>,
   azureEntityTypeKey: TType,
 ) => {
   // Map<partitionKey, Map<rowKey, T[]>>

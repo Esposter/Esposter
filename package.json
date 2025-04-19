@@ -26,11 +26,11 @@
     "lint:fix": "lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
-    "cross-os": "node packages/app/scripts/cross-os.ts",
+    "refresh:lockfile": "pnpm crossOS refresh:lockfile",
+    "crossOS": "node packages/app/scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
-  "cross-os": {
+  "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",
@@ -47,12 +47,11 @@
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "rollup": "catalog:",
+    "rolldown": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
     "vue-tsc": "catalog:"
   },
   "engines": {

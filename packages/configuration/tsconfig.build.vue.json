@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.vue.json",
+  "exclude": ["${configDir}/node_modules", "${configDir}/**/*.test.ts"]
+}
