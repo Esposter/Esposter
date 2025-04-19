@@ -28,8 +28,5 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
-  },
-  "devDependencies": {
-    "@types/node": "catalog:"
   }
 }
