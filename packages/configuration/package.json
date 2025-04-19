@@ -21,7 +21,12 @@
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",

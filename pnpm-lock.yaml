@@ -1015,6 +1015,9 @@ importers:
 
   packages/configuration:
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: 'link:'
       '@rolldown/plugin-node-polyfills':
         specifier: 'catalog:'
         version: 1.0.0

@@ -10,6 +10,9 @@ export default tseslint.config(
   unocss,
   {
     files: ["**/**.test.ts", "**/**.test-d.ts"],
+    languageOptions: {
+      globals: vitest.environments.env.globals,
+    },
     plugins: {
       vitest,
     },
@@ -20,15 +23,12 @@ export default tseslint.config(
       "vitest/no-hooks": "off",
       "vitest/prefer-to-be-falsy": "off",
       "vitest/prefer-to-be-truthy": "off",
-      "vitest/require-hook": "off"
+      "vitest/require-hook": "off",
     },
     settings: {
       vitest: {
         typecheck: true,
       },
-    },
-    languageOptions: {
-      globals: vitest.environments.env.globals,
     },
   },
   perfectionist.configs["recommended-natural"],

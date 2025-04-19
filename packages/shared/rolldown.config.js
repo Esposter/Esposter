@@ -1,3 +1,1 @@
-import rolldownConfiguration from "@esposter/configuration/rolldown.config.js";
-
-export default rolldownConfiguration;
+../configuration/rolldown.config.js
