@@ -25,7 +25,8 @@
     "lint": "eslint . && lerna run lint",
     "lint:fix": "eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
-    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
+    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish",
+    "release:auto": "pnpm release --yes",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "crossOS": "node scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
