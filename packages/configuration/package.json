@@ -39,7 +39,6 @@
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
     "vite-tsconfig-paths": "catalog:"
   }
 }
