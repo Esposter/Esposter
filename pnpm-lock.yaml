@@ -409,11 +409,11 @@ catalogs:
       specifier: npm:rolldown@nightly
       version: 1.0.0-beta.7-commit.a684277
     rolldown-plugin-dts:
-      specifier: ^0.8.1
+      specifier: ^0.8.2
       version: 0.8.2
     rolldown-vite:
-      specifier: ^6.3.1
-      version: 6.3.1
+      specifier: ^6.3.2
+      version: 6.3.2
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -1105,7 +1105,7 @@ importers:
     devDependencies:
       rolldown-vite:
         specifier: 'catalog:'
-        version: 6.3.1(@types/node@22.14.1)(esbuild@0.25.2)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.1)
+        version: 6.3.2(@types/node@22.14.1)(esbuild@0.25.2)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.1)
 
 packages:
 
@@ -9555,8 +9555,8 @@ packages:
       typescript:
         optional: true
 
-  rolldown-vite@6.3.1:
-    resolution: {integrity: sha512-nU7PhEUVpF1HWExn5Z36vCgr4rOUJeXaHjQg7m89ol/6L+Bw4s0M22m2qitP7EQmg5/0lvQI2TUnFEJTwU8wNg==}
+  rolldown-vite@6.3.2:
+    resolution: {integrity: sha512-VzxZ3FX3ao1P+8AxFp6zOjYNKmkv4+G39EHqjyL2mEwzLUQPMKiJIHDi0E7xXilQTWS9cAJm+sujF6fKuubLiw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -21381,14 +21381,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  rolldown-vite@6.3.1(@types/node@22.14.1)(esbuild@0.25.2)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.1):
+  rolldown-vite@6.3.2(@types/node@22.14.1)(esbuild@0.25.2)(jiti@2.4.2)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(yaml@2.7.1):
     dependencies:
       '@oxc-project/runtime': 0.64.0
       fdir: 6.4.4(picomatch@4.0.2)
       lightningcss: 1.29.3
       picomatch: 4.0.2
       postcss: 8.5.3
-      rolldown: 1.0.0-beta.7-commit.a7cf9ac(@oxc-project/runtime@0.64.0)(typescript@5.8.3)
+      rolldown: 1.0.0-beta.7-commit.a684277(@oxc-project/runtime@0.64.0)(typescript@5.8.3)
       tinyglobby: 0.2.13
     optionalDependencies:
       '@types/node': 22.14.1
@@ -22541,7 +22541,7 @@ snapshots:
       pkg-types: 2.1.0
       scule: 1.3.0
       strip-literal: 3.0.0
-      tinyglobby: 0.2.12
+      tinyglobby: 0.2.13
       unplugin: 2.3.2
       unplugin-utils: 0.2.4
 
@@ -22810,7 +22810,7 @@ snapshots:
       picomatch: 4.0.2
       strip-ansi: 7.1.0
       tiny-invariant: 1.3.3
-      tinyglobby: 0.2.12
+      tinyglobby: 0.2.13
       vite: 6.3.2(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.86.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1)
       vscode-uri: 3.1.0
     optionalDependencies:
