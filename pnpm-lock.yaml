@@ -409,7 +409,7 @@ catalogs:
       specifier: npm:rolldown@nightly
       version: 1.0.0-beta.7-commit.a684277
     rolldown-plugin-dts:
-      specifier: ^0.8.1
+      specifier: ^0.8.2
       version: 0.8.2
     rolldown-vite:
       specifier: ^6.3.1
