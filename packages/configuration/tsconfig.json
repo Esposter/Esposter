@@ -1,8 +1,4 @@
 {
-  "extends": "./tsconfig.vue.json",
-  "compilerOptions": {
-    "allowJs": false,
-    "composite": true,
-    "isolatedDeclarations": true
-  }
+  "extends": "../app/tsconfig.json",
+  "include": ["*.ts"]
 }

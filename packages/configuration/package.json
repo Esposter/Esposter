@@ -23,7 +23,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@rolldown/plugin-node-polyfills": "catalog:",
@@ -34,7 +35,6 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
-    "rolldown-plugin-dts": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",

@@ -8,7 +8,7 @@
     ".tsx": "xml"
   },
   "symlink-follow.autoFollow": true,
-  "search.followSymlinks": true,
+  "search.followSymlinks": false,
   "typescript.tsdk": "node_modules/typescript/lib",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",

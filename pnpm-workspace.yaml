@@ -140,8 +140,6 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
-  rolldown: npm:rolldown@nightly
-  rolldown-plugin-dts: ^0.8.1
   rolldown-vite: ^6.3.1
   rxjs: ^7.8.2
   sass-embedded: ^1.86.3
@@ -155,6 +153,7 @@ catalog:
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
+  tsdown: ^0.9.1
   tsx: ^4.19.3
   type-fest: ^4.40.0
   typedoc: ^0.28.3
@@ -186,6 +185,5 @@ onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
   - esbuild
-  - rolldown
   - unrs-resolver
   - vue-demi

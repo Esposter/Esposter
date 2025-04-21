@@ -50,7 +50,7 @@
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "rolldown": "catalog:",
+    "tsdown": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typedoc-plugin-vue": "catalog:",

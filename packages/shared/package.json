@@ -19,7 +19,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.js",
+    "build": "pnpm export:gen && tsdown",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc --noEmit",
