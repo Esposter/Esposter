@@ -75,7 +75,7 @@ catalog:
   ajv-formats: ^3.0.1
   # https://github.com/json-layout/json-layout/issues/5
   ajv-i18n: ^4.2.0
-  apexcharts: ^4.5.0
+  apexcharts: ^4.6.0
   # @TODO: https://github.com/better-auth/better-auth/issues/1669
   better-auth: 1.1.21
   codemirror: ^6.0.1
