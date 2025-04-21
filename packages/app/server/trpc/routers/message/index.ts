@@ -43,7 +43,6 @@ const readMessagesInputSchema = z
   .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
-// @TODO: Use this for getting replies
 const readMessagesByRowKeysInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
   rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
