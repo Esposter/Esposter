@@ -65,7 +65,7 @@ export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
 const createMembersInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  userIds: z.array(selectUserSchema.shape.id).min(1),
+  userIds: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
