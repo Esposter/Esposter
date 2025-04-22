@@ -3,6 +3,70 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/app
+
+## [1.42.3](https://github.com/Esposter/Esposter/compare/v1.42.2...v1.42.3) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/app
+
+## [1.42.2](https://github.com/Esposter/Esposter/compare/v1.42.1...v1.42.2) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/app
+
+## [1.42.1](https://github.com/Esposter/Esposter/compare/v1.42.0...v1.42.1) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/app
+
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Bug Fixes
+
+* Add migration sql ([08b38f6](https://github.com/Esposter/Esposter/commit/08b38f62579283bb8593d93a4e1797dcbbf43f8e))
+* adjust padding ([0c318e1](https://github.com/Esposter/Esposter/commit/0c318e1787e81da5b27887a6be9d8379efc39d6d))
+* auto navigate if already joined ([9ba387b](https://github.com/Esposter/Esposter/commit/9ba387b99abf65b6097dc69223c13c9995167de3))
+* avatar size ([5dd4698](https://github.com/Esposter/Esposter/commit/5dd4698cf068fc970f3667bf52e9d9c8bc2e3ace))
+* css styles ([d7802b6](https://github.com/Esposter/Esposter/commit/d7802b6aa2e9deb1f9abd45265e2d80404398bfb))
+* data types ([e469184](https://github.com/Esposter/Esposter/commit/e469184709671a5360ebbd01485e7d26af83fb8a))
+* db migrations + fix up some small UI ([54faf71](https://github.com/Esposter/Esposter/commit/54faf71808c0748da14a1b7d8aa47a4e25fa36f2))
+* debounce search ([85b330f](https://github.com/Esposter/Esposter/commit/85b330f21e8f5fb5c21a2ce000cf326c95d3f655))
+* deps ([92932ba](https://github.com/Esposter/Esposter/commit/92932ba2f042e7fe4e7a077d84480b4df2fce9e3))
+* finally fix up mention styles ([bdf3497](https://github.com/Esposter/Esposter/commit/bdf34974b8d7f247b68901fe203b5f200b7ff5e0))
+* finally fix up remaining relative path issues ([8968893](https://github.com/Esposter/Esposter/commit/896889345b312ab498ff8794ca588f2c5cdb7a8c))
+* fix up typedoc relative paths ([a847aa6](https://github.com/Esposter/Esposter/commit/a847aa60becb944d814d30337eafbf6dbd840103))
+* fix up typedoc relative paths continued ([dc0de55](https://github.com/Esposter/Esposter/commit/dc0de555e03585715173c2017d8f3d1daae0ed5d))
+* get current instance before first await ([62e7dbe](https://github.com/Esposter/Esposter/commit/62e7dbec1d23b8a199775901ce549e69785e1651))
+* lint ([c237159](https://github.com/Esposter/Esposter/commit/c237159c6ffd5af15ddfb1604dedea095282691e))
+* mention background color ([129bb84](https://github.com/Esposter/Esposter/commit/129bb84ea8bb8e2e1b6aca0c408dd86f0aed68b6))
+* missed reactivity set ([9165f16](https://github.com/Esposter/Esposter/commit/9165f16c1184903e01839aae71677b08f3dadee8))
+* no longer need random tracker since was an issue with useReadData ([78f4c90](https://github.com/Esposter/Esposter/commit/78f4c90d690b0f865ac3a506b6d760564f20aa3b))
+* page title ([98be994](https://github.com/Esposter/Esposter/commit/98be9942712c2a011072a57f4eee18ce72def0b7))
+* perms + navigation path ([c5e9003](https://github.com/Esposter/Esposter/commit/c5e9003437d8e293db19442feb0a2921e4ec49e8))
+* positions to make UI a bit better ([3869380](https://github.com/Esposter/Esposter/commit/3869380bb59bd132436df70ad6161ce539c5901f))
+* reactivity issues, use ReadonlyRefOrGetter ([c6bb5c9](https://github.com/Esposter/Esposter/commit/c6bb5c9771c2217c674e7cb1f2444d4dd3c3793a))
+* remove unnecessary top level await ([6efa6fa](https://github.com/Esposter/Esposter/commit/6efa6fa05062c48adce340d33ba9009e73edd6ba))
+* rename to just reply for succinctness + fix up reactivity issue by setting the map then retrieving it ([87423ae](https://github.com/Esposter/Esposter/commit/87423aecf3ca63bc85e7739ad0c557aa230edf10))
+* revert back changes ([ad04b43](https://github.com/Esposter/Esposter/commit/ad04b43a848aed36299ce52ee7054099166018b9))
+* styles ([79a3259](https://github.com/Esposter/Esposter/commit/79a32594cf957f7597d20e82cc4b41bb03594957))
+* try only replacing certain paths... ([c4aa4c2](https://github.com/Esposter/Esposter/commit/c4aa4c2d03dfa6db3b2ef3a6831831d749b7e248))
+* try updating modules too ([2c14517](https://github.com/Esposter/Esposter/commit/2c1451788ae1a0d635155bc5b9d971a5e1901387))
+* typing timeout use map ([118069f](https://github.com/Esposter/Esposter/commit/118069fea9532f61f100cc7fb784837df8dffe76))
+* update check to be stricter ([abb3095](https://github.com/Esposter/Esposter/commit/abb3095fd6b7b9f38b8e20182b4d8f43c9b000b3))
+* update snapshots ([b11d87c](https://github.com/Esposter/Esposter/commit/b11d87cbcb84377d6b6e03a378038ece4616bdbe))
+* use class which is reactive for some reason ([ab5b4cb](https://github.com/Esposter/Esposter/commit/ab5b4cb40e7bf8474ec4e49ba300f36a5a5ebfa9))
+* use tsx + add tsconfig.json at root ([9abf1bd](https://github.com/Esposter/Esposter/commit/9abf1bd21e1ce692a00bf59864a227e378e29177))
+
+### Features
+
+* Add invite page ([f961532](https://github.com/Esposter/Esposter/commit/f9615329b06615a2fa96f1acb3568b45022be56d))
+* Add num members info + update deps ([84b4a60](https://github.com/Esposter/Esposter/commit/84b4a608988aa1a95ba2769eee53834c1ca46776))
+* Add polyfills ([f2e60ba](https://github.com/Esposter/Esposter/commit/f2e60baa41aacdf1d0f49ecfe0876312c7ad8f12))
+* Add some little nicer UI for copying ([811f017](https://github.com/Esposter/Esposter/commit/811f017c8694d4d14a1ae4b759f57c505c485306))
+* Add tsconfig.json at root to enable complete devtooling with eslint + tsconfig across the whole monorepo in both packages and at the root for scripts ([5b1e48c](https://github.com/Esposter/Esposter/commit/5b1e48c742a023852a7ab1ed5a53f2400228be20))
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* Move invites from azure to postgres since we need the joins ([bf0b085](https://github.com/Esposter/Esposter/commit/bf0b0856a9df0bab7b526a254836ad8a5cc724ae))
+
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
 
 ### Bug Fixes

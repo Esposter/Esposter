@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "1.41.0",
+  "version": "2.0.0",
   "description": "A library that contains shared typescript code.",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -22,7 +22,7 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
@@ -30,7 +30,6 @@
     "xml2js": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
     "@types/xml2js": "catalog:"
   }

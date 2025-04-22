@@ -13,7 +13,7 @@ const { onClick } = popupStore;
     <ClickerModelItem
       relative
       size-50
-      :g-attrs="{ cursor: 'pointer', 'origin-center': '', 'active:scale-95': '' }"
+      :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
       @click="onClick"
     />
   </div>

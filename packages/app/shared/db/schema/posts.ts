@@ -42,6 +42,9 @@ export const selectPostSchema = createSelectSchema(posts, {
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
   title: z.string().min(1).max(POST_TITLE_MAX_LENGTH),
 });
+export const selectCommentSchema = createSelectSchema(posts, {
+  description: z.string().min(1).max(POST_DESCRIPTION_MAX_LENGTH),
+});
 
 export const postsRelations = relations(posts, ({ many, one }) => ({
   likes: many(likes),

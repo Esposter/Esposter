@@ -1,7 +1,6 @@
-import { selectPostSchema } from "#shared/db/schema/posts";
-import { z } from "zod";
+import type { z } from "zod";
 
-export const updateCommentInputSchema = selectPostSchema
-  .pick({ description: true, id: true })
-  .extend({ description: z.string().min(1) });
+import { selectCommentSchema } from "#shared/db/schema/posts";
+
+export const updateCommentInputSchema = selectCommentSchema.pick({ description: true, id: true });
 export type UpdateCommentInput = z.infer<typeof updateCommentInputSchema>;

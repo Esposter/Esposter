@@ -1,6 +1,6 @@
 {
   "mode": "bundle",
-  "project": "tsconfig.json",
+  "project": "tsconfig.build.json",
   "output": "src",
   "quote": "\"",
   "overwrite": true,

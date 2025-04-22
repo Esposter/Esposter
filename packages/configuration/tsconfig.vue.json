@@ -6,6 +6,11 @@
       "@/*": ["*"]
     }
   },
-  "include": ["${configDir}/auto-imports.d.ts", "${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
+  "include": [
+    "${configDir}/auto-imports.d.ts",
+    "${configDir}/types/*.d.ts",
+    "${configDir}/src/**/*.ts",
+    "${configDir}/src/**/*.vue"
+  ],
   "exclude": ["${configDir}/node_modules"]
 }

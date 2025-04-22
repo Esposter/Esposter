@@ -14,20 +14,22 @@ import type { TransformConfiguration } from "@/models/configuration/components/T
 import type { VisibleConfiguration } from "@/models/configuration/components/VisibleConfiguration";
 import type { GlobalConfiguration } from "@/models/configuration/global/GlobalConfiguration";
 import type { Types } from "phaser";
+import type { Except } from "type-fest";
 
-export type PathFollowerConfiguration = AlphaConfiguration &
-  BlendModeConfiguration &
-  DepthConfiguration &
-  FlipConfiguration &
-  GlobalConfiguration &
-  MaskConfiguration &
-  OriginConfiguration &
-  PathFollowerComponentConfiguration &
-  PipelineConfiguration &
-  ScrollFactorConfiguration &
-  SizeConfiguration &
-  TextureConfiguration &
-  TintConfiguration &
-  TransformConfiguration &
-  Types.GameObjects.PathFollower.PathConfig &
-  VisibleConfiguration;
+export interface PathFollowerConfiguration
+  extends AlphaConfiguration,
+    BlendModeConfiguration,
+    DepthConfiguration,
+    Except<Types.GameObjects.PathFollower.PathConfig, "rotateToPath">,
+    FlipConfiguration,
+    GlobalConfiguration,
+    MaskConfiguration,
+    OriginConfiguration,
+    PathFollowerComponentConfiguration,
+    PipelineConfiguration,
+    ScrollFactorConfiguration,
+    SizeConfiguration,
+    TextureConfiguration,
+    TintConfiguration,
+    TransformConfiguration,
+    VisibleConfiguration {}

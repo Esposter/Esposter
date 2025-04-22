@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
-  "version": "1.41.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -52,7 +52,6 @@
     "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@codemirror/view": "catalog:",
-    "@esposter/shared": "workspace:*",
     "@fullcalendar/core": "catalog:",
     "@fullcalendar/daygrid": "catalog:",
     "@fullcalendar/interaction": "catalog:",
@@ -157,7 +156,6 @@
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/scripts": "catalog:",

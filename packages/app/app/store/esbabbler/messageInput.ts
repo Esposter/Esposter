@@ -15,6 +15,6 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
       messageInputMap.value.set(roomStore.currentRoomId, newMessageInput);
     },
   });
-  const reply = shallowRef<MessageEntity>();
+  const reply = ref<MessageEntity>();
   return { messageInput, reply };
 });

@@ -9,7 +9,7 @@ import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoyst
 import "vue-phaserjs";
 
 type BaseAnimationKeyMap = {
-  [P in keyof typeof SpritesheetKey | keyof typeof TilesetKey]: P;
+  [P in keyof (typeof SpritesheetKey | typeof TilesetKey)]: P;
 };
 
 declare module "vue-phaserjs" {

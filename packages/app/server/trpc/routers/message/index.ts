@@ -29,7 +29,7 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.interface({
-  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
+  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -43,7 +43,6 @@ const readMessagesInputSchema =
     .extend(z.interface({ roomId: selectRoomSchema.shape.id }))
     .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
-// @TODO: Use this for getting replies
 const readMessagesByRowKeysInputSchema = z.interface({
   roomId: selectRoomSchema.shape.id,
   rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),

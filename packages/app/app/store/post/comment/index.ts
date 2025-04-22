@@ -51,11 +51,11 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
 
   return {
-    currentPost,
-    ...restOperationData,
     createComment,
     deleteComment,
     updateComment,
+    ...restOperationData,
+    currentPost,
     ...restData,
   };
 });

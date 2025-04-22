@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "1.41.0",
+  "version": "2.0.0",
   "description": "A parser for tmx.",
   "type": "module",
   "main": "dist/index.js",
@@ -26,14 +26,7 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
-  },
-  "dependencies": {
-    "@esposter/shared": "workspace:*"
-  },
-  "devDependencies": {
-    "@esposter/configuration": "workspace:*",
-    "@types/node": "catalog:"
   }
 }
