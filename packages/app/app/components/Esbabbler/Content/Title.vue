@@ -4,6 +4,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomStore } from "@/store/esbabbler/room";
 
+const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { updateRoom } = roomStore;
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
@@ -17,7 +18,7 @@ const onUpdateRoom = async () => {
   try {
     if (!currentRoomId.value || !editedRoomName.value || editedRoomName.value === currentRoomName.value) return;
 
-    await updateRoom({
+    await $trpc.room.updateRoom.mutate({
       id: currentRoomId.value,
       name: editedRoomName.value,
     });

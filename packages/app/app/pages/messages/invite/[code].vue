@@ -3,6 +3,7 @@ import { selectInviteSchema } from "#shared/db/schema/invites";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { authClient } from "@/services/auth/authClient";
+import { useRoomStore } from "@/store/esbabbler/room";
 import { NotFoundError } from "@esposter/shared";
 
 definePageMeta({
@@ -27,6 +28,9 @@ if (!invite)
   });
 else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
   await navigateTo(RoutePath.Messages(invite.roomId));
+
+const roomStore = useRoomStore();
+const { joinRoom } = roomStore;
 </script>
 
 <template>
@@ -62,9 +66,7 @@ else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?
                 async () => {
                   const code = $route.params.code;
                   if (typeof code !== 'string') return;
-                  const userToRoom = await $trpc.room.joinRoom.mutate(code);
-                  if (!userToRoom) return;
-                  await navigateTo(RoutePath.Messages(userToRoom.roomId));
+                  await joinRoom(code);
                 }
               "
             >

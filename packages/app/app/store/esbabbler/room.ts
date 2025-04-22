@@ -1,10 +1,10 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
-import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
-import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
+import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
@@ -39,19 +39,19 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
 
     storeCreateRoom(newRoom, true);
   };
-  const updateRoom = async (input: UpdateRoomInput) => {
-    const updatedRoom = await $trpc.room.updateRoom.mutate(input);
-    if (!updatedRoom) return;
+  const joinRoom = async (input: JoinRoomInput) => {
+    const joinedRoom = await $trpc.room.joinRoom.mutate(input);
+    if (!joinedRoom) return;
 
-    storeUpdateRoom(updatedRoom);
+    storeCreateRoom(joinedRoom, true);
+    await navigateTo(RoutePath.Messages(joinedRoom.id));
   };
-  const deleteRoom = async (input: DeleteRoomInput) => {
-    const deletedRoom = await $trpc.room.deleteRoom.mutate(input);
-    if (!deletedRoom) return;
+  const leaveRoom = async (input: DeleteRoomInput) => {
+    const id = await $trpc.room.leaveRoom.mutate(input);
+    if (!id) return;
 
-    storeDeleteRoom({ id: deletedRoom.id });
+    storeDeleteRoom({ id });
   };
-  const leaveRoom = (input: LeaveRoomInput) => $trpc.room.leaveRoom.mutate(input);
 
   const roomSearchQuery = ref("");
   const roomsSearched = computed<Room[]>(() => {
@@ -69,9 +69,8 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     rooms,
     ...restOperationData,
     createRoom,
-    deleteRoom,
+    joinRoom,
     leaveRoom,
-    updateRoom,
     ...restData,
     currentRoom,
     currentRoomId,
