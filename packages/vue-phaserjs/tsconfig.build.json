@@ -1,3 +1,3 @@
 {
-  "extends": ["../configuration/tsconfig.build.vue.json", "./tsconfig.base.vue.json"]
+  "extends": ["../configuration/tsconfig.build.vue.json", "./tsconfig.json"]
 }
