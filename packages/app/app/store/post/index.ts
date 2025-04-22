@@ -37,10 +37,10 @@ export const usePostStore = defineStore("post", () => {
   };
 
   return {
-    ...restOperationData,
     createPost,
     deletePost,
     updatePost,
+    ...restOperationData,
     ...restData,
   };
 });
