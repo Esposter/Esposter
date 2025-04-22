@@ -18,26 +18,26 @@ export const useRoomSubscribables = () => {
 
   onMounted(() => {
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(undefined, {
-      onData: (data) => {
-        storeUpdateRoom(data);
+      onData: (input) => {
+        storeUpdateRoom(input);
       },
     });
     deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(undefined, {
-      onData: (data) => {
-        storeDeleteRoom(data);
+      onData: (id) => {
+        storeDeleteRoom({ id });
       },
     });
 
     if (!currentRoomId.value) return;
 
     joinRoomUnsubscribable.value = $trpc.room.onJoinRoom.subscribe(currentRoomId.value, {
-      onData: (data) => {
-        userMap.value.set(data.id, data);
+      onData: (user) => {
+        userMap.value.set(user.id, user);
       },
     });
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(currentRoomId.value, {
-      onData: (data) => {
-        userMap.value.delete(data);
+      onData: (userId) => {
+        userMap.value.delete(userId);
       },
     });
   });
