@@ -1,4 +1,4 @@
-name: Build
+name: 🏗️ Build
 
 on:
   push:
@@ -9,29 +9,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: Install pnpm
+      - name: 📦 Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Install node
+      - name: 🛠️ Setup node
         uses: actions/setup-node@v4
         with:
           node-version-file: package.json
           cache: pnpm
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: Build
+      - name: 🏗️ Build
         run: pnpm build
 
-      - name: Lint
+      - name: 🔍 Lint
         run: pnpm lint
 
-      - name: Typecheck
+      - name: ✅ Typecheck
         run: pnpm typecheck
 
-      - name: Test
+      - name: 🧪 Test
         run: pnpm test
