@@ -51,6 +51,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     });
   };
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
+  const activeReply = ref<MessageEntity>();
   const typingList = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
@@ -61,6 +62,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
+    activeReply,
     replyMap,
     typingList,
   };

@@ -16,17 +16,15 @@ const creator = computed(() => (reply.value ? userMap.value.get(reply.value.user
 </script>
 
 <template>
-  <div relative flex items-center>
-    <div flex items-center gap-1>
-      <template v-if="reply && creator">
-        <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
-        <span text-xs text-gray font-bold>{{ creator.name }}</span>
-        <span text-xs v-html="reply.message" />
-      </template>
-      <template v-else>
-        <v-icon size="x-small" icon="mdi-reply" />
-        <span text-xs italic>Original message was deleted</span>
-      </template>
-    </div>
+  <div flex items-center gap-1>
+    <template v-if="reply && creator">
+      <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
+      <span text-xs text-gray font-bold>{{ creator.name }}</span>
+      <span text-xs v-html="reply.message" />
+    </template>
+    <template v-else>
+      <v-icon pb-0.75 size="x-small" icon="mdi-reply" />
+      <span pb-0.75 text-xs italic>Original message was deleted</span>
+    </template>
   </div>
 </template>

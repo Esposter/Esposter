@@ -2,6 +2,7 @@
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 interface MessageListItemProps {
@@ -10,6 +11,8 @@ interface MessageListItemProps {
 }
 
 const { message } = defineProps<MessageListItemProps>();
+const messageStore = useMessageStore();
+const { activeReply } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { reply } = storeToRefs(messageInputStore);
 const messageHtml = useRefreshMentions(() => message.message);
@@ -30,15 +33,20 @@ const selectEmoji = await useSelectEmoji(message);
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         v-if="creator.name"
+        :id="message.rowKey"
         mt-4
         py-1="!"
         min-h-auto="!"
-        :active="active && !isOpen"
+        :active="(active || activeReply?.rowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
-          <StyledAvatar :image="creator.image" :name="creator.name" />
+          <div v-if="message.replyRowKey" relative flex flex-col items-center>
+            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
+            <StyledAvatar :image="creator.image" :name="creator.name" />
+          </div>
+          <StyledAvatar v-else :image="creator.image" :name="creator.name" />
         </template>
         <v-list-item-title>
           <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
@@ -100,6 +108,10 @@ const selectEmoji = await useSelectEmoji(message);
 <style scoped lang="scss">
 :deep(.v-list-item__prepend) {
   align-self: flex-end;
+
+  > .v-list-item__spacer {
+    width: 1rem;
+  }
 }
 
 :deep(.v-list-item__content) {

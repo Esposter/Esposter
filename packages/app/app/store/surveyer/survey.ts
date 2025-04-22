@@ -44,12 +44,12 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   const totalItemsLength = ref(0);
 
   return {
-    ...restData,
-    ...restOperationData,
     createSurvey,
     deleteSurvey,
+    updateSurvey,
+    ...restOperationData,
+    ...restData,
     searchQuery,
     totalItemsLength,
-    updateSurvey,
   };
 });

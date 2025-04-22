@@ -23,14 +23,12 @@ const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;
 const name = ref(initialValue.name);
 const group = ref(initialValue.group);
-const resetSurvey = () => {
+const { start: resetSurvey } = useTimeoutFn(() => {
   // Hack resetting the item so the dialog content doesn't change
   // until after the CSS animation that lasts 300ms ends
-  window.setTimeout(() => {
-    name.value = initialValue.name;
-    group.value = initialValue.group;
-  }, dayjs.duration(0.3, "seconds").asMilliseconds());
-};
+  name.value = initialValue.name;
+  group.value = initialValue.group;
+}, dayjs.duration(0.3, "seconds").asMilliseconds());
 </script>
 
 <template>
