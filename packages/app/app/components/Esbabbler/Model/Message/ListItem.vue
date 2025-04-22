@@ -33,6 +33,7 @@ const selectEmoji = await useSelectEmoji(message);
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         v-if="creator.name"
+        :id="message.rowKey"
         mt-4
         py-1="!"
         min-h-auto="!"
@@ -105,10 +106,6 @@ const selectEmoji = await useSelectEmoji(message);
 </template>
 
 <style scoped lang="scss">
-:deep(.v-list-item__overlay) {
-  transition: background-color 0.25s;
-}
-
 :deep(.v-list-item__prepend) {
   align-self: flex-end;
 

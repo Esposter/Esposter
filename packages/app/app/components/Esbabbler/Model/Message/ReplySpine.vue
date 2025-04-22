@@ -14,24 +14,15 @@ const reply = computed(() => messageList.value.find(({ rowKey }) => rowKey === r
 const { start: resetActiveReply } = useTimeoutFn(() => {
   activeReply.value = undefined;
 }, dayjs.duration(2, "seconds").asMilliseconds());
+const onClick = () => {
+  activeReply.value = reply.value;
+  document.getElementById(replyRowKey)?.scrollIntoView({ behavior: "smooth" });
+  resetActiveReply();
+};
 </script>
 
 <template>
-  <div
-    class="custom-border"
-    b-l-2="!"
-    b-t-2="!"
-    w-8
-    h-2
-    rd-tl-1
-    cursor-pointer
-    @click="
-      () => {
-        activeReply = reply;
-        resetActiveReply();
-      }
-    "
-  />
+  <div class="custom-border" b-l-2="!" b-t-2="!" w-8 h-2 rd-tl-1 cursor-pointer @click="onClick" />
 </template>
 
 <style scoped lang="scss">
