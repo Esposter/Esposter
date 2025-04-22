@@ -94,7 +94,8 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.25.1
   eslint-config-prettier: ^10.1.2
-  eslint-plugin-perfectionist: ^4.11.0
+  # @TODO
+  eslint-plugin-perfectionist: 4.11.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.2.6
   eventemitter3: ^5.0.1
