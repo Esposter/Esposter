@@ -37,6 +37,12 @@ const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema
 ]).default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
+const onUpdateRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
+
+const onDeleteRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
+
 const onJoinRoomInputSchema = selectRoomSchema.shape.id;
 export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 
@@ -168,8 +174,9 @@ export const roomRouter = router({
     roomEventEmitter.emit("leaveRoom", userToRoom);
     return userToRoom.roomId;
   }),
-  onDeleteRoom: authedProcedure.subscription(async function* ({ ctx, signal }) {
+  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
     for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
+      if (!input.includes(roomId)) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
@@ -200,14 +207,15 @@ export const roomRouter = router({
       yield userId;
     }
   }),
-  onUpdateRoom: authedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [input] of on(roomEventEmitter, "updateRoom", { signal })) {
+  onUpdateRoom: authedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
+      if (!input.includes(data.id)) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input.id)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.id)),
       });
       if (!isMember) continue;
-      yield input;
+      yield data;
     }
   }),
   readInvite: authedProcedure.input(readInviteInputSchema).query(

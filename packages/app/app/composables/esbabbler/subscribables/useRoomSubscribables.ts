@@ -9,24 +9,33 @@ export const useRoomSubscribables = () => {
   const { userMap } = storeToRefs(esbabblerStore);
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
-  const { currentRoomId } = storeToRefs(roomStore);
+  const { currentRoomId, rooms } = storeToRefs(roomStore);
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
   const joinRoomUnsubscribable = ref<Unsubscribable>();
   const leaveRoomUnsubscribable = ref<Unsubscribable>();
 
-  onMounted(() => {
-    updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(undefined, {
+  const { trigger } = watchTriggerable(rooms, (newRooms) => {
+    const newRoomIds = newRooms.map(({ id }) => id);
+
+    updateRoomUnsubscribable.value?.unsubscribe();
+    updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
       onData: (input) => {
         storeUpdateRoom(input);
       },
     });
-    deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(undefined, {
+
+    deleteRoomUnsubscribable.value?.unsubscribe();
+    deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
       onData: (id) => {
         storeDeleteRoom({ id });
       },
     });
+  });
+
+  onMounted(() => {
+    trigger();
 
     if (!currentRoomId.value) return;
 
