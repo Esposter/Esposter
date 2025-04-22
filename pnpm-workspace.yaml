@@ -124,7 +124,7 @@ catalog:
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
-  marked: ^15.0.8
+  marked: ^15.0.9
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
@@ -141,10 +141,10 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
   rolldown: npm:rolldown@nightly
-  rolldown-plugin-dts: ^0.8.2
-  rolldown-vite: ^6.3.2
+  rolldown-plugin-dts: ^0.8.3
+  rolldown-vite: ^6.3.3
   rxjs: ^7.8.2
-  sass-embedded: ^1.86.3
+  sass-embedded: ^1.87.0
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
   survey-core: ^2.0.5
@@ -160,7 +160,7 @@ catalog:
   typedoc: ^0.28.3
   typedoc-plugin-vue: ^1.5.0
   typescript: ^5.8.3
-  typescript-eslint: ^8.30.1
+  typescript-eslint: ^8.31.0
   unocss: ^66.1.0-beta.12
   unplugin-auto-import: ^19.1.2
   vite: ^6.3.2
