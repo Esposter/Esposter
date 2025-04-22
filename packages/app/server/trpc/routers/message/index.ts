@@ -29,7 +29,7 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1),
+  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
