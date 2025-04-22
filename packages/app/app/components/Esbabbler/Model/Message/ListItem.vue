@@ -2,6 +2,7 @@
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 interface MessageListItemProps {
@@ -10,6 +11,8 @@ interface MessageListItemProps {
 }
 
 const { message } = defineProps<MessageListItemProps>();
+const messageStore = useMessageStore();
+const { activeReply } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { reply } = storeToRefs(messageInputStore);
 const messageHtml = useRefreshMentions(() => message.message);
@@ -33,13 +36,13 @@ const selectEmoji = await useSelectEmoji(message);
         mt-4
         py-1="!"
         min-h-auto="!"
-        :active="active && !isOpen"
+        :active="(active || activeReply?.rowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 />
+            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
             <StyledAvatar :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else :image="creator.image" :name="creator.name" />
@@ -102,6 +105,10 @@ const selectEmoji = await useSelectEmoji(message);
 </template>
 
 <style scoped lang="scss">
+:deep(.v-list-item__overlay) {
+  transition: background-color 0.25s;
+}
+
 :deep(.v-list-item__prepend) {
   align-self: flex-end;
 

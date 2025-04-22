@@ -13,17 +13,17 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const pointStore = usePointStore();
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
+  const duration = dayjs.duration(10, "seconds").asMilliseconds();
+  const { start: deletePopup } = useTimeoutFn((id: string) => {
+    const index = popups.value.findIndex((p) => p.id === id);
+    if (index === -1) return;
+    popups.value.splice(index, 1);
+  }, duration);
   const onClick = ({ pageX, pageY }: MouseEvent) => {
     const id = crypto.randomUUID();
-    const duration = dayjs.duration(10, "seconds").asMilliseconds();
     incrementPoints(mouseStore.mousePower);
     popups.value.push({ duration, id, left: pageX, points: mouseStore.mousePower, top: pageY });
-    window.setTimeout(() => {
-      const index = popups.value.findIndex((p) => p.id === id);
-      if (index === -1) return;
-
-      popups.value.splice(index, 1);
-    }, duration);
+    deletePopup(id);
   };
   return { onClick, popups };
 });
