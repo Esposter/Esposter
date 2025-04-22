@@ -6,7 +6,7 @@ import { EventEmitter } from "node:events";
 
 interface RoomEvents {
   deleteRoom: DeleteRoomInput[];
-  joinRoom: UserToRoomWithRelations[];
+  joinRoom: Pick<UserToRoomWithRelations, "roomId" | "user" | "userId">[];
   leaveRoom: UserToRoom[];
   updateRoom: UpdateRoomInput[];
 }

@@ -152,8 +152,9 @@ export const roomRouter = router({
     });
     if (!userToRoomWithRelations) return null;
 
-    roomEventEmitter.emit("joinRoom", userToRoomWithRelations);
-    return userToRoomWithRelations.room;
+    const { room, roomId, user, userId } = userToRoomWithRelations;
+    roomEventEmitter.emit("joinRoom", { roomId, user, userId });
+    return room;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<null | Room["id"]>(async ({ ctx, input }) => {
     const userToRoom = (
@@ -168,45 +169,45 @@ export const roomRouter = router({
     return userToRoom.roomId;
   }),
   onDeleteRoom: authedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(roomEventEmitter, "deleteRoom", { signal })) {
+    for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
       });
       if (!isMember) continue;
-      yield data;
+      yield roomId;
     }
   }),
   onJoinRoom: authedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (data.roomId !== input || data.userId === ctx.session.user.id) continue;
+    for await (const [{ roomId, user, userId }] of on(roomEventEmitter, "joinRoom", { signal })) {
+      if (roomId !== input || userId === ctx.session.user.id) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
       });
       if (!isMember) continue;
-      yield data.user;
+      yield user;
     }
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (data.roomId !== input || data.userId === ctx.session.user.id) continue;
+    for await (const [{ roomId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
+      if (roomId !== input || userId === ctx.session.user.id) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
       });
       if (!isMember) continue;
-      yield data.userId;
+      yield userId;
     }
   }),
   onUpdateRoom: authedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
+    for await (const [input] of on(roomEventEmitter, "updateRoom", { signal })) {
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.id)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, input.id)),
       });
       if (!isMember) continue;
-      yield data;
+      yield input;
     }
   }),
   readInvite: authedProcedure.input(readInviteInputSchema).query(
