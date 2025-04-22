@@ -5,6 +5,6 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useEsbabblerStore = defineStore("esbabbler", () => {
   const roomStore = useRoomStore();
-  const { data: userMap, dataMap: userDataMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, User>());
+  const { data: userMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, User>());
   return { userMap };
 });
