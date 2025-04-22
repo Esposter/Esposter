@@ -66,13 +66,13 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   });
 
   return {
-    rooms,
-    ...restOperationData,
     createRoom,
     joinRoom,
     leaveRoom,
     storeDeleteRoom,
     storeUpdateRoom,
+    ...restOperationData,
+    rooms,
     ...restData,
     currentRoom,
     currentRoomId,
