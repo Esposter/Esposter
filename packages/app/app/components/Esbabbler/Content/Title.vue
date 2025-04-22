@@ -6,7 +6,6 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
-const { updateRoom } = roomStore;
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const editedRoomName = ref(currentRoomName.value);
 const isUpdateMode = ref(false);
