@@ -6,6 +6,6 @@
   "overwrite": true,
   "backup": false,
   "include": [
-    "**/*.ts"
+    "src/**/*.ts"
   ]
 }

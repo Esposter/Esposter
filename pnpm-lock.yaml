@@ -555,6 +555,9 @@ importers:
       '@lerna-lite/run':
         specifier: 'catalog:'
         version: 4.0.0(@lerna-lite/publish@4.0.0)(@types/node@22.14.1)(typescript@5.8.3)
+      '@rolldown/plugin-node-polyfills':
+        specifier: 'catalog:'
+        version: 1.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 22.14.1
@@ -570,6 +573,9 @@ importers:
       rolldown:
         specifier: 'catalog:'
         version: 1.0.0-beta.8(@oxc-project/runtime@0.65.0)(typescript@5.8.3)
+      rolldown-plugin-dts:
+        specifier: 'catalog:'
+        version: 0.8.3(rolldown@1.0.0-beta.8(@oxc-project/runtime@0.65.0)(typescript@5.8.3))(typescript@5.8.3)
       type-fest:
         specifier: 'catalog:'
         version: 4.40.0
@@ -1024,9 +1030,6 @@ importers:
 
   packages/configuration:
     devDependencies:
-      '@rolldown/plugin-node-polyfills':
-        specifier: 'catalog:'
-        version: 1.0.0
       '@unocss/eslint-config':
         specifier: 'catalog:'
         version: 66.1.0-beta.12(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)
@@ -1048,9 +1051,6 @@ importers:
       eslint-plugin-prettier:
         specifier: 'catalog:'
         version: 5.2.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.2(eslint@9.25.1(jiti@2.4.2)))(eslint@9.25.1(jiti@2.4.2))(prettier@3.5.3)
-      rolldown-plugin-dts:
-        specifier: 'catalog:'
-        version: 0.8.3(rolldown@1.0.0-beta.7-commit.30e0395(@oxc-project/runtime@0.65.0)(typescript@5.8.3))(typescript@5.8.3)
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.31.0(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)
@@ -21367,7 +21367,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.8.3(rolldown@1.0.0-beta.7-commit.30e0395(@oxc-project/runtime@0.65.0)(typescript@5.8.3))(typescript@5.8.3):
+  rolldown-plugin-dts@0.8.3(rolldown@1.0.0-beta.8(@oxc-project/runtime@0.65.0)(typescript@5.8.3))(typescript@5.8.3):
     dependencies:
       debug: 4.4.0
       dts-resolver: 1.0.0
@@ -21375,7 +21375,7 @@ snapshots:
       magic-string-ast: 0.9.1
       oxc-parser: 0.65.0
       oxc-transform: 0.65.0
-      rolldown: 1.0.0-beta.7-commit.30e0395(@oxc-project/runtime@0.65.0)(typescript@5.8.3)
+      rolldown: 1.0.0-beta.8(@oxc-project/runtime@0.65.0)(typescript@5.8.3)
     optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:

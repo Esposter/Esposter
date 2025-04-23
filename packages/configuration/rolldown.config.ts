@@ -1,8 +1,10 @@
+import type { ConfigExport } from "rolldown";
+
 import nodePolyfills from "@rolldown/plugin-node-polyfills";
 import { defineConfig } from "rolldown";
 import { dts } from "rolldown-plugin-dts";
 
-export default defineConfig([
+const config: ConfigExport = defineConfig([
   {
     input: "src/index.ts",
     output: [{ dir: "dist", format: "es" }],
@@ -12,3 +14,5 @@ export default defineConfig([
     },
   },
 ]);
+
+export default config;

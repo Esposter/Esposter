@@ -23,10 +23,10 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc"
   },
   "devDependencies": {
-    "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
@@ -34,7 +34,6 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
-    "rolldown-plugin-dts": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
