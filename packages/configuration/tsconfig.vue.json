@@ -7,8 +7,7 @@
     }
   },
   "include": [
-    "${configDir}/auto-imports.d.ts",
-    "${configDir}/rolldown.config.ts",
+    "${configDir}/*.ts",
     "${configDir}/types/*.d.ts",
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"

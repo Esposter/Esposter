@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.vue.json",
-  "exclude": ["${configDir}/auto-imports.d.ts", "${configDir}/node_modules", "${configDir}/**/*.test.ts"]
+  "exclude": ["${configDir}/node_modules", "${configDir}/**/*.test.ts"]
 }
