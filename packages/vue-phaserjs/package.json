@@ -23,9 +23,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "dev": "vite",
     "build": "pnpm export:gen && vite build",
-    "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "vue-tsc",
