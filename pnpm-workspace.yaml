@@ -148,7 +148,7 @@ catalog:
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
   survey-core: ^2.0.5
-  survey-creator-core: ^2.0.5
+  survey-creator-core: ^2.0.6
   survey-creator-vue: ^2.0.5
   survey-vue3-ui: ^2.0.5
   three: ^0.175.0

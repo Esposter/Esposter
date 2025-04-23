@@ -430,8 +430,8 @@ catalogs:
       specifier: ^2.0.5
       version: 2.0.5
     survey-creator-core:
-      specifier: ^2.0.5
-      version: 2.0.5
+      specifier: ^2.0.6
+      version: 2.0.6
     survey-creator-vue:
       specifier: ^2.0.5
       version: 2.0.5
@@ -863,10 +863,10 @@ importers:
         version: 2.0.5
       survey-creator-core:
         specifier: 'catalog:'
-        version: 2.0.5(survey-core@2.0.5)
+        version: 2.0.6(survey-core@2.0.5)
       survey-creator-vue:
         specifier: 'catalog:'
-        version: 2.0.5(survey-core@2.0.5)(survey-creator-core@2.0.5(survey-core@2.0.5))(survey-vue3-ui@2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
+        version: 2.0.5(survey-core@2.0.5)(survey-creator-core@2.0.6(survey-core@2.0.5))(survey-vue3-ui@2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
       survey-vue3-ui:
         specifier: 'catalog:'
         version: 2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3))
@@ -10178,12 +10178,12 @@ packages:
   survey-core@2.0.5:
     resolution: {integrity: sha512-zUkcD+7cOSOwifLJLeyyufTOyrB9d8uzPO+vtQvpdvX0jmsF09xOsGLMTwlRFwcIokOAEtZGU9qlwF373GZATw==}
 
-  survey-creator-core@2.0.5:
-    resolution: {integrity: sha512-7ayR2BMXp9Y7vsmCF+SqITp2T9EpaMMIgIimrbqp6D7HMAAGQbQx+N1BC0INpEnBisd06cCA8Q9aV0ItCpR7zg==}
+  survey-creator-core@2.0.6:
+    resolution: {integrity: sha512-vOx8LsSDlpF2eQOwuEdbq3Jtwxm19TjS2eDMgxVhTy2FOrNWiE47hX34rhcKEk/j81yAr+Tvo7KVeC8Jkr7Npw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
-      survey-core: 2.0.5
+      survey-core: 2.0.6
     peerDependenciesMeta:
       ace-builds:
         optional: true
@@ -22048,14 +22048,14 @@ snapshots:
 
   survey-core@2.0.5: {}
 
-  survey-creator-core@2.0.5(survey-core@2.0.5):
+  survey-creator-core@2.0.6(survey-core@2.0.5):
     dependencies:
       survey-core: 2.0.5
 
-  survey-creator-vue@2.0.5(survey-core@2.0.5)(survey-creator-core@2.0.5(survey-core@2.0.5))(survey-vue3-ui@2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3)):
+  survey-creator-vue@2.0.5(survey-core@2.0.5)(survey-creator-core@2.0.6(survey-core@2.0.5))(survey-vue3-ui@2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       survey-core: 2.0.5
-      survey-creator-core: 2.0.5(survey-core@2.0.5)
+      survey-creator-core: 2.0.6(survey-core@2.0.5)
       survey-vue3-ui: 2.0.5(survey-core@2.0.5)(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
 
