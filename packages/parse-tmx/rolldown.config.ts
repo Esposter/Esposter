@@ -1,3 +1,18 @@
-import rolldownConfiguration from "@esposter/configuration/rolldown.config";
+import type { ConfigExport } from "rolldown";
 
-export default rolldownConfiguration;
+import nodePolyfills from "@rolldown/plugin-node-polyfills";
+import { defineConfig } from "rolldown";
+import { dts } from "rolldown-plugin-dts";
+
+const config: ConfigExport = defineConfig([
+  {
+    input: "src/index.ts",
+    output: [{ dir: "dist", format: "es" }],
+    plugins: [nodePolyfills(), dts({ resolve: ["type-fest"], tsconfig: "tsconfig.build.json" })],
+    resolve: {
+      tsconfigFilename: "tsconfig.build.json",
+    },
+  },
+]);
+
+export default config;
