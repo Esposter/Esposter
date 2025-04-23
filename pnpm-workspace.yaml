@@ -59,7 +59,7 @@ catalog:
   "@vitest/eslint-plugin": ^1.1.43
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.2
-  "@vue-flow/core": ^1.42.5
+  "@vue-flow/core": ^1.43.0
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.4.0
   "@vue/test-utils": ^2.4.6
@@ -94,7 +94,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.25.1
   eslint-config-prettier: ^10.1.2
-  eslint-plugin-perfectionist: ^4.12.1
+  eslint-plugin-perfectionist: ^4.12.2
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.2.6
   eventemitter3: ^5.0.1
@@ -124,7 +124,7 @@ catalog:
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
-  marked: ^15.0.9
+  marked: ^15.0.10
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
@@ -147,11 +147,11 @@ catalog:
   sass-embedded: ^1.87.0
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
-  survey-core: ^2.0.5
+  survey-core: ^2.0.6
   survey-creator-core: ^2.0.6
-  survey-creator-vue: ^2.0.5
-  survey-vue3-ui: ^2.0.5
-  three: ^0.175.0
+  survey-creator-vue: ^2.0.6
+  survey-vue3-ui: ^2.0.6
+  three: ^0.176.0
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
