@@ -12,7 +12,6 @@ const typedocConfiguration = {
     entryPoints: ["src/index.ts"],
     includeVersion: true,
   },
-  plugin: ["typedoc-plugin-vue"],
 };
 
 if (process.env.BASE_URL) {

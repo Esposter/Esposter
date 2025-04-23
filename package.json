@@ -55,7 +55,6 @@
     "rolldown-plugin-dts": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
-    "typedoc-plugin-vue": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vue-tsc": "catalog:"

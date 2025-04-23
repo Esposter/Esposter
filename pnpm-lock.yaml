@@ -459,9 +459,6 @@ catalogs:
     typedoc:
       specifier: ^0.28.3
       version: 0.28.3
-    typedoc-plugin-vue:
-      specifier: ^1.5.0
-      version: 1.5.0
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
@@ -582,9 +579,6 @@ importers:
       typedoc:
         specifier: 'catalog:'
         version: 0.28.3(typescript@5.8.3)
-      typedoc-plugin-vue:
-        specifier: 'catalog:'
-        version: 1.5.0(typedoc@0.28.3(typescript@5.8.3))
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -10507,11 +10501,6 @@ packages:
   typed-function@4.2.1:
     resolution: {integrity: sha512-EGjWssW7Tsk4DGfE+5yluuljS1OGYWiI1J6e8puZz9nTMM51Oug8CD5Zo4gWMsOhq5BI+1bF+rWTm4Vbj3ivRA==}
     engines: {node: '>= 18'}
-
-  typedoc-plugin-vue@1.5.0:
-    resolution: {integrity: sha512-I6Q1pk9uR8Z/j07cPFKIz6GdcoBqMmb4ckU57KX25yB9jTF6ddMI09r8GR7VB8H4RutAxb8nPtCDydvXmYr94g==}
-    peerDependencies:
-      typedoc: 0.25.x || 0.26.x || 0.27.x || 0.28.x
 
   typedoc@0.28.3:
     resolution: {integrity: sha512-5svOCTfXvVSh6zbZKSQluZhR8yN2tKpTeHZxlmWpE6N5vc3R8k/jhg9nnD6n5tN9/ObuQTojkONrOxFdUFUG9w==}
@@ -22393,10 +22382,6 @@ snapshots:
       reflect.getprototypeof: 1.0.10
 
   typed-function@4.2.1: {}
-
-  typedoc-plugin-vue@1.5.0(typedoc@0.28.3(typescript@5.8.3)):
-    dependencies:
-      typedoc: 0.28.3(typescript@5.8.3)
 
   typedoc@0.28.3(typescript@5.8.3):
     dependencies:
