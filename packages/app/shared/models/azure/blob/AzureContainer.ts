@@ -6,8 +6,9 @@ export enum AzureContainer {
   EsbabblerAssets = "esbabbler-assets",
   EsposterAssets = "esposter-assets",
   FlowchartEditorAssets = "flowchart-editor-assets",
+  PrivateUserAssets = "private-user-assets",
+  PublicUserAssets = "public-user-assets",
   SurveyerAssets = "surveyer-assets",
   TableEditorAssets = "table-editor-assets",
-  UserAssets = "user-assets",
   WebpageEditorAssets = "webpage-editor-assets",
 }

@@ -9,8 +9,8 @@ import { Readable } from "node:stream";
 
 export const userRouter = router({
   uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.UserAssets);
-    const blobName = `${ctx.session.user.id}/profile`;
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.session.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     // @TODO: We shouldn't need to cast to ReadableStream here if the types are unified
     const readable = Readable.fromWeb(input as ReadableStream);
