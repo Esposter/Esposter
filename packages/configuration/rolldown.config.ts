@@ -4,7 +4,7 @@ import nodePolyfills from "@rolldown/plugin-node-polyfills";
 import { defineConfig } from "rolldown";
 import { dts } from "rolldown-plugin-dts";
 
-const config: ConfigExport = defineConfig([
+const rolldownConfiguration: ConfigExport = defineConfig([
   {
     input: "src/index.ts",
     output: [{ dir: "dist", format: "es" }],
@@ -15,4 +15,4 @@ const config: ConfigExport = defineConfig([
   },
 ]);
 
-export default config;
+export default rolldownConfiguration;

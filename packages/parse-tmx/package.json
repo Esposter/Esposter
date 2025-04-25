@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc",

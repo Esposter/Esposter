@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["${configDir}/rolldown.config.ts", "${configDir}/node_modules", "${configDir}/**/*.test.ts"]
+  "exclude": ["${configDir}/node_modules", "${configDir}/*.config.ts", "${configDir}/**/*.test.ts"]
 }

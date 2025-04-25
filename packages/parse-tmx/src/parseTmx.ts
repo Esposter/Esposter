@@ -3,10 +3,10 @@ import type { TMXGroupLayerNode } from "@/models/tmx/node/TMXGroupLayerNode";
 import type { TMXLayerNode } from "@/models/tmx/node/TMXLayerNode";
 import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
 import type { TMXTilesetNode } from "@/models/tmx/node/TMXTilesetNode";
-import type { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
 
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
 import { TMXMapParsed } from "@/models/tmx/parsed/TMXMapParsed";
+import { TMXParsed } from "@/models/tmx/parsed/TMXParsed";
 import { parseNode } from "@/util/parseNode";
 import { parseTileset } from "@/util/parseTileset";
 import { parseXmlString } from "@/util/parseXmlString";
@@ -57,5 +57,5 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
     }
   }
 
-  return { map };
+  return new TMXParsed(map);
 };

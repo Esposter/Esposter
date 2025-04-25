@@ -177,9 +177,7 @@
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
-    "cross-env": "catalog:",
     "drizzle-kit": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
@@ -190,7 +188,6 @@
     "sass-embedded": "catalog:",
     "tsx": "catalog:",
     "unocss": "catalog:",
-    "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }

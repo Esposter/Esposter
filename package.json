@@ -48,6 +48,7 @@
     "@lerna-lite/run": "catalog:",
     "@rolldown/plugin-node-polyfills": "catalog:",
     "@types/node": "catalog:",
+    "cross-env": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
@@ -57,6 +58,7 @@
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
+    "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
   "engines": {
