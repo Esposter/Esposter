@@ -1061,9 +1061,7 @@ importers:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.0)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
 
-  packages/parse-tmx: {}
-
-  packages/shared:
+  packages/parse-tmx:
     dependencies:
       data-urls:
         specifier: 'catalog:'
@@ -1078,6 +1076,8 @@ importers:
       '@types/xml2js':
         specifier: 'catalog:'
         version: 0.4.14
+
+  packages/shared: {}
 
   packages/vue-phaserjs:
     dependencies:

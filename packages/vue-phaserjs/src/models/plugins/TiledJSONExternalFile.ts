@@ -3,15 +3,8 @@ import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTiles
 import type { Types } from "phaser";
 
 import { TilesetFile } from "@/models/plugins/TilesetFile";
-import {
-  ID_SEPARATOR,
-  InvalidOperationError,
-  isPlainObject,
-  NotFoundError,
-  Operation,
-  parseXmlString,
-} from "@esposter/shared";
-import { parseTileset } from "parse-tmx";
+import { ID_SEPARATOR, InvalidOperationError, isPlainObject, NotFoundError, Operation } from "@esposter/shared";
+import { parseTileset, parseXmlString } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
 
 const GetFastValue = Utils.Objects.GetFastValue;

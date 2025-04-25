@@ -24,13 +24,5 @@
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
-  },
-  "dependencies": {
-    "data-urls": "catalog:",
-    "xml2js": "catalog:"
-  },
-  "devDependencies": {
-    "@types/data-urls": "catalog:",
-    "@types/xml2js": "catalog:"
   }
 }
