@@ -23,6 +23,8 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
   for (const node of $$) {
     const tmxNodeType = node["#name"] as TMXNodeType;
     switch (tmxNodeType) {
+      case TMXNodeType.Data:
+        break;
       case TMXNodeType.EditorSettings:
         if (!node.$$) break;
         map.editorsettings = Object.assign({}, ...node.$$.map((n) => ({ [n["#name"] as TMXNodeType]: n.$ })));

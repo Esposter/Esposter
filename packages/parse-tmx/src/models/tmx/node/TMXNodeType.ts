@@ -1,4 +1,5 @@
 export enum TMXNodeType {
+  Data = "data",
   EditorSettings = "editorsettings",
   Export = "export",
   Group = "group",
