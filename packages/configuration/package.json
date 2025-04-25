@@ -37,7 +37,6 @@
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
-    "vite-plugin-mkcert": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-plugin-mkcert": "catalog:"
   }
 }
