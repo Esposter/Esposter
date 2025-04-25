@@ -186,6 +186,9 @@ catalogs:
     '@vue-flow/node-resizer':
       specifier: ^1.4.0
       version: 1.4.0
+    '@vue/test-utils':
+      specifier: ^2.4.6
+      version: 2.4.6
     '@vuepic/vue-datepicker':
       specifier: ^11.0.2
       version: 11.0.2
@@ -930,7 +933,7 @@ importers:
         version: 0.11.6(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@unhead/vue@2.0.8(vue@3.5.13(typescript@5.8.3)))(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)(nuxt@3.16.2(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.1)(@types/node@22.15.2)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.25.1(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.29.3)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.8(typescript@5.8.3))(rollup@4.40.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.2)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue-tsc@2.2.10(typescript@5.8.3))(xml2js@0.6.2)(yaml@2.7.1))(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@nuxt/test-utils':
         specifier: 'catalog:'
-        version: 3.17.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
+        version: 3.17.2(@types/node@22.15.2)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
       '@nuxtjs/seo':
         specifier: 'catalog:'
         version: 3.0.3(@unhead/vue@2.0.8(vue@3.5.13(typescript@5.8.3)))(h3@1.15.1)(magicast@0.3.5)(rollup@4.40.0)(unstorage@1.15.0(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(ioredis@5.6.1))(vite@6.3.3(@types/node@22.15.2)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
@@ -979,6 +982,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 3.1.2(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))
+      '@vue/test-utils':
+        specifier: 'catalog:'
+        version: 2.4.6
       '@vueuse/nuxt':
         specifier: 'catalog:'
         version: 13.1.0(magicast@0.3.5)(nuxt@3.16.2(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.1)(@types/node@22.15.2)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.25.1(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.29.3)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.8(typescript@5.8.3))(rollup@4.40.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.2)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(vue-tsc@2.2.10(typescript@5.8.3))(xml2js@0.6.2)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
@@ -4933,6 +4939,9 @@ packages:
 
   '@vue/shared@3.5.13':
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
+
+  '@vue/test-utils@2.4.6':
+    resolution: {integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==}
 
   '@vuepic/vue-datepicker@11.0.2':
     resolution: {integrity: sha512-uHh78mVBXCEjam1uVfTzZ/HkyDwut/H6b2djSN9YTF+l/EA+XONfdCnOVSi1g+qVGSy65DcQAwyBNidAssnudQ==}
@@ -13997,7 +14006,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/test-utils@3.17.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)':
+  '@nuxt/test-utils@3.17.2(@types/node@22.15.2)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)':
     dependencies:
       '@nuxt/kit': 3.16.2(magicast@0.3.5)
       '@nuxt/schema': 3.16.2
@@ -14023,9 +14032,10 @@ snapshots:
       ufo: 1.6.1
       unplugin: 2.3.2
       vite: 6.3.3(@types/node@22.15.2)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1)
-      vitest-environment-nuxt: 1.0.1(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
+      vitest-environment-nuxt: 1.0.1(@types/node@22.15.2)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
       vue: 3.5.13(typescript@5.8.3)
     optionalDependencies:
+      '@vue/test-utils': 2.4.6
       happy-dom: 17.4.4
       playwright-core: 1.52.0
       vitest: 3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1)
@@ -16110,6 +16120,11 @@ snapshots:
       vue: 3.5.13(typescript@5.8.3)
 
   '@vue/shared@3.5.13': {}
+
+  '@vue/test-utils@2.4.6':
+    dependencies:
+      js-beautify: 1.15.4
+      vue-component-type-helpers: 2.2.10
 
   '@vuepic/vue-datepicker@11.0.2(vue@3.5.13(typescript@5.8.3))':
     dependencies:
@@ -22888,9 +22903,9 @@ snapshots:
       tsx: 4.19.3
       yaml: 2.7.1
 
-  vitest-environment-nuxt@1.0.1(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1):
+  vitest-environment-nuxt@1.0.1(@types/node@22.15.2)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1):
     dependencies:
-      '@nuxt/test-utils': 3.17.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
+      '@nuxt/test-utils': 3.17.2(@types/node@22.15.2)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.2)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.1))(yaml@2.7.1)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
