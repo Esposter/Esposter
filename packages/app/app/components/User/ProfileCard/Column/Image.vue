@@ -34,7 +34,7 @@ const isLoading = ref(false);
         my-2
         show-size
         @update:model-value="
-          async (files: File | File[] | undefined) => {
+          async (files?) => {
             if (!files) return;
 
             const file = Array.isArray(files) ? files[0] : files;
