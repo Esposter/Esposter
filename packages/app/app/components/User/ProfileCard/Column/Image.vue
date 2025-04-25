@@ -2,6 +2,8 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
+import { formRules } from "@/services/vuetify/formRules";
+
 export interface UserProfileCardColumnImageProps {
   editMode: boolean;
   value: Row<RowValueType.Image>["value"];
@@ -10,20 +12,7 @@ export interface UserProfileCardColumnImageProps {
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
 const { $trpc } = useNuxtApp();
-const imageModelValue = ref<File>();
 const isLoading = ref(false);
-const onFileChange = async (files: File | File[] | undefined) => {
-  if (!files) return;
-
-  const file = Array.isArray(files) ? files[0] : files;
-  isLoading.value = true;
-
-  try {
-    modelValue.value = await $trpc.user.uploadProfileImage.mutate(file);
-  } finally {
-    isLoading.value = false;
-  }
-};
 </script>
 
 <template>
@@ -34,8 +23,8 @@ const onFileChange = async (files: File | File[] | undefined) => {
         <v-img v-else-if="value" :src="value" :alt="value" />
       </v-avatar>
       <v-file-input
-        v-model="imageModelValue"
         :disabled="isLoading"
+        :rules="[formRules.requireAtMostMaxFileSize]"
         accept="image/*"
         prepend-icon=""
         prepend-inner-icon="mdi-upload"
@@ -44,7 +33,20 @@ const onFileChange = async (files: File | File[] | undefined) => {
         hide-details
         my-2
         show-size
-        @update:model-value="onFileChange"
+        @update:model-value="
+          async (files: File | File[] | undefined) => {
+            if (!files) return;
+
+            const file = Array.isArray(files) ? files[0] : files;
+            isLoading = true;
+
+            try {
+              modelValue = await $trpc.user.uploadProfileImage.mutate(file);
+            } finally {
+              isLoading = false;
+            }
+          }
+        "
       />
     </template>
     <v-avatar v-else>

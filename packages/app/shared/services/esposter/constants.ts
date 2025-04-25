@@ -4,6 +4,10 @@ export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b621
 
 export const APP_BAR_HEIGHT = 56;
 
+export const MEGABYTE = Math.pow(2, 20);
+export const MAX_REQUEST_SIZE = 2 * MEGABYTE;
+export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
+
 export const PWA_PUBLIC_FOLDER_PATH = "/pwa";
 
 const IMAGES_PUBLIC_FOLDER_PATH = "/images";
