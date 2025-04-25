@@ -78,9 +78,6 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^0.11.0
       version: 0.11.0
-    '@rolldown/plugin-node-polyfills':
-      specifier: ^1.0.0
-      version: 1.0.0
     '@tiptap/core':
       specifier: ^2.11.7
       version: 2.11.7
@@ -276,6 +273,9 @@ catalogs:
     eventemitter3:
       specifier: ^5.0.1
       version: 5.0.1
+    events:
+      specifier: ^3.3.0
+      version: 3.3.0
     fast-deep-equal:
       specifier: ^3.1.3
       version: 3.1.3
@@ -549,9 +549,6 @@ importers:
       '@lerna-lite/run':
         specifier: 'catalog:'
         version: 4.0.0(@lerna-lite/publish@4.0.0)(@types/node@22.15.0)(typescript@5.8.3)
-      '@rolldown/plugin-node-polyfills':
-        specifier: 'catalog:'
-        version: 1.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 22.15.0
@@ -1060,6 +1057,9 @@ importers:
       data-urls:
         specifier: 'catalog:'
         version: 5.0.0
+      events:
+        specifier: 'catalog:'
+        version: 3.3.0
       xml2js:
         specifier: 'catalog:'
         version: 0.6.2
@@ -3733,9 +3733,6 @@ packages:
     resolution: {integrity: sha512-8nMcDSZpCR2KuKCkgeA9/Em967VhB1jZys8W0j95tcKMyNva/Bnq9wxNH5CAMtL3AzV/QIT92RrHTWbIt0m1MA==}
     cpu: [x64]
     os: [win32]
-
-  '@rolldown/plugin-node-polyfills@1.0.0':
-    resolution: {integrity: sha512-JUmEhvz+B6+0AaeUGvZ7SnJec7wpwYqZ+FcAng1I3UVGYKA1uSmE1H4vKHUewU665Nb37znDd9N4o/iImmKeVg==}
 
   '@rollup/plugin-alias@5.1.1':
     resolution: {integrity: sha512-PR9zDb+rOzkRb2VD+EuKB7UC41vU5DIwZ5qqCpk0KJudcWAyi8rvYOhS7+L5aZCspw1stTViLgN5v6FF1p5cgQ==}
@@ -14663,8 +14660,6 @@ snapshots:
 
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.8-commit.2686eb1':
     optional: true
-
-  '@rolldown/plugin-node-polyfills@1.0.0': {}
 
   '@rollup/plugin-alias@5.1.1(rollup@4.40.0)':
     optionalDependencies:

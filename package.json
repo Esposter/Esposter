@@ -46,7 +46,6 @@
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
-    "@rolldown/plugin-node-polyfills": "catalog:",
     "@types/node": "catalog:",
     "cross-env": "catalog:",
     "ctix": "catalog:",

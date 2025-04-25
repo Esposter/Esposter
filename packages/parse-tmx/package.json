@@ -32,7 +32,11 @@
   },
   "dependencies": {
     "data-urls": "catalog:",
+    "events": "catalog:",
     "xml2js": "catalog:"
+  },
+  "dependenciesComments": {
+    "events": "https://github.com/rolldown/rolldown/issues/4318"
   },
   "devDependencies": {
     "@types/data-urls": "catalog:",
