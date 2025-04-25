@@ -21,7 +21,7 @@ catalog:
   "@mdi/font": ^7.4.47
   "@rolldown/plugin-node-polyfills": ^1.0.0
   "@nuxt/eslint": ^1.3.0
-  "@nuxt/fonts": ^0.11.1
+  "@nuxt/fonts": ^0.11.2
   "@nuxt/scripts": ^0.11.6
   "@nuxt/test-utils": ^3.17.2
   "@nuxtjs/seo": ^3.0.3
@@ -45,10 +45,10 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/json-schema": ^7.0.15
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^22.14.1
+  "@types/node": ^22.15.0
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
-  "@types/three": ^0.175.0
+  "@types/three": ^0.176.0
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
   "@unocss/eslint-config": ^66.1.0-beta.12
@@ -59,7 +59,7 @@ catalog:
   "@vitest/eslint-plugin": ^1.1.43
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.2
-  "@vue-flow/core": ^1.43.0
+  "@vue-flow/core": ^1.43.1
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.4.0
   "@vue/test-utils": ^2.4.6
@@ -75,7 +75,7 @@ catalog:
   ajv-formats: ^3.0.1
   # https://github.com/json-layout/json-layout/issues/5
   ajv-i18n: ^4.2.0
-  apexcharts: ^4.6.0
+  apexcharts: ^4.7.0
   # @TODO: https://github.com/better-auth/better-auth/issues/1669
   better-auth: 1.1.21
   codemirror: ^6.0.1
@@ -89,12 +89,12 @@ catalog:
   defu: ^6.1.4
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.0
-  drizzle-orm: ^0.42.0
+  drizzle-orm: ^0.43.0
   drizzle-zod: ^0.7.1
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.25.1
   eslint-config-prettier: ^10.1.2
-  eslint-plugin-perfectionist: ^4.12.2
+  eslint-plugin-perfectionist: ^4.12.3
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.2.6
   eventemitter3: ^5.0.1
@@ -124,7 +124,7 @@ catalog:
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
-  marked: ^15.0.10
+  marked: ^15.0.11
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
@@ -141,7 +141,7 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.0.0
   rolldown: ^1.0.0-beta.8
-  rolldown-plugin-dts: ^0.8.3
+  rolldown-plugin-dts: ^0.8.5
   rolldown-vite: ^6.3.5
   rxjs: ^7.8.2
   sass-embedded: ^1.87.0
@@ -162,7 +162,7 @@ catalog:
   typescript-eslint: ^8.31.0
   unocss: ^66.1.0-beta.12
   unplugin-auto-import: ^19.1.2
-  vite: ^6.3.2
+  vite: ^6.3.3
   vite-plugin-dts: ^4.5.3
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
