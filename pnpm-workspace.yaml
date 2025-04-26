@@ -169,7 +169,7 @@ catalog:
   vitest: ^3.1.2
   vue: ^3.5.13
   vue-codemirror: ^6.1.1
-  vue-router: ^4.5.0
+  vue-router: ^4.5.1
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
