@@ -561,6 +561,9 @@ importers:
       ctix:
         specifier: 'catalog:'
         version: 2.7.1(prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)))(prettier@3.5.3)(typescript@5.8.3)
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.13
       dotenv:
         specifier: 'catalog:'
         version: 16.5.0
@@ -720,9 +723,6 @@ importers:
       codemirror:
         specifier: 'catalog:'
         version: 6.0.1
-      dayjs:
-        specifier: 'catalog:'
-        version: 1.11.13
       debug:
         specifier: 'catalog:'
         version: 4.4.0
