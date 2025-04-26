@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A parser for tmx.",
   "type": "module",
   "main": "dist/index.js",
@@ -23,10 +23,23 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.js",
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
+  },
+  "dependencies": {
+    "data-urls": "catalog:",
+    "events": "catalog:",
+    "xml2js": "catalog:"
+  },
+  "dependenciesComments": {
+    "events": "https://github.com/rolldown/rolldown/issues/4318"
+  },
+  "devDependencies": {
+    "@types/data-urls": "catalog:",
+    "@types/xml2js": "catalog:"
   }
 }

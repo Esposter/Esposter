@@ -9,30 +9,30 @@ describe("app", () => {
   test("snapshots", async () => {
     expect.hasAssertions();
 
-    const componentFilepathEntries = Object.entries(
-      import.meta.glob<Component>(
-        [
-          "@/components/About/**/*.vue",
-          "@/components/Anime/**/*.vue",
-          "@/components/Nuxt/**/*.vue",
-          "@/components/Transition/**/*.vue",
-        ],
-        {
-          eager: true,
-          import: "default",
-        },
-      ),
+    await Promise.all(
+      Object.entries(
+        import.meta.glob<Component>(
+          [
+            "@/components/About/**/*.vue",
+            "@/components/Anime/**/*.vue",
+            "@/components/Nuxt/**/*.vue",
+            "@/components/Transition/**/*.vue",
+          ],
+          {
+            eager: true,
+            import: "default",
+          },
+        ),
+      ).map(async ([filepath, component]) => {
+        const mountedComponent = await mountSuspended(component, {
+          global: {
+            plugins: [vuetify],
+          },
+        });
+        const filename = trimFileExtension(filepath);
+
+        await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);
+      }),
     );
-
-    for (const [filepath, component] of componentFilepathEntries) {
-      const mountedComponent = await mountSuspended(component, {
-        global: {
-          plugins: [vuetify],
-        },
-      });
-      const filename = trimFileExtension(filepath);
-
-      await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);
-    }
   });
 });

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* Add data type ([492177b](https://github.com/Esposter/Esposter/commit/492177bd82e86972ee2900ed137bbcfb7fc98cc0))
+* build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+* remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
+
+### Features
+
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+
 # [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
 
 **Note:** Version bump only for package parse-tmx

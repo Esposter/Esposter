@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -85,7 +85,6 @@
     "apexcharts": "catalog:",
     "better-auth": "catalog:",
     "codemirror": "catalog:",
-    "dayjs": "catalog:",
     "debug": "catalog:",
     "dedent": "catalog:",
     "defu": "catalog:",
@@ -177,7 +176,6 @@
     "@vitest/coverage-v8": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
-    "cross-env": "catalog:",
     "drizzle-kit": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
@@ -188,7 +186,6 @@
     "sass-embedded": "catalog:",
     "tsx": "catalog:",
     "unocss": "catalog:",
-    "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }

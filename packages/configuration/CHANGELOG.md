@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* ctirc ([7e87801](https://github.com/Esposter/Esposter/commit/7e8780136b764998c4e3b17deb60f71fe9c3bf58))
+* move vite-tsconfig-paths to root ([0af9b92](https://github.com/Esposter/Esposter/commit/0af9b921733824e3ec9f7a76b99432932088b1b9))
+* remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
+* specific tsconfig files to check ([32387e5](https://github.com/Esposter/Esposter/commit/32387e5ee456c857c9857dfc990f698d807f2537))
+* specific tsconfig files to check ([d8533ef](https://github.com/Esposter/Esposter/commit/d8533ef18eea04854ab665e93f3a422b95ca6ebc))
+
+### Features
+
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+
+### Performance Improvements
+
+* remove unnecessary vite plugin node polyfills ([dfb299e](https://github.com/Esposter/Esposter/commit/dfb299e975a25f46b38136bcf8b04b6fe38c1a8d))
+
 # [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
 
 **Note:** Version bump only for package @esposter/configuration

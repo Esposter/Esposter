@@ -36,7 +36,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Usage
 
-An example [implementation](https://github.com/Esposter/Esposter/blob/main/packages/app/pages/dungeons.vue).
+An example [implementation](https://github.com/Esposter/Esposter/blob/main/packages/app/app/pages/dungeons.vue).
 
 ## <a name="license">⚖️ License</a>
 

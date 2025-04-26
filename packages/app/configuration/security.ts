@@ -3,6 +3,7 @@ import type { NuxtConfig } from "nuxt/schema";
 import { BASE_URL } from "../app/services/desmos/constants";
 import { GOOGLE_FONTS_BASE_URL } from "../app/services/google/constants";
 import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../app/services/grapesjs/constants";
+import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/esposter/constants";
 
 export const security: NuxtConfig["security"] = {
   headers: {
@@ -29,8 +30,10 @@ export const security: NuxtConfig["security"] = {
       "worker-src": ["blob:", process.env.BASE_URL],
     },
   },
-  rateLimiter: {
-    whiteList: ["127.0.0.1"],
+  rateLimiter: false,
+  requestSizeLimiter: {
+    maxRequestSizeInBytes: MAX_REQUEST_SIZE,
+    maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE,
   },
   // @TODO: https://github.com/wobsoriano/trpc-nuxt/issues/215
   xssValidator: false,

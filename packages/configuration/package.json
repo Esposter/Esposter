@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
@@ -23,10 +23,10 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc"
   },
   "devDependencies": {
-    "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
@@ -34,11 +34,9 @@
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
-    "rolldown-plugin-dts": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite-plugin-dts": "catalog:",
-    "vite-plugin-mkcert": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-plugin-mkcert": "catalog:"
   }
 }

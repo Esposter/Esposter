@@ -6,8 +6,8 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { getIsServer } from "#shared/util/environment/getIsServer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
-import { createWSClient, loggerLink, splitLink, wsLink } from "@trpc/client";
-import { createTRPCNuxtClient, httpBatchLink } from "trpc-nuxt/client";
+import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
+import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
   const links: TRPCLink<TRPCRouter>[] = [
@@ -18,15 +18,20 @@ export default defineNuxtPlugin(() => {
     }),
     errorLink,
   ];
+  const httpSplitLink = splitLink({
+    condition: ({ input }) => isNonJsonSerializable(input),
+    false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
+    true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
+  });
 
-  if (getIsServer()) links.push(httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }));
+  if (getIsServer()) links.push(httpSplitLink);
   else {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
     links.push(
       splitLink({
         condition: ({ type }) => type === "subscription",
-        false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
+        false: httpSplitLink,
         true: wsLink({ client: wsClient, transformer }),
       }),
     );

@@ -7,7 +7,7 @@
     }
   },
   "include": [
-    "${configDir}/auto-imports.d.ts",
+    "${configDir}/*.ts",
     "${configDir}/types/*.d.ts",
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"

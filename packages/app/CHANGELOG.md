@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* Add support for octet input parser for file uploads ([a6c407b](https://github.com/Esposter/Esposter/commit/a6c407b7c0e5dd11ac0326c92b63527b571e510e))
+* docs links ([f4257b4](https://github.com/Esposter/Esposter/commit/f4257b416d4ef9a42c34cc05769a2d80a6535fdc))
+* export methods ([edc1d6b](https://github.com/Esposter/Esposter/commit/edc1d6b629c9cbf98e977f7136be916860982782))
+* remove non-existent func ([29c77ae](https://github.com/Esposter/Esposter/commit/29c77aed35e034ecef073f13bbdc3606533dd8fa))
+* remove unused datamap ([3289b40](https://github.com/Esposter/Esposter/commit/3289b40139ce9d0943a9f45c527ea95fdf535c93))
+* split containers based on access level ([1b58fe9](https://github.com/Esposter/Esposter/commit/1b58fe98d67429828a28544a769a61cb445499e4))
+* update vue-phaserjs types ([6b83156](https://github.com/Esposter/Esposter/commit/6b83156ab738bc28798875cdc27c940290bd8938))
+
+### Features
+
+* Add reply spine ([9884809](https://github.com/Esposter/Esposter/commit/9884809313c6cc2c52a919fd847a8cb9f66932de))
+* Add room subscriptions ([6dc335f](https://github.com/Esposter/Esposter/commit/6dc335fe716e24d8c763e3806dd18a9dc2c5e1ed))
+* Add scrolling to reply ([9aefd83](https://github.com/Esposter/Esposter/commit/9aefd8311554a3d191c976e6a46afa90d9573b7f))
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+* make container properties code-first ([65d6698](https://github.com/Esposter/Esposter/commit/65d6698d609bd48381612c34bdfe7f97451252f5))
+
+### Performance Improvements
+
+* remove unnecessary vite plugin node polyfills ([dfb299e](https://github.com/Esposter/Esposter/commit/dfb299e975a25f46b38136bcf8b04b6fe38c1a8d))
+
 # [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
 
 **Note:** Version bump only for package @esposter/app

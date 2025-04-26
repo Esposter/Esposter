@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* Add data type ([492177b](https://github.com/Esposter/Esposter/commit/492177bd82e86972ee2900ed137bbcfb7fc98cc0))
+* Add support for octet input parser for file uploads ([a6c407b](https://github.com/Esposter/Esposter/commit/a6c407b7c0e5dd11ac0326c92b63527b571e510e))
+* build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+* ctirc ([7e87801](https://github.com/Esposter/Esposter/commit/7e8780136b764998c4e3b17deb60f71fe9c3bf58))
+* docs links ([f4257b4](https://github.com/Esposter/Esposter/commit/f4257b416d4ef9a42c34cc05769a2d80a6535fdc))
+* export methods ([edc1d6b](https://github.com/Esposter/Esposter/commit/edc1d6b629c9cbf98e977f7136be916860982782))
+* move vite-tsconfig-paths to root ([0af9b92](https://github.com/Esposter/Esposter/commit/0af9b921733824e3ec9f7a76b99432932088b1b9))
+* pin eslint plugin for now ([771b175](https://github.com/Esposter/Esposter/commit/771b175ad3640f86a9629a19765463c0308df90a))
+* README ([1e4a49a](https://github.com/Esposter/Esposter/commit/1e4a49a357fe725a812d93c3f18b6ce7a3b8a3bc))
+* remove non-existent func ([29c77ae](https://github.com/Esposter/Esposter/commit/29c77aed35e034ecef073f13bbdc3606533dd8fa))
+* remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
+* remove unused datamap ([3289b40](https://github.com/Esposter/Esposter/commit/3289b40139ce9d0943a9f45c527ea95fdf535c93))
+* specific tsconfig files to check ([32387e5](https://github.com/Esposter/Esposter/commit/32387e5ee456c857c9857dfc990f698d807f2537))
+* specific tsconfig files to check ([d8533ef](https://github.com/Esposter/Esposter/commit/d8533ef18eea04854ab665e93f3a422b95ca6ebc))
+* split containers based on access level ([1b58fe9](https://github.com/Esposter/Esposter/commit/1b58fe98d67429828a28544a769a61cb445499e4))
+* update vue-phaserjs types ([6b83156](https://github.com/Esposter/Esposter/commit/6b83156ab738bc28798875cdc27c940290bd8938))
+* use pnpm 10.8.1 for now ([a1b577d](https://github.com/Esposter/Esposter/commit/a1b577d3b182c444102a2457b65182c9e3474e44))
+
+### Features
+
+* Add reply spine ([9884809](https://github.com/Esposter/Esposter/commit/9884809313c6cc2c52a919fd847a8cb9f66932de))
+* Add room subscriptions ([6dc335f](https://github.com/Esposter/Esposter/commit/6dc335fe716e24d8c763e3806dd18a9dc2c5e1ed))
+* Add scrolling to reply ([9aefd83](https://github.com/Esposter/Esposter/commit/9aefd8311554a3d191c976e6a46afa90d9573b7f))
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+* fancy pipeline emojis ([2a56519](https://github.com/Esposter/Esposter/commit/2a565199e5cef8d238c1b0a39df84f62f3aa1118))
+* make container properties code-first ([65d6698](https://github.com/Esposter/Esposter/commit/65d6698d609bd48381612c34bdfe7f97451252f5))
+
+### Performance Improvements
+
+* remove unnecessary vite plugin node polyfills ([dfb299e](https://github.com/Esposter/Esposter/commit/dfb299e975a25f46b38136bcf8b04b6fe38c1a8d))
+
 # [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
 
 **Note:** Version bump only for package esposter
