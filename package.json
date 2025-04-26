@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
+    "dayjs": "catalog:",
     "vue": "catalog:"
   },
   "devDependencies": {
@@ -49,7 +50,6 @@
     "@types/node": "catalog:",
     "cross-env": "catalog:",
     "ctix": "catalog:",
-    "dayjs": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "rolldown": "catalog:",
