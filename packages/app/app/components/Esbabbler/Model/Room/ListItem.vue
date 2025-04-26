@@ -20,7 +20,7 @@ const active = computed(() => room.id === currentRoomId.value);
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active :value="room.id">
         <template #prepend>
-          <v-badge mr-4 color="green" location="bottom end" dot>
+          <v-badge color="green" location="bottom end" dot>
             <StyledAvatar :image="room.image" :name="room.name" />
           </v-badge>
         </template>
@@ -48,3 +48,9 @@ const active = computed(() => room.id === currentRoomId.value);
     </EsbabblerModelRoomConfirmDeleteDialog>
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item__prepend > .v-list-item__spacer) {
+  width: 0.5rem !important;
+}
+</style>

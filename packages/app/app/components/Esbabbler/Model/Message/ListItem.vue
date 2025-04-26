@@ -32,7 +32,6 @@ const selectEmoji = await useSelectEmoji(message);
   <EsbabblerModelMessageConfirmDeleteDialog :message>
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
-        v-if="creator.name"
         :id="message.rowKey"
         mt-4
         py-1="!"
@@ -91,7 +90,7 @@ const selectEmoji = await useSelectEmoji(message);
       </div>
     </template>
     <template #messagePreview>
-      <v-list-item v-if="creator.name">
+      <v-list-item>
         <template #prepend>
           <StyledAvatar :image="creator.image" :name="creator.name" />
         </template>

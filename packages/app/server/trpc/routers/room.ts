@@ -23,7 +23,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { getRoomOwnerProcedure } from "@@/server/trpc/procedure/getRoomOwnerProcedure";
+import { getRoomCreatorProcedure } from "@@/server/trpc/procedure/getRoomCreatorProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
@@ -101,7 +101,7 @@ export const roomRouter = router({
         message: "Failed to create invite code. Please try again.",
       });
     }),
-  createMembers: getRoomOwnerProcedure(createMembersInputSchema, "roomId")
+  createMembers: getRoomCreatorProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db.transaction(async (tx) => {
