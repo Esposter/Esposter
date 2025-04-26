@@ -12,7 +12,7 @@ export const userRouter = router({
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.session.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: We shouldn't need to cast to ReadableStream here if the types are unified
+    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
     const readable = Readable.fromWeb(input as ReadableStream);
     await blockBlobClient.uploadStream(readable);
     return blockBlobClient.url;
