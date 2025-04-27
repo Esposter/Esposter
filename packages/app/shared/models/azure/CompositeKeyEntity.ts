@@ -14,5 +14,5 @@ export class CompositeKeyEntity extends Serializable implements CompositeKey {
 }
 
 export const createCompositeKeyEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(
-  schema: z.ZodObject<TEntity>,
+  schema: z.ZodInterface<TEntity>,
 ) => schema;

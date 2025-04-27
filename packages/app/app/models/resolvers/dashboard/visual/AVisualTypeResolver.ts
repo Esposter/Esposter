@@ -13,7 +13,7 @@ export abstract class AVisualTypeResolver implements ItemEntityType<VisualType> 
 
   handleConfiguration(_apexOptions: ApexOptions, _type: VisualType) {}
 
-  handleSchema(schema: z.ZodObject): z.ZodObject {
+  handleSchema(schema: z.ZodInterface): z.ZodInterface {
     return schema;
   }
 
