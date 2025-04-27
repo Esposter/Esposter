@@ -3,14 +3,14 @@ import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectUserSchema } from "#shared/db/schema/users";
-import { AzureEntity } from "#shared/models/azure/AzureEntity";
+import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
-import { itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];
+  isForward?: true;
   message!: string;
   replyRowKey?: string;
   userId!: string;
@@ -21,15 +21,19 @@ export class MessageEntity extends AzureEntity {
   }
 }
 
-export const messageEntitySchema = itemMetadataSchema.extend(
+export const messageEntitySchema = createAzureEntitySchema(
   z.interface({
-    files: z.array(fileEntitySchema),
-    message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     // ${roomId}-${createdAt.format("yyyyMMdd")}
     partitionKey: z.string(),
-    replyRowKey: z.string().optional(),
     // reverse-ticked timestamp
     rowKey: z.string(),
+  }),
+).extend(
+  z.interface({
+    files: z.array(fileEntitySchema),
+    isForward: z.literal(true),
+    message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
+    replyRowKey: z.string().optional(),
     userId: selectUserSchema.shape.id,
   }),
 ) satisfies z.ZodType<ToData<MessageEntity>>;

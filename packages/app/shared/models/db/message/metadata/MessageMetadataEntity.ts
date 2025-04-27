@@ -13,8 +13,8 @@ export const createMessageMetadataEntitySchema = <TType extends string>(typeSche
     z.interface({
       partitionKey: messageEntitySchema.shape.partitionKey,
       rowKey: z.string(),
-      type: typeSchema,
     }),
+    typeSchema,
   ).extend(
     z.interface({
       messageRowKey: messageEntitySchema.shape.rowKey,

@@ -43,6 +43,7 @@ const readMessagesInputSchema =
     .extend(z.interface({ roomId: selectRoomSchema.shape.id }))
     .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
+
 const readMessagesByRowKeysInputSchema = z.interface({
   roomId: selectRoomSchema.shape.id,
   rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),

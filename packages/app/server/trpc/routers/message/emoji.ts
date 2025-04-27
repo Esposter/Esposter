@@ -39,7 +39,9 @@ export const emojiRouter = router({
   createEmoji: getRoomUserProcedure(createEmojiInputSchema, "partitionKey")
     .input(createEmojiInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
+      const messagesMetadataClient = (await useTableClient(
+        AzureTable.MessagesMetadata,
+      )) as CustomTableClient<MessageEmojiMetadataEntity>;
       const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
         filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,

@@ -4,7 +4,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { UUIDV4_SEARCH_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const getRoomOwnerProcedure = <T>(schema: z.ZodType<T>, roomIdKey: keyof T & string) =>
+export const getRoomCreatorProcedure = <T>(schema: z.ZodType<T>, roomIdKey: keyof T & string) =>
   authedProcedure.use(async ({ ctx, getRawInput, next }) => {
     const rawInput = await getRawInput();
     const result = schema.safeParse(rawInput);
@@ -16,9 +16,9 @@ export const getRoomOwnerProcedure = <T>(schema: z.ZodType<T>, roomIdKey: keyof 
     const roomId = value.match(UUIDV4_SEARCH_REGEX)?.[0];
     if (!roomId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isOwner = await ctx.db.query.rooms.findFirst({
+    const isCreator = await ctx.db.query.rooms.findFirst({
       where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.userId, ctx.session.user.id)),
     });
-    if (!isOwner) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!isCreator) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });

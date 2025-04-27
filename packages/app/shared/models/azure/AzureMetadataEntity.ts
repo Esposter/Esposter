@@ -1,15 +1,18 @@
 import type { CompositeKeyEntityConstraint } from "#shared/models/azure/CompositeKeyEntity";
+import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { z } from "zod";
 
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-export abstract class AzureMetadataEntity<TType extends string> extends AzureEntity {
+import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
+
+export abstract class AzureMetadataEntity<TType extends string> extends AzureEntity implements ItemEntityType<TType> {
   type!: TType;
 }
 
 export const createAzureMetadataEntitySchema = <
-  TType extends string,
-  TEntity extends CompositeKeyEntityConstraint & { type: z.ZodType<TType> },
+  TEntity extends CompositeKeyEntityConstraint,
+  TTypeSchema extends z.ZodType<string>,
 >(
   schema: z.ZodObject<TEntity>,
-) => createAzureEntitySchema(schema);
+  typeSchema: TTypeSchema,
+) => createAzureEntitySchema(schema).extend(createItemEntityTypeSchema(typeSchema));
