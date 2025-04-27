@@ -9,10 +9,7 @@ export abstract class AzureMetadataEntity<TType extends string> extends AzureEnt
   type!: TType;
 }
 
-export const createAzureMetadataEntitySchema = <
-  TEntity extends CompositeKeyEntityConstraint,
-  TTypeSchema extends z.ZodType<string>,
->(
+export const createAzureMetadataEntitySchema = <TEntity extends CompositeKeyEntityConstraint, TType extends string>(
   schema: z.ZodObject<TEntity>,
-  typeSchema: TTypeSchema,
+  typeSchema: z.ZodType<TType>,
 ) => createAzureEntitySchema(schema).extend(createItemEntityTypeSchema(typeSchema));
