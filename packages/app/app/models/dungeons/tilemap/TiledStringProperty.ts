@@ -1,10 +1,9 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 
-export interface EnumPropertyType extends ItemEntityType<PropertyType.enum> {
-  id: number;
+export interface TiledStringProperty<TValue = never> extends ItemEntityType<PropertyType.string> {
   name: string;
-  storageType: string;
-  values: string[];
-  valuesAsFlags: boolean;
+  // The enum if it exists
+  propertyType?: string;
+  value: TValue;
 }

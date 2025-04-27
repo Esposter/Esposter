@@ -13,8 +13,8 @@ export const createMessageMetadataEntitySchema = <TTypeSchema extends z.ZodType<
     z.object({
       partitionKey: messageEntitySchema.shape.partitionKey,
       rowKey: z.string(),
-      type: typeSchema,
     }),
+    typeSchema,
   ).merge(
     z.object({
       messageRowKey: messageEntitySchema.shape.rowKey,
