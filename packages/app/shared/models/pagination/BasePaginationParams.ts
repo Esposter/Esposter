@@ -9,10 +9,10 @@ export interface BasePaginationParams<TSortKey extends string> {
   sortBy?: SortItem<TSortKey>[];
 }
 
-export const createBasePaginationParamsSchema = <TSortKeySchema extends z.ZodType<string>>(
-  sortKeySchema: TSortKeySchema,
+export const createBasePaginationParamsSchema = <TSortKey extends string>(
+  sortKeySchema: z.ZodType<TSortKey>,
   minSortBy = 0,
-  defaultSortBy: SortItem<TSortKeySchema["_type"]>[] = [],
+  defaultSortBy: SortItem<TSortKey>[] = [],
 ) =>
   z.object({
     limit: z.number().int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),

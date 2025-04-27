@@ -9,5 +9,5 @@ export class TableEditor<T extends ToData<Item>> extends AItemEntity {
   items: T[] = [];
 }
 
-export const createTableEditorSchema = <T extends z.ZodType<ToData<Item>>>(schema: T) =>
+export const createTableEditorSchema = <T extends ToData<Item>>(schema: z.ZodType<T>) =>
   z.object({ items: z.array(schema).max(TABLE_EDITOR_ITEMS_MAX_LENGTH) }).merge(aItemEntitySchema);
