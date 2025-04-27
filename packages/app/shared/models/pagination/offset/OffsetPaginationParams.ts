@@ -8,8 +8,8 @@ export interface OffsetPaginationParams<TSortKey extends string> extends BasePag
 }
 
 export const createOffsetPaginationParamsSchema = <TSortKey extends string>(sortKeySchema: z.ZodType<TSortKey>) =>
-  createBasePaginationParamsSchema(sortKeySchema).extend(
+  createBasePaginationParamsSchema(sortKeySchema).merge(
     z.interface({
-      offset: z.int().nonnegative().default(0),
+      offset: z.number().int().nonnegative().default(0),
     }),
   );
