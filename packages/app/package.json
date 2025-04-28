@@ -77,7 +77,6 @@
     "@vue-flow/node-resizer": "catalog:",
     "@vuepic/vue-datepicker": "catalog:",
     "@vueuse/core": "catalog:",
-    "@vueuse/integrations": "catalog:",
     "ajv": "catalog:",
     "ajv-errors": "catalog:",
     "ajv-formats": "catalog:",

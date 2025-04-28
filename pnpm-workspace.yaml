@@ -64,7 +64,6 @@ catalog:
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.1.0
-  "@vueuse/integrations": ^13.1.0
   "@vueuse/nuxt": ^13.1.0
   # https://github.com/json-layout/json-layout/issues/5
   ajv: ^8.17.1

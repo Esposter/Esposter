@@ -195,9 +195,6 @@ catalogs:
     '@vueuse/core':
       specifier: ^13.1.0
       version: 13.1.0
-    '@vueuse/integrations':
-      specifier: ^13.1.0
-      version: 13.1.0
     '@vueuse/nuxt':
       specifier: ^13.1.0
       version: 13.1.0
@@ -699,9 +696,6 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 13.1.0(vue@3.5.13(typescript@5.8.3))
-      '@vueuse/integrations':
-        specifier: 'catalog:'
-        version: 13.1.0(axios@1.9.0(debug@4.4.0))(fuse.js@7.1.0)(jwt-decode@4.0.0)(vue@3.5.13(typescript@5.8.3))
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
@@ -4900,48 +4894,6 @@ packages:
     resolution: {integrity: sha512-PAauvdRXZvTWXtGLg8cPUFjiZEddTqmogdwYpnn60t08AA5a8Q4hZokBnpTOnVNqySlFlTcRYIC8OqreV4hv3Q==}
     peerDependencies:
       vue: ^3.5.0
-
-  '@vueuse/integrations@13.1.0':
-    resolution: {integrity: sha512-wJ6aANdUs4SOpVabChQK+uLIwxRTUAEmn1DJnflGG7Wq6yaipiRmp6as/Md201FjJnquQt8MecIPbFv8HSBeDA==}
-    peerDependencies:
-      async-validator: ^4
-      axios: ^1
-      change-case: ^5
-      drauu: ^0.4
-      focus-trap: ^7
-      fuse.js: ^7
-      idb-keyval: ^6
-      jwt-decode: ^4
-      nprogress: ^0.2
-      qrcode: ^1.5
-      sortablejs: ^1
-      universal-cookie: ^7
-      vue: ^3.5.0
-    peerDependenciesMeta:
-      async-validator:
-        optional: true
-      axios:
-        optional: true
-      change-case:
-        optional: true
-      drauu:
-        optional: true
-      focus-trap:
-        optional: true
-      fuse.js:
-        optional: true
-      idb-keyval:
-        optional: true
-      jwt-decode:
-        optional: true
-      nprogress:
-        optional: true
-      qrcode:
-        optional: true
-      sortablejs:
-        optional: true
-      universal-cookie:
-        optional: true
 
   '@vueuse/metadata@10.11.1':
     resolution: {integrity: sha512-IGa5FXd003Ug1qAZmyE8wF3sJ81xGLSqTqtQ6jaVfkeZ4i5kS2mwQF61yhVqojRnenVew5PldLyRgvdl4YYuSw==}
@@ -16048,16 +16000,6 @@ snapshots:
       '@vueuse/metadata': 13.1.0
       '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
       vue: 3.5.13(typescript@5.8.3)
-
-  '@vueuse/integrations@13.1.0(axios@1.9.0(debug@4.4.0))(fuse.js@7.1.0)(jwt-decode@4.0.0)(vue@3.5.13(typescript@5.8.3))':
-    dependencies:
-      '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
-      '@vueuse/shared': 13.1.0(vue@3.5.13(typescript@5.8.3))
-      vue: 3.5.13(typescript@5.8.3)
-    optionalDependencies:
-      axios: 1.9.0(debug@4.4.0)
-      fuse.js: 7.1.0
-      jwt-decode: 4.0.0
 
   '@vueuse/metadata@10.11.1': {}
 

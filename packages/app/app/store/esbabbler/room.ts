@@ -9,7 +9,6 @@ import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
-import { useFuse } from "@vueuse/integrations/useFuse";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const { $trpc } = useNuxtApp();
@@ -53,18 +52,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     storeDeleteRoom({ id });
   };
 
-  const roomSearchQuery = ref("");
-  const roomsSearched = computed<Room[]>(() => {
-    if (!roomSearchQuery.value) return [];
-
-    const { results } = useFuse(roomSearchQuery, roomList, {
-      fuseOptions: {
-        keys: ["name"],
-      },
-    });
-    return results.value.map(({ item }) => item);
-  });
-
   return {
     createRoom,
     joinRoom,
@@ -77,7 +64,13 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     currentRoom,
     currentRoomId,
     currentRoomName,
-    roomSearchQuery,
-    roomsSearched,
+    ...useSearcher(
+      (searchQuery, cursor) =>
+        $trpc.room.readRooms.query({
+          cursor,
+          filter: { name: searchQuery },
+        }),
+      DatabaseEntityType.Room,
+    ),
   };
 });

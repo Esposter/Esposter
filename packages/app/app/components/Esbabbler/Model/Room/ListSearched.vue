@@ -4,7 +4,8 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 const emit = defineEmits<{ "update:room": [] }>();
 const roomStore = useRoomStore();
-const { roomsSearched } = storeToRefs(roomStore);
+const { readMoreRoomsSearched } = roomStore;
+const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -21,5 +22,6 @@ const { roomsSearched } = storeToRefs(roomStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
+    <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
   </v-list>
 </template>
