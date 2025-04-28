@@ -14,9 +14,9 @@ interface MessageOptionsMenuProps {
 const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{
   "update:delete-mode": [value: true];
-  "update:forward": [message: MessageEntity];
+  "update:forward": [rowKey: string];
   "update:menu": [value: boolean];
-  "update:reply": [message: MessageEntity];
+  "update:reply": [rowKey: string];
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
@@ -33,7 +33,7 @@ const editMessageOptionMenuItem: OptionMenuItem = {
 const forwardMessageOptionMenuItem: OptionMenuItem = {
   icon: "mdi-share",
   onClick: () => {
-    emit("update:forward", message);
+    emit("update:forward", message.rowKey);
   },
   title: "Forward",
 };
@@ -47,7 +47,7 @@ const items = computed(() => {
     {
       icon: "mdi-reply",
       onClick: () => {
-        emit("update:reply", message);
+        emit("update:reply", message.rowKey);
       },
       title: "Reply",
     },

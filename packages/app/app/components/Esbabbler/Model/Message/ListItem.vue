@@ -12,9 +12,9 @@ interface MessageListItemProps {
 
 const { message } = defineProps<MessageListItemProps>();
 const messageStore = useMessageStore();
-const { activeReply } = storeToRefs(messageStore);
+const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
-const { reply } = storeToRefs(messageInputStore);
+const { forwardRowKey, replyRowKey } = storeToRefs(messageInputStore);
 const messageHtml = useRefreshMentions(() => message.message);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
 const isUpdateMode = ref(false);
@@ -36,7 +36,7 @@ const selectEmoji = await useSelectEmoji(message);
         mt-4
         py-1="!"
         min-h-auto="!"
-        :active="(active || activeReply?.rowKey === message.rowKey) && !isOpen"
+        :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
       >
@@ -80,8 +80,9 @@ const selectEmoji = await useSelectEmoji(message);
               :is-hovering
               :hover-props
               @update:delete-mode="updateIsOpen"
+              @update:forward="(rowKey) => (forwardRowKey = rowKey)"
               @update:menu="(value) => (isOptionsChildrenActive = value)"
-              @update:reply="(message) => (reply = message)"
+              @update:reply="(rowKey) => (replyRowKey = rowKey)"
               @update:select-emoji="selectEmoji"
               @update:update-mode="(value) => (isUpdateMode = value)"
             />

@@ -41,9 +41,9 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
     const savedMessageInput = messageInputStore.messageInput;
-    const savedreplyRowKey = messageInputStore.reply?.rowKey;
+    const savedreplyRowKey = messageInputStore.replyRowKey;
     editor.commands.clearContent(true);
-    messageInputStore.reply = undefined;
+    messageInputStore.replyRowKey = undefined;
     await $trpc.message.createMessage.mutate({
       message: savedMessageInput,
       replyRowKey: savedreplyRowKey,
@@ -51,7 +51,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     });
   };
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  const activeReply = ref<MessageEntity>();
+  const activeReplyRowKey = ref<string>();
   const typingList = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
@@ -62,7 +62,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
-    activeReply,
+    activeReplyRowKey,
     replyMap,
     typingList,
   };
