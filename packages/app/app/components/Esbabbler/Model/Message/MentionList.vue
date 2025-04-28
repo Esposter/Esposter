@@ -47,8 +47,8 @@ watch(
   <div>
     <StyledCard overflow-y-auto="!" :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
-        v-for="(item, index) of items"
-        :key="item.id"
+        v-for="({ id, image, name }, index) of items"
+        :key="id"
         class="button"
         justify-start="!"
         w-full
@@ -56,11 +56,11 @@ watch(
         :ripple="false"
         @click="selectItem(index)"
       >
-        <v-avatar v-if="item.image" size="x-small">
-          <v-img :src="item.image" :alt="item.name" />
+        <v-avatar v-if="image" size="x-small">
+          <v-img :src="image" :alt="name" />
         </v-avatar>
         <span font-bold pl-2>
-          {{ item.name }}
+          {{ name }}
         </span>
       </v-btn>
       <div v-if="items.length === 0" font-bold text-center p-2>No result</div>

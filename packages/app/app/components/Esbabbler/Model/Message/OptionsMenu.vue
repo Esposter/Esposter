@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
 
 import { authClient } from "@/services/auth/authClient";
 import { mergeProps } from "vue";
-
-interface Item {
-  color?: string;
-  icon: string;
-  onClick: (event: KeyboardEvent | MouseEvent) => void;
-  title: string;
-}
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -20,6 +14,7 @@ interface MessageOptionsMenuProps {
 const { hoverProps, isHovering, message } = defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{
   "update:delete-mode": [value: true];
+  "update:forward": [message: MessageEntity];
   "update:menu": [value: boolean];
   "update:reply": [message: MessageEntity];
   "update:select-emoji": [emoji: string];
@@ -27,17 +22,28 @@ const emit = defineEmits<{
 }>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
+const editMessageOptionMenuItem: OptionMenuItem = {
+  icon: "mdi-pencil",
+  onClick: () => {
+    emit("update:update-mode", true);
+  },
+  shortTitle: "Edit",
+  title: "Edit Message",
+};
+const forwardMessageOptionMenuItem: OptionMenuItem = {
+  icon: "mdi-share",
+  onClick: () => {
+    emit("update:forward", message);
+  },
+  title: "Forward",
+};
+// We only include menu items that will be part of our v-for to generate similar components
+const menuItems = [editMessageOptionMenuItem, forwardMessageOptionMenuItem];
 const items = computed(() => {
   if (!isCreator.value) return [];
 
-  const result: Item[] = [
-    {
-      icon: "mdi-pencil",
-      onClick: () => {
-        emit("update:update-mode", true);
-      },
-      title: "Edit Message",
-    },
+  const result = [
+    editMessageOptionMenuItem,
     {
       icon: "mdi-reply",
       onClick: () => {
@@ -45,6 +51,7 @@ const items = computed(() => {
       },
       title: "Reply",
     },
+    forwardMessageOptionMenuItem,
     {
       color: "error",
       icon: "mdi-delete",
@@ -68,17 +75,9 @@ const items = computed(() => {
         @update:menu="(value) => emit('update:menu', value)"
         @select="(emoji) => emit('update:select-emoji', emoji)"
       />
-      <v-tooltip text="Edit">
+      <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn
-            v-if="isCreator"
-            m-0="!"
-            rd-none="!"
-            icon="mdi-pencil"
-            size="small"
-            :="tooltipProps"
-            @click="emit('update:update-mode', true)"
-          />
+          <v-btn v-if="isCreator" m-0="!" rd-none="!" :icon size="small" :="tooltipProps" @click="onClick" />
         </template>
       </v-tooltip>
       <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
@@ -96,10 +95,10 @@ const items = computed(() => {
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item v-for="item of items" :key="item.title" @click="item.onClick">
-            <span :class="item.color ? `text-${item.color}` : undefined">{{ item.title }}</span>
+          <v-list-item v-for="{ title, color, icon, onClick } of items" :key="title" @click="onClick">
+            <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
             <template #append>
-              <v-icon size="small" :icon="item.icon" :color="item.color ?? undefined" />
+              <v-icon size="small" :icon :color />
             </template>
           </v-list-item>
         </v-list>
