@@ -1,7 +1,6 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 
-import { dayjs } from "#shared/services/dayjs";
 import Header from "@/components/Styled/EditFormDialog/Header.vue";
 import { VForm } from "vuetify/components";
 
@@ -19,21 +18,16 @@ const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, origin
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
-  close: [];
   delete: [onComplete: () => void];
   save: [];
+  "update:close": [];
   "update:edit-form-ref": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
 }>();
-const { start: closeDialog } = useTimeoutFn(() => {
-  // Hack emitting the close event so the dialog content doesn't change
-  // until after the CSS animation that lasts 300ms ends
-  emit("close");
-}, dayjs.duration(0.3, "seconds").asMilliseconds());
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
-  closeDialog();
+  emit("update:close");
 });
 
 const editFormRef = ref<InstanceType<typeof VForm>>();
@@ -45,13 +39,7 @@ watch(editFormRef, (newEditFormRef) => {
 </script>
 
 <template>
-  <v-dialog
-    v-model="dialog"
-    :fullscreen="isFullScreenDialog"
-    :width="isFullScreenDialog ? '100%' : 800"
-    persistent
-    no-click-animation
-  >
+  <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
     <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header

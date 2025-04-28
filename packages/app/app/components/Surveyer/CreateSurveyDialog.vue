@@ -4,7 +4,6 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "#shared/services/constants";
-import { dayjs } from "#shared/services/dayjs";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
@@ -23,12 +22,6 @@ const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;
 const name = ref(initialValue.name);
 const group = ref(initialValue.group);
-const { start: resetSurvey } = useTimeoutFn(() => {
-  // Hack resetting the item so the dialog content doesn't change
-  // until after the CSS animation that lasts 300ms ends
-  name.value = initialValue.name;
-  group.value = initialValue.group;
-}, dayjs.duration(0.3, "seconds").asMilliseconds());
 </script>
 
 <template>
@@ -37,7 +30,8 @@ const { start: resetSurvey } = useTimeoutFn(() => {
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });
-        resetSurvey();
+        name = initialValue.name;
+        group = initialValue.group;
         onComplete();
       }
     "
