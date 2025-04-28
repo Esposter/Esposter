@@ -1,8 +1,8 @@
-import type { ListItem } from "@/models/shared/ListItem";
+import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 
-export const productListItems: ListItem[] = [
+export const ProductListLinkItems = [
   {
     href: RoutePath.MessagesIndex,
     icon: "mdi-message-fast",
@@ -48,4 +48,4 @@ export const productListItems: ListItem[] = [
     icon: "custom:dungeon-gate",
     title: "Dungeons",
   },
-];
+] as const satisfies ListLinkItem[];
