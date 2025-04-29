@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Room } from "#shared/db/schema/rooms";
-
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
+const { $trpc } = useNuxtApp();
 const messageInputStore = useMessageInputStore();
 const { forwardRowKey } = storeToRefs(messageInputStore);
 const dialog = computed({
@@ -12,17 +12,27 @@ const dialog = computed({
     forwardRowKey.value = undefined;
   },
 });
-const roomSearchQuery = ref("");
-const roomsSearched = ref<Room[]>([]);
+const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useSearcher(
+  (searchQuery, cursor) =>
+    $trpc.room.readRooms.query({
+      cursor,
+      filter: { name: searchQuery },
+    }),
+  DatabaseEntityType.Room,
+);
 </script>
 
 <template>
   <v-dialog v-model="dialog" persistent>
     <StyledCard>
-      <v-card-title>
+      <v-card-title flex flex-col>
+        <div flex space-between>
+          Forward To
+          <v-btn icon="mdi-close" @click="dialog = false" />
+        </div>
         <v-text-field
           v-model="roomSearchQuery"
-          placeholder="Where would you like to go?"
+          placeholder="Search"
           prepend-inner-icon="mdi-magnify"
           density="compact"
           hide-details
@@ -35,6 +45,7 @@ const roomsSearched = ref<Room[]>([]);
               <StyledAvatar :image :name />
             </template>
           </v-list-item>
+          <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
         </v-list>
       </v-card-text>
     </StyledCard>
