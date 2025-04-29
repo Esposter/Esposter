@@ -3,7 +3,9 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 
+import { dayjs } from "#shared/services/dayjs";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
+import { uncapitalize } from "@/util/text/uncapitalize";
 
 type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
   | `${Uncapitalize<TEntityTypeKey>}SearchQuery`
@@ -17,7 +19,7 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
 ) => {
   const searchQuery = ref("");
   const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
-  const throttledSearchQuery = useThrottle(searchQuery);
+  const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
   const { hasMore, initializeCursorPaginationData, itemList, nextCursor, resetCursorPaginationData } =
     createCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
@@ -43,8 +45,8 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
   });
 
   return {
-    [`${entityTypeKey}SearchQuery`]: searchQuery,
-    [`${entityTypeKey}sSearched`]: itemList,
+    [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,
+    [`${uncapitalize(entityTypeKey)}sSearched`]: itemList,
     [`hasMore${entityTypeKey}sSearched`]: hasMore,
     [`readMore${entityTypeKey}sSearched`]: readMoreItems,
   } as {
