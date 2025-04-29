@@ -9,15 +9,15 @@ export const useRoomSubscribables = () => {
   const { userMap } = storeToRefs(esbabblerStore);
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
-  const { currentRoomId, rooms } = storeToRefs(roomStore);
+  const { currentRoomId, roomList } = storeToRefs(roomStore);
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
   const joinRoomUnsubscribable = ref<Unsubscribable>();
   const leaveRoomUnsubscribable = ref<Unsubscribable>();
 
-  const { trigger } = watchTriggerable(rooms, (newRooms) => {
-    const newRoomIds = newRooms.map(({ id }) => id);
+  const { trigger } = watchTriggerable(roomList, (newRoomList) => {
+    const newRoomIds = newRoomList.map(({ id }) => id);
 
     updateRoomUnsubscribable.value?.unsubscribe();
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {

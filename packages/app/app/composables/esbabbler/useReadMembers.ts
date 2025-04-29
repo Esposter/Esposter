@@ -9,7 +9,7 @@ export const useReadMembers = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { initializeCursorPaginationData, pushMemberIdList } = memberStore;
+  const { initializeCursorPaginationData, pushMemberIds } = memberStore;
   const { hasMore, nextCursor } = storeToRefs(memberStore);
   const readMoreMembers = async (onComplete: () => void) => {
     try {
@@ -19,7 +19,7 @@ export const useReadMembers = async () => {
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
       for (const user of response.items) userMap.value.set(user.id, user);
-      pushMemberIdList(...response.items.map(({ id }) => id));
+      pushMemberIds(...response.items.map(({ id }) => id));
     } finally {
       onComplete();
     }

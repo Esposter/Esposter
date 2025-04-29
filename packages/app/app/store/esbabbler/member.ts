@@ -8,7 +8,7 @@ export const useMemberStore = defineStore("esbabbler/member", () => {
   const esbabblerStore = useEsbabblerStore();
   const roomStore = useRoomStore();
   const { itemList, ...rest } = createCursorPaginationDataMap<string>(() => roomStore.currentRoomId);
-  const pushMemberIdList = (...items: string[]) => itemList.value.push(...items);
+  const pushMemberIds = (...items: string[]) => itemList.value.push(...items);
   const members = computed(() => {
     const members: User[] = [];
     for (const memberId of itemList.value) {
@@ -20,7 +20,7 @@ export const useMemberStore = defineStore("esbabbler/member", () => {
   });
   return {
     members,
-    pushMemberIdList,
+    pushMemberIds,
     ...rest,
   };
 });

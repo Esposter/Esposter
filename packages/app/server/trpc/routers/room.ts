@@ -56,7 +56,7 @@ const readMembersInputSchema = z
     filter: selectUserSchema.pick({ name: true }).optional(),
     roomId: selectRoomSchema.shape.id,
   })
-  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]));
+  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "name", order: SortOrder.Asc }]));
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({

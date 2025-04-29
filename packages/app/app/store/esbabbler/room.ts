@@ -5,7 +5,6 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
@@ -20,7 +19,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(itemList, ["id"], DatabaseEntityType.Room);
-  const rooms = computed(() => roomList.value.toSorted((a, b) => dayjs(a.updatedAt).diff(b.updatedAt)));
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -59,7 +57,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     storeDeleteRoom,
     storeUpdateRoom,
     ...restOperationData,
-    rooms,
+    roomList,
     ...restData,
     currentRoom,
     currentRoomId,
