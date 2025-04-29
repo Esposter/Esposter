@@ -12,9 +12,9 @@ const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
-const { getEmojiList } = emojiStore;
-const emojiList = computed(() =>
-  getEmojiList(messageRowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
+const { getEmojis } = emojiStore;
+const emojis = computed(() =>
+  getEmojis(messageRowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
     emoji: emojify(emojiTag),
     emojiTag,
     isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
@@ -23,13 +23,13 @@ const emojiList = computed(() =>
     userIds,
   })),
 );
-const hasEmojis = computed(() => emojiList.value.length > 0);
+const hasEmojis = computed(() => emojis.value.length > 0);
 </script>
 
 <template>
   <div v-if="hasEmojis" flex gap-1 mt-2 flex-wrap>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojiList"
+      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"

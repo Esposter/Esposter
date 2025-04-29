@@ -1,9 +1,9 @@
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
-export const createOffsetPaginationData = <TItem>(items?: Ref<TItem[]>) => {
+export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
   const offsetPaginationData = ref(new OffsetPaginationData()) as Ref<OffsetPaginationData<TItem>>;
-  const itemList =
-    items ??
+  const items =
+    baseItems ??
     computed({
       get: () => offsetPaginationData.value.items,
       set: (items) => {
@@ -19,17 +19,17 @@ export const createOffsetPaginationData = <TItem>(items?: Ref<TItem[]>) => {
 
   const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
     offsetPaginationData.value = data;
-    if (items) items.value = offsetPaginationData.value.items;
+    if (baseItems) baseItems.value = offsetPaginationData.value.items;
   };
   const resetOffsetPaginationData = () => {
     offsetPaginationData.value = new OffsetPaginationData<TItem>();
-    if (items) items.value = [];
+    if (baseItems) baseItems.value = [];
   };
 
   return {
     hasMore,
     initializeOffsetPaginationData,
-    itemList,
+    items,
     resetOffsetPaginationData,
   };
 };

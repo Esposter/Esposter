@@ -11,14 +11,14 @@ import { uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const { $trpc } = useNuxtApp();
-  const { itemList, ...restData } = createCursorPaginationData<Room>();
+  const { items, ...restData } = createCursorPaginationData<Room>();
   const {
     createRoom: storeCreateRoom,
     deleteRoom: storeDeleteRoom,
-    roomList,
+    rooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
-  } = createOperationData(itemList, ["id"], DatabaseEntityType.Room);
+  } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -26,7 +26,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   });
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return undefined;
-    return roomList.value.find(({ id }) => id === currentRoomId.value);
+    return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const currentRoomName = computed(() => currentRoom.value?.name ?? "");
 
@@ -57,7 +57,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     storeDeleteRoom,
     storeUpdateRoom,
     ...restOperationData,
-    roomList,
+    rooms,
     ...restData,
     currentRoom,
     currentRoomId,

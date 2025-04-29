@@ -19,7 +19,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === creatorId);
 const roomStore = useRoomStore();
 const { leaveRoom } = roomStore;
-const { roomList } = storeToRefs(roomStore);
+const { rooms } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -33,8 +33,8 @@ const { roomList } = storeToRefs(roomStore);
       async (onComplete) => {
         try {
           isCreator ? await $trpc.room.deleteRoom.mutate(roomId) : await leaveRoom(roomId);
-          roomList.length > 0
-            ? await navigateTo(RoutePath.Messages(roomList[0].id), { replace: true })
+          rooms.length > 0
+            ? await navigateTo(RoutePath.Messages(rooms[0].id), { replace: true })
             : await navigateTo(RoutePath.MessagesIndex, { replace: true });
         } finally {
           onComplete();

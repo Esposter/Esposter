@@ -5,7 +5,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { initializeCursorPaginationData, pushRoomList } = roomStore;
+  const { initializeCursorPaginationData, pushRooms } = roomStore;
   const { currentRoomId, hasMore, nextCursor } = storeToRefs(roomStore);
   const readUsers = useReadUsers();
   const readMetadata = (rooms: Room[]) => Promise.all([readUsers(rooms.map(({ userId }) => userId))]);
@@ -15,7 +15,7 @@ export const useReadRooms = async () => {
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
       await readMetadata(response.items);
-      pushRoomList(...response.items);
+      pushRooms(...response.items);
     } finally {
       onComplete();
     }

@@ -14,7 +14,7 @@ export const createAzureMetadataMap = <TType extends string>(
 ) => {
   // Map<partitionKey, Map<rowKey, T[]>>
   const metadataMap: Ref<Map<string, Map<string, TEntity<TType>[]>>> = ref(new Map());
-  const getMetadataList = (rowKey: string) => {
+  const getMetadatas = (rowKey: string) => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return [];
     const dataMap = metadataMap.value.get(currentIdValue);
@@ -22,21 +22,21 @@ export const createAzureMetadataMap = <TType extends string>(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return dataMap.get(rowKey) ?? dataMap.set(rowKey, []).get(rowKey)!;
   };
-  const setMetadataList = (rowKey: string, metadataList: TEntity<TType>[]) => {
+  const setMetadatas = (rowKey: string, metadatas: TEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return [];
     const newMap = metadataMap.value.get(currentIdValue) ?? new Map<string, TEntity<TType>[]>();
-    newMap.set(rowKey, metadataList);
+    newMap.set(rowKey, metadatas);
     metadataMap.value.set(currentIdValue, newMap);
   };
   return {
-    [`${uncapitalize(AzureMetadataOperation.Get)}${azureEntityTypeKey}List`]: getMetadataList,
-    [`${uncapitalize(AzureMetadataOperation.Set)}${azureEntityTypeKey}List`]: setMetadataList,
+    [`${uncapitalize(AzureMetadataOperation.Get)}${azureEntityTypeKey}s`]: getMetadatas,
+    [`${uncapitalize(AzureMetadataOperation.Set)}${azureEntityTypeKey}s`]: setMetadatas,
   } as {
-    [P in AzureMetadataOperationDataKey<TType>]: P extends `${Uncapitalize<AzureMetadataOperation.Get>}${TType}List`
-      ? typeof getMetadataList
-      : P extends `${Uncapitalize<AzureMetadataOperation.Set>}${TType}List`
-        ? typeof setMetadataList
+    [P in AzureMetadataOperationDataKey<TType>]: P extends `${Uncapitalize<AzureMetadataOperation.Get>}${TType}s`
+      ? typeof getMetadatas
+      : P extends `${Uncapitalize<AzureMetadataOperation.Set>}${TType}s`
+        ? typeof setMetadatas
         : never;
   };
 };

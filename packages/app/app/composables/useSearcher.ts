@@ -20,14 +20,14 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
   const searchQuery = ref("");
   const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
   const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
-  const { hasMore, initializeCursorPaginationData, itemList, nextCursor, resetCursorPaginationData } =
+  const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
     createCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
     try {
       const response = await query(throttledSearchQuery.value, nextCursor.value);
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
-      itemList.value.push(...response.items);
+      items.value.push(...response.items);
     } finally {
       onComplete();
     }
@@ -46,14 +46,14 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
 
   return {
     [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,
-    [`${uncapitalize(entityTypeKey)}sSearched`]: itemList,
+    [`${uncapitalize(entityTypeKey)}sSearched`]: items,
     [`hasMore${entityTypeKey}sSearched`]: hasMore,
     [`readMore${entityTypeKey}sSearched`]: readMoreItems,
   } as {
     [P in SearcherKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}SearchQuery`
       ? typeof searchQuery
       : P extends `${Uncapitalize<TEntityTypeKey>}sSearched`
-        ? typeof itemList
+        ? typeof items
         : P extends `hasMore${TEntityTypeKey}sSearched`
           ? typeof hasMore
           : P extends `readMore${TEntityTypeKey}sSearched`

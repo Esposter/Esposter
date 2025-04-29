@@ -8,7 +8,7 @@ export const useReadMessages = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { initializeCursorPaginationData, pushMessageList } = messageStore;
+  const { initializeCursorPaginationData, pushMessages } = messageStore;
   const { hasMore, nextCursor } = storeToRefs(messageStore);
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
@@ -26,7 +26,7 @@ export const useReadMessages = async () => {
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
       await readMetadata(response.items);
-      pushMessageList(...response.items);
+      pushMessages(...response.items);
     } finally {
       onComplete();
     }

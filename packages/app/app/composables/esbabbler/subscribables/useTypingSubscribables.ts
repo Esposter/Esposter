@@ -7,7 +7,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useTypingSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
-  const { typingList } = storeToRefs(messageStore);
+  const { typings } = storeToRefs(messageStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const typingTimeoutIdMap = ref(new Map<string, number>());
@@ -34,12 +34,12 @@ export const useTypingSubscribables = () => {
           clearTypingTimeout(data.userId);
 
           const id = window.setTimeout(() => {
-            typingList.value = typingList.value.filter(({ userId }) => userId !== data.userId);
+            typings.value = typings.value.filter(({ userId }) => userId !== data.userId);
             clearTypingTimeout(data.userId);
           }, dayjs.duration(3, "seconds").asMilliseconds());
 
           typingTimeoutIdMap.value.set(data.userId, id);
-          if (!typingList.value.some(({ userId }) => userId === data.userId)) typingList.value.push(data);
+          if (!typings.value.some(({ userId }) => userId === data.userId)) typings.value.push(data);
         },
       },
     );
@@ -48,6 +48,6 @@ export const useTypingSubscribables = () => {
   onUnmounted(() => {
     createTypingUnsubscribable.value?.unsubscribe();
     for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
-    typingList.value = [];
+    typings.value = [];
   });
 };

@@ -12,12 +12,12 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
-  const upgradeList = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
+  const upgrades = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
   const initializeUpgradeMap = (newUpgradeMap: typeof UpgradeMap) => {
     upgradeMap.value = newUpgradeMap;
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
-    upgradeList.value.filter(({ unlockConditions }) =>
+    upgrades.value.filter(({ unlockConditions }) =>
       unlockConditions.every((uc) => {
         const { type } = uc;
 
@@ -50,6 +50,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     createBoughtUpgrade,
     initializeUpgradeMap,
     unlockedUpgrades,
-    upgradeList,
+    upgrades,
   };
 });

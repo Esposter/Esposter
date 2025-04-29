@@ -9,13 +9,13 @@ import { createOffsetPaginationData } from "@/services/shared/pagination/offset/
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $trpc } = useNuxtApp();
-  const { itemList, ...restData } = createOffsetPaginationData<Survey>();
+  const { items, ...restData } = createOffsetPaginationData<Survey>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
     updateSurvey: storeUpdateSurvey,
     ...restOperationData
-  } = createOperationData(itemList, ["id"], DatabaseEntityType.Survey);
+  } = createOperationData(items, ["id"], DatabaseEntityType.Survey);
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $trpc.survey.createSurvey.mutate(input);

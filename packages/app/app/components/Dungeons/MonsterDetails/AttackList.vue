@@ -4,12 +4,12 @@ import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/sce
 import { Text } from "vue-phaserjs";
 
 const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-const { attackNameList } = storeToRefs(monsterDetailsSceneStore);
+const { attackNames } = storeToRefs(monsterDetailsSceneStore);
 </script>
 
 <template>
   <Text
-    v-for="(text, index) of attackNameList"
+    v-for="(text, index) of attackNames"
     :key="text"
     :configuration="{ x: 560, y: 80 * index + 82, text, style: MonsterAttackTextStyle }"
   />

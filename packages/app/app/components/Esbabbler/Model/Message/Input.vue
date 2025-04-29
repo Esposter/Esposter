@@ -19,8 +19,8 @@ const placeholder = computed(() => {
 });
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
-const { messageList, typingList } = storeToRefs(messageStore);
-const typingMessage = computed(() => getTypingMessage(typingList.value.map(({ username }) => username)));
+const { messages, typings } = storeToRefs(messageStore);
+const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
@@ -35,7 +35,7 @@ const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
 const { messageInput, replyRowKey } = storeToRefs(messageInputStore);
 const reply = computed(() =>
-  replyRowKey.value ? messageList.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
+  replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
 );
 </script>
 
