@@ -22,6 +22,7 @@ const emit = defineEmits<{
 }>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
+const isEditable = computed(() => isCreator.value && !message.isForward);
 const editMessageOptionMenuItem: OptionMenuItem = {
   icon: "mdi-pencil",
   onClick: () => {
@@ -29,6 +30,13 @@ const editMessageOptionMenuItem: OptionMenuItem = {
   },
   shortTitle: "Edit",
   title: "Edit Message",
+};
+const replyOptionMenuItem: OptionMenuItem = {
+  icon: "mdi-reply",
+  onClick: () => {
+    emit("update:reply", message.rowKey);
+  },
+  title: "Reply",
 };
 const forwardMessageOptionMenuItem: OptionMenuItem = {
   icon: "mdi-share",
@@ -38,31 +46,28 @@ const forwardMessageOptionMenuItem: OptionMenuItem = {
   title: "Forward",
 };
 // We only include menu items that will be part of our v-for to generate similar components
-const menuItems = [editMessageOptionMenuItem, forwardMessageOptionMenuItem];
-const items = computed(() => {
-  if (!isCreator.value) return [];
-
-  const result = [
-    editMessageOptionMenuItem,
-    {
-      icon: "mdi-reply",
-      onClick: () => {
-        emit("update:reply", message.rowKey);
-      },
-      title: "Reply",
-    },
-    forwardMessageOptionMenuItem,
-    {
-      color: "error",
-      icon: "mdi-delete",
-      onClick: () => {
-        emit("update:delete-mode", true);
-      },
-      title: "Delete Message",
-    },
-  ];
-  return result;
-});
+const menuItems = computed(() =>
+  isEditable.value
+    ? [editMessageOptionMenuItem, forwardMessageOptionMenuItem]
+    : [replyOptionMenuItem, forwardMessageOptionMenuItem],
+);
+const items = computed(() =>
+  isEditable.value
+    ? [
+        editMessageOptionMenuItem,
+        replyOptionMenuItem,
+        forwardMessageOptionMenuItem,
+        {
+          color: "error",
+          icon: "mdi-delete",
+          onClick: () => {
+            emit("update:delete-mode", true);
+          },
+          title: "Delete Message",
+        },
+      ]
+    : [replyOptionMenuItem, forwardMessageOptionMenuItem],
+);
 </script>
 
 <template>
