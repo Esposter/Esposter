@@ -31,11 +31,11 @@ const group = ref(initialValue.group);
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });
+        onComplete();
         useTimeoutFn(() => {
           name = initialValue.name;
           group = initialValue.group;
         }, dayjs.duration(0.3, 'seconds').asMilliseconds());
-        onComplete();
       }
     "
   >
