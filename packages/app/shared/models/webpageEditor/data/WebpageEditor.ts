@@ -1,6 +1,7 @@
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "@/services/grapesjs/constants";
 import { css } from "@/services/prettier/css";
 import { html } from "@/services/prettier/html";
 import { z } from "zod";
@@ -12,9 +13,6 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
         <body>
           <header class="header-banner">
             <div class="container-width">
-              <div class="logo-container">
-                <div class="logo">GrapesJS</div>
-              </div>
               <nav class="menu">
                 <div class="menu-item">BUILDER</div>
                 <div class="menu-item">TEMPLATE</div>
@@ -108,7 +106,7 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
           <section class="am-sect">
             <div class="container-width">
               <div class="am-container">
-                <img src="/assets/images/demos/phone-app.png" class="img-phone" />
+                <img src="${GRAPESJS_BASE_URL}/assets/images/demos/phone-app.png" class="img-phone" />
                 <div class="am-content">
                   <div class="am-pre">ASSET MANAGER</div>
                   <div class="am-title">Manage your images with Asset Manager</div>
@@ -170,7 +168,7 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
               <div class="badges">
                 <div class="badge">
                   <div class="badge-header"></div>
-                  <img src="/assets/images/demos/team1.jpg" class="badge-avatar" />
+                  <img src="${GRAPESJS_BASE_URL}/assets/images/demos/team1.jpg" class="badge-avatar" />
                   <div class="badge-body">
                     <div class="badge-name">Adam Smith</div>
                     <div class="badge-role">CEO</div>
@@ -187,7 +185,7 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
                 </div>
                 <div class="badge">
                   <div class="badge-header"></div>
-                  <img src="/assets/images/demos/team2.jpg" class="badge-avatar" />
+                  <img src="${GRAPESJS_BASE_URL}/assets/images/demos/team2.jpg" class="badge-avatar" />
                   <div class="badge-body">
                     <div class="badge-name">John Black</div>
                     <div class="badge-role">Software Engineer</div>
@@ -204,7 +202,7 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
                 </div>
                 <div class="badge">
                   <div class="badge-header"></div>
-                  <img src="/assets/images/demos/team3.jpg" class="badge-avatar" />
+                  <img src="${GRAPESJS_BASE_URL}/assets/images/demos/team3.jpg" class="badge-avatar" />
                   <div class="badge-body">
                     <div class="badge-name">Jessica White</div>
                     <div class="badge-role">Web Designer</div>
@@ -258,13 +256,6 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
                 </div>
               </div>
             </div>
-            <div class="copyright">
-              <div class="container-width">
-                <div class="made-with">made with GrapesJS</div>
-                <div class="foot-social-btns">facebook twitter linkedin mail</div>
-                <div class="clearfix"></div>
-              </div>
-            </div>
           </footer>
         </body>
       `,
@@ -275,10 +266,12 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
         .header-banner {
           padding-top: 35px;
           padding-bottom: 100px;
-          color: #ffffff;
+          color: #fff;
           font-family: Helvetica, serif;
           font-weight: 100;
-          background-image: url("/assets/images/demos/bg-gr-v.png"), url("/assets/images/demos/work-desk.jpg");
+          background-image:
+            url("${GRAPESJS_BASE_URL}/assets/images/demos/bg-gr-v.png"),
+            url("${GRAPESJS_BASE_URL}/assets/images/demos/work-desk.jpg");
           background-attachment: scroll, scroll;
           background-position:
             left top,
@@ -290,21 +283,6 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
           width: 90%;
           max-width: 1150px;
           margin: 0 auto;
-        }
-        .logo-container {
-          float: left;
-          width: 50%;
-        }
-        .logo {
-          background-color: #fff;
-          border-radius: 5px;
-          width: 130px;
-          padding: 10px;
-          min-height: 30px;
-          text-align: center;
-          line-height: 30px;
-          color: #4d114f;
-          font-size: 23px;
         }
         .menu {
           float: right;
@@ -346,7 +324,7 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
           cursor: pointer;
         }
         .lead-btn:hover {
-          background-color: #ffffff;
+          background-color: #fff;
           color: #4c114e;
         }
         .lead-btn:active {
@@ -396,24 +374,24 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
         }
         .card-header {
           height: 155px;
-          background-image: url("https://via.placeholder.com/350x250/78c5d6/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/78c5d6/fff");
           background-size: cover;
           background-position: center center;
         }
         .card-header.ch2 {
-          background-image: url("https://via.placeholder.com/350x250/459ba8/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/459ba8/fff");
         }
         .card-header.ch3 {
-          background-image: url("https://via.placeholder.com/350x250/79c267/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/79c267/fff");
         }
         .card-header.ch4 {
-          background-image: url("https://via.placeholder.com/350x250/c5d647/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/c5d647/fff");
         }
         .card-header.ch5 {
-          background-image: url("https://via.placeholder.com/350x250/f28c33/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/f28c33/fff");
         }
         .card-header.ch6 {
-          background-image: url("https://via.placeholder.com/350x250/e868a2/fff");
+          background-image: url("${PLACEHOLD_BASE_URL}/350x250/e868a2/fff");
         }
         .card-body {
           padding: 15px 15px 5px 15px;
@@ -680,7 +658,9 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
         }
         .badge-header {
           height: 115px;
-          background-image: url("/assets/images/demos/bg-gr-v.png"), url("/assets/images/demos/work-desk.jpg");
+          background-image:
+            url("${GRAPESJS_BASE_URL}/assets/images/demos/bg-gr-v.png"),
+            url("${GRAPESJS_BASE_URL}/assets/images/demos/work-desk.jpg");
           background-position:
             left top,
             center center;
