@@ -34,11 +34,6 @@ const { trigger } = watchTriggerable(session, (newSession) => {
     load: () => readEmailEditor(),
     store: (data) => saveEmailEditor(data),
   });
-  editor.setComponents(`
-      <mjml>
-        <mj-body>
-        </mj-body>
-      </mjml>`);
 });
 
 onMounted(() => {
