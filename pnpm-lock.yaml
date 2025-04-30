@@ -343,8 +343,8 @@ catalogs:
       specifier: ^1.15.3
       version: 1.15.3
     happy-dom:
-      specifier: ^17.4.4
-      version: 17.4.4
+      specifier: ^17.4.6
+      version: 17.4.6
     howler:
       specifier: ^2.2.4
       version: 2.2.4
@@ -590,7 +590,7 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
       vitest:
         specifier: 'catalog:'
-        version: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
       vue-tsc:
         specifier: 'catalog:'
         version: 2.2.10(typescript@5.8.3)
@@ -927,7 +927,7 @@ importers:
         version: 0.11.6(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@unhead/vue@2.0.8(vue@3.5.13(typescript@5.8.3)))(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)(nuxt@3.17.1(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.1)(@types/node@22.15.3)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.25.1(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.29.3)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.8(typescript@5.8.3))(rollup@4.40.1)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue-tsc@2.2.10(typescript@5.8.3))(xml2js@0.6.2)(yaml@2.7.1))(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@nuxt/test-utils':
         specifier: 'catalog:'
-        version: 3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
+        version: 3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
       '@nuxtjs/seo':
         specifier: 'catalog:'
         version: 3.0.3(@unhead/vue@2.0.8(vue@3.5.13(typescript@5.8.3)))(h3@1.15.3)(magicast@0.3.5)(rollup@4.40.1)(unstorage@1.16.0(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(ioredis@5.6.1))(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
@@ -975,7 +975,7 @@ importers:
         version: 1.0.0(magicast@0.3.5)(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(workbox-build@7.3.0)(workbox-window@7.3.0)
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 3.1.2(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
+        version: 3.1.2(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vue/test-utils':
         specifier: 'catalog:'
         version: 2.4.6
@@ -993,7 +993,7 @@ importers:
         version: 1.15.3
       happy-dom:
         specifier: 'catalog:'
-        version: 17.4.4
+        version: 17.4.6
       nuxt:
         specifier: 'catalog:'
         version: 3.17.1(@azure/data-tables@13.3.0)(@azure/storage-blob@12.27.0)(@netlify/blobs@8.2.0)(@parcel/watcher@2.5.1)(@types/node@22.15.3)(db0@0.3.2(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5)))(drizzle-orm@0.43.1(kysely@0.27.6)(postgres@3.4.5))(encoding@0.1.13)(eslint@9.25.1(jiti@2.4.2))(ioredis@5.6.1)(lightningcss@1.29.3)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.8(typescript@5.8.3))(rollup@4.40.1)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue-tsc@2.2.10(typescript@5.8.3))(xml2js@0.6.2)(yaml@2.7.1)
@@ -1026,7 +1026,7 @@ importers:
         version: 5.2.3(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
       '@vitest/eslint-plugin':
         specifier: 'catalog:'
-        version: 1.1.43(@typescript-eslint/utils@8.31.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
+        version: 1.1.43(@typescript-eslint/utils@8.31.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
       eslint-config-prettier:
         specifier: 'catalog:'
         version: 10.1.2(eslint@9.25.1(jiti@2.4.2))
@@ -7173,8 +7173,8 @@ packages:
     engines: {node: '>=0.4.7'}
     hasBin: true
 
-  happy-dom@17.4.4:
-    resolution: {integrity: sha512-/Pb0ctk3HTZ5xEL3BZ0hK1AqDSAUuRQitOmROPHhfUYEWpmTImwfD8vFDGADmMAX0JYgbcgxWoLFKtsWhcpuVA==}
+  happy-dom@17.4.6:
+    resolution: {integrity: sha512-OEV1hDe9i2rFr66+WZNiwy1S8rAJy6bRXmXql68YJDjdfHBRbN76om+qVh68vQACf6y5Bcr90e/oK53RQxsDdg==}
     engines: {node: '>=18.0.0'}
 
   has-bigints@1.1.0:
@@ -13878,7 +13878,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/test-utils@3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)':
+  '@nuxt/test-utils@3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)':
     dependencies:
       '@nuxt/kit': 3.17.1(magicast@0.3.5)
       '@nuxt/schema': 3.17.1
@@ -13904,13 +13904,13 @@ snapshots:
       ufo: 1.6.1
       unplugin: 2.3.2
       vite: 6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
-      vitest-environment-nuxt: 1.0.1(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
+      vitest-environment-nuxt: 1.0.1(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
       vue: 3.5.13(typescript@5.8.3)
     optionalDependencies:
       '@vue/test-utils': 2.4.6
-      happy-dom: 17.4.4
+      happy-dom: 17.4.6
       playwright-core: 1.52.0
-      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -15686,7 +15686,7 @@ snapshots:
       vite: 6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
       vue: 3.5.13(typescript@5.8.3)
 
-  '@vitest/coverage-v8@3.1.2(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))':
+  '@vitest/coverage-v8@3.1.2(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
@@ -15700,17 +15700,17 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.1.43(@typescript-eslint/utils@8.31.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))':
+  '@vitest/eslint-plugin@1.1.43(@typescript-eslint/utils@8.31.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@typescript-eslint/utils': 8.31.1(eslint@9.25.1(jiti@2.4.2))(typescript@5.8.3)
       eslint: 9.25.1(jiti@2.4.2)
     optionalDependencies:
       typescript: 5.8.3
-      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
 
   '@vitest/expect@3.1.2':
     dependencies:
@@ -18581,7 +18581,7 @@ snapshots:
     optionalDependencies:
       uglify-js: 3.19.3
 
-  happy-dom@17.4.4:
+  happy-dom@17.4.6:
     dependencies:
       webidl-conversions: 7.0.0
       whatwg-mimetype: 3.0.0
@@ -22704,9 +22704,9 @@ snapshots:
       tsx: 4.19.4
       yaml: 2.7.1
 
-  vitest-environment-nuxt@1.0.1(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1):
+  vitest-environment-nuxt@1.0.1(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1):
     dependencies:
-      '@nuxt/test-utils': 3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
+      '@nuxt/test-utils': 3.17.2(@types/node@22.15.3)(@vue/test-utils@2.4.6)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(magicast@0.3.5)(playwright-core@1.52.0)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
@@ -22732,7 +22732,7 @@ snapshots:
       - vitest
       - yaml
 
-  vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.4)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1):
+  vitest@3.1.2(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       '@vitest/expect': 3.1.2
       '@vitest/mocker': 3.1.2(vite@6.3.3(@types/node@22.15.3)(jiti@2.4.2)(lightningcss@1.29.3)(sass-embedded@1.87.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
@@ -22757,7 +22757,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.15.3
-      happy-dom: 17.4.4
+      happy-dom: 17.4.6
     transitivePeerDependencies:
       - jiti
       - less
