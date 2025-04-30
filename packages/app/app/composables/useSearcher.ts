@@ -16,6 +16,7 @@ type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
 export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
   query: (searchQuery: string, cursor?: string) => Promise<CursorPaginationData<TItem>>,
   entityTypeKey: TEntityTypeKey,
+  isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
   const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
@@ -34,15 +35,19 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
   };
 
   watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
-    if (!newIsEmptySearchQuery) return;
+    if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
     resetCursorPaginationData();
   });
 
-  watch(throttledSearchQuery, async (newThrottledSearchQuery) => {
-    const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
-    if (!sanitizedNewThrottledSearchQuery) return;
-    initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
-  });
+  watch(
+    throttledSearchQuery,
+    async (newThrottledSearchQuery) => {
+      const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
+      if (!(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)) return;
+      initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
+    },
+    { immediate: isIncludeEmptySearchQuery },
+  );
 
   return {
     [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,

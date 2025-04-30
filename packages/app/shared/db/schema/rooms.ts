@@ -24,7 +24,7 @@ export const rooms = pgTable(
 export type Room = typeof rooms.$inferSelect;
 
 export const selectRoomSchema = createSelectSchema(rooms, {
-  name: z.string().min(1).max(ROOM_NAME_MAX_LENGTH),
+  name: z.string().max(ROOM_NAME_MAX_LENGTH),
 });
 
 export const roomsRelations = relations(rooms, ({ many }) => ({

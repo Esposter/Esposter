@@ -14,5 +14,5 @@ const { avatarProps, image, name } = defineProps<StyledAvatarProps>();
   <v-avatar v-if="image" :="avatarProps">
     <v-img :src="image" :alt="name" />
   </v-avatar>
-  <StyledDefaultAvatar v-else :name />
+  <StyledDefaultAvatar v-else :name :="avatarProps" />
 </template>

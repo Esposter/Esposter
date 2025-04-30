@@ -15,5 +15,6 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
   });
   const replyRowKey = ref<string>();
   const forwardRowKey = ref<string>();
-  return { forwardRowKey, messageInput, replyRowKey };
+  const forwardRoomIds = ref<string[]>([]);
+  return { forwardRoomIds, forwardRowKey, messageInput, replyRowKey };
 });

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { dayjs } from "#shared/services/dayjs";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 const { $trpc } = useNuxtApp();
 const messageInputStore = useMessageInputStore();
-const { forwardRowKey } = storeToRefs(messageInputStore);
+const { forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
 const dialog = computed({
-  get: () => Boolean(forwardRowKey),
+  get: () => Boolean(forwardRowKey.value),
   set: (newDialog) => {
     if (newDialog) return;
     forwardRowKey.value = undefined;
@@ -19,32 +20,43 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
       filter: { name: searchQuery },
     }),
   DatabaseEntityType.Room,
+  true,
 );
+const { start: reset } = useTimeoutFn(() => {
+  roomSearchQuery.value = "";
+  forwardRoomIds.value = [];
+}, dayjs.duration(0.3, "seconds").asMilliseconds());
+
+watch(dialog, (newDialog) => {
+  if (newDialog) return;
+  reset();
+});
 </script>
 
 <template>
-  <v-dialog v-model="dialog" persistent>
+  <v-dialog v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
-        <div flex space-between>
+        <div flex justify-between items-center>
           Forward To
-          <v-btn icon="mdi-close" @click="dialog = false" />
+          <v-btn icon="mdi-close" density="comfortable" @click="dialog = false" />
         </div>
+        <div class="text-subtitle-2 text-gray" pb-2>Select where you want to share this message.</div>
         <v-text-field
           v-model="roomSearchQuery"
           placeholder="Search"
-          prepend-inner-icon="mdi-magnify"
+          append-inner-icon="mdi-magnify"
           density="compact"
           hide-details
         />
       </v-card-title>
-      <v-card-text overflow-y="auto">
-        <v-list>
-          <v-list-item v-for="{ id, name, image } of roomsSearched" :key="id" :title="name">
-            <template #prepend>
-              <StyledAvatar :image :name />
-            </template>
-          </v-list-item>
+      <v-card-text p-4="!" overflow-y="auto">
+        <v-list py-0>
+          <EsbabblerModelMessageForwardRoomListItem
+            v-for="roomSearched of roomsSearched"
+            :key="roomSearched.id"
+            :room="roomSearched"
+          />
           <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
         </v-list>
       </v-card-text>

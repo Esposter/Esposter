@@ -13,13 +13,7 @@ const dialog = ref(false);
     </template>
     <StyledCard>
       <v-card-title>
-        <v-text-field
-          v-model="roomSearchQuery"
-          placeholder="Where would you like to go?"
-          prepend-inner-icon="mdi-magnify"
-          density="compact"
-          hide-details
-        />
+        <v-text-field v-model="roomSearchQuery" placeholder="Where would you like to go?" hide-details />
       </v-card-title>
       <v-card-text overflow-y="auto">
         <EsbabblerModelRoomListSearched @update:room="dialog = false" />
