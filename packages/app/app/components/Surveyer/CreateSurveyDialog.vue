@@ -4,6 +4,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "#shared/services/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
@@ -30,8 +31,10 @@ const group = ref(initialValue.group);
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });
-        name = initialValue.name;
-        group = initialValue.group;
+        useTimeoutFn(() => {
+          name = initialValue.name;
+          group = initialValue.group;
+        }, dayjs.duration(0.3, 'seconds').asMilliseconds());
         onComplete();
       }
     "

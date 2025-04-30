@@ -22,14 +22,13 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
   DatabaseEntityType.Room,
   true,
 );
-const { start: reset } = useTimeoutFn(() => {
-  roomSearchQuery.value = "";
-  forwardRoomIds.value = [];
-}, dayjs.duration(0.3, "seconds").asMilliseconds());
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
-  reset();
+  useTimeoutFn(() => {
+    roomSearchQuery.value = "";
+    forwardRoomIds.value = [];
+  }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
 </script>
 

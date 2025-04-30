@@ -10,13 +10,12 @@ const { replyRowKey } = defineProps<ReplySpineProps>();
 const { border, text } = useColors();
 const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
-const { start: resetActiveReply } = useTimeoutFn(() => {
-  activeReplyRowKey.value = undefined;
-}, dayjs.duration(2, "seconds").asMilliseconds());
 const onClick = () => {
   activeReplyRowKey.value = replyRowKey;
   document.getElementById(replyRowKey)?.scrollIntoView({ behavior: "smooth" });
-  resetActiveReply();
+  useTimeoutFn(() => {
+    activeReplyRowKey.value = undefined;
+  }, dayjs.duration(2, "seconds").asMilliseconds());
 };
 </script>
 
