@@ -40,7 +40,7 @@ watch(dialog, (newDialog) => {
           Forward To
           <v-btn icon="mdi-close" density="comfortable" @click="dialog = false" />
         </div>
-        <div class="text-subtitle-2 text-gray" pb-2>Select where you want to share this message.</div>
+        <div class="text-subtitle-2" pb-2 text-gray>Select where you want to share this message.</div>
         <v-text-field
           v-model="roomSearchQuery"
           placeholder="Search"
