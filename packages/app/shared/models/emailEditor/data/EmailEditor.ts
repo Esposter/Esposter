@@ -1,16 +1,16 @@
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { html } from "@/services/prettier/html";
 import { z } from "zod";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
   pages: unknown[] = [
     {
-      component: `
-      <mjml>
-        <mj-body>
-        </mj-body>
-      </mjml>
+      component: html`
+        <mjml>
+          <mj-body></mj-body>
+        </mjml>
       `,
     },
   ];
