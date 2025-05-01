@@ -235,8 +235,8 @@ catalogs:
       specifier: ^4.4.0
       version: 4.4.0
     dedent:
-      specifier: ^1.5.3
-      version: 1.5.3
+      specifier: ^1.6.0
+      version: 1.6.0
     defu:
       specifier: ^6.1.4
       version: 6.1.4
@@ -722,7 +722,7 @@ importers:
         version: 4.4.0
       dedent:
         specifier: 'catalog:'
-        version: 1.5.3
+        version: 1.6.0
       defu:
         specifier: 'catalog:'
         version: 6.1.4
@@ -6062,6 +6062,14 @@ packages:
 
   dedent@1.5.3:
     resolution: {integrity: sha512-NHQtfOOW68WD8lgypbLA5oT+Bt0xXJhiYvoR6SmmNXZfpzOGXwdKWmcwG8N7PwVVWV3eF/68nmD9BaJSsTBhyQ==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
+
+  dedent@1.6.0:
+    resolution: {integrity: sha512-F1Z+5UCFpmQUzJa11agbyPVMbpgT/qA3/SKyJ1jyBgm7dUcUEa8v9JwDkerSQXfakBwFljIxhOJqGkjUwZ9FSA==}
     peerDependencies:
       babel-plugin-macros: ^3.1.0
     peerDependenciesMeta:
@@ -17287,6 +17295,8 @@ snapshots:
   decimal.js@10.5.0: {}
 
   dedent@1.5.3: {}
+
+  dedent@1.6.0: {}
 
   deep-eql@5.0.2: {}
 

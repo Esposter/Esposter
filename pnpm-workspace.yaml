@@ -83,7 +83,7 @@ catalog:
   dayjs: ^1.11.13
   # https://github.com/json-layout/json-layout/issues/5
   debug: ^4.4.0
-  dedent: ^1.5.3
+  dedent: ^1.6.0
   defu: ^6.1.4
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.0
