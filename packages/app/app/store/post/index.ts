@@ -9,13 +9,13 @@ import { createCursorPaginationData } from "@/services/shared/pagination/cursor/
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
-  const { itemList, ...restData } = createCursorPaginationData<PostWithRelations>();
+  const { items, ...restData } = createCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,
     updatePost: storeUpdatePost,
     ...restOperationData
-  } = createOperationData(itemList, ["id"], DatabaseEntityType.Post);
+  } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $trpc.post.createPost.mutate(input);

@@ -14,10 +14,10 @@ import { useNpcStore } from "@/store/dungeons/world/npc";
 import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 
-export const useReadNpcList = () => {
+export const useReadNpcs = () => {
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
-  const npcList: Npc[] = [];
+  const npcs: Npc[] = [];
 
   for (const [layerName, npcLayer] of ExternalWorldSceneStore.objectLayerMap.entries()) {
     if (!(layerName.includes(ObjectType.Npc) && npcLayer)) continue;
@@ -38,7 +38,7 @@ export const useReadNpcList = () => {
 
     const idTiledObjectProperty = getTiledObjectProperty<NpcId>(npcObject.properties, NpcObjectProperty.id);
     const { frame, id, ...rest } = getNpc(idTiledObjectProperty.value);
-    npcList.push(
+    npcs.push(
       new Npc({
         asset: { frame, key: AssetKey.Npc },
         id: `${CharacterId.Npc}${id}`,
@@ -72,5 +72,5 @@ export const useReadNpcList = () => {
     );
   }
 
-  initializeCursorPaginationData({ hasMore: false, items: npcList });
+  initializeCursorPaginationData({ hasMore: false, items: npcs });
 };

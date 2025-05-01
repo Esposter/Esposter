@@ -15,9 +15,9 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
   "@koumoul/vjsf": ^3.14.0
-  "@lerna-lite/cli": ^4.0.0
-  "@lerna-lite/publish": ^4.0.0
-  "@lerna-lite/run": ^4.0.0
+  "@lerna-lite/cli": ^4.1.1
+  "@lerna-lite/publish": ^4.1.1
+  "@lerna-lite/run": ^4.1.1
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.3.0
   "@nuxt/fonts": ^0.11.2
@@ -25,17 +25,17 @@ catalog:
   "@nuxt/test-utils": ^3.17.2
   "@nuxtjs/seo": ^3.0.3
   "@pinia/nuxt": ^0.11.0
-  "@tiptap/core": ^2.11.7
-  "@tiptap/extension-character-count": ^2.11.7
-  "@tiptap/extension-link": ^2.11.7
-  "@tiptap/extension-mention": ^2.11.7
-  "@tiptap/extension-placeholder": ^2.11.7
-  "@tiptap/pm": ^2.11.7
-  "@tiptap/starter-kit": ^2.11.7
-  "@tiptap/suggestion": ^2.11.7
-  "@tiptap/vue-3": ^2.11.7
-  "@trpc/client": ^11.1.1
-  "@trpc/server": ^11.1.1
+  "@tiptap/core": ^2.11.9
+  "@tiptap/extension-character-count": ^2.11.9
+  "@tiptap/extension-link": ^2.11.9
+  "@tiptap/extension-mention": ^2.11.9
+  "@tiptap/extension-placeholder": ^2.11.9
+  "@tiptap/pm": ^2.11.9
+  "@tiptap/starter-kit": ^2.11.9
+  "@tiptap/suggestion": ^2.11.9
+  "@tiptap/vue-3": ^2.11.9
+  "@trpc/client": ^11.1.2
+  "@trpc/server": ^11.1.2
   "@types/data-urls": ^3.0.4
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -43,14 +43,14 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^22.15.2
+  "@types/node": ^22.15.3
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/three": ^0.176.0
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.1.0-beta.12
-  "@unocss/nuxt": ^66.1.0-beta.12
+  "@unocss/eslint-config": ^66.1.0-beta.13
+  "@unocss/nuxt": ^66.1.0-beta.13
   "@vite-pwa/nuxt": ^1.0.0
   "@vitejs/plugin-vue": ^5.2.3
   "@vitest/coverage-v8": ^3.1.2
@@ -63,7 +63,6 @@ catalog:
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.1.0
-  "@vueuse/integrations": ^13.1.0
   "@vueuse/nuxt": ^13.1.0
   # https://github.com/json-layout/json-layout/issues/5
   ajv: ^8.17.1
@@ -100,7 +99,7 @@ catalog:
   fast-deep-equal: ^3.1.3
   fs-extra: ^11.3.0
   fuse.js: ^7.1.0
-  grapesjs: ^0.22.6
+  grapesjs: ^0.22.7
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -117,9 +116,9 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.48.0
   grid-layout-plus: ^1.0.6
-  gsap: ^3.12.7
-  h3: ^1.15.1
-  happy-dom: ^17.4.4
+  gsap: ^3.13.0
+  h3: ^1.15.3
+  happy-dom: ^17.4.6
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
@@ -127,7 +126,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.16.2
+  nuxt: ^3.17.1
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -138,30 +137,30 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
-  rate-limiter-flexible: ^7.0.0
+  rate-limiter-flexible: ^7.1.0
   rolldown: ^1.0.0-beta.8
-  rolldown-plugin-dts: ^0.8.6
-  rolldown-vite: ^6.3.5
+  rolldown-plugin-dts: ^0.9.11
+  rolldown-vite: ^6.3.6
   rxjs: ^7.8.2
   sass-embedded: ^1.87.0
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
-  survey-core: ^2.0.6
-  survey-creator-core: ^2.0.6
-  survey-creator-vue: ^2.0.6
-  survey-vue3-ui: ^2.0.6
+  survey-core: ^2.0.7
+  survey-creator-core: ^2.0.7
+  survey-creator-vue: ^2.0.7
+  survey-vue3-ui: ^2.0.7
   three: ^0.176.0
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
-  tsx: ^4.19.3
-  type-fest: ^4.40.0
+  tsx: ^4.19.4
+  type-fest: ^4.40.1
   typedoc: ^0.28.3
   typescript: ^5.8.3
-  typescript-eslint: ^8.31.0
-  unocss: ^66.1.0-beta.12
+  typescript-eslint: ^8.31.1
+  unocss: ^66.1.0-beta.13
   unplugin-auto-import: ^19.1.2
-  vite: ^6.3.3
+  vite: ^6.3.4
   vite-plugin-dts: ^4.5.3
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
@@ -172,7 +171,7 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.2
+  vuetify: ^3.8.3
   vuetify-nuxt-module: ^0.18.6
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.20

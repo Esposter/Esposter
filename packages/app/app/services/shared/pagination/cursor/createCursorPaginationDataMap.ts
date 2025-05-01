@@ -21,7 +21,7 @@ export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
       cursorPaginationDataMap.value.set(currentIdValue, newCursorPaginationData);
     },
   });
-  const itemList = computed({
+  const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
       cursorPaginationData.value.items = items;
@@ -50,7 +50,7 @@ export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
   return {
     hasMore,
     initializeCursorPaginationData,
-    itemList,
+    items,
     nextCursor,
     resetCursorPaginationData,
   };

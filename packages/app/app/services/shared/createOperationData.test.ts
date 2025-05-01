@@ -12,57 +12,57 @@ describe(createOperationData, () => {
   test("pushes", () => {
     expect.hasAssertions();
 
-    const { itemList, pushItemList } = operationData;
+    const { items, pushItems } = operationData;
 
-    expect(itemList.value).toHaveLength(0);
+    expect(items.value).toHaveLength(0);
 
     const newItem = new TodoListItem();
-    pushItemList(newItem);
+    pushItems(newItem);
 
-    expect(itemList.value).toHaveLength(1);
-    expect(itemList.value[0]).toStrictEqual(newItem);
+    expect(items.value).toHaveLength(1);
+    expect(items.value[0]).toStrictEqual(newItem);
   });
 
   test("creates", () => {
     expect.hasAssertions();
 
-    const { createItem, itemList } = operationData;
+    const { createItem, items } = operationData;
 
-    expect(itemList.value).toHaveLength(0);
+    expect(items.value).toHaveLength(0);
 
     const newItem = new TodoListItem();
     createItem(newItem);
 
-    expect(itemList.value).toHaveLength(1);
-    expect(itemList.value[0]).toStrictEqual(newItem);
+    expect(items.value).toHaveLength(1);
+    expect(items.value[0]).toStrictEqual(newItem);
   });
 
   test("updates", () => {
     expect.hasAssertions();
 
-    const { createItem, itemList, updateItem } = operationData;
+    const { createItem, items, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
     createItem(newItem);
 
-    expect(itemList.value[0].name).not.toStrictEqual(updatedName);
+    expect(items.value[0].name).not.toStrictEqual(updatedName);
 
     updateItem(Object.assign({}, newItem, { name: updatedName }));
 
-    expect(itemList.value[0].name).toStrictEqual(updatedName);
+    expect(items.value[0].name).toStrictEqual(updatedName);
   });
 
   test("deletes", () => {
     expect.hasAssertions();
 
-    const { createItem, deleteItem, itemList } = operationData;
+    const { createItem, deleteItem, items } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
 
-    expect(itemList.value).toHaveLength(1);
+    expect(items.value).toHaveLength(1);
 
     deleteItem({ id: newItem.id });
 
-    expect(itemList.value).toHaveLength(0);
+    expect(items.value).toHaveLength(0);
   });
 });

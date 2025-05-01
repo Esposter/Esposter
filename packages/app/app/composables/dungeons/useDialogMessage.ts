@@ -10,7 +10,7 @@ export const useDialogMessage = <TTypeKey extends string = "">(typeKey: string |
   return {
     [`${typeKey}${typeKey === "" ? "d" : "D"}ialogMessage`]: dialogMessage,
     [`${typeKey}${typeKey === "" ? "t" : "T"}extDisplayWidth`]: textDisplayWidth,
-  } as unknown as {
+  } as {
     [P in DialogMessageKey<TTypeKey>]: P extends `${TTypeKey}${TTypeKey extends "" ? "d" : "D"}ialogMessage`
       ? typeof dialogMessage
       : P extends `${TTypeKey}${TTypeKey extends "" ? "t" : "T"}extDisplayWidth`

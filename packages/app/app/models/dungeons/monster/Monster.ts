@@ -27,7 +27,7 @@ export class Monster {
 
 export const monsterSchema = z.interface({
   asset: assetSchema,
-  attackIds: z.array(attackSchema.shape.id),
+  attackIds: attackSchema.shape.id.array(),
   id: z.uuid(),
   key: monsterKeySchema,
   stats: statsSchema,

@@ -3,7 +3,7 @@ import { usePostStore } from "@/store/post";
 
 const readMorePosts = await useReadPosts();
 const postStore = usePostStore();
-const { hasMore, postList } = storeToRefs(postStore);
+const { hasMore, posts } = storeToRefs(postStore);
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { hasMore, postList } = storeToRefs(postStore);
     >
       <v-container>
         <v-row>
-          <v-col v-for="post of postList" :key="post.id" cols="12">
+          <v-col v-for="post of posts" :key="post.id" cols="12">
             <PostCard :post />
           </v-col>
         </v-row>

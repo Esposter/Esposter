@@ -7,11 +7,11 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useMemberStore = defineStore("esbabbler/member", () => {
   const esbabblerStore = useEsbabblerStore();
   const roomStore = useRoomStore();
-  const { itemList, ...rest } = createCursorPaginationDataMap<string>(() => roomStore.currentRoomId);
-  const pushMemberIdList = (...items: string[]) => itemList.value.push(...items);
+  const { items, ...rest } = createCursorPaginationDataMap<string>(() => roomStore.currentRoomId);
+  const pushMemberIds = (...newItems: string[]) => items.value.push(...newItems);
   const members = computed(() => {
     const members: User[] = [];
-    for (const memberId of itemList.value) {
+    for (const memberId of items.value) {
       const user = esbabblerStore.userMap.get(memberId);
       if (!user) continue;
       members.push(user);
@@ -20,7 +20,7 @@ export const useMemberStore = defineStore("esbabbler/member", () => {
   });
   return {
     members,
-    pushMemberIdList,
+    pushMemberIds,
     ...rest,
   };
 });

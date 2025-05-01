@@ -17,13 +17,13 @@ export const useCommentStore = defineStore("post/comment", () => {
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
   });
   const currentPost = ref<PostWithRelations>();
-  const { itemList, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
+  const { items, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const {
     createComment: storeCreateComment,
     deleteComment: storeDeleteComment,
     updateComment: storeUpdateComment,
     ...restOperationData
-  } = createOperationData(itemList, ["id"], DerivedDatabaseEntityType.Comment);
+  } = createOperationData(items, ["id"], DerivedDatabaseEntityType.Comment);
 
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;

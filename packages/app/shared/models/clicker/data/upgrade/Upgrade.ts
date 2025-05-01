@@ -18,9 +18,9 @@ export interface Upgrade<TId extends string = UpgradeId> {
 export const createUpgradeSchema = <TId extends string = UpgradeId>(idSchema: z.ZodType<TId>) =>
   z.interface({
     description: z.string().min(1),
-    effects: z.array(effectSchema).min(1),
+    effects: effectSchema.array().min(1),
     flavorDescription: z.string().min(1),
     id: idSchema,
     price: z.number(),
-    unlockConditions: z.array(unlockConditionSchema),
+    unlockConditions: unlockConditionSchema.array(),
   });

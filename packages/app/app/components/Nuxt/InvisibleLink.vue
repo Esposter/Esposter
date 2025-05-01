@@ -1,6 +1,5 @@
 <script lang="ts">
-// @TODO: https://github.com/nuxt/nuxt/issues/31819
-export default defineNuxtLink({ componentName: "NuxtInvisibleLink", trailingSlash: "append" });
+export default defineNuxtLink({ componentName: "NuxtInvisibleLink" });
 </script>
 
 <style scoped lang="scss">

@@ -39,10 +39,10 @@ const readRoomsInputSchema = prefault(
 );
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const onUpdateRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+const onUpdateRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 
-const onDeleteRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+const onDeleteRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
 const onJoinRoomInputSchema = selectRoomSchema.shape.id;
@@ -62,14 +62,14 @@ const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSche
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.interface({
-  ids: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
+  ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
 const createMembersInputSchema = z.interface({
   roomId: selectRoomSchema.shape.id,
-  userIds: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
+  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
@@ -235,14 +235,13 @@ export const roomRouter = router({
   readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const filterWhere = ilike(users.name, `%${filter?.name ?? ""}%`);
+      const filterWhere = filter?.name ? ilike(users.name, `%${filter.name}%`) : undefined;
       const cursorWhere = cursor ? getCursorWhere(users, cursor, sortBy) : undefined;
-      const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
       const joinedUsers = await ctx.db
         .select()
         .from(users)
         .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
-        .where(and(eq(usersToRooms.roomId, roomId), where))
+        .where(and(eq(usersToRooms.roomId, roomId), filterWhere, cursorWhere))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
       const resultUsers = joinedUsers.map(({ users }) => users);
@@ -294,18 +293,21 @@ export const roomRouter = router({
     ).find(Boolean);
     return joinedRoom?.rooms ?? null;
   }),
-  readRooms: authedProcedure.input(readRoomsInputSchema).query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
-    const query = ctx.db
-      .select()
-      .from(rooms)
-      .innerJoin(usersToRooms, and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.session.user.id)));
-    if (cursor) query.where(getCursorWhere(rooms, cursor, sortBy));
-    query.orderBy(...parseSortByToSql(rooms, sortBy));
-
-    const joinedRooms = await query.limit(limit + 1);
-    const resultRooms = joinedRooms.map(({ rooms }) => rooms);
-    return getCursorPaginationData(resultRooms, limit, sortBy);
-  }),
+  readRooms: authedProcedure
+    .input(readRoomsInputSchema)
+    .query(async ({ ctx, input: { cursor, filter, limit, sortBy } }) => {
+      const filterWhere = filter?.name ? ilike(rooms.name, `%${filter.name}%`) : undefined;
+      const cursorWhere = cursor ? getCursorWhere(rooms, cursor, sortBy) : undefined;
+      const joinedRooms = await ctx.db
+        .select()
+        .from(rooms)
+        .innerJoin(usersToRooms, and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.session.user.id)))
+        .where(and(filterWhere, cursorWhere))
+        .orderBy(...parseSortByToSql(rooms, sortBy))
+        .limit(limit + 1);
+      const resultRooms = joinedRooms.map(({ rooms }) => rooms);
+      return getCursorPaginationData(resultRooms, limit, sortBy);
+    }),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"])
     .input(updateRoomInputSchema)
     .mutation<null | Room>(async ({ ctx, input: { id, ...rest } }) => {

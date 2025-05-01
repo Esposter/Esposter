@@ -11,7 +11,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const {
     createVisual: storeCreateVisual,
     updateVisual,
-    visualList,
+    visuals,
     ...restOperationData
   } = createOperationData(
     computed({
@@ -27,15 +27,15 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     storeCreateVisual(
       new Visual({
         type: visualType.value,
-        x: (visualList.value.length * 2) % noColumns.value,
+        x: (visuals.value.length * 2) % noColumns.value,
         // Puts the item at the bottom
-        y: visualList.value.length + noColumns.value,
+        y: visuals.value.length + noColumns.value,
       }),
     );
   };
   const noColumns = ref(12);
   const editFormData = createEditFormData(
-    computed(() => visualList.value),
+    computed(() => visuals.value),
     ["id"],
   );
   const save = async (editedVisual: Visual) => {
@@ -47,7 +47,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   return {
     createVisual,
     updateVisual,
-    visualList,
+    visuals,
     visualType,
     ...restOperationData,
     noColumns,

@@ -5,4 +5,4 @@ import { z } from "zod";
 
 export type Inventory = Item[];
 
-export const inventorySchema = z.array(itemSchema) satisfies z.ZodType<Inventory>;
+export const inventorySchema = itemSchema.array() satisfies z.ZodType<Inventory>;

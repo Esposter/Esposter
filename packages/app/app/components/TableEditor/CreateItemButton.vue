@@ -21,17 +21,17 @@ const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.v
     </template>
     <v-list>
       <v-list-item
-        v-for="icd of itemCategoryDefinitions"
-        :key="icd.value"
+        v-for="{ value, icon, title, create } of itemCategoryDefinitions"
+        :key="value"
         @click="
           () => {
-            editedItem = icd.create();
+            editedItem = create();
             editFormDialog = true;
           }
         "
       >
-        <v-icon :icon="icd.icon" />
-        {{ icd.title }}
+        <v-icon :icon />
+        {{ title }}
       </v-list-item>
     </v-list>
   </v-menu>

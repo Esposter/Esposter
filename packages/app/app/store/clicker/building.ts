@@ -17,7 +17,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerItemProperties = useClickerItemProperties();
 
   const buildingMap = ref<typeof BuildingMap>();
-  const buildingList = computed<Building[]>(() => (buildingMap.value ? parseDictionaryToArray(buildingMap.value) : []));
+  const buildings = computed<Building[]>(() => (buildingMap.value ? parseDictionaryToArray(buildingMap.value) : []));
   const initializeBuildingMap = (newBuildingMap: typeof BuildingMap) => {
     buildingMap.value = newBuildingMap;
   };
@@ -70,7 +70,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
 
   return {
     allBuildingPower,
-    buildingList,
+    buildings,
     createBoughtBuilding,
     getBoughtBuildingAmount,
     getBoughtBuildingPower,

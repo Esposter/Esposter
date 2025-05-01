@@ -17,12 +17,10 @@ const placeholder = computed(() => {
   const user = userMap.value.get(currentRoom.value.userId);
   return user ? `Message ${user.name}'s Room` : "";
 });
-const messageInputStore = useMessageInputStore();
-const { messageInput, reply } = storeToRefs(messageInputStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
-const { typingList } = storeToRefs(messageStore);
-const typingMessage = computed(() => getTypingMessage(typingList.value.map(({ username }) => username)));
+const { messages, typings } = storeToRefs(messageStore);
+const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
@@ -34,11 +32,17 @@ const keyboardExtension = new Extension({
   },
 });
 const mentionExtension = useMentionExtension();
+const messageInputStore = useMessageInputStore();
+const { messageInput, replyRowKey } = storeToRefs(messageInputStore);
+const reply = computed(() =>
+  replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
+);
 </script>
 
 <template>
+  <EsbabblerModelMessageForwardRoomDialog />
   <div w-full>
-    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="reply = undefined" />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = undefined" />
     <RichTextEditor
       v-model="messageInput"
       :placeholder

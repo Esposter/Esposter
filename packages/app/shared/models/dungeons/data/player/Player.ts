@@ -48,7 +48,7 @@ export class Player {
 export const playerSchema = z.interface({
   direction: directionSchema,
   inventory: inventorySchema,
-  monsters: z.array(monsterSchema),
+  monsters: monsterSchema.array(),
   position: positionSchema,
   respawnLocation: respawnLocationSchema,
 }) satisfies z.ZodType<Player>;

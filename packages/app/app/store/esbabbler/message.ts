@@ -15,17 +15,17 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const messageInputStore = useMessageInputStore();
-  const { itemList, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { items, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,
     updateMessage: storeUpdateMessage,
     ...restOperationData
-  } = createOperationData(itemList, ["partitionKey", "rowKey"], AzureEntityType.Message);
+  } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
 
   const storeCreateMessage = (message: MessageEntity) => {
     if (message.replyRowKey) {
-      const reply = restOperationData.messageList.value.find(({ rowKey }) => rowKey === message.replyRowKey);
+      const reply = restOperationData.messages.value.find(({ rowKey }) => rowKey === message.replyRowKey);
       if (reply) replyMap.value.set(message.replyRowKey, reply);
     }
     // Our messages list is reversed i.e. most recent messages are at the front
@@ -41,9 +41,9 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
     const savedMessageInput = messageInputStore.messageInput;
-    const savedreplyRowKey = messageInputStore.reply?.rowKey;
+    const savedreplyRowKey = messageInputStore.replyRowKey;
     editor.commands.clearContent(true);
-    messageInputStore.reply = undefined;
+    messageInputStore.replyRowKey = undefined;
     await $trpc.message.createMessage.mutate({
       message: savedMessageInput,
       replyRowKey: savedreplyRowKey,
@@ -51,8 +51,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     });
   };
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  const activeReply = ref<MessageEntity>();
-  const typingList = ref<CreateTypingInput[]>([]);
+  const activeReplyRowKey = ref<string>();
+  const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
@@ -62,8 +62,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
-    activeReply,
+    activeReplyRowKey,
     replyMap,
-    typingList,
+    typings,
   };
 });

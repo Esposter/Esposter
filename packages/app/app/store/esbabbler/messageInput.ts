@@ -1,5 +1,3 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMessageInputStore = defineStore("esbabbler/messageInput", () => {
@@ -15,6 +13,8 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
       messageInputMap.value.set(roomStore.currentRoomId, newMessageInput);
     },
   });
-  const reply = ref<MessageEntity>();
-  return { messageInput, reply };
+  const replyRowKey = ref<string>();
+  const forwardRowKey = ref<string>();
+  const forwardRoomIds = ref<string[]>([]);
+  return { forwardRoomIds, forwardRowKey, messageInput, replyRowKey };
 });

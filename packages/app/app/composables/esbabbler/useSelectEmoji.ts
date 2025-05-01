@@ -8,8 +8,8 @@ export const useSelectEmoji = async (message: MessageEntity) => {
   const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const emojiStore = useEmojiStore();
-  const { getEmojiList } = emojiStore;
-  const emojis = computed(() => getEmojiList(message.rowKey));
+  const { getEmojis } = emojiStore;
+  const emojis = computed(() => getEmojis(message.rowKey));
   return async (emoji: string) => {
     if (!session.value) return;
 

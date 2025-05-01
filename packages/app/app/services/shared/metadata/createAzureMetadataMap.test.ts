@@ -15,26 +15,26 @@ describe(createAzureMetadataMap, () => {
   test("gets", () => {
     expect.hasAssertions();
 
-    const { getEmojiList } = azureMetadataMap;
-    const emojiList = getEmojiList(rowKey);
+    const { getEmojis } = azureMetadataMap;
+    const emojis = getEmojis(rowKey);
 
-    expect(emojiList).toHaveLength(0);
+    expect(emojis).toHaveLength(0);
   });
 
   test("sets", () => {
     expect.hasAssertions();
 
-    const { getEmojiList, setEmojiList } = azureMetadataMap;
-    let emojiList = getEmojiList(rowKey);
+    const { getEmojis, setEmojis } = azureMetadataMap;
+    let emojis = getEmojis(rowKey);
 
-    expect(emojiList).toHaveLength(0);
+    expect(emojis).toHaveLength(0);
 
     const newEmoji = new MessageEmojiMetadataEntity();
-    emojiList.push(newEmoji);
-    setEmojiList(rowKey, emojiList);
-    emojiList = getEmojiList(rowKey);
+    emojis.push(newEmoji);
+    setEmojis(rowKey, emojis);
+    emojis = getEmojis(rowKey);
 
-    expect(emojiList).toHaveLength(1);
-    expect(emojiList[0]).toStrictEqual(newEmoji);
+    expect(emojis).toHaveLength(1);
+    expect(emojis[0]).toStrictEqual(newEmoji);
   });
 });

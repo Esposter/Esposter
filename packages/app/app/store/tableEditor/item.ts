@@ -8,7 +8,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
   // but also keep the reactivity of our operations so we need to
   // pass in a computed state which will notify our tableEditor
   // whenever any operations has been performed on our items
-  const { itemList, ...restData } = createOffsetPaginationData(
+  const { items, ...restData } = createOffsetPaginationData(
     computed({
       get: () => tableEditorStore.tableEditor.items,
       set: (newItems) => {
@@ -17,7 +17,7 @@ export const useItemStore = defineStore("tableEditor/item", () => {
     }),
   );
   return {
-    ...createOperationData(itemList, ["id"], "Item"),
+    ...createOperationData(items, ["id"], "Item"),
     ...restData,
   };
 });

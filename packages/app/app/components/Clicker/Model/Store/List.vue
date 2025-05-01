@@ -11,7 +11,7 @@ const { initializeUpgradeMap } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);
 const buildingStore = useBuildingStore();
 const { initializeBuildingMap } = buildingStore;
-const { buildingList } = storeToRefs(buildingStore);
+const { buildings } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
     .filter((u) => !game.value.boughtUpgrades.some((bu) => bu.id === u.id))
@@ -25,6 +25,6 @@ initializeBuildingMap(await $trpc.clicker.readBuildingMap.query());
 <template>
   <v-list overflow-y-auto="!">
     <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" />
-    <ClickerModelBuildingListGroup :buildings="buildingList" />
+    <ClickerModelBuildingListGroup :buildings />
   </v-list>
 </template>

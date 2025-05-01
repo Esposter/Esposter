@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { ListItem } from "@/models/shared/ListItem";
+import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { productListItems } from "@/services/esposter/productListItems";
+import { ProductListLinkItems } from "@/services/esposter/ProductListLinkItems";
 import { mergeProps } from "vue";
 
-const items: ListItem[] = [
+const items: ListLinkItem[] = [
   {
     href: RoutePath.PostCreate,
     icon: "mdi-square-edit-outline",
     title: "Create Post",
   },
-  ...productListItems,
+  ...ProductListLinkItems,
 ];
 const menu = ref(false);
 </script>
@@ -28,14 +28,14 @@ const menu = ref(false);
       </v-tooltip>
     </template>
     <v-list min-width="250">
-      <NuxtInvisibleLink v-for="item of items" :key="item.title" :to="item.href" @click="menu = false">
-        <v-list-item :value="item.title">
+      <NuxtInvisibleLink v-for="{ title, href, icon } of items" :key="title" :to="href" @click="menu = false">
+        <v-list-item :value="title">
           <template #prepend>
             <v-avatar color="background">
-              <v-icon :icon="item.icon" />
+              <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ item.title }}</v-list-item-title>
+          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

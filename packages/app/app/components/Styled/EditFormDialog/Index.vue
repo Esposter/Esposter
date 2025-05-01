@@ -25,15 +25,12 @@ const emit = defineEmits<{
   "update:edit-form-ref": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
 }>();
-const { start: closeDialog } = useTimeoutFn(() => {
-  // Hack emitting the close event so the dialog content doesn't change
-  // until after the CSS animation that lasts 300ms ends
-  emit("close");
-}, dayjs.duration(0.3, "seconds").asMilliseconds());
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
-  closeDialog();
+  useTimeoutFn(() => {
+    emit("close");
+  }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
 
 const editFormRef = ref<InstanceType<typeof VForm>>();
@@ -45,13 +42,7 @@ watch(editFormRef, (newEditFormRef) => {
 </script>
 
 <template>
-  <v-dialog
-    v-model="dialog"
-    :fullscreen="isFullScreenDialog"
-    :width="isFullScreenDialog ? '100%' : 800"
-    persistent
-    no-click-animation
-  >
+  <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
     <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header

@@ -5,7 +5,7 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 
 export const createCursorPaginationData = <TItem extends ToData<AEntity>>() => {
   const cursorPaginationData = ref(new CursorPaginationData()) as Ref<CursorPaginationData<TItem>>;
-  const itemList = computed({
+  const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
       cursorPaginationData.value.items = items;
@@ -34,7 +34,7 @@ export const createCursorPaginationData = <TItem extends ToData<AEntity>>() => {
   return {
     hasMore,
     initializeCursorPaginationData,
-    itemList,
+    items,
     nextCursor,
     resetCursorPaginationData,
   };

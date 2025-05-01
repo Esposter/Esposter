@@ -5,11 +5,11 @@ import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection"
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const useMoveNpcList = (scene: SceneWithPlugins) => {
+export const useMoveNpcs = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();
-  const { npcList } = storeToRefs(npcStore);
+  const { npcs } = storeToRefs(npcStore);
 
-  for (const npc of npcList.value) {
+  for (const npc of npcs.value) {
     if (!scene.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
 
     switch (npc.movementPattern) {

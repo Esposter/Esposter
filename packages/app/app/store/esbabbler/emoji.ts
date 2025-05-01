@@ -5,36 +5,36 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
-  const { getEmojiList, setEmojiList } = useMessageMetadataMap(MessageMetadataType.Emoji);
+  const { getEmojis, setEmojis } = useMessageMetadataMap(MessageMetadataType.Emoji);
 
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {
-    const emojiList = getEmojiList(newEmoji.messageRowKey);
-    emojiList.push(newEmoji);
-    setEmojiList(newEmoji.messageRowKey, emojiList);
+    const emojis = getEmojis(newEmoji.messageRowKey);
+    emojis.push(newEmoji);
+    setEmojis(newEmoji.messageRowKey, emojis);
   };
   const storeUpdateEmoji = (updatedEmoji: UpdateEmojiInput) => {
-    const emojiList = getEmojiList(updatedEmoji.messageRowKey);
-    const index = emojiList.findIndex(
+    const emojis = getEmojis(updatedEmoji.messageRowKey);
+    const index = emojis.findIndex(
       ({ partitionKey, rowKey }) => partitionKey === updatedEmoji.partitionKey && rowKey === updatedEmoji.rowKey,
     );
     if (index === -1) return;
 
-    Object.assign(emojiList[index], updatedEmoji, {
-      userIds: [...emojiList[index].userIds, ...updatedEmoji.userIds],
+    Object.assign(emojis[index], updatedEmoji, {
+      userIds: [...emojis[index].userIds, ...updatedEmoji.userIds],
     });
-    setEmojiList(updatedEmoji.messageRowKey, emojiList);
+    setEmojis(updatedEmoji.messageRowKey, emojis);
   };
   const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {
-    const emojiList = getEmojiList(messageRowKey);
-    setEmojiList(
+    const emojis = getEmojis(messageRowKey);
+    setEmojis(
       messageRowKey,
-      emojiList.filter((e) => !(e.partitionKey === partitionKey && e.rowKey === rowKey)),
+      emojis.filter((e) => !(e.partitionKey === partitionKey && e.rowKey === rowKey)),
     );
   };
 
   return {
-    getEmojiList,
-    setEmojiList,
+    getEmojis,
+    setEmojis,
     storeCreateEmoji,
     storeDeleteEmoji,
     storeUpdateEmoji,

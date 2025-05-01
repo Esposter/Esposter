@@ -9,15 +9,13 @@ interface ReplySpineProps {
 const { replyRowKey } = defineProps<ReplySpineProps>();
 const { border, text } = useColors();
 const messageStore = useMessageStore();
-const { activeReply, messageList } = storeToRefs(messageStore);
-const reply = computed(() => messageList.value.find(({ rowKey }) => rowKey === replyRowKey));
-const { start: resetActiveReply } = useTimeoutFn(() => {
-  activeReply.value = undefined;
-}, dayjs.duration(2, "seconds").asMilliseconds());
+const { activeReplyRowKey } = storeToRefs(messageStore);
 const onClick = () => {
-  activeReply.value = reply.value;
+  activeReplyRowKey.value = replyRowKey;
   document.getElementById(replyRowKey)?.scrollIntoView({ behavior: "smooth" });
-  resetActiveReply();
+  useTimeoutFn(() => {
+    activeReplyRowKey.value = undefined;
+  }, dayjs.duration(2, "seconds").asMilliseconds());
 };
 </script>
 

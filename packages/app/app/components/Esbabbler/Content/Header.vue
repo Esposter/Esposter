@@ -6,7 +6,7 @@ const { leftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <v-toolbar border color="surface" density="comfortable" :p="leftDrawerOpenAuto ? 'l-4' : undefined">
+  <v-toolbar :pl="leftDrawerOpenAuto ? '4' : undefined" b-none density="comfortable">
     <EsbabblerContentShowRoomListButton />
     <EsbabblerContentTitle />
     <template #append>

@@ -4,22 +4,24 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 const emit = defineEmits<{ "update:room": [] }>();
 const roomStore = useRoomStore();
-const { roomsSearched } = storeToRefs(roomStore);
+const { readMoreRoomsSearched } = roomStore;
+const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
 </script>
 
 <template>
   <v-list>
     <NuxtInvisibleLink
-      v-for="room of roomsSearched"
-      :key="room.id"
-      :to="RoutePath.Messages(room.id)"
+      v-for="{ id, name, image } of roomsSearched"
+      :key="id"
+      :to="RoutePath.Messages(id)"
       @click="emit('update:room')"
     >
-      <v-list-item :title="room.name" :value="room.id">
+      <v-list-item :title="name" :value="id">
         <template #prepend>
-          <StyledAvatar :image="room.image" :name="room.name" />
+          <StyledAvatar :image :name />
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
+    <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
   </v-list>
 </template>

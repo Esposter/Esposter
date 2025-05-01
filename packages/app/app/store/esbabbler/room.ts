@@ -5,23 +5,20 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
-import { useFuse } from "@vueuse/integrations/useFuse";
 
 export const useRoomStore = defineStore("esbabbler/room", () => {
   const { $trpc } = useNuxtApp();
-  const { itemList, ...restData } = createCursorPaginationData<Room>();
+  const { items, ...restData } = createCursorPaginationData<Room>();
   const {
     createRoom: storeCreateRoom,
     deleteRoom: storeDeleteRoom,
-    roomList,
+    rooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
-  } = createOperationData(itemList, ["id"], DatabaseEntityType.Room);
-  const rooms = computed(() => roomList.value.toSorted((a, b) => dayjs(a.updatedAt).diff(b.updatedAt)));
+  } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -29,7 +26,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   });
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return undefined;
-    return roomList.value.find(({ id }) => id === currentRoomId.value);
+    return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const currentRoomName = computed(() => currentRoom.value?.name ?? "");
 
@@ -53,18 +50,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     storeDeleteRoom({ id });
   };
 
-  const roomSearchQuery = ref("");
-  const roomsSearched = computed<Room[]>(() => {
-    if (!roomSearchQuery.value) return [];
-
-    const { results } = useFuse(roomSearchQuery, roomList, {
-      fuseOptions: {
-        keys: ["name"],
-      },
-    });
-    return results.value.map(({ item }) => item);
-  });
-
   return {
     createRoom,
     joinRoom,
@@ -77,7 +62,13 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     currentRoom,
     currentRoomId,
     currentRoomName,
-    roomSearchQuery,
-    roomsSearched,
+    ...useSearcher(
+      (searchQuery, cursor) =>
+        $trpc.room.readRooms.query({
+          cursor,
+          filter: { name: searchQuery },
+        }),
+      DatabaseEntityType.Room,
+    ),
   };
 });
