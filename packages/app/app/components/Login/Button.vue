@@ -4,7 +4,6 @@ import type { Component, CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { toTitleCase } from "@/util/text/toTitleCase";
-import { toast } from "vuetify-sonner";
 
 export interface LoginButtonProps {
   logo: Component;
@@ -38,7 +37,7 @@ const isLoading = ref(false);
           { provider },
           {
             onError: ({ error }) => {
-              toast(error.message, { cardProps: { color: 'error' } });
+              useToast(error.message, { cardProps: { color: 'error' } });
             },
           },
         );

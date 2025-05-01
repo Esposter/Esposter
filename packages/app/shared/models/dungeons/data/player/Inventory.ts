@@ -1,7 +1,7 @@
 import type { Item } from "@/models/dungeons/item/Item";
+import type { z } from "zod";
 
 import { itemSchema } from "@/models/dungeons/item/Item";
-import { z } from "zod";
 
 export type Inventory = Item[];
 

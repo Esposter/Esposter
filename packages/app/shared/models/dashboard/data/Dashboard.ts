@@ -9,6 +9,6 @@ export class Dashboard extends AItemEntity {
   visuals: Visual[] = [];
 }
 
-export const dashboardSchema = z
-  .object({ visuals: visualSchema.array() })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<Dashboard>>;
+export const dashboardSchema = z.object({ visuals: visualSchema.array() }).merge(aItemEntitySchema) satisfies z.ZodType<
+  ToData<Dashboard>
+>;

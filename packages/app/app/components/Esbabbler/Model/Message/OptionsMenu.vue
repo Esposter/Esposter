@@ -45,6 +45,14 @@ const forwardMessageOptionMenuItem: OptionMenuItem = {
   },
   title: "Forward",
 };
+const deleteMessageOptionMenuItem: OptionMenuItem = {
+  color: "error",
+  icon: "mdi-delete",
+  onClick: () => {
+    emit("update:delete-mode", true);
+  },
+  title: "Delete Message",
+};
 // We only include menu items that will be part of our v-for to generate similar components
 const menuItems = computed(() =>
   isEditable.value
@@ -53,20 +61,8 @@ const menuItems = computed(() =>
 );
 const items = computed(() =>
   isEditable.value
-    ? [
-        editMessageOptionMenuItem,
-        replyOptionMenuItem,
-        forwardMessageOptionMenuItem,
-        {
-          color: "error",
-          icon: "mdi-delete",
-          onClick: () => {
-            emit("update:delete-mode", true);
-          },
-          title: "Delete Message",
-        },
-      ]
-    : [replyOptionMenuItem, forwardMessageOptionMenuItem],
+    ? [editMessageOptionMenuItem, replyOptionMenuItem, forwardMessageOptionMenuItem, deleteMessageOptionMenuItem]
+    : [replyOptionMenuItem, forwardMessageOptionMenuItem, deleteMessageOptionMenuItem],
 );
 </script>
 

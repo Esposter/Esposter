@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
@@ -72,6 +73,14 @@ watch(dialog, (newDialog) => {
               if (!forward) return;
               const { partitionKey, rowKey } = forward;
               await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, forwardRoomIds });
+              if (forwardRoomIds.length === 1) {
+                await navigateTo(RoutePath.Messages(forwardRoomIds[0]));
+                useToast('Message forwarded!', {
+                  position: 'top-center',
+                  prependIcon: 'mdi-share',
+                  prependIconProps: { color: 'success' },
+                });
+              }
               dialog = false;
             }
           "
