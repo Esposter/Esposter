@@ -161,7 +161,7 @@ catalog:
   typescript-eslint: ^8.31.1
   unocss: ^66.1.0-beta.13
   unplugin-auto-import: ^19.1.2
-  vite: ^6.3.3
+  vite: ^6.3.4
   vite-plugin-dts: ^4.5.3
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
