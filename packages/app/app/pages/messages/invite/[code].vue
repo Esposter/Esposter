@@ -19,13 +19,14 @@ const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 const code = route.params.code as string;
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/3493
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
   throw createError({
     message: new NotFoundError(DatabaseEntityType.Invite, `${code}, the code may have expired`).message,
     statusCode: 404,
   });
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/3493
+// We should be able to have an extra property returned to tell us if isMember
 else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
   await navigateTo(RoutePath.Messages(invite.roomId));
 
