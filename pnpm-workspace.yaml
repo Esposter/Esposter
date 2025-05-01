@@ -140,8 +140,8 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.0
   rolldown: ^1.0.0-beta.8
-  rolldown-plugin-dts: ^0.9.9
-  rolldown-vite: ^6.3.5
+  rolldown-plugin-dts: ^0.9.11
+  rolldown-vite: ^6.3.6
   rxjs: ^7.8.2
   sass-embedded: ^1.87.0
   sql-highlight: ^6.0.0
