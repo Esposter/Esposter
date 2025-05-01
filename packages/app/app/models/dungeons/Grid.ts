@@ -84,7 +84,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
       }
       case Direction.DOWN: {
         let newPositionY = this.position.value.y;
@@ -99,7 +99,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
       }
       case Direction.LEFT: {
         let newPositionX = this.position.value.x;
@@ -114,7 +114,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
       }
       case Direction.RIGHT: {
         let newPositionX = this.position.value.x;
@@ -129,7 +129,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
       }
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:

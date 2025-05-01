@@ -13,6 +13,6 @@ export interface Effect {
 
 export const effectSchema = z.object({
   configuration: effectConfigurationSchema,
-  targets: z.array(targetSchema).min(1),
+  targets: targetSchema.array().min(1),
   value: z.number(),
 }) satisfies z.ZodType<Effect>;

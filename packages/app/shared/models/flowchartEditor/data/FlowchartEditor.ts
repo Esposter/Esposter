@@ -13,7 +13,7 @@ export class FlowchartEditor extends AItemEntity {
 
 export const flowchartEditorSchema = z
   .object({
-    edges: z.array(edgeSchema),
-    nodes: z.array(nodeSchema),
+    edges: edgeSchema.array(),
+    nodes: nodeSchema.array(),
   })
   .merge(aItemEntitySchema) satisfies z.ZodType<ToData<FlowchartEditor>>;

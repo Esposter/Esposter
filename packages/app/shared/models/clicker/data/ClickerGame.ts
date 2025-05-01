@@ -20,8 +20,8 @@ export class ClickerGame extends AItemEntity implements ItemEntityType<ClickerTy
 
 export const clickerGameSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(clickerTypeSchema)).merge(
   z.object({
-    boughtBuildings: z.array(buildingWithStatsSchema),
-    boughtUpgrades: z.array(createUpgradeSchema(upgradeIdSchema)),
+    boughtBuildings: buildingWithStatsSchema.array(),
+    boughtUpgrades: createUpgradeSchema(upgradeIdSchema).array(),
     id: z.string().uuid(),
     noPoints: z.number(),
   }),

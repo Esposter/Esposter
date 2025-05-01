@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { dayjs } from "#shared/services/dayjs";
+import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 const { $trpc } = useNuxtApp();
+const messageStore = useMessageStore();
+const { messages } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
+const forward = computed(() => messages.value.find(({ rowKey }) => rowKey === forwardRowKey.value));
 const dialog = computed({
   get: () => Boolean(forwardRowKey.value),
   set: (newDialog) => {
@@ -59,6 +63,22 @@ watch(dialog, (newDialog) => {
           <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
         </v-list>
       </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <StyledButton
+          :disabled="forwardRoomIds.length === 0"
+          @click="
+            async () => {
+              if (!forward) return;
+              const { partitionKey, rowKey } = forward;
+              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, forwardRoomIds });
+              dialog = false;
+            }
+          "
+        >
+          Send
+        </StyledButton>
+      </v-card-actions>
     </StyledCard>
   </v-dialog>
 </template>

@@ -13,6 +13,7 @@ import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
@@ -26,10 +27,12 @@ import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/g
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { NotFoundError } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
+  messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -46,7 +49,7 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  rowKeys: z.array(messageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
+  rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
@@ -61,6 +64,11 @@ export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
+
+export const forwardMessagesInputSchema = messageEntitySchema
+  .pick({ partitionKey: true, rowKey: true })
+  .merge(z.object({ forwardRoomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT) }));
+export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 
 export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
@@ -93,6 +101,41 @@ export const messageRouter = router({
       const messageClient = await useTableClient(AzureTable.Messages);
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
+    }),
+  forwardMessages: getRoomUserProcedure(forwardMessagesInputSchema, "partitionKey")
+    .input(forwardMessagesInputSchema)
+    .mutation(async ({ ctx, input: { forwardRoomIds, partitionKey, rowKey } }) => {
+      const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
+        where: (usersToRooms, { and, eq, inArray }) =>
+          and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, forwardRoomIds)),
+      });
+      if (foundUsersToRooms.length !== forwardRoomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const message = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
+      if (!message)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
+            .message,
+        });
+      // We don't forward reply information for privacy
+      message.replyRowKey = undefined;
+      message.isForward = true;
+      for (const forwardRoomId of forwardRoomIds) {
+        const createdAt = new Date();
+        await createEntity(
+          messageClient,
+          Object.assign(message, {
+            createdAt,
+            partitionKey: getMessagesPartitionKey(forwardRoomId, createdAt),
+            rowKey: getReverseTickedTimestamp(),
+            updatedAt: createdAt,
+            userId: ctx.session.user.id,
+          }),
+        );
+        messageEventEmitter.emit("createMessage", message);
+      }
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)

@@ -20,6 +20,6 @@ export interface EffectConfiguration extends ItemEntityType<EffectType> {
 export const effectConfigurationSchema = createItemEntityTypeSchema(effectTypeSchema).merge(
   z.object({
     itemType: itemTypeSchema.optional(),
-    targets: z.array(targetSchema).optional(),
+    targets: targetSchema.array().optional(),
   }),
 ) satisfies z.ZodType<EffectConfiguration>;

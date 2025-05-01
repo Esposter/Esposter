@@ -39,10 +39,10 @@ const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema
   .default({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const onUpdateRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+const onUpdateRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 
-const onDeleteRoomInputSchema = z.array(selectRoomSchema.shape.id).min(1).max(MAX_READ_LIMIT);
+const onDeleteRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
 const onJoinRoomInputSchema = selectRoomSchema.shape.id;
@@ -60,14 +60,14 @@ const readMembersInputSchema = z
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({
-  ids: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
+  ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
 const createMembersInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  userIds: z.array(selectUserSchema.shape.id).min(1).max(MAX_READ_LIMIT),
+  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 

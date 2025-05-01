@@ -30,7 +30,7 @@ export const messageEntitySchema = createAzureEntitySchema(
   }),
 ).merge(
   z.object({
-    files: z.array(fileEntitySchema),
+    files: fileEntitySchema.array(),
     isForward: z.literal(true),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     replyRowKey: z.string().optional(),

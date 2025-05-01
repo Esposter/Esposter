@@ -24,6 +24,8 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -43,10 +45,17 @@ export const emojiRouter = router({
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
       const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
-      const foundEmojis = await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
-      });
-      if (foundEmojis.length > 0) return;
+      const foundEmoji = (
+        await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
+          filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
+        })
+      ).find(Boolean);
+      if (foundEmoji)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, emojiRouter.createEmoji.name, JSON.stringify(foundEmoji))
+            .message,
+        });
 
       const newEmoji = new MessageEmojiMetadataEntity({
         emojiTag: input.emojiTag,

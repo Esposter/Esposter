@@ -14,7 +14,7 @@ export class DungeonsGame extends AItemEntity {
 export const dungeonsGameSchema = z
   .object({
     id: z.string().uuid(),
-    saves: z.array(saveSchema),
+    saves: saveSchema.array(),
     settings: settingsSchema,
   })
   .merge(aItemEntitySchema) satisfies z.ZodType<ToData<DungeonsGame>>;

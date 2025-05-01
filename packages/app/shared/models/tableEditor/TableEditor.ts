@@ -10,4 +10,4 @@ export class TableEditor<T extends ToData<Item>> extends AItemEntity {
 }
 
 export const createTableEditorSchema = <T extends ToData<Item>>(schema: z.ZodType<T>) =>
-  z.object({ items: z.array(schema).max(TABLE_EDITOR_ITEMS_MAX_LENGTH) }).merge(aItemEntitySchema);
+  z.object({ items: schema.array().max(TABLE_EDITOR_ITEMS_MAX_LENGTH) }).merge(aItemEntitySchema);
