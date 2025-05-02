@@ -48,7 +48,6 @@
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
     "@types/node": "catalog:",
-    "cross-env": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",

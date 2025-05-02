@@ -77,7 +77,6 @@ catalog:
   # @TODO: https://github.com/better-auth/better-auth/issues/1669
   better-auth: 1.1.21
   codemirror: ^6.0.1
-  cross-env: ^7.0.3
   ctix: ^2.7.1
   data-urls: ^5.0.0
   dayjs: ^1.11.13
@@ -187,3 +186,4 @@ onlyBuiltDependencies:
   - rolldown
   - unrs-resolver
   - vue-demi
+shellEmulator: true
