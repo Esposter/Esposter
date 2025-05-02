@@ -26,6 +26,7 @@ const active = computed(
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
+const listItemSpacer = computed(() => (message.replyRowKey ? 0 : "1rem"));
 </script>
 
 <template>
@@ -42,7 +43,7 @@ const selectEmoji = await useSelectEmoji(message);
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
+            <EsbabblerModelMessageReplySpine ml-7 mt-3 mb-1 :reply-row-key="message.replyRowKey" />
             <StyledAvatar :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else :image="creator.image" :name="creator.name" />
@@ -56,8 +57,22 @@ const selectEmoji = await useSelectEmoji(message);
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
+        <template v-if="message.isForward">
+          <div flex>
+            <div class="bg-background" mr-2 w-1 h-full rd-1 />
+            <div flex flex-col>
+              <v-list-item-subtitle>
+                <span italic>
+                  <v-icon icon="mdi-share" />
+                  Forwarded
+                </span>
+              </v-list-item-subtitle>
+              <div v-html="messageHtml" />
+            </div>
+          </div>
+        </template>
         <EsbabblerModelMessageEditor
-          v-if="isUpdateMode"
+          v-else-if="isUpdateMode"
           :message
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
@@ -107,10 +122,10 @@ const selectEmoji = await useSelectEmoji(message);
 
 <style scoped lang="scss">
 :deep(.v-list-item__prepend) {
-  align-self: flex-end;
+  align-self: flex-start;
 
   > .v-list-item__spacer {
-    width: 1rem;
+    width: v-bind(listItemSpacer);
   }
 }
 
