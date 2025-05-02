@@ -26,7 +26,6 @@ const active = computed(
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
-const listItemSpacer = computed(() => (message.replyRowKey ? 0 : "1rem"));
 </script>
 
 <template>
@@ -43,8 +42,8 @@ const listItemSpacer = computed(() => (message.replyRowKey ? 0 : "1rem"));
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine ml-7 mt-3 mb-1 :reply-row-key="message.replyRowKey" />
-            <StyledAvatar :image="creator.image" :name="creator.name" />
+            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
+            <StyledAvatar mt-2 :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else :image="creator.image" :name="creator.name" />
         </template>
@@ -125,7 +124,7 @@ const listItemSpacer = computed(() => (message.replyRowKey ? 0 : "1rem"));
   align-self: flex-start;
 
   > .v-list-item__spacer {
-    width: v-bind(listItemSpacer);
+    width: 1rem;
   }
 }
 
