@@ -42,6 +42,6 @@ const { text } = useColors();
 
 <style scoped lang="scss">
 .custom-border {
-  border: 1px $border-style-root v-bind(text);
+  border: $border-width-root $border-style-root v-bind(text);
 }
 </style>

@@ -71,6 +71,6 @@ onClickOutside(
 
 <style scoped lang="scss">
 .custom-border {
-  border: 1px $border-style-root v-bind(borderColor);
+  border: $border-width-root $border-style-root v-bind(borderColor);
 }
 </style>

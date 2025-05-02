@@ -25,7 +25,7 @@ const onClick = () => {
 
 <style scoped lang="scss">
 .custom-border {
-  border: 0px $border-style-root v-bind(border);
+  border: 0 $border-style-root v-bind(border);
   transition: border-color 0.25s;
 
   &:hover {
