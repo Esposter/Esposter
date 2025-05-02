@@ -19,8 +19,11 @@ const creator = computed(() => (reply.value ? userMap.value.get(reply.value.user
   <div flex items-center gap-1>
     <template v-if="reply && creator">
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
-      <span text-xs text-gray font-bold>{{ creator.name }}</span>
-      <span text-xs v-html="reply.message" />
+      <div flex items-center gap-1>
+        <span text-xs text-gray font-bold>{{ creator.name }}</span>
+        <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
+        <span text-xs v-html="reply.message" />
+      </div>
     </template>
     <template v-else>
       <v-icon pb-0.75 size="x-small" icon="mdi-reply" />

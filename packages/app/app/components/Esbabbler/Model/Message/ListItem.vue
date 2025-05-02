@@ -42,8 +42,8 @@ const selectEmoji = await useSelectEmoji(message);
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
-            <StyledAvatar mt-2 :image="creator.image" :name="creator.name" />
+            <EsbabblerModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
+            <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else :image="creator.image" :name="creator.name" />
         </template>
@@ -57,8 +57,8 @@ const selectEmoji = await useSelectEmoji(message);
           </span>
         </v-list-item-title>
         <template v-if="message.isForward">
-          <div flex>
-            <div class="bg-background" mr-2 w-1 h-full rd-1 />
+          <div flex gap-2>
+            <div class="bg-border" w-1 h-inherit rd-1 />
             <div flex flex-col>
               <v-list-item-subtitle>
                 <span italic>
@@ -66,7 +66,7 @@ const selectEmoji = await useSelectEmoji(message);
                   Forwarded
                 </span>
               </v-list-item-subtitle>
-              <div v-html="messageHtml" />
+              <v-list-item-subtitle op-100="!" v-html="messageHtml" />
             </div>
           </div>
         </template>
