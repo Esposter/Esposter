@@ -42,8 +42,8 @@ const selectEmoji = await useSelectEmoji(message);
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine absolute bottom-full ml-7 mb-1 :reply-row-key="message.replyRowKey" />
-            <StyledAvatar :image="creator.image" :name="creator.name" />
+            <EsbabblerModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
+            <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else :image="creator.image" :name="creator.name" />
         </template>
@@ -56,8 +56,22 @@ const selectEmoji = await useSelectEmoji(message);
             {{ displayCreatedAt }}
           </span>
         </v-list-item-title>
+        <template v-if="message.isForward">
+          <div flex gap-2>
+            <div class="bg-border" w-1 h-inherit rd-1 />
+            <div flex flex-col>
+              <v-list-item-subtitle>
+                <span italic>
+                  <v-icon icon="mdi-share" />
+                  Forwarded
+                </span>
+              </v-list-item-subtitle>
+              <v-list-item-subtitle op-100="!" v-html="messageHtml" />
+            </div>
+          </div>
+        </template>
         <EsbabblerModelMessageEditor
-          v-if="isUpdateMode"
+          v-else-if="isUpdateMode"
           :message
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
@@ -107,7 +121,7 @@ const selectEmoji = await useSelectEmoji(message);
 
 <style scoped lang="scss">
 :deep(.v-list-item__prepend) {
-  align-self: flex-end;
+  align-self: flex-start;
 
   > .v-list-item__spacer {
     width: 1rem;

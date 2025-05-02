@@ -20,7 +20,7 @@ const onClick = () => {
 </script>
 
 <template>
-  <div class="custom-border" b-l-2="!" b-t-2="!" cursor-pointer w-8 h-2 rd-tl-1 @click="onClick" />
+  <div class="custom-border" b-l-2="!" b-t-2="!" cursor-pointer w-8 h-3 rd-tl-2 @click="onClick" />
 </template>
 
 <style scoped lang="scss">
