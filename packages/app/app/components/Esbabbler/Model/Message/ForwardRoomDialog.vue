@@ -85,7 +85,7 @@ watch(dialog, (newDialog) => {
             }
           "
         >
-          Send
+          Send {{ forwardRoomIds.length > 1 ? `(${forwardRoomIds.length})` : "" }}
         </StyledButton>
       </v-card-actions>
     </StyledCard>
