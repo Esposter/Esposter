@@ -2,6 +2,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import type { PartialDeep } from "type-fest";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/data/TableEditor";
@@ -18,7 +19,7 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 
-  constructor(init?: Partial<TableEditorConfiguration>) {
+  constructor(init?: PartialDeep<TableEditorConfiguration>) {
     super();
     Object.assign(this, init);
   }
