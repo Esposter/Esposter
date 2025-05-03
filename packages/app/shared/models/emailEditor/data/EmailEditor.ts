@@ -5,6 +5,7 @@ import { html } from "@/services/prettier/html";
 import { z } from "zod";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
+  [key: string]: unknown;
   pages: unknown[] = [
     {
       component: html`
