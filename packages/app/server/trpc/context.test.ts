@@ -5,7 +5,7 @@ import { schema } from "@@/server/db/schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 export const createMockContext = (): Context => {
   const req = new IncomingMessage(new Socket());
@@ -20,10 +20,4 @@ export const createMockContext = (): Context => {
   };
 };
 
-describe("context", () => {
-  test("stub", () => {
-    expect.hasAssertions();
-
-    expect(undefined).toBeUndefined();
-  });
-});
+describe.todo("context");
