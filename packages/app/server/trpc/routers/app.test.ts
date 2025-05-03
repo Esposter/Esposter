@@ -2,7 +2,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/index.test";
+import { createMockContext } from "@@/server/trpc/context.test";
 import { appRouter } from "@@/server/trpc/routers/app";
 import { beforeEach, describe, expect, test } from "vitest";
 

@@ -20,7 +20,7 @@ export const createMockContext = (): Context => {
   };
 };
 
-describe("trpc", () => {
+describe("context", () => {
   test("stub", () => {
     expect.hasAssertions();
 
