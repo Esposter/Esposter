@@ -4,7 +4,7 @@ import type { EventSourceInput } from "@fullcalendar/core";
 
 import { useTableEditorStore } from "@/store/tableEditor";
 
-await useReadTableEditor();
+await useReadTableEditorConfiguration();
 const tableEditorStore = useTableEditorStore<TodoListItem>();
 const { editItem, resetItem, save } = tableEditorStore;
 const { editedItem, tableEditor } = storeToRefs(tableEditorStore);

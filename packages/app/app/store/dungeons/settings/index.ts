@@ -4,11 +4,11 @@ import { useDungeonsStore } from "@/store/dungeons";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const dungeonsStore = useDungeonsStore();
-  const { saveGame } = dungeonsStore;
+  const { saveDungeons } = dungeonsStore;
   const settings = computed({
-    get: () => dungeonsStore.game.settings,
+    get: () => dungeonsStore.dungeons.settings,
     set: (newSettings) => {
-      dungeonsStore.game.settings = newSettings;
+      dungeonsStore.dungeons.settings = newSettings;
     },
   });
   const setSettings = async (
@@ -18,7 +18,7 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     // Doing this casting hack here because we'll assume that
     // the correct settings option + value will always be passed in
     settings.value[settingsOption] = value as never;
-    await saveGame();
+    await saveDungeons();
   };
   const isSkipAnimations = computed(() => settings.value[SettingsOption.Animations] === AnimationsSetting.Off);
   const isSkipEncounters = ref(false);

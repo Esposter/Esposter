@@ -13,11 +13,11 @@ interface UpgradeListItemProps {
 
 const { isBought, upgrade } = defineProps<UpgradeListItemProps>();
 const clickerStore = useClickerStore();
-const { game } = storeToRefs(clickerStore);
+const { clicker } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
 const { createBoughtUpgrade } = upgradeStore;
 const { play } = useClickerSound(Sound.Buy);
-const isAffordable = computed(() => Boolean(game.value.noPoints >= upgrade.price));
+const isAffordable = computed(() => Boolean(clicker.value.noPoints >= upgrade.price));
 const displayDescription = useDecompileString(upgrade.description);
 const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
 </script>

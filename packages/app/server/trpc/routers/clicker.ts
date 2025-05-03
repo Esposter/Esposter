@@ -1,7 +1,7 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { ClickerGame, clickerGameSchema } from "#shared/models/clicker/data/ClickerGame";
+import { Clicker, clickerSchema } from "#shared/models/clicker/data/Clicker";
 import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { useDownload } from "@@/server/composables/azure/useDownload";
@@ -13,20 +13,20 @@ import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProced
 
 export const clickerRouter = router({
   readBuildingMap: rateLimitedProcedure.query(() => BuildingMap),
-  readGame: authedProcedure.query<ClickerGame>(async ({ ctx }) => {
+  readClicker: authedProcedure.query<Clicker>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const response = await useDownload(AzureContainer.ClickerAssets, blobName);
-      if (!response.readableStreamBody) return new ClickerGame();
+      if (!response.readableStreamBody) return new Clicker();
 
       const json = await streamToText(response.readableStreamBody);
-      return Object.assign(new ClickerGame(), jsonDateParse(json));
+      return Object.assign(new Clicker(), jsonDateParse(json));
     } catch {
-      return new ClickerGame();
+      return new Clicker();
     }
   }),
   readUpgradeMap: rateLimitedProcedure.query(() => UpgradeMap),
-  saveGame: authedProcedure.input(clickerGameSchema).mutation(async ({ ctx, input }) => {
+  saveClicker: authedProcedure.input(clickerSchema).mutation(async ({ ctx, input }) => {
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.ClickerAssets, blobName, JSON.stringify(input));
   }),

@@ -6,15 +6,20 @@ import { getInitialSettings, settingsSchema } from "#shared/models/dungeons/data
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { z } from "zod";
 
-export class DungeonsGame extends AItemEntity {
+export class Dungeons extends AItemEntity {
   saves: Save[] = [];
   settings = getInitialSettings();
+
+  constructor(init?: Partial<Dungeons>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export const dungeonsGameSchema = z
+export const dungeonsSchema = z
   .object({
     id: z.string().uuid(),
     saves: saveSchema.array(),
     settings: settingsSchema,
   })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<DungeonsGame>>;
+  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<Dungeons>>;

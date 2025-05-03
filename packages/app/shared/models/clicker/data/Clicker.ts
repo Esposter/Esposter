@@ -11,18 +11,23 @@ import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntit
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import { z } from "zod";
 
-export class ClickerGame extends AItemEntity implements ItemEntityType<ClickerType> {
+export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> {
   boughtBuildings: BuildingWithStats[] = [];
   boughtUpgrades: Upgrade[] = [];
   noPoints = 0;
   type = ClickerType.Default;
+
+  constructor(init?: Partial<Clicker>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export const clickerGameSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(clickerTypeSchema)).merge(
+export const clickerSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(clickerTypeSchema)).merge(
   z.object({
     boughtBuildings: buildingWithStatsSchema.array(),
     boughtUpgrades: createUpgradeSchema(upgradeIdSchema).array(),
     id: z.string().uuid(),
     noPoints: z.number(),
   }),
-) satisfies z.ZodType<ToData<ClickerGame>>;
+) satisfies z.ZodType<ToData<Clicker>>;

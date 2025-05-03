@@ -5,7 +5,7 @@ import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 const { $trpc } = useNuxtApp();
 const clickerStore = useClickerStore();
-const { game } = storeToRefs(clickerStore);
+const { clicker } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();
 const { initializeUpgradeMap } = upgradeStore;
 const { unlockedUpgrades } = storeToRefs(upgradeStore);
@@ -14,7 +14,7 @@ const { initializeBuildingMap } = buildingStore;
 const { buildings } = storeToRefs(buildingStore);
 const unlockedStoreUpgrades = computed(() =>
   unlockedUpgrades.value
-    .filter((u) => !game.value.boughtUpgrades.some((bu) => bu.id === u.id))
+    .filter((u) => !clicker.value.boughtUpgrades.some((bu) => bu.id === u.id))
     .toSorted((a, b) => a.price - b.price),
 );
 

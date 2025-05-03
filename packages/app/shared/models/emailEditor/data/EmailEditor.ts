@@ -15,6 +15,11 @@ export class EmailEditor extends AItemEntity implements ProjectData {
       `,
     },
   ];
+
+  constructor(init?: Partial<EmailEditor>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const emailEditorSchema = z.record(z.string().min(1), z.unknown());

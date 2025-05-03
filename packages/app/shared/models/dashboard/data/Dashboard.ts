@@ -7,6 +7,11 @@ import { z } from "zod";
 
 export class Dashboard extends AItemEntity {
   visuals: Visual[] = [];
+
+  constructor(init?: Partial<Dashboard>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const dashboardSchema = z.object({ visuals: visualSchema.array() }).merge(aItemEntitySchema) satisfies z.ZodType<

@@ -3,7 +3,7 @@ import { useClickerStore } from "@/store/clicker";
 
 export const useClickerItemColor = () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
+  const { clicker } = storeToRefs(clickerStore);
   const colors = useColors();
-  return computed(() => getColorMap(colors)[game.value.type]);
+  return computed(() => getColorMap(colors)[clicker.value.type]);
 };
