@@ -27,8 +27,6 @@ export const usePostStore = defineStore("post", () => {
   };
   const deletePost = async (input: DeletePostInput) => {
     const deletedPost = await $trpc.post.deletePost.mutate(input);
-    if (!deletedPost) return;
-
     storeDeletePost({ id: deletedPost.id });
   };
 
