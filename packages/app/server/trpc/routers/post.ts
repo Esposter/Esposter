@@ -8,6 +8,7 @@ import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -35,12 +36,12 @@ export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
     .input(createCommentInputSchema)
-    .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
+    .mutation<PostWithRelations>(async ({ ctx, input }) => {
       const parentPost = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
       if (!parentPost)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(`Parent ${DatabaseEntityType.Post}`, input.parentId).message,
+          message: new NotFoundError(DatabaseEntityType.Post, input.parentId).message,
         });
 
       const newComment = await ctx.db.transaction(async (tx) => {
@@ -57,7 +58,15 @@ export const postRouter = router({
             })
             .returning({ id: posts.id })
         ).find(Boolean);
-        if (!newComment) return null;
+        if (!newComment)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(
+              Operation.Create,
+              DerivedDatabaseEntityType.Comment,
+              JSON.stringify(input),
+            ).message,
+          });
 
         await tx
           .update(posts)
@@ -65,13 +74,17 @@ export const postRouter = router({
           .where(eq(posts.id, parentPost.id));
         return newComment;
       });
-      if (!newComment) return null;
 
       const newCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newComment.id),
         with: PostRelations,
       });
-      return newCommentWithRelations ?? null;
+      if (!newCommentWithRelations)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DerivedDatabaseEntityType.Comment, newComment.id).message,
+        });
+      return newCommentWithRelations;
     }),
   createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"])
     .input(createPostInputSchema)
@@ -105,7 +118,7 @@ export const postRouter = router({
         });
       return newPostWithRelations;
     }),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<null | Post>(
+  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(
     async ({ ctx, input }) =>
       await ctx.db.transaction(async (tx) => {
         const deletedComment = (
@@ -115,10 +128,18 @@ export const postRouter = router({
             .returning()
         ).find(Boolean);
         const postId = deletedComment?.parentId;
-        if (!postId) return null;
-        // Update number of comments
+        if (!postId)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
+          });
+
         const post = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
-        if (!post) return deletedComment;
+        if (!post)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: new NotFoundError(DatabaseEntityType.Post, postId).message,
+          });
 
         await tx
           .update(posts)
@@ -146,18 +167,21 @@ export const postRouter = router({
         return deletedPost;
       }),
   ),
-  readPost: rateLimitedProcedure
-    .input(readPostInputSchema)
-    .query(({ ctx, input }) =>
-      ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input), with: PostRelations }),
-    ),
+  readPost: rateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+    const post = await ctx.db.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, input),
+      with: PostRelations,
+    });
+    if (!post)
+      throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(DatabaseEntityType.Post, input).message });
+    return post;
+  }),
   readPosts: rateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
       const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
       const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
       const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
-
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
         orderBy: parseSortByToSql(posts, sortBy),
@@ -168,7 +192,7 @@ export const postRouter = router({
     }),
   updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"])
     .input(updateCommentInputSchema)
-    .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+    .mutation<PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedComment = (
         await ctx.db
           .update(posts)
@@ -176,13 +200,22 @@ export const postRouter = router({
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       ).find(Boolean);
-      if (!updatedComment) return null;
+      if (!updatedComment)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, id).message,
+        });
 
       const updatedCommentWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });
-      return updatedCommentWithRelations ?? null;
+      if (!updatedCommentWithRelations)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DerivedDatabaseEntityType.Comment, id).message,
+        });
+      return updatedCommentWithRelations;
     }),
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
     .input(updatePostInputSchema)

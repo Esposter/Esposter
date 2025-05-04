@@ -29,23 +29,17 @@ export const useCommentStore = defineStore("post/comment", () => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
     const newComment = await $trpc.post.createComment.mutate(input);
-    if (!newComment) return;
-
     storeCreateComment(newComment);
     currentPost.value.noComments += 1;
   };
   const updateComment = async (input: UpdateCommentInput) => {
     const updatedComment = await $trpc.post.updateComment.mutate(input);
-    if (!updatedComment) return;
-
     storeUpdateComment(updatedComment);
   };
   const deleteComment = async (input: DeleteCommentInput) => {
     if (!currentPost.value) return;
 
     const deletedComment = await $trpc.post.deleteComment.mutate(input);
-    if (!deletedComment) return;
-
     storeDeleteComment({ id: deletedComment.id });
     currentPost.value.noComments -= 1;
   };
