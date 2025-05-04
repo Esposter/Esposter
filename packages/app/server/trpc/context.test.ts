@@ -9,8 +9,10 @@ import { PGlite } from "@electric-sql/pglite";
 import { NIL } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
+import { createRequire } from "node:module";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
+const require = createRequire(import.meta.url);
 
 const createdAt = new Date(0);
 const mockUser: User = {
@@ -59,8 +61,6 @@ export const createMockContext = async (): Promise<Context> => {
 };
 
 const createMockDb = async () => {
-  const { createRequire } = await vi.importActual<typeof import("node:module")>("node:module");
-  const require = createRequire(import.meta.url);
   // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/2853#issuecomment-2668459509
   const { pushSchema } = require("drizzle-kit/api") as typeof import("drizzle-kit/api");
   const client = new PGlite();
