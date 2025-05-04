@@ -127,7 +127,7 @@ export const postRouter = router({
         return deletedComment;
       }),
   ),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation<null | Post>(
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(
     async ({ ctx, input }) =>
       await ctx.db.transaction(async (tx) => {
         const deletedPost = (
@@ -136,7 +136,11 @@ export const postRouter = router({
             .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
             .returning()
         ).find(Boolean);
-        if (!deletedPost) return null;
+        if (!deletedPost)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, input).message,
+          });
         // Delete comments
         await tx.delete(posts).where(eq(posts.parentId, deletedPost.id));
         return deletedPost;
