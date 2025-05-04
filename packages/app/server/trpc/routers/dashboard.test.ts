@@ -5,12 +5,12 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("dashboard", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(dashboardRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

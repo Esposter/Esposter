@@ -5,12 +5,12 @@ import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("dungeons", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dungeons"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(dungeonsRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

@@ -5,12 +5,12 @@ import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEd
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("flowchartEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(flowchartEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

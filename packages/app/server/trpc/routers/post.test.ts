@@ -5,12 +5,12 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
   let caller: DecorateRouterRecord<TRPCRouter["post"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(postRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

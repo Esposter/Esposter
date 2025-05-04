@@ -5,12 +5,12 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("webpageEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(webpageEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

@@ -6,12 +6,12 @@ import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("tableEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(tableEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

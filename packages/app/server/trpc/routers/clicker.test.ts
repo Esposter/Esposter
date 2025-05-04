@@ -5,12 +5,12 @@ import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("clicker", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(clickerRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

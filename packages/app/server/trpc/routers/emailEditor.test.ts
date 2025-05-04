@@ -5,12 +5,12 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("emailEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["emailEditor"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(emailEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);

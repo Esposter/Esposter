@@ -4,12 +4,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { appRouter } from "@@/server/trpc/routers/app";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("appRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["app"]>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const createCaller = createCallerFactory(appRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);
