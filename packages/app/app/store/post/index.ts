@@ -19,14 +19,10 @@ export const usePostStore = defineStore("post", () => {
 
   const createPost = async (input: CreatePostInput) => {
     const newPost = await $trpc.post.createPost.mutate(input);
-    if (!newPost) return;
-
     storeCreatePost(newPost);
   };
   const updatePost = async (input: UpdatePostInput) => {
     const updatedPost = await $trpc.post.updatePost.mutate(input);
-    if (!updatedPost) return;
-
     storeUpdatePost(updatedPost);
   };
   const deletePost = async (input: DeletePostInput) => {

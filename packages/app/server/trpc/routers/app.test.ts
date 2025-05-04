@@ -9,9 +9,9 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("appRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["app"]>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const createCaller = createCallerFactory(appRouter);
-    const mockContext = createMockContext();
+    const mockContext = await createMockContext();
     caller = createCaller(mockContext);
   });
 

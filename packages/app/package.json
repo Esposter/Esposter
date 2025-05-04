@@ -52,6 +52,7 @@
     "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@codemirror/view": "catalog:",
+    "@electric-sql/pglite": "catalog:",
     "@fullcalendar/core": "catalog:",
     "@fullcalendar/daygrid": "catalog:",
     "@fullcalendar/interaction": "catalog:",

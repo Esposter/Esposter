@@ -18,7 +18,7 @@ import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
-import { NotFoundError } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -75,7 +75,7 @@ export const postRouter = router({
     }),
   createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"])
     .input(createPostInputSchema)
-    .mutation<null | PostWithRelations>(async ({ ctx, input }) => {
+    .mutation<PostWithRelations>(async ({ ctx, input }) => {
       const createdAt = new Date();
       const newPost = (
         await ctx.db
@@ -88,13 +88,22 @@ export const postRouter = router({
           })
           .returning({ id: posts.id })
       ).find(Boolean);
-      if (!newPost) return null;
+      if (!newPost)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Post, JSON.stringify(input)).message,
+        });
 
       const newPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, newPost.id),
         with: PostRelations,
       });
-      return newPostWithRelations ?? null;
+      if (!newPostWithRelations)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, newPost.id).message,
+        });
+      return newPostWithRelations;
     }),
   deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<null | Post>(
     async ({ ctx, input }) =>
@@ -173,15 +182,14 @@ export const postRouter = router({
     }),
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
     .input(updatePostInputSchema)
-    .mutation<null | PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+    .mutation<PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
       const post = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
       });
       if (!post)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, `${posts.id}, you might be trying to update a comment`)
-            .message,
+          message: new NotFoundError(DatabaseEntityType.Post, id).message,
         });
 
       const updatedPost = (
@@ -191,12 +199,21 @@ export const postRouter = router({
           .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       ).find(Boolean);
-      if (!updatedPost) return null;
+      if (!updatedPost)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, id).message,
+        });
 
       const updatedPostWithRelations = await ctx.db.query.posts.findFirst({
         where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
         with: PostRelations,
       });
-      return updatedPostWithRelations ?? null;
+      if (!updatedPostWithRelations)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, id).message,
+        });
+      return updatedPostWithRelations;
     }),
 });

@@ -10,13 +10,13 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("dashboard", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const createCaller = createCallerFactory(dashboardRouter);
-    const mockContext = createMockContext();
+    const mockContext = await createMockContext();
     caller = createCaller(mockContext);
   });
 
-  test("read", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const dashboard = await caller.readDashboard();
@@ -25,7 +25,7 @@ describe("dashboard", () => {
     expect(dashboard).toStrictEqual(new Dashboard({ createdAt, id, updatedAt: createdAt }));
   });
 
-  test.todo("save and read", async () => {
+  test.todo("saves and reads", async () => {
     expect.hasAssertions();
 
     const dashboard = new Dashboard();

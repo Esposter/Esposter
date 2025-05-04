@@ -15,7 +15,7 @@ export const users = pgTable(
   "users",
   {
     createdAt: timestamp("created_at").notNull(),
-    deletedAt: timestamp("deleted_at").notNull(),
+    deletedAt: timestamp("deleted_at"),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull(),
     id: text("id").primaryKey(),

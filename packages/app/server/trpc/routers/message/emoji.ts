@@ -53,7 +53,7 @@ export const emojiRouter = router({
       if (foundEmoji)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, emojiRouter.createEmoji.name, JSON.stringify(foundEmoji))
+          message: new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(foundEmoji))
             .message,
         });
 

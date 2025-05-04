@@ -10,13 +10,13 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("flowchartEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const createCaller = createCallerFactory(flowchartEditorRouter);
-    const mockContext = createMockContext();
+    const mockContext = await createMockContext();
     caller = createCaller(mockContext);
   });
 
-  test("read", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const flowchartEditor = await caller.readFlowchartEditor();
@@ -25,7 +25,7 @@ describe("flowchartEditor", () => {
     expect(flowchartEditor).toStrictEqual(new FlowchartEditor({ createdAt, id, updatedAt: createdAt }));
   });
 
-  test.todo("save and read", async () => {
+  test.todo("saves and reads", async () => {
     expect.hasAssertions();
 
     const flowchartEditor = new FlowchartEditor();

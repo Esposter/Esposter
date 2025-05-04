@@ -62,11 +62,14 @@ export const surveyRouter = router({
 
     rest.publishVersion++;
     if (rest.publishVersion <= survey.publishVersion)
-      throw new InvalidOperationError(
-        Operation.Update,
-        DatabaseEntityType.Survey,
-        "cannot update survey publish with old publish version",
-      );
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(
+          Operation.Update,
+          DatabaseEntityType.Survey,
+          "cannot update survey publish with old publish version",
+        ).message,
+      });
 
     await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
 
@@ -89,7 +92,7 @@ export const surveyRouter = router({
     }),
   updateSurvey: authedProcedure
     .input(updateSurveyInputSchema)
-    .mutation<null | Survey>(async ({ ctx, input: { id, ...rest } }) => {
+    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
       const survey = await ctx.db.query.surveys.findFirst({
         where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
       });
@@ -102,16 +105,24 @@ export const surveyRouter = router({
       if (rest.model !== survey.model) {
         rest.modelVersion++;
         if (rest.modelVersion <= survey.modelVersion)
-          throw new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Survey,
-            "cannot update survey model with old model version",
-          );
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(
+              Operation.Update,
+              DatabaseEntityType.Survey,
+              "cannot update survey model with old model version",
+            ).message,
+          });
       }
 
       const updatedSurvey = (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(
         Boolean,
       );
-      return updatedSurvey ?? null;
+      if (!updatedSurvey)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
+        });
+      return updatedSurvey;
     }),
 });

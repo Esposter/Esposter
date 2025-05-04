@@ -10,13 +10,13 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("webpageEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const createCaller = createCallerFactory(webpageEditorRouter);
-    const mockContext = createMockContext();
+    const mockContext = await createMockContext();
     caller = createCaller(mockContext);
   });
 
-  test("read", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const webpageEditor = await caller.readWebpageEditor();
@@ -25,7 +25,7 @@ describe("webpageEditor", () => {
     expect(webpageEditor).toStrictEqual(new WebpageEditor({ createdAt, id, updatedAt: createdAt }));
   });
 
-  test.todo("save and read", async () => {
+  test.todo("saves and reads", async () => {
     expect.hasAssertions();
 
     const webpageEditor = new WebpageEditor();
