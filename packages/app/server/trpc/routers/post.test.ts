@@ -95,6 +95,18 @@ describe("post", () => {
     expect(readPost.noComments).toBe(1);
   });
 
+  test("reads comment", async () => {
+    expect.hasAssertions();
+
+    const title = "title";
+    const newPost = await caller.createPost({ title });
+    const description = "description";
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+    const readComment = await caller.readPost(newComment.id);
+
+    expect(readComment).toStrictEqual(newComment);
+  });
+
   test("fails create comment with non-existent parent id", async () => {
     expect.hasAssertions();
 
@@ -142,11 +154,36 @@ describe("post", () => {
     expect(readPost.noComments).toBe(0);
   });
 
+  test("deletes comment with deleting post", async () => {
+    expect.hasAssertions();
+
+    const title = "title";
+    const newPost = await caller.createPost({ title });
+    const description = "description";
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+    await caller.deletePost(newPost.id);
+
+    await expect(caller.readPost(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${newComment.id}]`,
+    );
+  });
+
   test("fails delete comment with non-existent id", async () => {
     expect.hasAssertions();
 
     await expect(caller.deleteComment(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails delete comment with post id", async () => {
+    expect.hasAssertions();
+
+    const title = "title";
+    const newPost = await caller.createPost({ title });
+
+    await expect(caller.deleteComment(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Comment, ${newPost.id}]`,
     );
   });
 });

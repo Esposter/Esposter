@@ -118,54 +118,52 @@ export const postRouter = router({
         });
       return newPostWithRelations;
     }),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(
-    async ({ ctx, input }) =>
-      await ctx.db.transaction(async (tx) => {
-        const deletedComment = (
-          await tx
-            .delete(posts)
-            .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
-            .returning()
-        ).find(Boolean);
-        const postId = deletedComment?.parentId;
-        if (!postId)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
-          });
-
-        const post = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
-        if (!post)
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: new NotFoundError(DatabaseEntityType.Post, postId).message,
-          });
-
+  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(async ({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const deletedComment = (
         await tx
-          .update(posts)
-          .set({ noComments: post.noComments - 1 })
-          .where(eq(posts.id, post.id));
-        return deletedComment;
-      }),
+          .delete(posts)
+          .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
+          .returning()
+      ).find(Boolean);
+      const postId = deletedComment?.parentId;
+      if (!postId)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
+        });
+
+      const post = await tx.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) });
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, postId).message,
+        });
+
+      await tx
+        .update(posts)
+        .set({ noComments: post.noComments - 1 })
+        .where(eq(posts.id, post.id));
+      return deletedComment;
+    }),
   ),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(
-    async ({ ctx, input }) =>
-      await ctx.db.transaction(async (tx) => {
-        const deletedPost = (
-          await tx
-            .delete(posts)
-            .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
-            .returning()
-        ).find(Boolean);
-        if (!deletedPost)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, input).message,
-          });
-        // Delete comments
-        await tx.delete(posts).where(eq(posts.parentId, deletedPost.id));
-        return deletedPost;
-      }),
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const deletedPost = (
+        await tx
+          .delete(posts)
+          .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
+          .returning()
+      ).find(Boolean);
+      if (!deletedPost)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, input).message,
+        });
+      // Delete comments
+      await tx.delete(posts).where(eq(posts.parentId, deletedPost.id));
+      return deletedPost;
+    }),
   ),
   readPost: rateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
     const post = await ctx.db.query.posts.findFirst({
