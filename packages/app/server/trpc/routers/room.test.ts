@@ -8,7 +8,7 @@ import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createMockContext, mockUser } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -176,14 +176,19 @@ describe("room", () => {
     expect.hasAssertions();
 
     const name = "name";
-    const userId = crypto.randomUUID();
     const createdAt = new Date();
-    await mockContext.db
-      .insert(users)
-      .values({ createdAt, email: " ", emailVerified: true, id: userId, name, updatedAt: createdAt });
+    const userId = crypto.randomUUID();
+    await mockContext.db.insert(users).values({
+      createdAt,
+      email: crypto.randomUUID(),
+      emailVerified: true,
+      id: userId,
+      name,
+      updatedAt: createdAt,
+    });
     const newRoom = (await mockContext.db.insert(rooms).values({ name, userId }).returning())[0];
     const code = createCode(CODE_LENGTH);
-    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: NIL });
+    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: mockUser.id });
 
     const joinedRoom = await caller.joinRoom(code);
 

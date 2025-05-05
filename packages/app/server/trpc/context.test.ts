@@ -15,7 +15,7 @@ import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 
 const createdAt = new Date(0);
-const mockUser: User = {
+export const mockUser: User = {
   createdAt,
   deletedAt: null,
   email: "",

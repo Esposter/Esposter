@@ -47,10 +47,10 @@ export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 const onDeleteRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
-const onJoinRoomInputSchema = selectRoomSchema.shape.id;
+const onJoinRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 
-const onLeaveRoomInputSchema = selectRoomSchema.shape.id;
+const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z
@@ -184,8 +184,8 @@ export const roomRouter = router({
         message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
       });
 
-    const { room, roomId, user, userId } = userToRoomWithRelations;
-    roomEventEmitter.emit("joinRoom", { roomId, user, userId });
+    const { room, roomId, user } = userToRoomWithRelations;
+    roomEventEmitter.emit("joinRoom", { roomId, user });
     return room;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<null | Room["id"]>(async ({ ctx, input }) => {
@@ -207,25 +207,25 @@ export const roomRouter = router({
     }
   }),
   onJoinRoom: authedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    for await (const [{ roomId, user, userId }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (roomId !== input || userId === ctx.session.user.id) continue;
+    for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
+      if (!input.includes(data.roomId) || data.user.id === ctx.session.user.id) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
       });
       if (!isMember) continue;
-      yield user;
+      yield data;
     }
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    for await (const [{ roomId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (roomId !== input || userId === ctx.session.user.id) continue;
+    for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
+      if (!input.includes(data.roomId) || data.userId === ctx.session.user.id) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
       });
       if (!isMember) continue;
-      yield userId;
+      yield data;
     }
   }),
   onUpdateRoom: authedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {

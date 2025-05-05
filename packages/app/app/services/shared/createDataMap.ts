@@ -5,6 +5,11 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
   defaultValue: TItem,
 ) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
+  const getDataMap = (key: string) => dataMap.value.get(key);
+  const setDataMap = (key: string, value: TItem) => {
+    dataMap.value.set(key, value);
+  };
+
   const data = computed({
     get: () => {
       const currentIdValue = toValue(currentId);
@@ -30,7 +35,9 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
 
   return {
     data,
+    getDataMap,
     initializeData,
     resetData,
+    setDataMap,
   };
 };
