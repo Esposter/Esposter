@@ -127,7 +127,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.17.1
+  nuxt: ^3.17.2
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -161,7 +161,7 @@ catalog:
   typescript-eslint: ^8.31.1
   unocss: ^66.1.0
   unplugin-auto-import: ^19.1.2
-  vite: ^6.3.4
+  vite: ^6.3.5
   vite-plugin-dts: ^4.5.3
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
@@ -178,7 +178,7 @@ catalog:
   worker-timers: ^8.0.20
   ws: ^8.18.2
   xml2js: ^0.6.2
-  zod: ^3.24.3
+  zod: ^3.24.4
   zod-to-json-schema: ^3.24.5
 onlyBuiltDependencies:
   - "@parcel/watcher"
