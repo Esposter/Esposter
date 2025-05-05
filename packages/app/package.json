@@ -175,7 +175,6 @@
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "drizzle-kit": "catalog:",
