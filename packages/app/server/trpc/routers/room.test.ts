@@ -2,12 +2,16 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { invites } from "#shared/db/schema/invites";
 import { rooms } from "#shared/db/schema/rooms";
+import { users } from "#shared/db/schema/users";
+import { CODE_LENGTH } from "#shared/services/invite/constants";
+import { createCode } from "#shared/util/math/random/createCode";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("room", () => {
   let caller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -88,6 +92,23 @@ describe("room", () => {
     );
   });
 
+  test("on updates", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const updatedName = "updatedName";
+    const onUpdateRoom = await caller.onUpdateRoom([newRoom.id]);
+    const [data] = await Promise.all([
+      onUpdateRoom[Symbol.asyncIterator]().next(),
+      caller.updateRoom({ id: newRoom.id, name: updatedName }),
+    ]);
+
+    assert(!data.done);
+
+    expect(data.value.name).toBe(updatedName);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -103,6 +124,91 @@ describe("room", () => {
 
     await expect(caller.deleteRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("on deletes", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const onDeleteRoom = await caller.onDeleteRoom([newRoom.id]);
+    const [data] = await Promise.all([onDeleteRoom[Symbol.asyncIterator]().next(), caller.deleteRoom(newRoom.id)]);
+
+    assert(!data.done);
+
+    expect(data.value).toBe(newRoom.id);
+  });
+
+  test("reads invite code", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
+
+    expect(readInviteCode).toStrictEqual(inviteCode);
+  });
+
+  test("read invite code with no code to be null", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
+
+    expect(readInviteCode).toBeNull();
+  });
+
+  test("creates invite to be cached", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const cachedInviteCode = await caller.createInvite({ roomId: newRoom.id });
+
+    expect(cachedInviteCode).toStrictEqual(inviteCode);
+  });
+
+  test("joins", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const userId = crypto.randomUUID();
+    const createdAt = new Date();
+    await mockContext.db
+      .insert(users)
+      .values({ createdAt, email: " ", emailVerified: true, id: userId, name, updatedAt: createdAt });
+    const newRoom = (await mockContext.db.insert(rooms).values({ name, userId }).returning())[0];
+    const code = createCode(CODE_LENGTH);
+    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: NIL });
+
+    const joinedRoom = await caller.joinRoom(code);
+
+    expect(joinedRoom).toStrictEqual(newRoom);
+  });
+
+  test("fails join with non-existent code", async () => {
+    expect.hasAssertions();
+
+    const code = createCode(CODE_LENGTH);
+
+    await expect(caller.joinRoom(code)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invite is not found for id: ${code}]`,
+    );
+  });
+
+  test("fails join with joined room", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+
+    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: duplicate key value violates unique constraint "users_to_rooms_userId_roomId_pk"]`,
     );
   });
 });

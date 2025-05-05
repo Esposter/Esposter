@@ -86,7 +86,7 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 export const roomRouter = router({
   createInvite: getRoomUserProcedure(createInviteInputSchema, "roomId")
     .input(createInviteInputSchema)
-    .mutation<null | string>(async ({ ctx, input: { roomId } }) => {
+    .mutation<string>(async ({ ctx, input: { roomId } }) => {
       let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
@@ -99,10 +99,10 @@ export const roomRouter = router({
         } catch {
           continue;
         }
-
+      // If we reach here, it means that we've failed to create a non-colliding invite code and something has gone horribly wrong
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
-        message: "Failed to create invite code. Please try again.",
+        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
   createMembers: getRoomCreatorProcedure(createMembersInputSchema, "roomId")
@@ -155,21 +155,34 @@ export const roomRouter = router({
     roomEventEmitter.emit("deleteRoom", deletedRoom.id);
     return deletedRoom;
   }),
-  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<null | Room>(async ({ ctx, input }) => {
+  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
-    if (!invite) return null;
+    if (!invite)
+      throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(DatabaseEntityType.Invite, input).message });
 
     const userToRoom = (
       await ctx.db.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
     ).find(Boolean);
-    if (!userToRoom) return null;
+    if (!userToRoom)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(
+          Operation.Create,
+          DatabaseEntityType.UserToRoom,
+          JSON.stringify({ roomId: invite.roomId, userId: ctx.session.user.id }),
+        ).message,
+      });
 
     const userToRoomWithRelations = await ctx.db.query.usersToRooms.findFirst({
       where: (usersToRooms, { and, eq }) =>
         and(eq(usersToRooms.userId, userToRoom.userId), eq(usersToRooms.roomId, userToRoom.roomId)),
       with: UserToRoomRelations,
     });
-    if (!userToRoomWithRelations) return null;
+    if (!userToRoomWithRelations)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
+      });
 
     const { room, roomId, user, userId } = userToRoomWithRelations;
     roomEventEmitter.emit("joinRoom", { roomId, user, userId });
@@ -187,14 +200,9 @@ export const roomRouter = router({
     roomEventEmitter.emit("leaveRoom", userToRoom);
     return userToRoom.roomId;
   }),
-  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ input, signal }) {
     for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
       if (!input.includes(roomId)) continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, roomId)),
-      });
-      if (!isMember) continue;
       yield roomId;
     }
   }),

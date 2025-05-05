@@ -4,5 +4,6 @@ export enum DatabaseEntityType {
   Room = "Room",
   Survey = "Survey",
   User = "User",
+  UserToRoom = "UserToRoom",
   VerificationToken = "VerificationToken",
 }

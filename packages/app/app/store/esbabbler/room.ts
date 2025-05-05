@@ -36,8 +36,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
   const joinRoom = async (input: JoinRoomInput) => {
     const joinedRoom = await $trpc.room.joinRoom.mutate(input);
-    if (!joinedRoom) return;
-
     storeCreateRoom(joinedRoom, true);
     await navigateTo(RoutePath.Messages(joinedRoom.id));
   };
