@@ -9,6 +9,7 @@ import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
@@ -25,6 +26,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomCreatorProcedure } from "@@/server/trpc/procedure/getRoomCreatorProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -118,7 +120,7 @@ export const roomRouter = router({
     ),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"])
     .input(createRoomInputSchema)
-    .mutation<null | Room>(({ ctx, input }) =>
+    .mutation<Room>(({ ctx, input }) =>
       ctx.db.transaction(async (tx) => {
         const newRoom = (
           await tx
@@ -126,20 +128,29 @@ export const roomRouter = router({
             .values({ ...input, userId: ctx.session.user.id })
             .returning()
         ).find(Boolean);
-        if (!newRoom) return null;
+        if (!newRoom)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input))
+              .message,
+          });
 
         await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.session.user.id });
         return newRoom;
       }),
     ),
-  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<null | Room>(async ({ ctx, input }) => {
+  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = (
       await ctx.db
         .delete(rooms)
         .where(and(eq(rooms.id, input), eq(rooms.userId, ctx.session.user.id)))
         .returning()
     ).find(Boolean);
-    if (!deletedRoom) return null;
+    if (!deletedRoom)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, input).message,
+      });
 
     roomEventEmitter.emit("deleteRoom", deletedRoom.id);
     return deletedRoom;
@@ -256,29 +267,34 @@ export const roomRouter = router({
       return joinedUsers.map(({ users }) => users);
     }),
   readRoom: authedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
-    if (input)
-      return (
-        (await ctx.db.query.rooms.findFirst({
-          where: (rooms, { and, eq, exists }) =>
-            and(
-              eq(rooms.id, input),
-              exists(
-                // Select a constant '1' - we only care if *any* row matches
-                ctx.db
-                  .select({ _: sql`1` })
-                  .from(usersToRooms)
-                  .where(
-                    and(
-                      // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
-                      eq(usersToRooms.roomId, rooms.id),
-                      // Condition 2: Ensure the row belongs to the specific user
-                      eq(usersToRooms.userId, ctx.session.user.id),
-                    ),
+    if (input) {
+      const room = await ctx.db.query.rooms.findFirst({
+        where: (rooms, { and, eq, exists }) =>
+          and(
+            eq(rooms.id, input),
+            exists(
+              // Select a constant '1' - we only care if *any* row matches
+              ctx.db
+                .select({ _: sql`1` })
+                .from(usersToRooms)
+                .where(
+                  and(
+                    // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
+                    eq(usersToRooms.roomId, rooms.id),
+                    // Condition 2: Ensure the row belongs to the specific user
+                    eq(usersToRooms.userId, ctx.session.user.id),
                   ),
-              ),
+                ),
             ),
-        })) ?? null
-      );
+          ),
+      });
+      if (!room)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Room, input).message,
+        });
+      return room;
+    }
     // By default, we will return the latest updated room
     const joinedRoom = (
       await ctx.db
@@ -308,7 +324,7 @@ export const roomRouter = router({
     }),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"])
     .input(updateRoomInputSchema)
-    .mutation<null | Room>(async ({ ctx, input: { id, ...rest } }) => {
+    .mutation<Room>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (
         await ctx.db
           .update(rooms)
@@ -316,7 +332,11 @@ export const roomRouter = router({
           .where(and(eq(rooms.id, id), eq(rooms.userId, ctx.session.user.id)))
           .returning()
       ).find(Boolean);
-      if (!updatedRoom) return null;
+      if (!updatedRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
+        });
 
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return updatedRoom;

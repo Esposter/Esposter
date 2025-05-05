@@ -32,8 +32,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
-    if (!newRoom) return;
-
     storeCreateRoom(newRoom, true);
   };
   const joinRoom = async (input: JoinRoomInput) => {

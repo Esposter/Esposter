@@ -36,8 +36,8 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       flex
       items-center
       shadow-md
-      z-1
       cursor-pointer
+      z-1
       w-fit
       px-2
       origin-center

@@ -60,7 +60,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     await expect(caller.updatePost({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+      `[TRPCError: No values to set]`,
     );
   });
 

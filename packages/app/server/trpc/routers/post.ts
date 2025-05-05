@@ -218,20 +218,11 @@ export const postRouter = router({
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
     .input(updatePostInputSchema)
     .mutation<PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
-      const post = await ctx.db.query.posts.findFirst({
-        where: (posts, { and, eq }) => and(eq(posts.id, id), isNull(posts.parentId)),
-      });
-      if (!post)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, id).message,
-        });
-
       const updatedPost = (
         await ctx.db
           .update(posts)
           .set(rest)
-          .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
+          .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.session.user.id)))
           .returning({ id: posts.id })
       ).find(Boolean);
       if (!updatedPost)

@@ -131,9 +131,13 @@ export const surveyRouter = router({
           });
       }
 
-      const updatedSurvey = (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(
-        Boolean,
-      );
+      const updatedSurvey = (
+        await ctx.db
+          .update(surveys)
+          .set(rest)
+          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
+          .returning()
+      ).find(Boolean);
       if (!updatedSurvey)
         throw new TRPCError({
           code: "BAD_REQUEST",
