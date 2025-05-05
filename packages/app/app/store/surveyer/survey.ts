@@ -19,8 +19,6 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $trpc.survey.createSurvey.mutate(input);
-    if (!newSurvey) return;
-
     storeCreateSurvey(newSurvey);
     totalItemsLength.value++;
   };
@@ -37,8 +35,6 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
     const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
-    if (!deletedSurvey) return;
-
     storeDeleteSurvey({ id: deletedSurvey.id });
   };
 
