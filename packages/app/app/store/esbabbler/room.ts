@@ -41,8 +41,6 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
   const leaveRoom = async (input: DeleteRoomInput) => {
     const id = await $trpc.room.leaveRoom.mutate(input);
-    if (!id) return;
-
     storeDeleteRoom({ id });
   };
 

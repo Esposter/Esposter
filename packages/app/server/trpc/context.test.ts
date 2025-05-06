@@ -37,22 +37,24 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-export const mockUserOnce = async (db: Context["db"]) => {
+export const mockUserOnce = async (db: Context["db"], mockUser?: User) => {
   const name = "name";
   const createdAt = new Date(0);
-  const user = (
-    await db
-      .insert(users)
-      .values({
-        createdAt,
-        email: crypto.randomUUID(),
-        emailVerified: true,
-        id: crypto.randomUUID(),
-        name,
-        updatedAt: createdAt,
-      })
-      .returning()
-  )[0];
+  const user =
+    mockUser ??
+    (
+      await db
+        .insert(users)
+        .values({
+          createdAt,
+          email: crypto.randomUUID(),
+          emailVerified: true,
+          id: crypto.randomUUID(),
+          name,
+          updatedAt: createdAt,
+        })
+        .returning()
+    )[0];
   mocks.getSession.mockImplementationOnce(() => ({ session: createSession(user.id), user }));
   return user;
 };

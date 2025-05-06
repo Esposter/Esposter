@@ -15,6 +15,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
+import { deleteRoom } from "@@/server/services/db/room/deleteRoom";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
 import { on } from "@@/server/services/events/on";
@@ -139,22 +140,9 @@ export const roomRouter = router({
         return newRoom;
       }),
     ),
-  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
-    const deletedRoom = (
-      await ctx.db
-        .delete(rooms)
-        .where(and(eq(rooms.id, input), eq(rooms.userId, ctx.session.user.id)))
-        .returning()
-    ).find(Boolean);
-    if (!deletedRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, input).message,
-      });
-
-    roomEventEmitter.emit("deleteRoom", deletedRoom.id);
-    return deletedRoom;
-  }),
+  deleteRoom: authedProcedure
+    .input(deleteRoomInputSchema)
+    .mutation<Room>(async ({ ctx, input }) => deleteRoom(ctx.db, ctx.session, input)),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
     if (!invite)
@@ -188,17 +176,30 @@ export const roomRouter = router({
     roomEventEmitter.emit("joinRoom", { roomId, user });
     return room;
   }),
-  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<null | Room["id"]>(async ({ ctx, input }) => {
-    const userToRoom = (
-      await ctx.db
-        .delete(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.session.user.id)))
-        .returning()
-    ).find(Boolean);
-    if (!userToRoom) return null;
+  leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<Room["id"]>(async ({ ctx, input }) => {
+    try {
+      const { id } = await deleteRoom(ctx.db, ctx.session, input);
+      return id;
+    } catch {
+      const userToRoom = (
+        await ctx.db
+          .delete(usersToRooms)
+          .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.session.user.id)))
+          .returning()
+      ).find(Boolean);
+      if (!userToRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Delete,
+            DatabaseEntityType.UserToRoom,
+            JSON.stringify({ roomId: input, userId: ctx.session.user.id }),
+          ).message,
+        });
 
-    roomEventEmitter.emit("leaveRoom", userToRoom);
-    return userToRoom.roomId;
+      roomEventEmitter.emit("leaveRoom", userToRoom);
+      return userToRoom.roomId;
+    }
   }),
   onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ input, signal }) {
     for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {

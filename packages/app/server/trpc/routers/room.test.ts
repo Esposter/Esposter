@@ -218,4 +218,55 @@ describe("room", () => {
 
     expect(data.value).toStrictEqual({ roomId: newRoom.id, user });
   });
+
+  test("leaves", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const user = await mockUserOnce(mockContext.db);
+    await caller.joinRoom(inviteCode);
+    await mockUserOnce(mockContext.db, user);
+    const roomId = await caller.leaveRoom(newRoom.id);
+
+    expect(roomId).toStrictEqual(newRoom.id);
+  });
+
+  test("fails leave with non-existent id", async () => {
+    expect.hasAssertions();
+
+    await expect(caller.leaveRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, {"roomId":"00000000-0000-0000-0000-000000000000","userId":"00000000-0000-0000-0000-000000000000"}]`,
+    );
+  });
+
+  test("leaves with creator to be delete", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const roomId = await caller.leaveRoom(newRoom.id);
+
+    await expect(caller.readRoom(roomId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: ${roomId}]`,
+    );
+  });
+
+  test("on leaves", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const user = await mockUserOnce(mockContext.db);
+    await caller.joinRoom(inviteCode);
+    const onLeaveRoom = await caller.onLeaveRoom([newRoom.id]);
+    await mockUserOnce(mockContext.db, user);
+    const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), caller.leaveRoom(newRoom.id)]);
+
+    assert(!data.done);
+
+    expect(data.value).toStrictEqual({ roomId: newRoom.id, userId: user.id });
+  });
 });
