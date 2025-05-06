@@ -13,15 +13,14 @@ import { Socket } from "node:net";
 import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 
-const mocks = await vi.hoisted(async () => {
+const mocks = vi.hoisted(() => {
   const createdAt = new Date(0);
-  const { NIL } = await import("@esposter/shared");
   const user: User = {
     createdAt,
     deletedAt: null,
     email: "",
     emailVerified: true,
-    id: NIL,
+    id: crypto.randomUUID(),
     image: null,
     name: "name",
     updatedAt: createdAt,
