@@ -59,6 +59,8 @@ export const mockUserOnce = async (db: Context["db"], mockUser?: User) => {
   return user;
 };
 
+export const getMockSession = () => mocks.getSession();
+
 const createSession = (userId: string): Session["session"] => {
   const createdAt = new Date();
   return {
