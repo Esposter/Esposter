@@ -2,13 +2,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { invites } from "#shared/db/schema/invites";
 import { rooms } from "#shared/db/schema/rooms";
 import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, createSession, getMockSession, getSessionMock } from "@@/server/trpc/context.test";
+import { createMockContext, createSession, getSessionMock } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -176,21 +175,27 @@ describe("room", () => {
     expect.hasAssertions();
 
     const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const createdAt = new Date();
-    const userId = crypto.randomUUID();
-    await mockContext.db.insert(users).values({
-      createdAt,
-      email: crypto.randomUUID(),
-      emailVerified: true,
-      id: userId,
-      name,
-      updatedAt: createdAt,
-    });
-    const newRoom = (await mockContext.db.insert(rooms).values({ name, userId }).returning())[0];
-    const code = createCode(CODE_LENGTH);
-    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: getMockSession().user.id });
-
-    const joinedRoom = await caller.joinRoom(code);
+    const mockUser = (
+      await mockContext.db
+        .insert(users)
+        .values({
+          createdAt,
+          email: crypto.randomUUID(),
+          emailVerified: true,
+          id: crypto.randomUUID(),
+          name,
+          updatedAt: createdAt,
+        })
+        .returning()
+    )[0];
+    getSessionMock().mockImplementationOnce(() => ({
+      session: createSession(mockUser.id),
+      user: mockUser,
+    }));
+    const joinedRoom = await caller.joinRoom(inviteCode);
 
     expect(joinedRoom).toStrictEqual(newRoom);
   });
@@ -224,7 +229,6 @@ describe("room", () => {
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const createdAt = new Date();
-    const userId = crypto.randomUUID();
     const mockUser = (
       await mockContext.db
         .insert(users)
@@ -232,7 +236,7 @@ describe("room", () => {
           createdAt,
           email: crypto.randomUUID(),
           emailVerified: true,
-          id: userId,
+          id: crypto.randomUUID(),
           name,
           updatedAt: createdAt,
         })

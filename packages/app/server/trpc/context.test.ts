@@ -37,8 +37,6 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-export const getMockSession = () => mocks.getSession();
-
 export const getSessionMock = () => mocks.getSession;
 
 export const createSession = (userId: string): Session["session"] => {
