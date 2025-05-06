@@ -155,7 +155,7 @@ catalog:
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
   tsx: ^4.19.4
-  type-fest: ^4.40.1
+  type-fest: ^4.41.0
   typedoc: ^0.28.4
   typescript: ^5.8.3
   typescript-eslint: ^8.32.0

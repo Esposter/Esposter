@@ -451,8 +451,8 @@ catalogs:
       specifier: ^4.19.4
       version: 4.19.4
     type-fest:
-      specifier: ^4.40.1
-      version: 4.40.1
+      specifier: ^4.41.0
+      version: 4.41.0
     typedoc:
       specifier: ^0.28.4
       version: 0.28.4
@@ -575,7 +575,7 @@ importers:
         version: 0.11.1(rolldown@1.0.0-beta.8-commit.534fde3)(typescript@5.8.3)
       type-fest:
         specifier: 'catalog:'
-        version: 4.40.1
+        version: 4.41.0
       typedoc:
         specifier: 'catalog:'
         version: 0.28.4(typescript@5.8.3)
@@ -10394,6 +10394,10 @@ packages:
     resolution: {integrity: sha512-9YvLNnORDpI+vghLU/Nf+zSv0kL47KbVJ1o3sKgoTefl6i+zebxbiDQWoe/oWWqPhIgQdRZRT1KA9sCPL810SA==}
     engines: {node: '>=16'}
 
+  type-fest@4.41.0:
+    resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
+    engines: {node: '>=16'}
+
   type-is@2.0.1:
     resolution: {integrity: sha512-OZs6gsjF4vMp32qrCbiVSkrFmXtG/AZhY3t0iAMrMBiAZyV9oALtXO8hsrHbMXF9x6L3grlFuwW2oAz7cav+Gw==}
     engines: {node: '>= 0.6'}
@@ -17256,7 +17260,7 @@ snapshots:
       ts-pattern: 5.7.0
       tslib: 2.8.1
       type-check: 0.4.0
-      type-fest: 4.40.1
+      type-fest: 4.41.0
       typescript: 5.8.3
       yaml: 2.7.1
       yargs: 17.7.2
@@ -20644,7 +20648,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.27.1
       index-to-position: 1.1.0
-      type-fest: 4.40.1
+      type-fest: 4.41.0
 
   parse-ms@4.0.0: {}
 
@@ -21189,7 +21193,7 @@ snapshots:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.2
       parse-json: 8.3.0
-      type-fest: 4.40.1
+      type-fest: 4.41.0
       unicorn-magic: 0.1.0
 
   readable-stream@2.3.8:
@@ -22326,6 +22330,8 @@ snapshots:
 
   type-fest@4.40.1: {}
 
+  type-fest@4.41.0: {}
+
   type-is@2.0.1:
     dependencies:
       content-type: 1.0.5
@@ -23418,7 +23424,7 @@ snapshots:
       deepmerge-ts: 7.1.5
       read-pkg: 9.0.1
       sort-keys: 5.1.0
-      type-fest: 4.40.1
+      type-fest: 4.41.0
       write-json-file: 6.0.0
 
   ws@8.18.2: {}
