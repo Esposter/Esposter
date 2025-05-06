@@ -6,7 +6,6 @@ import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
 import { schema } from "@@/server/db/schema";
 import { PGlite } from "@electric-sql/pglite";
-import { NIL } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
@@ -14,35 +13,50 @@ import { Socket } from "node:net";
 import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 
-const createdAt = new Date(0);
-export const mockUser: User = {
-  createdAt,
-  deletedAt: null,
-  email: "",
-  emailVerified: true,
-  id: NIL,
-  image: null,
-  name: "name",
-  updatedAt: createdAt,
+const mocks = await vi.hoisted(async () => {
+  const createdAt = new Date(0);
+  const { NIL } = await import("@esposter/shared");
+  const user: User = {
+    createdAt,
+    deletedAt: null,
+    email: "",
+    emailVerified: true,
+    id: NIL,
+    image: null,
+    name: "name",
+    updatedAt: createdAt,
+  };
+  return {
+    getSession: vi.fn<() => Session>(() => {
+      const session = createSession(user.id);
+      return {
+        session,
+        user,
+      };
+    }),
+  };
+});
+
+export const getMockSession = () => mocks.getSession();
+
+export const getSessionMock = () => mocks.getSession;
+
+export const createSession = (userId: string): Session["session"] => {
+  const createdAt = new Date();
+  return {
+    createdAt,
+    expiresAt: new Date(createdAt.getTime() + dayjs.duration(1, "day").asMilliseconds()),
+    id: crypto.randomUUID(),
+    token: "",
+    updatedAt: createdAt,
+    userId,
+  };
 };
 
 vi.mock("@@/server/auth", () => ({
   auth: {
     api: {
-      getSession: (): Session => {
-        const createdAt = new Date();
-        return {
-          session: {
-            createdAt,
-            expiresAt: new Date(createdAt.getTime() + dayjs.duration(1, "day").asMilliseconds()),
-            id: NIL,
-            token: "",
-            updatedAt: createdAt,
-            userId: NIL,
-          },
-          user: mockUser,
-        };
-      },
+      getSession: mocks.getSession,
     },
   },
 }));
@@ -67,7 +81,7 @@ const createMockDb = async () => {
   const db = drizzle(client, { schema });
   const { apply } = await pushSchema(schema, db as never);
   await apply();
-  await db.insert(users).values(mockUser);
+  await db.insert(users).values(mocks.getSession().user);
   // It is fine to use pglite here as a mock for the postgresjs db
   // as they support the same API
   return db as unknown as Context["db"];

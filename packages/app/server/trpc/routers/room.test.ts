@@ -8,7 +8,7 @@ import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockUser } from "@@/server/trpc/context.test";
+import { createMockContext, createSession, getMockSession, getSessionMock } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -188,7 +188,7 @@ describe("room", () => {
     });
     const newRoom = (await mockContext.db.insert(rooms).values({ name, userId }).returning())[0];
     const code = createCode(CODE_LENGTH);
-    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: mockUser.id });
+    await mockContext.db.insert(invites).values({ code, roomId: newRoom.id, userId: getMockSession().user.id });
 
     const joinedRoom = await caller.joinRoom(code);
 
@@ -215,5 +215,38 @@ describe("room", () => {
     await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: duplicate key value violates unique constraint "users_to_rooms_userId_roomId_pk"]`,
     );
+  });
+
+  test("on joins", async () => {
+    expect.hasAssertions();
+
+    const name = "name";
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const createdAt = new Date();
+    const userId = crypto.randomUUID();
+    const mockUser = (
+      await mockContext.db
+        .insert(users)
+        .values({
+          createdAt,
+          email: crypto.randomUUID(),
+          emailVerified: true,
+          id: userId,
+          name,
+          updatedAt: createdAt,
+        })
+        .returning()
+    )[0];
+    const onJoinRoom = await caller.onJoinRoom([newRoom.id]);
+    getSessionMock().mockImplementationOnce(() => ({
+      session: createSession(mockUser.id),
+      user: mockUser,
+    }));
+    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(inviteCode)]);
+
+    assert(!data.done);
+
+    expect(data.value).toStrictEqual({ roomId: newRoom.id, user: mockUser });
   });
 });
