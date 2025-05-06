@@ -14,6 +14,8 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 describe("room", () => {
   let caller: DecorateRouterRecord<TRPCRouter["room"]>;
   let mockContext: Context;
+  const name = "name";
+  const updatedName = "updatedName";
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(roomRouter);
@@ -28,7 +30,6 @@ describe("room", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
 
     expect(newRoom.name).toBe(name);
@@ -37,7 +38,6 @@ describe("room", () => {
   test("reads", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const readRoom = await caller.readRoom(newRoom.id);
 
@@ -55,7 +55,6 @@ describe("room", () => {
   test("reads latest updated room", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     await caller.createRoom({ name });
     const newRoom = await caller.createRoom({ name });
     const readRoom = await caller.readRoom();
@@ -74,9 +73,7 @@ describe("room", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
-    const updatedName = "updatedName";
     const updatedRoom = await caller.updateRoom({ id: newRoom.id, name: updatedName });
 
     expect(updatedRoom.name).toBe(updatedName);
@@ -93,9 +90,7 @@ describe("room", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
-    const updatedName = "updatedName";
     const onUpdateRoom = await caller.onUpdateRoom([newRoom.id]);
     const [data] = await Promise.all([
       onUpdateRoom[Symbol.asyncIterator]().next(),
@@ -110,7 +105,6 @@ describe("room", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const deletedRoom = await caller.deleteRoom(newRoom.id);
 
@@ -128,7 +122,6 @@ describe("room", () => {
   test("on deletes", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const onDeleteRoom = await caller.onDeleteRoom([newRoom.id]);
     const [data] = await Promise.all([onDeleteRoom[Symbol.asyncIterator]().next(), caller.deleteRoom(newRoom.id)]);
@@ -141,7 +134,6 @@ describe("room", () => {
   test("reads invite code", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
@@ -152,7 +144,6 @@ describe("room", () => {
   test("read invite code with no code to be null", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
 
@@ -162,7 +153,6 @@ describe("room", () => {
   test("creates invite to be cached", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const cachedInviteCode = await caller.createInvite({ roomId: newRoom.id });
@@ -173,7 +163,6 @@ describe("room", () => {
   test("joins", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     await mockUserOnce(mockContext.db);
@@ -195,7 +184,6 @@ describe("room", () => {
   test("fails join with joined room", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
 
@@ -207,7 +195,6 @@ describe("room", () => {
   test("on joins", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await caller.onJoinRoom([newRoom.id]);
@@ -222,7 +209,6 @@ describe("room", () => {
   test("leaves", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const user = await mockUserOnce(mockContext.db);
@@ -237,14 +223,13 @@ describe("room", () => {
     expect.hasAssertions();
 
     await expect(caller.leaveRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, {"roomId":"00000000-0000-0000-0000-000000000000","userId":"${getMockSession().user.id}"}]`,
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, {"roomId":"00000000-0000-0000-0000-000000000000"}]`,
     );
   });
 
   test("leaves with creator to be delete", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const roomId = await caller.leaveRoom(newRoom.id);
 
@@ -256,7 +241,6 @@ describe("room", () => {
   test("on leaves", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const user = await mockUserOnce(mockContext.db);
@@ -273,7 +257,6 @@ describe("room", () => {
   test("reads members", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const members = await caller.readMembers({ roomId: newRoom.id });
     const user = getMockSession().user;
@@ -284,7 +267,6 @@ describe("room", () => {
   test("reads members by ids", async () => {
     expect.hasAssertions();
 
-    const name = "name";
     const newRoom = await caller.createRoom({ name });
     const user = getMockSession().user;
     const members = await caller.readMembersByIds({ ids: [user.id], roomId: newRoom.id });

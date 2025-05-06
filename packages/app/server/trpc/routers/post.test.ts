@@ -9,6 +9,10 @@ import { beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
   let caller: DecorateRouterRecord<TRPCRouter["post"]>;
+  const title = "title";
+  const updatedTitle = "updatedTitle";
+  const description = "description";
+  const updatedDescription = "updatedDescription";
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(postRouter);
@@ -19,8 +23,6 @@ describe("post", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const title = "title";
-    const description = "description";
     const newPost = await caller.createPost({ description, title });
 
     expect(newPost.title).toBe(title);
@@ -30,7 +32,6 @@ describe("post", () => {
   test("reads", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
     const readPost = await caller.readPost(newPost.id);
 
@@ -48,9 +49,7 @@ describe("post", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const updatedTitle = "updatedTitle";
     const updatedPost = await caller.updatePost({ id: newPost.id, title: updatedTitle });
 
     expect(updatedPost.title).toBe(updatedTitle);
@@ -67,7 +66,6 @@ describe("post", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
     const deletedPost = await caller.deletePost(newPost.id);
 
@@ -85,9 +83,7 @@ describe("post", () => {
   test("creates comment", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const description = "description";
     const newComment = await caller.createComment({ description, parentId: newPost.id });
     const readPost = await caller.readPost(newPost.id);
 
@@ -98,9 +94,7 @@ describe("post", () => {
   test("reads comment", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const description = "description";
     const newComment = await caller.createComment({ description, parentId: newPost.id });
     const readComment = await caller.readPost(newComment.id);
 
@@ -110,8 +104,6 @@ describe("post", () => {
   test("fails create comment with non-existent parent id", async () => {
     expect.hasAssertions();
 
-    const description = "description";
-
     await expect(caller.createComment({ description, parentId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
     );
@@ -120,11 +112,8 @@ describe("post", () => {
   test("updates comment", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const description = "description";
     const newComment = await caller.createComment({ description, parentId: newPost.id });
-    const updatedDescription = "updatedDescription";
     const updatedComment = await caller.updateComment({ description: updatedDescription, id: newComment.id });
 
     expect(updatedComment.description).toBe(updatedDescription);
@@ -132,8 +121,6 @@ describe("post", () => {
 
   test("fails update comment with non-existent id", async () => {
     expect.hasAssertions();
-
-    const description = "description";
 
     await expect(caller.updateComment({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Comment, 00000000-0000-0000-0000-000000000000]`,
@@ -143,9 +130,7 @@ describe("post", () => {
   test("deletes comment", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const description = "description";
     const newComment = await caller.createComment({ description, parentId: newPost.id });
     const deletedComment = await caller.deleteComment(newComment.id);
     const readPost = await caller.readPost(newPost.id);
@@ -157,9 +142,7 @@ describe("post", () => {
   test("deletes comment with deleting post", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
-    const description = "description";
     const newComment = await caller.createComment({ description, parentId: newPost.id });
     await caller.deletePost(newPost.id);
 
@@ -179,7 +162,6 @@ describe("post", () => {
   test("fails delete comment with post id", async () => {
     expect.hasAssertions();
 
-    const title = "title";
     const newPost = await caller.createPost({ title });
 
     await expect(caller.deleteComment(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(

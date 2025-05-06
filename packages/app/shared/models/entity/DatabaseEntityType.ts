@@ -1,5 +1,6 @@
 export enum DatabaseEntityType {
   Invite = "Invite",
+  Like = "Like",
   Post = "Post",
   Room = "Room",
   Survey = "Survey",

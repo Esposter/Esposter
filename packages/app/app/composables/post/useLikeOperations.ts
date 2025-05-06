@@ -12,8 +12,6 @@ export const useLikeOperations = (allPosts: ReadonlyRefOrGetter<PostWithRelation
 
   const createLike = async (input: CreateLikeInput) => {
     const newLike = await $trpc.like.createLike.mutate(input);
-    if (!newLike) return;
-
     const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
     if (!post) return;
 
@@ -22,8 +20,6 @@ export const useLikeOperations = (allPosts: ReadonlyRefOrGetter<PostWithRelation
   };
   const updateLike = async (input: UpdateLikeInput) => {
     const updatedLike = await $trpc.like.updateLike.mutate(input);
-    if (!updatedLike) return;
-
     const post = toValue(allPosts).find(({ id }) => id === updatedLike.postId);
     if (!post) return;
 

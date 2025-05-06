@@ -12,6 +12,10 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("survey", () => {
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let mockContext: Context;
+  const name = "name";
+  const updatedName = "updatedName";
+  const group = "group";
+  const model = "model";
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(surveyRouter);
@@ -26,9 +30,6 @@ describe("survey", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     const newSurvey = await caller.createSurvey({ group, model, name });
 
     expect(newSurvey.name).toBe(name);
@@ -43,9 +44,6 @@ describe("survey", () => {
 
     expect(count).toBe(0);
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     await caller.createSurvey({ group, model, name });
     const newCount = await caller.count();
 
@@ -55,9 +53,6 @@ describe("survey", () => {
   test("reads", async () => {
     expect.hasAssertions();
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     const newSurvey = await caller.createSurvey({ group, model, name });
     const readSurvey = await caller.readSurvey(newSurvey.id);
 
@@ -75,11 +70,7 @@ describe("survey", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     const newSurvey = await caller.createSurvey({ group, model, name });
-    const updatedName = "updatedName";
     const updatedSurvey = await caller.updateSurvey({
       id: newSurvey.id,
       modelVersion: newSurvey.modelVersion,
@@ -100,9 +91,6 @@ describe("survey", () => {
   test("fails update with old model version", async () => {
     expect.hasAssertions();
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     const newSurvey = await caller.createSurvey({ group, model, name });
 
     await expect(
@@ -115,9 +103,6 @@ describe("survey", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const name = "name";
-    const group = "group";
-    const model = "model";
     const newSurvey = await caller.createSurvey({ group, model, name });
     const deletedSurvey = await caller.deleteSurvey(newSurvey.id);
 

@@ -193,7 +193,7 @@ export const roomRouter = router({
           message: new InvalidOperationError(
             Operation.Delete,
             DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId: input, userId: ctx.session.user.id }),
+            JSON.stringify({ roomId: input }),
           ).message,
         });
 
