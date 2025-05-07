@@ -502,7 +502,7 @@ catalogs:
       specifier: ^1.8.0
       version: 1.8.0
     vuetify:
-      specifier: ^3.8.3
+      specifier: ^3.8.4
       version: 3.8.4
     vuetify-nuxt-module:
       specifier: ^0.18.6
