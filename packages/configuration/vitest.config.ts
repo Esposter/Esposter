@@ -5,6 +5,11 @@ import { defineConfig } from "vitest/config";
 
 const vitestConfiguration: UserConfig = defineConfig({
   plugins: [tsconfigPaths()],
+  test: {
+    coverage: {
+      reporter: "text-summary",
+    },
+  },
 });
 
 export default vitestConfiguration;
