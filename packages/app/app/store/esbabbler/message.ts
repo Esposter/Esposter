@@ -1,9 +1,12 @@
+import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
+import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
+import { authClient } from "@/services/auth/authClient";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
@@ -12,6 +15,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
+  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const messageInputStore = useMessageInputStore();
@@ -38,17 +42,27 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
 
   const sendMessage = async (editor: Editor) => {
-    if (!roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
+    if (!session.value.data || !roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
 
     const savedMessageInput = messageInputStore.messageInput;
     const savedreplyRowKey = messageInputStore.replyRowKey;
     editor.commands.clearContent(true);
     messageInputStore.replyRowKey = undefined;
-    await $trpc.message.createMessage.mutate({
+    const createMessageInput: CreateMessageInput = {
       message: savedMessageInput,
       replyRowKey: savedreplyRowKey,
       roomId: roomStore.currentRoomId,
-    });
+    };
+    const newMessage = reactive(
+      createMessageEntity({
+        ...createMessageInput,
+        isLoading: true,
+        userId: session.value.data.user.id,
+      }),
+    );
+    storeCreateMessage(newMessage);
+    Object.assign(newMessage, await $trpc.message.createMessage.mutate(createMessageInput));
+    delete newMessage.isLoading;
   };
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   const activeReplyRowKey = ref<string>();

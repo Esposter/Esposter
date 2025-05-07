@@ -8,13 +8,14 @@ import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/Me
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
-import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
@@ -74,20 +75,12 @@ export const messageRouter = router({
   createMessage: getRoomUserProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
-    .mutation(async ({ ctx, input: { roomId, ...rest } }) => {
-      const createdAt = new Date();
-      const newMessage = new MessageEntity({
-        ...rest,
-        createdAt,
-        files: [],
-        partitionKey: getMessagesPartitionKey(roomId, createdAt),
-        rowKey: getReverseTickedTimestamp(),
-        updatedAt: createdAt,
-        userId: ctx.session.user.id,
-      });
+    .mutation(async ({ ctx, input }) => {
+      const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
       const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
       messageEventEmitter.emit("createMessage", newMessage);
+      return newMessage;
     }),
   createTyping: getRoomUserProcedure(createTypingInputSchema, "roomId")
     .input(createTypingInputSchema)
@@ -139,9 +132,10 @@ export const messageRouter = router({
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
-    .subscription(async function* ({ input, signal }) {
+    .subscription(async function* ({ ctx, input, signal }) {
       for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
-        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && data.userId !== ctx.session.user.id)
+          yield data;
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
     .input(onCreateTypingInputSchema)

@@ -11,6 +11,8 @@ import { z } from "zod";
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];
   isForward?: true;
+  // Only used by the frontend for visual effects
+  isLoading?: true;
   message!: string;
   replyRowKey?: string;
   userId!: string;

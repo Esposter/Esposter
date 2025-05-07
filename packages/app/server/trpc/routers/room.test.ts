@@ -52,6 +52,17 @@ describe("room", () => {
     );
   });
 
+  test("fails read with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
   test("reads latest updated room", async () => {
     expect.hasAssertions();
 

@@ -36,6 +36,7 @@ const selectEmoji = await useSelectEmoji(message);
         mt-4
         py-1="!"
         min-h-auto="!"
+        :opacity="message.isLoading ? 50 : undefined"
         :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
@@ -79,7 +80,7 @@ const selectEmoji = await useSelectEmoji(message);
         <v-list-item-subtitle v-else op-100="!" v-html="messageHtml" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
-      <div relative z-1>
+      <div v-if="!message.isLoading" relative z-1>
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
