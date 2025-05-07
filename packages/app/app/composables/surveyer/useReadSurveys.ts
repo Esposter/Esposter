@@ -6,9 +6,9 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 export const useReadSurveys = async () => {
   const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initializeOffsetPaginationData, pushSurveys } = surveyStore;
   const { hasMore, surveys, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
+  // This is also used by v-data-table-server to initialize the offset pagination data
   const readMoreSurveys = async ({
     itemsPerPage,
     page,
@@ -27,14 +27,11 @@ export const useReadSurveys = async () => {
       });
       surveys.value = response.items;
       hasMore.value = response.hasMore;
-      if (response.items.length === 0) return;
-      pushSurveys(...response.items);
     } finally {
       isLoading.value = false;
     }
   };
 
-  initializeOffsetPaginationData(await $trpc.survey.readSurveys.query());
   totalItemsLength.value = await $trpc.survey.count.query();
   return { isLoading, readMoreSurveys };
 };

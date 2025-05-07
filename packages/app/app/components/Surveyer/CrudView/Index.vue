@@ -20,7 +20,10 @@ const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
         items: surveys,
         itemsLength: totalItemsLength,
         search: searchQuery,
-        sortBy: [{ key: 'name', order: 'asc' }],
+        sortBy: [
+          { key: 'name', order: 'asc' },
+          { key: 'updatedAt', order: 'desc' },
+        ],
         groupBy: [{ key: 'group', order: 'asc' }],
         loading: isLoading,
       }"
