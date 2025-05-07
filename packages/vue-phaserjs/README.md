@@ -37,7 +37,7 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/Esposter/latest?color=brightgreen
-[url-npm]: https://www.npmjs.com/package/Esposter/v/latest
-[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/Esposter/latest?label=npm
-[badge-npm-downloads]: https://img.shields.io/npm/dm/parse-tmx.svg
+[badge-npm-version]: https://img.shields.io/npm/v/vue-phaserjs/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/vue-phaserjs/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/vue-phaserjs/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/vue-phaserjs.svg
