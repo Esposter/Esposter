@@ -59,7 +59,7 @@ describe("room", () => {
     await mockUserOnce(mockContext.db);
 
     await expect(caller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+      `[TRPCError: Room is not found for id: ${newRoom.id}]`,
     );
   });
 
