@@ -1,3 +1,4 @@
+import { FILENAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class FileEntity {
@@ -9,7 +10,8 @@ export class FileEntity {
 
 export const fileEntitySchema = z.object({
   description: z.string().optional(),
-  filename: z.string(),
+  filename: z.string().min(1).max(FILENAME_MAX_LENGTH),
   mimetype: z.string(),
+  // @TODO: z.url()
   url: z.string(),
 }) satisfies z.ZodType<FileEntity>;

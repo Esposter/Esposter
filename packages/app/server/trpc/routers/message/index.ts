@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { ReadableStream } from "node:stream/web";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -11,6 +11,7 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -30,12 +31,10 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { octetInputParser } from "@trpc/server/http";
-import { Readable } from "node:stream";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -60,11 +59,11 @@ const readMessagesByRowKeysInputSchema = z.object({
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
-// const uploadFileInputSchema = z.object({
-//   files: z.any().array().min(1).max(MAX_READ_LIMIT),
-//   roomId: selectRoomSchema.shape.id,
-// });
-// export type OnUploadFileInput = z.infer<typeof uploadFileInputSchema>;
+const generateUploadFileSasUrls = z.object({
+  files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.shape.id,
+});
+export type GenerateUploadFileSasTokenUrls = z.infer<typeof generateUploadFileSasUrls>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -142,6 +141,22 @@ export const messageRouter = router({
         messageEventEmitter.emit("createMessage", message);
       }
     }),
+  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrls, "roomId")
+    .input(generateUploadFileSasUrls)
+    .query(async ({ input: { files, roomId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const sasUrls = await Promise.all(
+        files.map(({ filename, mimetype }) => {
+          const blockBlobClient = containerClient.getBlockBlobClient(`${roomId}/${filename}`);
+          return blockBlobClient.generateSasUrl({
+            contentType: mimetype,
+            expiresOn: dayjs().add(1, "hour").toDate(),
+            permissions: ContainerSASPermissions.from({ create: true }),
+          });
+        }),
+      );
+      return sasUrls;
+    }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ ctx, input, signal }) {
@@ -195,13 +210,4 @@ export const messageRouter = router({
       await updateEntity(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
     }),
-  uploadFile: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.session.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
-    const readable = Readable.fromWeb(input as ReadableStream);
-    await blockBlobClient.uploadStream(readable);
-    return blockBlobClient.url;
-  }),
 });
