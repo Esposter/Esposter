@@ -151,7 +151,7 @@ export const messageRouter = router({
           return blockBlobClient.generateSasUrl({
             contentType: mimetype,
             expiresOn: dayjs().add(1, "hour").toDate(),
-            permissions: ContainerSASPermissions.from({ create: true }),
+            permissions: ContainerSASPermissions.from({ read: true, write: true }),
           });
         }),
       );

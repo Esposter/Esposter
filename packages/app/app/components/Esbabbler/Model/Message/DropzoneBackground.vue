@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { uploadBlocks } from "@/services/esbabbler/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { BlockBlobClient } from "@azure/storage-blob";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -19,13 +18,9 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   await Promise.all(
     sasUrls.map((sasUrl, index) => {
       const file = newFiles[index];
-      const blockBlobClient = new BlockBlobClient(
-        sasUrl,
-        AzureContainer.EsbabblerAssets,
-        `${currentRoomId.value}/${file.name}`,
-      );
-      files.value.push({ filename: file.name, mimetype: file.type, url: blockBlobClient.url });
-      return blockBlobClient.uploadData(file);
+      const url = new URL(sasUrl);
+      files.value.push({ filename: file.name, mimetype: file.type, url: url.pathname });
+      return uploadBlocks(file, sasUrl);
     }),
   );
 });
