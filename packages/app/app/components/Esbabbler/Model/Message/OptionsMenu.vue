@@ -91,7 +91,7 @@ const items = computed(() =>
         :target="optionsMenuMap.get(message.rowKey)"
         @update:model-value="
           (value) => {
-            // We just need to set a placholder so that the menu will appear
+            // We just need to set a placeholder so that the menu will appear
             if (value) optionsMenuMap.set(message.rowKey, 'true');
             else optionsMenuMap.delete(message.rowKey);
             emit('update:menu', value);
