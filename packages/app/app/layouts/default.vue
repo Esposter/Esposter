@@ -5,12 +5,13 @@ import type { VNavigationDrawer } from "vuetify/components";
 import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
+  footerStyle?: CSSProperties;
   leftNavigationDrawerProps?: VNavigationDrawer["$props"];
   mainStyle?: CSSProperties;
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
+const { footerStyle, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: (props: Record<string, never>) => unknown;
   footer?: (props: Record<string, never>) => unknown;
@@ -66,7 +67,7 @@ router.beforeEach(() => {
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" app>
+    <v-footer v-if="slots.footer" :style="footerStyle" app>
       <slot name="footer" />
     </v-footer>
   </div>

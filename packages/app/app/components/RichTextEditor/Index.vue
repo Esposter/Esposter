@@ -63,7 +63,7 @@ onUnmounted(() => editor.value?.destroy());
         </template>
       </RichTextEditorFooterBar>
     </StyledCard>
-    <div flex justify-between p-1>
+    <div flex justify-between px-1 pt-1>
       <slot name="prepend-external-footer" />
       <div>
         <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
