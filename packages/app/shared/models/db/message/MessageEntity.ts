@@ -1,11 +1,12 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
+import type { SetOptional } from "type-fest";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MAX_FILE_LIMIT, MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
@@ -32,10 +33,10 @@ export const messageEntitySchema = createAzureEntitySchema(
   }),
 ).merge(
   z.object({
-    files: fileEntitySchema.array(),
+    files: fileEntitySchema.array().max(MAX_FILE_LIMIT).default([]),
     isForward: z.literal(true),
     message: z.string().min(1).max(MESSAGE_MAX_LENGTH),
     replyRowKey: z.string().optional(),
     userId: selectUserSchema.shape.id,
   }),
-) satisfies z.ZodType<ToData<MessageEntity>>;
+) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files">>>;
