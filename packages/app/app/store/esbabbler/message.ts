@@ -46,9 +46,12 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
 
     const savedMessageInput = messageInputStore.messageInput;
     const savedreplyRowKey = messageInputStore.replyRowKey;
+    const savedFiles = messageInputStore.files;
     editor.commands.clearContent(true);
     messageInputStore.replyRowKey = undefined;
+    messageInputStore.files = [];
     const createMessageInput: CreateMessageInput = {
+      files: savedFiles,
       message: savedMessageInput,
       replyRowKey: savedreplyRowKey,
       roomId: roomStore.currentRoomId,

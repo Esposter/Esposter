@@ -4,5 +4,5 @@ import { z } from "zod";
 
 export const createMessageInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageEntitySchema.pick({ message: true, replyRowKey: true }));
+  .merge(messageEntitySchema.pick({ files: true, message: true, replyRowKey: true }));
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;
