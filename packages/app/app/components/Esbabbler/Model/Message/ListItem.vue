@@ -2,21 +2,26 @@
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { dayjs } from "#shared/services/dayjs";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 interface MessageListItemProps {
   creator: User;
   message: MessageEntity;
+  nextMessage?: MessageEntity;
 }
 
-const { message } = defineProps<MessageListItemProps>();
+const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
+const isSameBatch = computed(
+  () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
+);
 const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { forwardRowKey, replyRowKey } = storeToRefs(messageInputStore);
 const messageHtml = useRefreshMentions(() => message.message);
-const displayCreatedAt = useDateFormat(() => message.createdAt, "h:mm A");
+const displayCreatedAt = useDateFormat(() => message.createdAt, "H:mm");
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
@@ -33,10 +38,10 @@ const selectEmoji = await useSelectEmoji(message);
     <template #default="{ isOpen, updateIsOpen }">
       <v-list-item
         :id="message.rowKey"
-        mt-4
+        :mt="isSameBatch ? undefined : 4"
         py-1="!"
         min-h-auto="!"
-        :opacity="message.isLoading ? 50 : undefined"
+        :op="message.isLoading ? 50 : undefined"
         :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
@@ -46,16 +51,21 @@ const selectEmoji = await useSelectEmoji(message);
             <EsbabblerModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
             <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
           </div>
-          <StyledAvatar v-else :image="creator.image" :name="creator.name" />
+          <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
+          <span v-else :op="active ? undefined : 0" class="created-at" text-gray text-xs>
+            {{ displayCreatedAt }}
+          </span>
         </template>
         <v-list-item-title>
           <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
-          <span font-bold>
-            {{ creator.name }}
-          </span>
-          <span pl-2 text-gray text-xs>
-            {{ displayCreatedAt }}
-          </span>
+          <template v-if="!isSameBatch">
+            <span font-bold>
+              {{ creator.name }}
+            </span>
+            <span pl-2 text-gray text-xs>
+              {{ displayCreatedAt }}
+            </span>
+          </template>
         </v-list-item-title>
         <template v-if="message.isForward">
           <div flex gap-2>
@@ -85,7 +95,7 @@ const selectEmoji = await useSelectEmoji(message);
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
           right-0
-          top--2
+          :top="isSameBatch ? -9 : -2"
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
         >
@@ -135,5 +145,9 @@ const selectEmoji = await useSelectEmoji(message);
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
+}
+
+.created-at {
+  width: $avatar-width;
 }
 </style>

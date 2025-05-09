@@ -17,7 +17,7 @@ const creator = computed(() => members.value.find(({ id }) => id === currentMess
 <template>
   <!-- We won't show messages from members that have left the room for simplicity -->
   <template v-if="creator">
-    <EsbabblerModelMessageListItem :message="currentMessage" :creator />
+    <EsbabblerModelMessageListItem :creator :message="currentMessage" :next-message />
     <EsbabblerModelMessageTimeline
       :current-message-date="currentMessage.createdAt"
       :next-message-date="nextMessage?.createdAt"
