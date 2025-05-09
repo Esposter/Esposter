@@ -41,6 +41,7 @@ const reply = computed(() =>
 
 <template>
   <EsbabblerModelMessageForwardRoomDialog />
+  <EsbabblerModelMessageDropzoneBackground />
   <div w-full>
     <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = undefined" />
     <RichTextEditor
