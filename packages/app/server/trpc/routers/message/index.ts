@@ -35,6 +35,7 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { extname } from "node:path";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -147,11 +148,13 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       const sasUrls = await Promise.all(
         files.map(({ filename, mimetype }) => {
-          const blockBlobClient = containerClient.getBlockBlobClient(`${roomId}/${filename}`);
+          const blockBlobClient = containerClient.getBlockBlobClient(
+            `${roomId}/${crypto.randomUUID()}${extname(filename).toLowerCase()}`,
+          );
           return blockBlobClient.generateSasUrl({
             contentType: mimetype,
             expiresOn: dayjs().add(1, "hour").toDate(),
-            permissions: ContainerSASPermissions.from({ read: true, write: true }),
+            permissions: ContainerSASPermissions.from({ write: true }),
           });
         }),
       );
