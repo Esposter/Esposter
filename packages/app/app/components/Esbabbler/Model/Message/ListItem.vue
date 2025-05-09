@@ -52,7 +52,7 @@ const selectEmoji = await useSelectEmoji(message);
             <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
           </div>
           <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-          <span v-else :op="active ? undefined : 0" class="created-at" text-gray text-xs>
+          <span v-else :op="active ? undefined : 0" class="created-at" text-center text-gray text-xs>
             {{ displayCreatedAt }}
           </span>
         </template>
