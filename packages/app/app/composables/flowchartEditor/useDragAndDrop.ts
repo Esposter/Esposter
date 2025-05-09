@@ -37,28 +37,21 @@ export const useDragAndDrop = () => {
     document.removeEventListener("drop", onDragEnd);
   };
 
-  const onDrop = (event: DragEvent) => {
+  const onDrop = ({ clientX, clientY }: DragEvent) => {
     if (!type.value) return;
 
-    const position = screenToFlowCoordinate({
-      x: event.clientX,
-      y: event.clientY,
-    });
+    const position = screenToFlowCoordinate({ x: clientX, y: clientY });
     const id = crypto.randomUUID();
-    const newNode = {
-      id,
-      position,
-      type: type.value,
-    };
+    const newNode = { id, position, type: type.value };
     /**
      * Align node position after drop, so it's centered to the mouse
      * We can hook into events even in a callback, and we can remove the event listener after it's been called.
      */
     const { off } = onNodesInitialized(() => {
-      updateNode(id, (node) => ({
+      updateNode(id, ({ dimensions, position }) => ({
         position: {
-          x: node.position.x - node.dimensions.width / 2,
-          y: node.position.y - node.dimensions.height / 2,
+          x: position.x - dimensions.width / 2,
+          y: position.y - dimensions.height / 2,
         },
       }));
       off();
