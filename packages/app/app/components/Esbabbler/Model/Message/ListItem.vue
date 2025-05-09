@@ -58,7 +58,7 @@ const selectEmoji = await useSelectEmoji(message);
         </template>
         <v-list-item-title>
           <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
-          <template v-if="!isSameBatch">
+          <template v-if="message.replyRowKey || !isSameBatch">
             <span font-bold>
               {{ creator.name }}
             </span>
