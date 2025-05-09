@@ -1,6 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ReadableStream } from "node:stream/web";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -11,6 +13,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
@@ -27,9 +30,12 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { octetInputParser } from "@trpc/server/http";
+import { Readable } from "node:stream";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -53,6 +59,12 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
+
+// const uploadFileInputSchema = z.object({
+//   files: z.any().array().min(1).max(MAX_READ_LIMIT),
+//   roomId: selectRoomSchema.shape.id,
+// });
+// export type OnUploadFileInput = z.infer<typeof uploadFileInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -183,4 +195,13 @@ export const messageRouter = router({
       await updateEntity(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
     }),
+  uploadFile: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.session.user.id}/ProfileImage`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
+    const readable = Readable.fromWeb(input as ReadableStream);
+    await blockBlobClient.uploadStream(readable);
+    return blockBlobClient.url;
+  }),
 });
