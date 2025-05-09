@@ -18,7 +18,7 @@ const isSameBatch = computed(
   () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const esbabblerStore = useEsbabblerStore();
-const { optionsMenuMap } = storeToRefs(esbabblerStore);
+const { optionsMenu } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
@@ -29,9 +29,7 @@ const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
-const isDisabled = computed(
-  () => !optionsMenuMap.value.get(message.rowKey) && [...optionsMenuMap.value.values()].some(Boolean),
-);
+const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
 const active = computed(
   () =>
     !isDisabled.value &&
@@ -40,9 +38,8 @@ const active = computed(
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
 
-watch(active, (newActive) => {
-  if (newActive) return;
-  optionsMenuMap.value.delete(message.rowKey);
+watch(optionsMenu, (newOptionsMenu) => {
+  isOptionsChildrenActive.value = newOptionsMenu?.rowKey === message.rowKey;
 });
 </script>
 
@@ -60,8 +57,10 @@ watch(active, (newActive) => {
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
           ({ clientX, clientY }: MouseEvent) => {
-            optionsMenuMap.set(message.rowKey, [clientX, clientY]);
-            isOptionsChildrenActive = true;
+            optionsMenu = {
+              rowKey: message.rowKey,
+              target: [clientX, clientY],
+            };
           }
         "
       >

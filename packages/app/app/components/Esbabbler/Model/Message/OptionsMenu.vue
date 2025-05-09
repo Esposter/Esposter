@@ -22,7 +22,7 @@ const emit = defineEmits<{
   "update:update-mode": [value: true];
 }>();
 const esbabblerStore = useEsbabblerStore();
-const { optionsMenuMap } = storeToRefs(esbabblerStore);
+const { optionsMenu } = storeToRefs(esbabblerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
@@ -85,15 +85,15 @@ const items = computed(() =>
         </template>
       </v-tooltip>
       <v-menu
-        :model-value="Boolean(optionsMenuMap.get(message.rowKey))"
+        :model-value="optionsMenu?.rowKey === message.rowKey"
         transition="none"
         location="left"
-        :target="optionsMenuMap.get(message.rowKey)"
+        :target="optionsMenu?.target"
         @update:model-value="
           (value) => {
             // We just need to set a placeholder so that the menu will appear
-            if (value) optionsMenuMap.set(message.rowKey, 'true');
-            else optionsMenuMap.delete(message.rowKey);
+            if (value) optionsMenu = { rowKey: message.rowKey, target: 'true' };
+            else optionsMenu = undefined;
             emit('update:menu', value);
           }
         "

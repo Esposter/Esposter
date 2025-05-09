@@ -1,4 +1,5 @@
 import type { User } from "#shared/db/schema/users";
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { VMenu } from "vuetify/components/VMenu";
 
 import { createDataMap } from "@/services/shared/createDataMap";
@@ -11,9 +12,9 @@ export const useEsbabblerStore = defineStore("esbabbler", () => {
     getDataMap: getUserDataMap,
     setDataMap: setUserDataMap,
   } = createDataMap(() => roomStore.currentRoomId, new Map<string, User>());
-  const { data: optionsMenuMap } = createDataMap(
-    () => roomStore.currentRoomId,
-    new Map<string, InstanceType<typeof VMenu>["$props"]["target"]>(),
-  );
-  return { getUserDataMap, optionsMenuMap, setUserDataMap, userMap };
+  const optionsMenu = ref<{
+    rowKey: MessageEntity["rowKey"];
+    target: InstanceType<typeof VMenu>["$props"]["target"];
+  }>();
+  return { getUserDataMap, optionsMenu, setUserDataMap, userMap };
 });
