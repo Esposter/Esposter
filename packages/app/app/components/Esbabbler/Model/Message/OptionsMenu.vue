@@ -93,6 +93,7 @@ const items = computed(() =>
           (value) => {
             // We just need to set a placholder so that the menu will appear
             if (value) optionsMenuMap.set(message.rowKey, 'true');
+            else optionsMenuMap.delete(message.rowKey);
             emit('update:menu', value);
           }
         "

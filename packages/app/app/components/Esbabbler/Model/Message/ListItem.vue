@@ -29,8 +29,13 @@ const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
+const isDisabled = computed(
+  () => !optionsMenuMap.value.get(message.rowKey) && [...optionsMenuMap.value.values()].some(Boolean),
+);
 const active = computed(
-  () => isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value,
+  () =>
+    !isDisabled.value &&
+    (isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value),
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
