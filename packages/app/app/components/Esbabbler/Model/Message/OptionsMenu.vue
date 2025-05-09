@@ -3,6 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
 
 import { authClient } from "@/services/auth/authClient";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -20,6 +21,8 @@ const emit = defineEmits<{
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
+const esbabblerStore = useEsbabblerStore();
+const { optionsMenuMap } = storeToRefs(esbabblerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
@@ -81,7 +84,19 @@ const items = computed(() =>
           <v-btn v-if="isCreator" m-0="!" rd-none="!" :icon size="small" :="tooltipProps" @click="onClick" />
         </template>
       </v-tooltip>
-      <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
+      <v-menu
+        :model-value="Boolean(optionsMenuMap.get(message.rowKey))"
+        transition="none"
+        location="left"
+        :target="optionsMenuMap.get(message.rowKey)"
+        @update:model-value="
+          (value) => {
+            // We just need to set a placholder so that the menu will appear
+            if (value) optionsMenuMap.set(message.rowKey, 'true');
+            emit('update:menu', value);
+          }
+        "
+      >
         <template #activator="{ props: menuProps }">
           <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">

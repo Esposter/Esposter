@@ -3,6 +3,7 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
@@ -16,6 +17,8 @@ const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
 const isSameBatch = computed(
   () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
+const esbabblerStore = useEsbabblerStore();
+const { optionsMenuMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
@@ -31,6 +34,11 @@ const active = computed(
 );
 const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
+
+watch(active, (newActive) => {
+  if (newActive) return;
+  optionsMenuMap.value.delete(message.rowKey);
+});
 </script>
 
 <template>
@@ -45,6 +53,12 @@ const selectEmoji = await useSelectEmoji(message);
         :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
+        @contextmenu.prevent="
+          ({ clientX, clientY }: MouseEvent) => {
+            optionsMenuMap.set(message.rowKey, [clientX, clientY]);
+            isOptionsChildrenActive = true;
+          }
+        "
       >
         <template #prepend>
           <div v-if="message.replyRowKey" relative flex flex-col items-center>
