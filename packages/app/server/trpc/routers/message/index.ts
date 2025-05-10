@@ -159,6 +159,7 @@ export const messageRouter = router({
             `${roomId}/${id}${extname(filename).toLowerCase()}`,
           );
           return blockBlobClient.generateSasUrl({
+            contentDisposition: `attachment; filename="${filename}"`,
             contentType: mimetype,
             expiresOn: dayjs().add(1, "year").toDate(),
             permissions: ContainerSASPermissions.from({ read: true }),

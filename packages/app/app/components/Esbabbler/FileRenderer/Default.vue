@@ -5,7 +5,7 @@ const { file, url } = defineProps<FileRendererProps>();
 </script>
 
 <template>
-  <NuxtInvisibleLink :href="url" :download="file.filename">
+  <NuxtInvisibleLink :href="url">
     <StyledCard pl-2="!" pr-1="!" py-2="!">
       {{ file.filename }}
       <v-icon icon="mdi-download" />
