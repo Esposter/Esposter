@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
-const { url } = defineProps<FileRendererProps>();
+const { file } = defineProps<FileRendererProps>();
 </script>
 
 <template>
   <video controls>
-    <source :src="url" />
+    <source :src="file.url" />
   </video>
 </template>

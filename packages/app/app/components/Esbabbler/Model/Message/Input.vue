@@ -33,7 +33,7 @@ const keyboardExtension = new Extension({
 });
 const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
-const { messageInput, replyRowKey } = storeToRefs(messageInputStore);
+const { files, messageInput, replyRowKey } = storeToRefs(messageInputStore);
 const reply = computed(() =>
   replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
 );
@@ -51,10 +51,19 @@ const reply = computed(() =>
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
+      <template #prepend-inner-header>
+        <v-container fluid>
+          <v-row>
+            <v-col v-for="file in files" :key="file.url" xl="2" lg="3" md="4" sm="6">
+              <EsbabblerFileRenderer :file />
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
-      <template #prepend-external-footer>
+      <template #prepend-outer-footer>
         <div class="text-sm">{{ typingMessage }}&nbsp;</div>
       </template>
     </RichTextEditor>

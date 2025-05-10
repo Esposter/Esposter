@@ -18,8 +18,8 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   await Promise.all(
     sasUrls.map((sasUrl, index) => {
       const file = newFiles[index];
-      const url = new URL(sasUrl);
-      files.value.push({ filename: file.name, mimetype: file.type, url: url.pathname });
+      const { search } = new URL(sasUrl);
+      files.value.push({ filename: file.name, mimetype: file.type, url: sasUrl.replace(search, "") });
       return uploadBlocks(file, sasUrl);
     }),
   );

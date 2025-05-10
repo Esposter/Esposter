@@ -27,8 +27,9 @@ const {
 } = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
-  "prepend-external-footer": (props: Record<string, never>) => unknown;
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
+  "prepend-inner-header": (props: Record<string, never>) => unknown;
+  "prepend-outer-footer": (props: Record<string, never>) => unknown;
 }>();
 const editor = useEditor({
   content: modelValue.value,
@@ -52,6 +53,7 @@ onUnmounted(() => editor.value?.destroy());
     <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
+      <slot name="prepend-inner-header" />
       <EditorContent :editor />
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
@@ -64,7 +66,7 @@ onUnmounted(() => editor.value?.destroy());
       </RichTextEditorFooterBar>
     </StyledCard>
     <div flex justify-between px-1 pt-1>
-      <slot name="prepend-external-footer" />
+      <slot name="prepend-outer-footer" />
       <div>
         <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
       </div>
