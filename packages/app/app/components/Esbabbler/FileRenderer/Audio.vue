@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
-const { url } = defineProps<FileRendererProps>();
+const { file } = defineProps<FileRendererProps>();
 </script>
 
 <template>
-  <audio :src="url" controls />
+  <audio :src="file.url" controls />
 </template>
