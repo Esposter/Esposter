@@ -1,7 +1,7 @@
-export interface OptionMenuItem {
+export interface OptionMenuItem<T = never> {
   color?: string;
   icon: string;
-  onClick: (event: KeyboardEvent | MouseEvent) => void;
+  onClick: (event: T extends never ? KeyboardEvent | MouseEvent : T) => void;
   shortTitle?: string;
   title: string;
 }
