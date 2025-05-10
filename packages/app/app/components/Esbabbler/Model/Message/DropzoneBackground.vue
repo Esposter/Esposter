@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ParsedFileEntity } from "@/models/esbabbler/file/ParsedFileEntity";
 
+import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/esbabbler/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -12,6 +13,10 @@ const messageInputStore = useMessageInputStore();
 const { files } = storeToRefs(messageInputStore);
 const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   if (!currentRoomId.value || !newFiles) return;
+  else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
+    useToast(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, { cardProps: { color: "error" } });
+    return;
+  }
 
   const fileSasEntities = await $trpc.message.generateUploadFileSasUrls.query({
     files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
