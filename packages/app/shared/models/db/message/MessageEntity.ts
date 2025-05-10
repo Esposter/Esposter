@@ -6,7 +6,8 @@ import type { SetOptional } from "type-fest";
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
-import { MAX_FILE_LIMIT, MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {

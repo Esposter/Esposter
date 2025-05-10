@@ -3,4 +3,5 @@ import type { FileEntity } from "#shared/models/azure/FileEntity";
 export interface FileRendererProps {
   file: FileEntity;
   preview?: true;
+  url: string;
 }

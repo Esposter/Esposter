@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
-const { file } = defineProps<FileRendererProps>();
+const { file, url } = defineProps<FileRendererProps>();
 </script>
 
 <template>
-  <NuxtInvisibleLink :href="file.url" :download="file.filename">
+  <NuxtInvisibleLink :href="url" :download="file.filename">
     <StyledCard pl-2="!" pr-1="!" py-2="!">
       {{ file.filename }}
       <v-icon icon="mdi-download" />

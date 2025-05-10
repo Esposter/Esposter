@@ -11,16 +11,15 @@ const { files } = storeToRefs(messageInputStore);
 const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   if (!currentRoomId.value || !newFiles) return;
 
-  const sasUrls = await $trpc.message.generateUploadFileSasUrls.query({
+  const fileSasEntities = await $trpc.message.generateUploadFileSasUrls.query({
     files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
     roomId: currentRoomId.value,
   });
   await Promise.all(
-    sasUrls.map((sasUrl, index) => {
+    fileSasEntities.map(async ({ id, sasUrl }, index) => {
       const file = newFiles[index];
-      const { search } = new URL(sasUrl);
-      files.value.push({ filename: file.name, mimetype: file.type, url: sasUrl.replace(search, "") });
-      return uploadBlocks(file, sasUrl);
+      files.value[index] = { filename: file.name, id, mimetype: file.type };
+      await uploadBlocks(file, sasUrl);
     }),
   );
 });

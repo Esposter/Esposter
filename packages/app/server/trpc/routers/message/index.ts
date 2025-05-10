@@ -1,3 +1,4 @@
+import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
@@ -65,6 +66,12 @@ const generateUploadFileSasUrls = z.object({
   roomId: selectRoomSchema.shape.id,
 });
 export type GenerateUploadFileSasTokenUrls = z.infer<typeof generateUploadFileSasUrls>;
+
+const generateDownloadFileSasUrls = z.object({
+  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.shape.id,
+});
+export type GenerateDownloadFileSasTokenUrls = z.infer<typeof generateDownloadFileSasUrls>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -142,23 +149,45 @@ export const messageRouter = router({
         messageEventEmitter.emit("createMessage", message);
       }
     }),
-  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrls, "roomId")
-    .input(generateUploadFileSasUrls)
+  generateDownloadFileSasUrls: getRoomUserProcedure(generateDownloadFileSasUrls, "roomId")
+    .input(generateDownloadFileSasUrls)
     .query(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       const sasUrls = await Promise.all(
-        files.map(({ filename, mimetype }) => {
+        files.map(({ filename, id, mimetype }) => {
           const blockBlobClient = containerClient.getBlockBlobClient(
-            `${roomId}/${crypto.randomUUID()}${extname(filename).toLowerCase()}`,
+            `${roomId}/${id}${extname(filename).toLowerCase()}`,
           );
           return blockBlobClient.generateSasUrl({
             contentType: mimetype,
-            expiresOn: dayjs().add(1, "hour").toDate(),
-            permissions: ContainerSASPermissions.from({ write: true }),
+            expiresOn: dayjs().add(1, "year").toDate(),
+            permissions: ContainerSASPermissions.from({ read: true }),
           });
         }),
       );
       return sasUrls;
+    }),
+  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrls, "roomId")
+    .input(generateUploadFileSasUrls)
+    .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const fileSasEntities = await Promise.all(
+        files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
+          const id: string = crypto.randomUUID();
+          const blockBlobClient = containerClient.getBlockBlobClient(
+            `${roomId}/${id}${extname(filename).toLowerCase()}`,
+          );
+          return {
+            id,
+            sasUrl: await blockBlobClient.generateSasUrl({
+              contentType: mimetype,
+              expiresOn: dayjs().add(1, "hour").toDate(),
+              permissions: ContainerSASPermissions.from({ write: true }),
+            }),
+          };
+        }),
+      );
+      return fileSasEntities;
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
