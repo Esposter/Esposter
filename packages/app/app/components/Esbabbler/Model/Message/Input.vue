@@ -52,7 +52,7 @@ const reply = computed(() =>
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template #prepend-inner-header>
-        <EsbabblerModelMessageFileInnerHeader />
+        <EsbabblerModelMessageFileContainer />
       </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />

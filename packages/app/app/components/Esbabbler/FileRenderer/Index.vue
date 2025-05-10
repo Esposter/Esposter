@@ -10,6 +10,9 @@ const { file } = toRefs(props);
 const language = computed(() => getLanguage(file.value.filename));
 const renderer = computed<Component>(() => {
   if (file.value.mimetype in TypeRendererMap) return TypeRendererMap[file.value.mimetype];
+
+  const inferredMimetype = file.value.mimetype.substring(0, file.value.mimetype.indexOf("/"));
+  if (inferredMimetype in TypeRendererMap) return TypeRendererMap[inferredMimetype];
   else if (!language.value)
     return defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Default.vue"));
   else return defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Code.vue"));

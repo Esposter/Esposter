@@ -7,7 +7,7 @@ const { files } = storeToRefs(messageInputStore);
 
 <template>
   <v-container v-if="files.length > 0" pb-0 fluid>
-    <v-row>
+    <v-row flex-nowrap overflow-x-auto>
       <v-col v-for="file in files" :key="file.id" xl="2" lg="3" md="4" sm="6">
         <EsbabblerFileRenderer :file />
       </v-col>
