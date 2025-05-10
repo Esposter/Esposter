@@ -25,7 +25,7 @@ const isCopied = ref(false);
         </template>
       </v-tooltip>
     </template>
-    <StyledCard px-4="!">
+    <StyledCard px-4>
       <v-card-title px-0="!">
         Invite friends to <span font-bold>{{ currentRoomName }}</span>
       </v-card-title>

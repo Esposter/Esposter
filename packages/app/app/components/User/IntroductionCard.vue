@@ -8,7 +8,7 @@ const createdAtTimeAgo = useTimeAgo(() => session.value?.user.createdAt ?? "");
 </script>
 
 <template>
-  <StyledCard v-if="session" p-6="!" flex="!">
+  <StyledCard v-if="session" p-6 flex="!">
     <div flex-1 grid>
       <div class="text-h5" font-bold>{{ session.user.name }}</div>
       <div>

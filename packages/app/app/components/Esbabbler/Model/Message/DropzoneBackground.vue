@@ -8,7 +8,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const messageInputStore = useMessageInputStore();
 const { files } = storeToRefs(messageInputStore);
 const { isOverDropZone } = useDropZone(document, async (newFiles) => {
@@ -41,5 +41,10 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
 </script>
 
 <template>
-  <v-overlay v-model="isOverDropZone" justify-center items-center text-xl>Drop files here</v-overlay>
+  <v-dialog v-model="isOverDropZone" width="auto">
+    <StyledCard p-8 text-center>
+      <v-card-title pb-0 text-xl font-bold>Upload to {{ currentRoomName }}</v-card-title>
+      <v-card-subtitle>You can add comments before uploading.</v-card-subtitle>
+    </StyledCard>
+  </v-dialog>
 </template>

@@ -49,7 +49,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       }
     "
   >
-    <StyledCard mt-6 p-2="!">
+    <StyledCard mt-6 p-2>
       <v-card-title>
         <div font-bold>Personal Information</div>
         <v-divider mt-2 />

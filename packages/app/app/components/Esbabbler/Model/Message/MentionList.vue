@@ -45,14 +45,14 @@ watch(
 
 <template>
   <div>
-    <StyledCard overflow-y-auto="!" :card-props="{ maxHeight: '250', width: '400' }">
+    <StyledCard overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
         v-for="({ id, image, name }, index) of items"
         :key="id"
         class="button"
-        justify-start="!"
         w-full
         rd
+        justify-start
         :ripple="false"
         @click="selectItem(index)"
       >

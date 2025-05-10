@@ -54,7 +54,7 @@ watch(dialog, (newDialog) => {
           hide-details
         />
       </v-card-title>
-      <v-card-text p-4="!" overflow-y="auto">
+      <v-card-text p-4="!" overflow-y-auto>
         <v-list py-0>
           <EsbabblerModelMessageForwardRoomListItem
             v-for="roomSearched of roomsSearched"
