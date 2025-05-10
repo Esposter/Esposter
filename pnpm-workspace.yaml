@@ -15,7 +15,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.17
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
-  "@koumoul/vjsf": ^3.14.0
+  "@koumoul/vjsf": ^3.15.0
   "@lerna-lite/cli": ^4.1.1
   "@lerna-lite/publish": ^4.1.1
   "@lerna-lite/run": ^4.1.1
@@ -139,8 +139,8 @@ catalog:
   postgres: ^3.4.5
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.0
-  rolldown: npm:rolldown@nightly
-  rolldown-plugin-dts: ^0.11.1
+  rolldown: npm:rolldown@canary
+  rolldown-plugin-dts: ^0.11.4
   rolldown-vite: ^6.3.8
   rxjs: ^7.8.2
   sass-embedded: ^1.87.0
