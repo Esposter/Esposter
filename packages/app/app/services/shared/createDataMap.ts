@@ -13,9 +13,19 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
   const data = computed({
     get: () => {
       const currentIdValue = toValue(currentId);
-      if (!currentIdValue) return defaultValue;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return dataMap.value.get(currentIdValue) ?? dataMap.value.set(currentIdValue, defaultValue).get(currentIdValue)!;
+      if (!currentIdValue) {
+        const clonedDefaultValue = structuredClone(defaultValue);
+        return clonedDefaultValue;
+      }
+
+      const value = dataMap.value.get(currentIdValue);
+      if (!value) {
+        const clonedDefaultValue = structuredClone(defaultValue);
+        dataMap.value.set(currentIdValue, clonedDefaultValue);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return dataMap.value.get(currentIdValue)!;
+      }
+      return value;
     },
     set: (newData) => {
       const currentIdValue = toValue(currentId);
