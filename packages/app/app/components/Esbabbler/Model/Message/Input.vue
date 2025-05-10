@@ -51,7 +51,7 @@ const reply = computed(() =>
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
-      <template #prepend-inner-header>
+      <template v-if="files.length > 0" #prepend-inner-header>
         <v-container fluid>
           <v-row>
             <v-col v-for="file in files" :key="file.url" xl="2" lg="3" md="4" sm="6">
