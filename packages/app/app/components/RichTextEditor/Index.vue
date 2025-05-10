@@ -76,7 +76,7 @@ onUnmounted(() => editor.value?.destroy());
 
 <style scoped lang="scss">
 :deep(.ProseMirror) {
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
   height: v-bind(height);
   max-height: 15rem;
   overflow-y: auto;

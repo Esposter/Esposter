@@ -52,7 +52,7 @@ const reply = computed(() =>
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template v-if="files.length > 0" #prepend-inner-header>
-        <v-container fluid>
+        <v-container pb-0 fluid>
           <v-row>
             <v-col v-for="file in files" :key="file.url" xl="2" lg="3" md="4" sm="6">
               <EsbabblerFileRenderer :file />
