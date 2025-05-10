@@ -42,20 +42,22 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
 
   const sendMessage = async (editor: Editor) => {
-    if (!session.value.data || !roomStore.currentRoomId || EMPTY_TEXT_REGEX.test(editor.getText())) return;
+    if (
+      !session.value.data ||
+      !roomStore.currentRoomId ||
+      (EMPTY_TEXT_REGEX.test(editor.getText()) && messageInputStore.files.length === 0)
+    )
+      return;
 
-    const savedMessageInput = messageInputStore.messageInput;
-    const savedreplyRowKey = messageInputStore.replyRowKey;
-    const savedFiles = messageInputStore.files;
+    const createMessageInput: CreateMessageInput = {
+      files: messageInputStore.files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
+      message: messageInputStore.messageInput,
+      replyRowKey: messageInputStore.replyRowKey,
+      roomId: roomStore.currentRoomId,
+    };
     editor.commands.clearContent(true);
     messageInputStore.replyRowKey = undefined;
     messageInputStore.files = [];
-    const createMessageInput: CreateMessageInput = {
-      files: savedFiles,
-      message: savedMessageInput,
-      replyRowKey: savedreplyRowKey,
-      roomId: roomStore.currentRoomId,
-    };
     const newMessage = reactive(
       createMessageEntity({
         ...createMessageInput,

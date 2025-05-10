@@ -12,7 +12,6 @@ export const createMessageEntity = ({
   return new MessageEntity({
     ...rest,
     createdAt,
-    files: [],
     partitionKey: getMessagesPartitionKey(roomId, createdAt),
     rowKey: getReverseTickedTimestamp(),
     updatedAt: createdAt,

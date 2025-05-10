@@ -25,7 +25,7 @@ const keyboardExtension = new Extension({
 });
 const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
-const { messageInput, replyRowKey } = storeToRefs(messageInputStore);
+const { files, messageInput, replyRowKey } = storeToRefs(messageInputStore);
 const reply = computed(() =>
   replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
 );
@@ -44,7 +44,7 @@ const reply = computed(() =>
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template #prepend-inner-header>
-        <EsbabblerModelMessageFileContainer />
+        <EsbabblerModelMessageFileInputContainer :files @delete="(index) => files.splice(index, 1)" />
       </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />

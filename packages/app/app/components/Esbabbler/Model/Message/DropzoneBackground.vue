@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ParsedFileEntity } from "@/models/esbabbler/file/ParsedFileEntity";
-
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/esbabbler/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
@@ -22,21 +20,13 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
     files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
     roomId: currentRoomId.value,
   });
-  const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-    files: fileSasEntities.map(({ id }, index) => {
-      const file = newFiles[index];
-      return { filename: file.name, id, mimetype: file.type };
+  await Promise.all(
+    newFiles.map(async (file, index) => {
+      const { id, sasUrl } = fileSasEntities[index];
+      files.value[index] = { filename: file.name, id, mimetype: file.type, url: URL.createObjectURL(file) };
+      await uploadBlocks(file, sasUrl);
     }),
-    roomId: currentRoomId.value,
-  });
-  const parsedFileEntities = newFiles.map<ParsedFileEntity>(({ name, type }, index) => ({
-    filename: name,
-    id: fileSasEntities[index].id,
-    mimetype: type,
-    url: downloadFileSasUrls[index],
-  }));
-  files.value.push(...parsedFileEntities);
-  await Promise.all(newFiles.map((file, index) => uploadBlocks(file, fileSasEntities[index].sasUrl)));
+  );
 });
 </script>
 
