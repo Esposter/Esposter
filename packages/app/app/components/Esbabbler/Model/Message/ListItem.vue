@@ -6,7 +6,6 @@ import { dayjs } from "#shared/services/dayjs";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface MessageListItemProps {
   creator: User;
@@ -24,7 +23,6 @@ const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { forwardRowKey, replyRowKey } = storeToRefs(messageInputStore);
-const displayCreatedAt = useDateFormat(() => message.createdAt, "H:mm");
 const messageHtml = useRefreshMentions(() => message.message);
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
@@ -47,13 +45,16 @@ watch(optionsMenu, (newOptionsMenu) => {
 <template>
   <EsbabblerModelMessageConfirmDeleteDialog :message>
     <template #default="{ isOpen, updateIsOpen }">
-      <v-list-item
+      <EsbabblerModelMessage
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
         py-1="!"
         min-h-auto="!"
         :op="message.isLoading ? 50 : undefined"
         :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
+        :creator
+        :message
+        :next-message
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
@@ -65,51 +66,13 @@ watch(optionsMenu, (newOptionsMenu) => {
           }
         "
       >
-        <template #prepend>
-          <div v-if="message.replyRowKey" relative flex flex-col items-center>
-            <EsbabblerModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
-            <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
-          </div>
-          <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-          <span v-else :op="active ? undefined : 0" class="created-at" text-center text-gray text-xs>
-            {{ displayCreatedAt }}
-          </span>
-        </template>
-        <v-list-item-title>
-          <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
-          <template v-if="message.replyRowKey || !isSameBatch">
-            <span font-bold>
-              {{ creator.name }}
-            </span>
-            <span pl-2 text-gray text-xs>
-              {{ displayCreatedAt }}
-            </span>
-          </template>
-        </v-list-item-title>
-        <template v-if="message.isForward">
-          <div flex gap-2>
-            <div class="bg-border" w-1 h-inherit rd-1 />
-            <div flex flex-col>
-              <v-list-item-subtitle>
-                <span italic>
-                  <v-icon icon="mdi-share" />
-                  Forwarded
-                </span>
-              </v-list-item-subtitle>
-              <v-list-item-subtitle op-100="!" v-html="messageHtml" />
-            </div>
-          </div>
-        </template>
         <EsbabblerModelMessageEditor
-          v-else-if="isUpdateMode"
+          v-if="isUpdateMode"
           :message
           @update:update-mode="(value) => (isUpdateMode = value)"
           @update:delete-mode="updateIsOpen"
         />
-        <v-list-item-subtitle v-else-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
-        <EsbabblerModelMessageFileContainer :files="message.files" />
-        <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
-      </v-list-item>
+      </EsbabblerModelMessage>
       <div v-if="!message.isLoading" relative z-1>
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
@@ -136,38 +99,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <v-list-item>
-        <template #prepend>
-          <StyledAvatar :image="creator.image" :name="creator.name" />
-        </template>
-        <v-list-item-title font-bold="!">
-          {{ creator.name }}
-        </v-list-item-title>
-        <v-list-item-subtitle op-100="!" v-html="messageHtml" />
-        <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
-      </v-list-item>
+      <EsbabblerModelMessage :creator :message :next-message />
     </template>
   </EsbabblerModelMessageConfirmDeleteDialog>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-list-item__prepend) {
-  align-self: flex-start;
-
-  > .v-list-item__spacer {
-    width: 1rem;
-  }
-}
-
-:deep(.v-list-item__content) {
-  overflow: visible;
-}
-// We don't want to hide message content even if they added a bunch of newlines
-:deep(.v-list-item-subtitle) {
-  line-clamp: unset;
-}
-
-.created-at {
-  width: $avatar-width;
-}
-</style>

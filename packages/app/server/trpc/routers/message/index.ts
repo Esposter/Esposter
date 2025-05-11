@@ -112,8 +112,8 @@ export const messageRouter = router({
     .input(deleteMessageInputSchema)
     .mutation(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
-      if (!messageEntity)
+      const message = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+      if (!message)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
@@ -121,11 +121,11 @@ export const messageRouter = router({
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
 
-      if (messageEntity.files.length === 0) return;
+      if (message.files.length === 0) return;
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       const blobBatchClient = containerClient.getBlobBatchClient();
-      const blobUrls = messageEntity.files.map(({ filename, id }) => {
+      const blobUrls = message.files.map(({ filename, id }) => {
         const blobName = getBlobName(ctx.roomId, id, filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         return blockBlobClient.url;
@@ -210,7 +210,12 @@ export const messageRouter = router({
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ ctx, input, signal }) {
       for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
-        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && data.userId !== ctx.session.user.id)
+        if (
+          isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
+          // We don't need visual effects like isLoading when forwarding messages
+          // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          (data.userId !== ctx.session.user.id || data.isForward)
+        )
           yield data;
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
@@ -236,7 +241,7 @@ export const messageRouter = router({
   readMessages: getRoomUserProcedure(readMessagesInputSchema, "roomId")
     .input(readMessagesInputSchema)
     .query(async ({ input: { cursor, limit, roomId } }) => {
-      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "createdAt", order: SortOrder.Desc }];
+      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "rowKey", order: SortOrder.Asc }];
       let filter = getMessagesPartitionKeyFilter(roomId);
       if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
       const messageClient = await useTableClient(AzureTable.Messages);
