@@ -121,6 +121,7 @@
     "node-html-parser": "catalog:",
     "obscenity": "catalog:",
     "omit-deep-lodash": "catalog:",
+    "p-progress": "catalog:",
     "parse-tmx": "workspace:*",
     "pathe": "catalog:",
     "phaser": "catalog:",

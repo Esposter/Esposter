@@ -14,7 +14,6 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Operation } from "@esposter/shared";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
@@ -22,6 +21,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const messageInputStore = useMessageInputStore();
+  const { getIsSendEnabled } = messageInputStore;
   const { items, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -43,12 +43,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   };
 
   const sendMessage = async (editor: Editor) => {
-    if (
-      !session.value.data ||
-      !roomStore.currentRoomId ||
-      (EMPTY_TEXT_REGEX.test(editor.getText()) && messageInputStore.files.length === 0)
-    )
-      return;
+    if (!session.value.data || !roomStore.currentRoomId || !getIsSendEnabled(editor)) return;
 
     const createMessageInput: CreateMessageInput = {
       files: messageInputStore.files,

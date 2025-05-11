@@ -18,10 +18,10 @@ const dialog = ref(false);
   <v-dialog v-model="dialog">
     <template #activator>
       <v-tooltip text="Close">
-        <template #activator="{ props: tooltipProps }">
+        <template #activator="{ props }">
           <v-btn
             icon="mdi-close"
-            :="tooltipProps"
+            :="props"
             @click="
               () => {
                 if (isSavable) dialog = true;

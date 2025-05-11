@@ -131,6 +131,7 @@ catalog:
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
+  p-progress: ^1.0.0
   pathe: ^2.0.3
   phaser: ^3.88.2
   phaser3-rex-plugins: ^1.80.15

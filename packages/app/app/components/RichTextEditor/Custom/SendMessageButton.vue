@@ -2,7 +2,7 @@
 import type { Editor } from "@tiptap/vue-3";
 
 import { useMessageStore } from "@/store/esbabbler/message";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 interface CustomEmojiPickerButtonProps {
   editor?: Editor;
@@ -11,19 +11,21 @@ interface CustomEmojiPickerButtonProps {
 const { editor } = defineProps<CustomEmojiPickerButtonProps>();
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
-const disabled = computed(() => Boolean(editor && EMPTY_TEXT_REGEX.test(editor.getText())));
+const messageInputStore = useMessageInputStore();
+const { getIsSendEnabled } = messageInputStore;
+const disabled = computed(() => !getIsSendEnabled(editor));
 const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 
 <template>
   <v-tooltip text="Send now">
-    <template #activator="{ props: tooltipProps }">
+    <template #activator="{ props }">
       <v-btn
         icon="mdi-send"
         size="small"
         bg-transparent="!"
         :disabled
-        :="tooltipProps"
+        :="props"
         @click="
           () => {
             if (!editor) return;

@@ -378,6 +378,9 @@ catalogs:
     omit-deep-lodash:
       specifier: ^1.1.7
       version: 1.1.7
+    p-progress:
+      specifier: ^1.0.0
+      version: 1.0.0
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
@@ -828,6 +831,9 @@ importers:
       omit-deep-lodash:
         specifier: 'catalog:'
         version: 1.1.7
+      p-progress:
+        specifier: 'catalog:'
+        version: 1.0.0
       parse-tmx:
         specifier: workspace:*
         version: link:../parse-tmx
@@ -4830,6 +4836,10 @@ packages:
     resolution: {integrity: sha512-jRR5wdylq8CkOe6hei19GGZnxM6rBGwFl3Bg0YItGDimvjGtAvdZk4Pu6Cl4u4Igsws4a1fd1Vq3ezrhn4KmFw==}
     engines: {node: '>= 14'}
 
+  aggregate-error@4.0.1:
+    resolution: {integrity: sha512-0poP0T7el6Vq3rstR8Mn4V/IQrpBLO6POkUSrN7RhyY+GF/InCFShQzsQ39T25gkHhLgSLByyAz+Kjb+c2L98w==}
+    engines: {node: '>=12'}
+
   ajv-draft-04@1.0.0:
     resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
     peerDependencies:
@@ -5301,6 +5311,10 @@ packages:
   clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
     engines: {node: '>=4'}
+
+  clean-stack@4.2.0:
+    resolution: {integrity: sha512-LYv6XPxoyODi36Dp976riBtSY27VmFo+MKqEU9QCCWyTrdEPDog+RWA7xQWHi6Vbp61j5c4cdzzX1NidnwtUWg==}
+    engines: {node: '>=12'}
 
   cli-cursor@3.1.0:
     resolution: {integrity: sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==}
@@ -8559,6 +8573,10 @@ packages:
     resolution: {integrity: sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  p-map@5.5.0:
+    resolution: {integrity: sha512-VFqfGDHlx87K66yZrNdI4YGtD70IRyd+zSvgks6mzHPRNkoKy+9EKP4SFC77/vTTQYmRmti7dvqC+m5jBrBAcg==}
+    engines: {node: '>=12'}
+
   p-map@7.0.3:
     resolution: {integrity: sha512-VkndIv2fIB99swvQoA65bm+fsmt6UNdGeIB0oxBs+WhAhdh08QA04JXpI7rbB9r08/nkbysKoya9rtDERYOYMA==}
     engines: {node: '>=18'}
@@ -8566,6 +8584,10 @@ packages:
   p-pipe@4.0.0:
     resolution: {integrity: sha512-HkPfFklpZQPUKBFXzKFB6ihLriIHxnmuQdK9WmLDwe4hf2PdhhfWT/FJa+pc3bA1ywvKXtedxIRmd4Y7BTXE4w==}
     engines: {node: '>=12'}
+
+  p-progress@1.0.0:
+    resolution: {integrity: sha512-OnA4Uo4/tB0PdZG7vH6qt0v8vfV5ktFiinJL+V7ThMvDPPloqL+syfki24h7iHxtMQqGFSIRImD5HEH5QL7RNQ==}
+    engines: {node: '>=18'}
 
   p-queue@8.1.0:
     resolution: {integrity: sha512-mxLDbbGIBEXTJL0zEx8JIylaj3xQ7Z/7eEVjcF9fJX4DBiH9oqe+oahYnlKKxm0Ci9TlWTyhSHgygxMxjIB2jw==}
@@ -8582,6 +8604,10 @@ packages:
   p-timeout@6.1.4:
     resolution: {integrity: sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg==}
     engines: {node: '>=14.16'}
+
+  p-times@4.0.0:
+    resolution: {integrity: sha512-KqBkcxIZ2EZHHkt8lbNORmRofFLrLlHQh0ObFO3moOlrdN/v+sbJ2ssZspP5GN7E7zwvcqiqV0xnJydkQuoNyw==}
+    engines: {node: '>=12.20'}
 
   p-try@2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
@@ -16001,6 +16027,11 @@ snapshots:
 
   agent-base@7.1.3: {}
 
+  aggregate-error@4.0.1:
+    dependencies:
+      clean-stack: 4.2.0
+      indent-string: 5.0.0
+
   ajv-draft-04@1.0.0(ajv@8.13.0):
     optionalDependencies:
       ajv: 8.13.0
@@ -16583,6 +16614,10 @@ snapshots:
   clean-regexp@1.0.0:
     dependencies:
       escape-string-regexp: 1.0.5
+
+  clean-stack@4.2.0:
+    dependencies:
+      escape-string-regexp: 5.0.0
 
   cli-cursor@3.1.0:
     dependencies:
@@ -20328,9 +20363,17 @@ snapshots:
     dependencies:
       p-limit: 4.0.0
 
+  p-map@5.5.0:
+    dependencies:
+      aggregate-error: 4.0.1
+
   p-map@7.0.3: {}
 
   p-pipe@4.0.0: {}
+
+  p-progress@1.0.0:
+    dependencies:
+      p-times: 4.0.0
 
   p-queue@8.1.0:
     dependencies:
@@ -20342,6 +20385,10 @@ snapshots:
   p-timeout@5.1.0: {}
 
   p-timeout@6.1.4: {}
+
+  p-times@4.0.0:
+    dependencies:
+      p-map: 5.5.0
 
   p-try@2.2.0: {}
 
