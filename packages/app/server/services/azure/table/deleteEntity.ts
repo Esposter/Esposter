@@ -4,6 +4,4 @@ import type { CustomTableClient } from "@@/server/models/azure/table/CustomTable
 export const deleteEntity = <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["deleteEntity"]>
-) => {
-  return tableClient.deleteEntity(...args);
-};
+) => tableClient.deleteEntity(...args);

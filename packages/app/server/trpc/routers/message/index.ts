@@ -15,6 +15,7 @@ import { getReverseTickedTimestamp } from "#shared/services/azure/table/getRever
 import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
@@ -24,6 +25,7 @@ import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
+import { getBlobName } from "@@/server/services/esbabbler/getBlobName";
 import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
@@ -36,7 +38,6 @@ import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProced
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { extname } from "node:path";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -109,10 +110,27 @@ export const messageRouter = router({
     }),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
+      const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+      if (!messageEntity)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
+        });
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
+
+      if (messageEntity.files.length === 0) return;
+
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const blobBatchClient = containerClient.getBlobBatchClient();
+      const blobUrls = messageEntity.files.map(({ filename, id }) => {
+        const blobName = getBlobName(ctx.roomId, id, filename);
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+        return blockBlobClient.url;
+      });
+      await blobBatchClient.deleteBlobs(blobUrls, containerClient.credential);
     }),
   forwardMessages: getRoomUserProcedure(forwardMessagesInputSchema, "partitionKey")
     .input(forwardMessagesInputSchema)
@@ -155,9 +173,8 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       const sasUrls = await Promise.all(
         files.map(({ filename, id, mimetype }) => {
-          const blockBlobClient = containerClient.getBlockBlobClient(
-            `${roomId}/${id}${extname(filename).toLowerCase()}`,
-          );
+          const blobName = getBlobName(roomId, id, filename);
+          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
           return blockBlobClient.generateSasUrl({
             contentDisposition: `attachment; filename="${filename}"`,
             contentType: mimetype,
@@ -175,9 +192,8 @@ export const messageRouter = router({
       const fileSasEntities = await Promise.all(
         files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
           const id: string = crypto.randomUUID();
-          const blockBlobClient = containerClient.getBlockBlobClient(
-            `${roomId}/${id}${extname(filename).toLowerCase()}`,
-          );
+          const blobName = getBlobName(roomId, id, filename);
+          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
           return {
             id,
             sasUrl: await blockBlobClient.generateSasUrl({
