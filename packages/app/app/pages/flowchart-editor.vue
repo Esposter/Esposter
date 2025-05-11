@@ -12,7 +12,7 @@ defineRouteRules({ ssr: false });
 await useReadFlowchartEditor();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { saveFlowchartEditor } = flowchartEditorStore;
-const debouncedSaveFlowChartEditor = useDebounceFn(
+const throttledSaveFlowChartEditor = useThrottleFn(
   () => saveFlowchartEditor(),
   dayjs.duration(1, "second").asMilliseconds(),
 );
@@ -24,13 +24,13 @@ onConnect((connection) => {
   addEdges(connection);
 });
 
-onEdgesChange(getSynchronizedFunction(debouncedSaveFlowChartEditor));
+onEdgesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
 
-onNodesChange(getSynchronizedFunction(debouncedSaveFlowChartEditor));
+onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
 </script>
 
 <template>
-  <NuxtLayout :scrim="false">
+  <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
     <template #left>
       <FlowchartEditorSideBar />
     </template>

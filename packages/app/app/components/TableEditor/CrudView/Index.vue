@@ -26,7 +26,7 @@ const richTextColumnKeys = computed(() =>
         search: searchQuery,
         sortBy: [{ key: 'name', order: 'asc' }],
       }"
-      @click:row="(_, { item }) => editItem(item.id)"
+      @click:row="(_, { item }) => editItem({ id: item.id })"
     >
       <template #top>
         <TableEditorCrudViewTopSlot />

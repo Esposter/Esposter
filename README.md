@@ -1,10 +1,7 @@
 # [Esposter](https://esposter.com)
 
-<p>
-  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
-  </a>
-</p>
+[![Apache-2.0 licensed][badge-license]][url-license]
+[![Build Status][badge-ci]][url-ci]
 
 ### Table of Contents
 
@@ -211,7 +208,27 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ## <a name="local-development">🏠 Local Development</a>
 
-1. Install dependencies:
+### Git configuration to enable symlinks
+
+The projects make use of symlinks in the git project. On Windows, this may not work as expected without extra configuration. To configure git to create symlinks on windows, you need to enable the Windows "Developer Mode" setting, and also set the `core.symlinks` git feature using either of the following commands:
+
+```bash
+# Global setting
+git config --global core.symlinks true
+
+# Local setting
+git config core.symlinks true
+```
+
+After applying this setting, you may need to reset your local branch to ensure the files get rewritten as symlinks. Note that this step is destructive and you will want to push any changes you have made prior to resetting your branch.
+
+```bash
+git reset --hard
+```
+
+### Installing Dependencies
+
+1. Install Node Modules:
 
 ```bash
 pnpm i
@@ -220,20 +237,6 @@ pnpm i
 2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
 
 3. Add `.env` file according to `.env.example` in `packages/app` directory.
-
-### Production
-
-Build the application for production:
-
-```bash
-pnpm build
-```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
 
 Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
@@ -257,15 +260,35 @@ cd packages/app
 pnpm dev
 ```
 
+### Production
+
+Build the application for production:
+
+```bash
+pnpm build
+```
+
+Locally preview production build:
+
+```bash
+pnpm preview
+```
+
 ### Architecture
 
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
 
-### Tools
+### Miscellaneous Tools
 
 https://devina.io/svg-minifier
 
 ## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
+This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[url-npm]: https://www.npmjs.com/package/Esposter/v/latest
+[badge-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml/badge.svg?event=push&branch=main
+[url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml?query=event%3Apush+branch%3Amain

@@ -1,20 +1,25 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
+import type { AEntity } from "#shared/models/entity/AEntity";
+import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { VForm } from "vuetify/components";
 
-import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
-import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
+import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
+import { toRawDeep } from "@/util/reactivity/toRawDeep";
 import deepEqual from "fast-deep-equal";
 
-export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef<TItem[]>) => {
+export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(
+  items: ComputedRef<TItem[]>,
+  idKeys: [...TIdKeys],
+) => {
   const router = useRouter();
   const editFormDialog = ref(false);
   const editFormRef = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
-    const id = editedItem.value?.id;
-    if (!id) return undefined;
-    return items.value.find((i) => i.id === id) ?? undefined;
+    const editedItemValue = editedItem.value;
+    if (!editedItemValue) return undefined;
+    return items.value.find(getEntityIdComparator(idKeys, editedItemValue)) ?? undefined;
   });
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
@@ -28,7 +33,7 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
         isEditFormValid.value &&
         // The edited item is a clone of original item which does not clone the class information
         // so it's not "strictly" equal including the Object prototype
-        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toDeepRaw(originalItem.value))))
+        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value))))
       );
   });
   // We know the form is dirty if:
@@ -36,19 +41,22 @@ export const createEditFormData = <TItem extends AItemEntity>(items: ComputedRef
   // 2. or that it is savable
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
-  const editItem = async (id: string) => {
-    const item = items.value.find((item) => item.id === id);
+  const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
+    const entityIdComparator = getEntityIdComparator(Object.keys(ids) as [...TIdKeys], ids);
+    const item = items.value.find(entityIdComparator);
     if (!item) return;
 
-    editedItem.value = structuredClone(toDeepRaw(item));
-    editedIndex.value = items.value.findIndex((item) => item.id === id);
+    editedItem.value = structuredClone(toRawDeep(item));
+    editedIndex.value = items.value.findIndex(entityIdComparator);
     editFormDialog.value = true;
-    await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: item.id } });
+    await router.replace({ query: { ...router.currentRoute.value.query, ...ids } });
   };
   const resetItem = async () => {
     editedItem.value = undefined;
     editedIndex.value = -1;
-    await router.replace({ query: { ...router.currentRoute.value.query, [ITEM_ID_QUERY_PARAM_KEY]: undefined } });
+    await router.replace({
+      query: { ...router.currentRoute.value.query, ...Object.fromEntries(idKeys.map((key) => [key, undefined])) },
+    });
   };
 
   return {

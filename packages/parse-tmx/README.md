@@ -1,16 +1,9 @@
 # parse-tmx
 
-<p>
-  <a href="https://www.npmjs.com/package/parse-tmx">
-    <img src="https://img.shields.io/npm/v/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Version">
-  </a>
-  <a href="https://www.npmjs.com/package/parse-tmx">
-    <img src="https://img.shields.io/npm/dm/parse-tmx.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
-  </a>
-  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
-  </a>
-</p>
+[![Apache-2.0 licensed][badge-license]][url-license]
+[![NPM version][badge-npm-version]][url-npm]
+[![NPM downloads][badge-npm-downloads]][url-npm]
+[![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
 Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
@@ -122,4 +115,11 @@ const loadMap = async () => {
 
 ## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
+This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-npm-version]: https://img.shields.io/npm/v/parse-tmx/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/parse-tmx/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/parse-tmx/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/parse-tmx.svg

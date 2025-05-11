@@ -12,23 +12,23 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
   const upgradeMap = ref<typeof UpgradeMap>();
-  const upgradeList = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
+  const upgrades = computed<Upgrade[]>(() => (upgradeMap.value ? parseDictionaryToArray(upgradeMap.value) : []));
   const initializeUpgradeMap = (newUpgradeMap: typeof UpgradeMap) => {
     upgradeMap.value = newUpgradeMap;
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
-    upgradeList.value.filter((u) =>
-      u.unlockConditions.every((uc) => {
+    upgrades.value.filter(({ unlockConditions }) =>
+      unlockConditions.every((uc) => {
         const { type } = uc;
 
         switch (type) {
           case Target.Building: {
-            const foundBuilding = clickerStore.game.boughtBuildings.find((bb) => bb.id === uc.id);
+            const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === uc.id);
             if (foundBuilding) return foundBuilding.amount >= uc.amount;
             break;
           }
           case Target.Upgrade: {
-            const foundUpgrade = clickerStore.game.boughtUpgrades.find((bu) => bu.id === uc.id);
+            const foundUpgrade = clickerStore.clicker.boughtUpgrades.find(({ id }) => id === uc.id);
             if (foundUpgrade) return true;
             break;
           }
@@ -42,7 +42,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   );
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    clickerStore.game.boughtUpgrades.push(newUpgrade);
+    clickerStore.clicker.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };
 
@@ -50,6 +50,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     createBoughtUpgrade,
     initializeUpgradeMap,
     unlockedUpgrades,
-    upgradeList,
+    upgrades,
   };
 });

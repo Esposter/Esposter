@@ -11,18 +11,20 @@ export const applyUpgrades = (
   boughtUpgrades: Upgrade[],
   boughtBuildings: BuildingWithStats[],
 ) => {
-  const allEffects = boughtUpgrades.flatMap((u) => u.effects);
+  const allEffects = boughtUpgrades.flatMap(({ effects }) => effects);
   const resultUpgrades = boughtUpgrades
     .map((bu) =>
       applyUpgradeEffects(
         bu,
         // We're looking for a special type of "Upgrade Effect"
         // which enhances the effects of upgrades
-        allEffects.filter((e) => e.configuration.itemType === Target.Upgrade && e.targets.includes(bu.id)),
+        allEffects.filter(
+          ({ configuration, targets }) => configuration.itemType === Target.Upgrade && targets.includes(bu.id),
+        ),
         boughtBuildings,
       ),
     )
     .filter(upgradeFilterPredicate);
-  const allUpgradedEffects = resultUpgrades.flatMap((u) => u.effects);
+  const allUpgradedEffects = resultUpgrades.flatMap(({ effects }) => effects);
   return applyEffects(basePower, allUpgradedEffects, boughtBuildings);
 };

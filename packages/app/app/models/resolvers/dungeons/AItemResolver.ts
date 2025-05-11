@@ -1,3 +1,4 @@
+import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
@@ -6,8 +7,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
-export abstract class AItemResolver {
-  type: ItemEffectType;
+export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
+  type;
 
   constructor(type: ItemEffectType) {
     this.type = type;
@@ -20,7 +21,7 @@ export abstract class AItemResolver {
     item.value.quantity--;
     if (item.value.quantity > 0) return;
 
-    const index = inventory.value.findIndex((i) => i.id === item.value.id);
+    const index = inventory.value.findIndex(({ id }) => id === item.value.id);
     if (index === -1) return;
     inventory.value.splice(index, 1);
   }

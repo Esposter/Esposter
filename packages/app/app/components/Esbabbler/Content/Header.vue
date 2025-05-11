@@ -2,16 +2,16 @@
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen } = storeToRefs(layoutStore);
+const { leftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <v-toolbar color="surface" density="comfortable" :p="leftDrawerOpenAuto ? 'l-4' : undefined" border>
-    <v-btn v-if="!leftDrawerOpenAuto" icon="mdi-menu" size="small" @click="leftDrawerOpen = true" />
-    <EsbabblerModelRoomTitle />
+  <v-toolbar :pl="leftDrawerOpenAuto ? '4' : undefined" b-none density="comfortable">
+    <EsbabblerContentShowRoomListButton />
+    <EsbabblerContentTitle />
     <template #append>
-      <EsbabblerModelMemberCreateDialogButton />
-      <v-btn icon="mdi-account-multiple" size="small" @click="rightDrawerOpen = !rightDrawerOpen" />
+      <EsbabblerContentAddFriendsDialogButton />
+      <EsbabblerContentShowMemberListButton />
     </template>
   </v-toolbar>
 </template>

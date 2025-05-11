@@ -7,7 +7,7 @@ import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constan
 import type { Direction, Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 
 export interface PhaserEvents extends SceneEvents {
   levelUp: (monster: Monster, onComplete: () => void) => void;

@@ -12,7 +12,7 @@ import { Game, usePhaserStore, useTextStore } from "vue-phaserjs";
 
 defineRouteRules({ ssr: false });
 
-await useReadDungeonsGame();
+await useReadDungeons();
 
 const phaserStore = usePhaserStore();
 const { prioritizedParallelSceneKeys } = storeToRefs(phaserStore);

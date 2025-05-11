@@ -4,7 +4,8 @@ import { usePostStore } from "@/store/post";
 
 definePageMeta({ middleware: "auth" });
 
-const { createPost } = usePostStore();
+const postStore = usePostStore();
+const { createPost } = postStore;
 </script>
 
 <template>

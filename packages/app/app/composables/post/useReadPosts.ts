@@ -1,21 +1,21 @@
 import { usePostStore } from "@/store/post";
 
 export const useReadPosts = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const postStore = usePostStore();
-  const { initializeCursorPaginationData, pushPostList } = postStore;
+  const { initializeCursorPaginationData, pushPosts } = postStore;
   const { hasMore, nextCursor } = storeToRefs(postStore);
   const readMorePosts = async (onComplete: () => void) => {
     try {
-      const response = await $client.post.readPosts.query({ cursor: nextCursor.value });
-      pushPostList(...response.items);
+      const response = await $trpc.post.readPosts.query({ cursor: nextCursor.value });
       nextCursor.value = response.nextCursor;
       hasMore.value = response.hasMore;
+      pushPosts(...response.items);
     } finally {
       onComplete();
     }
   };
 
-  initializeCursorPaginationData(await $client.post.readPosts.query());
+  initializeCursorPaginationData(await $trpc.post.readPosts.query());
   return readMorePosts;
 };

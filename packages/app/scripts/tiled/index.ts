@@ -1,14 +1,14 @@
-import { generatePropertyTypes } from "@@/scripts/tiled/propertyTypes/generatePropertyTypes";
+import { createPropertyTypes } from "@@/scripts/tiled/propertyTypes/createPropertyTypes";
 import { remove } from "@@/scripts/tiled/util/remove";
 import { spawn } from "node:child_process";
 /**
  * Order here is important!
- * We must generate property types first which include important metadata enums
- * e.g. TilemapKey which must exist before we generate other tilemap specific metadata.
- * This causes a small issue if you try to run the generate scripts in parallel as the typechecking
- * will complain about the not-yet existent generated typescript enum files from generatePropertyTypes
+ * We must create property types first which include important metadata enums
+ * e.g. TilemapKey which must exist before we create other tilemap specific metadata.
+ * This causes a small issue if you try to run the create scripts in parallel as the typechecking
+ * will complain about the not-yet existent created typescript enum files from createPropertyTypes
  */
 await remove();
-await generatePropertyTypes();
-const proc = spawn("tsx", ["scripts/tiled/generateTmxProperties.ts"], { shell: true, stdio: "inherit" });
+await createPropertyTypes();
+const proc = spawn("tsx", ["scripts/tiled/createTmxProperties.ts"], { shell: true, stdio: "inherit" });
 proc.on("exit", (code) => process.exit(code));

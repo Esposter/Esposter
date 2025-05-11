@@ -2,7 +2,8 @@
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { useRoomStore } from "@/store/esbabbler/room";
 
-const { createRoom } = useRoomStore();
+const roomStore = useRoomStore();
+const { createRoom } = roomStore;
 </script>
 
 <template>

@@ -15,18 +15,19 @@ import type { GlobalConfiguration } from "@/models/configuration/global/GlobalCo
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type ImageConfiguration = AlphaConfiguration &
-  BlendModeConfiguration &
-  DepthConfiguration &
-  Except<Types.GameObjects.Sprite.SpriteConfig, keyof Types.GameObjects.GameObjectConfig> &
-  FlipConfiguration &
-  GlobalConfiguration &
-  MaskConfiguration &
-  OriginConfiguration &
-  PipelineConfiguration &
-  ScrollFactorConfiguration &
-  SizeConfiguration &
-  TextureCropConfiguration &
-  TintConfiguration &
-  TransformConfiguration &
-  VisibleConfiguration;
+export interface ImageConfiguration
+  extends AlphaConfiguration,
+    BlendModeConfiguration,
+    DepthConfiguration,
+    Except<Types.GameObjects.Sprite.SpriteConfig, "frame" | keyof Types.GameObjects.GameObjectConfig>,
+    FlipConfiguration,
+    GlobalConfiguration,
+    MaskConfiguration,
+    OriginConfiguration,
+    PipelineConfiguration,
+    ScrollFactorConfiguration,
+    SizeConfiguration,
+    TextureCropConfiguration,
+    TintConfiguration,
+    TransformConfiguration,
+    VisibleConfiguration {}

@@ -5,5 +5,5 @@ import omitDeepLodash from "omit-deep-lodash";
 
 export const omitDeep = <T extends object, TKeys extends RecursiveKeyOf<T>[] = RecursiveKeyOf<T>[]>(
   object: T,
-  ...keys: TKeys
-) => omitDeepLodash(object, ...keys) as RecursiveDeepOmit<T, TKeys>;
+  ...keys: [...TKeys]
+) => omitDeepLodash(object, ...(keys as string[])) as RecursiveDeepOmit<T, TKeys>;

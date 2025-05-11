@@ -11,7 +11,7 @@ defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 <style lang="scss">
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity $transition-move-duration-root ease;
 }
 
 .fade-enter-from,

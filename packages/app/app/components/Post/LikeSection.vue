@@ -14,8 +14,10 @@ const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;
-const liked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === 1));
-const unliked = computed(() => post.likes.some((l) => l.userId === session.value?.user.id && l.value === -1));
+const liked = computed(() => post.likes.some(({ userId, value }) => userId === session.value?.user.id && value === 1));
+const unliked = computed(() =>
+  post.likes.some(({ userId, value }) => userId === session.value?.user.id && value === -1),
+);
 </script>
 
 <template>

@@ -1,3 +1,1 @@
-import viteConfiguration from "@esposter/configuration/vite.config.js";
-
-export default viteConfiguration;
+../configuration/vite.config.js

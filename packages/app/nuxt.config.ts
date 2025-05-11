@@ -2,11 +2,11 @@ import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
 import { css } from "./configuration/css";
+import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
-import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -21,11 +21,11 @@ export default defineNuxtConfig({
   build,
   compatibilityDate,
   css,
+  devtools,
   experimental,
   future,
   imports,
   modules,
-  nitro,
   pwa,
   runtimeConfig,
   security,

@@ -32,9 +32,6 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       :is-edit-form-valid
       :is-full-screen-dialog
       :is-savable
-      @update:edit-form-ref="(value) => (editFormRef = value)"
-      @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
-      @save="save()"
       @close="resetItem()"
       @delete="
         async (onComplete) => {
@@ -42,6 +39,9 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
           onComplete();
         }
       "
+      @save="save()"
+      @update:edit-form-ref="(value) => (editFormRef = value)"
+      @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
     >
       <component :is="component" />
     </StyledEditFormDialog>

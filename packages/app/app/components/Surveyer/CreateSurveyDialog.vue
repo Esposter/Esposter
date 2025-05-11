@@ -23,14 +23,6 @@ const surveyerStore = useSurveyStore();
 const { createSurvey } = surveyerStore;
 const name = ref(initialValue.name);
 const group = ref(initialValue.group);
-const resetSurvey = () => {
-  // Hack resetting the item so the dialog content doesn't change
-  // until after the CSS animation that lasts 300ms ends
-  window.setTimeout(() => {
-    name.value = initialValue.name;
-    group.value = initialValue.group;
-  }, dayjs.duration(0.3, "seconds").asMilliseconds());
-};
 </script>
 
 <template>
@@ -39,8 +31,11 @@ const resetSurvey = () => {
     @create="
       async (onComplete) => {
         await createSurvey({ name, group, model: initialValue.model });
-        resetSurvey();
         onComplete();
+        useTimeoutFn(() => {
+          name = initialValue.name;
+          group = initialValue.group;
+        }, dayjs.duration(0.3, 'seconds').asMilliseconds());
       }
     "
   >

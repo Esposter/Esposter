@@ -4,7 +4,6 @@ import type { TRPCLink } from "@trpc/client";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { observable } from "@trpc/server/observable";
-import { toast } from "vuetify-sonner";
 
 export const errorLink: TRPCLink<TRPCRouter> =
   () =>
@@ -18,7 +17,9 @@ export const errorLink: TRPCLink<TRPCRouter> =
 
           switch (err.data.code) {
             case "BAD_REQUEST":
-              toast(err.message, { cardProps: { color: "error" } });
+            case "TOO_MANY_REQUESTS":
+            case "UNPROCESSABLE_CONTENT":
+              useToast(err.message, { cardProps: { color: "error" } });
               break;
             case "FORBIDDEN":
             case "UNAUTHORIZED":

@@ -4,52 +4,50 @@ import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInp
 import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
-  const { $client } = useNuxtApp();
-  const { itemList, ...restData } = createOffsetPaginationData<Survey>();
+  const { $trpc } = useNuxtApp();
+  const { items, ...restData } = createOffsetPaginationData<Survey>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
     updateSurvey: storeUpdateSurvey,
     ...restOperationData
-  } = createOperationData(itemList, DatabaseEntityType.Survey);
+  } = createOperationData(items, ["id"], DatabaseEntityType.Survey);
 
   const createSurvey = async (input: CreateSurveyInput) => {
-    const newSurvey = await $client.survey.createSurvey.mutate(input);
-    if (!newSurvey) return;
-
+    const newSurvey = await $trpc.survey.createSurvey.mutate(input);
     storeCreateSurvey(newSurvey);
     totalItemsLength.value++;
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
     input.modelVersion++;
-    const updatedSurvey = await $client.survey.updateSurvey.mutate(input);
     // Surveyjs needs to know whether the save was successful with a boolean
-    if (!updatedSurvey) return false;
-
-    storeUpdateSurvey(updatedSurvey);
-    return true;
+    try {
+      const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
+      storeUpdateSurvey(updatedSurvey);
+      return true;
+    } catch {
+      return false;
+    }
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
-    const deletedSurvey = await $client.survey.deleteSurvey.mutate(input);
-    if (!deletedSurvey) return;
-
-    storeDeleteSurvey(deletedSurvey.id);
+    const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
+    storeDeleteSurvey({ id: deletedSurvey.id });
   };
 
   const searchQuery = ref("");
   const totalItemsLength = ref(0);
 
   return {
-    ...restData,
-    ...restOperationData,
     createSurvey,
     deleteSurvey,
+    updateSurvey,
+    ...restOperationData,
+    ...restData,
     searchQuery,
     totalItemsLength,
-    updateSurvey,
   };
 });

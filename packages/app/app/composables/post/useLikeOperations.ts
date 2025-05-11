@@ -2,43 +2,42 @@ import type { PostWithRelations } from "#shared/db/schema/posts";
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { authClient } from "@/services/auth/authClient";
 
-export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
-  const { $client } = useNuxtApp();
+export const useLikeOperations = (allPosts: ReadonlyRefOrGetter<PostWithRelations[]>) => {
+  const session = authClient.useSession();
+  const { $trpc } = useNuxtApp();
 
   const createLike = async (input: CreateLikeInput) => {
-    const newLike = await $client.like.createLike.mutate(input);
-    if (!newLike) return;
-
-    const post = toValue(allPosts).find((p) => p.id === newLike.postId);
+    const newLike = await $trpc.like.createLike.mutate(input);
+    const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
     if (!post) return;
 
     post.likes.push(newLike);
     post.noLikes += newLike.value;
   };
   const updateLike = async (input: UpdateLikeInput) => {
-    const updatedLike = await $client.like.updateLike.mutate(input);
-    if (!updatedLike) return;
-
-    const post = toValue(allPosts).find((p) => p.id === updatedLike.postId);
+    const updatedLike = await $trpc.like.updateLike.mutate(input);
+    const post = toValue(allPosts).find(({ id }) => id === updatedLike.postId);
     if (!post) return;
 
-    const index = post.likes.findIndex((l) => l.userId === updatedLike.userId && l.postId === updatedLike.postId);
+    const index = post.likes.findIndex(
+      ({ postId, userId }) => userId === updatedLike.userId && postId === updatedLike.postId,
+    );
     if (index === -1) return;
 
-    post.likes[index] = { ...post.likes[index], ...updatedLike };
+    Object.assign(post.likes[index], updatedLike);
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
-    const session = authClient.useSession();
     const userId = session.value.data?.user.id;
     if (!userId) return;
 
-    await $client.like.deleteLike.mutate(postId);
+    await $trpc.like.deleteLike.mutate(postId);
 
-    const post = toValue(allPosts).find((p) => p.id === postId);
+    const post = toValue(allPosts).find(({ id }) => id === postId);
     if (!post) return;
 
     const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);

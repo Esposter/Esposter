@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { RoutePath } from "#shared/models/router/RoutePath";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -13,9 +14,12 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => unknown;
 }>();
 const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
+const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === creatorId);
-const { deleteRoom, leaveRoom } = useRoomStore();
+const roomStore = useRoomStore();
+const { leaveRoom } = roomStore;
+const { rooms } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -28,7 +32,10 @@ const { deleteRoom, leaveRoom } = useRoomStore();
     @delete="
       async (onComplete) => {
         try {
-          isCreator ? await deleteRoom(roomId) : await leaveRoom(roomId);
+          isCreator ? await $trpc.room.deleteRoom.mutate(roomId) : await leaveRoom(roomId);
+          rooms.length > 0
+            ? await navigateTo(RoutePath.Messages(rooms[0].id), { replace: true })
+            : await navigateTo(RoutePath.MessagesIndex, { replace: true });
         } finally {
           onComplete();
         }

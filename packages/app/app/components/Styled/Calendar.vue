@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CalendarOptions } from "@fullcalendar/core";
 
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -40,9 +41,11 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
         <div text-center font-bold>
           {{ event.title }}
         </div>
-        <div v-if="event.extendedProps.description" pt-2>
-          {{ event.extendedProps.description }}
-        </div>
+        <div
+          v-if="event.extendedProps.description && !EMPTY_TEXT_REGEX.test(event.extendedProps.description)"
+          pt-2
+          v-html="event.extendedProps.description"
+        />
       </v-tooltip>
     </template>
   </FullCalendar>

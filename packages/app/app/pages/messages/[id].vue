@@ -1,49 +1,36 @@
 <script setup lang="ts">
+import { validate } from "@/services/router/validate";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { uuidValidateV4 } from "@esposter/shared";
 
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: "auth", validate });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 
-const { info, infoOpacity10 } = useColors();
-const roomStore = useRoomStore();
-const { currentRoomId, currentRoomName, roomList, roomSearchQuery } = storeToRefs(roomStore);
-const roomExists = computed(() => roomList.value.find((r) => r.id === currentRoomId.value));
-const route = useRoute();
-const roomId = route.params.id;
-currentRoomId.value = typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : null;
-roomSearchQuery.value = "";
-
 useSubscribables();
+
+const roomStore = useRoomStore();
+const { currentRoomId, currentRoomName, rooms } = storeToRefs(roomStore);
+const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === currentRoomId.value));
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ 'max-height': '100dvh' }">
-    <!-- Set max height here so we can hide global window scrollbar
+  <!-- Set max height here so we can hide global window scrollbar
     and show scrollbar within the chat content only for chat routes -->
+  <NuxtLayout :main-style="{ maxHeight: '100dvh' }" :footer-style="{ paddingBottom: 0 }">
     <template #left>
       <EsbabblerLeftSideBar />
     </template>
-    <template v-if="roomExists" #right>
+    <template v-if="isRoomExisting" #right>
       <EsbabblerRightSideBar />
     </template>
-    <template v-if="roomExists">
+    <template v-if="isRoomExisting">
       <Head>
         <Title>{{ currentRoomName }}</Title>
       </Head>
       <EsbabblerContent />
     </template>
-    <template v-if="roomExists" #footer>
+    <template v-if="isRoomExisting" #footer>
       <EsbabblerModelMessageInput />
     </template>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-:deep(.mention) {
-  color: v-bind(info);
-  background-color: v-bind(infoOpacity10);
-  border-radius: $border-radius-root;
-}
-</style>

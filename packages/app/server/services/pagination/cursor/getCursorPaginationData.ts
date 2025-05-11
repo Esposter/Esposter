@@ -1,10 +1,11 @@
-import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { AEntity } from "#shared/models/entity/AEntity";
+import type { ToData } from "#shared/models/entity/ToData";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 
-export const getCursorPaginationData = <TItem extends ItemMetadata>(
+export const getCursorPaginationData = <TItem extends ToData<AEntity>>(
   items: TItem[],
   limit: number,
   sortBy: SortItem<keyof TItem & string>[],

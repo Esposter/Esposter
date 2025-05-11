@@ -1,11 +1,11 @@
 {
   "mode": "bundle",
-  "project": "tsconfig.json",
+  "project": "tsconfig.build.json",
   "output": "src",
   "quote": "\"",
   "overwrite": true,
   "backup": false,
   "include": [
-    "**/*.ts"
+    "src/**/*.ts"
   ]
 }

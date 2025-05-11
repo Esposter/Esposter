@@ -11,7 +11,7 @@ export const applyMouseUpgrades = (
 ) =>
   applyUpgrades(
     basePower,
-    (u) => u.effects.some((e) => e.targets.includes(Target.Mouse)),
+    ({ effects }) => effects.some(({ targets }) => targets.includes(Target.Mouse)),
     boughtUpgrades,
     boughtBuildings,
   );

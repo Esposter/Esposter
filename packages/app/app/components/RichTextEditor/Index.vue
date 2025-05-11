@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { AnyExtension } from "@tiptap/vue-3";
+import type { VCard } from "vuetify/components";
 
 import { CharacterCount } from "@tiptap/extension-character-count";
 import { Link } from "@tiptap/extension-link";
@@ -9,6 +10,7 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface RichTextEditorProps {
+  cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
   height?: string;
   limit: number;
@@ -16,10 +18,18 @@ interface RichTextEditorProps {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { extensions, height = "15rem", limit, placeholder = "Text (optional)" } = defineProps<RichTextEditorProps>();
+const {
+  cardProps,
+  extensions,
+  height = "auto",
+  limit,
+  placeholder = "Text (optional)",
+} = defineProps<RichTextEditorProps>();
 const slots = defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => unknown;
   "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
+  "prepend-inner-header": (props: Record<string, never>) => unknown;
+  "prepend-outer-footer": (props: Record<string, never>) => unknown;
 }>();
 const editor = useEditor({
   content: modelValue.value,
@@ -40,9 +50,10 @@ onUnmounted(() => editor.value?.destroy());
 
 <template>
   <div flex flex-col w-full>
-    <StyledCard>
+    <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
+      <slot name="prepend-inner-header" />
       <EditorContent :editor />
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
@@ -54,16 +65,20 @@ onUnmounted(() => editor.value?.destroy());
         </template>
       </RichTextEditorFooterBar>
     </StyledCard>
-    <div flex justify-end pt-2 pr-4 h-6.5>
-      <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+    <div flex justify-between px-1 pt-1>
+      <slot name="prepend-outer-footer" />
+      <div>
+        <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 :deep(.ProseMirror) {
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
   height: v-bind(height);
+  max-height: 15rem;
   overflow-y: auto;
   outline: none;
 

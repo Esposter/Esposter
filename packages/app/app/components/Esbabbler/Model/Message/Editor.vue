@@ -4,8 +4,6 @@ import type { Editor } from "@tiptap/core";
 
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { mentionExtension } from "@/services/esbabbler/mentionExtension";
-import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Extension } from "@tiptap/vue-3";
@@ -19,10 +17,10 @@ const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:update-mode": [value: false];
 }>();
+const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const { updateMessage } = useMessageStore();
-const editedMessageHtml = ref(useRefreshMentions(message.message));
+const editedMessageHtml = ref(useRefreshMentions(() => message.message).value);
 const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
@@ -31,7 +29,7 @@ const onUpdateMessage = async (editor: Editor) => {
       return;
     }
 
-    await updateMessage({
+    await $trpc.message.updateMessage.mutate({
       message: editedMessageHtml.value,
       partitionKey: message.partitionKey,
       rowKey: message.rowKey,
@@ -55,6 +53,7 @@ const keyboardExtension = new Extension({
     };
   },
 });
+const mentionExtension = useMentionExtension();
 </script>
 
 <template>
@@ -79,10 +78,3 @@ const keyboardExtension = new Extension({
     </template>
   </RichTextEditor>
 </template>
-
-<style scoped lang="scss">
-:deep(.ProseMirror) {
-  height: auto;
-  max-height: 15rem;
-}
-</style>

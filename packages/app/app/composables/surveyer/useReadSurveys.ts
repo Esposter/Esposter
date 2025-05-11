@@ -4,11 +4,11 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 export const useReadSurveys = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { initializeOffsetPaginationData } = surveyStore;
-  const { hasMore, surveyList, totalItemsLength } = storeToRefs(surveyStore);
+  const { hasMore, surveys, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
+  // This is also used by v-data-table-server to initialize the offset pagination data
   const readMoreSurveys = async ({
     itemsPerPage,
     page,
@@ -20,19 +20,18 @@ export const useReadSurveys = async () => {
   }) => {
     isLoading.value = true;
     try {
-      const response = await $client.survey.readSurveys.query({
+      const response = await $trpc.survey.readSurveys.query({
         limit: itemsPerPage,
         offset: (page - 1) * itemsPerPage,
         sortBy,
       });
-      surveyList.value = response.items;
+      surveys.value = response.items;
       hasMore.value = response.hasMore;
     } finally {
       isLoading.value = false;
     }
   };
 
-  initializeOffsetPaginationData(await $client.survey.readSurveys.query());
-  totalItemsLength.value = await $client.survey.count.query();
+  totalItemsLength.value = await $trpc.survey.count.query();
   return { isLoading, readMoreSurveys };
 };

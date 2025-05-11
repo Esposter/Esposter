@@ -30,6 +30,6 @@ const { border, surface } = useColors();
 <style scoped lang="scss">
 :deep(.dp__input) {
   background-color: v-bind(surface);
-  border: 1px $border-style-root v-bind(border);
+  border: $border-width-root $border-style-root v-bind(border);
 }
 </style>

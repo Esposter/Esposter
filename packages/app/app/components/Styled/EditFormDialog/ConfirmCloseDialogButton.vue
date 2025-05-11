@@ -53,8 +53,7 @@ const dialog = ref(false);
         >
           Discard changes
         </v-btn>
-        <v-btn
-          variant="outlined"
+        <StyledButton
           @click="
             () => {
               dialog = false;
@@ -63,7 +62,7 @@ const dialog = ref(false);
           "
         >
           Save changes
-        </v-btn>
+        </StyledButton>
       </v-card-actions>
     </StyledCard>
   </v-dialog>

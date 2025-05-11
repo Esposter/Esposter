@@ -12,7 +12,7 @@ export class MovementInteractionInputResolver extends AInputResolver {
     const worldPlayerStore = useWorldPlayerStore();
     const { isMoving } = storeToRefs(worldPlayerStore);
 
-    useMoveNpcList(scene);
+    useMoveNpcs(scene);
 
     if (isMoving.value || !scene.gridEngine.hasCharacter(CharacterId.Player)) return true;
     else if (justDownInput === PlayerSpecialInput.Confirm) {

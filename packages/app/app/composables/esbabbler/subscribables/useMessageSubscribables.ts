@@ -1,13 +1,10 @@
-import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useMessageSubscribables = () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
@@ -20,27 +17,27 @@ export const useMessageSubscribables = () => {
   onMounted(() => {
     if (!currentRoomId.value) return;
 
-    createMessageUnsubscribable.value = $client.message.onCreateMessage.subscribe(
-      { roomId: currentRoomId.value },
+    const roomId = currentRoomId.value;
+    createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
+      { roomId },
       {
-        // @TODO: trpc-nuxt type issue
-        onData: (data: MessageEntity) => {
+        onData: (data) => {
           storeCreateMessage(data);
         },
       },
     );
-    updateMessageUnsubscribable.value = $client.message.onUpdateMessage.subscribe(
-      { roomId: currentRoomId.value },
+    updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
+      { roomId },
       {
-        onData: (data: UpdateMessageInput) => {
+        onData: (data) => {
           storeUpdateMessage(data);
         },
       },
     );
-    deleteMessageUnsubscribable.value = $client.message.onDeleteMessage.subscribe(
-      { roomId: currentRoomId.value },
+    deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
+      { roomId },
       {
-        onData: (data: DeleteMessageInput) => {
+        onData: (data) => {
           storeDeleteMessage(data);
         },
       },

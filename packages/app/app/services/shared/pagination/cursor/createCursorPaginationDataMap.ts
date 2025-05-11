@@ -1,17 +1,19 @@
-import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
-export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
-  currentId: MaybeRefOrGetter<string | undefined>,
-) => {
+export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGetter<string | undefined>) => {
   const cursorPaginationDataMap: Ref<Map<string, CursorPaginationData<TItem>>> = ref(new Map());
   const cursorPaginationData = computed({
     get: () => {
       const currentIdValue = toValue(currentId);
       if (!currentIdValue) return new CursorPaginationData<TItem>();
-      return cursorPaginationDataMap.value.get(currentIdValue) ?? new CursorPaginationData<TItem>();
+      return (
+        cursorPaginationDataMap.value.get(currentIdValue) ??
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        cursorPaginationDataMap.value.set(currentIdValue, new CursorPaginationData<TItem>()).get(currentIdValue)!
+      );
     },
     set: (newCursorPaginationData) => {
       const currentIdValue = toValue(currentId);
@@ -19,7 +21,7 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
       cursorPaginationDataMap.value.set(currentIdValue, newCursorPaginationData);
     },
   });
-  const itemList = computed({
+  const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
       cursorPaginationData.value.items = items;
@@ -48,7 +50,7 @@ export const createCursorPaginationDataMap = <TItem extends ItemMetadata>(
   return {
     hasMore,
     initializeCursorPaginationData,
-    itemList,
+    items,
     nextCursor,
     resetCursorPaginationData,
   };

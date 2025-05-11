@@ -3,9 +3,9 @@ import { useMessageStore } from "@/store/esbabbler/message";
 
 const readMoreMessages = await useReadMessages();
 const messageStore = useMessageStore();
-const { hasMore, messageList } = storeToRefs(messageStore);
+const { hasMore, messages } = storeToRefs(messageStore);
 </script>
 
 <template>
-  <EsbabblerModelMessageList v-if="messageList" :messages="messageList" :has-more :read-more-messages />
+  <EsbabblerModelMessageList :messages :has-more :read-more-messages />
 </template>

@@ -1,17 +1,10 @@
 import type { TilemapFile } from "@/models/plugins/TilemapFile";
-import type { TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
+import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
 
 import { TilesetFile } from "@/models/plugins/TilesetFile";
-import {
-  ID_SEPARATOR,
-  InvalidOperationError,
-  isPlainObject,
-  NotFoundError,
-  Operation,
-  parseXmlString,
-} from "@esposter/shared";
-import { parseTileset } from "parse-tmx";
+import { ID_SEPARATOR, InvalidOperationError, isPlainObject, NotFoundError, Operation } from "@esposter/shared";
+import { parseTileset, parseXmlString } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
 
 const GetFastValue = Utils.Objects.GetFastValue;
@@ -58,17 +51,15 @@ export class TiledJSONExternalFile extends MultiFile {
       const response = tilesetFile.xhrLoader?.responseText;
       if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
 
-      const responseData = await parseXmlString(response);
+      const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(response);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
-      tilemapFile.data.tilesets[index] = {
-        ...tilemapFile.data.tilesets[index],
-        ...tilesetData,
+      Object.assign(tilemapFile.data.tilesets[index], tilesetData, {
         imageheight: tilesetData.image.height,
         imagewidth: tilesetData.image.width,
         // Avoid throwing in tilemap creator
         source: undefined,
-      };
+      });
     }
 
     this.loader.cacheManager.tilemap.add(tilemapFile.key, {
@@ -87,7 +78,6 @@ export class TiledJSONExternalFile extends MultiFile {
     this.pending--;
 
     if (!(file.type === "json" && Object.hasOwn(file.data, "tilesets"))) return;
-
     //  Inspect the data for the files to now load
     const tilesets = file.data.tilesets as TMXExternalTilesetParsed[];
     const config = this.config;

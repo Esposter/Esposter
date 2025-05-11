@@ -12,7 +12,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/scene", () => {
   const selectedMonster = ref<Monster>();
   const attacks = computed(() => selectedMonster.value?.attackIds.map(getAttack) ?? []);
-  const attackNameList = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map((a) => a.id));
+  const attackNames = computed(() => attacks.value.slice(0, ATTACK_DISPLAY_LIMIT).map(({ id }) => id));
   const { switchToPreviousScene } = usePreviousScene(SceneKey.MonsterDetails);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
@@ -33,7 +33,7 @@ export const useMonsterDetailsSceneStore = defineStore("dungeons/monsterDetails/
   };
 
   return {
-    attackNameList,
+    attackNames,
     onPlayerInput,
     selectedMonster: selectedMonster as Ref<Monster>,
   };

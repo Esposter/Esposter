@@ -1,3 +1,5 @@
+import type { Room } from "#shared/db/schema/rooms";
+
 import { accounts } from "#shared/db/schema/accounts";
 import { posts } from "#shared/db/schema/posts";
 import { rooms } from "#shared/db/schema/rooms";
@@ -13,7 +15,7 @@ export const users = pgTable(
   "users",
   {
     createdAt: timestamp("created_at").notNull(),
-    deletedAt: timestamp("deleted_at").notNull(),
+    deletedAt: timestamp("deleted_at"),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull(),
     id: text("id").primaryKey(),
@@ -54,6 +56,11 @@ export const usersToRooms = pgTable(
   ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
 );
 export type UserToRoom = typeof usersToRooms.$inferSelect;
+export const UserToRoomRelations = {
+  room: true,
+  user: true,
+} as const;
+export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };
 
 export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
   room: one(rooms, {

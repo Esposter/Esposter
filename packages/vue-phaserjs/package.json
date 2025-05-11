@@ -1,6 +1,6 @@
 {
   "name": "vue-phaserjs",
-  "version": "1.38.1",
+  "version": "2.1.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
   "type": "module",
   "keywords": [
@@ -23,20 +23,17 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "dev": "vite",
     "build": "pnpm export:gen && vite build",
-    "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "typecheck": "vue-tsc --noEmit",
+    "typecheck": "vue-tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "rolldown-vite": "catalog:"
   },
   "peerDependencies": {
     "phaser": "catalog:",

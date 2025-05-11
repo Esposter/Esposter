@@ -32,7 +32,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     this.validate = (position) => {
       const value = this.getValue(position);
       // We want to skip grid values that don't exist
-      if (value === null || value === undefined) return false;
+      if (value === undefined) return false;
       return validate?.bind(this)(position) ?? true;
     };
     this._validate = (...args) => unref(this.validate(...args));
@@ -48,19 +48,19 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return unref(this.grid)[rowIndex].length;
   }
 
-  getPosition(value: TValue): null | Position {
+  getPosition(value: TValue): Position | undefined {
     for (let y = 0; y < this.rowSize - 1; y++)
       for (let x = 0; x < this.getColumnSize(y); x++) {
         const position: Position = { x, y };
         if (this.getValue(position) === value) return position;
       }
 
-    return null;
+    return undefined;
   }
 
-  getPositionX(value: TValue, y: number): null | number {
+  getPositionX(value: TValue, y: number): number | undefined {
     for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
-    return null;
+    return undefined;
   }
 
   getValue({ x, y }: Position) {
@@ -84,7 +84,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
       }
       case Direction.DOWN: {
         let newPositionY = this.position.value.y;
@@ -99,7 +99,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionY}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionY.toString());
       }
       case Direction.LEFT: {
         let newPositionX = this.position.value.x;
@@ -114,7 +114,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
       }
       case Direction.RIGHT: {
         let newPositionX = this.position.value.x;
@@ -129,7 +129,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           return;
         }
 
-        throw new InvalidOperationError(Operation.Update, this.move.name, `${newPositionX}`);
+        throw new InvalidOperationError(Operation.Update, this.move.name, newPositionX.toString());
       }
       case Direction.UP_LEFT:
       case Direction.UP_RIGHT:

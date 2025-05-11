@@ -6,9 +6,9 @@ import { SITE_NAME } from "#shared/services/esposter/constants";
 <template>
   <v-app-bar pl-2 color="surface" density="comfortable">
     <template #prepend>
-      <NuxtLink contents :to="RoutePath.Index">
+      <NuxtInvisibleLink :to="RoutePath.Index">
         <EsposterLogo />
-      </NuxtLink>
+      </NuxtInvisibleLink>
     </template>
     <v-app-bar-title pl-2>
       {{ SITE_NAME }}

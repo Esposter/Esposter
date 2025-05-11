@@ -45,7 +45,7 @@ const { "on-surface": onSurface, surface } = useColors();
 <style scoped lang="scss">
 @use "sass:math";
 // @NOTE: Make sure to manually change this when the total number of cards are changed
-// Unfortunately we have to do this manually because sass generates the css at compile-time and is "static"
+// Unfortunately we have to do this manually because sass creates the css at compile-time and is "static"
 // whereas we cannot use vue props as an index for sass loops since vue props are run-time and are "dynamic" :C
 $card-length: 6;
 
@@ -67,7 +67,7 @@ $card-length: 6;
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
-  transition: transform 0.5s;
+  transition: transform $transition-move-duration-root;
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
 
@@ -90,7 +90,7 @@ $card-length: 6;
     content: "";
     position: absolute;
     inset: 4px 4px -2px -2px;
-    border-radius: 0.25rem;
+    border-radius: $border-radius-root;
     background-color: v-bind(onSurface);
     opacity: 0.1;
     scale: 1 calc(1 + (var(--active) * 0.05));

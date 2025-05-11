@@ -3,7 +3,6 @@ import type { ThemeDefinition, VuetifyOptions } from "vuetify";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
-
 // @TODO: Internal vuetify types
 export type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
 type Defaults = VuetifyOptions["defaults"];
@@ -13,7 +12,7 @@ const BaseColorsCommon = {
   border: "#ccc",
   info: "#2d88ff",
   primary: "#42b883",
-} satisfies ThemeColors;
+} as const satisfies ThemeColors;
 
 const BaseColorsMap = {
   [ThemeMode.dark]: {
@@ -75,7 +74,12 @@ const theme: Theme = {
 
 const defaults: Defaults = {
   VAutocomplete: { variant: "outlined" },
-  VBtn: { flat: true, style: { backgroundColor: "transparent" } },
+  VBtn: {
+    flat: true,
+    style: {
+      backgroundColor: "transparent",
+    },
+  },
   VCombobox: { variant: "outlined" },
   VDataTable: {
     style: {
@@ -89,7 +93,6 @@ const defaults: Defaults = {
   },
   VDialog: { maxWidth: "100%", width: 500 },
   VFileInput: { variant: "outlined" },
-  VListItem: { active: false },
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },

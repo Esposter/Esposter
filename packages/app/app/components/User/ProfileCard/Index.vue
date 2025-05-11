@@ -26,8 +26,8 @@ const profileCardRows = computed(() => {
 });
 const profileCardRowValues = computed(
   () =>
-    Object.entries(profileCardRows.value).reduce<Record<string, unknown>>((acc, [prop, row]) => {
-      acc[prop] = row.value;
+    Object.entries(profileCardRows.value).reduce<Record<string, unknown>>((acc, [property, row]) => {
+      acc[property] = row.value;
       return acc;
     }, {}) as { [P in keyof typeof profileCardRows.value]: (typeof profileCardRows.value)[P]["value"] },
 );
@@ -49,7 +49,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       }
     "
   >
-    <StyledCard mt-6 p-2="!">
+    <StyledCard mt-6 p-2>
       <v-card-title>
         <div font-bold>Personal Information</div>
         <v-divider mt-2 />
@@ -60,12 +60,9 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
           :key="title"
           v-model="editedProfileCardRows[title]"
           px-4
-          :title
-          :row="{
-            type: row.type,
-            value: row.value,
-          }"
           :edit-mode
+          :row
+          :title
         />
       </v-container>
       <v-card-actions px-4="!">

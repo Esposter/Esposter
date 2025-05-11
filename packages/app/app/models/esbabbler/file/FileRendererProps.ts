@@ -1,5 +1,7 @@
+import type { FileEntity } from "#shared/models/azure/FileEntity";
+
 export interface FileRendererProps {
-  mimetype: string;
+  file: FileEntity;
   preview?: true;
   url: string;
 }

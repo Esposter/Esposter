@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { useToastStore } from "@/store/toast";
 import { VSonner } from "vuetify-sonner";
+
+const toastStore = useToastStore();
+const { position } = storeToRefs(toastStore);
 </script>
 
 <template>
@@ -12,9 +16,7 @@ import { VSonner } from "vuetify-sonner";
         <NuxtPage />
       </NuxtSEO>
     </NuxtTheme>
-    <ClientOnly>
-      <VSonner />
-    </ClientOnly>
+    <VSonner :position />
   </v-app>
 </template>
 

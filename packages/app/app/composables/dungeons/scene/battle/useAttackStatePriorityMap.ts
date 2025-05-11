@@ -1,7 +1,7 @@
 import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
-import { generateRandomBoolean } from "@/util/math/random/generateRandomBoolean";
+import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 
 export const useAttackStatePriorityMap = () => {
   if (PlayerBattleMenuOptionGrid.value !== PlayerOption.Fight)
@@ -10,7 +10,7 @@ export const useAttackStatePriorityMap = () => {
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,
       [StateName.PlayerPostAttackCheck]: undefined,
     };
-  else if (generateRandomBoolean())
+  else if (createRandomBoolean())
     return {
       [StateName.Battle]: StateName.PlayerAttack,
       [StateName.EnemyPostAttackCheck]: StateName.PlayerInput,

@@ -20,17 +20,18 @@
     "build:packages": "lerna run build --ignore @esposter/app",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
-    "typecheck": "lerna run typecheck",
+    "coverage": "lerna run coverage",
+    "typecheck": "tsc && lerna run typecheck",
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
-    "lint": "lerna run lint",
-    "lint:fix": "lerna run lint:fix",
+    "lint": "eslint . && lerna run lint",
+    "lint:fix": "eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "pnpm cross-os refresh:lockfile",
-    "cross-os": "node packages/app/scripts/cross-os.ts",
+    "refresh:lockfile": "pnpm crossOS refresh:lockfile",
+    "crossOS": "node scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
-  "cross-os": {
+  "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",
@@ -38,25 +39,32 @@
     }
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "dayjs": "catalog:",
     "vue": "catalog:"
   },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "rollup": "catalog:",
+    "rolldown": "catalog:",
+    "rolldown-plugin-dts": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-node-polyfills": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
   "engines": {
-    "node": "^22.14.0"
+    "node": "^22.15.0"
   },
-  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }

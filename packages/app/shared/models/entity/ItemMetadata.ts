@@ -2,10 +2,10 @@ import type { Class } from "type-fest";
 
 import { z } from "zod";
 
-export interface ItemMetadata {
-  createdAt: Date;
-  deletedAt: Date | null;
-  updatedAt: Date;
+export class ItemMetadata {
+  createdAt = new Date();
+  deletedAt: Date | null = null;
+  updatedAt = new Date();
 }
 
 export const itemMetadataSchema = z.object({

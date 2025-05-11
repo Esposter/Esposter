@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* Add data type ([492177b](https://github.com/Esposter/Esposter/commit/492177bd82e86972ee2900ed137bbcfb7fc98cc0))
+* build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+* remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
+
+### Features
+
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+
+# [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
+
+**Note:** Version bump only for package parse-tmx
+
+## [1.42.3](https://github.com/Esposter/Esposter/compare/v1.42.2...v1.42.3) (2025-04-19)
+
+**Note:** Version bump only for package parse-tmx
+
+## [1.42.2](https://github.com/Esposter/Esposter/compare/v1.42.1...v1.42.2) (2025-04-19)
+
+**Note:** Version bump only for package parse-tmx
+
+## [1.42.1](https://github.com/Esposter/Esposter/compare/v1.42.0...v1.42.1) (2025-04-19)
+
+**Note:** Version bump only for package parse-tmx
+
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Bug Fixes
+
+* lint ([c237159](https://github.com/Esposter/Esposter/commit/c237159c6ffd5af15ddfb1604dedea095282691e))
+* no need for undefined ([d461897](https://github.com/Esposter/Esposter/commit/d46189710b2f807684de21081c0c0a3dcff10804))
+* use class to allow private identifiers ([f18d9d8](https://github.com/Esposter/Esposter/commit/f18d9d8b24d06d087dab49905ddbc0c219fa679b))
+
+### Features
+
+* Add tsconfig.json at root to enable complete devtooling with eslint + tsconfig across the whole monorepo in both packages and at the root for scripts ([5b1e48c](https://github.com/Esposter/Esposter/commit/5b1e48c742a023852a7ab1ed5a53f2400228be20))
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
+
+# [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
+
+**Note:** Version bump only for package parse-tmx
+
+# [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
+
+**Note:** Version bump only for package parse-tmx
+
+# [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
+
+**Note:** Version bump only for package parse-tmx
+
 ## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
 **Note:** Version bump only for package parse-tmx

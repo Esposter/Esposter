@@ -14,19 +14,20 @@ import type { GlobalConfiguration } from "@/models/configuration/global/GlobalCo
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export type TextConfiguration = AlphaConfiguration &
-  BlendModeConfiguration &
-  ComputedSizeConfiguration &
-  DepthConfiguration &
-  Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig> &
-  FlipConfiguration &
-  GlobalConfiguration &
-  MaskConfiguration &
-  OriginConfiguration &
-  PipelineConfiguration &
-  ScrollFactorConfiguration &
-  TintConfiguration &
-  TransformConfiguration &
-  VisibleConfiguration & {
-    text: string;
-  };
+export interface TextConfiguration
+  extends AlphaConfiguration,
+    BlendModeConfiguration,
+    ComputedSizeConfiguration,
+    DepthConfiguration,
+    Except<Types.GameObjects.Text.TextConfig, keyof Types.GameObjects.GameObjectConfig>,
+    FlipConfiguration,
+    GlobalConfiguration,
+    MaskConfiguration,
+    OriginConfiguration,
+    PipelineConfiguration,
+    ScrollFactorConfiguration,
+    TintConfiguration,
+    TransformConfiguration,
+    VisibleConfiguration {
+  text: string;
+}

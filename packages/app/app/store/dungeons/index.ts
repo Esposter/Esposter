@@ -1,40 +1,39 @@
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { DungeonsGame } from "#shared/models/dungeons/data/DungeonsGame";
+import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
 export const useDungeonsStore = defineStore("dungeons", () => {
-  const { $client } = useNuxtApp();
+  const session = authClient.useSession();
+  const { $trpc } = useNuxtApp();
   const phaserStore = usePhaserStore();
   const { switchToScene } = phaserStore;
   const cameraStore = useCameraStore();
   const { fadeOut } = cameraStore;
 
-  const game = ref(new DungeonsGame());
-  const saveGame = async () => {
-    const session = authClient.useSession();
-
+  const dungeons = ref(new Dungeons());
+  const saveDungeons = async () => {
     if (session.value.data) {
-      saveItemMetadata(game.value);
-      await $client.dungeons.saveGame.mutate(game.value);
+      saveItemMetadata(dungeons.value);
+      await $trpc.dungeons.saveDungeons.mutate(dungeons.value);
     } else {
-      saveItemMetadata(game.value);
-      localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, game.value.toJSON());
+      saveItemMetadata(dungeons.value);
+      localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, dungeons.value.toJSON());
     }
   };
 
   const save = ref(new Save());
   const saveIndex = ref(0);
   const saveData = async () => {
-    game.value.saves[saveIndex.value] = save.value;
-    await saveGame();
+    dungeons.value.saves[saveIndex.value] = save.value;
+    await saveDungeons();
   };
 
   const fadeSwitchToScene = (scene: SceneWithPlugins, sceneKey: SceneKey, msDuration = 1000) => {
@@ -44,5 +43,5 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     });
   };
 
-  return { fadeSwitchToScene, game, save, saveData, saveGame };
+  return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons };
 });

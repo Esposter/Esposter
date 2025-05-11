@@ -1,17 +1,17 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { AzureEntity } from "#shared/models/azure/AzureEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 import type { Class } from "type-fest";
 
-import { plainToInstance } from "class-transformer";
+import { deserializeEntity } from "@@/server/services/azure/transformer/deserializeEntity";
 
-export const getEntity = async <TEntity extends CompositeKey>(
+export const getEntity = async <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,
   cls: Class<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
 ): Promise<TEntity | undefined> => {
   try {
     const entity = await tableClient.getEntity<TEntity>(...args);
-    return plainToInstance(cls, entity);
+    return deserializeEntity(entity, cls);
   } catch {
     return undefined;
   }

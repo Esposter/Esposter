@@ -9,7 +9,7 @@ export const applyEffects = (basePower: number, allEffects: Effect[], boughtBuil
   for (const effectType of Object.values(EffectType))
     resultPower = EffectOperatorMap[effectType](
       resultPower,
-      allEffects.filter((e) => e.configuration.type === effectType),
+      allEffects.filter(({ configuration }) => configuration.type === effectType),
       boughtBuildings,
     );
   return resultPower;

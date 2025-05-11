@@ -2,7 +2,7 @@ let buildVersion: number | undefined;
 
 export const useBuildVersion = async () => {
   if (buildVersion !== undefined) return buildVersion;
-  const { $client } = useNuxtApp();
-  buildVersion = await $client.app.buildVersion.query();
+  const { $trpc } = useNuxtApp();
+  buildVersion = await $trpc.app.buildVersion.query();
   return buildVersion;
 };

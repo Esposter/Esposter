@@ -3,6 +3,73 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* ctirc ([7e87801](https://github.com/Esposter/Esposter/commit/7e8780136b764998c4e3b17deb60f71fe9c3bf58))
+* move vite-tsconfig-paths to root ([0af9b92](https://github.com/Esposter/Esposter/commit/0af9b921733824e3ec9f7a76b99432932088b1b9))
+* remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
+* specific tsconfig files to check ([32387e5](https://github.com/Esposter/Esposter/commit/32387e5ee456c857c9857dfc990f698d807f2537))
+* specific tsconfig files to check ([d8533ef](https://github.com/Esposter/Esposter/commit/d8533ef18eea04854ab665e93f3a422b95ca6ebc))
+
+### Features
+
+* Add shared vitest.config and add basic test for parse-tmx ([5953090](https://github.com/Esposter/Esposter/commit/5953090532f3457647aec85cc2df3351a7689183))
+
+### Performance Improvements
+
+* remove unnecessary vite plugin node polyfills ([dfb299e](https://github.com/Esposter/Esposter/commit/dfb299e975a25f46b38136bcf8b04b6fe38c1a8d))
+
+# [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/configuration
+
+## [1.42.3](https://github.com/Esposter/Esposter/compare/v1.42.2...v1.42.3) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/configuration
+
+## [1.42.2](https://github.com/Esposter/Esposter/compare/v1.42.1...v1.42.2) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/configuration
+
+## [1.42.1](https://github.com/Esposter/Esposter/compare/v1.42.0...v1.42.1) (2025-04-19)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Bug Fixes
+
+* add eslint ([948ce6c](https://github.com/Esposter/Esposter/commit/948ce6c29136cb497ef71b8e4e60af299fe41b0f))
+* add resolve tsConfig for dts ([d623f62](https://github.com/Esposter/Esposter/commit/d623f6207ede56cb19daf10a141dea9362a51454))
+* add trying to resolve tsconfig ([594e874](https://github.com/Esposter/Esposter/commit/594e8746663057c3bd97f935d84226f35546b2f1))
+* format ([403fb3c](https://github.com/Esposter/Esposter/commit/403fb3c9782c32f2a6980be73848587061a7b4da))
+* should try and use build tsconfig ([3d5ab1f](https://github.com/Esposter/Esposter/commit/3d5ab1f391ecd5c9504f25713ed9a6d75cfaf9b6))
+* update rolldown-plugin-dts to resolve external lib types ([ec85376](https://github.com/Esposter/Esposter/commit/ec8537604995279c0a97bd501410a6cf8867e6d9))
+
+### Features
+
+* Add polyfills ([f2e60ba](https://github.com/Esposter/Esposter/commit/f2e60baa41aacdf1d0f49ecfe0876312c7ad8f12))
+* Add tsconfig.json at root to enable complete devtooling with eslint + tsconfig across the whole monorepo in both packages and at the root for scripts ([5b1e48c](https://github.com/Esposter/Esposter/commit/5b1e48c742a023852a7ab1ed5a53f2400228be20))
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
+
+# [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
+
+### Bug Fixes
+
+* add back no-deprecated check & add vue expect errors ([0a70edb](https://github.com/Esposter/Esposter/commit/0a70edbc48737b7f668fe6fc6744010633e7aa6a))
+* input hanging workaround + migrate in plugin instead ([c679635](https://github.com/Esposter/Esposter/commit/c679635d2d95320ae5d18dfb92ac313eab4fc026))
+
 ## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
 **Note:** Version bump only for package @esposter/configuration

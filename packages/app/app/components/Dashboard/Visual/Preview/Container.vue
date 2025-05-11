@@ -17,7 +17,7 @@ const container = useTemplateRef("container");
 
 onClickExceptDrag(
   container,
-  getSynchronizedFunction(() => editItem(id)),
+  getSynchronizedFunction(() => editItem({ id })),
 );
 </script>
 

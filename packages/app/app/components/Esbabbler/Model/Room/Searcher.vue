@@ -9,19 +9,13 @@ const dialog = ref(false);
 <template>
   <v-dialog v-model="dialog">
     <template #activator>
-      <v-btn case-normal="!" variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+      <v-btn variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
     </template>
     <StyledCard>
       <v-card-title>
-        <v-text-field
-          v-model="roomSearchQuery"
-          placeholder="Where would you like to go?"
-          prepend-inner-icon="mdi-magnify"
-          density="compact"
-          hide-details
-        />
+        <v-text-field v-model="roomSearchQuery" placeholder="Where would you like to go?" hide-details />
       </v-card-title>
-      <v-card-text overflow-y="auto">
+      <v-card-text overflow-y-auto>
         <EsbabblerModelRoomListSearched @update:room="dialog = false" />
       </v-card-text>
     </StyledCard>

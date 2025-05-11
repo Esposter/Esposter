@@ -9,7 +9,7 @@ const post = await useReadPostFromRoute();
 const readMoreComments = await useReadComments(post.id);
 const { data: session } = await authClient.useSession(useFetch);
 const commentStore = useCommentStore();
-const { commentList, currentPost, hasMore } = storeToRefs(commentStore);
+const { comments, currentPost, hasMore } = storeToRefs(commentStore);
 currentPost.value = post;
 </script>
 
@@ -29,7 +29,7 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <PostCommentCard v-for="comment of commentList" v-else :key="comment.id" :comment />
+              <PostCommentCard v-for="comment of comments" v-else :key="comment.id" :comment />
             </v-container>
           </StyledCard>
         </v-col>

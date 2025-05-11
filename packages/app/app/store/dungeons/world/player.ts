@@ -4,7 +4,7 @@ import { phaserEventEmitter } from "@/services/phaser/events";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { toDeepRaw } from "@/util/reactivity/toDeepRaw";
+import { toRawDeep } from "@/util/reactivity/toRawDeep";
 
 export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const playerStore = usePlayerStore();
@@ -12,7 +12,7 @@ export const useWorldPlayerStore = defineStore("dungeons/world/player", () => {
   const worldSceneStore = useWorldSceneStore();
   const { switchToTilemap } = worldSceneStore;
   const respawn = async () => {
-    const { direction, position, tilemapKey } = structuredClone(toDeepRaw(playerStore.player.respawnLocation));
+    const { direction, position, tilemapKey } = structuredClone(toRawDeep(playerStore.player.respawnLocation));
     await switchToTilemap(tilemapKey);
     phaserEventEmitter.emit("playerTeleport", position, direction);
   };

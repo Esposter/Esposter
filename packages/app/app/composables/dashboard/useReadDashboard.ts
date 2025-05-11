@@ -1,23 +1,28 @@
-import type { RecursiveDeepOmitItemMetadata } from "#shared/util/types/RecursiveDeepOmitItemMetadata";
+import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
-import { omitDeepItemMetadata } from "@/services/shared/omitDeepItemMetadata";
+import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useDashboardStore } from "@/store/dashboard";
 import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const dashboardChangedTracker = computed<RecursiveDeepOmitItemMetadata<Dashboard>>((oldDashboardChangedTracker) => {
-    const newDashboardChangedTracker = omitDeepItemMetadata(dashboard.value);
-    return oldDashboardChangedTracker && deepEqual(newDashboardChangedTracker, oldDashboardChangedTracker)
-      ? oldDashboardChangedTracker
-      : newDashboardChangedTracker;
+  const virtualDashboard = computed<RecursiveDeepOmitItemEntity<Dashboard>>((oldVirtualDashboard) => {
+    const newVirtualDashboard = omitDeepItemEntity(dashboard.value);
+    return oldVirtualDashboard && deepEqual(newVirtualDashboard, oldVirtualDashboard)
+      ? oldVirtualDashboard
+      : newVirtualDashboard;
   });
+
+  watch(virtualDashboard, async () => {
+    await saveDashboard();
+  });
+
   await useReadData(
     () => {
       const dashboardJson = localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY);
@@ -25,11 +30,7 @@ export const useReadDashboard = async () => {
       else dashboard.value = new Dashboard();
     },
     async () => {
-      dashboard.value = await $client.dashboard.readDashboard.query();
+      dashboard.value = await $trpc.dashboard.readDashboard.query();
     },
   );
-
-  watchTracker(dashboardChangedTracker, async () => {
-    await saveDashboard();
-  });
 };

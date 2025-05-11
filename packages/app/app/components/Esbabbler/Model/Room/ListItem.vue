@@ -18,15 +18,15 @@ const active = computed(() => room.id === currentRoomId.value);
 <template>
   <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
-      <v-list-item :active :title="room.name" :value="room.id">
+      <v-list-item :active :value="room.id">
         <template #prepend>
-          <v-badge mr-4 color="green" location="bottom end" dot>
-            <v-avatar v-if="room.image">
-              <v-img :src="room.image" :alt="room.name" />
-            </v-avatar>
-            <StyledDefaultAvatar v-else :name="room.name" />
+          <v-badge color="green" location="bottom end" dot>
+            <StyledAvatar :image="room.image" :name="room.name" />
           </v-badge>
         </template>
+        <v-list-item-title pr-6>
+          {{ room.name }}
+        </v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>
     <EsbabblerModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
@@ -48,3 +48,9 @@ const active = computed(() => room.id === currentRoomId.value);
     </EsbabblerModelRoomConfirmDeleteDialog>
   </div>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item__prepend > .v-list-item__spacer) {
+  width: 0.5rem !important;
+}
+</style>

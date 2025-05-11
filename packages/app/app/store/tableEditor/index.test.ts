@@ -1,5 +1,5 @@
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { ITEM_ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { expectToBeDefined } from "@/util/test/expectToBeDefined";
@@ -31,7 +31,7 @@ describe("tableEditorStore", () => {
     expect(editFormDialog.value).toBe(false);
     expect(router.currentRoute.value.query).toStrictEqual({});
 
-    await editItem(newItem.id);
+    await editItem({ id: newItem.id });
 
     // The edited item will be a structured clone object of the original item class
     // object !== class (not strictly equal)
@@ -39,7 +39,7 @@ describe("tableEditorStore", () => {
     expect(editedItem.value).toEqual(newItem);
     expect(editedIndex.value).toBe(0);
     expect(editFormDialog.value).toBe(true);
-    expect(router.currentRoute.value.query).toStrictEqual({ [ITEM_ID_QUERY_PARAM_KEY]: newItem.id });
+    expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAM_KEY]: newItem.id });
   });
 
   test("save unedited item", async () => {
@@ -90,7 +90,7 @@ describe("tableEditorStore", () => {
     expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items[0].name).not.toStrictEqual(updatedName);
 
-    await editItem(newItem.id);
+    await editItem({ id: newItem.id });
     expectToBeDefined(editedItem.value);
     editedItem.value.name = updatedName;
     await save();
@@ -113,7 +113,7 @@ describe("tableEditorStore", () => {
     expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items).toHaveLength(1);
 
-    await editItem(newItem.id);
+    await editItem({ id: newItem.id });
     await save(true);
 
     expect(editFormDialog.value).toBe(false);

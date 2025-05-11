@@ -9,11 +9,11 @@ import { clearInterval, setInterval } from "worker-timers";
 
 export const useBuildingStatsTimer = () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
+  const { clicker } = storeToRefs(clickerStore);
   const buildingStore = useBuildingStore();
   const { getBoughtBuildingPower } = buildingStore;
   const boughtBuildingPowers = computed<{ id: Target; power: number }[]>(() =>
-    game.value.boughtBuildings.map((b) => ({ id: b.id, power: getBoughtBuildingPower(b) })),
+    clicker.value.boughtBuildings.map((b) => ({ id: b.id, power: getBoughtBuildingPower(b) })),
   );
   const buildingStatsTimers = ref<number[]>([]);
 
@@ -22,7 +22,7 @@ export const useBuildingStatsTimer = () => {
     buildingPowers: typeof boughtBuildingPowers.value,
   ) => {
     for (const boughtBuilding of boughtBuildings) {
-      const buildingPower = buildingPowers.find((b) => b.id === boughtBuilding.id);
+      const buildingPower = buildingPowers.find(({ id }) => id === boughtBuilding.id);
       if (!buildingPower) return;
 
       buildingStatsTimers.value.push(
@@ -37,14 +37,14 @@ export const useBuildingStatsTimer = () => {
   };
 
   onMounted(() => {
-    setBuildingStatsTimers(game.value.boughtBuildings, boughtBuildingPowers.value);
+    setBuildingStatsTimers(clicker.value.boughtBuildings, boughtBuildingPowers.value);
   });
 
   onUnmounted(() => {
     for (const buildingStatsTimer of buildingStatsTimers.value) clearInterval(buildingStatsTimer);
   });
 
-  watch([() => game.value.boughtBuildings, boughtBuildingPowers], ([boughtBuildings, boughtBuildingPowers]) => {
+  watch([() => clicker.value.boughtBuildings, boughtBuildingPowers], ([boughtBuildings, boughtBuildingPowers]) => {
     for (const buildingStatsTimer of buildingStatsTimers.value) clearInterval(buildingStatsTimer);
     buildingStatsTimers.value = [];
     setBuildingStatsTimers(boughtBuildings, boughtBuildingPowers);

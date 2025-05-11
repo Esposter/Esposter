@@ -45,22 +45,22 @@ watch(
 
 <template>
   <div>
-    <StyledCard overflow-y-auto="!" :card-props="{ maxHeight: '250', width: '400' }">
+    <StyledCard overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
       <v-btn
-        v-for="(item, index) of items"
-        :key="item.id"
+        v-for="({ id, image, name }, index) of items"
+        :key="id"
         class="button"
-        justify-start="!"
         w-full
         rd
+        justify-start
         :ripple="false"
         @click="selectItem(index)"
       >
-        <v-avatar v-if="item.image" size="x-small">
-          <v-img :src="item.image" :alt="item.name ?? undefined" />
+        <v-avatar v-if="image" size="x-small">
+          <v-img :src="image" :alt="name" />
         </v-avatar>
-        <span font-bold pl-2 case-normal>
-          {{ item.name }}
+        <span font-bold pl-2>
+          {{ name }}
         </span>
       </v-btn>
       <div v-if="items.length === 0" font-bold text-center p-2>No result</div>
@@ -70,6 +70,6 @@ watch(
 
 <style scoped lang="scss">
 .button {
-  background-color: v-bind(infoOpacity10);
+  background-color: v-bind(infoOpacity10) !important;
 }
 </style>

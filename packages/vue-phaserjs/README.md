@@ -1,16 +1,9 @@
 # vue-phaserjs
 
-<p>
-  <a href="https://www.npmjs.com/package/vue-phaserjs">
-    <img src="https://img.shields.io/npm/v/vue-phaserjs.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Version">
-  </a>
-  <a href="https://www.npmjs.com/package/vue-phaserjs">
-    <img src="https://img.shields.io/npm/dm/vue-phaserjs.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="Downloads">
-  </a>
-  <a href="https://github.com/Esposter/Esposter/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Esposter/Esposter.svg?style=flat&colorA=18181B&colorB=28CF8D" alt="License">
-  </a>
-</p>
+[![Apache-2.0 licensed][badge-license]][url-license]
+[![NPM version][badge-npm-version]][url-npm]
+[![NPM downloads][badge-npm-downloads]][url-npm]
+[![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
 Inspired by [phavuer](https://github.com/laineus/phavuer).
 
@@ -36,8 +29,15 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Usage
 
-An example [implementation](https://github.com/Esposter/Esposter/blob/main/packages/app/pages/dungeons.vue).
+An example [implementation](https://github.com/Esposter/Esposter/blob/main/packages/app/app/pages/dungeons.vue).
 
 ## <a name="license">⚖️ License</a>
 
-[Apache-2.0 licensed](https://github.com/Esposter/Esposter/blob/main/LICENSE)
+This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-npm-version]: https://img.shields.io/npm/v/vue-phaserjs/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/vue-phaserjs/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/vue-phaserjs/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/vue-phaserjs.svg

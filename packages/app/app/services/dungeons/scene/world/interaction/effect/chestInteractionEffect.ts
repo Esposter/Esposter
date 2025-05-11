@@ -30,7 +30,7 @@ export const chestInteractionEffect: Effect = async (scene, chestObjects) => {
     return true;
   }
 
-  const item = inventory.value.find((i) => i.id === itemIdTiledObjectProperty.value);
+  const item = inventory.value.find(({ id }) => id === itemIdTiledObjectProperty.value);
   if (item) item.quantity++;
   else inventory.value.push({ ...getItem(itemIdTiledObjectProperty.value), quantity: 1 });
   chest.isOpened = true;

@@ -4,7 +4,7 @@ import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/c
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
 export const useReadFlowchartEditor = async () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const flowchartEditorStore = useFlowchartEditorStore();
   const { flowchartEditor } = storeToRefs(flowchartEditorStore);
   await useReadData(
@@ -15,7 +15,7 @@ export const useReadFlowchartEditor = async () => {
       else flowchartEditor.value = new FlowchartEditor();
     },
     async () => {
-      flowchartEditor.value = await $client.flowchartEditor.readFlowchartEditor.query();
+      flowchartEditor.value = await $trpc.flowchartEditor.readFlowchartEditor.query();
     },
   );
 };

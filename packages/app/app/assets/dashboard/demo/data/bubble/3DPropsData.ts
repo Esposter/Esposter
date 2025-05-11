@@ -1,6 +1,6 @@
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-import { generateData } from "@/services/dashboard/demo/generateData";
+import { createData } from "@/services/dashboard/demo/createData";
 
 export const Bubble3DPropsData = {
   options: {
@@ -17,28 +17,28 @@ export const Bubble3DPropsData = {
   },
   series: [
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Product1",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Product2",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),
       name: "Product3",
     },
     {
-      data: generateData(20, {
+      data: createData(20, {
         max: 60,
         min: 10,
       }),

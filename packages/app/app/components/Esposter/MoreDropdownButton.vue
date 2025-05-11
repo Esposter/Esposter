@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ListItem } from "@/models/shared/ListItem";
+import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { authClient } from "@/services/auth/authClient";
@@ -7,8 +7,8 @@ import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { signOut } = authClient;
-const items = computed<ListItem[]>(() => {
-  const commonItems: ListItem[] = [
+const items = computed<ListLinkItem[]>(() => {
+  const commonItems: ListLinkItem[] = [
     {
       href: RoutePath.About,
       icon: "mdi-information",
@@ -19,6 +19,7 @@ const items = computed<ListItem[]>(() => {
       href: RoutePath.Docs,
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
+      trailingSlash: "append",
     },
     {
       href: RoutePath.Anime,
@@ -71,10 +72,7 @@ const menu = ref(false);
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
             <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">
-              <v-avatar v-if="session.user.image">
-                <v-img :src="session.user.image" />
-              </v-avatar>
-              <StyledDefaultAvatar v-else :name="session.user.name ?? ''" />
+              <StyledAvatar :image="session.user.image ?? null" :name="session.user.name" />
             </v-btn>
           </v-avatar>
         </template>
@@ -89,10 +87,10 @@ const menu = ref(false);
     </template>
     <v-list min-width="250">
       <NuxtInvisibleLink
-        v-for="{ external, icon, title, href, onClick } of items"
+        v-for="{ icon, title, href, onClick, ...rest } of items"
         :key="title"
         :to="href"
-        :external
+        :="rest"
         @click="
           async () => {
             await onClick?.();

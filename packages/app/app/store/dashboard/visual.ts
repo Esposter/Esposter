@@ -1,8 +1,7 @@
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { createItemMetadata } from "@/services/shared/createItemMetadata";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
 import { useDashboardStore } from "@/store/dashboard";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
@@ -12,7 +11,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const {
     createVisual: storeCreateVisual,
     updateVisual,
-    visualList,
+    visuals,
     ...restOperationData
   } = createOperationData(
     computed({
@@ -21,21 +20,24 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
         dashboardStore.dashboard.visuals = newVisuals;
       },
     }),
+    ["id"],
     "Visual",
   );
   const createVisual = () => {
     storeCreateVisual(
       new Visual({
         type: visualType.value,
-        x: (visualList.value.length * 2) % noColumns.value,
+        x: (visuals.value.length * 2) % noColumns.value,
         // Puts the item at the bottom
-        y: visualList.value.length + noColumns.value,
-        ...createItemMetadata(),
+        y: visuals.value.length + noColumns.value,
       }),
     );
   };
   const noColumns = ref(12);
-  const editFormData = createEditFormData(computed(() => visualList.value));
+  const editFormData = createEditFormData(
+    computed(() => visuals.value),
+    ["id"],
+  );
   const save = async (editedVisual: Visual) => {
     const { editFormDialog } = editFormData;
     updateVisual(editedVisual);
@@ -45,7 +47,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   return {
     createVisual,
     updateVisual,
-    visualList,
+    visuals,
     visualType,
     ...restOperationData,
     noColumns,

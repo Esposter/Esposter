@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
+
+### Bug Fixes
+
+* build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+* README ([1e4a49a](https://github.com/Esposter/Esposter/commit/1e4a49a357fe725a812d93c3f18b6ce7a3b8a3bc))
+
+# [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
+
+**Note:** Version bump only for package vue-phaserjs
+
+## [1.42.3](https://github.com/Esposter/Esposter/compare/v1.42.2...v1.42.3) (2025-04-19)
+
+**Note:** Version bump only for package vue-phaserjs
+
+## [1.42.2](https://github.com/Esposter/Esposter/compare/v1.42.1...v1.42.2) (2025-04-19)
+
+**Note:** Version bump only for package vue-phaserjs
+
+## [1.42.1](https://github.com/Esposter/Esposter/compare/v1.42.0...v1.42.1) (2025-04-19)
+
+**Note:** Version bump only for package vue-phaserjs
+
+# [1.42.0](https://github.com/Esposter/Esposter/compare/v1.41.0...v1.42.0) (2025-04-19)
+
+### Features
+
+* Add num members info + update deps ([84b4a60](https://github.com/Esposter/Esposter/commit/84b4a608988aa1a95ba2769eee53834c1ca46776))
+* Add polyfills ([f2e60ba](https://github.com/Esposter/Esposter/commit/f2e60baa41aacdf1d0f49ecfe0876312c7ad8f12))
+* Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+* switch to rolldown-vite ([f21d387](https://github.com/Esposter/Esposter/commit/f21d3872b3cc918ce34291e24d685b668ccfd879))
+
+# [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
+
+### Bug Fixes
+
+* use throttle instead of debounce + don't use ssr useFetch for subscribables, not needed ([047b287](https://github.com/Esposter/Esposter/commit/047b2870101337e0f51e3798faf0eec45a4d6407))
+
+# [1.40.0](https://github.com/Esposter/Esposter/compare/v1.39.0...v1.40.0) (2025-03-31)
+
+**Note:** Version bump only for package vue-phaserjs
+
+# [1.39.0](https://github.com/Esposter/Esposter/compare/v1.38.1...v1.39.0) (2025-03-28)
+
+**Note:** Version bump only for package vue-phaserjs
+
 ## [1.38.1](https://github.com/Esposter/Esposter/compare/v1.38.0...v1.38.1) (2025-03-12)
 
 **Note:** Version bump only for package vue-phaserjs

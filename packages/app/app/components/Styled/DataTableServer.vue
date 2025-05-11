@@ -11,6 +11,7 @@ const { backgroundOpacity40 } = useColors();
 </script>
 
 <template>
+  <!-- @vue-expect-error @TODO -->
   <v-data-table-server class="border-sm" :="dataTableServerProps">
     <template v-for="(_, slot) of slots" #[slot]="scope">
       <slot :name="slot" :="{ ...scope }" />

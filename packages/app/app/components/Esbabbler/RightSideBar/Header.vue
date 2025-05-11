@@ -2,8 +2,8 @@
 import { useMemberStore } from "@/store/esbabbler/member";
 
 const memberStore = useMemberStore();
-const { memberList } = storeToRefs(memberStore);
-const membersCount = computed(() => memberList.value.length);
+const { members } = storeToRefs(memberStore);
+const membersCount = computed(() => members.value.length);
 </script>
 
 <template>

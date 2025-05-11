@@ -1,18 +1,14 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { AzureEntity } from "#shared/models/azure/AzureEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
-import type { TableEntity } from "@azure/data-tables";
 import type { TupleSlice } from "@esposter/shared";
 
-export const createEntity = <TEntity extends CompositeKey>(
+import { serializeEntity } from "@@/server/services/azure/transformer/serializeEntity";
+
+export const createEntity = <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,
-  ...args: [TEntity, ...TupleSlice<Parameters<CustomTableClient<TEntity>["createEntity"]>, 1>]
+  entity: TEntity,
+  ...args: TupleSlice<Parameters<CustomTableClient<TEntity>["createEntity"]>, 1>
 ) => {
-  const [entity, ...rest] = args;
-  const serializedEntity = Object.fromEntries(
-    Object.entries(entity).map(([prop, value]) => {
-      if (Array.isArray(value)) return [prop, JSON.stringify(value)];
-      else return [prop, value];
-    }),
-  ) as TableEntity;
-  return tableClient.createEntity(serializedEntity, ...rest);
+  const serializedEntity = serializeEntity(entity);
+  return tableClient.createEntity(serializedEntity, ...args);
 };

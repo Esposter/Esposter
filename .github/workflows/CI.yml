@@ -1,0 +1,37 @@
+name: 🏗️ CI
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: 🛠️ Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: 📦 Install dependencies
+        run: pnpm i
+
+      - name: 🏗️ Build
+        run: pnpm build
+
+      - name: 🔍 Lint
+        run: pnpm lint
+
+      - name: ✅ Typecheck
+        run: pnpm typecheck
+
+      - name: 🧪 Test
+        run: pnpm test

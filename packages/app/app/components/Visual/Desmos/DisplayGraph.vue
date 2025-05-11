@@ -69,26 +69,28 @@ watch(componentsToRender, (newComponentsToRender) => {
   render(newComponentsToRender);
 });
 
-onLoaded(async ({ GraphingCalculator }) => {
+onMounted(() => {
   const element = document.querySelector<HTMLDivElement>(`#${id}`);
   if (!element) return;
 
-  calculator = await GraphingCalculator(element, {
-    border: false,
-    expressionsCollapsed: true,
-    invertedColors: isDark.value,
-    keypad: false,
-    showGrid: false,
-    showXAxis: false,
-    showYAxis: false,
-    trace: false,
-  });
-  calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
-  const newExpressionPanel = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
-  if (!newExpressionPanel) return;
+  onLoaded(async ({ GraphingCalculator }) => {
+    calculator = await GraphingCalculator(element, {
+      border: false,
+      expressionsCollapsed: true,
+      invertedColors: isDark.value,
+      keypad: false,
+      showGrid: false,
+      showXAxis: false,
+      showYAxis: false,
+      trace: false,
+    });
+    calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
+    const newExpressionPanel = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+    if (!newExpressionPanel) return;
 
-  expressionPanel.value = newExpressionPanel;
-  render(componentsToRender.value);
+    expressionPanel.value = newExpressionPanel;
+    render(componentsToRender.value);
+  });
 });
 </script>
 

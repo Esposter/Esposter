@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { productListItems } from "@/services/esposter/productListItems";
+import { ProductListLinkItems } from "@/services/esposter/ProductListLinkItems";
 </script>
 
 <template>
   <v-list>
-    <NuxtInvisibleLink v-for="item of productListItems" :key="item.title" :to="item.href">
-      <v-list-item :value="item.title">
+    <NuxtInvisibleLink v-for="{ title, icon, href } of ProductListLinkItems" :key="title" :to="href">
+      <v-list-item :value="title">
         <template #prepend>
           <v-avatar color="background">
-            <v-icon :icon="item.icon" />
+            <v-icon :icon />
           </v-avatar>
         </template>
-        <v-list-item-title font-bold="!">{{ item.title }}</v-list-item-title>
+        <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>
   </v-list>

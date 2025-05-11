@@ -5,7 +5,7 @@ import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType
 import {
   ATableEditorItemEntity,
   aTableEditorItemEntitySchema,
-} from "#shared/models/tableEditor/ATableEditorItemEntity";
+} from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import {
   VuetifyComponentItemType,
   vuetifyComponentItemTypeSchema,

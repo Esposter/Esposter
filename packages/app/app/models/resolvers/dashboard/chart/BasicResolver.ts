@@ -44,7 +44,6 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
   override handleSchema(schema: z.AnyZodObject) {
     return schema.merge(basicChartConfigurationSchema);
   }
-
   // This is our base resolver that's always active
   override isActive() {
     return true;

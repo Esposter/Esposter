@@ -1,5 +1,6 @@
-import type { Item } from "#shared/models/tableEditor/Item";
-import type { TableEditor } from "#shared/models/tableEditor/TableEditor";
+import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
+import type { Item } from "#shared/models/tableEditor/data/Item";
+import type { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import type {
   _ExtractActionsFromSetupStore,
   _ExtractGettersFromSetupStore,
@@ -7,15 +8,18 @@ import type {
   Store,
 } from "pinia";
 
-import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditorConfiguration";
-import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
+import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { saveItemMetadata } from "@/services/shared/saveItemMetadata";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
 
-type TableEditorStoreState<TItem extends Item = Item> = ReturnType<typeof createEditFormData<TItem>> & {
+type TableEditorStoreState<
+  TItem extends Item = Item,
+  TIdKeys extends EntityIdKeys<TItem> = EntityIdKeys<TItem>,
+> = ReturnType<typeof createEditFormData<TItem, TIdKeys>> & {
   save: (isDeleteAction?: true) => Promise<void>;
   searchQuery: Ref<string>;
   tableEditor: ComputedRef<TableEditor<TItem>>;
@@ -25,27 +29,29 @@ type TableEditorStoreState<TItem extends Item = Item> = ReturnType<typeof create
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
-  const { $client } = useNuxtApp();
+  const session = authClient.useSession();
+  const { $trpc } = useNuxtApp();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
   const tableEditorConfiguration = ref(new TableEditorConfiguration());
   const tableEditorType = ref(TableEditorType.TodoList);
   const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value]);
-  const editFormData = createEditFormData<Item>(computed(() => tableEditor.value.items));
+  const editFormData = createEditFormData(
+    computed(() => tableEditor.value.items as Item[]),
+    ["id"],
+  );
   const save = async (isDeleteAction?: true) => {
     const { editedIndex, editedItem, editFormDialog } = editFormData;
     if (!editedItem.value) return;
 
-    if (isDeleteAction) deleteItem(editedItem.value.id);
+    if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
 
-    const session = authClient.useSession();
-
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);
-      await $client.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
+      await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
       localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());

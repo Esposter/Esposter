@@ -27,10 +27,9 @@ const emit = defineEmits<{
 }>();
 
 watch(dialog, (newDialog) => {
-  // Hack emitting the close event so the dialog content doesn't change
-  // until after the CSS animation that lasts 300ms ends
-  window.setTimeout(() => {
-    if (!newDialog) emit("close");
+  if (newDialog) return;
+  useTimeoutFn(() => {
+    emit("close");
   }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
 
@@ -43,13 +42,7 @@ watch(editFormRef, (newEditFormRef) => {
 </script>
 
 <template>
-  <v-dialog
-    v-model="dialog"
-    :fullscreen="isFullScreenDialog"
-    :width="isFullScreenDialog ? '100%' : 800"
-    persistent
-    no-click-animation
-  >
+  <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
     <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
       <StyledCard>
         <Header

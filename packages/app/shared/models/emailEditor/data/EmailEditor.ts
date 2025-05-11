@@ -1,11 +1,25 @@
 import type { ProjectData } from "grapesjs";
 
-import { applyItemMetadataMixin } from "#shared/models/entity/ItemMetadata";
-import { Serializable } from "#shared/models/entity/Serializable";
+import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { html } from "@/services/prettier/html";
 import { z } from "zod";
 
-class BaseEmailEditor extends Serializable implements ProjectData {}
-export const EmailEditor = applyItemMetadataMixin(BaseEmailEditor);
-export type EmailEditor = typeof EmailEditor.prototype;
+export class EmailEditor extends AItemEntity implements ProjectData {
+  [key: string]: unknown;
+  pages: unknown[] = [
+    {
+      component: html`
+        <mjml>
+          <mj-body></mj-body>
+        </mjml>
+      `,
+    },
+  ];
+
+  constructor(init?: Partial<EmailEditor>) {
+    super();
+    Object.assign(this, init);
+  }
+}
 
 export const emailEditorSchema = z.record(z.string().min(1), z.unknown());

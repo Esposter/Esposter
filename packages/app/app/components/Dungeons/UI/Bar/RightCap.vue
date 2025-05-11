@@ -20,6 +20,6 @@ const isVisible = computed(() => (displayWidth.value ?? 0) > 0);
 <template>
   <Image
     :configuration="{ visible: isVisible, ...imagePosition, texture, displayWidth, scaleY, tween }"
-    @update:display-width="(value: typeof displayWidth) => (displayWidth = value)"
+    @update:display-width="(value) => (displayWidth = value)"
   />
 </template>

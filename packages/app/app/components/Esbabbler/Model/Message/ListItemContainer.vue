@@ -10,14 +10,14 @@ interface MessageListItemContainerProps {
 
 const { currentMessage, nextMessage } = defineProps<MessageListItemContainerProps>();
 const memberStore = useMemberStore();
-const { memberList } = storeToRefs(memberStore);
-// We won't show messages from members that have left the room for simplicity
-const creator = computed(() => memberList.value.find((m) => m.id === currentMessage.userId));
+const { members } = storeToRefs(memberStore);
+const creator = computed(() => members.value.find(({ id }) => id === currentMessage.userId));
 </script>
 
 <template>
+  <!-- We won't show messages from members that have left the room for simplicity -->
   <template v-if="creator">
-    <EsbabblerModelMessageListItem :message="currentMessage" :creator />
+    <EsbabblerModelMessageListItem :creator :message="currentMessage" :next-message />
     <EsbabblerModelMessageTimeline
       :current-message-date="currentMessage.createdAt"
       :next-message-date="nextMessage?.createdAt"

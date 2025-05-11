@@ -1,6 +1,6 @@
 import type { CumulativeWeight } from "@/models/math/CumulativeWeight";
 
-import { generateRandomNumber } from "#shared/util/math/random/generateRandomNumber";
+import { createRandomNumber } from "#shared/util/math/random/createRandomNumber";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) => {
@@ -12,6 +12,6 @@ export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) 
       "cannot pick weighted random value from empty array",
     );
 
-  const randomCumulativeWeight = generateRandomNumber(maxCumulativeWeight);
-  return values[values.filter((v) => v.cumulativeWeight <= randomCumulativeWeight).length];
+  const randomCumulativeWeight = createRandomNumber(maxCumulativeWeight);
+  return values[values.filter(({ cumulativeWeight }) => cumulativeWeight <= randomCumulativeWeight).length];
 };

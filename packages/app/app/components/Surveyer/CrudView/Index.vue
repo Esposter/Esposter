@@ -5,7 +5,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();
 const surveyerStore = useSurveyStore();
-const { searchQuery, surveyList, totalItemsLength } = storeToRefs(surveyerStore);
+const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
 </script>
 
 <template>
@@ -17,10 +17,13 @@ const { searchQuery, surveyList, totalItemsLength } = storeToRefs(surveyerStore)
       :data-table-server-props="{
         height: '100%',
         headers: surveyerHeaders,
-        items: surveyList,
+        items: surveys,
         itemsLength: totalItemsLength,
         search: searchQuery,
-        sortBy: [{ key: 'name', order: 'asc' }],
+        sortBy: [
+          { key: 'name', order: 'asc' },
+          { key: 'updatedAt', order: 'desc' },
+        ],
         groupBy: [{ key: 'group', order: 'asc' }],
         loading: isLoading,
       }"

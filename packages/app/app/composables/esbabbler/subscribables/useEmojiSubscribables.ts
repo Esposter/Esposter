@@ -1,13 +1,10 @@
-import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useEmojiSubscribables = () => {
-  const { $client } = useNuxtApp();
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
@@ -20,26 +17,27 @@ export const useEmojiSubscribables = () => {
   onMounted(() => {
     if (!currentRoomId.value) return;
 
-    createEmojiUnsubscribable.value = $client.emoji.onCreateEmoji.subscribe(
-      { roomId: currentRoomId.value },
+    const roomId = currentRoomId.value;
+    createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
+      { roomId },
       {
-        onData: (data: MessageEmojiMetadataEntity) => {
+        onData: (data) => {
           storeCreateEmoji(data);
         },
       },
     );
-    updateEmojiUnsubscribable.value = $client.emoji.onUpdateEmoji.subscribe(
-      { roomId: currentRoomId.value },
+    updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
+      { roomId },
       {
-        onData: (data: UpdateEmojiInput) => {
+        onData: (data) => {
           storeUpdateEmoji(data);
         },
       },
     );
-    deleteEmojiUnsubscribable.value = $client.emoji.onDeleteEmoji.subscribe(
-      { roomId: currentRoomId.value },
+    deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
+      { roomId },
       {
-        onData: (data: DeleteEmojiInput) => {
+        onData: (data) => {
           storeDeleteEmoji(data);
         },
       },

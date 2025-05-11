@@ -1,8 +1,8 @@
-import { JSONClasses } from "#shared/services/superjson/JSONClasses";
+import { JSONClassMap } from "#shared/services/superjson/JSONClassMap";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 
 export default definePayloadPlugin(() => {
-  for (const { cls, name } of JSONClasses) {
+  for (const [name, cls] of Object.entries(JSONClassMap)) {
     definePayloadReducer(name, (data) => data instanceof cls && data.toJSON());
     definePayloadReviver(name, (data) => Object.assign(new cls(), jsonDateParse(data)));
   }

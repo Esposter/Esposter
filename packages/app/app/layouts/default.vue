@@ -5,11 +5,13 @@ import type { VNavigationDrawer } from "vuetify/components";
 import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
+  footerStyle?: CSSProperties;
+  leftNavigationDrawerProps?: VNavigationDrawer["$props"];
   mainStyle?: CSSProperties;
-  scrim?: VNavigationDrawer["scrim"];
+  rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { mainStyle, scrim } = defineProps<DefaultProps>();
+const { footerStyle, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: (props: Record<string, never>) => unknown;
   footer?: (props: Record<string, never>) => unknown;
@@ -28,13 +30,13 @@ router.beforeEach(() => {
 </script>
 
 <template>
+  <!-- Ignore parent div here, it is only for nuxt -->
   <div contents>
-    <!-- Ignore parent div here, it is only for nuxt -->
     <v-navigation-drawer
       v-if="slots.left"
       app
-      :model-value="leftDrawerOpen"
-      :scrim
+      :model-value="leftNavigationDrawerProps?.permanent ?? leftDrawerOpen"
+      :="leftNavigationDrawerProps"
       @update:model-value="
         (value) => {
           leftDrawerOpen = value;
@@ -49,8 +51,8 @@ router.beforeEach(() => {
       v-if="slots.right"
       app
       location="right"
-      :model-value="rightDrawerOpen"
-      :scrim
+      :model-value="rightNavigationDrawerProps?.permanent ?? rightDrawerOpen"
+      :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
           rightDrawerOpen = value;
@@ -65,7 +67,7 @@ router.beforeEach(() => {
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" app>
+    <v-footer v-if="slots.footer" :style="footerStyle" app>
       <slot name="footer" />
     </v-footer>
   </div>
@@ -77,8 +79,8 @@ router.beforeEach(() => {
 }
 // Only show scrollbar for part of the drawer that actually has
 // content greater than screen size rather than the entire drawer.
-// Make sure to apply attribute overflow-y="auto" for the container
-// you want to show the scrollbar on in the drawer
+// Make sure to apply attribute overflow-y-auto for the container
+// that you want to show the scrollbar on in the drawer
 .v-navigation-drawer__content {
   display: flex;
   flex-direction: column;

@@ -13,7 +13,8 @@ defineSlots<{
   postPreview: (props: Record<string, never>) => unknown;
 }>();
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
-const { deletePost } = usePostStore();
+const postStore = usePostStore();
+const { deletePost } = postStore;
 const { text } = useColors();
 </script>
 
@@ -37,14 +38,14 @@ const { text } = useColors();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div class="border" py-2 mx-4 rd-lg shadow-md>
+    <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="postPreview" />
     </div>
   </StyledDeleteDialog>
 </template>
-
+<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
-.border {
-  border: 1px $border-style-root v-bind(text);
+.custom-border {
+  border: $border-width-root $border-style-root v-bind(text);
 }
 </style>

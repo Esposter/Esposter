@@ -4,43 +4,37 @@ import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { createOperationData } from "@/services/shared/pagination/createOperationData";
+import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {
-  const { $client } = useNuxtApp();
-  const { itemList, ...restData } = createCursorPaginationData<PostWithRelations>();
+  const { $trpc } = useNuxtApp();
+  const { items, ...restData } = createCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,
     updatePost: storeUpdatePost,
     ...restOperationData
-  } = createOperationData(itemList, DatabaseEntityType.Post);
+  } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
   const createPost = async (input: CreatePostInput) => {
-    const newPost = await $client.post.createPost.mutate(input);
-    if (!newPost) return;
-
+    const newPost = await $trpc.post.createPost.mutate(input);
     storeCreatePost(newPost);
   };
   const updatePost = async (input: UpdatePostInput) => {
-    const updatedPost = await $client.post.updatePost.mutate(input);
-    if (!updatedPost) return;
-
+    const updatedPost = await $trpc.post.updatePost.mutate(input);
     storeUpdatePost(updatedPost);
   };
   const deletePost = async (input: DeletePostInput) => {
-    const deletedPost = await $client.post.deletePost.mutate(input);
-    if (!deletedPost) return;
-
-    storeDeletePost(deletedPost.id);
+    const deletedPost = await $trpc.post.deletePost.mutate(input);
+    storeDeletePost({ id: deletedPost.id });
   };
 
   return {
-    ...restOperationData,
     createPost,
     deletePost,
     updatePost,
+    ...restOperationData,
     ...restData,
   };
 });

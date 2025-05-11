@@ -17,7 +17,7 @@ const { buttonAttrs, buttonProps, tooltipProps } = defineProps<StyledEmojiPicker
 const emit = defineEmits<{ select: [emoji: string]; "update:menu": [value: boolean] }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
-const onEmojiSelect = (emoji: { native: string }) => {
+const onSelectEmoji = (emoji: { native: string }) => {
   emit("select", emoji.native);
   emit("update:menu", false);
   menu.value = false;
@@ -47,7 +47,7 @@ const onEmojiSelect = (emoji: { native: string }) => {
         </template>
       </v-tooltip>
     </template>
-    <Picker :data="emojiIndex" @select="onEmojiSelect" />
+    <Picker :data="emojiIndex" @select="onSelectEmoji" />
   </v-menu>
 </template>
 

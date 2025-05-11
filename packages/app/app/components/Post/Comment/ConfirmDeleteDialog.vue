@@ -12,7 +12,8 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
 }>();
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
-const { deleteComment } = useCommentStore();
+const commentStore = useCommentStore();
+const { deleteComment } = commentStore;
 const { text } = useColors();
 </script>
 
@@ -35,14 +36,14 @@ const { text } = useColors();
     <template #activator="activatorProps">
       <slot :="activatorProps" />
     </template>
-    <div class="border" py-2 mx-4 rd-lg shadow-md>
+    <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="commentPreview" />
     </div>
   </StyledDeleteDialog>
 </template>
-
+<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
-.border {
-  border: 1px $border-style-root v-bind(text);
+.custom-border {
+  border: $border-width-root $border-style-root v-bind(text);
 }
 </style>

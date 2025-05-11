@@ -7,11 +7,13 @@ const { onClick } = popupStore;
 
 <template>
   <div mt-12 relative>
-    <ClickerModelRotatingCursors />
+    <ClientOnly>
+      <ClickerModelRotatingCursors />
+    </ClientOnly>
     <ClickerModelItem
       relative
       size-50
-      :g-attrs="{ cursor: 'pointer', 'origin-center': '', 'active:scale-95': '' }"
+      :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
       @click="onClick"
     />
   </div>

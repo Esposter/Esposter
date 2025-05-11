@@ -2,12 +2,12 @@ import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/Delete
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "node:events";
 
 interface EmojiEvents {
-  createEmoji: (data: MessageEmojiMetadataEntity) => void;
-  deleteEmoji: (data: DeleteEmojiInput) => void;
-  updateEmoji: (data: UpdateEmojiInput) => void;
+  createEmoji: MessageEmojiMetadataEntity[];
+  deleteEmoji: DeleteEmojiInput[];
+  updateEmoji: UpdateEmojiInput[];
 }
 
 export const emojiEventEmitter = new EventEmitter<EmojiEvents>();
