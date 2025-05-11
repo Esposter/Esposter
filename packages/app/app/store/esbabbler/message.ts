@@ -2,6 +2,7 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
 import type { Editor } from "@tiptap/core";
 
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
@@ -70,6 +71,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     delete newMessage.isLoading;
   };
   const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
+  const { data: downloadFileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, DownloadFileUrl>());
   const activeReplyRowKey = ref<string>();
   const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
@@ -82,6 +84,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     sendMessage,
     ...restData,
     activeReplyRowKey,
+    downloadFileUrlMap,
     replyMap,
     typings,
   };

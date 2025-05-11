@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import type { ParsedFileEntity } from "@/models/esbabbler/file/ParsedFileEntity";
+import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
 
+import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+
 interface FileInputContainerProps {
-  files: ParsedFileEntity[];
+  files: FileEntity[];
 }
 
 const { files } = defineProps<FileInputContainerProps>();
 const emit = defineEmits<{
   delete: [number];
 }>();
+const messageInputStore = useMessageInputStore();
+const { uploadFileUrlMap } = storeToRefs(messageInputStore);
+const getUrl = (fileId: string) => uploadFileUrlMap.value.get(fileId)?.url ?? "";
 const menuItems: OptionMenuItem<number>[] = [
   {
     color: "error",
@@ -51,7 +56,7 @@ const menuItems: OptionMenuItem<number>[] = [
           </v-card-title>
           <v-card-text pb-0 px-4>
             <v-card rd-4>
-              <EsbabblerFileRenderer :file />
+              <EsbabblerFileRenderer :file :url="getUrl(file.id)" />
             </v-card>
           </v-card-text>
           <v-card-actions px-4 text-sm>

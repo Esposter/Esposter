@@ -1,6 +1,7 @@
-import type { ParsedFileEntity } from "@/models/esbabbler/file/ParsedFileEntity";
+import type { FileEntity } from "#shared/models/azure/FileEntity";
 
 export interface FileRendererProps {
-  file: ParsedFileEntity;
+  file: FileEntity;
   preview?: true;
+  url: string;
 }

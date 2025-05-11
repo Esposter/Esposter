@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
+
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/esbabbler/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
@@ -8,7 +10,7 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const messageInputStore = useMessageInputStore();
-const { files } = storeToRefs(messageInputStore);
+const { files, uploadFileUrlMap } = storeToRefs(messageInputStore);
 const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   if (!currentRoomId.value || !newFiles) return;
   else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
@@ -23,7 +25,9 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
   await Promise.all(
     newFiles.map(async (file, index) => {
       const { id, sasUrl } = fileSasEntities[index];
-      files.value[index] = { filename: file.name, id, mimetype: file.type, url: URL.createObjectURL(file) };
+      const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
+      uploadFileUrlMap.value.set(id, uploadFileUrl);
+      files.value[index] = { filename: file.name, id, mimetype: file.type };
       await uploadBlocks(file, sasUrl);
     }),
   );
@@ -32,8 +36,8 @@ const { isOverDropZone } = useDropZone(document, async (newFiles) => {
 
 <template>
   <v-dialog v-model="isOverDropZone" width="auto">
-    <StyledCard p-8 text-center>
-      <v-card-title pb-0 text-xl font-bold>Upload to {{ currentRoomName }}</v-card-title>
+    <StyledCard text-center p-8>
+      <v-card-title text-xl font-bold pb-0>Upload to {{ currentRoomName }}</v-card-title>
       <v-card-subtitle>You can add comments before uploading.</v-card-subtitle>
     </StyledCard>
   </v-dialog>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { ParsedFileEntity } from "@/models/esbabbler/file/ParsedFileEntity";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
-import { useRoomStore } from "@/store/esbabbler/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface MessageListItemProps {
@@ -28,18 +26,6 @@ const messageInputStore = useMessageInputStore();
 const { forwardRowKey, replyRowKey } = storeToRefs(messageInputStore);
 const displayCreatedAt = useDateFormat(() => message.createdAt, "H:mm");
 const messageHtml = useRefreshMentions(() => message.message);
-const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
-// @TODO: Optimise this to fetch all the files when messages are fetched
-const files = computedAsync<ParsedFileEntity[]>(async () => {
-  if (!currentRoomId.value || message.files.length === 0) return [];
-  const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-    files: message.files,
-    roomId: currentRoomId.value,
-  });
-  return message.files.map((file, index) => Object.assign(file, { url: downloadFileSasUrls[index] }));
-}, []);
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
@@ -121,7 +107,7 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:delete-mode="updateIsOpen"
         />
         <v-list-item-subtitle v-else-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
-        <EsbabblerModelMessageFileContainer :files />
+        <EsbabblerModelMessageFileContainer :files="message.files" />
         <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
       </v-list-item>
       <div v-if="!message.isLoading" relative z-1>
