@@ -5,5 +5,5 @@ const { file, url } = defineProps<FileRendererProps>();
 </script>
 
 <template>
-  <v-img :src="url" :alt="file.mimetype" />
+  <v-img :src="url" :alt="file.mimetype" eager />
 </template>
