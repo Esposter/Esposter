@@ -144,7 +144,7 @@ catalog:
   rolldown-plugin-dts: ^0.11.4
   rolldown-vite: ^6.3.8
   rxjs: ^7.8.2
-  sass-embedded: ^1.87.0
+  sass-embedded: ^1.88.0
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
   survey-core: ^2.0.8
