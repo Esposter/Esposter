@@ -51,7 +51,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
       return;
 
     const createMessageInput: CreateMessageInput = {
-      files: messageInputStore.files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
+      files: messageInputStore.files,
       message: messageInputStore.messageInput,
       replyRowKey: messageInputStore.replyRowKey,
       roomId: roomStore.currentRoomId,
