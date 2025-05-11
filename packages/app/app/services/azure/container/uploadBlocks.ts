@@ -1,5 +1,5 @@
 import { MEGABYTE } from "#shared/services/esposter/constants";
-import { commitBlockList } from "@/services/esbabbler/commitBlockList";
+import { commitBlockList } from "@/services/azure/container/commitBlockList";
 
 export const uploadBlocks = async (file: File, sasUrl: string) => {
   // 4MB block size (adjust as needed)

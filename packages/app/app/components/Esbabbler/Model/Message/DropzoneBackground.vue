@@ -2,7 +2,7 @@
 import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
-import { uploadBlocks } from "@/services/esbabbler/uploadBlocks";
+import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
 

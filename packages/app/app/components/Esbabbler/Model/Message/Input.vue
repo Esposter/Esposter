@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
+import { getTypingMessage } from "@/services/esbabbler/message/getTypingMessage";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -25,6 +25,7 @@ const keyboardExtension = new Extension({
 });
 const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
+const { removeFileUrl } = messageInputStore;
 const { files, messageInput, replyRowKey } = storeToRefs(messageInputStore);
 const reply = computed(() =>
   replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
@@ -44,7 +45,15 @@ const reply = computed(() =>
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template #prepend-inner-header>
-        <EsbabblerModelMessageFileInputContainer :files @delete="(index) => files.splice(index, 1)" />
+        <EsbabblerModelMessageFileInputContainer
+          :files
+          @delete="
+            (index) => {
+              const { id } = files.splice(index, 1)[0];
+              removeFileUrl(id);
+            }
+          "
+        />
       </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />
