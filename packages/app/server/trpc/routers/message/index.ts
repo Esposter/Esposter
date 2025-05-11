@@ -145,10 +145,11 @@ export const messageRouter = router({
       const message = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
       if (!message)
         throw new TRPCError({
-          code: "BAD_REQUEST",
+          code: "NOT_FOUND",
           message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
             .message,
         });
+      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       // We don't forward reply information for privacy
       message.replyRowKey = undefined;
       message.isForward = true;
@@ -259,8 +260,15 @@ export const messageRouter = router({
   updateMessage: getRoomUserProcedure(updateMessageInputSchema, "partitionKey")
     .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
     .input(updateMessageInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
+      const message = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+      if (!message)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify(input)).message,
+        });
+      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       await updateEntity(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
     }),
