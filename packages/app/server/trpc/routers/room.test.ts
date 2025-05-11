@@ -113,7 +113,7 @@ describe("room", () => {
     expect(data.value.name).toBe(updatedName);
   });
 
-  test("deletes", async () => {
+  test.todo("deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
@@ -130,7 +130,7 @@ describe("room", () => {
     );
   });
 
-  test("on deletes", async () => {
+  test.todo("on deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });

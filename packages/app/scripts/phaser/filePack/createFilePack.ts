@@ -19,8 +19,8 @@ export const createFilePack = async () => {
   const fileKeys = new Set<string>();
   const enumName = "FileKey";
 
-  for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    for (const blob of response.segment.blobItems) {
+  for await (const { segment } of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+    for (const blob of segment.blobItems) {
       if (!blob.properties.contentType)
         throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);
 

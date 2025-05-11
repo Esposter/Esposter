@@ -11,11 +11,10 @@ export const getTopNEntities = async <TEntity extends AzureEntity>(
   cls: Class<TEntity>,
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
-  const listResults = tableClient.listEntities<TEntity>({ queryOptions });
-  const iterator = listResults.byPage({ maxPageSize: topN });
   // Filter out metadata like continuation token before deserializing the json
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  for await (const page of iterator) return page.slice(0, topN).map((e) => deserializeEntity(e, cls));
+  for await (const page of tableClient.listEntities<TEntity>({ queryOptions }).byPage({ maxPageSize: topN }))
+    return page.slice(0, topN).map((e) => deserializeEntity(e, cls));
   return [];
 };

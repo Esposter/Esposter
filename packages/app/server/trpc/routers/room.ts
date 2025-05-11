@@ -15,6 +15,8 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
+import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { deleteRoom } from "@@/server/services/db/room/deleteRoom";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
@@ -27,6 +29,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getRoomCreatorProcedure } from "@@/server/trpc/procedure/getRoomCreatorProcedure";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { AzureContainer } from "@@/shared/models/azure/blob/AzureContainer";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
@@ -140,9 +143,18 @@ export const roomRouter = router({
         return newRoom;
       }),
     ),
-  deleteRoom: authedProcedure
-    .input(deleteRoomInputSchema)
-    .mutation<Room>(async ({ ctx, input }) => deleteRoom(ctx.db, ctx.session, input)),
+  deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
+    const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
+    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const blobBatchClient = containerClient.getBlobBatchClient();
+    const blobUrls: string[] = [];
+    for await (const { segment } of containerClient
+      .listBlobsFlat({ prefix: input })
+      .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+      blobUrls.push(...segment.blobItems.map(({ name }) => `${containerClient.url}/${name}`));
+    if (blobUrls.length > 0) await blobBatchClient.deleteBlobs(blobUrls, containerClient.credential);
+    return deletedRoom;
+  }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
     if (!invite)
