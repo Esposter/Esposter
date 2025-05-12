@@ -108,7 +108,7 @@ export const messageRouter = router({
       const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
       const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
-      messageEventEmitter.emit("createMessage", [newMessage]);
+      messageEventEmitter.emit("createMessage", [[newMessage]]);
       return newMessage;
     }),
   createTyping: getRoomUserProcedure(createTypingInputSchema, "roomId")
@@ -203,7 +203,7 @@ export const messageRouter = router({
           await createEntity(messageClient, newMessageEntity);
           // We don't need visual effects like isLoading when forwarding messages
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
-          messageEventEmitter.emit("createMessage", [forward, true], [newMessageEntity, true]);
+          messageEventEmitter.emit("createMessage", [[forward, newMessageEntity], true]);
         }),
       );
     }),
@@ -237,10 +237,10 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ ctx, input, signal }) {
-      for await (const data of on(messageEventEmitter, "createMessage", { signal })) {
+      for await (const [[data, isIncludesSelf]] of on(messageEventEmitter, "createMessage", { signal })) {
         const dataToYield: MessageEntity[] = [];
 
-        for (const [newMessage, isIncludesSelf] of data)
+        for (const newMessage of data)
           if (
             isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
             (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
