@@ -9,16 +9,16 @@ catalog:
   "@codemirror/state": ^6.5.2
   "@codemirror/theme-one-dark": ^6.1.2
   "@codemirror/view": ^6.36.8
-  "@electric-sql/pglite": ^0.3.0
+  "@electric-sql/pglite": ^0.3.1
   "@fullcalendar/core": ^6.1.17
   "@fullcalendar/daygrid": ^6.1.17
   "@fullcalendar/interaction": ^6.1.17
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
-  "@koumoul/vjsf": ^3.15.0
-  "@lerna-lite/cli": ^4.1.1
-  "@lerna-lite/publish": ^4.1.1
-  "@lerna-lite/run": ^4.1.1
+  "@koumoul/vjsf": ^3.15.1
+  "@lerna-lite/cli": ^4.1.2
+  "@lerna-lite/publish": ^4.1.2
+  "@lerna-lite/run": ^4.1.2
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.3.0
   "@nuxt/fonts": ^0.11.3
@@ -127,7 +127,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.17.2
+  nuxt: ^3.17.3
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -141,8 +141,8 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.0
   rolldown: npm:rolldown@canary
-  rolldown-plugin-dts: ^0.11.4
-  rolldown-vite: ^6.3.8
+  rolldown-plugin-dts: ^0.12.0
+  rolldown-vite: ^6.3.9
   rxjs: ^7.8.2
   sass-embedded: ^1.88.0
   sql-highlight: ^6.0.0
@@ -159,7 +159,7 @@ catalog:
   type-fest: ^4.41.0
   typedoc: ^0.28.4
   typescript: ^5.8.3
-  typescript-eslint: ^8.32.0
+  typescript-eslint: ^8.32.1
   unocss: ^66.1.1
   unplugin-auto-import: ^19.2.0
   vite: ^6.3.5
