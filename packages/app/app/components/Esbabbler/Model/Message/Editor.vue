@@ -24,7 +24,7 @@ const editedMessageHtml = ref(useRefreshMentions(() => message.message).value);
 const onUpdateMessage = async (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
-    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+    else if (EMPTY_TEXT_REGEX.test(editor.getText()) && message.files.length === 0) {
       emit("update:delete-mode", true);
       return;
     }
