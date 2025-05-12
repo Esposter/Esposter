@@ -65,7 +65,7 @@ const messageHtml = useRefreshMentions(() => message.message);
     <slot v-else>
       <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
     </slot>
-    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
+    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message :is-preview />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
   </v-list-item>
 </template>
