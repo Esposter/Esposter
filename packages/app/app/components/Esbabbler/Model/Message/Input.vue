@@ -35,7 +35,7 @@ const reply = computed(() =>
   <EsbabblerModelMessageForwardRoomDialog />
   <EsbabblerModelMessageDropzoneBackground />
   <div w-full>
-    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = undefined" />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = ''" />
     <RichTextEditor
       v-model="messageInput"
       :placeholder="`Message ${currentRoomName}`"
