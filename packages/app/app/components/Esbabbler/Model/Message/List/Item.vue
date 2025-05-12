@@ -77,7 +77,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         <div
           v-show="activeAndNotUpdateMode && !isOpen"
           absolute
-          right-0
+          right-4
           :top="isSameBatch ? -9 : -2"
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"
@@ -99,7 +99,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <EsbabblerModelMessage :creator :message :next-message />
+      <EsbabblerModelMessage :creator is-preview :message :next-message />
     </template>
   </EsbabblerModelMessageConfirmDeleteDialog>
 </template>

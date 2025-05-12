@@ -20,7 +20,7 @@ interface BarProps {
   width: number;
 }
 
-const { barPercentage, imagePosition, isSkipAnimations, scaleY, type, width } = defineProps<BarProps>();
+const { barPercentage, imagePosition, isSkipAnimations = false, scaleY, type, width } = defineProps<BarProps>();
 const emit = defineEmits<{
   "complete:display-width": [];
   "start:display-width": [tween: Tweens.Tween];

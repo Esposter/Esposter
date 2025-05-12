@@ -12,11 +12,11 @@ interface FileInputProps {
 const { file, index, uploadFileUrl } = defineProps<FileInputProps>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
-const menuItems: OptionMenuItem<number>[] = [
+const menuItems: OptionMenuItem[] = [
   {
     color: "error",
     icon: "mdi-delete",
-    onClick: (index) => {
+    onClick: () => {
       emit("delete", index);
     },
     title: "Delete Attachment",
@@ -35,7 +35,7 @@ const menuItems: OptionMenuItem<number>[] = [
             :text="shortTitle ?? title"
           >
             <template #activator="{ props }">
-              <v-btn m-0="!" rd-none="!" variant="text" :color :icon size="small" :="props" @click="onClick(index)" />
+              <v-btn m-0="!" rd-none="!" variant="text" :color :icon size="small" :="props" @click="onClick" />
             </template>
           </v-tooltip>
         </div>

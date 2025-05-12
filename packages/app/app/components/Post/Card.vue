@@ -7,11 +7,11 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 interface PostCardProps {
   // This is only used for the post card in the comments page to direct it
   // into looking for post data in the comment store instead
-  isCommentStore?: true;
+  isCommentStore?: boolean;
   post: PostWithRelations;
 }
 
-const { isCommentStore, post } = defineProps<PostCardProps>();
+const { isCommentStore = false, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { surfaceOpacity80 } = useColors();
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);

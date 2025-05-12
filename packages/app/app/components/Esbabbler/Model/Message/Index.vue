@@ -3,22 +3,23 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
-import { authClient } from "@/services/auth/authClient";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface MessageProps {
   active?: boolean;
   creator: User;
+  isPreview?: boolean;
   message: MessageEntity;
   nextMessage?: MessageEntity;
 }
 
 const slots = defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
-const { active, creator, message, nextMessage } = defineProps<MessageProps>();
-const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === creator.id);
+const { active, creator, isPreview = false, message, nextMessage } = defineProps<MessageProps>();
 const isSameBatch = computed(
-  () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
+  () =>
+    !isPreview &&
+    message.userId === nextMessage?.userId &&
+    dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const displayCreatedAt = useDateFormat(() => message.createdAt, "H:mm");
 const messageHtml = useRefreshMentions(() => message.message);
@@ -64,7 +65,7 @@ const messageHtml = useRefreshMentions(() => message.message);
     <slot v-else>
       <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
     </slot>
-    <EsbabblerModelMessageFileContainer :files="message.files" :is-creator />
+    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
   </v-list-item>
 </template>

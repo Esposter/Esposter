@@ -7,11 +7,11 @@ import { useClickerStore } from "@/store/clicker";
 import { useUpgradeStore } from "@/store/clicker/upgrade";
 
 interface UpgradeListItemProps {
-  isBought?: true;
+  isBought?: boolean;
   upgrade: Upgrade;
 }
 
-const { isBought, upgrade } = defineProps<UpgradeListItemProps>();
+const { isBought = false, upgrade } = defineProps<UpgradeListItemProps>();
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
 const upgradeStore = useUpgradeStore();

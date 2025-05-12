@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/esbabbler/file/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface FileProps {
   columnLayout: number[];
   file: FileEntity;
   index: number;
-  isCreator: boolean;
+  message: MessageEntity;
 }
 
-const { columnLayout, file, index, isCreator } = defineProps<FileProps>();
+const { columnLayout, file, index, message } = defineProps<FileProps>();
+const { data: session } = await authClient.useSession(useFetch);
+const isCreator = computed(() => session.value?.user.id === message.userId);
+const { $trpc } = useNuxtApp();
 const messageStore = useMessageStore();
 const { downloadFileUrlMap } = storeToRefs(messageStore);
 const url = computed(() => downloadFileUrlMap.value.get(file.id)?.url ?? "");
@@ -33,9 +39,21 @@ const isActive = ref(false);
     @mouseleave="isActive = false"
   >
     <EsbabblerFileRenderer :file :url />
-    <div v-if="isCreator" v-show="isActive" absolute top-2 right-2>
+    <div
+      v-if="isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
+      v-show="isActive"
+      absolute
+      top-2
+      right-2
+    >
       <v-hover #default="{ isHovering, props: hoverProps }">
-        <EsbabblerModelMessageFileOptionsMenu :is-hovering :hover-props />
+        <EsbabblerModelMessageFileOptionsMenu
+          :is-hovering
+          :hover-props
+          @delete="
+            $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
+          "
+        />
       </v-hover>
     </div>
   </StyledCard>
