@@ -126,6 +126,7 @@ export const messageRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
+      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       else if (message.files.length === 0) return;
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
@@ -158,6 +159,8 @@ export const messageRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
         });
+      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
 
@@ -189,7 +192,6 @@ export const messageRouter = router({
           message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
             .message,
         });
-      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       // We don't forward reply information for privacy
       message.replyRowKey = undefined;
       message.isForward = true;
