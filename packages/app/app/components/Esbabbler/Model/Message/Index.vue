@@ -26,7 +26,7 @@ const messageHtml = useRefreshMentions(() => message.message);
 </script>
 
 <template>
-  <v-list-item :active>
+  <v-list-item :style="isPreview ? { pointerEvents: 'none', userSelect: 'none' } : undefined" :active>
     <template #prepend>
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
         <EsbabblerModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
@@ -65,7 +65,7 @@ const messageHtml = useRefreshMentions(() => message.message);
     <slot v-else>
       <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
     </slot>
-    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message :is-preview />
+    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
   </v-list-item>
 </template>
