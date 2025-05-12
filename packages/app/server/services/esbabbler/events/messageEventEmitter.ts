@@ -6,7 +6,7 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import { EventEmitter } from "node:events";
 
 interface MessageEvents {
-  createMessage: MessageEntity[];
+  createMessage: [MessageEntity, isIncludesSelf?: true][];
   createTyping: CreateTypingInput[];
   deleteMessage: DeleteMessageInput[];
   // updatedAt also gets implicitly updated, but for the sake of my sanity in not wanting to do any more type-massaging

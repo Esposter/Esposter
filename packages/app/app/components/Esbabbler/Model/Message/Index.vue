@@ -58,7 +58,7 @@ const messageHtml = useRefreshMentions(() => message.message);
               Forwarded
             </span>
           </v-list-item-subtitle>
-          <v-list-item-subtitle op-100="!" v-html="messageHtml" />
+          <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
         </div>
       </div>
     </template>

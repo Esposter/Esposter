@@ -7,7 +7,7 @@ import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessage
 export const createMessageEntity = ({
   roomId,
   ...rest
-}: CreateMessageInput & Pick<MessageEntity, "isLoading" | "userId">) => {
+}: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">) => {
   const createdAt = new Date();
   return new MessageEntity({
     ...rest,

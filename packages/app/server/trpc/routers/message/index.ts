@@ -12,7 +12,6 @@ import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/Me
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -30,7 +29,6 @@ import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
-import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
 import { on } from "@@/server/services/events/on";
@@ -110,7 +108,7 @@ export const messageRouter = router({
       const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
       const messageClient = await useTableClient(AzureTable.Messages);
       await createEntity(messageClient, newMessage);
-      messageEventEmitter.emit("createMessage", newMessage);
+      messageEventEmitter.emit("createMessage", [newMessage]);
       return newMessage;
     }),
   createTyping: getRoomUserProcedure(createTypingInputSchema, "roomId")
@@ -187,27 +185,25 @@ export const messageRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      // We don't forward reply information for privacy
-      messageEntity.replyRowKey = undefined;
-      messageEntity.isForward = true;
-      if (message) messageEntity.message = message;
       await Promise.all(
         forwardRoomIds.map(async (forwardRoomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, forwardRoomId, ctx.roomId);
-          const createdAt = new Date();
-          const forward = new MessageEntity({
-            // eslint-disable-next-line @typescript-eslint/no-misused-spread
-            ...messageEntity,
-            createdAt,
+          const forward = createMessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
-            partitionKey: getMessagesPartitionKey(forwardRoomId, createdAt),
-            rowKey: getReverseTickedTimestamp(),
-            updatedAt: createdAt,
+            isForward: true,
+            message: messageEntity.message,
+            // We don't forward reply information for privacy
+            replyRowKey: undefined,
+            roomId: forwardRoomId,
             userId: ctx.session.user.id,
           });
+          const newMessageEntity = createMessageEntity({ message, roomId: forwardRoomId, userId: ctx.session.user.id });
           await createEntity(messageClient, forward);
-          messageEventEmitter.emit("createMessage", forward);
+          await createEntity(messageClient, newMessageEntity);
+          // We don't need visual effects like isLoading when forwarding messages
+          // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          messageEventEmitter.emit("createMessage", [forward, true], [newMessageEntity, true]);
         }),
       );
     }),
@@ -241,14 +237,13 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ ctx, input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "createMessage", { signal }))
-        if (
-          isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
-          // We don't need visual effects like isLoading when forwarding messages
-          // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
-          (data.userId !== ctx.session.user.id || data.isForward)
-        )
-          yield data;
+      for await (const data of on(messageEventEmitter, "createMessage", { signal }))
+        for (const [newMessage, isIncludesSelf] of data)
+          if (
+            isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
+            (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
+          )
+            yield newMessage;
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
     .input(onCreateTypingInputSchema)

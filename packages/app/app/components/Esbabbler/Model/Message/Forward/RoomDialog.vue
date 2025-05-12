@@ -13,7 +13,7 @@ const { userMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { messages } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
-const { forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
+const { forwardMessageInput, forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
 const forward = computed(() => messages.value.find(({ rowKey }) => rowKey === forwardRowKey.value));
 const creator = computed(() => (forward.value ? userMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
@@ -32,7 +32,6 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
   DatabaseEntityType.Room,
   true,
 );
-const message = ref("");
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
@@ -74,7 +73,11 @@ watch(dialog, (newDialog) => {
       <EsbabblerModelMessage :creator is-preview :message="forward" />
       <v-divider />
       <v-card-actions flex-col gap-0>
-        <RichTextEditor v-model="message" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
+        <RichTextEditor
+          v-model="forwardMessageInput"
+          :limit="MESSAGE_MAX_LENGTH"
+          placeholder="Add an optional message..."
+        />
         <StyledButton
           w-full
           :disabled="forwardRoomIds.length === 0"
@@ -82,7 +85,12 @@ watch(dialog, (newDialog) => {
             async () => {
               if (!forward) return;
               const { partitionKey, rowKey } = forward;
-              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, forwardRoomIds, message });
+              await $trpc.message.forwardMessages.mutate({
+                partitionKey,
+                rowKey,
+                forwardRoomIds,
+                message: forwardMessageInput,
+              });
               if (forwardRoomIds.length === 1) {
                 await navigateTo(RoutePath.Messages(forwardRoomIds[0]));
                 useToast('Message forwarded!', {
@@ -92,6 +100,7 @@ watch(dialog, (newDialog) => {
                 });
               }
               dialog = false;
+              forwardMessageInput = '';
             }
           "
         >

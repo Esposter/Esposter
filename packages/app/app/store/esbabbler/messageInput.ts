@@ -11,7 +11,9 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
   const roomStore = useRoomStore();
   const { data: messageInput } = createDataMap(() => roomStore.currentRoomId, "");
   const replyRowKey = ref<string>();
-  MessageHookMap.ResetSend.push(() => (replyRowKey.value = undefined));
+  MessageHookMap.ResetSend.push(() => {
+    replyRowKey.value = undefined;
+  });
 
   const { data: files } = createDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
   const { data: uploadFileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());
@@ -33,8 +35,11 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
 
   const forwardRowKey = ref<string>();
   const forwardRoomIds = ref<string[]>([]);
+  const { data: forwardMessageInput } = createDataMap(() => roomStore.currentRoomId, "");
+
   return {
     files,
+    forwardMessageInput,
     forwardRoomIds,
     forwardRowKey,
     getIsSendEnabled,
