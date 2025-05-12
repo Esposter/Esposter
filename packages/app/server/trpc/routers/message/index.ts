@@ -98,7 +98,7 @@ const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id 
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const forwardMessagesInputSchema = messageEntitySchema
-  .pick({ partitionKey: true, rowKey: true })
+  .pick({ message: true, partitionKey: true, rowKey: true })
   .merge(z.object({ forwardRoomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT) }));
 export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 
@@ -154,23 +154,23 @@ export const messageRouter = router({
     .input(deleteMessageInputSchema)
     .mutation(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const message = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
-      if (!message)
+      const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+      if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
         });
-      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      else if (messageEntity.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      await deleteFiles(containerClient, message.files);
+      await deleteFiles(containerClient, messageEntity.files);
     }),
   forwardMessages: getRoomUserProcedure(forwardMessagesInputSchema, "partitionKey")
     .input(forwardMessagesInputSchema)
-    .mutation(async ({ ctx, input: { forwardRoomIds, partitionKey, rowKey } }) => {
+    .mutation(async ({ ctx, input: { forwardRoomIds, message, partitionKey, rowKey } }) => {
       const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
         where: (usersToRooms, { and, eq, inArray }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, forwardRoomIds)),
@@ -178,8 +178,8 @@ export const messageRouter = router({
       if (foundUsersToRooms.length !== forwardRoomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const messageClient = await useTableClient(AzureTable.Messages);
-      const message = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
-      if (!message)
+      const messageEntity = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
+      if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
@@ -188,18 +188,19 @@ export const messageRouter = router({
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       // We don't forward reply information for privacy
-      message.replyRowKey = undefined;
-      message.isForward = true;
+      messageEntity.replyRowKey = undefined;
+      messageEntity.isForward = true;
+      if (message) messageEntity.message = message;
       await Promise.all(
         forwardRoomIds.map(async (forwardRoomId) => {
-          const newFileIds = await cloneFiles(containerClient, message.files, forwardRoomId, ctx.roomId);
+          const newFileIds = await cloneFiles(containerClient, messageEntity.files, forwardRoomId, ctx.roomId);
           const createdAt = new Date();
           const forward = new MessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
-            ...message,
+            ...messageEntity,
             createdAt,
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
-            files: message.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
+            files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             partitionKey: getMessagesPartitionKey(forwardRoomId, createdAt),
             rowKey: getReverseTickedTimestamp(),
             updatedAt: createdAt,

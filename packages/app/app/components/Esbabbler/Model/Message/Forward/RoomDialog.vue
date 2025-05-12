@@ -2,6 +2,7 @@
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
@@ -31,6 +32,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
   DatabaseEntityType.Room,
   true,
 );
+const message = ref("");
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
@@ -71,14 +73,16 @@ watch(dialog, (newDialog) => {
       <v-divider />
       <EsbabblerModelMessage :creator is-preview :message="forward" />
       <v-divider />
-      <v-card-actions>
+      <v-card-actions flex-col gap-0>
+        <RichTextEditor v-model="message" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
         <StyledButton
+          w-full
           :disabled="forwardRoomIds.length === 0"
           @click="
             async () => {
               if (!forward) return;
               const { partitionKey, rowKey } = forward;
-              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, forwardRoomIds });
+              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, forwardRoomIds, message });
               if (forwardRoomIds.length === 1) {
                 await navigateTo(RoutePath.Messages(forwardRoomIds[0]));
                 useToast('Message forwarded!', {
