@@ -62,6 +62,7 @@ const mentionExtension = useMentionExtension();
     placeholder="Edit message"
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
+    @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
