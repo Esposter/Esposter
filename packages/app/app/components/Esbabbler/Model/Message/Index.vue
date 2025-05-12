@@ -3,6 +3,7 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
+import { authClient } from "@/services/auth/authClient";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface MessageProps {
@@ -14,6 +15,8 @@ interface MessageProps {
 
 const slots = defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
 const { active, creator, message, nextMessage } = defineProps<MessageProps>();
+const { data: session } = await authClient.useSession(useFetch);
+const isCreator = computed(() => session.value?.user.id === creator.id);
 const isSameBatch = computed(
   () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
@@ -61,7 +64,7 @@ const messageHtml = useRefreshMentions(() => message.message);
     <slot v-else>
       <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
     </slot>
-    <EsbabblerModelMessageFileContainer :files="message.files" />
+    <EsbabblerModelMessageFileContainer :files="message.files" :is-creator />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
   </v-list-item>
 </template>

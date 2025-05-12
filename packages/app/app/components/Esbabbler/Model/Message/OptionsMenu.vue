@@ -81,7 +81,7 @@ const items = computed(() =>
       />
       <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
         <template #activator="{ props }">
-          <v-btn v-if="isCreator" m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
+          <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
         </template>
       </v-tooltip>
       <v-menu
