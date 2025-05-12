@@ -60,7 +60,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
         userId: session.value.data.user.id,
       }),
     );
-    storeCreateMessage(newMessage);
+    await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(createMessageInput));
     delete newMessage.isLoading;
   };

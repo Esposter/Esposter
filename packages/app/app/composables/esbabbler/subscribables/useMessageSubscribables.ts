@@ -21,8 +21,8 @@ export const useMessageSubscribables = () => {
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeCreateMessage(data);
+        onData: async (data) => {
+          await storeCreateMessage(data);
         },
       },
     );
@@ -37,8 +37,8 @@ export const useMessageSubscribables = () => {
     deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeDeleteMessage(data);
+        onData: async (data) => {
+          await storeDeleteMessage(data);
         },
       },
     );
