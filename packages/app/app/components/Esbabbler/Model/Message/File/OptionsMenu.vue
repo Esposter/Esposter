@@ -15,7 +15,7 @@ const menuItems: OptionMenuItem[] = [
     onClick: () => {
       emit("delete");
     },
-    title: "Delete",
+    shortTitle: "Delete",
   },
 ];
 </script>
