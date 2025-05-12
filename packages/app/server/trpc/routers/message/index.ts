@@ -237,13 +237,18 @@ export const messageRouter = router({
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
     .subscription(async function* ({ ctx, input, signal }) {
-      for await (const data of on(messageEventEmitter, "createMessage", { signal }))
+      for await (const data of on(messageEventEmitter, "createMessage", { signal })) {
+        const dataToYield: MessageEntity[] = [];
+
         for (const [newMessage, isIncludesSelf] of data)
           if (
             isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
             (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
           )
-            yield newMessage;
+            dataToYield.push(newMessage);
+
+        yield dataToYield;
+      }
     }),
   onCreateTyping: getRoomUserProcedure(onCreateTypingInputSchema, "roomId")
     .input(onCreateTypingInputSchema)

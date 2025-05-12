@@ -20,7 +20,7 @@ const dialog = computed({
   get: () => Boolean(forwardRowKey.value),
   set: (newDialog) => {
     if (newDialog) return;
-    forwardRowKey.value = undefined;
+    forwardRowKey.value = "";
   },
 });
 const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useSearcher(

@@ -23,7 +23,7 @@ export const useMessageSubscribables = () => {
       { roomId },
       {
         onData: getSynchronizedFunction(async (data) => {
-          await storeCreateMessage(data);
+          for (const newMessage of data) await storeCreateMessage(newMessage);
         }),
       },
     );

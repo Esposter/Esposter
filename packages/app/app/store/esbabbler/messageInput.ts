@@ -10,9 +10,9 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 export const useMessageInputStore = defineStore("esbabbler/messageInput", () => {
   const roomStore = useRoomStore();
   const { data: messageInput } = createDataMap(() => roomStore.currentRoomId, "");
-  const replyRowKey = ref<string>();
+  const { data: replyRowKey } = createDataMap(() => roomStore.currentRoomId, "");
   MessageHookMap.ResetSend.push(() => {
-    replyRowKey.value = undefined;
+    replyRowKey.value = "";
   });
 
   const { data: files } = createDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
@@ -33,8 +33,8 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
     for (const { id } of savedFiles) removeFileUrl(id);
   });
 
-  const forwardRowKey = ref<string>();
-  const forwardRoomIds = ref<string[]>([]);
+  const { data: forwardRowKey } = createDataMap(() => roomStore.currentRoomId, "");
+  const { data: forwardRoomIds } = createDataMap<string[]>(() => roomStore.currentRoomId, []);
   const { data: forwardMessageInput } = createDataMap(() => roomStore.currentRoomId, "");
 
   return {
