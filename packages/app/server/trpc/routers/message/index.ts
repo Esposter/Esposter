@@ -194,7 +194,7 @@ export const messageRouter = router({
         forwardRoomIds.map(async (forwardRoomId) => {
           const newFileIds = await cloneFiles(containerClient, message.files, forwardRoomId, ctx.roomId);
           const createdAt = new Date();
-          const forwardedMessage = new MessageEntity({
+          const forward = new MessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             ...message,
             createdAt,
@@ -205,8 +205,8 @@ export const messageRouter = router({
             updatedAt: createdAt,
             userId: ctx.session.user.id,
           });
-          await createEntity(messageClient, forwardedMessage);
-          messageEventEmitter.emit("createMessage", forwardedMessage);
+          await createEntity(messageClient, forward);
+          messageEventEmitter.emit("createMessage", forward);
         }),
       );
     }),

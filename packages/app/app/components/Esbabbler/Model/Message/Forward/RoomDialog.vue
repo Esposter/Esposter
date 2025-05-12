@@ -2,15 +2,19 @@
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 const { $trpc } = useNuxtApp();
+const esbabblerStore = useEsbabblerStore();
+const { userMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { messages } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
 const { forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
 const forward = computed(() => messages.value.find(({ rowKey }) => rowKey === forwardRowKey.value));
+const creator = computed(() => (forward.value ? userMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
   get: () => Boolean(forwardRowKey.value),
   set: (newDialog) => {
@@ -38,7 +42,7 @@ watch(dialog, (newDialog) => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog">
+  <v-dialog v-if="forward && creator" v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
         <div flex justify-between items-center>
@@ -64,6 +68,8 @@ watch(dialog, (newDialog) => {
           <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
         </v-list>
       </v-card-text>
+      <v-divider />
+      <EsbabblerModelMessage :creator is-preview :message="forward" />
       <v-divider />
       <v-card-actions>
         <StyledButton
