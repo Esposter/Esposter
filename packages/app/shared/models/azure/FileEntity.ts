@@ -5,6 +5,10 @@ export class FileEntity {
   filename!: string;
   id!: string;
   mimetype!: string;
+
+  constructor(init?: Partial<FileEntity>) {
+    Object.assign(this, init);
+  }
 }
 
 export const fileEntitySchema = z.object({

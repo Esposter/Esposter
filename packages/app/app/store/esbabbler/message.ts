@@ -5,6 +5,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
 import type { Editor } from "@tiptap/core";
 
+import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { authClient } from "@/services/auth/authClient";
@@ -97,6 +98,15 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   });
 
   const activeReplyRowKey = ref<string>();
+  const isReplyIndicatorActive = ref(false);
+  const onReplyIndicatorClick = (replyRowKey: string) => {
+    activeReplyRowKey.value = replyRowKey;
+    document.getElementById(replyRowKey)?.scrollIntoView({ behavior: "smooth" });
+    useTimeoutFn(() => {
+      activeReplyRowKey.value = undefined;
+    }, dayjs.duration(2, "seconds").asMilliseconds());
+  };
+
   const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
@@ -110,6 +120,8 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restData,
     activeReplyRowKey,
     downloadFileUrlMap,
+    isReplyIndicatorActive,
+    onReplyIndicatorClick,
     replyMap,
     typings,
   };

@@ -1,10 +1,10 @@
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { AzureUpdateEntity } from "~~/shared/models/azure/AzureUpdateEntity";
+import type { AzureUpdateEntity } from "@@/shared/models/azure/AzureUpdateEntity";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -20,13 +20,16 @@ import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
+import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
+import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
+import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
-import { getBlobName } from "@@/server/services/esbabbler/getBlobName";
 import { getMessagesPartitionKey } from "@@/server/services/esbabbler/getMessagesPartitionKey";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
@@ -63,17 +66,17 @@ const readMessagesByRowKeysInputSchema = z.object({
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
-const generateUploadFileSasUrls = z.object({
+const generateUploadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
-export type GenerateUploadFileSasUrls = z.infer<typeof generateUploadFileSasUrls>;
+export type GenerateUploadFileSasUrlsInput = z.infer<typeof generateUploadFileSasUrlsInputSchema>;
 
-const generateDownloadFileSasUrls = z.object({
+const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
-export type GenerateDownloadFileSasUrls = z.infer<typeof generateDownloadFileSasUrls>;
+export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true }).merge(
   z.object({
@@ -162,16 +165,8 @@ export const messageRouter = router({
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
 
-      if (message.files.length === 0) return;
-
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const blobBatchClient = containerClient.getBlobBatchClient();
-      const blobUrls = message.files.map(({ filename, id }) => {
-        const blobName = getBlobName(ctx.roomId, id, filename);
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        return blockBlobClient.url;
-      });
-      await blobBatchClient.deleteBlobs(blobUrls, containerClient.credential);
+      await deleteFiles(containerClient, message.files);
     }),
   forwardMessages: getRoomUserProcedure(forwardMessagesInputSchema, "partitionKey")
     .input(forwardMessagesInputSchema)
@@ -190,44 +185,39 @@ export const messageRouter = router({
           message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
             .message,
         });
+
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       // We don't forward reply information for privacy
       message.replyRowKey = undefined;
       message.isForward = true;
-      for (const forwardRoomId of forwardRoomIds) {
-        const createdAt = new Date();
-        await createEntity(
-          messageClient,
-          Object.assign(message, {
+      await Promise.all(
+        forwardRoomIds.map(async (forwardRoomId) => {
+          const newFileIds = await cloneFiles(containerClient, message.files, forwardRoomId, ctx.roomId);
+          const createdAt = new Date();
+          const forwardedMessage = new MessageEntity({
+            // eslint-disable-next-line @typescript-eslint/no-misused-spread
+            ...message,
             createdAt,
+            // eslint-disable-next-line @typescript-eslint/no-misused-spread
+            files: message.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             partitionKey: getMessagesPartitionKey(forwardRoomId, createdAt),
             rowKey: getReverseTickedTimestamp(),
             updatedAt: createdAt,
             userId: ctx.session.user.id,
-          }),
-        );
-        messageEventEmitter.emit("createMessage", message);
-      }
-    }),
-  generateDownloadFileSasUrls: getRoomUserProcedure(generateDownloadFileSasUrls, "roomId")
-    .input(generateDownloadFileSasUrls)
-    .query(async ({ input: { files, roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const sasUrls = await Promise.all(
-        files.map(({ filename, id, mimetype }) => {
-          const blobName = getBlobName(roomId, id, filename);
-          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-          return blockBlobClient.generateSasUrl({
-            contentDisposition: `attachment; filename="${filename}"`,
-            contentType: mimetype,
-            expiresOn: dayjs().add(1, "year").toDate(),
-            permissions: ContainerSASPermissions.from({ read: true }),
           });
+          await createEntity(messageClient, forwardedMessage);
+          messageEventEmitter.emit("createMessage", forwardedMessage);
         }),
       );
-      return sasUrls;
     }),
-  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrls, "roomId")
-    .input(generateUploadFileSasUrls)
+  generateDownloadFileSasUrls: getRoomUserProcedure(generateDownloadFileSasUrlsInputSchema, "roomId")
+    .input(generateDownloadFileSasUrlsInputSchema)
+    .query(async ({ input: { files, roomId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      return generateDownloadFileSasUrls(containerClient, files, roomId);
+    }),
+  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrlsInputSchema, "roomId")
+    .input(generateUploadFileSasUrlsInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       const fileSasEntities = await Promise.all(
