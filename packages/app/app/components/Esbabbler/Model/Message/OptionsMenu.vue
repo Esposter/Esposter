@@ -115,7 +115,7 @@ const items = computed(() =>
           <v-list-item v-for="{ title, color, icon, onClick } of items" :key="title" @click="onClick">
             <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
             <template #append>
-              <v-icon size="small" :icon :color />
+              <v-icon size="small" :color :icon />
             </template>
           </v-list-item>
         </v-list>

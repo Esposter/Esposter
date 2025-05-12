@@ -35,7 +35,7 @@ const menuItems: OptionMenuItem<number>[] = [
             :text="shortTitle ?? title"
           >
             <template #activator="{ props }">
-              <v-btn m-0="!" rd-none="!" variant="text" :icon :color size="small" :="props" @click="onClick(index)" />
+              <v-btn m-0="!" rd-none="!" variant="text" :color :icon size="small" :="props" @click="onClick(index)" />
             </template>
           </v-tooltip>
         </div>
