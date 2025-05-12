@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { dayjs } from "#shared/services/dayjs";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -32,14 +31,6 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
   DatabaseEntityType.Room,
   true,
 );
-
-watch(dialog, (newDialog) => {
-  if (newDialog) return;
-  useTimeoutFn(() => {
-    roomSearchQuery.value = "";
-    forwardRoomIds.value = [];
-  }, dayjs.duration(0.3, "seconds").asMilliseconds());
-});
 </script>
 
 <template>
@@ -100,6 +91,8 @@ watch(dialog, (newDialog) => {
                 });
               }
               dialog = false;
+              roomSearchQuery = '';
+              forwardRoomIds = [];
               forwardMessageInput = '';
             }
           "
