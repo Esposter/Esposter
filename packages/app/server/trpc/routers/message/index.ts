@@ -1,5 +1,6 @@
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { AzureUpdateEntity } from "~~/shared/models/azure/AzureUpdateEntity";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
@@ -66,13 +67,20 @@ const generateUploadFileSasUrls = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
-export type GenerateUploadFileSasTokenUrls = z.infer<typeof generateUploadFileSasUrls>;
+export type GenerateUploadFileSasUrls = z.infer<typeof generateUploadFileSasUrls>;
 
 const generateDownloadFileSasUrls = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
-export type GenerateDownloadFileSasTokenUrls = z.infer<typeof generateDownloadFileSasUrls>;
+export type GenerateDownloadFileSasUrls = z.infer<typeof generateDownloadFileSasUrls>;
+
+const deleteFilesInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true }).merge(
+  z.object({
+    ids: fileEntitySchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  }),
+);
+export type DeleteFilesInput = z.infer<typeof deleteFilesInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -107,6 +115,38 @@ export const messageRouter = router({
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ input }) => {
       messageEventEmitter.emit("createTyping", input);
+    }),
+  deleteFiles: getRoomUserProcedure(deleteFilesInputSchema, "partitionKey")
+    .input(deleteFilesInputSchema)
+    .mutation(async ({ ctx, input: { ids, partitionKey, rowKey } }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const message = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
+      if (!message)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
+        });
+      else if (message.files.length === 0) return;
+
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const blobBatchClient = containerClient.getBlobBatchClient();
+      const blobUrls: string[] = [];
+
+      for (const id of ids) {
+        const index = message.files.findIndex((f) => f.id === id);
+        if (index === -1) continue;
+        blobUrls.push(getBlobName(ctx.roomId, id, message.files.splice(index, 1)[0].filename));
+      }
+
+      const updatedMessage = {
+        files: message.files,
+        message: message.message,
+        partitionKey,
+        rowKey,
+      } as const satisfies AzureUpdateEntity<MessageEntity>;
+      await updateEntity(messageClient, updatedMessage);
+      messageEventEmitter.emit("updateMessage", updatedMessage);
+      await blobBatchClient.deleteBlobs(blobUrls, containerClient.credential);
     }),
   deleteMessage: getRoomUserProcedure(deleteMessageInputSchema, "partitionKey")
     .input(deleteMessageInputSchema)
