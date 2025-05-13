@@ -31,7 +31,7 @@ const { isOverDropZone } = useDropZone(
     for (let i = 0; i < newFiles.length; i++) {
       const file = newFiles[i];
       const { id } = fileSasEntities[i];
-      files.value.push({ filename: file.name, id, mimetype: file.type });
+      files.value.push({ filename: file.name, id, mimetype: file.type, size: file.size });
     }
 
     await Promise.all(

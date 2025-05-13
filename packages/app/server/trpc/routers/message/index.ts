@@ -71,7 +71,7 @@ const generateUploadFileSasUrlsInputSchema = z.object({
 export type GenerateUploadFileSasUrlsInput = z.infer<typeof generateUploadFileSasUrlsInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  files: fileEntitySchema.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;

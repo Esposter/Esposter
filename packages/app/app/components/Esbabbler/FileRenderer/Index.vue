@@ -4,7 +4,7 @@ import type { Component } from "vue";
 
 import { TypeRendererMap } from "@/models/esbabbler/file/TypeRendererMap";
 import { getLanguage } from "@/services/codemirror/getLanguage";
-import { getInferredMimetype } from "@/services/esbabbler/file/getInferredMimetype";
+import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 
 const props = defineProps<FileRendererProps>();
 const { file } = toRefs(props);
