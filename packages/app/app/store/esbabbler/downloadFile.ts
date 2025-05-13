@@ -5,6 +5,7 @@ import { createDataMap } from "@/services/shared/createDataMap";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { Operation } from "@esposter/shared";
+import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => {
   const { $trpc } = useNuxtApp();
@@ -27,5 +28,19 @@ export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => 
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
-  return { fileUrlMap };
+  const images = computed(() => {
+    const images: { alt: string; src: string }[] = [];
+    for (const { filename, id } of messageStore.files) {
+      const fileUrl = fileUrlMap.value.get(id);
+      if (!fileUrl) continue;
+      images.push({ alt: filename, src: fileUrl.url });
+    }
+    return images;
+  });
+
+  const viewFiles = (initialViewIndex: number) => {
+    viewerApi({ images: images.value, options: { initialViewIndex } });
+  };
+
+  return { fileUrlMap, viewFiles };
 });

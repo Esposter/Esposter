@@ -28,6 +28,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
+  const files = computed(() => messages.value.flatMap(({ files }) => files));
 
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => fn(message)));
@@ -72,6 +73,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
+    files,
     messages,
     storeCreateMessage,
     storeDeleteMessage,

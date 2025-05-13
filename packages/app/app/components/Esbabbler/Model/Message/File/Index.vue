@@ -19,6 +19,7 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const { $trpc } = useNuxtApp();
 const downloadFileStore = useDownloadFileStore();
+const { viewFiles } = downloadFileStore;
 const { fileUrlMap } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const isActive = ref(false);
@@ -35,8 +36,10 @@ const isActive = ref(false);
           : undefined,
       borderBottomRightRadius: index === columnLayout.length - 1 ? CONTAINER_BORDER_RADIUS : undefined,
     }"
+    cursor-pointer
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
+    @click="viewFiles(index)"
   >
     <EsbabblerFileRenderer :file :url />
     <div
