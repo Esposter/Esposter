@@ -3,23 +3,23 @@ import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { useForwardStore } from "@/store/esbabbler/forward";
 import { useMessageStore } from "@/store/esbabbler/message";
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
 const { $trpc } = useNuxtApp();
 const esbabblerStore = useEsbabblerStore();
 const { userMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { messages } = storeToRefs(messageStore);
-const messageInputStore = useMessageInputStore();
-const { forwardMessageInput, forwardRoomIds, forwardRowKey } = storeToRefs(messageInputStore);
-const forward = computed(() => messages.value.find(({ rowKey }) => rowKey === forwardRowKey.value));
+const forwardStore = useForwardStore();
+const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
+const forward = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
 const creator = computed(() => (forward.value ? userMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
-  get: () => Boolean(forwardRowKey.value),
+  get: () => Boolean(rowKey.value),
   set: (newDialog) => {
     if (newDialog) return;
-    forwardRowKey.value = "";
+    rowKey.value = "";
   },
 });
 const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useSearcher(
@@ -64,26 +64,17 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
       <EsbabblerModelMessage :creator is-preview :message="forward" />
       <v-divider />
       <v-card-actions flex-col gap-0>
-        <RichTextEditor
-          v-model="forwardMessageInput"
-          :limit="MESSAGE_MAX_LENGTH"
-          placeholder="Add an optional message..."
-        />
+        <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
         <StyledButton
           w-full
-          :disabled="forwardRoomIds.length === 0"
+          :disabled="roomIds.length === 0"
           @click="
             async () => {
               if (!forward) return;
               const { partitionKey, rowKey } = forward;
-              await $trpc.message.forwardMessages.mutate({
-                partitionKey,
-                rowKey,
-                forwardRoomIds,
-                message: forwardMessageInput,
-              });
-              if (forwardRoomIds.length === 1) {
-                await navigateTo(RoutePath.Messages(forwardRoomIds[0]));
+              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
+              if (roomIds.length === 1) {
+                await navigateTo(RoutePath.Messages(roomIds[0]));
                 useToast('Message forwarded!', {
                   position: 'top-center',
                   prependIcon: 'mdi-share',
@@ -92,12 +83,12 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
               }
               dialog = false;
               roomSearchQuery = '';
-              forwardRoomIds = [];
-              forwardMessageInput = '';
+              roomIds = [];
+              messageInput = '';
             }
           "
         >
-          Send {{ forwardRoomIds.length > 1 ? `(${forwardRoomIds.length})` : "" }}
+          Send {{ roomIds.length > 1 ? `(${roomIds.length})` : "" }}
         </StyledButton>
       </v-card-actions>
     </StyledCard>

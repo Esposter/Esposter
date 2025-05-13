@@ -33,15 +33,8 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
     for (const { id } of savedFiles) removeFileUrl(id);
   });
 
-  const { data: forwardRowKey } = createDataMap(() => roomStore.currentRoomId, "");
-  const { data: forwardRoomIds } = createDataMap<string[]>(() => roomStore.currentRoomId, []);
-  const { data: forwardMessageInput } = createDataMap(() => roomStore.currentRoomId, "");
-
   return {
     files,
-    forwardMessageInput,
-    forwardRoomIds,
-    forwardRowKey,
     getIsSendEnabled,
     isFileLoading,
     messageInput,

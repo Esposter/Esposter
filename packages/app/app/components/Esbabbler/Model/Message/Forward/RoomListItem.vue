@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { Room } from "#shared/db/schema/rooms";
 
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useForwardStore } from "@/store/esbabbler/forward";
 
 interface ForwardRoomListItemProps {
   room: Room;
 }
 
 const { room } = defineProps<ForwardRoomListItemProps>();
-const messageInputStore = useMessageInputStore();
-const { forwardRoomIds } = storeToRefs(messageInputStore);
+const forwardStore = useForwardStore();
+const { roomIds } = storeToRefs(forwardStore);
 const isActive = ref(false);
 </script>
 
@@ -23,8 +23,8 @@ const isActive = ref(false);
     :ripple="false"
     @click="
       () => {
-        const index = forwardRoomIds.findIndex((id) => id === room.id);
-        index === -1 ? forwardRoomIds.push(room.id) : forwardRoomIds.splice(index, 1);
+        const index = roomIds.findIndex((id) => id === room.id);
+        index === -1 ? roomIds.push(room.id) : roomIds.splice(index, 1);
       }
     "
     @mouseenter="isActive = true"
@@ -37,7 +37,7 @@ const isActive = ref(false);
     </template>
     <v-list-item-title flex justify-between items-center>
       {{ room.name }}
-      <v-checkbox v-model="forwardRoomIds" :value="room.id" :ripple="false" density="compact" hide-details />
+      <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details />
     </v-list-item-title>
   </v-list-item>
 </template>

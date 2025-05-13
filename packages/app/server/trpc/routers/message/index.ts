@@ -97,7 +97,7 @@ export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const forwardMessagesInputSchema = messageEntitySchema
   .pick({ message: true, partitionKey: true, rowKey: true })
-  .merge(z.object({ forwardRoomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT) }));
+  .merge(z.object({ roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT) }));
 export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 
 export const messageRouter = router({
@@ -168,12 +168,12 @@ export const messageRouter = router({
     }),
   forwardMessages: getRoomUserProcedure(forwardMessagesInputSchema, "partitionKey")
     .input(forwardMessagesInputSchema)
-    .mutation(async ({ ctx, input: { forwardRoomIds, message, partitionKey, rowKey } }) => {
+    .mutation(async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
         where: (usersToRooms, { and, eq, inArray }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, forwardRoomIds)),
+          and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, roomIds)),
       });
-      if (foundUsersToRooms.length !== forwardRoomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (foundUsersToRooms.length !== roomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
@@ -186,8 +186,8 @@ export const messageRouter = router({
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       await Promise.all(
-        forwardRoomIds.map(async (forwardRoomId) => {
-          const newFileIds = await cloneFiles(containerClient, messageEntity.files, forwardRoomId, ctx.roomId);
+        roomIds.map(async (roomId) => {
+          const newFileIds = await cloneFiles(containerClient, messageEntity.files, roomId, ctx.roomId);
           const forward = createMessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
@@ -195,10 +195,10 @@ export const messageRouter = router({
             message: messageEntity.message,
             // We don't forward reply information for privacy
             replyRowKey: undefined,
-            roomId: forwardRoomId,
+            roomId,
             userId: ctx.session.user.id,
           });
-          const newMessageEntity = createMessageEntity({ message, roomId: forwardRoomId, userId: ctx.session.user.id });
+          const newMessageEntity = createMessageEntity({ message, roomId, userId: ctx.session.user.id });
           await createEntity(messageClient, forward);
           await createEntity(messageClient, newMessageEntity);
           // We don't need visual effects like isLoading when forwarding messages

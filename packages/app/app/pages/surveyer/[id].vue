@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { validate } from "@/services/router/validate";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import "survey-core/survey-core.min.css";
-import "survey-core/survey.i18n";
 import { SurveyCreatorModel } from "survey-creator-core";
-import "survey-creator-core/survey-creator-core.i18n";
-import "survey-creator-core/survey-creator-core.min.css";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 defineRouteRules({ ssr: false });

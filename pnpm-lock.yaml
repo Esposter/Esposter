@@ -471,6 +471,12 @@ catalogs:
     unplugin-auto-import:
       specifier: ^19.2.0
       version: 19.2.0
+    v-viewer:
+      specifier: ^3.0.21
+      version: 3.0.21
+    viewerjs:
+      specifier: ^1.11.7
+      version: 1.11.7
     vite:
       specifier: ^6.3.5
       version: 6.3.5
@@ -891,6 +897,12 @@ importers:
       trpc-nuxt:
         specifier: 'catalog:'
         version: 1.0.5(@trpc/client@11.1.2(@trpc/server@11.1.2(typescript@5.8.3))(typescript@5.8.3))(@trpc/server@11.1.2(typescript@5.8.3))
+      v-viewer:
+        specifier: 'catalog:'
+        version: 3.0.21(viewerjs@1.11.7)(vue@3.5.13(typescript@5.8.3))
+      viewerjs:
+        specifier: 'catalog:'
+        version: 1.11.7
       vue-codemirror:
         specifier: 'catalog:'
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.8.3))
@@ -10577,6 +10589,12 @@ packages:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
+  v-viewer@3.0.21:
+    resolution: {integrity: sha512-FyorVqtWiv9LvDG36XEh8HDv8TAcVnMn0+s4b9yKUdBriAZNlYJvgyhGnhyBH/w9yK1PlLVyhorKEj26B6JK1Q==}
+    peerDependencies:
+      viewerjs: ^1.11.0
+      vue: ^3.0.0
+
   valibot@1.1.0:
     resolution: {integrity: sha512-Nk8lX30Qhu+9txPYTwM0cFlWLdPFsFr6LblzqIySfbZph9+BFsAHsNvHOymEviUepeIW6KFHzpX8TKhbptBXXw==}
     peerDependencies:
@@ -10598,6 +10616,9 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  viewerjs@1.11.7:
+    resolution: {integrity: sha512-0JuVqOmL5v1jmEAlG5EBDR3XquxY8DWFQbFMprOXgaBB0F7Q/X9xWdEaQc59D8xzwkdUgXEMSSknTpriq95igg==}
 
   vite-dev-rpc@1.0.7:
     resolution: {integrity: sha512-FxSTEofDbUi2XXujCA+hdzCDkXFG1PXktMjSk1efq9Qb5lOYaaM9zNSvKvPPF7645Bak79kSp1PTooMW2wktcA==}
@@ -22471,6 +22492,12 @@ snapshots:
 
   uuid@11.1.0: {}
 
+  v-viewer@3.0.21(viewerjs@1.11.7)(vue@3.5.13(typescript@5.8.3)):
+    dependencies:
+      lodash-es: 4.17.21
+      viewerjs: 1.11.7
+      vue: 3.5.13(typescript@5.8.3)
+
   valibot@1.1.0(typescript@5.8.3):
     optionalDependencies:
       typescript: 5.8.3
@@ -22485,6 +22512,8 @@ snapshots:
   varint@6.0.0: {}
 
   vary@1.1.2: {}
+
+  viewerjs@1.11.7: {}
 
   vite-dev-rpc@1.0.7(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)):
     dependencies:

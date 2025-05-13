@@ -4,6 +4,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { useForwardStore } from "@/store/esbabbler/forward";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 
@@ -22,8 +23,9 @@ const { optionsMenu } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
 const { activeReplyRowKey } = storeToRefs(messageStore);
 const messageInputStore = useMessageInputStore();
-const { forwardRowKey, replyRowKey } = storeToRefs(messageInputStore);
-const messageHtml = useRefreshMentions(() => message.message);
+const { replyRowKey } = storeToRefs(messageInputStore);
+const forwardStore = useForwardStore();
+const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
 const isUpdateMode = ref(false);
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);

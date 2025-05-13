@@ -141,6 +141,8 @@
     "three-globe": "catalog:",
     "tippy.js": "catalog:",
     "trpc-nuxt": "catalog:",
+    "v-viewer": "catalog:",
+    "viewerjs": "catalog:",
     "vue-codemirror": "catalog:",
     "vue-phaserjs": "workspace:*",
     "vue-router": "catalog:",
