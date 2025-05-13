@@ -26,7 +26,7 @@ const menuItems: OptionMenuItem[] = [
 
 <template>
   <v-col xl="2" lg="3" md="4" sm="6">
-    <StyledCard>
+    <StyledCard h-full flex flex-col>
       <v-card-title flex justify-end p-0>
         <div class="border-sm">
           <v-tooltip
@@ -41,8 +41,8 @@ const menuItems: OptionMenuItem[] = [
         </div>
       </v-card-title>
       <v-card-text pb-0>
-        <v-card rd-4>
-          <EsbabblerFileRenderer :file :url="uploadFileUrl.url" />
+        <v-card h-full rd-4>
+          <EsbabblerFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>
       <v-card v-if="progressPercentage < 100" pt-4>

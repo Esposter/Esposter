@@ -37,6 +37,7 @@ const isActive = ref(false);
           : undefined,
       borderBottomRightRadius: index === columnLayout.length - 1 ? CONTAINER_BORDER_RADIUS : undefined,
     }"
+    h-full
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
     v-on="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"

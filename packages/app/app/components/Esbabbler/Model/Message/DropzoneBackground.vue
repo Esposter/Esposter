@@ -32,7 +32,7 @@ const { isOverDropZone } = useDropZone(
         const { id, sasUrl } = fileSasEntities[index];
         const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
         fileUrlMap.value.set(id, uploadFileUrl);
-        files.value[index] = { filename: file.name, id, mimetype: file.type };
+        files.value[files.value.length + index] = { filename: file.name, id, mimetype: file.type };
         await uploadBlocks(file, sasUrl, (progress) => {
           uploadFileUrl.progress = progress;
         });
