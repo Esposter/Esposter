@@ -128,7 +128,7 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
       else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      else if (message.files.length === 0) return;
+      else if (message.isForward || message.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const index = message.files.findIndex((f) => f.id === id);
       if (index === -1)
