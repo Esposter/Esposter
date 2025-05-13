@@ -29,21 +29,21 @@ export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => 
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
-  const images = computed(() => {
-    const images: { alt: string; id: string; src: string }[] = [];
+  const viewableFiles = computed(() => {
+    const viewableFiles: { alt: string; id: string; src: string }[] = [];
     for (const { filename, id, mimetype } of messageStore.files) {
       const fileUrl = fileUrlMap.value.get(id);
       if (!fileUrl) continue;
       const inferredMimetype = getInferredMimetype(mimetype);
       if (inferredMimetype !== "image") continue;
-      images.push({ alt: filename, id, src: fileUrl.url });
+      viewableFiles.push({ alt: filename, id, src: fileUrl.url });
     }
-    return images;
+    return viewableFiles;
   });
 
   const viewFiles = (initialViewIndex: number) => {
-    viewerApi({ images: images.value, options: { initialViewIndex } });
+    viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });
   };
 
-  return { fileUrlMap, images, viewFiles };
+  return { fileUrlMap, viewableFiles, viewFiles };
 });

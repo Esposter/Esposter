@@ -20,9 +20,9 @@ const isCreator = computed(() => session.value?.user.id === message.userId);
 const { $trpc } = useNuxtApp();
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
-const { fileUrlMap, images } = storeToRefs(downloadFileStore);
+const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
-const imageIndex = computed(() => images.value.findIndex(({ id }) => id === file.id));
+const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
 const isActive = ref(false);
 </script>
 
@@ -39,7 +39,7 @@ const isActive = ref(false);
     }"
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
-    v-on="imageIndex === -1 ? {} : { click: () => viewFiles(imageIndex) }"
+    v-on="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
   >
     <EsbabblerFileRenderer :file :url />
     <div
