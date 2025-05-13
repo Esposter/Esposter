@@ -44,7 +44,7 @@ const isActive = ref(false);
   >
     <EsbabblerFileRenderer :file :url />
     <div
-      v-if="isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
+      v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
       absolute
       top-2
