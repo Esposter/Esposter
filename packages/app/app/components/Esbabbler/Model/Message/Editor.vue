@@ -29,14 +29,13 @@ const onUpdateMessage = (editor: Editor) => {
       return;
     }
     // Optimistically update UI
-    getSynchronizedFunction(
-      async () =>
-        await $trpc.message.updateMessage.mutate({
-          message: editedMessageHtml.value,
-          partitionKey: message.partitionKey,
-          rowKey: message.rowKey,
-        }),
-    )();
+    getSynchronizedFunction(async () => {
+      await $trpc.message.updateMessage.mutate({
+        message: editedMessageHtml.value,
+        partitionKey: message.partitionKey,
+        rowKey: message.rowKey,
+      });
+    })();
   } finally {
     emit("update:update-mode", false);
     editedMessageHtml.value = message.message;

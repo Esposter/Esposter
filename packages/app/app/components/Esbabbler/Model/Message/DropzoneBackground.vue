@@ -2,6 +2,7 @@
 import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -11,32 +12,35 @@ const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const messageInputStore = useMessageInputStore();
 const { files, isFileLoading, uploadFileUrlMap } = storeToRefs(messageInputStore);
-const { isOverDropZone } = useDropZone(document, async (newFiles) => {
-  if (!currentRoomId.value || !newFiles) return;
-  else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
-    useToast(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, { cardProps: { color: "error" } });
-    return;
-  }
+const { isOverDropZone } = useDropZone(
+  document,
+  getSynchronizedFunction(async (newFiles) => {
+    if (!currentRoomId.value || !newFiles) return;
+    else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
+      useToast(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, { cardProps: { color: "error" } });
+      return;
+    }
 
-  const fileSasEntities = await $trpc.message.generateUploadFileSasUrls.query({
-    files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
-    roomId: currentRoomId.value,
-  });
+    const fileSasEntities = await $trpc.message.generateUploadFileSasUrls.query({
+      files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
+      roomId: currentRoomId.value,
+    });
 
-  isFileLoading.value = true;
-  await Promise.all(
-    newFiles.map(async (file, index) => {
-      const { id, sasUrl } = fileSasEntities[index];
-      const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
-      uploadFileUrlMap.value.set(id, uploadFileUrl);
-      files.value[index] = { filename: file.name, id, mimetype: file.type };
-      await uploadBlocks(file, sasUrl, (progress) => {
-        uploadFileUrl.progress = progress;
-      });
-    }),
-  );
-  isFileLoading.value = false;
-});
+    isFileLoading.value = true;
+    await Promise.all(
+      newFiles.map(async (file, index) => {
+        const { id, sasUrl } = fileSasEntities[index];
+        const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
+        uploadFileUrlMap.value.set(id, uploadFileUrl);
+        files.value[index] = { filename: file.name, id, mimetype: file.type };
+        await uploadBlocks(file, sasUrl, (progress) => {
+          uploadFileUrl.progress = progress;
+        });
+      }),
+    );
+    isFileLoading.value = false;
+  }),
+);
 </script>
 
 <template>

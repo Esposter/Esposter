@@ -63,9 +63,9 @@ const messageHtml = useRefreshMentions(() => message.message);
       </div>
     </template>
     <slot v-else>
-      <div flex items-end gap-1>
+      <div flex gap-1 items-end>
         <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
-        <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
+        <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
       </div>
     </slot>
     <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
