@@ -142,7 +142,7 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.0
   rolldown: npm:rolldown@canary
-  rolldown-plugin-dts: ^0.12.0
+  rolldown-plugin-dts: ^0.12.1
   rolldown-vite: ^6.3.9
   rxjs: ^7.8.2
   sass-embedded: ^1.88.0
