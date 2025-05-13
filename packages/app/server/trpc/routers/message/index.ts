@@ -33,7 +33,7 @@ import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/is
 import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
+import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
