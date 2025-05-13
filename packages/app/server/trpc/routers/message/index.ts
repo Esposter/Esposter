@@ -27,10 +27,10 @@ import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhere";
@@ -144,7 +144,7 @@ export const messageRouter = router({
         partitionKey,
         rowKey,
       } as const satisfies AzureUpdateEntity<MessageEntity>;
-      await updateEntity(messageClient, updatedMessage);
+      await updateMessage(messageClient, updatedMessage);
       messageEventEmitter.emit("updateMessage", updatedMessage);
       await containerClient.deleteBlob(blobName);
     }),
@@ -300,7 +300,7 @@ export const messageRouter = router({
           message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify(input)).message,
         });
       else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      await updateEntity(messageClient, input);
+      await updateMessage(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
     }),
 });

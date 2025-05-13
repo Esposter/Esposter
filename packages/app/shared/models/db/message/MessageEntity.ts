@@ -12,6 +12,7 @@ import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];
+  isEdited?: true;
   isForward?: true;
   // Only used by the frontend for visual effects
   isLoading?: true;
@@ -36,6 +37,7 @@ export const messageEntitySchema = createAzureEntitySchema(
   // @TODO: oneOf([files, message])
   z.object({
     files: fileEntitySchema.array().max(MAX_FILE_LIMIT).default([]),
+    isEdited: z.literal(true).optional(),
     isForward: z.literal(true).optional(),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
