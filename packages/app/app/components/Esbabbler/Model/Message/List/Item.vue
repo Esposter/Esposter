@@ -72,9 +72,8 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:delete-mode="updateIsOpen"
         />
       </EsbabblerModelMessage>
-      <div v-if="!message.isLoading" relative z-1>
+      <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
         <div
-          v-show="activeAndNotUpdateMode && !isOpen"
           absolute
           right-4
           :top="isSameBatch ? -9 : -2"
