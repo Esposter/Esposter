@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMessageStore } from "@/store/esbabbler/message";
+import { useReplyStore } from "@/store/esbabbler/reply";
 
 interface ReplySpineProps {
   replyRowKey: string;
@@ -7,10 +7,10 @@ interface ReplySpineProps {
 
 const { replyRowKey } = defineProps<ReplySpineProps>();
 const { border, text } = useColors();
-const messageStore = useMessageStore();
-const { onReplyIndicatorClick } = messageStore;
-const { isReplyIndicatorActive } = storeToRefs(messageStore);
-const borderColor = computed(() => (isReplyIndicatorActive.value ? text.value : border.value));
+const replyStore = useReplyStore();
+const { onIndicatorClick } = replyStore;
+const { isIndicatorActive } = storeToRefs(replyStore);
+const borderColor = computed(() => (isIndicatorActive.value ? text.value : border.value));
 </script>
 
 <template>
@@ -22,9 +22,9 @@ const borderColor = computed(() => (isReplyIndicatorActive.value ? text.value : 
     w-8
     h-3
     rd-tl-2
-    @mouseenter="isReplyIndicatorActive = true"
-    @mouseleave="isReplyIndicatorActive = false"
-    @click="onReplyIndicatorClick(replyRowKey)"
+    @mouseenter="isIndicatorActive = true"
+    @mouseleave="isIndicatorActive = false"
+    @click="onIndicatorClick(replyRowKey)"
   />
 </template>
 

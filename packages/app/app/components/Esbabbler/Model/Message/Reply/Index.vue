@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { useEsbabblerStore } from "@/store/esbabbler";
-import { useMessageStore } from "@/store/esbabbler/message";
+import { useReplyStore } from "@/store/esbabbler/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface ReplyProps {
-  replyRowKey: string;
+  rowKey: string;
 }
 
-const { replyRowKey } = defineProps<ReplyProps>();
+const { rowKey } = defineProps<ReplyProps>();
 const { text } = useColors();
 const esbabblerStore = useEsbabblerStore();
 const { userMap } = storeToRefs(esbabblerStore);
-const messageStore = useMessageStore();
-const { onReplyIndicatorClick } = messageStore;
-const { isReplyIndicatorActive, replyMap } = storeToRefs(messageStore);
-const reply = computed(() => replyMap.value.get(replyRowKey));
+const replyStore = useReplyStore();
+const { onIndicatorClick } = replyStore;
+const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
+const reply = computed(() => replyMap.value.get(rowKey));
 const creator = computed(() => (reply.value ? userMap.value.get(reply.value.userId) : undefined));
-const color = computed(() => (isReplyIndicatorActive.value ? text.value : "gray"));
+const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
 </script>
 
 <template>
@@ -33,9 +33,9 @@ const color = computed(() => (isReplyIndicatorActive.value ? text.value : "gray"
           text-xs
           italic
           cursor-pointer
-          @mouseenter="isReplyIndicatorActive = true"
-          @mouseleave="isReplyIndicatorActive = false"
-          @click="onReplyIndicatorClick(reply.rowKey)"
+          @mouseenter="isIndicatorActive = true"
+          @mouseleave="isIndicatorActive = false"
+          @click="onIndicatorClick(reply.rowKey)"
         >
           Click to see attachment
         </span>

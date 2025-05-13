@@ -38,7 +38,7 @@ const messageHtml = useRefreshMentions(() => message.message);
       </span>
     </template>
     <v-list-item-title>
-      <EsbabblerModelMessageReply v-if="message.replyRowKey" :reply-row-key="message.replyRowKey" />
+      <EsbabblerModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
       <template v-if="message.replyRowKey || !isSameBatch">
         <span font-bold>
           {{ creator.name }}

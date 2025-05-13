@@ -5,8 +5,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { dayjs } from "#shared/services/dayjs";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useForwardStore } from "@/store/esbabbler/forward";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useReplyStore } from "@/store/esbabbler/reply";
 
 interface MessageListItemProps {
   creator: User;
@@ -20,10 +19,8 @@ const isSameBatch = computed(
 );
 const esbabblerStore = useEsbabblerStore();
 const { optionsMenu } = storeToRefs(esbabblerStore);
-const messageStore = useMessageStore();
-const { activeReplyRowKey } = storeToRefs(messageStore);
-const messageInputStore = useMessageInputStore();
-const { replyRowKey } = storeToRefs(messageInputStore);
+const replyStore = useReplyStore();
+const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();
 const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
 const isUpdateMode = ref(false);

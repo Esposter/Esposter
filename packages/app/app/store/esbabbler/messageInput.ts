@@ -10,10 +10,6 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 export const useMessageInputStore = defineStore("esbabbler/messageInput", () => {
   const roomStore = useRoomStore();
   const { data: messageInput } = createDataMap(() => roomStore.currentRoomId, "");
-  const { data: replyRowKey } = createDataMap(() => roomStore.currentRoomId, "");
-  MessageHookMap.ResetSend.push(() => {
-    replyRowKey.value = "";
-  });
 
   const { data: files } = createDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
   const { data: uploadFileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());
@@ -39,7 +35,6 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
     isFileLoading,
     messageInput,
     removeFileUrl,
-    replyRowKey,
     uploadFileUrlMap,
   };
 });
