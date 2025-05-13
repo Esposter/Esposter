@@ -1,5 +1,6 @@
 import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
 
+import { getInferredMimetype } from "@/services/esbabbler/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -29,11 +30,13 @@ export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => 
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
   const images = computed(() => {
-    const images: { alt: string; src: string }[] = [];
-    for (const { filename, id } of messageStore.files) {
+    const images: { alt: string; id: string; src: string }[] = [];
+    for (const { filename, id, mimetype } of messageStore.files) {
       const fileUrl = fileUrlMap.value.get(id);
       if (!fileUrl) continue;
-      images.push({ alt: filename, src: fileUrl.url });
+      const inferredMimetype = getInferredMimetype(mimetype);
+      if (inferredMimetype !== "image") continue;
+      images.push({ alt: filename, id, src: fileUrl.url });
     }
     return images;
   });
@@ -42,5 +45,5 @@ export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => 
     viewerApi({ images: images.value, options: { initialViewIndex } });
   };
 
-  return { fileUrlMap, viewFiles };
+  return { fileUrlMap, images, viewFiles };
 });
