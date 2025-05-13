@@ -27,12 +27,18 @@ const { isOverDropZone } = useDropZone(
     });
 
     isFileLoading.value = true;
+    // Populate the file metadata first before uploading the blocks so that vue can render them properly in the UI
+    for (let i = 0; i < newFiles.length; i++) {
+      const file = newFiles[i];
+      const { id } = fileSasEntities[i];
+      files.value.push({ filename: file.name, id, mimetype: file.type });
+    }
+
     await Promise.all(
       newFiles.map(async (file, index) => {
         const { id, sasUrl } = fileSasEntities[index];
         const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
         fileUrlMap.value.set(id, uploadFileUrl);
-        files.value[files.value.length + index] = { filename: file.name, id, mimetype: file.type };
         await uploadBlocks(file, sasUrl, (progress) => {
           uploadFileUrl.progress = progress;
         });
