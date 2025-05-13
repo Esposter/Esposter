@@ -63,7 +63,10 @@ const messageHtml = useRefreshMentions(() => message.message);
       </div>
     </template>
     <slot v-else>
-      <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+      <div flex items-end gap-1>
+        <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+        <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
+      </div>
     </slot>
     <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
@@ -84,7 +87,7 @@ const messageHtml = useRefreshMentions(() => message.message);
 }
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
-  line-clamp: unset;
+  -webkit-line-clamp: unset;
 }
 
 .created-at {
