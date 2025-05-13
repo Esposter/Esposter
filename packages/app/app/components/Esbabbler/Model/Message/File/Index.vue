@@ -4,7 +4,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/esbabbler/file/constants";
-import { useMessageStore } from "@/store/esbabbler/message";
+import { useDownloadFileStore } from "@/store/esbabbler/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface FileProps {
@@ -18,9 +18,9 @@ const { columnLayout, file, index, message } = defineProps<FileProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const { $trpc } = useNuxtApp();
-const messageStore = useMessageStore();
-const { downloadFileUrlMap } = storeToRefs(messageStore);
-const url = computed(() => downloadFileUrlMap.value.get(file.id)?.url ?? "");
+const downloadFileStore = useDownloadFileStore();
+const { fileUrlMap } = storeToRefs(downloadFileStore);
+const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const isActive = ref(false);
 </script>
 

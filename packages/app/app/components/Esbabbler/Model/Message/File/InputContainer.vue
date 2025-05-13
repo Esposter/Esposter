@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
 
-const messageInputStore = useMessageInputStore();
-const { removeFileUrl } = messageInputStore;
-const { files, uploadFileUrlMap } = storeToRefs(messageInputStore);
+const uploadFileStore = useUploadFileStore();
+const { removeFileUrl } = uploadFileStore;
+const { files, fileUrlMap } = storeToRefs(uploadFileStore);
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { files, uploadFileUrlMap } = storeToRefs(messageInputStore);
         :key="file.id"
         :file
         :index
-        :upload-file-url="uploadFileUrlMap.get(file.id)!"
+        :upload-file-url="fileUrlMap.get(file.id)!"
         @delete="
           (index) => {
             const { id } = files.splice(index, 1)[0];

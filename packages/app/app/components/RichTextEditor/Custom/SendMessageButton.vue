@@ -12,8 +12,8 @@ const { editor } = defineProps<CustomEmojiPickerButtonProps>();
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 const messageInputStore = useMessageInputStore();
-const { getIsSendEnabled } = messageInputStore;
-const disabled = computed(() => !getIsSendEnabled(editor));
+const { validateMessageInput } = messageInputStore;
+const disabled = computed(() => !validateMessageInput(editor));
 const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 

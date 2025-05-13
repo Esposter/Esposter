@@ -4,14 +4,14 @@ import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
-const messageInputStore = useMessageInputStore();
-const { files, isFileLoading, uploadFileUrlMap } = storeToRefs(messageInputStore);
+const uploadFileStore = useUploadFileStore();
+const { files, fileUrlMap, isFileLoading } = storeToRefs(uploadFileStore);
 const { isOverDropZone } = useDropZone(
   document,
   getSynchronizedFunction(async (newFiles) => {
@@ -31,7 +31,7 @@ const { isOverDropZone } = useDropZone(
       newFiles.map(async (file, index) => {
         const { id, sasUrl } = fileSasEntities[index];
         const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
-        uploadFileUrlMap.value.set(id, uploadFileUrl);
+        fileUrlMap.value.set(id, uploadFileUrl);
         files.value[index] = { filename: file.name, id, mimetype: file.type };
         await uploadBlocks(file, sasUrl, (progress) => {
           uploadFileUrl.progress = progress;
