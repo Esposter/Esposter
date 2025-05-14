@@ -187,10 +187,6 @@ export class Parser {
     return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
   }
 
-  reset(): void {
-    this.resultObject = {};
-  }
-
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
     if (!(key in object))
       if (!this.options.explicitArray) defineProperty(object, key, newValue);
@@ -204,7 +200,10 @@ export class Parser {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
-    this.saxParser.onend = () => callback(this.resultObject as T);
+    this.saxParser.onend = () => {
+      callback(this.resultObject as T);
+      this.resultObject = {};
+    };
     return this.saxParser.write(string).close();
   }
 }
