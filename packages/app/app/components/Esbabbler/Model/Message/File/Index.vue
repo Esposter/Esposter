@@ -38,9 +38,9 @@ const isActive = ref(false);
       borderBottomRightRadius: index === columnLayout.length - 1 ? CONTAINER_BORDER_RADIUS : undefined,
     }"
     h-full
+    @="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
-    v-on="viewableFileIndex === -1 ? {} : { click: () => viewFiles(viewableFileIndex) }"
   >
     <EsbabblerFileRenderer :file :url />
     <div

@@ -25,7 +25,7 @@ export const security: NuxtConfig["security"] = {
         TUI_BASE_URL,
       ],
       "script-src": "'unsafe-eval'",
-      "script-src-elem": ["'unsafe-inline'", process.env.BASE_URL, BASE_URL, TUI_BASE_URL],
+      "script-src-elem": ["'unsafe-inline'", "data:", process.env.BASE_URL, BASE_URL, TUI_BASE_URL],
       "style-src-elem": [
         "'unsafe-inline'",
         "data:",

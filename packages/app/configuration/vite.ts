@@ -4,9 +4,9 @@ import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
 
 export const vite: NuxtConfig["vite"] = {
   build: {
-    // Do not inline images and assets to avoid the phaser error
-    // "Local data URIs are not supported"
+    // Fix phaser "Local data URIs are not supported"
     assetsInlineLimit: 0,
+    // https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/getting-started
     commonjsOptions: {
       transformMixedEsModules: true,
     },
@@ -23,6 +23,8 @@ export const vite: NuxtConfig["vite"] = {
     },
   },
   optimizeDeps: {
-    include: commonjsDeps,
+    // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
+    exclude: ["@vue-pdf-viewer/viewer"],
+    include: [...commonjsDeps, "pdfjs-dist"],
   },
 };

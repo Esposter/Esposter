@@ -62,6 +62,7 @@ catalog:
   "@vue-flow/core": ^1.43.1
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.4.0
+  "@vue-pdf-viewer/viewer": ^2.5.1
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.1.0
@@ -172,6 +173,7 @@ catalog:
   viewerjs: ^1.11.7
   vue: ^3.5.13
   vue-codemirror: ^6.1.1
+  vue-pdf-embed: ^2.1.2
   vue-router: ^4.5.1
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0

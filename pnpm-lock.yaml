@@ -189,6 +189,9 @@ catalogs:
     '@vue-flow/node-resizer':
       specifier: ^1.4.0
       version: 1.4.0
+    '@vue-pdf-viewer/viewer':
+      specifier: ^2.5.1
+      version: 2.5.1
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -501,6 +504,9 @@ catalogs:
     vue-codemirror:
       specifier: ^6.1.1
       version: 6.1.1
+    vue-pdf-embed:
+      specifier: ^2.1.2
+      version: 2.1.2
     vue-router:
       specifier: ^4.5.1
       version: 4.5.1
@@ -705,6 +711,9 @@ importers:
       '@vue-flow/node-resizer':
         specifier: 'catalog:'
         version: 1.4.0(@vue-flow/core@1.43.1(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
+      '@vue-pdf-viewer/viewer':
+        specifier: 'catalog:'
+        version: 2.5.1(pdfjs-dist@4.10.38)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 11.0.2(vue@3.5.13(typescript@5.8.3))
@@ -912,6 +921,9 @@ importers:
       vue-codemirror:
         specifier: 'catalog:'
         version: 6.1.1(codemirror@6.0.1)(vue@3.5.13(typescript@5.8.3))
+      vue-pdf-embed:
+        specifier: 'catalog:'
+        version: 2.1.2(vue@3.5.13(typescript@5.8.3))
       vue-phaserjs:
         specifier: workspace:*
         version: link:../vue-phaserjs
@@ -2374,6 +2386,9 @@ packages:
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
 
+  '@floating-ui/vue@1.1.6':
+    resolution: {integrity: sha512-XFlUzGHGv12zbgHNk5FN2mUB7ROul3oG2ENdTpWdE+qMFxyNxWSRmsoyhiEnpmabNm6WnUvR1OvJfUfN4ojC1A==}
+
   '@fullcalendar/core@6.1.17':
     resolution: {integrity: sha512-0W7lnIrv18ruJ5zeWBeNZXO8qCWlzxDdp9COFEsZnyNjiEhUVnrW/dPbjRKYpL0edGG0/Lhs0ghp1z/5ekt8ZA==}
 
@@ -2485,6 +2500,12 @@ packages:
 
   '@interactjs/types@1.10.27':
     resolution: {integrity: sha512-BUdv0cvs4H5ODuwft2Xp4eL8Vmi3LcihK42z0Ft/FbVJZoRioBsxH+LlsBdK4tAie7PqlKGy+1oyOncu1nQ6eA==}
+
+  '@internationalized/date@3.8.0':
+    resolution: {integrity: sha512-J51AJ0fEL68hE4CwGPa6E0PO6JDaVLd8aln48xFCSy7CZkZc96dGEGmLs2OEEbBxcsVZtfrqkXJwI2/MSG8yKw==}
+
+  '@internationalized/number@3.6.1':
+    resolution: {integrity: sha512-UVsb4bCwbL944E0SX50CHFtWEeZ2uB5VozZ5yDXJdq6iPZsZO5p+bjVMZh2GxHf4Bs/7xtDCcPwEa2NU9DaG/g==}
 
   '@ioredis/commands@1.2.0':
     resolution: {integrity: sha512-Sx1pU8EM64o2BrqNpEO1CNLtKQwyhuXuqyfH7oGKCk+1a33d2r5saW8zNwm3j6BTExtjrv2BxTgzzkMwts6vGg==}
@@ -2689,6 +2710,70 @@ packages:
   '@modelcontextprotocol/sdk@1.11.2':
     resolution: {integrity: sha512-H9vwztj5OAqHg9GockCQC06k1natgcxWQSRpQcPJf6i5+MWBzfKkRtxGbjQf0X2ihii0ffLZCRGbYV2f2bjNCQ==}
     engines: {node: '>=18'}
+
+  '@napi-rs/canvas-android-arm64@0.1.70':
+    resolution: {integrity: sha512-I/YOuQ0wbkVYxVaYtCgN42WKTYxNqFA0gTcTrHIGG1jfpDSyZWII/uHcjOo4nzd19io6Y4+/BqP8E5hJgf9OmQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [android]
+
+  '@napi-rs/canvas-darwin-arm64@0.1.70':
+    resolution: {integrity: sha512-4pPGyXetHIHkw2TOJHujt3mkCP8LdDu8+CT15ld9Id39c752RcI0amDHSuMLMQfAjvusA9B5kKxazwjMGjEJpQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@napi-rs/canvas-darwin-x64@0.1.70':
+    resolution: {integrity: sha512-+2N6Os9LbkmDMHL+raknrUcLQhsXzc5CSXRbXws9C3pv/mjHRVszQ9dhFUUe9FjfPhCJznO6USVdwOtu7pOrzQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.70':
+    resolution: {integrity: sha512-QjscX9OaKq/990sVhSMj581xuqLgiaPVMjjYvWaCmAJRkNQ004QfoSMEm3FoTqM4DRoquP8jvuEXScVJsc1rqQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+
+  '@napi-rs/canvas-linux-arm64-gnu@0.1.70':
+    resolution: {integrity: sha512-LNakMOwwqwiHIwMpnMAbFRczQMQ7TkkMyATqFCOtUJNlE6LPP/QiUj/mlFrNbUn/hctqShJ60gWEb52ZTALbVw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@napi-rs/canvas-linux-arm64-musl@0.1.70':
+    resolution: {integrity: sha512-wBTOllEYNfJCHOdZj9v8gLzZ4oY3oyPX8MSRvaxPm/s7RfEXxCyZ8OhJ5xAyicsDdbE5YBZqdmaaeP5+xKxvtg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@napi-rs/canvas-linux-riscv64-gnu@0.1.70':
+    resolution: {integrity: sha512-GVUUPC8TuuFqHip0rxHkUqArQnlzmlXmTEBuXAWdgCv85zTCFH8nOHk/YCF5yo0Z2eOm8nOi90aWs0leJ4OE5Q==}
+    engines: {node: '>= 10'}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@napi-rs/canvas-linux-x64-gnu@0.1.70':
+    resolution: {integrity: sha512-/kvUa2lZRwGNyfznSn5t1ShWJnr/m5acSlhTV3eXECafObjl0VBuA1HJw0QrilLpb4Fe0VLywkpD1NsMoVDROQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@napi-rs/canvas-linux-x64-musl@0.1.70':
+    resolution: {integrity: sha512-aqlv8MLpycoMKRmds7JWCfVwNf1fiZxaU7JwJs9/ExjTD8lX2KjsO7CTeAj5Cl4aEuzxUWbJPUUE2Qu9cZ1vfg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@napi-rs/canvas-win32-x64-msvc@0.1.70':
+    resolution: {integrity: sha512-Q9QU3WIpwBTVHk4cPfBjGHGU4U0llQYRXgJtFtYqqGNEOKVN4OT6PQ+ve63xwIPODMpZ0HHyj/KLGc9CWc3EtQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@napi-rs/canvas@0.1.70':
+    resolution: {integrity: sha512-nD6NGa4JbNYSZYsTnLGrqe9Kn/lCkA4ybXt8sx5ojDqZjr2i0TWAHxx/vhgfjX+i3hCdKWufxYwi7CfXqtITSA==}
+    engines: {node: '>= 10'}
 
   '@napi-rs/wasm-runtime@0.2.9':
     resolution: {integrity: sha512-OKRBiajrrxB9ATokgEQoG87Z25c67pCpYcCwmXYX8PBftC9pBfN18gnm/fh1wurSLEKIAt+QRFLFCQISrb66Jg==}
@@ -3783,6 +3868,14 @@ packages:
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
 
+  '@tanstack/virtual-core@3.13.8':
+    resolution: {integrity: sha512-BT6w89Hqy7YKaWewYzmecXQzcJh6HTBbKYJIIkMaNU49DZ06LoTV3z32DWWEdUsgW6n1xTmwTLs4GtWrZC261w==}
+
+  '@tanstack/vue-virtual@3.13.8':
+    resolution: {integrity: sha512-CqyjKVc88YlE8JPth8a5Gi4CUoYrwJ2PZxtFbhoekx8Z2qqymxX2jzkbUMKFsX4EVNET90D5bLsG3epyozbzcg==}
+    peerDependencies:
+      vue: ^2.7.0 || ^3.0.0
+
   '@tiptap/core@2.12.0':
     resolution: {integrity: sha512-3qX8oGVKFFZzQ0vit+ZolR6AJIATBzmEmjAA0llFhWk4vf3v64p1YcXcJsOBsr5scizJu5L6RYWEFatFwqckRg==}
     peerDependencies:
@@ -4554,6 +4647,13 @@ packages:
       vue:
         optional: true
 
+  '@vue-pdf-viewer/viewer@2.5.1':
+    resolution: {integrity: sha512-hOTVUZ99UDSQsYlsooor4i/FAGzdQem8CqnFWddf4Rk/wSi4tn6iztU3aI+xKLUBoF2asMiDHZWMNqJ5r5Z+pA==}
+    engines: {bun: '>=1.0.4', node: '>=18.20.3', npm: '>=9.5.1', pnpm: '>=8.8.0', yarn: '>=1.20.0'}
+    peerDependencies:
+      pdfjs-dist: ^4.10.38
+      vue: ^3.2.37
+
   '@vue/babel-helper-vue-transform-on@1.4.0':
     resolution: {integrity: sha512-mCokbouEQ/ocRce/FpKCRItGo+013tHg7tixg3DUNS+6bmIchPt66012kBMm476vyEIJPafrvOf4E5OYj3shSw==}
 
@@ -4946,6 +5046,10 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  aria-hidden@1.2.4:
+    resolution: {integrity: sha512-y+CcFFwelSXpLZk/7fMB2mUbGtX9lKycf1MWJ7CaTIERyitVlyQx6C+sxcROU2BAJ24OiZyK+8wj2i8AlBoS3A==}
+    engines: {node: '>=10'}
 
   array-buffer-byte-length@1.0.2:
     resolution: {integrity: sha512-LHE+8BuR7RYGDKvnrmcuSq3tDcKv9OFEXQt/HpbZhY7V6h0zlUXutnAD82GiFx9rdieCMjkvtcsPqBwgUl1Iiw==}
@@ -8731,6 +8835,10 @@ packages:
     resolution: {integrity: sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==}
     engines: {node: '>= 14.16'}
 
+  pdfjs-dist@4.10.38:
+    resolution: {integrity: sha512-/Y3fcFrXEAsMjJXeL9J8+ZG9U01LbuWaYypvDW2ycW1jL269L3js3DVBjDJ0Up9Np1uqDXsDrRihHANhZOlwdQ==}
+    engines: {node: '>=20'}
+
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
@@ -9264,6 +9372,11 @@ packages:
   regjsparser@0.12.0:
     resolution: {integrity: sha512-cnE+y8bz4NhMjISKbgeVJtqNbtf5QpjZP+Bslo+UqkIt9QPnX9q095eiRRASJG1/tz6dlNr6Z5NsBiWYokp6EQ==}
     hasBin: true
+
+  reka-ui@2.2.1:
+    resolution: {integrity: sha512-oLHiyBn6gTIQGnTnv8G5LQuFp9j8HuUNl0qdnW3XPhFb/07hrxzFpjo2kt/jxOZive+n/XWDbOjSj2h9Hih3qA==}
+    peerDependencies:
+      vue: '>= 3.2.0'
 
   remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -10688,6 +10801,11 @@ packages:
       vue-tsc:
         optional: true
 
+  vite-plugin-css-injected-by-js@3.5.2:
+    resolution: {integrity: sha512-2MpU/Y+SCZyWUB6ua3HbJCrgnF0KACAsmzOQt1UvRVJCGF6S8xdA3ZUhWcWdM9ivG4I5az8PnQmwwrkC2CAQrQ==}
+    peerDependencies:
+      vite: '>2.0.0-0'
+
   vite-plugin-dts@4.5.3:
     resolution: {integrity: sha512-P64VnD00dR+e8S26ESoFELqc17+w7pKkwlBpgXteOljFyT0zDwD8hH4zXp49M/kciy//7ZbVXIwQCekBJjfWzA==}
     peerDependencies:
@@ -10857,6 +10975,11 @@ packages:
     resolution: {integrity: sha512-JdgRRUVrN0Y2GosA0M68DEbKlXMqJ7FQgsK8CjQD2vxvNSqAU6PZEpi4cfcTVtfM2GVOMjHo7GKKLbXxOBqDqA==}
     peerDependencies:
       vue: ^3.4.37
+
+  vue-pdf-embed@2.1.2:
+    resolution: {integrity: sha512-/j++oknFBY9x/MgEFBo9tSuOXS0Z9COlywwLhMREhiGfmuQqpnGy5T+SwVIXxR1tmdzM/lHog8JL7HOAgXT1aw==}
+    peerDependencies:
+      vue: ^3.3.0
 
   vue-router@4.5.1:
     resolution: {integrity: sha512-ogAF3P97NPm8fJsE4by9dwSYtDwXIY1nFY9T6DyQnGHd1E2Da94w9JIolpe42LJGIl0DwOHBi8TcRPlPGwbTtw==}
@@ -11440,7 +11563,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.0
+      debug: 4.4.1
       lodash.debounce: 4.0.8
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -12668,6 +12791,15 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
+  '@floating-ui/vue@1.1.6(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@floating-ui/dom': 1.7.0
+      '@floating-ui/utils': 0.2.9
+      vue-demi: 0.14.10(vue@3.5.13(typescript@5.8.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   '@fullcalendar/core@6.1.17':
     dependencies:
       preact: 10.12.1
@@ -12775,6 +12907,14 @@ snapshots:
       '@types/node': 22.15.17
 
   '@interactjs/types@1.10.27': {}
+
+  '@internationalized/date@3.8.0':
+    dependencies:
+      '@swc/helpers': 0.5.17
+
+  '@internationalized/number@3.6.1':
+    dependencies:
+      '@swc/helpers': 0.5.17
 
   '@ioredis/commands@1.2.0': {}
 
@@ -13238,6 +13378,50 @@ snapshots:
       zod-to-json-schema: 3.24.5(zod@3.24.4)
     transitivePeerDependencies:
       - supports-color
+
+  '@napi-rs/canvas-android-arm64@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-darwin-arm64@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-darwin-x64@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-arm64-gnu@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-arm64-musl@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-riscv64-gnu@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-x64-gnu@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-linux-x64-musl@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas-win32-x64-msvc@0.1.70':
+    optional: true
+
+  '@napi-rs/canvas@0.1.70':
+    optionalDependencies:
+      '@napi-rs/canvas-android-arm64': 0.1.70
+      '@napi-rs/canvas-darwin-arm64': 0.1.70
+      '@napi-rs/canvas-darwin-x64': 0.1.70
+      '@napi-rs/canvas-linux-arm-gnueabihf': 0.1.70
+      '@napi-rs/canvas-linux-arm64-gnu': 0.1.70
+      '@napi-rs/canvas-linux-arm64-musl': 0.1.70
+      '@napi-rs/canvas-linux-riscv64-gnu': 0.1.70
+      '@napi-rs/canvas-linux-x64-gnu': 0.1.70
+      '@napi-rs/canvas-linux-x64-musl': 0.1.70
+      '@napi-rs/canvas-win32-x64-msvc': 0.1.70
+    optional: true
 
   '@napi-rs/wasm-runtime@0.2.9':
     dependencies:
@@ -14657,6 +14841,13 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@tanstack/virtual-core@3.13.8': {}
+
+  '@tanstack/vue-virtual@3.13.8(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@tanstack/virtual-core': 3.13.8
+      vue: 3.5.13(typescript@5.8.3)
+
   '@tiptap/core@2.12.0(@tiptap/pm@2.12.0)':
     dependencies:
       '@tiptap/pm': 2.12.0
@@ -15629,6 +15820,18 @@ snapshots:
     optionalDependencies:
       vue: 3.5.13(typescript@5.8.3)
 
+  '@vue-pdf-viewer/viewer@2.5.1(pdfjs-dist@4.10.38)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
+      pdfjs-dist: 4.10.38
+      reka-ui: 2.2.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+      vite-plugin-css-injected-by-js: 3.5.2(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
+      vue: 3.5.13(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
+      - vite
+
   '@vue/babel-helper-vue-transform-on@1.4.0': {}
 
   '@vue/babel-plugin-jsx@1.4.0(@babel/core@7.27.1)':
@@ -16168,6 +16371,10 @@ snapshots:
       sprintf-js: 1.0.3
 
   argparse@2.0.1: {}
+
+  aria-hidden@1.2.4:
+    dependencies:
+      tslib: 2.8.1
 
   array-buffer-byte-length@1.0.2:
     dependencies:
@@ -20484,6 +20691,10 @@ snapshots:
 
   pathval@2.0.0: {}
 
+  pdfjs-dist@4.10.38:
+    optionalDependencies:
+      '@napi-rs/canvas': 0.1.70
+
   pend@1.2.0: {}
 
   perfect-debounce@1.0.0: {}
@@ -21065,6 +21276,23 @@ snapshots:
   regjsparser@0.12.0:
     dependencies:
       jsesc: 3.0.2
+
+  reka-ui@2.2.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)):
+    dependencies:
+      '@floating-ui/dom': 1.7.0
+      '@floating-ui/vue': 1.1.6(vue@3.5.13(typescript@5.8.3))
+      '@internationalized/date': 3.8.0
+      '@internationalized/number': 3.6.1
+      '@tanstack/vue-virtual': 3.13.8(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/core': 12.8.2(typescript@5.8.3)
+      '@vueuse/shared': 12.8.2(typescript@5.8.3)
+      aria-hidden: 1.2.4
+      defu: 6.1.4
+      ohash: 2.0.11
+      vue: 3.5.13(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
 
   remove-trailing-separator@1.1.0: {}
 
@@ -22590,6 +22818,10 @@ snapshots:
       typescript: 5.8.3
       vue-tsc: 2.2.10(typescript@5.8.3)
 
+  vite-plugin-css-injected-by-js@3.5.2(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)):
+    dependencies:
+      vite: 6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+
   vite-plugin-dts@4.5.3(@types/node@22.15.17)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(lightningcss@1.30.0)(sass-embedded@1.88.0)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)):
     dependencies:
       '@microsoft/api-extractor': 7.52.7(@types/node@22.15.17)
@@ -22802,6 +23034,11 @@ snapshots:
 
   vue-flow-layout@0.1.1(vue@3.5.13(typescript@5.8.3)):
     dependencies:
+      vue: 3.5.13(typescript@5.8.3)
+
+  vue-pdf-embed@2.1.2(vue@3.5.13(typescript@5.8.3)):
+    dependencies:
+      pdfjs-dist: 4.10.38
       vue: 3.5.13(typescript@5.8.3)
 
   vue-router@4.5.1(vue@3.5.13(typescript@5.8.3)):
