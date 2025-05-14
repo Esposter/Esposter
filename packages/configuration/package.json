@@ -4,6 +4,11 @@
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "ctix",
     "eslint",
@@ -11,9 +16,6 @@
     "typescript",
     "vite"
   ],
-  "homepage": "https://github.com/Esposter/Esposter#readme",
-  "license": "Apache-2.0",
-  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
