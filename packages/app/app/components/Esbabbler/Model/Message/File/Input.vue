@@ -9,7 +9,7 @@ interface FileInputProps {
   uploadFileUrl?: UploadFileUrl;
 }
 
-const { file, index, uploadFileUrl = { progress: 100, url: "" } } = defineProps<FileInputProps>();
+const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<FileInputProps>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 const menuItems: OptionMenuItem[] = [
