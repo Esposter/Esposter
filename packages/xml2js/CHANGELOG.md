@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
+
+### Bug Fixes
+
+* make package json fields consistent ([d94cebc](https://github.com/Esposter/Esposter/commit/d94cebc5b8009a79a4572f4021ebee35f6efe1ef))
+
 # [2.2.0](https://github.com/Esposter/Esposter/compare/v2.1.0...v2.2.0) (2025-05-14)
 
 ### Bug Fixes
