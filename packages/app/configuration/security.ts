@@ -12,7 +12,6 @@ import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/espo
 
 export const security: NuxtConfig["security"] = {
   headers: {
-    // @TODO: Document what packages need what policies...
     contentSecurityPolicy: {
       "img-src": [
         // @vite-pwa/nuxt
