@@ -1,5 +1,13 @@
 packages:
   - packages/*
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - core-js
+  - esbuild
+  - rolldown
+  - unrs-resolver
+  - vue-demi
+shellEmulator: true
 catalog:
   "@azure/data-tables": ^13.3.0
   "@azure/storage-blob": ^12.27.0
@@ -48,6 +56,7 @@ catalog:
   "@types/node": ^22.15.17
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
+  "@types/sax": ^1.2.7
   "@types/three": ^0.176.0
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
@@ -67,22 +76,16 @@ catalog:
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.1.0
   "@vueuse/nuxt": ^13.1.0
-  # https://github.com/json-layout/json-layout/issues/5
   ajv: ^8.17.1
-  # https://github.com/json-layout/json-layout/issues/5
   ajv-errors: ^3.0.0
-  # https://github.com/json-layout/json-layout/issues/5
   ajv-formats: ^3.0.1
-  # https://github.com/json-layout/json-layout/issues/5
   ajv-i18n: ^4.2.0
   apexcharts: ^4.7.0
-  # @TODO: https://github.com/better-auth/better-auth/issues/1669
   better-auth: 1.1.21
   codemirror: ^6.0.1
   ctix: ^2.7.1
   data-urls: ^5.0.0
   dayjs: ^1.11.13
-  # https://github.com/json-layout/json-layout/issues/5
   debug: ^4.4.1
   dedent: ^1.6.0
   defu: ^6.1.4
@@ -147,6 +150,7 @@ catalog:
   rolldown-vite: ^6.3.9
   rxjs: ^7.8.2
   sass-embedded: ^1.88.0
+  sax: ^1.4.1
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
   survey-core: ^2.0.8
@@ -164,13 +168,13 @@ catalog:
   typescript-eslint: ^8.32.1
   unocss: ^66.1.1
   unplugin-auto-import: ^19.2.0
+  v-viewer: ^3.0.21
+  viewerjs: ^1.11.7
   vite: ^6.3.5
   vite-plugin-dts: ^4.5.3
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
   vitest: ^3.1.3
-  v-viewer: ^3.0.21
-  viewerjs: ^1.11.7
   vue: ^3.5.13
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.2
@@ -183,14 +187,6 @@ catalog:
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.21
   ws: ^8.18.2
-  xml2js: ^0.6.2
+  xmlbuilder2: ^3.1.1
   zod: ^3.24.4
   zod-to-json-schema: ^3.24.5
-onlyBuiltDependencies:
-  - "@parcel/watcher"
-  - core-js
-  - esbuild
-  - rolldown
-  - unrs-resolver
-  - vue-demi
-shellEmulator: true

@@ -159,7 +159,13 @@
     "zod-to-json-schema": "catalog:"
   },
   "dependenciesComments": {
-    "vue-phaserjs": "@TODO: broken with vue's new reactive system"
+    "vue-phaserjs": "@TODO: broken with vue's new reactive system",
+    "ajv": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
+    "better-auth": "https://github.com/better-auth/better-auth/issues/1669",
+    "debug": "https://github.com/json-layout/json-layout/issues/5"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",
