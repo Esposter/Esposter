@@ -12,10 +12,12 @@ import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/espo
 
 export const security: NuxtConfig["security"] = {
   headers: {
+    // @TODO: Document what packages need what policies...
     contentSecurityPolicy: {
       "img-src": [
-        "'self'",
+        "self",
         "data:",
+        // Upload file preview
         "blob:",
         "*.googleusercontent.com",
         "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
@@ -25,6 +27,7 @@ export const security: NuxtConfig["security"] = {
         TUI_BASE_URL,
       ],
       "script-src": "'unsafe-eval'",
+      // data: @vue-pdf-viewer/viewer
       "script-src-elem": ["'unsafe-inline'", "data:", process.env.BASE_URL, BASE_URL, TUI_BASE_URL],
       "style-src-elem": [
         "'unsafe-inline'",
@@ -35,6 +38,10 @@ export const security: NuxtConfig["security"] = {
         TUI_BASE_URL,
       ],
       "worker-src": ["blob:", process.env.BASE_URL],
+    },
+    permissionsPolicy: {
+      // @vue-pdf-viewer/viewer
+      fullscreen: "self",
     },
   },
   rateLimiter: false,
