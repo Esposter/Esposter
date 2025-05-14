@@ -17,8 +17,9 @@ export const security: NuxtConfig["security"] = {
       "img-src": [
         // @vite-pwa/nuxt
         "'self'",
+        // phaser, surveyjs
         "data:",
-        // Upload file preview
+        // Upload file createObjectURL preview
         "blob:",
         // Google user image
         "*.googleusercontent.com",
@@ -38,9 +39,11 @@ export const security: NuxtConfig["security"] = {
       "script-src-elem": [
         // nuxt data hydration
         "'unsafe-inline'",
+        // nuxt vite client
+        "'self'",
         // @vue-pdf-viewer/viewer
         "data:",
-        process.env.BASE_URL,
+        // desmos
         BASE_URL,
         // grapesjs
         TUI_BASE_URL,
@@ -48,8 +51,9 @@ export const security: NuxtConfig["security"] = {
       "style-src-elem": [
         // vuetify
         "'unsafe-inline'",
-        "data:",
-        process.env.BASE_URL,
+        // nuxt
+        "'self'",
+        // "data:",
         // grapesjs
         CLOUDFLARE_BASE_URL,
         // @nuxt/fonts
@@ -57,7 +61,11 @@ export const security: NuxtConfig["security"] = {
         // grapesjs
         TUI_BASE_URL,
       ],
-      "worker-src": ["blob:", process.env.BASE_URL],
+      "worker-src": [
+        // desmos
+        "blob:",
+        // process.env.BASE_URL,
+      ],
     },
     permissionsPolicy: {
       // @vue-pdf-viewer/viewer
