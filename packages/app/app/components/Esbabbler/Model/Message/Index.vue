@@ -87,6 +87,7 @@ const messageHtml = useRefreshMentions(() => message.message);
 }
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
+  line-clamp: unset;
   -webkit-line-clamp: unset;
 }
 

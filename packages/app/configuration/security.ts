@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
 import { BASE_URL } from "../app/services/desmos/constants";
-import { GOOGLE_FONTS_BASE_URL } from "../app/services/google/constants";
+import { FONTS_BASE_URL } from "../app/services/google/constants";
 import {
   CLOUDFLARE_BASE_URL,
   GRAPESJS_BASE_URL,
@@ -15,26 +15,46 @@ export const security: NuxtConfig["security"] = {
     // @TODO: Document what packages need what policies...
     contentSecurityPolicy: {
       "img-src": [
-        "self",
+        // @vite-pwa/nuxt
+        "'self'",
         "data:",
         // Upload file preview
         "blob:",
+        // Google user image
         "*.googleusercontent.com",
+        // emoji-mart-vue-fast
         "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
+        // Azure
         process.env.AZURE_BLOB_URL,
+        // grapesjs
         GRAPESJS_BASE_URL,
+        // grapesjs
         PLACEHOLD_BASE_URL,
+        // grapesjs
         TUI_BASE_URL,
       ],
+      // desmos
       "script-src": "'unsafe-eval'",
-      // data: @vue-pdf-viewer/viewer
-      "script-src-elem": ["'unsafe-inline'", "data:", process.env.BASE_URL, BASE_URL, TUI_BASE_URL],
+      "script-src-elem": [
+        // nuxt data hydration
+        "'unsafe-inline'",
+        // @vue-pdf-viewer/viewer
+        "data:",
+        process.env.BASE_URL,
+        BASE_URL,
+        // grapesjs
+        TUI_BASE_URL,
+      ],
       "style-src-elem": [
+        // vuetify
         "'unsafe-inline'",
         "data:",
         process.env.BASE_URL,
+        // grapesjs
         CLOUDFLARE_BASE_URL,
-        GOOGLE_FONTS_BASE_URL,
+        // @nuxt/fonts
+        FONTS_BASE_URL,
+        // grapesjs
         TUI_BASE_URL,
       ],
       "worker-src": ["blob:", process.env.BASE_URL],

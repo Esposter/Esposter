@@ -18,8 +18,10 @@ watch(isDark, (newIsDark) => {
 
 <template>
   <VuePdfEmbed
-    :max-h-32="isPreview ? '' : undefined"
-    :cursor-pointer="isPreview ? undefined : ''"
+    :style="{
+      maxHeight: isPreview ? '8rem' : undefined,
+      cursor: isPreview ? undefined : 'pointer',
+    }"
     :page="1"
     :source="url"
     annotation-layer
