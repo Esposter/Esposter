@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/Esposter/Esposter/compare/v2.1.0...v2.2.0) (2025-05-14)
+
+### Bug Fixes
+
+* add is preview to file container as well ([8585f26](https://github.com/Esposter/Esposter/commit/8585f26458f0e0e434d2ec0069f7a09b175a8f6e))
+* floating promises ([7abd187](https://github.com/Esposter/Esposter/commit/7abd18741481fd448d45f6cf3c667caf93484ec1))
+* lint ([a9472bd](https://github.com/Esposter/Esposter/commit/a9472bd1ffd8df63a9cd5a3988efc3a7c4657101))
+* **lint:** turn off unnecessary rule ([9356141](https://github.com/Esposter/Esposter/commit/935614148c9f67e570805039e437cea89270cf82))
+* remove unnecessary reporter ([2f20994](https://github.com/Esposter/Esposter/commit/2f20994a349288de12a81a8bc8001d7e9250e5ea))
+* some lint rules ([1c049c2](https://github.com/Esposter/Esposter/commit/1c049c21cc7991723cb8608ea6732526c1c6904e))
+
+### Features
+
+* **test:** Add remaining comment endpoint tests ([78991e7](https://github.com/Esposter/Esposter/commit/78991e79a247ae365fff8c1017dee1a762e12618))
+
 # [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
 
 ### Bug Fixes
