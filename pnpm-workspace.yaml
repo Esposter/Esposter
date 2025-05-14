@@ -154,10 +154,10 @@ catalog:
   sax: ^1.4.1
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
-  survey-core: ^2.0.8
+  survey-core: ^2.0.9
   survey-creator-core: ^2.0.8
   survey-creator-vue: ^2.0.8
-  survey-vue3-ui: ^2.0.8
+  survey-vue3-ui: ^2.0.9
   three: ^0.176.0
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
