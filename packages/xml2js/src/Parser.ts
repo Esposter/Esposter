@@ -4,17 +4,15 @@ import type { convertableToString, ParserOptions } from "xml2js";
 import { DefaultParserOptions } from "@/DefaultParserOptions";
 import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
-import { EventEmitter } from "node:events";
 import { parser } from "sax";
 
-export class Parser extends EventEmitter {
+export class Parser {
   private options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
   private resultObject: Record<string, unknown> = {};
-  private saxParser!: SAXParser;
+  private saxParser: SAXParser;
   private xmlnsKey = "";
 
   constructor(init?: Partial<ParserOptions>) {
-    super();
     Object.assign(this.options, init);
     // Define the key used for namespaces
     if (this.options.xmlns) this.xmlnsKey = `${this.options.attrkey}ns`;
@@ -23,26 +21,12 @@ export class Parser extends EventEmitter {
       this.options.tagNameProcessors.unshift(normalize);
     }
 
-    this.reset();
-  }
-
-  parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
-  }
-
-  reset(): void {
-    this.removeAllListeners();
     this.saxParser = parser(this.options.strict, { normalize: false, trim: false, xmlns: this.options.xmlns });
-    this.saxParser.onerror = (error) => {
+    this.saxParser.onerror = () => {
       this.saxParser.resume();
-      this.emit("error", error);
     };
-    this.saxParser.onend = () => {
-      this.emit("end", this.resultObject);
-    };
-    this.resultObject = {};
-    const stack: Record<string, unknown>[] = [];
 
+    const stack: Record<string, unknown>[] = [];
     this.saxParser.onopentag = (node) => {
       const object: Record<string, unknown> = {};
       object[this.options.charkey] = "";
@@ -70,7 +54,6 @@ export class Parser extends EventEmitter {
 
       stack.push(object);
     };
-
     this.saxParser.onclosetag = () => {
       let object = stack.pop();
       if (!object) return;
@@ -86,7 +69,7 @@ export class Parser extends EventEmitter {
 
       const nextObject = stack.at(-1);
       let emptyStr = "";
-      // remove the '#' key altogether if it's blank
+      // Remove the '#' key altogether if it's blank
       const char = object[this.options.charkey] as string;
       if (/^\s*$/.exec(char) && !cdata) {
         emptyStr = char;
@@ -122,7 +105,7 @@ export class Parser extends EventEmitter {
         object = this.options.validator(xpath, nextObject?.[nodeName], object);
       }
 
-      // put children into <childkey> property and unfold chars if necessary
+      // Put children into <childkey> property and unfold chars if necessary
       if (this.options.explicitChildren && !this.options.mergeAttrs && typeof object === "object")
         if (!this.options.preserveChildrenOrder) {
           const node: Record<string, unknown> = {};
@@ -132,7 +115,7 @@ export class Parser extends EventEmitter {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete object[this.options.attrkey];
           }
-          // separate char data
+          // Separate char data
           if (!this.options.charsAsChildren && this.options.charkey in object) {
             node[this.options.charkey] = object[this.options.charkey];
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -157,14 +140,13 @@ export class Parser extends EventEmitter {
       else {
         // If explicitRoot was specified, wrap stuff in the root tag name
         if (this.options.explicitRoot) {
-          // avoid circular references
+          // Avoid circular references
           const oldObject = object;
           object = {};
           defineProperty(object, nodeName, oldObject);
         }
 
         this.resultObject = object ?? {};
-        this.emit("end", this.resultObject);
       }
     };
 
@@ -201,6 +183,14 @@ export class Parser extends EventEmitter {
     };
   }
 
+  parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
+    return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
+  }
+
+  reset(): void {
+    this.resultObject = {};
+  }
+
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
     if (!(key in object))
       if (!this.options.explicitArray) defineProperty(object, key, newValue);
@@ -214,7 +204,7 @@ export class Parser extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
-    this.on("end", callback);
+    this.saxParser.onend = () => callback(this.resultObject as T);
     return this.saxParser.write(string).close();
   }
 }
