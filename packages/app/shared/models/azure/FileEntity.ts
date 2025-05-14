@@ -16,5 +16,5 @@ export const fileEntitySchema = z.object({
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH),
   id: z.string().uuid(),
   mimetype: z.string(),
-  size: z.number().int().nonnegative(),
+  size: z.number().int().positive(),
 }) satisfies z.ZodType<FileEntity>;

@@ -14,7 +14,7 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
         :key="file.id"
         :file
         :index
-        :upload-file-url="fileUrlMap.get(file.id)!"
+        :upload-file-url="fileUrlMap.get(file.id)"
         @delete="
           (index) => {
             const { id } = files.splice(index, 1)[0];

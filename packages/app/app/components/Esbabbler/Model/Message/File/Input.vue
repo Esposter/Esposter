@@ -6,10 +6,10 @@ import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
 interface FileInputProps {
   file: FileEntity;
   index: number;
-  uploadFileUrl: UploadFileUrl;
+  uploadFileUrl?: UploadFileUrl;
 }
 
-const { file, index, uploadFileUrl } = defineProps<FileInputProps>();
+const { file, index, uploadFileUrl = { progress: 100, url: "" } } = defineProps<FileInputProps>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 const menuItems: OptionMenuItem[] = [

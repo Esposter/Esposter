@@ -46,7 +46,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const uploadFileStore = useUploadFileStore();
   const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (!session.value.data || !roomStore.currentRoomId || !validateMessageInput(editor)) return;
+    if (!session.value.data || !roomStore.currentRoomId || !validateMessageInput(editor, true)) return;
 
     const createMessageInput: CreateMessageInput = {
       files: uploadFileStore.files,

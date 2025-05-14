@@ -1,6 +1,7 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 
+import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -10,6 +11,7 @@ export const useUploadFileStore = defineStore("esbabbler/uploadFile", () => {
   const { data: files } = createDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
   const { data: fileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());
   const isFileLoading = ref(false);
+  const validateFile = (size: FileEntity["size"]) => fileEntitySchema.shape.size.safeParse(size).success;
   const removeFileUrl = (id: string) => {
     const uploadFileUrl = fileUrlMap.value.get(id);
     if (!uploadFileUrl) return;
@@ -27,5 +29,6 @@ export const useUploadFileStore = defineStore("esbabbler/uploadFile", () => {
     fileUrlMap,
     isFileLoading,
     removeFileUrl,
+    validateFile,
   };
 });
