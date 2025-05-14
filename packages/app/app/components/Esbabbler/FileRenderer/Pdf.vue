@@ -2,6 +2,7 @@
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
 import { VPdfViewer } from "@vue-pdf-viewer/viewer";
+import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
 import "vue-pdf-embed/dist/styles/annotationLayer.css";
 import "vue-pdf-embed/dist/styles/textLayer.css";
@@ -39,7 +40,7 @@ watch(isDark, (newIsDark) => {
   <v-dialog v-if="!isPreview" v-model="dialog" width="64rem" height="48rem">
     <StyledCard>
       <v-card-title font-bold>{{ file.filename }}</v-card-title>
-      <VPdfViewer v-model:dark-mode="darkMode" :download-filename="file.filename" :src="url" />
+      <VPdfViewer v-model:dark-mode="darkMode" :download-filename="file.filename" :src="url" :worker-url="PdfWorker" />
     </StyledCard>
   </v-dialog>
 </template>

@@ -60,8 +60,12 @@ export const security: NuxtConfig["security"] = {
         // grapesjs
         TUI_BASE_URL,
       ],
-      // desmos
-      "worker-src": "blob:",
+      "worker-src": [
+        // pdfjs-dist
+        "'self'",
+        // desmos
+        "blob:",
+      ],
     },
     permissionsPolicy: {
       // @vue-pdf-viewer/viewer
