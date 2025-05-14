@@ -2,10 +2,6 @@
   "name": "@esposter/xml2js",
   "version": "2.2.0",
   "description": "Simple XML to JavaScript object converter.",
-  "keywords": [
-    "xml",
-    "json"
-  ],
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
@@ -15,6 +11,13 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "xml",
+    "json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"

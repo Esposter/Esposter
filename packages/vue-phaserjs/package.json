@@ -3,10 +3,6 @@
   "version": "2.2.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
   "type": "module",
-  "keywords": [
-    "vue",
-    "phaser"
-  ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
@@ -15,6 +11,13 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "vue",
+    "phaser"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
