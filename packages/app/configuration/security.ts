@@ -53,7 +53,6 @@ export const security: NuxtConfig["security"] = {
         "'unsafe-inline'",
         // nuxt
         "'self'",
-        // "data:",
         // grapesjs
         CLOUDFLARE_BASE_URL,
         // @nuxt/fonts
@@ -61,11 +60,8 @@ export const security: NuxtConfig["security"] = {
         // grapesjs
         TUI_BASE_URL,
       ],
-      "worker-src": [
-        // desmos
-        "blob:",
-        // process.env.BASE_URL,
-      ],
+      // desmos
+      "worker-src": "blob:",
     },
     permissionsPolicy: {
       // @vue-pdf-viewer/viewer
